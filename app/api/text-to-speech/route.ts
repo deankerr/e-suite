@@ -29,6 +29,8 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify(body),
   })
   console.log(response)
+
+  if (!response.ok) throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
   const buffer = Buffer.from(await response.arrayBuffer())
   await writeFile('test.mp3', buffer)
 
