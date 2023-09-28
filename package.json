@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/core": "^7.0.2",
+    "@mantine/form": "^7.0.2",
+    "@mantine/hooks": "^7.0.2",
+    "@mantine/modals": "^7.0.2",
+    "@mantine/notifications": "^7.0.2",
+    "@mantine/nprogress": "^7.0.2",
     "next": "latest",
     "openai": "^4.10.0",
     "react": "latest",
@@ -24,7 +30,9 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "^9.0.0",
-    "postcss": "latest",
+    "postcss": "^8.4.30",
+    "postcss-preset-mantine": "^1.7.0",
+    "postcss-simple-vars": "^7.0.1",
     "prettier": "3.0.3",
     "tailwindcss": "latest",
     "typescript": "latest"
