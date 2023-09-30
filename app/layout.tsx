@@ -1,6 +1,6 @@
 import './globals.css'
-import '@mantine/core/styles.css'
-import { ColorSchemeScript, MantineProvider } from '@mantine/core'
+// import '@mantine/core/styles.css'
+// import { ColorSchemeScript, MantineProvider } from '@mantine/core'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
@@ -14,12 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
-      <body className={inter.className}>
-        <MantineProvider>{children}</MantineProvider>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
