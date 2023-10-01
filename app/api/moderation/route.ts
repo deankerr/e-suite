@@ -5,7 +5,6 @@ import { z } from 'zod'
 export async function POST(request: NextRequest) {
   console.log('moderation')
   const params = requestSchema.parse(await request.json())
-  console.log('params', params)
 
   const api = new OpenAI()
   const response = await api.moderations.create(params)

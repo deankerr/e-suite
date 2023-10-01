@@ -1,13 +1,21 @@
 import { writeFile } from 'node:fs/promises'
-import { raise } from '@/lib/utils'
+import { env, raise } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 export async function POST(request: NextRequest) {
-  console.log('text-to-speech')
-  const params = requestSchema.parse(await request.json())
-  console.log('params:', params)
+  console.log('POST text-to-speech')
+  const { provider, ...params } = requestSchema.parse(await request.json())
 
+  switch (provider) {
+    case 'elevenlabs':
+      return await elevenlabs(params)
+    default:
+      throw new Error(`unsupported provider: ${provider}`)
+  }
+}
+
+async function elevenlabs(params: TtsParams) {
   const body = {
     ...params,
     model_id: 'eleven_multilingual_v1',
@@ -24,7 +32,7 @@ export async function POST(request: NextRequest) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'audio/mpeg',
-      'xi-api-key': process.env.ELEVENLABS_API_KEY ?? raise('ELEVENLABS_API_KEY not provided'),
+      'xi-api-key': env('ELEVENLABS_API_KEY'),
     },
     body: JSON.stringify(body),
   })
@@ -45,5 +53,8 @@ const elevenLabsModels = [
 ]
 
 const requestSchema = z.object({
+  provider: z.string(),
   text: z.string(),
 })
+type RequestSchema = z.infer<typeof requestSchema>
+type TtsParams = Omit<RequestSchema, 'provider'>

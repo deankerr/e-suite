@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     case 'replicate':
       return await replicate(params)
     default:
-      throw new Error('unsupported provider')
+      throw new Error(`unsupported provider: ${provider}`)
   }
 }
 
