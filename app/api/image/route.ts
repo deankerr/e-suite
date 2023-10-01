@@ -5,34 +5,44 @@ import Replicate from 'replicate'
 import { z } from 'zod'
 
 export async function POST(request: NextRequest) {
-  console.log('image')
+  console.log('POST image')
   const { provider, ...params } = requestSchema.parse(await request.json())
-  console.log('params:', params)
 
-  let result: { url: string } | { base64: string } | undefined
-  if (provider === 'openai') result = await openai(params)
-  if (provider === 'togetherai') result = await togetherai(params)
-  if (provider === 'replicate') result = await replicate(params)
-  if (!result) throw new Error('invalid provider/response')
-
-  console.log('result:', result)
-  return NextResponse.json(result)
+  switch (provider) {
+    case 'openai':
+      return await openai(params)
+    case 'togetherai':
+      return await togetherai(params)
+    case 'replicate':
+      return await replicate(params)
+    default:
+      throw new Error('unsupported provider')
+  }
 }
 
 async function openai(params: ImageParams) {
-  const { prompt } = params
-  const api = new OpenAI()
-  const response = await api.images.generate({
-    prompt,
-  })
-  const url = response.data[0].url
-  if (!url) throw new Error('openai response missing url')
-  return { url }
+  try {
+    console.log('openai', params)
+    const { prompt } = params
+    const api = new OpenAI()
+    const response = await api.images.generate({
+      prompt,
+    })
+    const url = response.data[0].url ?? raise('response missing expected url')
+    return NextResponse.json({ url })
+  } catch (error) {
+    if (error instanceof OpenAI.APIError) {
+      const { status, message } = error
+      return sendErrorResponse({ status, message })
+    } else {
+      throw error
+    }
+  }
 }
 
 async function togetherai(params: ImageParams) {
   console.log('togetherai', params)
-  const apiKey = process.env.TOGETHERAI_API_KEY ?? raise('TOGETHERAI_API_KEY not provided')
+  const apiKey = env('TOGETHERAI_API_KEY')
 
   const response = await fetch('https://api.together.xyz/inference', {
     method: 'POST',
@@ -42,24 +52,40 @@ async function togetherai(params: ImageParams) {
     },
     body: JSON.stringify(params),
   })
-
   if (!response.ok) throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
+
   const result = responseSchema.togetherai.parse(await response.json())
-  const base64 = result.output.choices[0]?.image_base64
-  if (!base64) throw new Error('togetherai: response missing expected data')
-  return { base64 }
+  const base64 = result.output.choices[0]?.image_base64 ?? raise('response missing expected data')
+  return NextResponse.json({ base64 })
 }
 
 async function replicate(params: ImageParams) {
-  console.log('replicate')
-  const { prompt, model } = params
-  const api = new Replicate({ auth: env('REPLICATE_API_KEY') })
+  try {
+    console.log('replicate')
+    const { prompt, model } = params
+    const api = new Replicate({ auth: env('REPLICATE_API_KEY') })
+    const input = { prompt }
+    const response = await api.run(model as `${string}/${string}:${string}`, { input })
 
-  const input = { prompt }
-  const response = await api.run(model as `${string}/${string}:${string}`, { input })
-  const result = z.string().url().array().parse(response)
-  const url = result[0] ?? raise('replicate response missing data')
-  return { url }
+    const result = z.string().url().array().parse(response)
+    const url = result[0] ?? raise('replicate response missing data')
+    return NextResponse.json({ url })
+  } catch (error) {
+    if (error instanceof Error) {
+      const { message } = error
+      return sendErrorResponse({ message })
+    } else {
+      throw error
+    }
+  }
+}
+
+function sendErrorResponse({ status, message }: { status?: number; message?: string }) {
+  const error = {
+    status: status ?? 400,
+    message: message ?? 'An unknown error occurred.',
+  }
+  return NextResponse.json({ error })
 }
 
 const requestSchema = z.object({
