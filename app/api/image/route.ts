@@ -6,10 +6,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { z } from 'zod'
 
-const log = logger.child({}, { msgPrefix: '[API/IMAGE] ' })
+const log = logger.child({}, { msgPrefix: '[api/image] ' })
 
 export async function POST(request: NextRequest) {
-  log.info('POST image')
+  log.info('POST', request.url)
+
   const { provider, ...params } = requestSchema.parse(await request.json())
   log.info(params, 'parameters')
 
