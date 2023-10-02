@@ -11,6 +11,6 @@ export function raise(message: string): never {
   throw new Error(message)
 }
 
-export function env(key: string) {
-  return process.env[key] ?? raise(`${key} not provided`)
+export function env(key: string, fallback?: string) {
+  return process.env[key] ?? fallback ?? raise(`${key} not provided`)
 }
