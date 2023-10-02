@@ -28,7 +28,7 @@ async function openai(params: ImageParams) {
     const response = await api.images.generate({
       prompt,
     })
-    const url = response.data[0].url ?? raise('response missing expected url')
+    const url = response.data[0]?.url ?? raise('response missing expected url')
     return NextResponse.json({ url })
   } catch (error) {
     if (error instanceof OpenAI.APIError) {

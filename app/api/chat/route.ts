@@ -1,11 +1,14 @@
-import { env, raise } from '@/lib/utils'
+import { env, logger, raise } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { z } from 'zod'
 
+const log = logger.child({ api: 'chat' }, { msgPrefix: '[API/CHAT] ' })
+
 export async function POST(request: NextRequest) {
-  console.log('POST chat')
+  log.info('POST chat')
   const { provider, ...params } = requestSchema.parse(await request.json())
+  log.info(params, 'parameters')
 
   switch (provider) {
     case 'openai':
@@ -21,7 +24,7 @@ async function openai(params: ChatParams) {
   console.log('openai')
   const api = new OpenAI()
   const response = await api.chat.completions.create(params)
-  const message = response.choices[0].message.content ?? raise('response missing expected data')
+  const message = response.choices[0]?.message.content ?? raise('response missing expected data')
   return NextResponse.json(message)
 }
 
@@ -35,7 +38,7 @@ async function openrouter(params: ChatParams) {
     },
   })
   const request = await api.chat.completions.create(params)
-  const message = request.choices[0].message.content ?? raise('response missing expected data')
+  const message = request.choices[0]?.message.content ?? raise('response missing expected data')
   return NextResponse.json(message)
 }
 

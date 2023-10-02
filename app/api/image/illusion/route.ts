@@ -1,11 +1,13 @@
-import { env } from '@/lib/utils'
+import { env, logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
+const log = logger.child({ api: 'image/illusion' }, { msgPrefix: '[API/ILLUSION] ' })
+
 export async function POST(request: NextRequest) {
-  console.log('POST image/illusion')
+  log.info('POST image/illusion')
   const params = requestSchema.parse(await request.json())
-  console.log(params)
+  log.info(params, 'parameters')
 
   const url = 'https://54285744-illusion-diffusion.gateway.alpha.fal.ai/'
   const options = {
@@ -19,8 +21,8 @@ export async function POST(request: NextRequest) {
 
   const response = await fetch(url, options)
   const data = await response.json()
-  console.log(data)
   const result = responseSchema.parse(data)
+  log.info(result, 'result')
 
   return NextResponse.json({
     url: result.image.url,
