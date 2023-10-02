@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     throw new Error(`unsupported provider: ${provider}`)
   }
 
+  log.info(result, 'result')
   return NextResponse.json(result)
 }
 
