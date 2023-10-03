@@ -17,8 +17,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme="light">
+      <body className={`${inter.className}`}>{children}</body>
     </html>
   )
 }
+
+/* 
+  bg-[url('/backgrounds/random-shapes.svg')] bg-[length:64px_64px]
+
+  base-200 rgb(242, 242, 242)
+  base-300 rgb(229, 230, 230) #e5e6e6
+*/

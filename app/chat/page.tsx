@@ -13,7 +13,7 @@ export default function Chat() {
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-end  border-base-200 pb-24 pt-4">
+      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-end border-base-200 bg-base-100 bg-[url('/backgrounds/shapes.svg')] bg-[length:60px_60px] pb-24 pt-4">
         <div className="px-2">
           {messages.map((msg, i) =>
             msg.role === 'system' ? (
