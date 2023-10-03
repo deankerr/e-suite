@@ -1,55 +1,55 @@
-import { openai } from '@/lib/provider/openai'
-import { replicate } from '@/lib/provider/replicate'
-import { togetherai } from '@/lib/provider/togetherai'
+import { openai, replicate, togetherai } from '@/lib/providers'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[api/image] ' })
 
+const endpoints = {
+  openai,
+  replicate,
+  togetherai,
+}
+
 export async function POST(request: NextRequest) {
-  log.info('POST', request.url)
+  log.info('POST %s', request.url)
 
   const { provider, ...params } = requestSchema.parse(await request.json())
   log.info(params, 'parameters')
 
-  let result: { url?: string; base64?: string }
-  if (provider === 'openai') {
-    try {
-      const { prompt } = params
-      const { item } = await openai.image({ prompt })
-      result = item
-    } catch (error) {
-      if (error instanceof OpenAI.APIError) {
-        const { status, message } = error
-        return sendErrorResponse({ status, message })
-      } else {
-        throw error
-      }
-    }
-  } else if (provider === 'togetherai') {
-    const { item } = await togetherai.image(params)
-    result = item
-  } else if (provider === 'replicate') {
-    try {
-      const { item } = await replicate.image(params)
-      result = item
-    } catch (error) {
-      if (error instanceof Error) {
-        const { message } = error
-        return sendErrorResponse({ message })
-      } else {
-        throw error
-      }
-    }
-  } else {
-    throw new Error('unsupported provider')
-  }
+  const result = await endpoint(provider).image(params)
 
   log.info(result, 'result')
   return NextResponse.json(result)
 }
+
+function endpoint(provider: string) {
+  if (!(provider in endpoints)) {
+    throw new Error('Unsupported provider')
+  }
+  const key = provider as keyof typeof endpoints
+  return endpoints[key]
+}
+// const endpoints = {
+//   async openai(params: RequestParameters) {
+//     try {
+//       const { prompt } = params
+//       const { item } = await openai.image({ prompt })
+//       return item
+//     } catch (error) {
+//       if (error instanceof OpenAI.APIError) {
+//         const { status, message } = error
+//         return createErrorResponse({ status, message })
+//       } else {
+//         throw error
+//       }
+//     }
+//   },
+
+//   async togetherai(params: RequestParameters) {
+
+//   }
+// }
 
 // async function openai(params: ImageParams) {
 //   try {
@@ -111,12 +111,12 @@ export async function POST(request: NextRequest) {
 //   }
 // }
 
-function sendErrorResponse({ status, message }: { status?: number; message?: string }) {
+function createErrorResponse({ status, message }: { status?: number; message?: string }) {
   const error = {
     status: status ?? 400,
     message: message ?? 'An unknown error occurred.',
   }
-  return NextResponse.json({ error })
+  return { error }
 }
 
 const requestSchema = z.object({
@@ -125,3 +125,4 @@ const requestSchema = z.object({
   model: z.string().optional(),
   provider: z.string(),
 })
+type RequestParameters = z.infer<typeof requestSchema>

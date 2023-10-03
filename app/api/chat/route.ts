@@ -1,5 +1,5 @@
-import { openai } from '@/lib/provider/openai'
-import { openrouter } from '@/lib/provider/openrouter'
+import { openai } from '@/lib/providers/openai'
+import { openrouter } from '@/lib/providers/openrouter'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'

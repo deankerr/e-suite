@@ -1,21 +1,19 @@
-import { illusion } from '@/lib/provider/fal/'
+import { fal } from '@/lib/providers'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
-const log = logger.child({}, { msgPrefix: '[API/ILLUSION] ' })
+const log = logger.child({}, { msgPrefix: '[api/image/illusion] ' })
 
 export async function POST(request: NextRequest) {
   log.info('POST image/illusion')
   const params = requestSchema.parse(await request.json())
-  log.info('%o', params)
+  log.info(params, 'params')
 
-  const result = await illusion(params)
+  const result = await fal.illusion(params)
   log.info(result, 'result')
 
-  return NextResponse.json({
-    url: result.image.url,
-  })
+  return NextResponse.json(result)
 }
 
 const requestSchema = z.object({

@@ -5,7 +5,20 @@ export const logger = pino({
   depthLimit: 2,
   base: undefined,
   timestamp: pino.stdTimeFunctions.isoTime,
+  redact: ['base64', 'image_url'],
 })
+
+const truncateLength = 40
+function truncateLogString(obj: Record<string, unknown>, ...keys: string[]) {
+  for (const key of keys) {
+    if (key in obj && typeof obj[key] === 'string') {
+      const value = obj[key] as string
+      if (value.length > truncateLength) {
+        obj[key] = value.slice(0, truncateLength) + ' ... [TRUNCATED]'
+      }
+    }
+  }
+}
 
 export function raise(message: string): never {
   throw new Error(message)
@@ -13,4 +26,12 @@ export function raise(message: string): never {
 
 export function env(key: string, fallback?: string) {
   return process.env[key] ?? fallback ?? raise(`${key} not provided`)
+}
+
+export function createErrorResponse({ status, message }: { status?: number; message?: string }) {
+  const error = {
+    status: status ?? 400,
+    message: message ?? 'An unknown error occurred.',
+  }
+  return { error }
 }

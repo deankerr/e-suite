@@ -1,7 +1,7 @@
-import { env, raise } from '@/lib/utils'
+import { createErrorResponse, env, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
-import { paths } from './togetherai.d'
+import { paths } from './togetherai'
 
 const { POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
@@ -21,7 +21,7 @@ export const togetherai = {
       return { response, item: { base64 } }
     } else {
       console.error(error)
-      throw new Error('togetherai error')
+      return createErrorResponse({})
     }
   },
 }
