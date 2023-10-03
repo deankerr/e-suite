@@ -1,17 +1,21 @@
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import { InputPanel } from './components/InputPanel'
+import { MessageBubble, SystemBubble } from './components/MessageBubble'
 
-type ChatMessageItem = {
+export type ChatMessageItem = {
   role: 'system' | 'user' | 'assistant'
   name?: string
   content: string
 }
 
 export default function Chat() {
+  // const messages = _sampleMessagesFew
+  const messages = _sampleMessagesMany
+
   return (
     <div className="min-h-screen">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-end border-x border-base-200 bg-base-100 pb-24">
-        <div className="px-2 pb-2">
-          {_sampleMessages.map((msg, i) =>
+      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-end  border-base-200 pb-24 pt-4">
+        <div className="px-2">
+          {messages.map((msg, i) =>
             msg.role === 'system' ? (
               <SystemBubble content={msg.content} key={i} />
             ) : (
@@ -25,56 +29,7 @@ export default function Chat() {
   )
 }
 
-function InputPanel() {
-  return (
-    <div className="fixed bottom-0 flex w-full max-w-md justify-center bg-base-200 px-4 py-2">
-      <InputBox />
-    </div>
-  )
-}
-
-function SystemBubble(props: { content: string }) {
-  const { content } = props
-  return (
-    <div className="mx-auto max-w-sm">
-      <div className="text-sm">System</div>
-      <div className="rounded-lg bg-accent px-4 py-1 text-center">{content}</div>
-    </div>
-  )
-}
-
-function MessageBubble({ message }: { message: ChatMessageItem }) {
-  const { role } = message
-  const color = role === 'user' ? 'chat-bubble-primary' : 'chat-bubble-secondary'
-  const alignment = role === 'user' ? 'chat-start' : 'chat-end'
-  const name = message.name ?? (role === 'user' ? 'User' : 'Assistant')
-
-  return (
-    <div className={`chat ${alignment}`}>
-      <div className="chat-header">{name}</div>
-      <div className={`chat-bubble ${color}`}>{message.content}</div>
-    </div>
-  )
-}
-
-function InputBox() {
-  return (
-    <div className="flex w-full justify-center gap-2 align-middle">
-      <textarea
-        placeholder="Enter your message..."
-        className="textarea textarea-bordered textarea-sm flex-auto"
-      ></textarea>
-
-      <div className="flex flex-col justify-center">
-        <button className="btn btn-circle btn-accent">
-          <PaperAirplaneIcon className="w-8" />
-        </button>
-      </div>
-    </div>
-  )
-}
-
-const _sampleMessages: ChatMessageItem[] = [
+const _sampleMessagesMany: ChatMessageItem[] = [
   { role: 'system', content: 'Adipisicing exercitation ut sit aute fugiat duis enim ad.' },
   {
     role: 'user',
@@ -118,4 +73,4 @@ const _sampleMessages: ChatMessageItem[] = [
   },
 ]
 
-const _sampleMessagesFew = _sampleMessages.slice(0, 3)
+const _sampleMessagesFew = _sampleMessagesMany.slice(0, 3)
