@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 
 export function ThemePicker() {
   const [theme, setTheme] = useLocalStorage('theme', 'default')
-  console.log('theme', theme)
 
   useEffect(() => {
     const body = document.body

@@ -59,11 +59,13 @@ export function Chat() {
   }
 
   return (
-    <div className="mx-auto flex h-full max-w-md flex-col justify-end border-base-200 bg-base-100 bg-[url('/backgrounds/shapes.svg')] bg-[length:60px_60px]">
-      <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
-      <MessagePanel messages={messages} />
-      <InputPanel handleSubmit={submitMessage} />
-    </div>
+    <>
+      <div className="mx-auto flex h-full max-w-md flex-col justify-between bg-base-100 pt-3">
+        <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
+        <MessagePanel messages={messages} />
+        <InputPanel handleSubmit={submitMessage} />
+      </div>
+    </>
   )
 }
 

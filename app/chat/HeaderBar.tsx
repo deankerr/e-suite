@@ -9,7 +9,7 @@ export function HeaderBar({
   clearMessages: () => void
 }) {
   return (
-    <div className="navbar bg-accent">
+    <div className="navbar mx-3 w-auto flex-none rounded-xl bg-accent shadow-lg">
       <div className="navbar-start">
         <a className="btn btn-ghost text-xl normal-case text-accent-content">ai.chat</a>
       </div>

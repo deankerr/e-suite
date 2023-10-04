@@ -3,7 +3,7 @@ import type { ChatMessageItem } from '../Chat'
 export function SystemBubble(props: { content: string }) {
   const { content } = props
   return (
-    <div className="mx-auto max-w-sm">
+    <div className="mx-6 w-auto">
       <div className="text-sm text-transparent">System</div>
       <div className="rounded-xl bg-accent px-4 py-1 text-center text-accent-content shadow-lg">
         {content}
