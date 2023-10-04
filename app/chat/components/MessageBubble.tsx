@@ -1,4 +1,4 @@
-import type { ChatMessageItem } from '../page'
+import type { ChatMessageItem } from '../Chat'
 
 export function SystemBubble(props: { content: string }) {
   const { content } = props
