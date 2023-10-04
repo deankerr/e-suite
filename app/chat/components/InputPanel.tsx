@@ -11,7 +11,7 @@ export function InputPanel({ handleSubmit }: Props) {
   const [message, setMessage] = useState('')
 
   return (
-    <div className="fixed bottom-0 flex w-full max-w-md justify-center rounded-md bg-base-300 px-4 py-2">
+    <div className="flex w-full max-w-md justify-center rounded-md bg-base-200 px-4 py-2">
       <form
         className="flex w-full justify-center gap-4 align-middle"
         onSubmit={(e) => {
