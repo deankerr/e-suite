@@ -3,6 +3,7 @@
 import { useIsClient } from '@uidotdev/usehooks'
 import { ThemePicker } from '../../components/ThemePicker'
 import { Chat } from './Chat'
+import { HeaderBar } from './HeaderBar'
 
 export default function ChatPage() {
   // stop Chat from rendering on server due to localStorage (?)
@@ -12,11 +13,12 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-[100dvh] overflow-hidden">
+    // <div className="h-[100dvh] overflow-hidden">
+    <div className="">
       <Chat />
-      <div className="fixed left-2 top-2">
+      {/* <div className="fixed left-2 top-2">
         <ThemePicker />
-      </div>
+      </div> */}
     </div>
   )
 }

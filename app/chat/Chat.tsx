@@ -3,6 +3,7 @@
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { InputPanel } from './components/InputPanel'
 import { MessagePanel } from './components/MessagePanel'
+import { HeaderBar } from './HeaderBar'
 
 export type ChatMessageItem = {
   role: 'system' | 'user' | 'assistant'
@@ -14,6 +15,15 @@ export function Chat() {
   const [messages, setMessages] = useLocalStorage<ChatMessageItem[]>('chat-messages-history-1', [
     initialMessage,
   ])
+
+  const addDebugMessages = () => {
+    const newMessages = [...messages, ..._sampleMessagesMany]
+    setMessages(newMessages)
+  }
+
+  const clearMessages = () => {
+    setMessages([initialMessage])
+  }
 
   const submitMessage = async (content: string) => {
     const userMessage: ChatMessageItem = {
@@ -50,9 +60,8 @@ export function Chat() {
 
   return (
     <div className="mx-auto flex h-full max-w-md flex-col justify-end border-base-200 bg-base-100 bg-[url('/backgrounds/shapes.svg')] bg-[length:60px_60px]">
+      <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
       <MessagePanel messages={messages} />
-      {/* <MessagePanel messages={_sampleMessagesMany} /> */}
-      {/* <MessagePanel messages={_sampleMessagesFew} /> */}
       <InputPanel handleSubmit={submitMessage} />
     </div>
   )
@@ -70,7 +79,6 @@ const initialMessage = {
 } as const
 
 const _sampleMessagesMany: ChatMessageItem[] = [
-  { role: 'system', content: 'Adipisicing exercitation ut sit aute fugiat duis enim ad.' },
   {
     role: 'user',
     name: 'Katelynn',
@@ -112,5 +120,3 @@ const _sampleMessagesMany: ChatMessageItem[] = [
       'Elit dolore aliqua in voluptate anim quis pariatur amet elit laboris ut amet et nostrud. Amet laboris cillum esse sunt commodo irure. Dolore laborum ad velit cillum sunt. Do elit occaecat est dolore proident in qui minim exercitation excepteur et nisi proident pariatur cupidatat. Nulla consequat ex pariatur exercitation officia eu est. Aliquip cupidatat reprehenderit aliquip ad commodo voluptate id et cupidatat aliquip eu sint non. Qui excepteur proident voluptate id ut consequat fugiat.',
   },
 ]
-
-const _sampleMessagesFew = _sampleMessagesMany.slice(0, 3)
