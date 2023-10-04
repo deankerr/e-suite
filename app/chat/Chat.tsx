@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocalStorage } from '@uidotdev/usehooks'
 import { useState } from 'react'
 import { InputPanel } from './components/InputPanel'
 import { MessagePanel } from './components/MessagePanel'
@@ -11,15 +12,41 @@ export type ChatMessageItem = {
 }
 
 export function Chat() {
-  const [messages, setMessages] = useState<ChatMessageItem[]>([initialMessage])
+  const [messages, setMessages] = useLocalStorage<ChatMessageItem[]>('dev-messages-1', [
+    initialMessage,
+  ])
 
-  const submitMessage = (content: string) => {
-    const message = {
+  const submitMessage = async (content: string) => {
+    const userMessage: ChatMessageItem = {
       role: ROLE.user,
       content,
     }
-    const newMessages = [...messages, message]
-    setMessages(newMessages)
+    const newMessages = [...messages, userMessage]
+
+    const payload = {
+      provider: 'openai',
+      model: 'gpt-3.5-turbo',
+      messages: newMessages,
+    }
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+    const result = await response.json()
+    console.log('result', result)
+
+    if (typeof result === 'string') {
+      const responseMessage = {
+        role: ROLE.assistant,
+        content: result,
+      }
+      newMessages.push(responseMessage)
+
+      setMessages(newMessages)
+    } else {
+      console.error('invalid result:', result)
+    }
   }
 
   return (
