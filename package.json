@@ -11,6 +11,7 @@
   "dependencies": {
     "@heroicons/react": "^2.0.18",
     "@uidotdev/usehooks": "^2.3.1",
+    "ai": "^2.2.14",
     "dayjs": "^1.11.10",
     "next": "latest",
     "openai": "^4.10.0",

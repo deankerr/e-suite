@@ -1,13 +1,20 @@
 import { createErrorResponse, raise } from '@/lib/utils'
+import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 
 const api = new OpenAI()
 
 export const openai = {
-  async chat(input: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming) {
-    const response = await api.chat.completions.create(input)
+  async chat(input: OpenAI.Chat.ChatCompletionCreateParams) {
+    const response = await api.chat.completions.create({ ...input, stream: false })
     const item = response.choices[0]?.message.content ?? raise('response missing expected data')
     return { response, item }
+  },
+
+  async chatStream(input: OpenAI.Chat.ChatCompletionCreateParams) {
+    const response = await api.chat.completions.create({ ...input, stream: true })
+    const stream = OpenAIStream(response)
+    return new StreamingTextResponse(stream)
   },
 
   async image(input: OpenAI.ImageGenerateParams) {
@@ -25,3 +32,5 @@ export const openai = {
     }
   },
 }
+
+async function Tstreaming() {}

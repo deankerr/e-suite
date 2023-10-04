@@ -1,7 +1,7 @@
 'use client'
 
-import { useLocalStorage } from '@uidotdev/usehooks'
-import { InputPanel } from './components/InputPanel'
+import { useChat } from 'ai/react'
+import { InputPanelStream } from './components/InputPanelStream'
 import { MessagePanel } from './components/MessagePanel'
 import { HeaderBar } from './HeaderBar'
 
@@ -12,50 +12,24 @@ export type ChatMessageItem = {
 }
 
 export function Chat() {
-  const [messages, setMessages] = useLocalStorage<ChatMessageItem[]>('chat-messages-history-1', [
-    initialMessage,
-  ])
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: '/api/chat',
+    body: {
+      // model: 'gpt-3.5-turbo',
+      // provider: 'openai',
+      model: 'nousresearch/nous-hermes-llama2-13b',
+      provider: 'openrouter',
+      stream: true,
+    },
+  })
 
   const addDebugMessages = () => {
-    const newMessages = [...messages, ..._sampleMessagesMany]
-    setMessages(newMessages)
+    // const newMessages = [...messages, ..._sampleMessagesMany]
+    // setMessages(newMessages)
   }
 
   const clearMessages = () => {
-    setMessages([initialMessage])
-  }
-
-  const submitMessage = async (content: string) => {
-    const userMessage: ChatMessageItem = {
-      role: ROLE.user,
-      content,
-    }
-    const newMessages = [...messages, userMessage]
-
-    const payload = {
-      provider: 'openai',
-      model: 'gpt-3.5-turbo',
-      messages: newMessages,
-    }
-
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    })
-    const result = await response.json()
-    console.log('result', result)
-
-    if (typeof result === 'string') {
-      const responseMessage = {
-        role: ROLE.assistant,
-        content: result,
-      }
-      newMessages.push(responseMessage)
-
-      setMessages(newMessages)
-    } else {
-      console.error('invalid result:', result)
-    }
+    // setMessages([initialMessage])
   }
 
   return (
@@ -63,7 +37,11 @@ export function Chat() {
       <div className="mx-auto flex h-full max-w-md flex-col justify-between bg-base-100 pt-3">
         <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
         <MessagePanel messages={messages} />
-        <InputPanel handleSubmit={submitMessage} />
+        <InputPanelStream
+          handleSubmit={handleSubmit}
+          handleInputChange={handleInputChange}
+          input={input}
+        />
       </div>
     </>
   )
