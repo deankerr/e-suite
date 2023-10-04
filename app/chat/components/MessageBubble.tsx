@@ -5,7 +5,9 @@ export function SystemBubble(props: { content: string }) {
   return (
     <div className="mx-auto max-w-sm">
       <div className="text-sm text-transparent">System</div>
-      <div className="rounded-xl bg-accent px-4 py-1 text-center shadow-lg">{content}</div>
+      <div className="rounded-xl bg-accent px-4 py-1 text-center text-accent-content shadow-lg">
+        {content}
+      </div>
     </div>
   )
 }

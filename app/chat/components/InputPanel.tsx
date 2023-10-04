@@ -11,7 +11,7 @@ export function InputPanel() {
 
         <div className="flex flex-col justify-center">
           <button className="btn btn-circle btn-accent">
-            <PaperAirplaneIcon className="w-8" />
+            <PaperAirplaneIcon className="ml-1 w-8" />
           </button>
         </div>
       </div>
