@@ -1,3 +1,4 @@
+import { ThemePicker } from '../components/ThemeToggle'
 import { InputPanel } from './components/InputPanel'
 import { MessageBubble, SystemBubble } from './components/MessageBubble'
 
@@ -24,6 +25,9 @@ export default function Chat() {
           )}
         </div>
         <InputPanel />
+      </div>
+      <div className="fixed left-2 top-2">
+        <ThemePicker />
       </div>
     </div>
   )
