@@ -1,7 +1,7 @@
 'use client'
 
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   handleSubmit: (content: string) => void
@@ -9,6 +9,16 @@ type Props = {
 
 export function InputPanel({ handleSubmit }: Props) {
   const [message, setMessage] = useState('')
+
+  // auto-resize textarea on change
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '0px'
+      const scrollHeight = textareaRef.current.scrollHeight
+      textareaRef.current.style.height = scrollHeight + 'px'
+    }
+  }, [message])
 
   return (
     <div className="flex w-full max-w-md justify-center rounded-md bg-base-200 px-4 py-2">
@@ -21,10 +31,12 @@ export function InputPanel({ handleSubmit }: Props) {
         }}
       >
         <textarea
-          className="font textarea textarea-accent textarea-sm flex-auto"
+          className="font textarea textarea-accent textarea-md flex-auto text-base"
           placeholder="Enter your message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          rows={1}
+          ref={textareaRef}
         />
 
         <div className="flex flex-col justify-center">
