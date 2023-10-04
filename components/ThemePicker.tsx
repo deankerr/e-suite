@@ -3,24 +3,6 @@
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useEffect } from 'react'
 
-export function ThemeToggle() {
-  const [theme, setTheme] = useLocalStorage('theme', 'dark')
-
-  const body = document.body
-  console.log('current theme:', body.getAttribute('data-theme'))
-  if (body.getAttribute('data-theme') !== theme) {
-    body.setAttribute('data-theme', theme)
-  }
-
-  return (
-    <input
-      type="checkbox"
-      className="toggle"
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-    />
-  )
-}
-
 export function ThemePicker() {
   const [theme, setTheme] = useLocalStorage('theme', 'default')
   console.log('theme', theme)

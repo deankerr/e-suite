@@ -1,7 +1,6 @@
 'use client'
 
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { useState } from 'react'
 import { InputPanel } from './components/InputPanel'
 import { MessagePanel } from './components/MessagePanel'
 
@@ -51,8 +50,8 @@ export function Chat() {
 
   return (
     <div className="mx-auto flex h-full max-w-md flex-col justify-end border-base-200 bg-base-100 bg-[url('/backgrounds/shapes.svg')] bg-[length:60px_60px]">
-      {/* <MessagePanel messages={messages} /> */}
-      <MessagePanel messages={_sampleMessagesMany} />
+      <MessagePanel messages={messages} />
+      {/* <MessagePanel messages={_sampleMessagesMany} /> */}
       {/* <MessagePanel messages={_sampleMessagesFew} /> */}
       <InputPanel handleSubmit={submitMessage} />
     </div>
