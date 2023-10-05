@@ -32,6 +32,7 @@ export function InputPanel({ handleSubmit, handleInputChange, input }: Props) {
       >
         <textarea
           className="font textarea textarea-accent textarea-md flex-auto text-base"
+          style={{ resize: 'none' }}
           placeholder="Enter your message..."
           value={input}
           onChange={(e) => handleInputChange(e)}
