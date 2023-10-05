@@ -6,7 +6,7 @@ export function SystemBubble(props: { content: string }) {
   return (
     <div className="mx-6 w-auto">
       <div className="text-sm text-transparent">System</div>
-      <div className="rounded-xl bg-accent px-4 py-1 text-center text-accent-content shadow-lg">
+      <div className="rounded-xl border border-primary bg-neutral px-4 py-1 text-center text-neutral-content shadow-lg">
         {content}
       </div>
     </div>
@@ -22,9 +22,9 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
         {message.name ?? (isUser ? 'User' : 'Assistant')}
       </div>
       <div
-        className={`chat-bubble ${
-          isUser ? 'chat-bubble-primary' : 'chat-bubble-secondary'
-        } prose shadow-lg`}
+        className={`${
+          isUser ? 'border-secondary' : 'border-accent'
+        } prose chat-bubble border shadow-lg`}
       >
         <Markdown>{message.content}</Markdown>
       </div>

@@ -31,7 +31,7 @@ export function InputPanel({ handleSubmit, handleInputChange, input }: Props) {
         onSubmit={(e) => handleSubmit(e)}
       >
         <textarea
-          className="font textarea textarea-accent textarea-md flex-auto text-base"
+          className="font textarea textarea-primary textarea-md flex-auto text-base"
           style={{ resize: 'none' }}
           placeholder="Enter your message..."
           value={input}
@@ -41,7 +41,7 @@ export function InputPanel({ handleSubmit, handleInputChange, input }: Props) {
         />
 
         <div className="flex flex-col justify-center">
-          <button className="btn btn-circle btn-accent" type="submit">
+          <button className="btn btn-circle btn-primary" type="submit">
             <PaperAirplaneIcon className="ml-1 w-8" />
           </button>
         </div>

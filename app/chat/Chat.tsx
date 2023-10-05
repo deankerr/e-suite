@@ -3,7 +3,7 @@
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { _sampleMessages } from './_sampleMessages'
-import { HeaderBar } from './components/HeaderBar'
+import { HeaderBar } from './components/HeaderPanel'
 import { InputPanel } from './components/InputPanel'
 import { MessagePanel } from './components/MessagePanel'
 
@@ -33,7 +33,10 @@ export function Chat() {
 
   return (
     <>
-      <div className="bg-shapes-pink-light mx-auto flex h-full max-w-4xl flex-col justify-between bg-base-100">
+      <div
+        data-theme="mytheme"
+        className="mx-auto flex h-full max-w-4xl flex-col justify-between bg-base-100"
+      >
         <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
         <MessagePanel messages={messages} />
         <InputPanel
