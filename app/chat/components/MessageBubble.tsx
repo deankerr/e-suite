@@ -1,4 +1,4 @@
-import Markdown from 'react-markdown'
+import { Markdown } from '@/components/Markdown'
 import type { ChatMessage } from '../Chat'
 
 export function SystemBubble(props: { content: string }) {
@@ -15,14 +15,17 @@ export function SystemBubble(props: { content: string }) {
 
 export function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user'
-  const color = isUser ? 'chat-bubble-primary' : 'chat-bubble-secondary'
-  const alignment = isUser ? 'chat-start' : 'chat-end'
-  const name = message.name ?? (isUser ? 'User' : 'Assistant')
 
   return (
-    <div className={`chat ${alignment}`}>
-      <div className="chat-header text-transparent">{name}</div>
-      <div className={`chat-bubble ${color} shadow-lg`}>
+    <div className={`chat ${isUser ? 'chat-start' : 'chat-end'}`}>
+      <div className="chat-header text-transparent">
+        {message.name ?? (isUser ? 'User' : 'Assistant')}
+      </div>
+      <div
+        className={`chat-bubble ${
+          isUser ? 'chat-bubble-primary' : 'chat-bubble-secondary'
+        } prose shadow-lg`}
+      >
         <Markdown>{message.content}</Markdown>
       </div>
     </div>

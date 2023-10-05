@@ -33,7 +33,7 @@ export function Chat() {
 
   return (
     <>
-      <div className="mx-auto flex h-full max-w-6xl flex-col justify-between bg-base-100 pt-3">
+      <div className="mx-auto flex h-full max-w-5xl flex-col justify-between bg-base-100 pt-3">
         <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
         <MessagePanel messages={messages} />
         <InputPanel
