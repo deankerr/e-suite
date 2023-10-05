@@ -1,5 +1,5 @@
 import { ChatBubbleLeftRightIcon, XCircleIcon } from '@heroicons/react/24/outline'
-import { BarThemePicker } from './components/BarThemePicker'
+import { BarThemePicker } from './BarThemePicker'
 
 export function HeaderBar({
   addMessages,

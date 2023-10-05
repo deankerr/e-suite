@@ -1,4 +1,5 @@
-import type { ChatMessageItem } from '../Chat'
+import Markdown from 'react-markdown'
+import type { ChatMessage } from '../Chat'
 
 export function SystemBubble(props: { content: string }) {
   const { content } = props
@@ -12,7 +13,7 @@ export function SystemBubble(props: { content: string }) {
   )
 }
 
-export function MessageBubble({ message }: { message: ChatMessageItem }) {
+export function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user'
   const color = isUser ? 'chat-bubble-primary' : 'chat-bubble-secondary'
   const alignment = isUser ? 'chat-start' : 'chat-end'
@@ -21,7 +22,9 @@ export function MessageBubble({ message }: { message: ChatMessageItem }) {
   return (
     <div className={`chat ${alignment}`}>
       <div className="chat-header text-transparent">{name}</div>
-      <div className={`chat-bubble ${color} shadow-lg`}>{message.content}</div>
+      <div className={`chat-bubble ${color} shadow-lg`}>
+        <Markdown>{message.content}</Markdown>
+      </div>
     </div>
   )
 }

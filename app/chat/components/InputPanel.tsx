@@ -1,15 +1,19 @@
 'use client'
 
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
-import { useEffect, useRef, useState } from 'react'
+import { ChatRequestOptions } from 'ai'
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
 
 type Props = {
-  handleSubmit: (content: string) => void
+  handleSubmit: (
+    e: FormEvent<HTMLFormElement>,
+    chatRequestOptions?: ChatRequestOptions | undefined,
+  ) => void
+  handleInputChange: (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => void
+  input: string
 }
 
-export function InputPanel({ handleSubmit }: Props) {
-  const [message, setMessage] = useState('')
-
+export function InputPanel({ handleSubmit, handleInputChange, input }: Props) {
   // auto-resize textarea on change
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   useEffect(() => {
@@ -18,23 +22,19 @@ export function InputPanel({ handleSubmit }: Props) {
       const scrollHeight = textareaRef.current.scrollHeight
       textareaRef.current.style.height = scrollHeight + 'px'
     }
-  }, [message])
+  }, [input])
 
   return (
-    <div className="flex w-full max-w-md justify-center rounded-md bg-base-200 px-4 py-2">
+    <div className="flex w-full justify-center rounded-md bg-base-200 px-4 py-2">
       <form
         className="flex w-full justify-center gap-4 align-middle"
-        onSubmit={(e) => {
-          e.preventDefault()
-          console.log('inputpanel submit:', message)
-          handleSubmit(message)
-        }}
+        onSubmit={(e) => handleSubmit(e)}
       >
         <textarea
           className="font textarea textarea-accent textarea-md flex-auto text-base"
           placeholder="Enter your message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={input}
+          onChange={(e) => handleInputChange(e)}
           rows={1}
           ref={textareaRef}
         />
