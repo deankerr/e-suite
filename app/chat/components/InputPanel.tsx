@@ -25,7 +25,7 @@ export function InputPanel({ handleSubmit, handleInputChange, input }: Props) {
   }, [input])
 
   return (
-    <div className="flex w-full justify-center rounded-md bg-base-200 px-4 py-2">
+    <div className="flex w-full justify-center rounded-t-md bg-base-200 px-4 py-2">
       <form
         className="flex w-full justify-center gap-4 align-middle"
         onSubmit={(e) => handleSubmit(e)}

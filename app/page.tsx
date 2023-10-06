@@ -3,37 +3,39 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className="mx-auto max-w-2xl bg-base-100" data-theme="dark">
-      <h1>pabel</h1>
-      <div className="">
-        <article className="prose">
-          <Markdown>{mdText}</Markdown>
-        </article>
-      </div>
-      <div className="prose">
-        <p>
-          Eiusmod sit ad anim in **consectetur** adipisicing *mollit* ipsum ex ea. Aliquip proident
-          laboris labore culpa ullamco. Elit occaecat officia in cupidatat culpa nisi aliquip. Ut
-          nostrud id adipisicing do labore.
-        </p>
+    <>
+      <main className="mx-auto max-w-2xl bg-base-100" data-theme="dark">
+        <h1>pabel</h1>
+        <div className="">
+          <article className="prose">
+            <Markdown>{mdText}</Markdown>
+          </article>
+        </div>
+        <div className="prose">
+          <p>
+            Eiusmod sit ad anim in **consectetur** adipisicing *mollit* ipsum ex ea. Aliquip
+            proident laboris labore culpa ullamco. Elit occaecat officia in cupidatat culpa nisi
+            aliquip. Ut nostrud id adipisicing do labore.
+          </p>
 
-        <p>
-          Ipsum mollit adipisicing esse et quis aute occaecat aliquip fugiat. Nostrud amet
-          consectetur tempor incididunt ipsum esse. Excepteur ullamco officia elit esse ex laboris
-          enim officia adipisicing excepteur quis elit duis laboris. Ex aliquip velit et ad duis
-          minim cupidatat adipisicing excepteur duis dolore officia. Voluptate velit mollit proident
-          aliqua aliquip ex aliquip ipsum do.
-        </p>
+          <p>
+            Ipsum mollit adipisicing esse et quis aute occaecat aliquip fugiat. Nostrud amet
+            consectetur tempor incididunt ipsum esse. Excepteur ullamco officia elit esse ex laboris
+            enim officia adipisicing excepteur quis elit duis laboris. Ex aliquip velit et ad duis
+            minim cupidatat adipisicing excepteur duis dolore officia. Voluptate velit mollit
+            proident aliqua aliquip ex aliquip ipsum do.
+          </p>
 
-        <p>
-          Nisi labore ad minim sint nostrud cupidatat duis aliquip. Consequat consectetur aliquip
-          laboris incididunt id ipsum ut adipisicing consectetur proident cupidatat anim non ullamco
-          consectetur. Laboris consequat ad non nulla veniam adipisicing aute Lorem nostrud. Ex
-          veniam ullamco cupidatat elit occaecat sunt veniam aute ut Lorem occaecat esse sit.
-          Laboris ea proident consequat in duis et amet cupidatat.
-        </p>
-      </div>
-    </main>
+          <p>
+            Nisi labore ad minim sint nostrud cupidatat duis aliquip. Consequat consectetur aliquip
+            laboris incididunt id ipsum ut adipisicing consectetur proident cupidatat anim non
+            ullamco consectetur. Laboris consequat ad non nulla veniam adipisicing aute Lorem
+            nostrud. Ex veniam ullamco cupidatat elit occaecat sunt veniam aute ut Lorem occaecat
+            esse sit. Laboris ea proident consequat in duis et amet cupidatat.
+          </p>
+        </div>
+      </main>
+    </>
   )
 }
 
