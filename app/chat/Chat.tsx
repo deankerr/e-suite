@@ -35,7 +35,7 @@ export function Chat() {
     <>
       <div
         data-theme="mytheme"
-        className="mx-auto flex h-full max-w-4xl flex-col justify-between bg-base-100"
+        className="bg-temple-orange-dark mx-auto flex h-full max-w-4xl flex-col justify-between bg-base-100"
       >
         <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
         <MessagePanel messages={messages} />
