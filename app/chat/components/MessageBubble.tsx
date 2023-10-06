@@ -1,30 +1,37 @@
 import { Markdown } from '@/components/Markdown'
 import type { ChatMessage } from '../Chat'
 
-export function MessageBubbleSystem(props: { content: string }) {
-  const { content } = props
-  return (
-    <div className="flex flex-col items-center py-1">
-      <div className="text-sm text-transparent">System</div>
-      <div className="w-fit max-w-[90%] rounded-xl border border-primary bg-base-100 px-4 py-1 text-center text-neutral-content shadow-lg">
-        <div className="prose prose-neutral max-w-none">
-          <Markdown>{content}</Markdown>
-        </div>
-      </div>
-    </div>
-  )
-}
+const bubbleRolesConfig = {
+  user: {
+    position: 'items-start',
+    border: 'border-info',
+    name: 'User',
+  },
+  assistant: {
+    position: 'items-end',
+    border: 'border-secondary',
+    name: 'Assistant',
+  },
+  system: {
+    position: 'items-center text-center',
+    border: 'border-primary',
+    name: 'System',
+  },
+  function: {
+    position: 'items-center text-center',
+    border: 'border-primary',
+    name: 'Function',
+  },
+} as const
 
 export function MessageBubble({ message }: { message: ChatMessage }) {
-  const isUser = message.role === 'user'
+  const config = bubbleRolesConfig[message.role]
 
   return (
-    <div className={`flex flex-col ${isUser ? 'items-start' : 'items-end'} py-1`}>
-      <div className="w-fit px-1 text-sm">{message.name ?? (isUser ? 'User' : 'Assistant')}</div>
+    <div className={`flex flex-col ${config.position} py-1`}>
+      <div className="w-fit px-1 text-sm">{message.name ?? config.name}</div>
       <div
-        className={`w-fit max-w-[90%] rounded-xl border ${
-          isUser ? 'border-info' : 'border-secondary'
-        } bg-base-100 px-4 py-2 text-base-content`}
+        className={`w-fit max-w-[90%] rounded-xl border ${config.border} bg-base-100 px-4 py-2 text-base-content`}
       >
         <div className="prose prose-neutral max-w-none">
           <Markdown>{message.content}</Markdown>
@@ -34,7 +41,7 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
   )
 }
 
-export function ChatBubble({ message }: { message: ChatMessage }) {
+export function DaisyChatBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user'
   return (
     <div className={`chat ${isUser ? 'chat-start' : 'chat-end'}`}>
