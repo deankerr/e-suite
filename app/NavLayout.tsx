@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export function NavLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="drawer mx-auto max-w-6xl">
+    <div className="drawer mx-auto max-w-5xl">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}

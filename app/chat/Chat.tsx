@@ -40,18 +40,7 @@ export function Chat() {
     </div>
   )
 
-  // const _chatbuttons = (
-  //   <>
-  //     <div className="btn btn-ghost">
-  //       <ChatBubbleLeftRightIcon className="w-8" />
-  //     </div>
-  //     <div className="btn btn-ghost">
-  //       <XCircleIcon className="w-8" />
-  //     </div>
-  //   </>
-  // )
-
-  // auto-resize textarea on change
+  //* auto-resize textarea on change
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   useEffect(() => {
     if (textareaRef.current) {
@@ -62,22 +51,24 @@ export function Chat() {
   }, [input])
 
   return (
-    <main className="bg-temple-orange-dark min-h-screen px-3" id="chat-messages">
+    <main className="min-h-screen bg-base-200" id="chat-messages">
       {debugButtons}
 
       {/* Message Display */}
-      {messages.map((msg, i) => (
-        <MessageBubble message={msg} key={i} />
-      ))}
+      <div className="mx-auto max-w-5xl px-3 pb-20">
+        {messages.map((msg, i) => (
+          <MessageBubble message={msg} key={i} />
+        ))}
+      </div>
 
       {/*  Input Panel */}
-      <div className="fixed bottom-0 left-0 w-full" id="input-panel">
+      <div className="fixed bottom-0 mx-auto w-full max-w-5xl" id="input-panel">
         <form
-          className="mx-auto flex max-w-3xl justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
+          className="flex justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
           onSubmit={handleSubmit}
         >
           <textarea
-            className="font textarea textarea-primary textarea-md flex-auto text-base"
+            className="font textarea textarea-primary textarea-md flex-auto overflow-y-hidden text-base"
             style={{ resize: 'none' }}
             placeholder="Enter your message..."
             value={input}
@@ -107,3 +98,14 @@ function createChatMessage(
 const initialMessages = [
   createChatMessage({ role: 'system', content: 'You are a helpful AI assistant.' }),
 ]
+
+// const _chatbuttons = (
+//   <>
+//     <div className="btn btn-ghost">
+//       <ChatBubbleLeftRightIcon className="w-8" />
+//     </div>
+//     <div className="btn btn-ghost">
+//       <XCircleIcon className="w-8" />
+//     </div>
+//   </>
+// )
