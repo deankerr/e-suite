@@ -2,12 +2,12 @@ import Link from 'next/link'
 
 export function NavLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="drawer">
+    <div className="drawer mx-auto max-w-6xl">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}
         <div className="navbar w-full rounded-b-md bg-primary text-primary-content">
-          <div className="flex-none sm:hidden">
+          <div className="flex-none">
             {/* Menu Button */}
             <label
               htmlFor="my-drawer-3"

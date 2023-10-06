@@ -1,11 +1,11 @@
 'use client'
 
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
+import { useEffect, useRef } from 'react'
 import { _sampleMessages } from './_sampleMessages'
-import { HeaderBar } from './components/HeaderPanel'
-import { InputPanel } from './components/InputPanel'
-import { MessagePanel } from './components/MessagePanel'
+import { MessageBubble } from './components/MessageBubble'
 
 export type ChatMessage = Message
 
@@ -16,8 +16,6 @@ export function Chat() {
     body: {
       model: 'gpt-4',
       provider: 'openai',
-      // model: 'nousresearch/nous-hermes-llama2-13b',
-      // provider: 'openrouter',
       stream: true,
     },
   })
@@ -31,21 +29,70 @@ export function Chat() {
     setMessages(initialMessages)
   }
 
+  const debugButtons = (
+    <div className="fixed right-2 top-2 flex gap-1">
+      <button className="btn w-fit" onClick={addDebugMessages}>
+        add
+      </button>
+      <button className="btn inline w-fit" onClick={clearMessages}>
+        clear
+      </button>
+    </div>
+  )
+
+  // const _chatbuttons = (
+  //   <>
+  //     <div className="btn btn-ghost">
+  //       <ChatBubbleLeftRightIcon className="w-8" />
+  //     </div>
+  //     <div className="btn btn-ghost">
+  //       <XCircleIcon className="w-8" />
+  //     </div>
+  //   </>
+  // )
+
+  // auto-resize textarea on change
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = '0px'
+      const scrollHeight = textareaRef.current.scrollHeight
+      textareaRef.current.style.height = scrollHeight + 'px'
+    }
+  }, [input])
+
   return (
-    <>
-      <div
-        data-theme="mytheme"
-        className="bg-temple-orange-dark mx-auto flex h-full max-w-4xl flex-col justify-between bg-base-100"
-      >
-        <HeaderBar addMessages={addDebugMessages} clearMessages={clearMessages} />
-        <MessagePanel messages={messages} />
-        <InputPanel
-          handleSubmit={handleSubmit}
-          handleInputChange={handleInputChange}
-          input={input}
-        />
+    <main className="bg-temple-orange-dark min-h-screen px-3" id="chat-messages">
+      {debugButtons}
+
+      {/* Message Display */}
+      {messages.map((msg, i) => (
+        <MessageBubble message={msg} key={i} />
+      ))}
+
+      {/*  Input Panel */}
+      <div className="fixed bottom-0 left-0 w-full" id="input-panel">
+        <form
+          className="mx-auto flex max-w-3xl justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
+          onSubmit={handleSubmit}
+        >
+          <textarea
+            className="font textarea textarea-primary textarea-md flex-auto text-base"
+            style={{ resize: 'none' }}
+            placeholder="Enter your message..."
+            value={input}
+            onChange={handleInputChange}
+            rows={1}
+            ref={textareaRef}
+          />
+          <div className="flex flex-col justify-center">
+            <button className="btn btn-circle btn-primary" type="submit">
+              <PaperAirplaneIcon className="ml-1 w-8" />
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+    </main>
   )
 }
 

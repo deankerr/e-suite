@@ -4,7 +4,7 @@ import Image from 'next/image'
 export default function Home() {
   return (
     <>
-      <main className="mx-auto max-w-2xl bg-base-100" data-theme="dark">
+      <main className="mx-auto bg-base-100">
         <h1>pabel</h1>
         <div className="">
           <article className="prose">
