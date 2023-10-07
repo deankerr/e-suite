@@ -47,8 +47,8 @@
   --tw-prose-quote-borders: hsl(var(--nc) / 0.2);
   --tw-prose-captions: hsl(var(--nc) / 0.5);
   --tw-prose-code: hsl(var(--nc));
-  --tw-prose-pre-code: hsl(var(--bc));
-  --tw-prose-pre-bg: hsl(var(--b1));
+  --tw-prose-pre-code: hsl(var(--nc));
+  --tw-prose-pre-bg: hsl(var(--n));
   --tw-prose-th-borders: hsl(var(--nc) / 0.5);
   --tw-prose-td-borders: hsl(var(--nc) / 0.2);
 }

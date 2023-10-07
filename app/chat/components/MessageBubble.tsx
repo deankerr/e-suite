@@ -15,7 +15,7 @@ const bubbleRolesConfig = {
   system: {
     position: 'items-center text-center',
     border: 'border-primary',
-    name: 'System',
+    name: 'Prompt',
   },
   function: {
     position: 'items-center text-center',
