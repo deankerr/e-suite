@@ -22,7 +22,7 @@ export function Chat({ model, provider, prompt, title }: Props) {
     [prompt],
   )
 
-  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading } = useChat({
+  const chatHelpers = useChat({
     id: title,
     api: '/api/chat',
     initialMessages,
@@ -31,7 +31,8 @@ export function Chat({ model, provider, prompt, title }: Props) {
       provider,
       stream: true,
     },
-    onResponse() {
+    onResponse(response) {
+      console.log('[response]', response)
       setIsAwaitingResponse(false)
     },
     onFinish(message) {
@@ -41,6 +42,8 @@ export function Chat({ model, provider, prompt, title }: Props) {
       console.error('[error]', error)
     },
   })
+  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, error } =
+    chatHelpers
 
   //* useChat/API status
   const isInProgress = isLoading
@@ -100,6 +103,7 @@ export function Chat({ model, provider, prompt, title }: Props) {
           <MessageBubble message={msg} key={i} />
         ))}
         {isAwaitingResponse ? <MessageBubble message={{ role: 'assistant' }} /> : ''}
+        {error ? <ErrorToast message={error.message} /> : ''}
         <div id="auto-scroll-target" className="h-16" ref={scrollRef} />
       </div>
 
@@ -147,4 +151,27 @@ function createChatMessage(
   const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
   const message = { id: nanoid(), ...messageProps }
   return message
+}
+
+function ErrorToast({ message }: { message: string }) {
+  return (
+    <div className="toast toast-center mb-16">
+      <div className="alert alert-error">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 shrink-0 stroke-current"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span>{message}</span>
+      </div>
+    </div>
+  )
 }
