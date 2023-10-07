@@ -3,19 +3,28 @@
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { _sampleMessages } from './_sampleMessages'
-import { MessageBubble } from './components/MessageBubble'
+import { MessageBubble } from './MessageBubble'
 
 export type ChatMessage = Message
 
-export function Chat() {
+type Props = {
+  model: string
+  provider: string
+  prompt: string
+}
+export function Chat({ model, provider, prompt }: Props) {
+  const initialMessages = useMemo(
+    () => [createChatMessage({ role: 'system', content: prompt })],
+    [prompt],
+  )
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat({
     api: '/api/chat',
     initialMessages,
     body: {
-      model: 'gpt-4',
-      provider: 'openai',
+      model,
+      provider,
       stream: true,
     },
   })
@@ -48,6 +57,7 @@ export function Chat() {
     scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
 
+  // console.log(messages)
   return (
     <main className="min-h-[100svh] bg-base-200" id="chat-messages">
       {debugButtons}
@@ -67,8 +77,7 @@ export function Chat() {
           onSubmit={handleSubmit}
         >
           <textarea
-            className="font textarea textarea-primary textarea-md flex-auto overflow-y-hidden text-base"
-            style={{ resize: 'none' }}
+            className="font textarea textarea-primary textarea-md flex-auto resize-none overflow-y-hidden text-base"
             placeholder="Speak..."
             value={input}
             onChange={handleInputChange}
@@ -94,9 +103,9 @@ function createChatMessage(
   return message
 }
 
-const initialMessages = [
-  createChatMessage({ role: 'system', content: 'You are a helpful AI assistant.' }),
-]
+// const initialMessages = [
+//   createChatMessage({ role: 'system', content: 'You are a helpful AI assistant.' }),
+// ]
 
 // const _chatbuttons = (
 //   <>
