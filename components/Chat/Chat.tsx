@@ -31,6 +31,9 @@ export function Chat({ model, provider, prompt, title }: Props) {
       provider,
       stream: true,
     },
+    headers: {
+      pirce: 'yes sir',
+    },
     onResponse(response) {
       console.log('[response]', response)
       setIsAwaitingResponse(false)

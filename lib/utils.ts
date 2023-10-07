@@ -35,3 +35,11 @@ export function createErrorResponse({ status, message }: { status?: number; mess
   }
   return { error }
 }
+
+export function isFriendly(value: string | null) {
+  if (!value || value !== 'yes sir') {
+    console.error('value:', value)
+    return false
+  }
+  return true
+}

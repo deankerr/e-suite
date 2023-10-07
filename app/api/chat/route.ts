@@ -1,7 +1,6 @@
 import { openai } from '@/lib/providers/openai'
 import { openrouter } from '@/lib/providers/openrouter'
-import { logger } from '@/lib/utils'
-import { OpenAIStream, StreamingTextResponse } from 'ai'
+import { isFriendly, logger } from '@/lib/utils'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -9,6 +8,8 @@ const log = logger.child({}, { msgPrefix: '[api/chat] ' })
 
 export async function POST(request: Request) {
   log.info('POST chat')
+  if (!isFriendly(request.headers.get('pirce'))) return NextResponse.json({ no: true })
+
   const { provider, ...params } = requestSchema.parse(await request.json())
   log.info(params, 'parameters')
 
