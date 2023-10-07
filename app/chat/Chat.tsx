@@ -50,6 +50,13 @@ export function Chat() {
     }
   }, [input])
 
+  //* auto scroll on message change
+  // TODO support scrolling away during message change
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView()
+  }, [messages])
+
   return (
     <main className="min-h-screen bg-base-200" id="chat-messages">
       {debugButtons}
@@ -59,6 +66,7 @@ export function Chat() {
         {messages.map((msg, i) => (
           <MessageBubble message={msg} key={i} />
         ))}
+        <div id="auto-scroll-target" ref={scrollRef} />
       </div>
 
       {/*  Input Panel */}
