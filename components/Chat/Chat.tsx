@@ -13,12 +13,14 @@ type Props = {
   model: string
   provider: string
   prompt: string
+  title: string
 }
-export function Chat({ model, provider, prompt }: Props) {
+export function Chat({ model, provider, prompt, title }: Props) {
   const initialMessages = useMemo(
     () => [createChatMessage({ role: 'system', content: prompt })],
     [prompt],
   )
+
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat({
     api: '/api/chat',
     initialMessages,
@@ -28,17 +30,6 @@ export function Chat({ model, provider, prompt }: Props) {
       stream: true,
     },
   })
-
-  const debugButtons = (
-    <div className="fixed right-2 top-2 flex gap-1">
-      <button className="btn w-fit" onClick={() => setMessages([...messages, ..._sampleMessages])}>
-        lorem
-      </button>
-      <button className="btn inline w-fit" onClick={() => setMessages(initialMessages)}>
-        clear
-      </button>
-    </div>
-  )
 
   //* auto-resize textarea on change
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -57,13 +48,36 @@ export function Chat({ model, provider, prompt }: Props) {
     scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
 
-  // console.log(messages)
+  const handleDebugClick = () => {
+    if (messages.length === 1) setMessages([...messages, ..._sampleMessages])
+    console.log(messages)
+  }
+
   return (
-    <main className="min-h-[100svh] bg-base-200" id="chat-messages">
-      {debugButtons}
+    <main className="mx-auto h-full max-w-5xl bg-base-200">
+      {/* Controls */}
+      <div className="navbar rounded-b-md bg-primary text-primary-content">
+        <div className="navbar-start">
+          <a className="btn btn-ghost text-xl normal-case">{title}</a>
+        </div>
+
+        <div className="navbar-center"></div>
+
+        <div className="navbar-end">
+          <button
+            className="btn btn-ghost normal-case"
+            onClick={() => setMessages(initialMessages)}
+          >
+            new chat
+          </button>
+          <button className="btn btn-circle btn-ghost" onClick={handleDebugClick}>
+            π
+          </button>
+        </div>
+      </div>
 
       {/* Message Display */}
-      <div className="mx-auto max-w-5xl px-3">
+      <div className="mx-auto max-w-5xl bg-base-200 px-3">
         {messages.map((msg, i) => (
           <MessageBubble message={msg} key={i} />
         ))}
@@ -102,18 +116,3 @@ function createChatMessage(
   const message = { id: nanoid(), ...messageProps }
   return message
 }
-
-// const initialMessages = [
-//   createChatMessage({ role: 'system', content: 'You are a helpful AI assistant.' }),
-// ]
-
-// const _chatbuttons = (
-//   <>
-//     <div className="btn btn-ghost">
-//       <ChatBubbleLeftRightIcon className="w-8" />
-//     </div>
-//     <div className="btn btn-ghost">
-//       <XCircleIcon className="w-8" />
-//     </div>
-//   </>
-// )

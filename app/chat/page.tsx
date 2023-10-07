@@ -8,6 +8,11 @@ export default function ChatPage() {
   const isClient = useIsClient()
 
   return isClient ? (
-    <Chat model="gpt-4" provider="openai" prompt="You are a helpful AI assistant." />
+    <Chat
+      model="gpt-3.5-turbo"
+      provider="openai"
+      prompt="You are a helpful AI assistant."
+      title="turbys tavern"
+    />
   ) : null
 }

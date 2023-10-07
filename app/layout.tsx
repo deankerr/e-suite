@@ -1,7 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { NavLayout } from './NavLayout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,10 +17,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="bg-base-300">
-      <body className={`${inter.className}`}>
-        <NavLayout>{children}</NavLayout>
-      </body>
+    <html lang="en" className="h-full bg-base-300">
+      <body className={`${inter.className} h-full`}>{children}</body>
     </html>
   )
 }
