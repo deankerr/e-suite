@@ -16,6 +16,7 @@ type Props = {
   title: string
 }
 export function Chat({ model, provider, prompt, title }: Props) {
+  //* chat configuration
   const initialMessages = useMemo(
     () => [createChatMessage({ role: 'system', content: prompt })],
     [prompt],
@@ -48,10 +49,13 @@ export function Chat({ model, provider, prompt, title }: Props) {
     scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
 
+  //* debug actions
   const handleDebugClick = () => {
     if (messages.length === 1) setMessages([...messages, ..._sampleMessages])
     console.log(messages)
   }
+
+  const formRef = useRef<HTMLFormElement | null>(null)
 
   return (
     <main className="mx-auto h-full max-w-5xl bg-base-200">
@@ -88,15 +92,23 @@ export function Chat({ model, provider, prompt, title }: Props) {
       <div className="fixed bottom-0 mx-auto w-full max-w-5xl" id="input-panel">
         <form
           className="flex justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
+          ref={formRef}
           onSubmit={handleSubmit}
         >
           <textarea
             className="font textarea textarea-primary textarea-md flex-auto resize-none overflow-y-hidden text-base"
+            rows={1}
+            required={true}
             placeholder="Speak..."
             value={input}
-            onChange={handleInputChange}
-            rows={1}
             ref={textareaRef}
+            onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey && formRef.current) {
+                e.preventDefault()
+                formRef.current.requestSubmit()
+              }
+            }}
           />
           <div className="flex flex-col justify-center">
             <button className="btn btn-circle btn-primary" type="submit">
