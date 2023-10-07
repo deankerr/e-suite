@@ -20,21 +20,12 @@ export function Chat() {
     },
   })
 
-  const addDebugMessages = () => {
-    const newMessages: ChatMessage[] = [...messages, ..._sampleMessages]
-    setMessages(newMessages)
-  }
-
-  const clearMessages = () => {
-    setMessages(initialMessages)
-  }
-
   const debugButtons = (
     <div className="fixed right-2 top-2 flex gap-1">
-      <button className="btn w-fit" onClick={addDebugMessages}>
-        add
+      <button className="btn w-fit" onClick={() => setMessages([...messages, ..._sampleMessages])}>
+        lorem
       </button>
-      <button className="btn inline w-fit" onClick={clearMessages}>
+      <button className="btn inline w-fit" onClick={() => setMessages(initialMessages)}>
         clear
       </button>
     </div>
@@ -54,19 +45,19 @@ export function Chat() {
   // TODO support scrolling away during message change
   const scrollRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    scrollRef.current?.scrollIntoView()
+    scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
 
   return (
-    <main className="min-h-screen bg-base-200" id="chat-messages">
+    <main className="min-h-[100svh] bg-base-200" id="chat-messages">
       {debugButtons}
 
       {/* Message Display */}
-      <div className="mx-auto max-w-5xl px-3 pb-20">
+      <div className="mx-auto max-w-5xl px-3">
         {messages.map((msg, i) => (
           <MessageBubble message={msg} key={i} />
         ))}
-        <div id="auto-scroll-target" ref={scrollRef} />
+        <div id="auto-scroll-target" className="h-16" ref={scrollRef} />
       </div>
 
       {/*  Input Panel */}
@@ -78,7 +69,7 @@ export function Chat() {
           <textarea
             className="font textarea textarea-primary textarea-md flex-auto overflow-y-hidden text-base"
             style={{ resize: 'none' }}
-            placeholder="Enter your message..."
+            placeholder="Speak..."
             value={input}
             onChange={handleInputChange}
             rows={1}
