@@ -3,6 +3,7 @@
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { shuffle } from 'remeda'
 import { _sampleInput, _sampleMessages } from './_sampleData'
@@ -80,6 +81,30 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
 
   //* debug
   const [showDebugInfo, setShowDebugInfo] = useState(false)
+  const showDebugMenu = useSearchParams().get('debug') ? true : false
+  const debugMenu = (
+    <ul className="menu menu-horizontal px-1">
+      <li tabIndex={0}>
+        <details>
+          <summary>π</summary>
+          <ul className="p-2 text-base-content">
+            <li>
+              <a onClick={() => setInput(shuffle(_sampleInput)[0] ?? '')}>test input</a>
+            </li>
+            <li>
+              <a onClick={() => console.log(messages)}>log</a>
+            </li>
+            <li>
+              <a onClick={() => setMessages([...messages, ..._sampleMessages])}>lorem</a>
+            </li>
+            <li>
+              <a onClick={() => setShowDebugInfo(!showDebugInfo)}>debug</a>
+            </li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+  )
 
   return (
     <main className="bg-grid-teal mx-auto flex min-h-full max-w-4xl flex-col bg-base-200">
@@ -89,29 +114,9 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
           <a className="btn btn-ghost text-xl normal-case">{title}</a>
         </div>
         <div className="navbar-center"></div>
-        {/* Debug Menu */}
         <div className="navbar-end">
-          <ul className="menu menu-horizontal px-1">
-            <li tabIndex={0}>
-              <details>
-                <summary>π</summary>
-                <ul className="p-2 text-base-content">
-                  <li>
-                    <a onClick={() => setInput(shuffle(_sampleInput)[0] ?? '')}>test input</a>
-                  </li>
-                  <li>
-                    <a onClick={() => console.log(messages)}>log</a>
-                  </li>
-                  <li>
-                    <a onClick={() => setMessages([...messages, ..._sampleMessages])}>lorem</a>
-                  </li>
-                  <li>
-                    <a onClick={() => setShowDebugInfo(!showDebugInfo)}>debug</a>
-                  </li>
-                </ul>
-              </details>
-            </li>
-          </ul>
+          {/* Debug Menu */}
+          {showDebugMenu ? debugMenu : ''}
           <button
             className="btn btn-ghost font-normal normal-case"
             onClick={() => setMessages(initialMessages)}
@@ -144,6 +149,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
         >
           <textarea
             className="font textarea textarea-primary textarea-md flex-auto resize-none overflow-y-hidden text-base"
+            name="message input"
             rows={1}
             required={true}
             placeholder="Speak..."
