@@ -4,7 +4,8 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { _sampleMessages } from './_sampleMessages'
+import { shuffle } from 'remeda'
+import { _sampleInput, _sampleMessages } from './_sampleData'
 import { MessageBubble } from './MessageBubble'
 
 export type ChatMessage = Message
@@ -45,8 +46,16 @@ export function Chat({ model, provider, prompt, title }: Props) {
       console.error('[error]', error)
     },
   })
-  const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading, error } =
-    chatHelpers
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    setMessages,
+    setInput,
+    isLoading,
+    error,
+  } = chatHelpers
 
   //* useChat/API status
   const isInProgress = isLoading
@@ -71,39 +80,55 @@ export function Chat({ model, provider, prompt, title }: Props) {
 
   const formRef = useRef<HTMLFormElement | null>(null)
 
-  //* debug actions
-  const handleDebugClick = () => {
-    if (messages.length === 1) setMessages([...messages, ..._sampleMessages])
-    console.log(messages)
-  }
+  //* debug
+  const [showDebugInfo, setShowDebugInfo] = useState(false)
 
   return (
-    <main className="mx-auto h-full max-w-5xl bg-base-200">
+    <main className="mx-auto h-full max-w-4xl bg-base-200">
       {/* Controls */}
-      <div className="navbar rounded-b-md bg-primary text-primary-content">
+      <div className="navbar rounded-b-md bg-primary font-mono text-primary-content">
         <div className="navbar-start">
           <a className="btn btn-ghost text-xl normal-case">{title}</a>
         </div>
 
         <div className="navbar-center"></div>
 
+        {/* Debug Menu */}
         <div className="navbar-end">
+          <ul className="menu menu-horizontal px-1">
+            <li tabIndex={0}>
+              <details>
+                <summary>π</summary>
+                <ul className="p-2 text-base-content">
+                  <li>
+                    <a onClick={() => setInput(shuffle(_sampleInput)[0] ?? '')}>test input</a>
+                  </li>
+                  <li>
+                    <a onClick={() => console.log(messages)}>log</a>
+                  </li>
+                  <li>
+                    <a onClick={() => setMessages([...messages, ..._sampleMessages])}>lorem</a>
+                  </li>
+                  <li>
+                    <a onClick={() => setShowDebugInfo(!showDebugInfo)}>debug</a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
           <button
-            className="btn btn-ghost normal-case"
+            className="btn btn-ghost font-normal normal-case"
             onClick={() => setMessages(initialMessages)}
           >
             new chat
-          </button>
-          <button className="btn btn-circle btn-ghost" onClick={handleDebugClick}>
-            π
           </button>
         </div>
       </div>
 
       {/* Message Display */}
-      <div className="mx-auto max-w-5xl bg-base-200 px-3">
+      <div className="mx-auto bg-base-200 px-3">
         {messages.map((msg, i) => (
-          <MessageBubble message={msg} key={i} />
+          <MessageBubble message={msg} key={i} debug={showDebugInfo} />
         ))}
         {isAwaitingResponse ? <MessageBubble message={{ role: 'assistant' }} /> : ''}
         {error ? <ErrorToast message={error.message} /> : ''}
@@ -111,7 +136,7 @@ export function Chat({ model, provider, prompt, title }: Props) {
       </div>
 
       {/*  Input Panel */}
-      <div className="fixed bottom-0 mx-auto w-full max-w-5xl" id="input-panel">
+      <div className="fixed bottom-0 mx-auto w-full max-w-4xl" id="input-panel">
         <form
           className="flex justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
           ref={formRef}

@@ -55,3 +55,12 @@ export const _sampleMessages = [
     role: 'assistant',
   },
 ] as const
+
+export const _sampleInput = [
+  'List of every towel.',
+  'List of every European country and capital.',
+  'Give me a table of common HTTP error codes and meanings.',
+  'Short history of Australia.',
+  'Short history of Indonesia.',
+  'How many clowns can fit in a single clown car?',
+]

@@ -44,6 +44,9 @@ dependencies:
   remark-gfm:
     specifier: ^4.0.0
     version: 4.0.0(supports-color@8.1.1)
+  remeda:
+    specifier: ^1.27.0
+    version: 1.27.0
   replicate:
     specifier: ^0.18.1
     version: 0.18.1
@@ -3693,6 +3696,10 @@ packages:
       '@types/mdast': 4.0.1
       mdast-util-to-markdown: 2.1.0
       unified: 11.0.3
+    dev: false
+
+  /remeda@1.27.0:
+    resolution: {integrity: sha512-Vv4gz6z8WnKPA01ObvswV09bBOkB/jKjlszsfxAH82YEvEWfVvaelUuKOpKkLwlli1xyAwwlfWAAmpHlSXENRQ==}
     dev: false
 
   /replicate@0.18.1:

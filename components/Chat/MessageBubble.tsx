@@ -24,7 +24,13 @@ const bubbleRolesConfig = {
   },
 } as const
 
-export function MessageBubble({ message }: { message: Partial<ChatMessage> }) {
+export function MessageBubble({
+  message,
+  debug,
+}: {
+  message: Partial<ChatMessage>
+  debug?: boolean
+}) {
   const config = bubbleRolesConfig[message.role ?? 'system']
   const loadingIcon = (
     <span className="not-prose loading loading-ring loading-md align-middle"></span>
@@ -34,7 +40,7 @@ export function MessageBubble({ message }: { message: Partial<ChatMessage> }) {
     <div className={`flex flex-col ${config.position} py-1`}>
       <div className="px-1 text-sm">
         {message.name ?? config.name}
-        {/* <span className="text-xs opacity-50"> {message.id}</span> */}
+        {debug ? <span className="text-xs opacity-50"> {message.id}</span> : ''}
       </div>
       <div
         className={`rounded-xl border ${config.border} max-w-[90vw] bg-base-100 px-4 py-2 text-base-content `}
