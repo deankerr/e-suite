@@ -1,4 +1,10 @@
+import { clsx, type ClassValue } from 'clsx'
 import pino from 'pino'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 export const logger = pino({
   level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
