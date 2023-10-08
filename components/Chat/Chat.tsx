@@ -82,7 +82,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
   const [showDebugInfo, setShowDebugInfo] = useState(false)
 
   return (
-    <main className="mx-auto min-h-full max-w-4xl bg-base-200">
+    <main className="bg-grid-teal mx-auto min-h-full max-w-4xl bg-base-200">
       {/* Controls */}
       <div className="navbar sticky top-0 rounded-b-md bg-primary font-mono text-primary-content shadow-lg">
         <div className="navbar-start">
