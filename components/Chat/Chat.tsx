@@ -1,6 +1,6 @@
 'use client'
 
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import { ExclamationCircleIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useSearchParams } from 'next/navigation'
@@ -42,19 +42,14 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
       setIsAwaitingResponse(false)
     },
     onFinish: (message) => console.log('[finish]', message),
-    onError: (error) => console.error('[error]', error),
+    onError: (error) => {
+      console.error('[error]', error)
+      setErrorMessage(error.message)
+    },
   })
 
-  const {
-    messages,
-    input,
-    isLoading,
-    error,
-    handleInputChange,
-    handleSubmit,
-    setMessages,
-    setInput,
-  } = chatHelpers
+  const { messages, input, isLoading, handleInputChange, handleSubmit, setMessages, setInput } =
+    chatHelpers
 
   //* useChat/API status
   const isInProgress = isLoading
@@ -79,10 +74,23 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
 
   const formRef = useRef<HTMLFormElement | null>(null)
 
-  //* debug
+  //* error display
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const errorToast = errorMessage ? (
+    <div className="fixed top-24 w-full max-w-4xl">
+      <div
+        className="alert alert-error mx-auto w-fit max-w-screen-sm shadow-md"
+        onClick={() => setErrorMessage(null)}
+      >
+        <ExclamationCircleIcon className="w-8" />
+        <span>{errorMessage}</span>
+      </div>
+    </div>
+  ) : null
+
+  //* debug menu
   const [showDebugInfo, setShowDebugInfo] = useState(false)
-  const showDebugMenu = useSearchParams().get('debug') ? true : false
-  const debugMenu = (
+  const debugMenu = useSearchParams().get('debug') ? (
     <ul className="menu menu-horizontal px-1">
       <li tabIndex={0}>
         <details>
@@ -100,11 +108,14 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
             <li>
               <a onClick={() => setShowDebugInfo(!showDebugInfo)}>debug</a>
             </li>
+            <li>
+              <a onClick={() => setErrorMessage('An error is in progress.')}>error</a>
+            </li>
           </ul>
         </details>
       </li>
     </ul>
-  )
+  ) : null
 
   return (
     <main className="bg-grid-teal mx-auto flex min-h-full max-w-4xl flex-col bg-base-200">
@@ -116,7 +127,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
         <div className="navbar-center"></div>
         <div className="navbar-end">
           {/* Debug Menu */}
-          {showDebugMenu ? debugMenu : ''}
+          {debugMenu}
           <button
             className="btn btn-ghost font-normal normal-case"
             onClick={() => setMessages(initialMessages)}
@@ -127,23 +138,29 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
       </div>
 
       {/* Message Display */}
-      <div className="flex min-h-full grow flex-col justify-end px-3">
+      <div className="flex min-h-full grow flex-col justify-end px-3 pt-1">
         {messages.map((msg, i) => (
           <MessageBubble message={msg} names={names} key={i} debug={showDebugInfo} />
         ))}
+
+        {/* Loading Icon Message Bubble */}
         {isAwaitingResponse ? <MessageBubble message={{ role: 'assistant' }} names={names} /> : ''}
-        {error ? <ErrorToast message={error.message} /> : ''}
-        <div id="auto-scroll-target" className="h-16" ref={scrollRef} />
+
+        <div id="auto-scroll-target" className="h-20" ref={scrollRef} />
       </div>
+
+      {/* Error Message */}
+      {errorToast}
 
       {/*  Input Panel */}
       <div className="fixed bottom-0 mx-auto w-full max-w-4xl" id="input-panel">
         <form
-          className="flex justify-center gap-4 rounded-t-md bg-base-200 bg-opacity-75 px-4 py-2 align-middle"
+          className="flex justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
           ref={formRef}
           onSubmit={(e) => {
             e.preventDefault()
             setIsAwaitingResponse(true)
+            setErrorMessage(null)
             handleSubmit(e)
           }}
         >
@@ -155,10 +172,9 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
             placeholder="Speak..."
             value={input}
             ref={textareaRef}
-            disabled={isInProgress}
             onChange={handleInputChange}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey && formRef.current) {
+              if (e.key === 'Enter' && e.metaKey && formRef.current) {
                 e.preventDefault()
                 formRef.current.requestSubmit()
               }
@@ -181,27 +197,4 @@ function createMessage(
   const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
   const message = { id: nanoid(), ...messageProps }
   return message
-}
-
-function ErrorToast({ message }: { message: string }) {
-  return (
-    <div className="toast toast-center mb-16">
-      <div className="alert alert-error">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span>{message}</span>
-      </div>
-    </div>
-  )
 }

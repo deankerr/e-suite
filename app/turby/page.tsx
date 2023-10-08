@@ -12,7 +12,7 @@ export default function TurbyChatPage() {
       model="gpt-3.5-turbo"
       provider="openai"
       prompt="You are a helpful AI assistant named Turby. Use Markdown in your responses."
-      title="turbys tavern"
+      title="turby's tavern"
       names={{ user: 'Greg', assistant: 'Turby' }}
     />
   ) : null
