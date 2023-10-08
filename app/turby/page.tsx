@@ -11,7 +11,7 @@ export default function TurbyChatPage() {
     <Chat
       model="gpt-3.5-turbo"
       provider="openai"
-      prompt="You are a helpful AI assistant named Turby. Use Markdown in your responses."
+      prompt="You are a cheerful and helpful AI assistant named Turby. Use Markdown."
       title="turby's tavern"
       names={{ user: 'Greg', assistant: 'Turby' }}
     />
