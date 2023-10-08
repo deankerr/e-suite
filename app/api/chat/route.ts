@@ -1,6 +1,7 @@
+import { createErrorResponse } from '@/lib/api'
 import { openai } from '@/lib/providers/openai'
 import { openrouter } from '@/lib/providers/openrouter'
-import { createErrorResponse, isFriendly, logger } from '@/lib/utils'
+import { isFriendly, logger } from '@/lib/utils'
 import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[api/chat] ' })
@@ -8,7 +9,7 @@ const log = logger.child({}, { msgPrefix: '[api/chat] ' })
 export async function POST(request: Request) {
   log.info('POST chat')
   if (!isFriendly(request.headers.get('pirce'))) {
-    const error = createErrorResponse({ message: 'wrong parameter' })
+    const error = createErrorResponse('wrong parameter')
     return Response.json(error)
   }
 

@@ -28,14 +28,6 @@ export function env(key: string, fallback?: string) {
   return process.env[key] ?? fallback ?? raise(`${key} not provided`)
 }
 
-export function createErrorResponse({ status, message }: { status?: number; message?: string }) {
-  const error = {
-    status: status ?? 400,
-    message: message ?? 'An unknown error occurred.',
-  }
-  return { error }
-}
-
 export function isFriendly(value: string | null) {
   if (!value || value !== 'yes sir') {
     console.error('value:', value)

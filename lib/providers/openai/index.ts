@@ -1,4 +1,5 @@
-import { createErrorResponse, logger, raise } from '@/lib/utils'
+import { createErrorResponse } from '@/lib/api'
+import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 
@@ -13,14 +14,15 @@ export const openai = {
 }
 
 async function chat(input: OpenAI.Chat.ChatCompletionCreateParams) {
-  log.info('chat')
   if (input.stream) {
     const response = await api.chat.completions.create(input)
     const stream = OpenAIStream(response)
+    log.info('chat stream')
     return new StreamingTextResponse(stream)
   } else {
     const response = await api.chat.completions.create(input)
     const item = response.choices[0]?.message.content ?? raise('response missing expected data')
+    log.info(item, 'chat')
     return new Response(item)
   }
 }
@@ -37,20 +39,20 @@ async function chatModerated(input: OpenAI.Chat.ChatCompletionCreateParams) {
   } else {
     log.warn(flagged, 'reject chat')
     const message = `OpenAI Moderation rejected: ${flagged.map((m) => `"${m.content}"`).join(', ')}`
-    return Response.json(createErrorResponse({ status: 403, message }))
+    return createErrorResponse(message, 403)
   }
 }
 
 async function image(input: OpenAI.ImageGenerateParams) {
-  log.info('image')
   try {
     const response = await api.images.generate(input)
     const item = { url: response.data[0]?.url ?? raise('response missing expected url') }
+    log.info(item, 'image')
     return { response, item }
   } catch (error) {
     if (error instanceof OpenAI.APIError) {
       const { status, message } = error
-      return createErrorResponse({ status, message })
+      return createErrorResponse(message, status)
     } else {
       throw error
     }
