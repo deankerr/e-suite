@@ -82,7 +82,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
   const [showDebugInfo, setShowDebugInfo] = useState(false)
 
   return (
-    <main className="bg-grid-teal mx-auto min-h-full max-w-4xl bg-base-200">
+    <main className="bg-grid-teal mx-auto flex min-h-full max-w-4xl flex-col bg-base-200">
       {/* Controls */}
       <div className="navbar sticky top-0 rounded-b-md bg-primary font-mono text-primary-content shadow-lg">
         <div className="navbar-start">
@@ -122,7 +122,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
       </div>
 
       {/* Message Display */}
-      <div className="mx-auto px-3">
+      <div className="flex min-h-full grow flex-col justify-end px-3">
         {messages.map((msg, i) => (
           <MessageBubble message={msg} names={names} key={i} debug={showDebugInfo} />
         ))}
