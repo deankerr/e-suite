@@ -116,7 +116,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
             className="btn btn-ghost font-normal normal-case"
             onClick={() => setMessages(initialMessages)}
           >
-            new chat
+            clear
           </button>
         </div>
       </div>
@@ -134,7 +134,7 @@ export function Chat({ model, provider, prompt, title, names }: Props) {
       {/*  Input Panel */}
       <div className="fixed bottom-0 mx-auto w-full max-w-4xl" id="input-panel">
         <form
-          className="flex justify-center gap-4 rounded-t-md bg-base-200 px-4 py-2 align-middle"
+          className="flex justify-center gap-4 rounded-t-md bg-base-200 bg-opacity-75 px-4 py-2 align-middle"
           ref={formRef}
           onSubmit={(e) => {
             e.preventDefault()
