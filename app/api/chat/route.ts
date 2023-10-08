@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   log.info(params, 'parameters')
 
   if (provider === 'openai') {
-    return openai.chat(params)
+    return openai.chatModerated(params)
   } else if (provider === 'openrouter') {
     return openrouter.chat(params)
   } else {
