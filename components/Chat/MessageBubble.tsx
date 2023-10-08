@@ -26,9 +26,11 @@ const bubbleRolesConfig = {
 
 export function MessageBubble({
   message,
+  names,
   debug,
 }: {
   message: Partial<ChatMessage>
+  names: Record<string, string>
   debug?: boolean
 }) {
   const config = bubbleRolesConfig[message.role ?? 'system']
@@ -38,8 +40,8 @@ export function MessageBubble({
 
   return (
     <div className={`flex flex-col ${config.position} py-1`}>
-      <div className="px-1 text-sm">
-        {message.name ?? config.name}
+      <div className="px-1.5 text-sm">
+        {message.name ?? names[message.role ?? ''] ?? config.name}
         {debug ? <span className="text-xs opacity-50"> {message.id}</span> : ''}
       </div>
       <div className={`rounded-xl border ${config.border} max-w-[85vw] bg-base-100 px-4 py-2`}>

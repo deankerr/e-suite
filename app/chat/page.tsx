@@ -11,8 +11,9 @@ export default function ChatPage() {
     <Chat
       model="gpt-3.5-turbo"
       provider="openai"
-      prompt="You are a helpful AI assistant."
+      prompt="You are a helpful AI assistant named Turby."
       title="turbys tavern"
+      names={{ user: 'Greg', assistant: 'Turby' }}
     />
   ) : null
 }

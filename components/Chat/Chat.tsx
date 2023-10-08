@@ -3,7 +3,7 @@
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { shuffle } from 'remeda'
 import { _sampleInput, _sampleMessages } from './_sampleData'
 import { MessageBubble } from './MessageBubble'
@@ -15,13 +15,14 @@ type Props = {
   provider: string
   prompt: string
   title: string
+  names: {
+    user: string
+    assistant: string
+  }
 }
-export function Chat({ model, provider, prompt, title }: Props) {
+export function Chat({ model, provider, prompt, title, names }: Props) {
   //* chat configuration
-  const initialMessages = useMemo(
-    () => [createChatMessage({ role: 'system', content: prompt })],
-    [prompt],
-  )
+  const initialMessages = [createMessage({ role: 'system', content: prompt })]
 
   const chatHelpers = useChat({
     id: title,
@@ -35,27 +36,23 @@ export function Chat({ model, provider, prompt, title }: Props) {
     headers: {
       pirce: 'yes sir',
     },
-    onResponse(response) {
+    onResponse: (response) => {
       console.log('[response]', response)
       setIsAwaitingResponse(false)
     },
-    onFinish(message) {
-      console.log('[finish]', message)
-    },
-    onError(error) {
-      console.error('[error]', error)
-    },
+    onFinish: (message) => console.log('[finish]', message),
+    onError: (error) => console.error('[error]', error),
   })
 
   const {
     messages,
     input,
+    isLoading,
+    error,
     handleInputChange,
     handleSubmit,
     setMessages,
     setInput,
-    isLoading,
-    error,
   } = chatHelpers
 
   //* useChat/API status
@@ -127,9 +124,9 @@ export function Chat({ model, provider, prompt, title }: Props) {
       {/* Message Display */}
       <div className="mx-auto px-3">
         {messages.map((msg, i) => (
-          <MessageBubble message={msg} key={i} debug={showDebugInfo} />
+          <MessageBubble message={msg} names={names} key={i} debug={showDebugInfo} />
         ))}
-        {isAwaitingResponse ? <MessageBubble message={{ role: 'assistant' }} /> : ''}
+        {isAwaitingResponse ? <MessageBubble message={{ role: 'assistant' }} names={names} /> : ''}
         {error ? <ErrorToast message={error.message} /> : ''}
         <div id="auto-scroll-target" className="h-16" ref={scrollRef} />
       </div>
@@ -172,7 +169,7 @@ export function Chat({ model, provider, prompt, title }: Props) {
   )
 }
 
-function createChatMessage(
+function createMessage(
   messageProps: Partial<ChatMessage> & Pick<ChatMessage, 'role' | 'content'>,
 ): ChatMessage {
   const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
