@@ -46,6 +46,7 @@ export function Chat({ model, provider, prompt, title }: Props) {
       console.error('[error]', error)
     },
   })
+
   const {
     messages,
     input,
@@ -84,15 +85,13 @@ export function Chat({ model, provider, prompt, title }: Props) {
   const [showDebugInfo, setShowDebugInfo] = useState(false)
 
   return (
-    <main className="mx-auto h-full max-w-4xl bg-base-200">
+    <main className="mx-auto min-h-full max-w-4xl bg-base-200">
       {/* Controls */}
-      <div className="navbar rounded-b-md bg-primary font-mono text-primary-content">
+      <div className="navbar sticky top-0 rounded-b-md bg-primary font-mono text-primary-content shadow-lg">
         <div className="navbar-start">
           <a className="btn btn-ghost text-xl normal-case">{title}</a>
         </div>
-
         <div className="navbar-center"></div>
-
         {/* Debug Menu */}
         <div className="navbar-end">
           <ul className="menu menu-horizontal px-1">
@@ -126,7 +125,7 @@ export function Chat({ model, provider, prompt, title }: Props) {
       </div>
 
       {/* Message Display */}
-      <div className="mx-auto bg-base-200 px-3">
+      <div className="mx-auto px-3">
         {messages.map((msg, i) => (
           <MessageBubble message={msg} key={i} debug={showDebugInfo} />
         ))}
