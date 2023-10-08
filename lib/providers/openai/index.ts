@@ -6,15 +6,15 @@ const api = new OpenAI()
 
 export const openai = {
   async chat(input: OpenAI.Chat.ChatCompletionCreateParams) {
-    const response = await api.chat.completions.create({ ...input, stream: false })
-    const item = response.choices[0]?.message.content ?? raise('response missing expected data')
-    return { response, item }
-  },
-
-  async chatStream(input: OpenAI.Chat.ChatCompletionCreateParams) {
-    const response = await api.chat.completions.create({ ...input, stream: true })
-    const stream = OpenAIStream(response)
-    return new StreamingTextResponse(stream)
+    if (input.stream) {
+      const response = await api.chat.completions.create(input)
+      const stream = OpenAIStream(response)
+      return new StreamingTextResponse(stream)
+    } else {
+      const response = await api.chat.completions.create(input)
+      const item = response.choices[0]?.message.content ?? raise('response missing expected data')
+      return new Response(item)
+    }
   },
 
   async image(input: OpenAI.ImageGenerateParams) {
@@ -32,5 +32,3 @@ export const openai = {
     }
   },
 }
-
-async function Tstreaming() {}

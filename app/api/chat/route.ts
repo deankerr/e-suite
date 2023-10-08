@@ -1,33 +1,27 @@
 import { openai } from '@/lib/providers/openai'
 import { openrouter } from '@/lib/providers/openrouter'
-import { isFriendly, logger } from '@/lib/utils'
-import { NextResponse } from 'next/server'
+import { createErrorResponse, isFriendly, logger } from '@/lib/utils'
 import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[api/chat] ' })
 
 export async function POST(request: Request) {
   log.info('POST chat')
-  if (!isFriendly(request.headers.get('pirce'))) return NextResponse.json({ no: true })
+  if (!isFriendly(request.headers.get('pirce'))) {
+    const error = createErrorResponse({ message: 'wrong parameter' })
+    return Response.json(error)
+  }
 
   const { provider, ...params } = requestSchema.parse(await request.json())
   log.info(params, 'parameters')
 
-  let result: string
   if (provider === 'openai') {
-    if (params.stream) return await openai.chatStream(params)
-    const response = await openai.chat(params)
-    result = response.item
+    return openai.chat(params)
   } else if (provider === 'openrouter') {
-    if (params.stream) return await openrouter.chatStream(params)
-    const response = await openrouter.chat(params)
-    result = response.item
+    return openrouter.chat(params)
   } else {
     throw new Error(`unsupported provider: ${provider}`)
   }
-
-  log.info(result, 'result')
-  return NextResponse.json(result)
 }
 
 const requestSchema = z.object({

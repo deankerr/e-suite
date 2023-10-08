@@ -9,8 +9,8 @@ export default function TurbyChatPage() {
 
   return isClient ? (
     <Chat
-      model="gpt-3.5-turbo"
-      provider="openai"
+      model="openai/gpt-3.5-turbo"
+      provider="openrouter"
       prompt="You are a helpful AI assistant named Turby. Use Markdown in your responses."
       title="turbys tavern"
       names={{ user: 'Greg', assistant: 'Turby' }}
