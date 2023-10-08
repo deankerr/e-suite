@@ -42,10 +42,8 @@ export function MessageBubble({
         {message.name ?? config.name}
         {debug ? <span className="text-xs opacity-50"> {message.id}</span> : ''}
       </div>
-      <div
-        className={`rounded-xl border ${config.border} max-w-[90vw] bg-base-100 px-4 py-2 text-base-content `}
-      >
-        <div className="prose prose-neutral">
+      <div className={`rounded-xl border ${config.border} max-w-[85vw] bg-base-100 px-4 py-2`}>
+        <div className="prose prose-neutral prose-ol:pl-5 prose-li:pl-0">
           {message.content ? <Markdown>{message.content}</Markdown> : loadingIcon}
         </div>
       </div>
