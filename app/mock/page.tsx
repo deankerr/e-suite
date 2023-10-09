@@ -1,16 +1,16 @@
-import { CardDemo } from '@/components/card-demo'
-import { ContextMenuDemo } from '@/components/context-menu-demo'
-import { NavigationMenuDemo } from '@/components/main-nav'
-import { SidebarDemo } from '@/components/sidebar-demo'
-import { TableDemo } from '@/components/table-demo'
-import { TabsDemo } from '@/components/tabs-demo'
+import { CardDemo } from '@/components/shadcn-ui-demo/card-demo'
+import { ContextMenuDemo } from '@/components/shadcn-ui-demo/context-menu-demo'
+import { NavigationMenuDemo } from '@/components/shadcn-ui-demo/main-nav'
+import { SidebarDemo } from '@/components/shadcn-ui-demo/sidebar-demo'
+import { TableDemo } from '@/components/shadcn-ui-demo/table-demo'
+import { TabsDemo } from '@/components/shadcn-ui-demo/tabs-demo'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export default function MockPage() {
   return (
-    <div id="ui-page" className="bg-grid-teal min-h-full">
+    <div id="ui-page" className="min-h-full">
       {/* Header Bar */}
       <div
         id="ui-header"
