@@ -17,7 +17,7 @@ export default function eSuitePage() {
       </div>
 
       {/* Main */}
-      <main className="bg-grid-grey flex grow flex-col">
+      <main className="bg-grid-grey flex grow flex-col items-center justify-center">
         {/* Chat Component Instance */}
         <ChatApp />
       </main>

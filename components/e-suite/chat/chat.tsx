@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import {
   CodeSandboxLogoIcon,
   FaceIcon,
@@ -7,15 +6,13 @@ import {
   PaperPlaneIcon,
   SketchLogoIcon,
 } from '@radix-ui/react-icons'
+import { ChatInputPanel } from './input-panel'
 
 type Props = {}
 
 export function ChatApp(props: Props) {
   return (
-    <div
-      id="e-chat-component"
-      className="flex max-w-md grow flex-col rounded-md border-2 bg-background text-sm"
-    >
+    <div id="e-chat-component" className="flex grow flex-col rounded-md border-2 bg-background">
       {/* Title/Controls */}
       <div className="flex items-center border-b bg-muted px-2 py-1 font-medium">
         <Button variant="ghost" size="icon" className="">
@@ -36,10 +33,7 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Messages */}
-      <div
-        id="e-messages"
-        className="flex grow flex-col justify-end space-y-4 bg-blue-100 px-4 py-4"
-      >
+      <div id="e-messages" className="flex grow flex-col justify-end space-y-4 px-4 py-4">
         <div
           id="e-chat-system"
           className="mx-auto max-w-[75%] rounded-lg bg-secondary px-3 py-2 text-center text-secondary-foreground shadow"
@@ -67,12 +61,13 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Input */}
-      <div className="bg-amber-100">
+      {/* <div className="bg-amber-100">
         <Textarea placeholder="Enter your message..." />
-        {/* <Button variant="secondary" size="icon" className="absolute right-4 top-[0.8em] shadow">
+        <Button variant="secondary" size="icon" className="absolute right-4 top-[0.8em] shadow">
           <PaperPlaneIcon />
-        </Button> */}
-      </div>
+        </Button>
+      </div> */}
+      <ChatInputPanel />
     </div>
   )
 }
