@@ -3,13 +3,19 @@
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
-import { useEffect, useRef, useState } from 'react'
+import { ChatRequestOptions } from 'ai'
+import { ChangeEvent, FormEvent, useEffect, useRef } from 'react'
 
-type Props = {}
+type Props = {
+  input: string
+  handleInputChange: (e: ChangeEvent<HTMLTextAreaElement> | ChangeEvent<HTMLInputElement>) => void
+  handleSubmit: (
+    e: FormEvent<HTMLFormElement>,
+    chatRequestOptions?: ChatRequestOptions | undefined,
+  ) => void
+}
 
-export function ChatInputPanel(props: Props) {
-  const [input, setInput] = useState<string>('')
-
+export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props) {
   const formRef = useRef<HTMLFormElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -23,14 +29,7 @@ export function ChatInputPanel(props: Props) {
   }, [input])
 
   return (
-    <form
-      className="flex items-end"
-      ref={formRef}
-      onSubmit={(e) => {
-        e.preventDefault()
-        console.log('submit', e)
-      }}
-    >
+    <form className="flex items-end" ref={formRef} onSubmit={handleSubmit}>
       <Textarea
         className="inline-flex min-h-0 resize-none overflow-y-hidden rounded-none"
         ref={textareaRef}
@@ -39,11 +38,10 @@ export function ChatInputPanel(props: Props) {
         required={true}
         value={input}
         rows={1}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={handleInputChange}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && e.metaKey && formRef.current) {
             e.preventDefault()
-            console.log('enter submit')
             formRef.current.requestSubmit()
           }
         }}
