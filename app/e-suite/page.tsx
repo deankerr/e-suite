@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 export default function eSuitePage() {
   return (
-    <div className="min-h-[100svh]">
+    <div className="flex min-h-[100svh] flex-col justify-between">
       <TuiBreakpointIndicator />
       {/* Header Bar */}
       <div
@@ -17,7 +17,7 @@ export default function eSuitePage() {
       </div>
 
       {/* Main */}
-      <main className="bg-grid-grey h-full">
+      <main className="bg-grid-grey flex grow flex-col">
         {/* Chat Component Instance */}
         <ChatApp />
       </main>
