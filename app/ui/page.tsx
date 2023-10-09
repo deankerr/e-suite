@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
-export default function MockPage() {
+export default function UiPage() {
   return (
     <div id="ui-page" className="min-h-full">
       {/* Header Bar */}
@@ -46,27 +46,11 @@ export default function MockPage() {
             reprehenderit dolore nostrud excepteur veniam ad voluptate sunt enim.
           </p>
 
-          <p className="leading-7 [&:not(:first-child)]:mt-6">
-            Qui laboris consequat est eu consequat ex tempor nostrud pariatur aliquip cupidatat ad
-            eu. Excepteur nostrud laboris ea irure sint exercitation ad mollit ea deserunt. Laboris
-            culpa aliqua exercitation officia. Dolor cillum elit cillum exercitation voluptate.
-            Consequat sit ex magna mollit consequat. Esse ullamco duis aute laboris est laborum
-            occaecat consectetur. Sunt sunt fugiat veniam magna dolore dolor esse in Lorem occaecat.
-          </p>
-
           <p className="prose mt-6">
             Ea voluptate proident fugiat fugiat sint voluptate elit. Ad qui nulla ut sint et sit
             ullamco qui. Veniam consequat sint deserunt qui adipisicing reprehenderit occaecat esse
             nostrud irure consectetur. Adipisicing veniam ullamco irure in enim. Enim laborum
             reprehenderit dolore nostrud excepteur veniam ad voluptate sunt enim.
-          </p>
-
-          <p className="prose mt-6">
-            Qui laboris consequat est eu consequat ex tempor nostrud pariatur aliquip cupidatat ad
-            eu. Excepteur nostrud laboris ea irure sint exercitation ad mollit ea deserunt. Laboris
-            culpa aliqua exercitation officia. Dolor cillum elit cillum exercitation voluptate.
-            Consequat sit ex magna mollit consequat. Esse ullamco duis aute laboris est laborum
-            occaecat consectetur. Sunt sunt fugiat veniam magna dolore dolor esse in Lorem occaecat.
           </p>
 
           <div className="flex flex-col items-center">
@@ -80,9 +64,6 @@ export default function MockPage() {
           </div>
           <TableDemo />
         </main>
-
-        {/* Sidebar */}
-        <SidebarDemo className="w-fit max-w-xs bg-background" />
       </div>
     </div>
   )
