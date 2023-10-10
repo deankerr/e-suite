@@ -1,9 +1,9 @@
-import { Markdown } from '@/components/Markdown'
+import { Markdown } from '@/components/markdown'
 
 export default function TestPage() {
   return (
     <>
-      <main className="mx-auto bg-base-100">
+      <main className="bg-base-100 mx-auto">
         Markdown prose:
         <article className="prose">
           <Markdown>{mdText}</Markdown>

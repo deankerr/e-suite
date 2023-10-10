@@ -64,3 +64,18 @@ export const sampleInput = [
   'Short history of Indonesia.',
   'How many clowns can fit in a single clown car?',
 ]
+
+export const sampleCode = [
+  {
+    id: 'UkRu1fg',
+    content:
+      'Sure! Here\'s an example of how you can implement the FizzBuzz problem in each of the mentioned languages:\n\n**Typescript**:\n```typescript\nfor (let i = 1; i <= 100; i++) {\n  if (i % 3 === 0 && i % 5 === 0) {\n    console.log("FizzBuzz");\n  } else if (i % 3 === 0) {\n    console.log("Fizz");\n  } else if (i % 5 === 0) {\n    console.log("Buzz");\n  } else {\n    console.log(i);\n  }\n}\n```\n\n**Python**:\n```python\nfor i in range(1, 101):\n    if i % 3 == 0 and i % 5 == 0:\n        print("FizzBuzz")\n    elif i % 3 == 0:\n        print("Fizz")\n    elif i % 5 == 0:\n        print("Buzz")\n    else:\n        print(i)\n```\n\n**Bash**:\n```bash\nfor ((i=1; i<=100; i++)); do\n  if ((i % 3 == 0)) && ((i % 5 == 0)); then\n    echo "FizzBuzz"\n  elif ((i % 3 == 0)); then\n    echo "Fizz"\n  elif ((i % 5 == 0)); then\n    echo "Buzz"\n  else\n    echo $i\n  fi\ndone\n```\n\n**C**:\n```c\n#include<stdio.h>\nint main()\n{\n    for (int i = 1; i <= 100; i++) {\n        if (i % 3 == 0 && i % 5 == 0) {\n            printf("FizzBuzz\\n");\n        } else if (i % 3 == 0) {\n            printf("Fizz\\n");\n        } else if (i % 5 == 0) {\n            printf("Buzz\\n");\n        } else {\n            printf("%d\\n", i);\n        }\n    }\n    return 0;\n}\n```\n\n**Rust**:\n```rust\nfn main() {\n    for i in 1..=100 {\n        if i % 3 == 0 && i % 5 == 0 {\n            println!("FizzBuzz");\n        } else if i % 3 == 0 {\n            println!("Fizz");\n        } else if i % 5 == 0 {\n            println!("Buzz");\n        } else {\n            println!("{}", i);\n        }\n    }\n}\n```\n\nDon\'t forget to run these snippets in their respective environments to see the output!',
+    role: 'assistant',
+  },
+  {
+    id: 'SsFBTME',
+    content:
+      'Certainly! Here\'s how you can implement the FizzBuzz problem in JavaScript, Lua, a React component (JSX), and Ruby:\n\n**JavaScript**:\n```javascript\nfor (let i = 1; i <= 100; i++) {\n  if (i % 3 === 0 && i % 5 === 0) {\n    console.log("FizzBuzz");\n  } else if (i % 3 === 0) {\n    console.log("Fizz");\n  } else if (i % 5 === 0) {\n    console.log("Buzz");\n  } else {\n    console.log(i);\n  }\n}\n```\n\n**Lua**:\n```lua\nfor i = 1, 100 do\n  if i % 3 == 0 and i % 5 == 0 then\n    print("FizzBuzz")\n  elseif i % 3 == 0 then\n    print("Fizz")\n  elseif i % 5 == 0 then\n    print("Buzz")\n  else\n    print(i)\n  end\nend\n```\n\n**React Component (JSX)**:\n```jsx\nimport React from "react";\n\nconst FizzBuzz = () => {\n  const nums = [];\n  for (let i = 1; i <= 100; i++) {\n    if (i % 3 === 0 && i % 5 === 0) {\n      nums.push("FizzBuzz");\n    } else if (i % 3 === 0) {\n      nums.push("Fizz");\n    } else if (i % 5 === 0) {\n      nums.push("Buzz");\n    } else {\n      nums.push(i);\n    }\n  }\n\n  return (\n    <ul>\n      {nums.map((num, index) => (\n        <li key={index}>{num}</li>\n      ))}\n    </ul>\n  );\n}\n```\n\n**Ruby**:\n```ruby\n(1..100).each do |i|\n  if i % 3 == 0 && i % 5 == 0\n    puts "FizzBuzz"\n  elsif i % 3 == 0\n    puts "Fizz"\n  elsif i % 5 == 0\n    puts "Buzz"\n  else\n    puts i\n  end\nend\n```\n\nRemember to run them in their respective environments to see the output!',
+    role: 'assistant',
+  },
+] as const

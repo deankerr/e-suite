@@ -1,4 +1,4 @@
-import { Markdown } from '@/components/Markdown'
+import { Markdown } from '@/components/markdown'
 import type { ChatMessage } from './Chat'
 
 const bubbleRolesConfig = {
@@ -44,7 +44,7 @@ export function MessageBubble({
         {message.name ?? names[message.role ?? ''] ?? config.name}
         {debug ? <span className="text-xs opacity-50"> {message.id}</span> : ''}
       </div>
-      <div className={`rounded-xl border ${config.border} max-w-[85vw] bg-base-100 px-4 py-2`}>
+      <div className={`rounded-xl border ${config.border} bg-base-100 max-w-[85vw] px-4 py-2`}>
         <div className="prose prose-neutral prose-ol:pl-5 prose-li:pl-0">
           {message.content ? <Markdown>{message.content}</Markdown> : loadingIcon}
         </div>

@@ -1,10 +1,10 @@
 'use client'
 
-import { Markdown } from '@/components/Markdown'
+import { Markdown } from '@/components/markdown'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
-  CodeSandboxLogoIcon,
+  CodeIcon,
   FaceIcon,
   MixerHorizontalIcon,
   ResetIcon,
@@ -13,7 +13,7 @@ import {
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { ChatInputPanel } from './input-panel'
-import { sampleMessages } from './sample-data'
+import { sampleCode, sampleMessages } from './sample-data'
 
 type Props = {}
 
@@ -66,6 +66,13 @@ export function ChatApp(props: Props) {
         <div className="w-[50%] text-right">
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setMessages([...messages, ...sampleCode])}
+          >
+            <CodeIcon />
           </Button>
           <Button
             variant="outline"
