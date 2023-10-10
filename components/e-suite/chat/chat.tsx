@@ -1,16 +1,19 @@
 'use client'
 
+import { Markdown } from '@/components/Markdown'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
   CodeSandboxLogoIcon,
   FaceIcon,
   MixerHorizontalIcon,
+  ResetIcon,
   SketchLogoIcon,
 } from '@radix-ui/react-icons'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { ChatInputPanel } from './input-panel'
+import { sampleMessages } from './sample-data'
 
 type Props = {}
 
@@ -18,15 +21,16 @@ export function ChatApp(props: Props) {
   //* temp config
   const model = 'gpt-3.5-turbo'
   const provider = 'openai'
-  const title = 'Pinata'
+  const title = 'Piñata'
   const prompt = 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.'
 
   //* chat configuration
+  const initialMessages = [{ id: nanoid(), role: 'system', content: prompt } as const]
   const { messages, isLoading, setMessages, setInput, input, handleInputChange, handleSubmit } =
     useChat({
       id: title,
       api: '/api/chat',
-      initialMessages: [{ id: nanoid(), role: 'system', content: prompt }],
+      initialMessages,
       body: {
         model,
         provider,
@@ -47,41 +51,47 @@ export function ChatApp(props: Props) {
     })
 
   return (
-    <div id="e-chat-component" className="flex grow flex-col rounded-md border-2 bg-background">
+    <div
+      id="e-chat-component"
+      className="flex max-w-[99vw] grow flex-col rounded-md border-2 bg-background"
+    >
       {/* Title/Controls */}
-      <div className="flex items-center border-b bg-muted px-2 py-1 font-medium">
-        <Button variant="ghost" size="icon" className="">
-          <FaceIcon />
-        </Button>
-        <div className="h-full grow text-center">{title}</div>
-        <div>
-          <Button variant="outline" size="icon" className="">
+      <div className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium">
+        <div className="w-[50%]">
+          <Button variant="ghost" size="icon">
+            <FaceIcon />
+          </Button>
+        </div>
+        <div className="h-full">{title}</div>
+        <div className="w-[50%] text-right">
+          <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
           </Button>
-          <Button variant="outline" size="icon" className="">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setMessages([...messages, ...sampleMessages])}
+          >
             <SketchLogoIcon />
           </Button>
-          <Button variant="outline" size="icon" className="">
-            <CodeSandboxLogoIcon />
+          <Button variant="outline" size="icon" onClick={() => setMessages(initialMessages)}>
+            <ResetIcon />
           </Button>
         </div>
       </div>
 
       {/* Messages */}
-      <div
-        id="e-messages-container"
-        className="flex grow flex-col items-center justify-end space-y-4 px-4 py-4"
-      >
+      <div id="e-messages-container" className="grow space-y-4 px-4 py-4">
         {messages.map((m) => {
           const style =
             m.role === 'user'
               ? 'ml-auto bg-primary text-primary-foreground'
               : m.role === 'assistant'
-              ? 'mr-auto bg-muted'
+              ? 'mr-auto bg-muted text-secondary-foreground'
               : 'bg-secondary text-secondary-foreground text-center'
           return (
-            <div className={cn('max-w-[75%] rounded-lg px-3 py-2', style)} key={m.id}>
-              {m.content}
+            <div className={cn('prose max-w-[90%] rounded-lg px-3 py-2', style)} key={m.id}>
+              <Markdown>{m.content}</Markdown>
             </div>
           )
         })}
