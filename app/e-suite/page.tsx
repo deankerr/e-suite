@@ -4,14 +4,14 @@ import { cn } from '@/lib/utils'
 
 export default function eSuitePage() {
   return (
-    <div className="flex min-h-[100svh] flex-col justify-between">
+    <div className="flex h-[100svh] flex-col justify-between">
       <TuiBreakpointIndicator />
       {/* Header Bar */}
       <div
         id="ui-header"
-        className="flex h-16 w-full flex-row items-center justify-between border-b-2 border-border bg-background px-8 text-foreground"
+        className="flex w-full flex-row items-center justify-between border-b-2 border-border bg-background px-8 text-foreground"
       >
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">e/suite</h1>
+        <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight">e/suite</h1>
 
         <ThemeToggle />
       </div>

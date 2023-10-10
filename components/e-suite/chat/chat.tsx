@@ -88,18 +88,20 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Messages */}
-      <div id="e-messages-container" className="flex grow flex-col space-y-4 px-1 py-4 md:px-3">
+      <div
+        id="e-messages-container"
+        className="flex grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
+      >
         {messages.map((m) => {
           const isUser = m.role === 'user'
           const isAi = m.role === 'assistant'
           return (
             <div
               className={cn('prose prose-stone dark:prose-invert', 'rounded-lg px-3 py-2', {
-                'ml-[10%] self-end bg-primary text-primary-foreground': isUser,
-                'mr-[10%] bg-muted text-secondary-foreground': isAi,
-                'mx-[10%] self-center bg-secondary text-center text-secondary-foreground': !(
-                  isUser || isAi
-                ),
+                'ml-[10%] self-end bg-primary text-primary-foreground sm:ml-[20%]': isUser,
+                'mr-[10%] bg-muted text-secondary-foreground sm:mr-[20%]': isAi,
+                'mx-[5%] self-center bg-secondary text-center text-secondary-foreground sm:mx-[10%]':
+                  !(isUser || isAi),
               })}
               key={m.id}
             >
