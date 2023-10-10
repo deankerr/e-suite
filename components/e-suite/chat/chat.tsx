@@ -53,7 +53,7 @@ export function ChatApp(props: Props) {
   return (
     <div
       id="e-chat-component"
-      className="flex max-w-[99vw] grow flex-col rounded-md border-2 bg-background"
+      className="flex max-w-md grow flex-col rounded-md border-2 bg-background"
     >
       {/* Title/Controls */}
       <div className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium">
@@ -90,7 +90,7 @@ export function ChatApp(props: Props) {
       {/* Messages */}
       <div
         id="e-messages-container"
-        className="flex grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
+        className="flex h-96 grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
       >
         {messages.map((m) => {
           const isUser = m.role === 'user'

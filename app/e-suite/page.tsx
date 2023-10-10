@@ -9,7 +9,7 @@ export default function eSuitePage() {
       {/* Header Bar */}
       <div
         id="ui-header"
-        className="flex w-full flex-row items-center justify-between border-b-2 border-border bg-background px-8 text-foreground"
+        className="flex w-full flex-row items-center justify-between bg-background px-8 text-foreground"
       >
         <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight">e/suite</h1>
 
@@ -17,10 +17,10 @@ export default function eSuitePage() {
       </div>
 
       {/* Main */}
-      <main className="bg-grid-grey flex grow flex-col items-center justify-center">
-        {/* Chat Component Instance */}
-        <ChatApp />
-      </main>
+      {/* <main className="bg-grid-grey flex grow flex-col items-center justify-center"> */}
+      {/* Chat Component Instance */}
+      <ChatApp />
+      {/* </main> */}
     </div>
   )
 }
