@@ -13,7 +13,8 @@ import {
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { ChatInputPanel } from './input-panel'
-import { sampleCode, sampleMessages } from './sample-data'
+import { ChatBarMenuItem } from './menu'
+import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 
 type Props = {}
 
@@ -25,12 +26,12 @@ export function ChatApp(props: Props) {
   const prompt = 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.'
 
   //* chat configuration
-  const initialMessages = [{ id: nanoid(), role: 'system', content: prompt } as const]
+  const initialMessage = { id: nanoid(), role: 'system', content: prompt } as const
   const { messages, isLoading, setMessages, setInput, input, handleInputChange, handleSubmit } =
     useChat({
       id: title,
       api: '/api/chat',
-      initialMessages,
+      initialMessages: [createPrompt(prompt)],
       body: {
         model,
         provider,
@@ -55,14 +56,22 @@ export function ChatApp(props: Props) {
       id="e-chat-component"
       className="flex max-w-xl grow flex-col rounded-md border-2 bg-background"
     >
-      {/* Title/Controls */}
+      {/* Control Bar */}
       <div className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium">
         <div className="w-[50%]">
-          <Button variant="ghost" size="icon">
-            <FaceIcon />
-          </Button>
+          <ChatBarMenuItem
+            label={<FaceIcon />}
+            heading="Debug"
+            items={[
+              ['Add convo', () => setMessages([...messages, ...sampleConvo])],
+              ['Add code', () => setMessages([...messages, ...sampleCode])],
+              ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
+            ]}
+          />
         </div>
-        <div className="h-full">{title}</div>
+        <div className="">
+          <h2>{title}</h2>
+        </div>
         <div className="w-[50%] text-right">
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
@@ -81,7 +90,7 @@ export function ChatApp(props: Props) {
           >
             <SketchLogoIcon />
           </Button>
-          <Button variant="outline" size="icon" onClick={() => setMessages(initialMessages)}>
+          <Button variant="outline" size="icon" onClick={() => setMessages([createPrompt(prompt)])}>
             <ResetIcon />
           </Button>
         </div>
@@ -122,3 +131,6 @@ export function ChatApp(props: Props) {
 }
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
+function createPrompt(content: string) {
+  return { id: nanoid(), role: 'system', content } as const
+}

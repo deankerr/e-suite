@@ -84,3 +84,41 @@ export const sampleCode = [
     role: 'assistant',
   },
 ] as const
+
+export const sampleConvo = [
+  {
+    content: 'Excepteur tempor ullamco labore commodo minim culpa.',
+    role: 'user',
+    id: 'rwettwe',
+  },
+  {
+    id: '425435',
+    content:
+      'Ea cillum occaecat esse ut dolore qui incididunt aliqua dolore ullamco fugiat. Sunt velit qui amet et. Enim tempor adipisicing pariatur in sint dolore nostrud reprehenderit consequat officia mollit veniam consequat mollit amet. Ut aliquip aliqua proident.\n\n Magna enim aliqua mollit id ad veniam do. Eu dolor in eiusmod adipisicing exercitation dolor Lorem minim quis qui velit consectetur. Lorem consequat minim duis velit duis id eiusmod adipisicing. Nulla sint magna do officia Lorem pariatur aute laborum velit.',
+    role: 'assistant',
+  },
+  {
+    content:
+      'Eu aliquip velit veniam labore fugiat magna ipsum deserunt culpa occaecat est. Elit consequat dolore elit sit consequat Lorem est pariatur consequat eu adipisicing eu officia.',
+    role: 'user',
+    id: 'regseg',
+  },
+  {
+    id: '3433f',
+    content:
+      'Elit magna Lorem aliqua sint aliqua duis adipisicing enim elit. Excepteur nisi commodo duis aute Lorem proident.\n\n Ex et aute excepteur nisi dolor ut cillum ullamco cupidatat culpa nostrud amet non dolor veniam.\n\n Ullamco consequat pariatur in labore excepteur incididunt anim dolor Lorem ut ex nostrud reprehenderit. In occaecat in excepteur enim irure do ut Lorem do non occaecat reprehenderit.',
+    role: 'assistant',
+  },
+  {
+    content:
+      'Dolore dolore commodo elit officia culpa sunt do dolor consectetur adipisicing ad anim commodo ullamco eiusmod.',
+    role: 'user',
+    id: 'dfsdfsdf',
+  },
+  {
+    id: '123423',
+    content:
+      'Anim velit aliqua veniam est.\n\n Quis consequat deserunt do quis nulla. Aliquip pariatur qui veniam adipisicing consequat non est laborum ut.\n\n Minim reprehenderit sunt fugiat enim reprehenderit nulla deserunt aute exercitation aute in pariatur anim sint. Deserunt amet labore proident. Anim proident do ad eiusmod occaecat fugiat dolor cupidatat ullamco sint voluptate aliquip minim proident.\n\n Irure ad proident voluptate culpa laborum elit commodo sunt. Ut quis laboris dolor exercitation exercitation. Amet consectetur irure in elit et nulla tempor cupidatat occaecat nostrud deserunt culpa nulla enim. Incididunt do occaecat culpa mollit. Mollit consectetur non commodo id consequat qui esse ullamco anim esse laborum enim. Occaecat Lorem ex adipisicing irure ad ut. Esse aliquip deserunt Lorem sit cillum reprehenderit. Ut do et quis ea dolore duis proident do do. Ex ad officia ex eiusmod ut est aliquip do aliqua. Duis elit ut laborum reprehenderit.',
+    role: 'assistant',
+  },
+] as const
