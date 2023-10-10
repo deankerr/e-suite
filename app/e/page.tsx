@@ -1,17 +1,25 @@
 import { ChatApp } from '@/components/e-suite/chat/chat'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { cn } from '@/lib/utils'
+import * as R from 'remeda'
+
+export const metadata = {
+  title: 'e/suite',
+  description: 'e/suite',
+}
 
 export default function eSuitePage() {
   return (
-    <div className="flex h-[100svh] flex-col justify-between">
+    <div className="bg-grid-grey flex h-[100svh] flex-col items-center justify-between">
       <TuiBreakpointIndicator />
       {/* Header Bar */}
       <div
         id="ui-header"
-        className="flex w-full flex-row items-center justify-between bg-background px-8 text-foreground"
+        className="flex h-14 w-full flex-row items-center justify-between overflow-x-auto bg-background px-8 py-1 text-foreground"
       >
-        <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight">e/suite</h1>
+        <div className="">
+          <h1 className={cn('text-xl', randomText())}>e/suite</h1>
+        </div>
 
         <ThemeToggle />
       </div>
@@ -38,4 +46,29 @@ export function TuiBreakpointIndicator({ className }: React.HTMLAttributes<HTMLD
       )}
     ></div>
   )
+}
+
+function randomText() {
+  const fnt = R.shuffle(['font-mono', 'font-serif', 'font-sans'])[0]
+  const wgt = R.shuffle([
+    'font-thin',
+    'font-extralight',
+    'font-light',
+    'font-normal',
+    'font-medium',
+    'font-semibold',
+    'font-bold',
+    'font-extrabold',
+    'font-black',
+  ])[0]
+  const trk = R.shuffle([
+    'tracking-tighter',
+    'tracking-tight',
+    'tracking-normal',
+    'tracking-wide',
+    'tracking-wider',
+    'tracking-widest',
+  ])[0]
+  const it = Math.random() > 0.9 ? 'italic' : ''
+  return cn(fnt, wgt, trk, it)
 }
