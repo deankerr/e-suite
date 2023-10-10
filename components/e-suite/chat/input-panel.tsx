@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import { ChatRequestOptions } from 'ai'
 import { ChangeEvent, FormEvent, useEffect, useRef } from 'react'
@@ -29,12 +29,16 @@ export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props
   }, [input])
 
   return (
-    <form className="flex items-end" ref={formRef} onSubmit={handleSubmit}>
-      <Textarea
-        className="inline-flex min-h-0 resize-none overflow-y-hidden rounded-none"
+    <form className="flex items-end border-t-2 text-base" ref={formRef} onSubmit={handleSubmit}>
+      <textarea
+        className={cn(
+          'min-h-0 w-full resize-none overflow-y-hidden px-3 py-2 placeholder:text-muted-foreground',
+          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+        )}
         ref={textareaRef}
         placeholder="Enter your message..."
-        name="chat message input"
+        name="Enter your message"
         required={true}
         value={input}
         rows={1}
@@ -46,7 +50,7 @@ export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props
           }
         }}
       />
-      <Button size="icon" className="rounded-none">
+      <Button className="h-10 w-16 rounded-none">
         <PaperPlaneIcon />
       </Button>
     </form>

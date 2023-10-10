@@ -53,7 +53,7 @@ export function ChatApp(props: Props) {
   return (
     <div
       id="e-chat-component"
-      className="flex max-w-md grow flex-col rounded-md border-2 bg-background"
+      className="flex max-w-xl grow flex-col rounded-md border-2 bg-background"
     >
       {/* Title/Controls */}
       <div className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium">
