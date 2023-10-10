@@ -1,3 +1,12 @@
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -27,6 +36,13 @@ export function Markdown({ children }: { children: string | null | undefined }) 
             </pre>
           )
         },
+        table: ({ node, ref, ...props }) => <Table {...props} className="not-prose" />,
+        thead: ({ node, ref, ...props }) => <TableHeader {...props} />,
+        tbody: ({ node, ref, ...props }) => <TableBody {...props} />,
+        tfoot: ({ node, ref, ...props }) => <TableCaption {...props} />,
+        tr: ({ node, ref, ...props }) => <TableRow {...props} />,
+        th: ({ node, ref, ...props }) => <TableHead {...props} />,
+        td: ({ node, ref, ...props }) => <TableCell {...props} />,
       }}
     >
       {children}
