@@ -32,7 +32,8 @@ export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props
     <form className="flex items-end border-t-2 text-base" ref={formRef} onSubmit={handleSubmit}>
       <textarea
         className={cn(
-          'min-h-0 w-full resize-none overflow-y-hidden px-3 py-2 placeholder:text-muted-foreground',
+          'min-h-0 w-full resize-none overflow-y-hidden px-3 py-2',
+          'bg-transparent placeholder:text-muted-foreground',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
           'disabled:cursor-not-allowed disabled:opacity-50',
         )}
@@ -50,7 +51,7 @@ export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props
           }
         }}
       />
-      <Button className="h-10 w-16 rounded-none">
+      <Button className="h-10 w-16 rounded-none" type="submit">
         <PaperPlaneIcon />
       </Button>
     </form>
