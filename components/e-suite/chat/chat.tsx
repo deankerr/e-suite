@@ -94,7 +94,7 @@ export function ChatApp(props: Props) {
           const isAi = m.role === 'assistant'
           return (
             <div
-              className={cn('prose', 'rounded-lg px-3 py-2', {
+              className={cn('prose prose-stone dark:prose-invert', 'rounded-lg px-3 py-2', {
                 'ml-[10%] self-end bg-primary text-primary-foreground': isUser,
                 'mr-[10%] bg-muted text-secondary-foreground': isAi,
                 'mx-[10%] self-center bg-secondary text-center text-secondary-foreground': !(
