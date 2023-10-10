@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import bash from 'react-syntax-highlighter/dist/cjs/languages/prism/bash'
@@ -52,7 +53,7 @@ export function Markdown({ children }: { children: string | null | undefined }) 
         },
         pre({ children, className, node, ...props }) {
           return (
-            <pre className={className ? className + ' not-prose' : 'not-prose'} {...props}>
+            <pre className={cn(className, 'not-prose max-w-[65ch]')} {...props}>
               {children}
             </pre>
           )

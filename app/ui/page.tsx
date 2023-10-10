@@ -53,6 +53,15 @@ export default function UiPage() {
             reprehenderit dolore nostrud excepteur veniam ad voluptate sunt enim.
           </p>
 
+          <div className="prose bg-slate-300">
+            <p className="">
+              Ea voluptate proident fugiat fugiat sint voluptate elit. Ad qui nulla ut sint et sit
+              ullamco qui. Veniam consequat sint deserunt qui adipisicing reprehenderit occaecat
+              esse nostrud irure consectetur. Adipisicing veniam ullamco irure in enim. Enim laborum
+              reprehenderit dolore nostrud excepteur veniam ad voluptate sunt enim.
+            </p>
+          </div>
+
           <div className="flex flex-col items-center">
             <Separator className="my-4" />
             <TabsDemo />

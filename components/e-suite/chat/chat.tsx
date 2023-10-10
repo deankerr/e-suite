@@ -88,16 +88,21 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Messages */}
-      <div id="e-messages-container" className="grow space-y-4 px-4 py-4">
+      <div id="e-messages-container" className="flex grow flex-col space-y-4 px-1 py-4 md:px-3">
         {messages.map((m) => {
-          const style =
-            m.role === 'user'
-              ? 'ml-auto bg-primary text-primary-foreground'
-              : m.role === 'assistant'
-              ? 'mr-auto bg-muted text-secondary-foreground'
-              : 'bg-secondary text-secondary-foreground text-center'
+          const isUser = m.role === 'user'
+          const isAi = m.role === 'assistant'
           return (
-            <div className={cn('prose max-w-[90%] rounded-lg px-3 py-2', style)} key={m.id}>
+            <div
+              className={cn('prose', 'rounded-lg px-3 py-2', {
+                'ml-[10%] self-end bg-primary text-primary-foreground': isUser,
+                'mr-[10%] bg-muted text-secondary-foreground': isAi,
+                'mx-[10%] self-center bg-secondary text-center text-secondary-foreground': !(
+                  isUser || isAi
+                ),
+              })}
+              key={m.id}
+            >
               <Markdown>{m.content}</Markdown>
             </div>
           )
