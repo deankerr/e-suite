@@ -13,6 +13,7 @@ import {
 } from '@radix-ui/react-icons'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
+import { useEffect, useRef } from 'react'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
@@ -50,6 +51,13 @@ export function ChatApp(props: Props) {
         // setErrorMessage(error.message)
       },
     })
+
+  //* auto scroll on message change
+  // TODO support scrolling away during message change
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ block: 'center' })
+  }, [messages])
 
   return (
     <div
@@ -118,6 +126,9 @@ export function ChatApp(props: Props) {
             <Loading icon="ball" size="md" />
           </div>
         ) : null}
+
+        {/* Auto Scroll Target */}
+        <div id="auto-scroll-target" className="" ref={scrollRef} />
       </div>
 
       {/* Input */}
