@@ -1,3 +1,4 @@
+import { Loading } from '@/components/ui/loading'
 import {
   Table,
   TableBody,
@@ -43,6 +44,11 @@ export function Markdown({ children }: { children: string | null | undefined }) 
         tr: ({ node, ref, ...props }) => <TableRow {...props} />,
         th: ({ node, ref, ...props }) => <TableHead {...props} />,
         td: ({ node, ref, ...props }) => <TableCell {...props} />,
+        a: ({ node, ref, href, ...props }) => {
+          if (href === 'loadingball')
+            return <Loading icon="ball" size="md" className="not-prose mb-1" />
+          return <a href={href} {...props} />
+        },
       }}
     >
       {children}

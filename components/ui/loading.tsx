@@ -21,11 +21,11 @@ const sizes = {
   lg: 'daisy-loading-lg',
 } as const
 
-export function Loading({ icon, size, ...props }: Props) {
+export function Loading({ icon, size, className, ...props }: Props) {
   return (
     <>
       <span
-        className={cn('daisy-loading align-middle', icons[icon], sizes[size])}
+        className={cn(className, 'daisy-loading align-middle', icons[icon], sizes[size])}
         {...props}
       ></span>
     </>
