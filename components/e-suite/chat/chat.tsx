@@ -42,11 +42,14 @@ export function ChatApp(props: Props) {
 
   return (
     <div
-      id="e-chat-component"
+      id="e-chat-panel"
       className="flex max-w-xl grow flex-col rounded-md border-2 bg-background"
     >
       {/* Control Bar */}
-      <div className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium">
+      <div
+        id="e-chat-control-bar"
+        className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium"
+      >
         {/* Bar Left */}
         <div className="w-[50%]">
           <ChatBarMenuItem
@@ -76,7 +79,7 @@ export function ChatApp(props: Props) {
 
       {/* Messages */}
       <div
-        id="e-messages-container"
+        id="e-chat-messages-container"
         className="flex h-96 grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
       >
         {messages.map((m) => {

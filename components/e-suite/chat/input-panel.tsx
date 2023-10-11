@@ -26,7 +26,12 @@ export function ChatInputPanel({ chatHelpers }: Props) {
   }, [input])
 
   return (
-    <form className="flex items-end border-t-2 text-base" ref={formRef} onSubmit={handleSubmit}>
+    <form
+      id="e-chat-input-panel"
+      className="flex items-end border-t-2 text-base"
+      ref={formRef}
+      onSubmit={handleSubmit}
+    >
       <textarea
         className={cn(
           'min-h-0 w-full resize-none overflow-y-hidden px-3 py-2',
