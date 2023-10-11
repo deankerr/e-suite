@@ -39,7 +39,7 @@ function createErrorBubble(errText: string): ErrorBubble {
     entity: 'error' as const,
     errText,
   }
-  console.log('new errorBub', bub.id)
+  // console.log('new errorBub', bub.id)
   return bub
 }
 //* pre-create the bubble for message, becomes message entity
@@ -54,7 +54,7 @@ function createAwaitingBubble(): AwaitingBubble {
     entity: 'awaiting' as const,
     actual: null,
   }
-  console.log('new awaitingBub', bub.id)
+  // console.log('new awaitingBub', bub.id)
   return bub
 }
 
@@ -110,7 +110,7 @@ export function useBubbles(messages: Message[]) {
     const newMsgBubs = createMessageBubbles(...messageQueue)
     setOrder([...order, ...getIds(...newMsgBubs)])
     orderedBubbles.push(...newMsgBubs)
-    console.log('new messages:', ...getIds(...newMsgBubs))
+    // console.log('new messages:', ...getIds(...newMsgBubs))
   }
 
   const createBubble = {

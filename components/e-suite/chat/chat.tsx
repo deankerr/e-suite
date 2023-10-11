@@ -4,77 +4,34 @@ import { Markdown } from '@/components/markdown'
 import { Button } from '@/components/ui/button'
 import { Loading } from '@/components/ui/loading'
 import { cn } from '@/lib/utils'
-import {
-  CodeIcon,
-  FaceIcon,
-  MixerHorizontalIcon,
-  ResetIcon,
-  SketchLogoIcon,
-} from '@radix-ui/react-icons'
-import { useChat, type Message } from 'ai/react'
+import { FaceIcon, MixerHorizontalIcon } from '@radix-ui/react-icons'
+import { useChat } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useEffect, useRef, useState } from 'react'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
-import { useBubbles } from './useBubbles'
-
-// bubbles?
+import { useChatApp } from './useChatApp'
 
 type Props = {}
 
-function newMsg(content: string) {
-  const m = { id: nanoid(), role: 'system', content } as const
-  // console.log('new prompt', m)
-  return m
-}
-
-console.clear()
+//* temp config
+const model = 'gpt-3.5-turbo'
+const provider = 'openai'
+const title = 'Piñata'
+const prompt = 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.'
 
 export function ChatApp(props: Props) {
-  //* temp config
-  const model = 'gpt-3.5-turbo'
-  const provider = 'openai'
-  const title = 'Piñata'
-  const prompt = 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.'
-
   //* chat configuration
-  const [systemMessage] = useState(() => {
-    console.log('sysinit')
-    return { id: 'sysinit', role: 'system', content: prompt } as const
+  const chatHelpers = useChatApp({
+    chatSessionId: 'c1',
+    api: '/api/chat',
+    model,
+    prompt,
+    provider,
+    stream: true,
   })
-
-  const { messages, isLoading, setMessages, setInput, input, handleInputChange, handleSubmit } =
-    useChat({
-      id: title,
-      api: '/api/chat',
-      initialMessages: [systemMessage],
-      body: {
-        model,
-        provider,
-        stream: true,
-      },
-      headers: {
-        pirce: 'yes sir',
-      },
-      onResponse: (response) => {
-        console.log('[response]', response)
-        // setIsAwaitingResponse(false)
-      },
-      onFinish: (message) => {
-        console.log('[finish]', message)
-        console.log('todo: streaming bubble')
-        clearAwaiting()
-      },
-      onError: (error) => {
-        console.error('[error]', error)
-        // setErrorMessage(error.message)
-        createBubble.error(`Oopsy an error: ${error.message}`)
-        clearAwaiting()
-      },
-    })
-
-  const { orderedBubbles, createBubble, clearAwaiting } = useBubbles(messages)
+  const { messages, setMessages, isLoading } = chatHelpers
 
   //* auto scroll on message change
   // TODO support scrolling away during message change
@@ -82,16 +39,6 @@ export function ChatApp(props: Props) {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
-
-  //* Bubbles
-  console.log('messages:', messages.length, messages[0]?.id, messages.at(-1)?.id, messages)
-  console.log(
-    'BUBBLES:',
-    orderedBubbles.length,
-    orderedBubbles[0]?.id,
-    orderedBubbles.at(-1)?.id,
-    orderedBubbles,
-  )
 
   return (
     <div
@@ -166,12 +113,7 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Input */}
-      <ChatInputPanel
-        input={input}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        createBubble={createBubble}
-      />
+      <ChatInputPanel chatHelpers={chatHelpers} />
     </div>
   )
 }
