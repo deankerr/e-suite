@@ -62,7 +62,9 @@ export function useChatApp(config: useChatAppConfig) {
     },
   })
 
-  return chatHelpers
+  const resetChatMessages = () => chatHelpers.setMessages([...initialMessages])
+
+  return { ...chatHelpers, resetChatMessages }
 }
 
 type Role = Message['role']

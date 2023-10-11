@@ -29,10 +29,9 @@ export function ChatApp(props: Props) {
 
   //* chat configuration
   const chatHelpers = useChatApp(config)
-  const { messages, setMessages, isLoading } = chatHelpers
+  const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
 
-  const showLoaderId =
-    isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : null
+  const showLoaderId = isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
   const showLoaderAfter = isLoading && !showLoaderId
 
   //* auto scroll on message change
@@ -69,7 +68,7 @@ export function ChatApp(props: Props) {
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
           </Button>
-          <Button variant="outline" onClick={() => setMessages([])}>
+          <Button variant="outline" onClick={() => resetChatMessages()}>
             clear
           </Button>
         </div>
