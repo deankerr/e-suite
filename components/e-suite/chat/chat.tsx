@@ -2,6 +2,7 @@
 
 import { Markdown } from '@/components/markdown'
 import { Button } from '@/components/ui/button'
+import { Loading } from '@/components/ui/loading'
 import { cn } from '@/lib/utils'
 import {
   CodeIcon,
@@ -26,7 +27,6 @@ export function ChatApp(props: Props) {
   const prompt = 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.'
 
   //* chat configuration
-  const initialMessage = { id: nanoid(), role: 'system', content: prompt } as const
   const { messages, isLoading, setMessages, setInput, input, handleInputChange, handleSubmit } =
     useChat({
       id: title,
@@ -58,6 +58,7 @@ export function ChatApp(props: Props) {
     >
       {/* Control Bar */}
       <div className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium">
+        {/* Bar Left */}
         <div className="w-[50%]">
           <ChatBarMenuItem
             label={<FaceIcon />}
@@ -69,29 +70,17 @@ export function ChatApp(props: Props) {
             ]}
           />
         </div>
+        {/* Bar Middle */}
         <div className="">
           <h2>{title}</h2>
         </div>
-        <div className="w-[50%] text-right">
+        {/* Bar Right */}
+        <div className="flex w-[50%] justify-end">
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
           </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setMessages([...messages, ...sampleCode])}
-          >
-            <CodeIcon />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setMessages([...messages, ...sampleMessages])}
-          >
-            <SketchLogoIcon />
-          </Button>
-          <Button variant="outline" size="icon" onClick={() => setMessages([createPrompt(prompt)])}>
-            <ResetIcon />
+          <Button variant="outline" onClick={() => setMessages([createPrompt(prompt)])}>
+            clear
           </Button>
         </div>
       </div>
@@ -106,8 +95,8 @@ export function ChatApp(props: Props) {
           const isAi = m.role === 'assistant'
           return (
             <div
-              className={cn('prose prose-stone dark:prose-invert', 'rounded-lg px-3 py-2', {
-                'ml-[10%] self-end bg-primary text-primary-foreground sm:ml-[20%]': isUser,
+              className={cn('prose prose-stone w-fit rounded-lg px-3 py-2 dark:prose-invert', {
+                'ml-[10%]  self-end bg-primary text-primary-foreground sm:ml-[20%]': isUser,
                 'mr-[10%] bg-muted text-secondary-foreground sm:mr-[20%]': isAi,
                 'mx-[5%] self-center bg-secondary text-center text-secondary-foreground sm:mx-[10%]':
                   !(isUser || isAi),
@@ -118,6 +107,17 @@ export function ChatApp(props: Props) {
             </div>
           )
         })}
+
+        {/* Loading Indicator */}
+        {isLoading ? (
+          <div
+            className={cn(
+              'prose prose-stone mr-[10%] w-fit rounded-lg bg-muted px-3 py-2 text-secondary-foreground dark:prose-invert sm:mr-[20%] ',
+            )}
+          >
+            <Loading icon="ball" size="md" />
+          </div>
+        ) : null}
       </div>
 
       {/* Input */}
