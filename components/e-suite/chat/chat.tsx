@@ -13,12 +13,23 @@ import {
 } from '@radix-ui/react-icons'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
+import { useBubbles } from './useBubbles'
+
+// bubbles?
 
 type Props = {}
+
+function newMsg(content: string) {
+  const m = { id: nanoid(), role: 'system', content } as const
+  // console.log('new prompt', m)
+  return m
+}
+
+console.clear()
 
 export function ChatApp(props: Props) {
   //* temp config
@@ -28,11 +39,16 @@ export function ChatApp(props: Props) {
   const prompt = 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.'
 
   //* chat configuration
+  const [systemMessage] = useState(() => {
+    console.log('sysinit')
+    return { id: 'sysinit', role: 'system', content: prompt } as const
+  })
+
   const { messages, isLoading, setMessages, setInput, input, handleInputChange, handleSubmit } =
     useChat({
       id: title,
       api: '/api/chat',
-      initialMessages: [createPrompt(prompt)],
+      initialMessages: [systemMessage],
       body: {
         model,
         provider,
@@ -45,12 +61,20 @@ export function ChatApp(props: Props) {
         console.log('[response]', response)
         // setIsAwaitingResponse(false)
       },
-      onFinish: (message) => console.log('[finish]', message),
+      onFinish: (message) => {
+        console.log('[finish]', message)
+        console.log('todo: streaming bubble')
+        clearAwaiting()
+      },
       onError: (error) => {
         console.error('[error]', error)
         // setErrorMessage(error.message)
+        createBubble.error(`Oopsy an error: ${error.message}`)
+        clearAwaiting()
       },
     })
+
+  const { orderedBubbles, createBubble, clearAwaiting } = useBubbles(messages)
 
   //* auto scroll on message change
   // TODO support scrolling away during message change
@@ -58,6 +82,16 @@ export function ChatApp(props: Props) {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
+
+  //* Bubbles
+  console.log('messages:', messages.length, messages[0]?.id, messages.at(-1)?.id, messages)
+  console.log(
+    'BUBBLES:',
+    orderedBubbles.length,
+    orderedBubbles[0]?.id,
+    orderedBubbles.at(-1)?.id,
+    orderedBubbles,
+  )
 
   return (
     <div
@@ -87,7 +121,7 @@ export function ChatApp(props: Props) {
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
           </Button>
-          <Button variant="outline" onClick={() => setMessages([createPrompt(prompt)])}>
+          <Button variant="outline" onClick={() => setMessages([])}>
             clear
           </Button>
         </div>
@@ -136,12 +170,10 @@ export function ChatApp(props: Props) {
         input={input}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
+        createBubble={createBubble}
       />
     </div>
   )
 }
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
-function createPrompt(content: string) {
-  return { id: nanoid(), role: 'system', content } as const
-}

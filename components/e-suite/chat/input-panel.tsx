@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import { ChatRequestOptions } from 'ai'
 import { ChangeEvent, FormEvent, useEffect, useRef } from 'react'
+import type { CreateBubble } from './useBubbles'
 
 type Props = {
   input: string
@@ -13,9 +14,10 @@ type Props = {
     e: FormEvent<HTMLFormElement>,
     chatRequestOptions?: ChatRequestOptions | undefined,
   ) => void
+  createBubble: CreateBubble
 }
 
-export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props) {
+export function ChatInputPanel({ input, handleInputChange, handleSubmit, createBubble }: Props) {
   const formRef = useRef<HTMLFormElement | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -29,7 +31,14 @@ export function ChatInputPanel({ input, handleInputChange, handleSubmit }: Props
   }, [input])
 
   return (
-    <form className="flex items-end border-t-2 text-base" ref={formRef} onSubmit={handleSubmit}>
+    <form
+      className="flex items-end border-t-2 text-base"
+      ref={formRef}
+      onSubmit={(e) => {
+        createBubble.awaiting()
+        handleSubmit(e)
+      }}
+    >
       <textarea
         className={cn(
           'min-h-0 w-full resize-none overflow-y-hidden px-3 py-2',
