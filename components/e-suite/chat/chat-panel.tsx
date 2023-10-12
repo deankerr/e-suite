@@ -36,6 +36,7 @@ export function ChatPanel(props: Props) {
   config.prompt = config.prompt.replace('%%title%%', config.title)
   const panelTitle = config.title
 
+  //* scroll to panel on mount
   const panelRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     console.log('open panel', panelTitle)
@@ -46,7 +47,7 @@ export function ChatPanel(props: Props) {
   const chatHelpers = useChatApp(config)
   const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
 
-  // ID of streaming message if active
+  //* ID of streaming message if active
   const isLastMessageStreaming =
     isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 

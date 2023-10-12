@@ -1,5 +1,6 @@
 'use-client'
 
+import { useToast } from '@/components/ui/use-toast'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useState } from 'react'
@@ -42,6 +43,8 @@ export function useChatApp(config: useChatAppConfig) {
     return [rootMessage, systemMessage]
   })
 
+  const { toast } = useToast()
+
   const chatHelpers = useChat({
     id: chatSessionId,
     api,
@@ -62,6 +65,11 @@ export function useChatApp(config: useChatAppConfig) {
     },
     onError: (error) => {
       console.error('[error]', error)
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      })
     },
   })
 
