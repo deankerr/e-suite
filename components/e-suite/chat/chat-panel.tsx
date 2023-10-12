@@ -11,20 +11,30 @@ import { ChatBarMenuItem } from './menu'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 import { useChatApp } from './useChatApp'
 
-type Props = {}
+type Props = {
+  chatSessionId: string
+  api?: string
+  model?: string
+  provider?: string
+  title: string
+  prompt?: string
+  stream?: boolean
+}
 
-//* temp config
-const config = {
-  chatSessionId: 'c1',
+const defaultConfig = {
   api: '/api/chat',
   model: 'gpt-3.5-turbo',
   provider: 'openai',
-  title: 'Piñata',
-  prompt: 'You are a cheerful and helpful AI assistant named Piñata. Use Markdown.',
+  prompt: 'You are a cheerful and helpful AI assistant named %%title%%. Use Markdown.',
   stream: true,
 }
 
-export function ChatApp(props: Props) {
+export function ChatPanel(props: Props) {
+  const config = {
+    ...defaultConfig,
+    ...props,
+  }
+  config.prompt = config.prompt.replace('%%title%%', config.title)
   const panelTitle = config.title
 
   //* chat configuration
@@ -41,10 +51,7 @@ export function ChatApp(props: Props) {
   }, [messages])
 
   return (
-    <div
-      id="e-chat-panel"
-      className="flex max-w-xl grow flex-col rounded-md border-2 bg-background"
-    >
+    <div id="e-chat-panel" className="flex grow flex-col rounded-md border-2 bg-background">
       {/* Control Bar */}
       <div
         id="e-chat-control-bar"
@@ -80,7 +87,7 @@ export function ChatApp(props: Props) {
       {/* Messages */}
       <div
         id="e-chat-messages-container"
-        className="flex h-96 grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
+        className="flex grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
       >
         {messages.map((m) => {
           const isUser = m.role === 'user'
