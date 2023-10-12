@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Loading } from '@/components/ui/loading'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef } from 'react'
@@ -25,7 +24,7 @@ const defaultConfig = {
   api: '/api/chat',
   model: 'gpt-3.5-turbo',
   provider: 'openai',
-  prompt: 'You are a cheerful and helpful AI assistant named %%title%%. Use Markdown.',
+  prompt: 'You are a cheerful and helpful AI assistant named %%title%%.',
   stream: true,
 }
 
@@ -36,6 +35,12 @@ export function ChatPanel(props: Props) {
   }
   config.prompt = config.prompt.replace('%%title%%', config.title)
   const panelTitle = config.title
+
+  const panelRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    console.log('open panel', panelTitle)
+    panelRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [panelTitle])
 
   //* chat configuration
   const chatHelpers = useChatApp(config)
@@ -55,6 +60,7 @@ export function ChatPanel(props: Props) {
     <div
       id="e-chat-panel"
       className="flex h-full w-screen flex-col rounded-md border-2 bg-background sm:max-w-2xl"
+      ref={panelRef}
     >
       {/* Control Bar */}
       <div

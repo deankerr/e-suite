@@ -19,6 +19,7 @@ type Props = {}
 export function ChatApp(props: Props) {
   const [hStyle] = useState(() => randomText())
   const [chats, setChats] = useState(chatsConfig)
+  // const activeCount = chats.
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">
@@ -28,7 +29,7 @@ export function ChatApp(props: Props) {
         className="flex w-screen flex-row items-center justify-between bg-background px-8 py-1 text-foreground"
       >
         <div className="w-[50%]">
-          <h1 className={cn('text-xl', hStyle)} title={hStyle}>
+          <h1 className={cn('text-xl', hStyle)} title={hStyle} suppressHydrationWarning>
             e/suite
           </h1>
         </div>
@@ -57,8 +58,8 @@ export function ChatApp(props: Props) {
         </div>
       </div>
 
-      {/* Main */}
-      <main className="flex h-full">
+      {/* Chat Panels */}
+      <main className="flex h-full justify-center">
         {chats.map((chat) =>
           chat.active ? <ChatPanel {...chat} key={chat.chatSessionId} /> : null,
         )}
