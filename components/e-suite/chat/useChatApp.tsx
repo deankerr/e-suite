@@ -17,17 +17,20 @@ type ChatModelConfig = {
   stream: boolean
 }
 
-const numId = customAlphabet('0123456789')
+export type ChatMessage = Message & { hidden?: boolean }
+
+const numId = customAlphabet('0123456789', 3)
 // Won't be revealed to users
-const rootPrompt = 'Use Markdown in your answers.'
-const rootMessage = createMessage('system', rootPrompt, { id: `R00T${numId(3)}` })
+const rootPrompt = 'Format your answers using Markdown.'
 
 export function useChatApp(config: useChatAppConfig) {
   const { chatSessionId, api, prompt, userName, model, provider, stream } = config
 
   //* set up
   const [initialMessages] = useState<Message[]>(() => {
-    // TODO initialise with prior convo history
+    const rootMessage = createMessage('system', rootPrompt, { id: `R00T${numId()}` })
+    rootMessage.hidden = true
+
     const systemMessage = createMessage('system', prompt)
 
     console.log(
@@ -68,9 +71,10 @@ export function useChatApp(config: useChatAppConfig) {
 }
 
 type Role = Message['role']
-type MessageOptional = Omit<Message, 'role' | 'content' | 'id'> & { id?: string }
+type MessageOptional = Omit<Message, 'role' | 'content' | 'id'> &
+  Partial<{ id: string; hidden: boolean }>
 
-function createMessage(role: Role, content: string, others: MessageOptional = {}): Message {
+function createMessage(role: Role, content: string, others: MessageOptional = {}): ChatMessage {
   const { id, createdAt, function_call, name } = others
   const message = {
     role,

@@ -19,7 +19,6 @@ type Props = {}
 export function ChatApp(props: Props) {
   const [hStyle] = useState(() => randomText())
   const [chats, setChats] = useState(chatsConfig)
-  // const activeCount = chats.
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">

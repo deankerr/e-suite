@@ -1,13 +1,15 @@
 import { Markdown } from '@/components/markdown'
 import { cn } from '@/lib/utils'
-import { Message } from 'ai'
+import { ChatMessage } from './useChatApp'
 
 type Props = {
-  message: Message | null
+  message: ChatMessage | null
   showLoader: boolean
 }
 
 export function ChatMessageBubble({ message, showLoader }: Props) {
+  if (message?.hidden) return null
+
   const m = message ?? { role: 'assistant', content: '' }
 
   const isUser = m.role === 'user'
