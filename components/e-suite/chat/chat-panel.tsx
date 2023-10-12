@@ -1,6 +1,5 @@
 'use client'
 
-import { Markdown } from '@/components/markdown'
 import { Button } from '@/components/ui/button'
 import { Loading } from '@/components/ui/loading'
 import { cn } from '@/lib/utils'
@@ -8,6 +7,7 @@ import { FaceIcon, MixerHorizontalIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef } from 'react'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
+import { ChatMessageBubble } from './message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 import { useChatApp } from './useChatApp'
 
@@ -92,29 +92,9 @@ export function ChatPanel(props: Props) {
         id="e-chat-messages-container"
         className="flex h-96 max-w-full grow flex-col space-y-4 overflow-y-auto px-2 py-4"
       >
-        {messages.map((m) => {
-          const isUser = m.role === 'user'
-          const isAi = m.role === 'assistant'
-          const content = showLoaderId === m.id ? m.content + '[icon](loadingball)' : m.content
-          return (
-            <div
-              className={cn(
-                'prose prose-stone w-fit rounded-lg px-3 py-2 dark:prose-invert',
-                {
-                  'self-end bg-primary text-primary-foreground': isUser,
-                  'bg-muted text-secondary-foreground': isAi,
-                  'self-center bg-secondary text-center text-secondary-foreground': !(
-                    isUser || isAi
-                  ),
-                },
-                'max-w-[95%]',
-              )}
-              key={m.id}
-            >
-              <Markdown>{content}</Markdown>
-            </div>
-          )
-        })}
+        {messages.map((m) => (
+          <ChatMessageBubble message={m} key={m.id} />
+        ))}
 
         {/* Loading Indicator */}
         {showLoaderAfter ? (
