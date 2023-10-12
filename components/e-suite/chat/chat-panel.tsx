@@ -51,7 +51,10 @@ export function ChatPanel(props: Props) {
   }, [messages])
 
   return (
-    <div id="e-chat-panel" className="flex grow flex-col rounded-md border-2 bg-background">
+    <div
+      id="e-chat-panel"
+      className="flex w-full max-w-[40rem] flex-col rounded-md border-2 bg-background"
+    >
       {/* Control Bar */}
       <div
         id="e-chat-control-bar"
@@ -63,7 +66,7 @@ export function ChatPanel(props: Props) {
             label={<FaceIcon />}
             heading="Debug"
             items={[
-              ['Add convo', () => setMessages([...messages, ...sampleConvo])],
+              ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
               ['Add code', () => setMessages([...messages, ...sampleCode])],
               ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
             ]}
@@ -87,7 +90,7 @@ export function ChatPanel(props: Props) {
       {/* Messages */}
       <div
         id="e-chat-messages-container"
-        className="flex grow flex-col space-y-4 overflow-y-auto px-3 py-4 sm:px-4"
+        className="flex grow flex-col space-y-4 overflow-y-auto px-2 py-4"
       >
         {messages.map((m) => {
           const isUser = m.role === 'user'
@@ -95,12 +98,17 @@ export function ChatPanel(props: Props) {
           const content = showLoaderId === m.id ? m.content + '[icon](loadingball)' : m.content
           return (
             <div
-              className={cn('prose prose-stone w-fit rounded-lg px-3 py-2 dark:prose-invert', {
-                'ml-[10%] self-end bg-primary text-primary-foreground sm:ml-[20%]': isUser,
-                'mr-[10%] bg-muted text-secondary-foreground sm:mr-[20%]': isAi,
-                'mx-[5%] self-center bg-secondary text-center text-secondary-foreground sm:mx-[10%]':
-                  !(isUser || isAi),
-              })}
+              className={cn(
+                'prose prose-stone w-fit rounded-lg px-3 py-2 dark:prose-invert',
+                {
+                  'self-end bg-primary text-primary-foreground': isUser,
+                  'bg-muted text-secondary-foreground': isAi,
+                  'self-center bg-secondary text-center text-secondary-foreground': !(
+                    isUser || isAi
+                  ),
+                },
+                'max-w-[95%]',
+              )}
               key={m.id}
             >
               <Markdown>{content}</Markdown>
@@ -112,7 +120,7 @@ export function ChatPanel(props: Props) {
         {showLoaderAfter ? (
           <div
             className={cn(
-              'prose prose-stone mr-[10%] w-fit rounded-lg bg-muted px-3 py-2 text-secondary-foreground dark:prose-invert sm:mr-[20%] ',
+              'prose prose-stone mr-[10%] rounded-lg bg-muted px-3 py-2 text-secondary-foreground dark:prose-invert sm:mr-[20%] ',
             )}
           >
             <Loading icon="ball" size="md" />

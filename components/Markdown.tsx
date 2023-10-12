@@ -32,7 +32,7 @@ export function Markdown({ children }: { children: string | null | undefined }) 
         },
         pre({ children, className, node, ...props }) {
           return (
-            <pre className={cn(className, 'not-prose max-w-[65ch] rounded-md')} {...props}>
+            <pre className={cn(className, 'contents')} {...props}>
               {children}
             </pre>
           )
