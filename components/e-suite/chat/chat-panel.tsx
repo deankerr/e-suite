@@ -41,8 +41,9 @@ export function ChatPanel(props: Props) {
   const chatHelpers = useChatApp(config)
   const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
 
-  const showLoaderId = isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
-  const showLoaderAfter = isLoading && !showLoaderId
+  // ID of streaming message if active
+  const isLastMessageStreaming =
+    isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 
   //* auto scroll on message change
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -53,7 +54,7 @@ export function ChatPanel(props: Props) {
   return (
     <div
       id="e-chat-panel"
-      className="flex h-full w-screen flex-col rounded-md border-2 bg-background sm:w-fit sm:min-w-fit"
+      className="flex h-full w-screen flex-col rounded-md border-2 bg-background sm:max-w-2xl"
     >
       {/* Control Bar */}
       <div
@@ -90,27 +91,22 @@ export function ChatPanel(props: Props) {
       {/* Messages */}
       <div
         id="e-chat-messages-container"
-        className="flex h-96 grow flex-col space-y-4 overflow-y-auto px-2 py-4"
+        className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 py-4"
       >
         {messages.map((m) => (
-          <ChatMessageBubble message={m} key={m.id} />
+          <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
-        {/* Loading Indicator */}
-        {showLoaderAfter ? (
-          <div
-            className={cn(
-              'prose prose-stone mr-[10%] rounded-lg bg-muted px-3 py-2 text-secondary-foreground dark:prose-invert sm:mr-[20%] ',
-            )}
-          >
-            <Loading icon="ball" size="md" />
-          </div>
+
+        {/* Awaiting Response Indicator */}
+        {isLoading && !isLastMessageStreaming ? (
+          <ChatMessageBubble message={null} showLoader={true} />
         ) : null}
 
         {/* Auto Scroll Target */}
         <div id="auto-scroll-target" className="" ref={scrollRef} />
       </div>
 
-      {/* Input */}
+      {/* Input Panel */}
       <ChatInputPanel chatHelpers={chatHelpers} />
     </div>
   )
