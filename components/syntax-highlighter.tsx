@@ -46,8 +46,8 @@ export function SyntaxHighlighter({ children, language }: Props) {
     <PrismLight
       style={style}
       language={language}
-      PreTag="div"
-      customStyle={{ fontFamily: 'unset' }}
+      PreTag="pre"
+      customStyle={{ fontFamily: 'unset', margin: 0 }}
       className="rounded-md font-mono text-sm"
       codeTagProps={{}}
     >

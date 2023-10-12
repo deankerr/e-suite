@@ -53,7 +53,7 @@ export function ChatPanel(props: Props) {
   return (
     <div
       id="e-chat-panel"
-      className="flex w-full max-w-[40rem] flex-col rounded-md border-2 bg-background"
+      className="flex h-full w-screen flex-col rounded-md border-2 bg-background"
     >
       {/* Control Bar */}
       <div
@@ -90,7 +90,7 @@ export function ChatPanel(props: Props) {
       {/* Messages */}
       <div
         id="e-chat-messages-container"
-        className="flex grow flex-col space-y-4 overflow-y-auto px-2 py-4"
+        className="flex h-96 max-w-full grow flex-col space-y-4 overflow-y-auto px-2 py-4"
       >
         {messages.map((m) => {
           const isUser = m.role === 'user'

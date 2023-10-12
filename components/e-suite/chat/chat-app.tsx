@@ -14,14 +14,16 @@ export function ChatApp(props: Props) {
   const [panelsActive, setPanelsActive] = useState({ p1: true, p2: false, p3: false })
 
   return (
-    <div className="bg-grid-grey grid h-[100svh] grid-cols-1 grid-rows-[auto_minmax(0,_1fr)] justify-center">
+    <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">
       {/* Header Bar */}
       <div
         id="ui-header"
-        className="flex flex-row items-center justify-between overflow-x-auto bg-background px-8 py-1 text-foreground"
+        className="flex w-screen flex-row items-center justify-between bg-background px-8 py-1 text-foreground"
       >
         <div className="w-[50%]">
-          <h1 className={cn('text-xl', hStyle)}>e/suite</h1>
+          <h1 className={cn('text-xl', hStyle)} title={hStyle}>
+            e/suite
+          </h1>
         </div>
 
         <div className="flex gap-1">
@@ -30,21 +32,21 @@ export function ChatApp(props: Props) {
             pressed={panelsActive.p1}
             onPressedChange={(pressed) => setPanelsActive({ ...panelsActive, p1: pressed })}
           >
-            Piñata
+            P
           </Toggle>
           <Toggle
             variant="outline"
             pressed={panelsActive.p2}
             onPressedChange={(pressed) => setPanelsActive({ ...panelsActive, p2: pressed })}
           >
-            Gretchen
+            G
           </Toggle>
           <Toggle
             variant="outline"
             pressed={panelsActive.p3}
             onPressedChange={(pressed) => setPanelsActive({ ...panelsActive, p3: pressed })}
           >
-            Hideko
+            H
           </Toggle>
         </div>
 
@@ -54,7 +56,7 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Main */}
-      <main className="flex justify-center gap-3 px-3 py-3">
+      <main className="flex h-full bg-red-300">
         {panelsActive.p1 && <ChatPanel chatSessionId="P1" title="Piñata" />}
         {panelsActive.p2 && <ChatPanel chatSessionId="G2" title="Gretchen" />}
         {panelsActive.p3 && <ChatPanel chatSessionId="H3" title="Hideko" />}
