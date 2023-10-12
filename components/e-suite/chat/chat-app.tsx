@@ -7,11 +7,18 @@ import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import * as R from 'remeda'
 
+const chatsConfig = [
+  { chatSessionId: 'P1', title: 'Piñata', active: true },
+  { chatSessionId: 'G2', title: 'Gretchen', active: false },
+  { chatSessionId: 'H3', title: 'Hideko', active: false },
+  { chatSessionId: 'E4', title: 'Ernest', active: false },
+]
+
 type Props = {}
 
 export function ChatApp(props: Props) {
   const [hStyle] = useState(() => randomText())
-  const [panelsActive, setPanelsActive] = useState({ p1: true, p2: false, p3: false })
+  const [chats, setChats] = useState(chatsConfig)
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">
@@ -27,27 +34,22 @@ export function ChatApp(props: Props) {
         </div>
 
         <div className="flex gap-1">
-          <Toggle
-            variant="outline"
-            pressed={panelsActive.p1}
-            onPressedChange={(pressed) => setPanelsActive({ ...panelsActive, p1: pressed })}
-          >
-            P
-          </Toggle>
-          <Toggle
-            variant="outline"
-            pressed={panelsActive.p2}
-            onPressedChange={(pressed) => setPanelsActive({ ...panelsActive, p2: pressed })}
-          >
-            G
-          </Toggle>
-          <Toggle
-            variant="outline"
-            pressed={panelsActive.p3}
-            onPressedChange={(pressed) => setPanelsActive({ ...panelsActive, p3: pressed })}
-          >
-            H
-          </Toggle>
+          {/* Active Chat Toggles */}
+          {chats.map((chat) => (
+            <Toggle
+              variant="outline"
+              pressed={chat.active}
+              onPressedChange={(pressed) => {
+                const newChats = chats.map((c) =>
+                  c.chatSessionId === chat.chatSessionId ? { ...chat, active: pressed } : c,
+                )
+                setChats(newChats)
+              }}
+              key={chat.chatSessionId}
+            >
+              {chat.title}
+            </Toggle>
+          ))}
         </div>
 
         <div className="flex w-[50%] justify-end">
@@ -57,9 +59,9 @@ export function ChatApp(props: Props) {
 
       {/* Main */}
       <main className="flex h-full">
-        {panelsActive.p1 && <ChatPanel chatSessionId="P1" title="Piñata" />}
-        {panelsActive.p2 && <ChatPanel chatSessionId="G2" title="Gretchen" />}
-        {panelsActive.p3 && <ChatPanel chatSessionId="H3" title="Hideko" />}
+        {chats.map((chat) =>
+          chat.active ? <ChatPanel {...chat} key={chat.chatSessionId} /> : null,
+        )}
       </main>
     </div>
   )
