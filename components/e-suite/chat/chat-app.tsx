@@ -56,7 +56,7 @@ export function ChatApp(props: Props) {
       </div>
 
       {/* Main */}
-      <main className="flex h-full bg-red-300">
+      <main className="flex h-full">
         {panelsActive.p1 && <ChatPanel chatSessionId="P1" title="Piñata" />}
         {panelsActive.p2 && <ChatPanel chatSessionId="G2" title="Gretchen" />}
         {panelsActive.p3 && <ChatPanel chatSessionId="H3" title="Hideko" />}
