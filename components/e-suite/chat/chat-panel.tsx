@@ -1,6 +1,8 @@
 'use client'
 
+import { ComboboxDemo } from '@/components/shadcn-ui-demo/combobox-demo'
 import { Button } from '@/components/ui/button'
+import { Combobox } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef } from 'react'
@@ -28,6 +30,15 @@ const defaultConfig = {
   prompt: 'You are a cheerful and helpful AI assistant named %%title%%.',
   stream: true,
 }
+
+const modelsList = [
+  'OpenAI: GPT-3.5 Turbo',
+  'OpenAI: GPT-4',
+  'Meta: Llama v2 13B Chat',
+  'Meta: Llama v2 70B Chat',
+  'Xwin 70B',
+]
+const defaultModel = modelsList[0]
 
 export function ChatPanel(props: Props) {
   const config = {
@@ -71,13 +82,23 @@ export function ChatPanel(props: Props) {
       className="flex h-full w-screen flex-col rounded-md border-2 bg-background sm:max-w-2xl"
       ref={panelRef}
     >
-      {/* Control Bar */}
+      {/* //* Control Bar */}
       <div
         id="e-chat-control-bar"
         className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium"
       >
-        {/* Bar Left */}
-        <div className="w-[50%]">
+        {/* //* Bar Left */}
+        <div className="flex w-[50%]">
+          <Combobox items={modelsList} defaultItem={defaultModel} className="w-[230px]" />
+        </div>
+
+        {/* //* Bar Middle */}
+        <div className="">
+          <h2>{panelTitle}</h2>
+        </div>
+
+        {/* //* Bar Right */}
+        <div className="flex w-[50%] justify-end">
           <ChatBarMenuItem
             label={<FaceIcon />}
             heading="Debug"
@@ -87,13 +108,6 @@ export function ChatPanel(props: Props) {
               ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
             ]}
           />
-        </div>
-        {/* Bar Middle */}
-        <div className="">
-          <h2>{panelTitle}</h2>
-        </div>
-        {/* Bar Right */}
-        <div className="flex w-[50%] justify-end">
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
           </Button>
@@ -103,7 +117,7 @@ export function ChatPanel(props: Props) {
         </div>
       </div>
 
-      {/* Messages */}
+      {/* //* Messages */}
       <div
         id="e-chat-messages-container"
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
@@ -113,16 +127,16 @@ export function ChatPanel(props: Props) {
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
 
-        {/* Awaiting Response Indicator */}
+        {/* //* Awaiting Response Indicator */}
         {isLoading && !isLastMessageStreaming ? (
           <ChatMessageBubble message={null} showLoader={true} />
         ) : null}
 
-        {/* Auto Scroll Target */}
+        {/* //* Auto Scroll Target */}
         <div id="scroll-to-btm-observer" ref={bottomRef} className="w-full" />
       </div>
 
-      {/* Scroll To Bottom Button */}
+      {/* //* Scroll To Bottom Button */}
       <div className="relative w-12 self-end">
         <Button
           variant="outline"
@@ -135,7 +149,7 @@ export function ChatPanel(props: Props) {
         </Button>
       </div>
 
-      {/* Input Panel */}
+      {/* //* Input Panel */}
       <ChatInputPanel chatHelpers={chatHelpers} />
     </div>
   )

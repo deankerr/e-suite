@@ -43,6 +43,38 @@ export default function UiPage() {
 
           <Separator />
 
+          {/* Palette */}
+          <div className="my-6 w-96 space-x-2 border border-black">
+            {[
+              'background',
+              'foreground',
+              'card',
+              'card-foreground',
+              'popover',
+              'popover-foreground',
+              'primary',
+              'primary-foreground',
+              'secondary',
+              'secondary-foreground',
+              'muted',
+              'muted-foreground',
+              'accent',
+              'accent-foreground',
+              'destructive',
+              'destructive-foreground',
+              'border',
+              'input',
+              'ring',
+            ].map((val) => {
+              return (
+                <div className="flex" key={val}>
+                  <div className="text-right">{val}</div>
+                  <div style={{ backgroundColor: `hsl(var(--${val}))` }}>{val}</div>
+                </div>
+              )
+            })}
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="border p-6 pt-10">
               <article className="mx-auto max-w-2xl">
