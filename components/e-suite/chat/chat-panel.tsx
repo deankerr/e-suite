@@ -2,8 +2,9 @@
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { FaceIcon, MixerHorizontalIcon } from '@radix-ui/react-icons'
+import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
@@ -57,6 +58,8 @@ export function ChatPanel(props: Props) {
     scrollRef.current?.scrollIntoView({ block: 'center' })
   }, [messages])
 
+  const [bottomRef, bottomIsVisible, entry] = useInView()
+
   return (
     <div
       id="e-chat-panel"
@@ -98,7 +101,7 @@ export function ChatPanel(props: Props) {
       {/* Messages */}
       <div
         id="e-chat-messages-container"
-        className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 py-4"
+        className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2"
       >
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
@@ -110,7 +113,21 @@ export function ChatPanel(props: Props) {
         ) : null}
 
         {/* Auto Scroll Target */}
-        <div id="auto-scroll-target" className="" ref={scrollRef} />
+        <div id="scroll-to-btm-target" ref={bottomRef} className="w-full" />
+        <div id="auto-scroll-target" ref={scrollRef} />
+      </div>
+
+      {/* Scroll To Bottom Button */}
+      <div className="relative w-20 self-end bg-cyan-200">
+        <Button
+          variant="outline"
+          size="icon"
+          name="scroll to bottom"
+          className={cn('absolute bottom-12 opacity-80', bottomIsVisible && 'hidden')}
+          onClick={() => scrollRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })}
+        >
+          <PinBottomIcon className="h-6 w-6 text-secondary-foreground" />
+        </Button>
       </div>
 
       {/* Input Panel */}
