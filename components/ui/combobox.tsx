@@ -8,7 +8,12 @@ import {
   CommandInput,
   CommandItem,
 } from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverContentProps,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
@@ -20,9 +25,20 @@ type ComboboxItem = {
 
 type Props = {
   items: ComboboxItem[]
-} & ButtonProps
+  buttonProps?: ButtonProps
+  popoverProps?: PopoverContentProps
+  selectText?: string
+  searchText?: string
+}
 
-export function Combobox({ items, className, ...props }: Props) {
+export function Combobox({
+  items,
+  buttonProps,
+  popoverProps,
+  selectText,
+  searchText,
+  ...props
+}: Props) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState('')
 
@@ -33,16 +49,18 @@ export function Combobox({ items, className, ...props }: Props) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-[200px] justify-between', className)}
           {...props}
+          className={cn('w-[200px] justify-between', buttonProps?.className)}
         >
-          {value ? items.find((item) => item.value === value)?.label : 'Select item...'}
+          {value
+            ? items.find((item) => item.value === value)?.label
+            : selectText ?? 'Select item...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent {...props} className={cn('w-[200px] p-0', popoverProps?.className)}>
         <Command>
-          <CommandInput placeholder="Search item..." className="h-9" />
+          <CommandInput placeholder={searchText ?? 'Search item...'} className="h-9" />
           <CommandEmpty>No item found.</CommandEmpty>
           <CommandGroup>
             {items.map((item) => {

@@ -61,7 +61,13 @@ export function ChatPanel(props: Props) {
       >
         {/* //* Bar Left */}
         <div className="flex w-[50%]">
-          <Combobox items={modelsBoxList} className="w-[230px]" />
+          <Combobox
+            items={modelsBoxList}
+            buttonProps={{ className: 'w-[230px]' }}
+            popoverProps={{ className: 'w-[230px]' }}
+            selectText="Select model..."
+            searchText="Search model..."
+          />
         </div>
 
         {/* //* Bar Middle */}
