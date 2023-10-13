@@ -4,28 +4,16 @@ import { useToast } from '@/components/ui/use-toast'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useState } from 'react'
+import type { ChatMessage, ChatSession } from './types.ts'
 
-type useChatAppConfig = {
-  chatSessionId: string
-  api: string
-  prompt: string
-  userName?: string
-} & ChatModelConfig
-
-type ChatModelConfig = {
-  model: string
-  provider: string
-  stream: boolean
-}
-
-export type ChatMessage = Message & { hidden?: boolean }
+type useChatAppConfig = ChatSession
 
 const numId = customAlphabet('0123456789', 3)
-// Won't be revealed to users
+// Hidden initial system prompt
 const rootPrompt = 'Format your answers using Markdown.'
 
-export function useChatApp(config: useChatAppConfig) {
-  const { chatSessionId, api, prompt, userName, model, provider, stream } = config
+export function useChatApp(config: useChatAppConfig, prompt: string) {
+  const { id, api, parameters } = config
 
   //* set up
   const [initialMessages] = useState<Message[]>(() => {
@@ -36,7 +24,7 @@ export function useChatApp(config: useChatAppConfig) {
 
     console.log(
       'useChatApp',
-      { id: chatSessionId },
+      { id },
       { [rootMessage.id]: rootMessage.content },
       { [systemMessage.id]: systemMessage.content },
     )
@@ -46,14 +34,10 @@ export function useChatApp(config: useChatAppConfig) {
   const { toast } = useToast()
 
   const chatHelpers = useChat({
-    id: chatSessionId,
+    id,
     api,
     initialMessages: [...initialMessages],
-    body: {
-      model,
-      provider,
-      stream,
-    },
+    body: { ...parameters },
     headers: {
       pirce: 'yes sir',
     },

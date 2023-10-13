@@ -6,13 +6,7 @@ import { Toggle } from '@/components/ui/toggle'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import * as R from 'remeda'
-
-const chatsConfig = [
-  { chatSessionId: 'P1', title: 'Piñata', active: true },
-  { chatSessionId: 'G2', title: 'Gretchen', active: false },
-  { chatSessionId: 'H3', title: 'Hideko', active: false },
-  { chatSessionId: 'E4', title: 'Ernest', active: false },
-]
+import { chatsConfig } from './config'
 
 type Props = {}
 
@@ -22,7 +16,7 @@ export function ChatApp(props: Props) {
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">
-      {/* Header Bar */}
+      {/* //* Header Bar */}
       <div
         id="ui-header"
         className="flex w-screen flex-row items-center justify-between bg-background px-8 py-1 text-foreground"
@@ -34,20 +28,20 @@ export function ChatApp(props: Props) {
         </div>
 
         <div className="flex gap-1">
-          {/* Active Chat Toggles */}
+          {/* //* Active Chat Toggles */}
           {chats.map((chat) => (
             <Toggle
               variant="outline"
-              pressed={chat.active}
+              pressed={chat.panelActive}
               onPressedChange={(pressed) => {
                 const newChats = chats.map((c) =>
-                  c.chatSessionId === chat.chatSessionId ? { ...chat, active: pressed } : c,
+                  c.id === chat.id ? { ...chat, panelActive: pressed } : c,
                 )
                 setChats(newChats)
               }}
-              key={chat.chatSessionId}
+              key={chat.id}
             >
-              {chat.title}
+              {chat.panelTitle}
             </Toggle>
           ))}
         </div>
@@ -57,11 +51,9 @@ export function ChatApp(props: Props) {
         </div>
       </div>
 
-      {/* Chat Panels */}
+      {/* //* Chat Panels */}
       <main className="flex h-full justify-center">
-        {chats.map((chat) =>
-          chat.active ? <ChatPanel {...chat} key={chat.chatSessionId} /> : null,
-        )}
+        {chats.map((chat) => chat.panelActive && <ChatPanel {...chat} key={chat.id} />)}
       </main>
     </div>
   )

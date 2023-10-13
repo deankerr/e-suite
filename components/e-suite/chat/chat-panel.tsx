@@ -1,6 +1,5 @@
 'use client'
 
-import { ComboboxDemo } from '@/components/shadcn-ui-demo/combobox-demo'
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
@@ -11,25 +10,10 @@ import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
+import type { ChatSession } from './types'
 import { useChatApp } from './useChatApp'
 
-type Props = {
-  chatSessionId: string
-  api?: string
-  model?: string
-  provider?: string
-  title: string
-  prompt?: string
-  stream?: boolean
-}
-
-const defaultConfig = {
-  api: '/api/chat',
-  model: 'gpt-3.5-turbo',
-  provider: 'openai',
-  prompt: 'You are a cheerful and helpful AI assistant named %%title%%.',
-  stream: true,
-}
+type Props = ChatSession
 
 const modelsList = [
   'OpenAI: GPT-3.5 Turbo',
@@ -40,27 +24,25 @@ const modelsList = [
 ]
 const defaultModel = modelsList[0]
 
+const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
+
 export function ChatPanel(props: Props) {
-  const config = {
-    ...defaultConfig,
-    ...props,
-  }
-  config.prompt = config.prompt.replace('%%title%%', config.title)
-  const panelTitle = config.title
+  const { panelTitle } = props
+
+  //* chat configuration
+  const prompt = defaultPrompt.replace('%%title%%', props.panelTitle)
+  const chatHelpers = useChatApp(props, prompt)
+  const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
+
+  //* ID of streaming message if active
+  const isLastMessageStreaming =
+    isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 
   //* scroll to panel on mount
   const panelRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     panelRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
-
-  //* chat configuration
-  const chatHelpers = useChatApp(config)
-  const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
-
-  //* ID of streaming message if active
-  const isLastMessageStreaming =
-    isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 
   //* scroll panel to bottom
   const messageContainerRef = useRef<HTMLDivElement | null>(null)
@@ -72,8 +54,6 @@ export function ChatPanel(props: Props) {
 
   //* auto scroll on message change
   useEffect(() => scrollToBottom(), [messages])
-
-  //* scroll to bottom button helper
   const [bottomRef, bottomIsVisible] = useInView()
 
   return (
