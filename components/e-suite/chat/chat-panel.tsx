@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { modelsBoxList } from './config'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
@@ -14,15 +15,6 @@ import type { ChatSession } from './types'
 import { useChatApp } from './useChatApp'
 
 type Props = ChatSession
-
-const modelsList = [
-  'OpenAI: GPT-3.5 Turbo',
-  'OpenAI: GPT-4',
-  'Meta: Llama v2 13B Chat',
-  'Meta: Llama v2 70B Chat',
-  'Xwin 70B',
-]
-const defaultModel = modelsList[0]
 
 const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
 
@@ -69,7 +61,7 @@ export function ChatPanel(props: Props) {
       >
         {/* //* Bar Left */}
         <div className="flex w-[50%]">
-          <Combobox items={modelsList} defaultItem={defaultModel} className="w-[230px]" />
+          <Combobox items={modelsBoxList} className="w-[230px]" />
         </div>
 
         {/* //* Bar Middle */}

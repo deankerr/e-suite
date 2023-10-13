@@ -36,3 +36,30 @@ export const chatsConfig: ChatSession[] = [
     parameters: { ...defaultParameters },
   },
 ]
+
+export const modelsBoxList = [
+  {
+    value: 'gpt-3.5-turbo',
+    label: 'OpenAI: GPT-3.5 Turbo',
+  },
+  {
+    value: 'gpt-4',
+    label: 'OpenAI: GPT-4',
+  },
+  {
+    value: 'meta-llama/llama-2-70b-chat',
+    label: 'Meta: Llama v2 70B Chat',
+  },
+  {
+    value: 'jondurbin/airoboros-l2-70b',
+    label: 'Airoboros L2 70B',
+  },
+  {
+    value: 'migtissera/synthia-70b',
+    label: 'Synthia 70B',
+  },
+  {
+    value: 'xwin-lm/xwin-lm-70b',
+    label: 'Xwin 70B',
+  },
+]

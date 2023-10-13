@@ -13,16 +13,18 @@ import { cn } from '@/lib/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
 
+type ComboboxItem = {
+  value: string
+  label: string
+}
+
 type Props = {
-  items: string[]
-  defaultItem?: string
+  items: ComboboxItem[]
 } & ButtonProps
 
-const normalize = (v: string) => v.trim().toLowerCase()
-
-export function Combobox({ items, className, defaultItem = '', ...props }: Props) {
+export function Combobox({ items, className, ...props }: Props) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState(() => normalize(defaultItem))
+  const [value, setValue] = React.useState('')
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -34,7 +36,7 @@ export function Combobox({ items, className, defaultItem = '', ...props }: Props
           className={cn('w-[200px] justify-between', className)}
           {...props}
         >
-          {value ? items.find((item) => normalize(item) === value) : 'Select item...'}
+          {value ? items.find((item) => item.value === value)?.label : 'Select item...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -46,17 +48,18 @@ export function Combobox({ items, className, defaultItem = '', ...props }: Props
             {items.map((item) => {
               return (
                 <CommandItem
-                  key={item}
+                  key={item.value}
+                  value={item.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === normalize(value) ? '' : currentValue)
+                    setValue(currentValue === value ? '' : currentValue)
                     setOpen(false)
                   }}
                 >
-                  {item}
+                  {item.label}
                   <CheckIcon
                     className={cn(
                       'ml-auto h-4 w-4',
-                      value === normalize(item) ? 'opacity-100' : 'opacity-0',
+                      value === item.value ? 'opacity-100' : 'opacity-0',
                     )}
                   />
                 </CommandItem>
