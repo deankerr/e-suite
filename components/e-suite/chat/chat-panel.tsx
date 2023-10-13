@@ -40,9 +40,8 @@ export function ChatPanel(props: Props) {
   //* scroll to panel on mount
   const panelRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    console.log('open panel', panelTitle)
     panelRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [panelTitle])
+  }, [])
 
   //* chat configuration
   const chatHelpers = useChatApp(config)
@@ -52,13 +51,19 @@ export function ChatPanel(props: Props) {
   const isLastMessageStreaming =
     isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 
-  //* auto scroll on message change
-  const scrollRef = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({ block: 'center' })
-  }, [messages])
+  //* scroll panel to bottom
+  const messageContainerRef = useRef<HTMLDivElement | null>(null)
+  const scrollToBottom = (behavior?: 'auto' | 'instant' | 'smooth') => {
+    if (!messageContainerRef.current) return
+    const height = messageContainerRef.current.scrollHeight
+    messageContainerRef.current.scrollTo({ top: height, behavior })
+  }
 
-  const [bottomRef, bottomIsVisible, entry] = useInView()
+  //* auto scroll on message change
+  useEffect(() => scrollToBottom(), [messages])
+
+  //* scroll to bottom button helper
+  const [bottomRef, bottomIsVisible] = useInView()
 
   return (
     <div
@@ -101,7 +106,8 @@ export function ChatPanel(props: Props) {
       {/* Messages */}
       <div
         id="e-chat-messages-container"
-        className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2"
+        className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
+        ref={messageContainerRef}
       >
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
@@ -113,18 +119,17 @@ export function ChatPanel(props: Props) {
         ) : null}
 
         {/* Auto Scroll Target */}
-        <div id="scroll-to-btm-target" ref={bottomRef} className="w-full" />
-        <div id="auto-scroll-target" ref={scrollRef} />
+        <div id="scroll-to-btm-observer" ref={bottomRef} className="w-full" />
       </div>
 
       {/* Scroll To Bottom Button */}
-      <div className="relative w-20 self-end bg-cyan-200">
+      <div className="relative w-12 self-end">
         <Button
           variant="outline"
           size="icon"
           name="scroll to bottom"
           className={cn('absolute bottom-12 opacity-80', bottomIsVisible && 'hidden')}
-          onClick={() => scrollRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })}
+          onClick={() => scrollToBottom('smooth')}
         >
           <PinBottomIcon className="h-6 w-6 text-secondary-foreground" />
         </Button>
