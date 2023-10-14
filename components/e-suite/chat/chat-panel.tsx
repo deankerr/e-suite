@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { modelsBoxList } from './config'
 import { ChatInputPanel } from './input-panel'
@@ -20,6 +20,8 @@ const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title
 
 export function ChatPanel(props: Props) {
   const { panelTitle } = props
+
+  const [modelValue, setModelValue] = useState(props.parameters.model)
 
   //* chat configuration
   const prompt = defaultPrompt.replace('%%title%%', props.panelTitle)
@@ -67,6 +69,8 @@ export function ChatPanel(props: Props) {
             popoverProps={{ className: 'w-[230px]' }}
             selectText="Select model..."
             searchText="Search model..."
+            value={modelValue}
+            setValue={setModelValue}
           />
         </div>
 
@@ -101,6 +105,7 @@ export function ChatPanel(props: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
+        {modelValue}
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}

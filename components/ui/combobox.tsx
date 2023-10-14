@@ -29,6 +29,8 @@ type Props = {
   popoverProps?: PopoverContentProps
   selectText?: string
   searchText?: string
+  value?: string
+  setValue?: (value: string) => void
 }
 
 export function Combobox({
@@ -40,8 +42,10 @@ export function Combobox({
   ...props
 }: Props) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState('')
+  const [localValue, setLocalValue] = React.useState(props.value ?? '')
 
+  const value = props.value ?? localValue
+  const setValue = props.setValue ?? setLocalValue
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -49,7 +53,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          {...props}
+          {...buttonProps}
           className={cn('w-[200px] justify-between', buttonProps?.className)}
         >
           {value
@@ -58,7 +62,7 @@ export function Combobox({
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent {...props} className={cn('w-[200px] p-0', popoverProps?.className)}>
+      <PopoverContent {...popoverProps} className={cn('w-[200px] p-0', popoverProps?.className)}>
         <Command>
           <CommandInput placeholder={searchText ?? 'Search item...'} className="h-9" />
           <CommandEmpty>No item found.</CommandEmpty>
