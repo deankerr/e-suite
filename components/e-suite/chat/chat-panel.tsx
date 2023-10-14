@@ -2,33 +2,41 @@
 
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
-import { cn } from '@/lib/utils'
+import { cn, raise } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { modelsBoxList } from './config'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
-import type { ChatSession } from './types'
+import type { ChatModelOption, ChatSession } from './types'
 import { useChatApp } from './useChatApp'
 
 type Props = {
   session: ChatSession
   updateSession: (fn: (session: ChatSession) => void) => void
+  modelsAvailable: ChatModelOption[]
 }
 
 const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
 
-export function ChatPanel({ session, updateSession }: Props) {
+export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
   const { panel } = session
 
-  const handleModelSelect = (model: string) => {
+  //* model selection
+  const modelsComboList = modelsAvailable.map((m) => ({
+    value: `${m.provider}::${m.model}`,
+    label: m.label,
+  }))
+  const handleModelSelect = (selected: string) => {
     updateSession((s) => {
-      s.parameters.model = model
+      const [provider, model] = selected.split('::')
+      s.parameters.provider = provider ?? raise('invalid provider')
+      s.parameters.model = model ?? raise('invalid model')
     })
   }
+  const selectedModel = `${session.parameters.provider}::${session.parameters.model}`
 
   //* chat configuration
   const prompt = defaultPrompt.replace('%%title%%', session.panel.title)
@@ -71,12 +79,12 @@ export function ChatPanel({ session, updateSession }: Props) {
         {/* //* Bar Left */}
         <div className="flex w-[50%]">
           <Combobox
-            items={modelsBoxList}
+            items={modelsComboList}
             buttonProps={{ className: 'w-[230px]' }}
             popoverProps={{ className: 'w-[230px]' }}
             selectText="Select model..."
             searchText="Search model..."
-            value={session.parameters.model}
+            value={selectedModel}
             onSelect={handleModelSelect}
           />
         </div>

@@ -1,4 +1,5 @@
 import { ChatApp } from '@/components/e-suite/chat/chat-app'
+import { getChatModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const metadata = {
@@ -7,10 +8,11 @@ export const metadata = {
 }
 
 export default function eSuitePage() {
+  const models = getChatModels()
   return (
     <>
       <TuiBreakpointIndicator />
-      <ChatApp />
+      <ChatApp modelsAvailable={models} />
     </>
   )
 }

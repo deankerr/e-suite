@@ -7,11 +7,13 @@ import { cn, raise } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { DraftFunction, useImmer } from 'use-immer'
 import { initialChatsConfig } from './config'
-import { ChatSession } from './types'
+import { ChatModelOption, ChatSession } from './types'
 
-type Props = {}
+type Props = {
+  modelsAvailable: ChatModelOption[]
+}
 
-export function ChatApp(props: Props) {
+export function ChatApp({ modelsAvailable }: Props) {
   const [chatSessions, setChatSessions] = useImmer(() => {
     const chats: Record<ChatSession['id'], ChatSession> = {}
     for (const chat of initialChatsConfig) {
@@ -76,7 +78,12 @@ export function ChatApp(props: Props) {
         {panels.map((id) => {
           const session = getChatById(id)
           return session.panel.active ? (
-            <ChatPanel session={session} updateSession={updateChatById(id)} key={id} />
+            <ChatPanel
+              session={session}
+              updateSession={updateChatById(id)}
+              modelsAvailable={modelsAvailable}
+              key={id}
+            />
           ) : null
         })}
       </main>

@@ -21,3 +21,9 @@ export type ChatInferenceParameters = {
 }
 
 export type ChatMessage = Message & { hidden?: boolean }
+
+export type ChatModelOption = {
+  provider: string
+  model: string
+  label: string
+}
