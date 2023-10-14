@@ -10,7 +10,7 @@ const defaultApi = {
   endpoint: '/api/chat',
 }
 
-export const chatsConfig: ChatSession[] = [
+export const initialChatsConfig: ChatSession[] = [
   {
     id: 'G2',
     api: defaultApi,

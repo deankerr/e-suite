@@ -16,14 +16,19 @@ import { useChatApp } from './useChatApp'
 
 type Props = {
   session: ChatSession
+  updateSession: (fn: (session: ChatSession) => void) => void
 }
 
 const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
 
-export function ChatPanel({ session }: Props) {
+export function ChatPanel({ session, updateSession }: Props) {
   const { panel } = session
 
-  const [modelValue, setModelValue] = useState(session.parameters.model)
+  const handleModelSelect = (model: string) => {
+    updateSession((s) => {
+      s.parameters.model = model
+    })
+  }
 
   //* chat configuration
   const prompt = defaultPrompt.replace('%%title%%', session.panel.title)
@@ -71,8 +76,8 @@ export function ChatPanel({ session }: Props) {
             popoverProps={{ className: 'w-[230px]' }}
             selectText="Select model..."
             searchText="Search model..."
-            value={modelValue}
-            setValue={setModelValue}
+            value={session.parameters.model}
+            onSelect={handleModelSelect}
           />
         </div>
 
@@ -107,7 +112,10 @@ export function ChatPanel({ session }: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
-        {modelValue}
+        <div>
+          {session.parameters.provider} {session.parameters.model} stream:{' '}
+          {String(session.parameters.stream)}
+        </div>
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}

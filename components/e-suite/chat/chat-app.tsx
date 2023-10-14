@@ -4,10 +4,10 @@ import { ChatPanel } from '@/components/e-suite/chat/chat-panel'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Toggle } from '@/components/ui/toggle'
 import { cn, raise } from '@/lib/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as R from 'remeda'
-import { useImmer } from 'use-immer'
-import { chatsConfig } from './config'
+import { DraftFunction, useImmer } from 'use-immer'
+import { initialChatsConfig } from './config'
 import { ChatSession } from './types'
 
 type Props = {}
@@ -17,12 +17,28 @@ export function ChatApp(props: Props) {
 
   const [chatSessions, setChatSessions] = useImmer(() => {
     const chats: Record<ChatSession['id'], ChatSession> = {}
-    for (const chat of chatsConfig) {
+    for (const chat of initialChatsConfig) {
       chats[chat.id] = chat
     }
     return chats
   })
-  const [panels, SetPanels] = useState(() => chatsConfig.map((c) => c.id))
+
+  const getChatById = (id: string) => chatSessions[id] ?? raise('no chat session with this id')
+
+  const updateChatById = (id: string) => {
+    return (fn: DraftFunction<ChatSession>) => {
+      setChatSessions((chats) => {
+        const chat = chats[id] ?? raise('no chat session with this id')
+        fn(chat)
+      })
+    }
+  }
+
+  const [panels, setPanels] = useState(() => initialChatsConfig.map((c) => c.id))
+
+  useEffect(() => {
+    console.log(chatSessions)
+  }, [chatSessions])
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">
@@ -44,8 +60,7 @@ export function ChatApp(props: Props) {
               variant="outline"
               pressed={chatSessions[id]?.panel.active}
               onPressedChange={(pressed) => {
-                setChatSessions((chats) => {
-                  const chat = chats[id] ?? raise('no chat session with this id')
+                updateChatById(id)((chat) => {
                   chat.panel.active = pressed
                 })
               }}
@@ -64,9 +79,10 @@ export function ChatApp(props: Props) {
       {/* //* Chat Panels */}
       <main className="flex h-full justify-center">
         {panels.map((id) => {
-          const session = chatSessions[id]
-          if (!session || !session.panel.active) return null
-          return <ChatPanel session={session} key={id} />
+          const session = getChatById(id)
+          return session.panel.active ? (
+            <ChatPanel session={session} updateSession={updateChatById(id)} key={id} />
+          ) : null
         })}
       </main>
     </div>

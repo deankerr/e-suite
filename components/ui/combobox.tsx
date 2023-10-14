@@ -31,6 +31,7 @@ type Props = {
   searchText?: string
   value?: string
   setValue?: (value: string) => void
+  onSelect?: (value: string) => void
 }
 
 export function Combobox({
@@ -46,6 +47,7 @@ export function Combobox({
 
   const value = props.value ?? localValue
   const setValue = props.setValue ?? setLocalValue
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -72,8 +74,10 @@ export function Combobox({
                 <CommandItem
                   key={item.value}
                   value={item.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue)
+                  onSelect={(selectedValue) => {
+                    const newValue = selectedValue === value ? '' : selectedValue
+                    if (props.onSelect) props.onSelect(newValue)
+                    else setValue(newValue)
                     setOpen(false)
                   }}
                 >
