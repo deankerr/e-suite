@@ -3,16 +3,26 @@
 import { ChatPanel } from '@/components/e-suite/chat/chat-panel'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Toggle } from '@/components/ui/toggle'
-import { cn } from '@/lib/utils'
+import { cn, raise } from '@/lib/utils'
 import { useState } from 'react'
 import * as R from 'remeda'
+import { useImmer } from 'use-immer'
 import { chatsConfig } from './config'
+import { ChatSession } from './types'
 
 type Props = {}
 
 export function ChatApp(props: Props) {
   const [hStyle] = useState(() => randomText())
-  const [chats, setChats] = useState(chatsConfig)
+
+  const [chatSessions, setChatSessions] = useImmer(() => {
+    const chats: Record<ChatSession['id'], ChatSession> = {}
+    for (const chat of chatsConfig) {
+      chats[chat.id] = chat
+    }
+    return chats
+  })
+  const [panels, SetPanels] = useState(() => chatsConfig.map((c) => c.id))
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[auto_minmax(0,_1fr)]">
@@ -29,19 +39,19 @@ export function ChatApp(props: Props) {
 
         <div className="flex gap-1">
           {/* //* Active Chat Toggles */}
-          {chats.map((chat) => (
+          {panels.map((id) => (
             <Toggle
               variant="outline"
-              pressed={chat.panel.active}
+              pressed={chatSessions[id]?.panel.active}
               onPressedChange={(pressed) => {
-                const newChats = chats.map((c) =>
-                  c.id === chat.id ? { ...chat, panel: { ...chat.panel, active: pressed } } : c,
-                )
-                setChats(newChats)
+                setChatSessions((chats) => {
+                  const chat = chats[id] ?? raise('no chat session with this id')
+                  chat.panel.active = pressed
+                })
               }}
-              key={chat.id}
+              key={id}
             >
-              {chat.panel.title}
+              {chatSessions[id]?.panel.title}
             </Toggle>
           ))}
         </div>
@@ -53,7 +63,11 @@ export function ChatApp(props: Props) {
 
       {/* //* Chat Panels */}
       <main className="flex h-full justify-center">
-        {chats.map((chat) => chat.panel.active && <ChatPanel {...chat} key={chat.id} />)}
+        {panels.map((id) => {
+          const session = chatSessions[id]
+          if (!session || !session.panel.active) return null
+          return <ChatPanel session={session} key={id} />
+        })}
       </main>
     </div>
   )

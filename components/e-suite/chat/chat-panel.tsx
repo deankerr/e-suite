@@ -14,18 +14,20 @@ import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 import type { ChatSession } from './types'
 import { useChatApp } from './useChatApp'
 
-type Props = ChatSession
+type Props = {
+  session: ChatSession
+}
 
 const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
 
-export function ChatPanel(props: Props) {
-  const { panel } = props
+export function ChatPanel({ session }: Props) {
+  const { panel } = session
 
-  const [modelValue, setModelValue] = useState(props.parameters.model)
+  const [modelValue, setModelValue] = useState(session.parameters.model)
 
   //* chat configuration
-  const prompt = defaultPrompt.replace('%%title%%', props.panel.title)
-  const chatHelpers = useChatApp(props, prompt)
+  const prompt = defaultPrompt.replace('%%title%%', session.panel.title)
+  const chatHelpers = useChatApp(session, prompt)
   const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
 
   //* ID of streaming message if active
