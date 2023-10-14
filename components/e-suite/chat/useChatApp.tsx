@@ -4,7 +4,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useState } from 'react'
-import type { ChatMessage, ChatSession } from './types.ts'
+import type { ChatMessage, ChatSession } from './types'
 
 type useChatAppConfig = ChatSession
 
