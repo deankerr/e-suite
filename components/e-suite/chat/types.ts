@@ -1,11 +1,17 @@
 import type { Message } from 'ai'
 
 export type ChatSession = {
-  id: string
-  panelTitle: string
-  panelActive: boolean
-  api: string
+  id: Readonly<string>
+  api: {
+    endpoint: string
+  }
+  panel: ChatPanelState
   parameters: ChatInferenceParameters
+}
+
+export type ChatPanelState = {
+  title: string
+  active: boolean
 }
 
 export type ChatInferenceParameters = {

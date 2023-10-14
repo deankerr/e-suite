@@ -32,16 +32,16 @@ export function ChatApp(props: Props) {
           {chats.map((chat) => (
             <Toggle
               variant="outline"
-              pressed={chat.panelActive}
+              pressed={chat.panel.active}
               onPressedChange={(pressed) => {
                 const newChats = chats.map((c) =>
-                  c.id === chat.id ? { ...chat, panelActive: pressed } : c,
+                  c.id === chat.id ? { ...chat, panel: { ...chat.panel, active: pressed } } : c,
                 )
                 setChats(newChats)
               }}
               key={chat.id}
             >
-              {chat.panelTitle}
+              {chat.panel.title}
             </Toggle>
           ))}
         </div>
@@ -53,7 +53,7 @@ export function ChatApp(props: Props) {
 
       {/* //* Chat Panels */}
       <main className="flex h-full justify-center">
-        {chats.map((chat) => chat.panelActive && <ChatPanel {...chat} key={chat.id} />)}
+        {chats.map((chat) => chat.panel.active && <ChatPanel {...chat} key={chat.id} />)}
       </main>
     </div>
   )

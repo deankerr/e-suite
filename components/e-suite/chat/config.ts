@@ -6,33 +6,33 @@ const defaultParameters: ChatInferenceParameters = {
   stream: true,
 }
 
+const defaultApi = {
+  endpoint: '/api/chat',
+}
+
 export const chatsConfig: ChatSession[] = [
   {
     id: 'G2',
-    panelTitle: 'Gretchen',
-    panelActive: false,
-    api: '/api/chat',
+    api: defaultApi,
+    panel: { title: 'Gretchen', active: false },
     parameters: { ...defaultParameters },
   },
   {
     id: 'H3',
-    panelTitle: 'Hideko',
-    panelActive: true,
-    api: '/api/chat',
+    api: defaultApi,
+    panel: { title: 'Hideko', active: true },
     parameters: { ...defaultParameters },
   },
   {
     id: 'P1',
-    panelTitle: 'Piñata',
-    panelActive: false,
-    api: '/api/chat',
+    api: defaultApi,
+    panel: { title: 'Piñata', active: false },
     parameters: { ...defaultParameters },
   },
   {
     id: 'E4',
-    panelTitle: 'Ernest',
-    panelActive: false,
-    api: '/api/chat',
+    api: defaultApi,
+    panel: { title: 'Ernest', active: false },
     parameters: { ...defaultParameters },
   },
 ]

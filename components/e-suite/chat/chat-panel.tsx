@@ -19,12 +19,12 @@ type Props = ChatSession
 const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
 
 export function ChatPanel(props: Props) {
-  const { panelTitle } = props
+  const { panel } = props
 
   const [modelValue, setModelValue] = useState(props.parameters.model)
 
   //* chat configuration
-  const prompt = defaultPrompt.replace('%%title%%', props.panelTitle)
+  const prompt = defaultPrompt.replace('%%title%%', props.panel.title)
   const chatHelpers = useChatApp(props, prompt)
   const { messages, setMessages, isLoading, resetChatMessages } = chatHelpers
 
@@ -76,7 +76,7 @@ export function ChatPanel(props: Props) {
 
         {/* //* Bar Middle */}
         <div className="">
-          <h2>{panelTitle}</h2>
+          <h2>{panel.title}</h2>
         </div>
 
         {/* //* Bar Right */}

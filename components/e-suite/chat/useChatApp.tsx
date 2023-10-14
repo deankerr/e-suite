@@ -15,7 +15,7 @@ const rootPrompt = 'Format your answers using Markdown.'
 export function useChatApp(config: useChatAppConfig, prompt: string) {
   const { id, api, parameters } = config
 
-  //* set up
+  //* create initial messages
   const [initialMessages] = useState<Message[]>(() => {
     const rootMessage = createMessage('system', rootPrompt, { id: `R00T${numId()}` })
     rootMessage.hidden = true
@@ -35,7 +35,7 @@ export function useChatApp(config: useChatAppConfig, prompt: string) {
 
   const chatHelpers = useChat({
     id,
-    api,
+    api: api.endpoint,
     initialMessages: [...initialMessages],
     body: { ...parameters },
     headers: {
