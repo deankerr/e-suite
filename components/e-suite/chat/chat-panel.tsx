@@ -80,7 +80,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         <div className="flex w-[50%]">
           <Combobox
             items={modelsComboList}
-            buttonProps={{ className: 'w-[230px]' }}
+            buttonProps={{ className: 'w-[140px] sm:w-[230px] px-1' }}
             popoverProps={{ className: 'w-[230px]' }}
             selectText="Select model..."
             searchText="Search model..."
@@ -96,15 +96,6 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
 
         {/* //* Bar Right */}
         <div className="flex w-[50%] justify-end">
-          <ChatBarMenuItem
-            label={<FaceIcon />}
-            heading="Debug"
-            items={[
-              ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
-              ['Add code', () => setMessages([...messages, ...sampleCode])],
-              ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
-            ]}
-          />
           <Button variant="outline" size="icon">
             <MixerHorizontalIcon />
           </Button>
@@ -120,19 +111,20 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
-        <div>
-          {session.parameters.provider} {session.parameters.model} stream:{' '}
-          {String(session.parameters.stream)}
-        </div>
+        <ChatMessageBubble
+          message={{
+            id: 'debug',
+            role: 'system',
+            content: `${selectedModel} stream: ${session.parameters.stream}`,
+          }}
+        />
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
-
         {/* //* Awaiting Response Indicator */}
         {isLoading && !isLastMessageStreaming ? (
           <ChatMessageBubble message={null} showLoader={true} />
         ) : null}
-
         {/* //* Auto Scroll Target */}
         <div id="scroll-to-btm-observer" ref={bottomRef} className="w-full" />
       </div>
@@ -151,6 +143,15 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
       </div>
 
       {/* //* Input Panel */}
+      <ChatBarMenuItem
+        label={<FaceIcon />}
+        heading="Debug"
+        items={[
+          ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
+          ['Add code', () => setMessages([...messages, ...sampleCode])],
+          ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
+        ]}
+      />
       <ChatInputPanel chatHelpers={chatHelpers} />
     </div>
   )

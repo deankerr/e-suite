@@ -44,7 +44,7 @@ export function ChatApp({ modelsAvailable }: Props) {
       {/* //* Header Bar */}
       <div
         id="ui-header"
-        className="fixed top-0 flex w-screen flex-row items-center justify-between bg-background px-8 py-1 text-foreground"
+        className="fixed top-0 flex w-full flex-row items-center justify-between gap-1 bg-background px-2 py-1 text-foreground md:px-8"
       >
         <div className="w-[50%]">
           <h1 className={cn('text-xl font-extrabold tracking-tight')}>e/suite</h1>
@@ -61,6 +61,7 @@ export function ChatApp({ modelsAvailable }: Props) {
                   chat.panel.active = pressed
                 })
               }}
+              className="px-1 sm:px-3"
               key={id}
             >
               {chatSessions[id]?.panel.title}

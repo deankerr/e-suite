@@ -1,10 +1,10 @@
 import { Markdown } from '@/components/markdown'
 import { cn } from '@/lib/utils'
-import { ChatMessage } from './useChatApp'
+import { ChatMessage } from './types'
 
 type Props = {
   message: ChatMessage | null
-  showLoader: boolean
+  showLoader?: boolean
 }
 
 export function ChatMessageBubble({ message, showLoader }: Props) {

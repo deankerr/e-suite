@@ -18,48 +18,22 @@ export const initialChatsConfig: ChatSession[] = [
     parameters: { ...defaultParameters },
   },
   {
-    id: 'H3',
-    api: defaultApi,
-    panel: { title: 'Hideko', active: true },
-    parameters: { ...defaultParameters },
-  },
-  {
     id: 'P1',
     api: defaultApi,
-    panel: { title: 'Piñata', active: false },
-    parameters: { ...defaultParameters },
+    panel: { title: 'Piñata', active: true },
+    parameters: { provider: 'openrouter', model: 'meta-llama/llama-2-70b-chat', stream: true },
   },
+  {
+    id: 'H3',
+    api: defaultApi,
+    panel: { title: 'Hideko', active: false },
+    parameters: { provider: 'openrouter', model: 'migtissera/synthia-70b', stream: true },
+  },
+
   {
     id: 'E4',
     api: defaultApi,
     panel: { title: 'Ernest', active: false },
-    parameters: { ...defaultParameters },
-  },
-]
-
-export const modelsBoxList = [
-  {
-    value: 'gpt-3.5-turbo',
-    label: 'OpenAI: GPT-3.5 Turbo',
-  },
-  {
-    value: 'gpt-4',
-    label: 'OpenAI: GPT-4',
-  },
-  {
-    value: 'meta-llama/llama-2-70b-chat',
-    label: 'Meta: Llama v2 70B Chat',
-  },
-  {
-    value: 'jondurbin/airoboros-l2-70b',
-    label: 'Airoboros L2 70B',
-  },
-  {
-    value: 'migtissera/synthia-70b',
-    label: 'Synthia 70B',
-  },
-  {
-    value: 'xwin-lm/xwin-lm-70b',
-    label: 'Xwin 70B',
+    parameters: { provider: 'openrouter', model: 'xwin-lm/xwin-lm-70b', stream: true },
   },
 ]
