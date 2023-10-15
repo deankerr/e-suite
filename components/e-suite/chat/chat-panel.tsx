@@ -11,7 +11,7 @@ import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 import type { ChatModelOption, ChatSession } from './types'
-import { useChatApp } from './useChatApp'
+import { useChatApp } from './use-chat-app'
 
 type Props = {
   session: ChatSession
