@@ -2,6 +2,7 @@ import { createErrorResponse } from '@/lib/api'
 import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
+import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[provider/openai] ' })
 
@@ -58,3 +59,27 @@ async function image(input: OpenAI.ImageGenerateParams) {
     }
   }
 }
+
+export const schemaOpenAIChatRequest = z.object({
+  model: z.string(),
+  messages: z.array(
+    z.object({
+      role: z.enum(['user', 'assistant', 'system']),
+      name: z.string().optional(),
+      content: z.string(),
+    }),
+  ),
+  stream: z.union([z.boolean(), z.null()]),
+
+  frequency_penalty: z.union([z.number(), z.null()]).optional(),
+  function_call: z.unknown().optional(), // TODO
+  functions: z.unknown().optional(), // TODO
+  logit_bias: z.union([z.record(z.number()), z.null()]).optional(),
+  max_tokens: z.union([z.number(), z.null()]).optional(),
+  n: z.union([z.number(), z.null()]).optional(),
+  presence_penalty: z.union([z.number(), z.null()]).optional(),
+  stop: z.union([z.string(), z.null(), z.string().array()]).optional(),
+  temperature: z.union([z.number(), z.null()]).optional(),
+  top_p: z.union([z.number(), z.null()]).optional(),
+  user: z.string().optional(),
+})

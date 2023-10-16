@@ -3,11 +3,12 @@
 import { ChatPanel } from '@/components/e-suite/chat/chat-panel'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Toggle } from '@/components/ui/toggle'
+import { ChatModelOption } from '@/lib/api'
 import { cn, raise } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { DraftFunction, useImmer } from 'use-immer'
 import { initialChatsConfig } from './config'
-import { ChatModelOption, ChatSession } from './types'
+import { ChatSession } from './types'
 
 type Props = {
   modelsAvailable: ChatModelOption[]
@@ -36,8 +37,8 @@ export function ChatApp({ modelsAvailable }: Props) {
   const [panels, setPanels] = useState(() => initialChatsConfig.map((c) => c.id))
 
   useEffect(() => {
-    console.log(chatSessions)
-  }, [chatSessions])
+    console.log(chatSessions, modelsAvailable)
+  }, [chatSessions, modelsAvailable])
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[2.75rem_minmax(0,_1fr)]">

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Combobox } from '@/components/ui/combobox'
+import { ChatModelOption } from '@/lib/api'
 import { cn, raise } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
@@ -9,8 +9,9 @@ import { useInView } from 'react-intersection-observer'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
+import { ModelConfigPanel } from './model-config-panel'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
-import type { ChatModelOption, ChatSession } from './types'
+import type { ChatSession } from './types'
 import { useChatApp } from './use-chat-app'
 
 type Props = {
@@ -23,20 +24,6 @@ const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title
 
 export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
   const { panel } = session
-
-  //* model selection
-  const modelsComboList = modelsAvailable.map((m) => ({
-    value: `${m.provider}::${m.model}`,
-    label: m.label,
-  }))
-  const handleModelSelect = (selected: string) => {
-    updateSession((s) => {
-      const [provider, model] = selected.split('::')
-      s.parameters.provider = provider ?? raise('invalid provider')
-      s.parameters.model = model ?? raise('invalid model')
-    })
-  }
-  const selectedModel = `${session.parameters.provider}::${session.parameters.model}`
 
   //* chat configuration
   const prompt = defaultPrompt.replace('%%title%%', session.panel.title)
@@ -77,17 +64,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium"
       >
         {/* //* Bar Left */}
-        <div className="flex w-[50%]">
-          <Combobox
-            items={modelsComboList}
-            buttonProps={{ className: 'w-[140px] sm:w-[230px] px-1' }}
-            popoverProps={{ className: 'w-[230px]' }}
-            selectText="Select model..."
-            searchText="Search model..."
-            value={selectedModel}
-            onSelect={handleModelSelect}
-          />
-        </div>
+        <div className="flex w-[50%]"></div>
 
         {/* //* Bar Middle */}
         <div className="">
@@ -111,11 +88,16 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
+        <ModelConfigPanel
+          session={session}
+          updateSession={updateSession}
+          modelsAvailable={modelsAvailable}
+        />
         <ChatMessageBubble
           message={{
             id: 'debug',
             role: 'system',
-            content: `${selectedModel} stream: ${session.parameters.stream}`,
+            content: `${session.parameters.provider}::${session.parameters.model} stream: ${session.parameters.stream}`,
           }}
         />
         {messages.map((m) => (
