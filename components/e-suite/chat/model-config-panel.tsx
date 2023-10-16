@@ -41,12 +41,12 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
   }
 
   return (
-    <div className="w-full space-y-2 rounded-md border-2 px-4 py-2">
+    <div className="w-full space-y-2 rounded-md border-2 px-1 py-2">
       <div className="text-center text-sm">
         ModelConfigPanel - {session.id} {panel.title}
       </div>
 
-      <div className="flex gap-2 px-2 py-1">
+      <div className="flex flex-wrap justify-center gap-2 px-2 py-1">
         <ModelsCombobox
           session={session}
           updateSession={updateSession}
@@ -151,13 +151,21 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         </div>
 
         <div className="w-full space-y-1">
-          {stop.map((v) => (
+          {stop.map((v, i) => (
             <Badge
               className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
               key={v}
             >
               {v}
-              <Button className="h-5 w-7" variant="ghost" size="icon" onClick={handleStopInput}>
+              <Button
+                className="h-5 w-7"
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  const newStop = stop.filter((_, _i) => i !== _i)
+                  updateSession((s) => (s.parameters.stop = newStop))
+                }}
+              >
                 <CrossCircledIcon />
               </Button>
             </Badge>
