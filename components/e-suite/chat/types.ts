@@ -1,4 +1,6 @@
+import type { SchemaOpenAIChatRequest } from '@/lib/providers'
 import type { Message } from 'ai'
+import type { OpenAI } from 'openai'
 
 export type ChatSession = {
   id: Readonly<string>
@@ -18,6 +20,6 @@ export type ChatInferenceParameters = {
   provider: string
   model: string
   stream: boolean
-}
+} & OpenAI.Chat.ChatCompletionCreateParams
 
 export type ChatMessage = Message & { hidden?: boolean }

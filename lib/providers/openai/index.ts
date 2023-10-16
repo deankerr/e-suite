@@ -64,7 +64,7 @@ export const schemaOpenAIChatRequest = z.object({
   model: z.string(),
   messages: z.array(
     z.object({
-      role: z.enum(['user', 'assistant', 'system']),
+      role: z.enum(['user', 'assistant', 'system', 'function']),
       name: z.string().optional(),
       content: z.string(),
     }),
@@ -83,3 +83,4 @@ export const schemaOpenAIChatRequest = z.object({
   top_p: z.union([z.number(), z.null()]).optional(),
   user: z.string().optional(),
 })
+export type SchemaOpenAIChatRequest = z.infer<typeof schemaOpenAIChatRequest>

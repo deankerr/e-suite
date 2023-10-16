@@ -6,6 +6,7 @@ import { cn, raise } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
+import * as R from 'remeda'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
@@ -23,7 +24,7 @@ type Props = {
 const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title%%.'
 
 export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
-  const { panel } = session
+  const { panel, parameters } = session
 
   //* chat configuration
   const prompt = defaultPrompt.replace('%%title%%', session.panel.title)
@@ -52,6 +53,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
   useEffect(() => scrollToBottom(), [messages])
   const [bottomRef, bottomIsVisible] = useInView()
 
+  const _params = Object.entries(parameters).map(([key, value]) => ` ${key}: ${value}`)
   return (
     <div
       id="e-chat-panel"
@@ -93,11 +95,12 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
           updateSession={updateSession}
           modelsAvailable={modelsAvailable}
         />
+        {/* //# Debug Panel */}
         <ChatMessageBubble
           message={{
             id: 'debug',
             role: 'system',
-            content: `${session.parameters.provider}::${session.parameters.model} stream: ${session.parameters.stream}`,
+            content: `${_params}`,
           }}
         />
         {messages.map((m) => (
