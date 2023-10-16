@@ -30,12 +30,14 @@ export function ChatApp({ modelsAvailable }: Props) {
       setChatSessions((chats) => {
         const chat = chats[id] ?? raise('no chat session with this id')
         fn(chat)
+        console.log('chat update:', chatSessions[id])
       })
     }
   }
 
   const [panels, setPanels] = useState(() => initialChatsConfig.map((c) => c.id))
 
+  // debug log
   useEffect(() => {
     console.log(chatSessions, modelsAvailable)
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -41,7 +41,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
   }
 
   return (
-    <div className="w-full space-y-2 rounded-md border-2 px-1 py-2">
+    <>
       <div className="text-center text-sm">
         ModelConfigPanel - {session.id} {panel.title}
       </div>
@@ -70,7 +70,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
       </div>
 
       {/* //* temperature */}
-      <OptionalControl label="temperature" enabled={true}>
+      <OptionalControl label="temperature" enabled={false}>
         <SliderInput
           id="temperature"
           min={0}
@@ -172,7 +172,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
           ))}
         </div>
       </OptionalControl>
-    </div>
+    </>
   )
 }
 
@@ -186,14 +186,13 @@ type OptionalControl = {
 
 function OptionalControl({ label, enabled, children, className, ...props }: OptionalControl) {
   const id = props.id ?? label
-
   return (
     <div className={cn('flex w-full flex-col items-center px-2 py-1 font-mono', className)}>
       <div className="flex w-full items-center justify-start gap-3">
-        <Switch />
+        <Switch checked={enabled} />
         <Label htmlFor={id}>{label}</Label>
       </div>
-      {children}
+      <div className={cn('w-full', !enabled && 'opacity-50')}>{children}</div>
     </div>
   )
 }
@@ -206,8 +205,17 @@ type SliderInputProps = {
   value: number
   onChange: (value: number | undefined) => void
   decimal?: number
+  disabled?: boolean
 }
-function SliderInput({ id, min, max, step, decimal, ...props }: SliderInputProps) {
+function SliderInput({
+  id,
+  min,
+  max,
+  step,
+  decimal,
+  disabled = false,
+  ...props
+}: SliderInputProps) {
   const valueNumber = props.value
   const valueFixed = decimal ? valueNumber.toFixed(decimal) : valueNumber
 
@@ -225,6 +233,7 @@ function SliderInput({ id, min, max, step, decimal, ...props }: SliderInputProps
         value={[valueNumber]}
         onValueChange={([v]) => handleInputChange(v)}
         minStepsBetweenThumbs={step}
+        disabled={disabled}
       />
       <Input
         className="w-20 px-1 text-right"
@@ -235,6 +244,7 @@ function SliderInput({ id, min, max, step, decimal, ...props }: SliderInputProps
         step={step}
         value={valueFixed}
         onChange={(v) => handleInputChange(v.target.value)}
+        disabled={disabled}
       />
     </div>
   )

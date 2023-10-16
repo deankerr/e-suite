@@ -50,7 +50,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
   }
 
   //* auto scroll on message change
-  useEffect(() => scrollToBottom(), [messages])
+  useEffect(() => scrollToBottom(), [messages.length])
   const [bottomRef, bottomIsVisible] = useInView()
 
   const _params = Object.entries(parameters).map(([key, value]) => ` ${key}: ${value}`)
@@ -90,22 +90,19 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
-        <ModelConfigPanel
-          session={session}
-          updateSession={updateSession}
-          modelsAvailable={modelsAvailable}
-        />
-        {/* //# Debug Panel */}
-        <ChatMessageBubble
-          message={{
-            id: 'debug',
-            role: 'system',
-            content: `${_params}`,
-          }}
-        />
+        {/* ParameterConfig */}
+        <div className="w-11/12 space-y-2 rounded-md border-2 px-1 py-2">
+          <ModelConfigPanel
+            session={session}
+            updateSession={updateSession}
+            modelsAvailable={modelsAvailable}
+          />
+        </div>
+
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
+
         {/* //* Awaiting Response Indicator */}
         {isLoading && !isLastMessageStreaming ? (
           <ChatMessageBubble message={null} showLoader={true} />
