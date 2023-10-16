@@ -1,9 +1,12 @@
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { ChatModelOption } from '@/lib/api'
-import { raise } from '@/lib/utils'
+import { CrossCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
+import { useState } from 'react'
 import { ModelsCombobox } from './models-combobox'
 import { ChatSession } from './types'
 
@@ -16,10 +19,25 @@ type Props = {
 export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Props) {
   const { parameters, panel } = session
 
-  const { frequency_penalty, presence_penalty, stream, max_tokens, n, temperature, top_p, stop } =
+  const { frequency_penalty, presence_penalty, stream, max_tokens, n, temperature, top_p } =
     parameters
 
   const max_tokensMax = 4097 // TODO
+
+  // coerce to string[]
+  const stop = Array.isArray(parameters.stop)
+    ? parameters.stop
+    : parameters.stop == null
+    ? []
+    : [parameters.stop]
+
+  const [stopInputValue, setStopInputValue] = useState('')
+  const handleStopInput = () => {
+    if (!stopInputValue || stop.includes(stopInputValue)) return
+    updateSession((s) => (s.parameters.stop = [...stop, stopInputValue]))
+    setStopInputValue('')
+  }
+
   return (
     <div className="w-full space-y-2 bg-muted p-2">
       <div className="text-center text-sm">
@@ -84,14 +102,46 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
       />
 
       {/* //* stop */}
-      <div className="flex flex-col items-center font-mono">
+      <div className="flex w-full flex-col items-center font-mono">
         <Label htmlFor="stop">stop</Label>
 
-        <div className="flex space-x-1">
-          <Input id="stop_1" />
-          <Input id="stop_2" />
-          <Input id="stop_3" />
-          <Input id="stop_4" />
+        {/* //* input */}
+        <div className="flex gap-2 px-3 py-2">
+          <Input
+            className="font-sans"
+            id="add_stop"
+            value={stopInputValue}
+            onChange={(e) => setStopInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.metaKey) handleStopInput()
+            }}
+          />
+          <Button variant="outline" size="icon" onClick={handleStopInput}>
+            <PlusCircledIcon />
+          </Button>
+        </div>
+
+        {/* //* values */}
+        <div className="w-full space-y-1">
+          {stop.map((v, i) => (
+            <Badge
+              className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
+              key={v}
+            >
+              {v}
+              <Button
+                className="h-5 w-7"
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  const newStop = stop.filter((_, _i) => i !== _i)
+                  updateSession((s) => (s.parameters.stop = newStop))
+                }}
+              >
+                <CrossCircledIcon />
+              </Button>
+            </Badge>
+          ))}
         </div>
       </div>
 

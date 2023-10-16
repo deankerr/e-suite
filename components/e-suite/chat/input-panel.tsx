@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import { UseChatHelpers } from 'ai/react'
-import { ChangeEvent, FormEvent, useEffect, useRef } from 'react'
-import type { CreateBubble } from './useBubbles'
+import { useEffect, useRef } from 'react'
 
 type Props = {
   chatHelpers: UseChatHelpers
