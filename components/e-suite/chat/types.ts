@@ -20,6 +20,6 @@ export type ChatInferenceParameters = {
   provider: string
   model: string
   stream: boolean
-} & OpenAI.Chat.ChatCompletionCreateParams
+} & Partial<OpenAI.Chat.ChatCompletionCreateParams>
 
 export type ChatMessage = Message & { hidden?: boolean }

@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -39,34 +40,57 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
   }
 
   return (
-    <div className="w-full space-y-2 bg-muted p-2">
+    <div className="w-full space-y-3 rounded-md border-2 px-4 py-2">
       <div className="text-center text-sm">
         ModelConfigPanel - {session.id} {panel.title}
       </div>
 
-      <ModelsCombobox
-        session={session}
-        updateSession={updateSession}
-        modelsAvailable={modelsAvailable}
-      />
-
-      <div className="flex items-center space-x-2">
-        <Label htmlFor="stream">Stream</Label>
-        <Switch
-          id="stream"
-          checked={stream}
-          onCheckedChange={(checked) => updateSession((s) => (s.parameters.stream = checked))}
+      <div className="flex gap-2 pb-1">
+        <ModelsCombobox
+          session={session}
+          updateSession={updateSession}
+          modelsAvailable={modelsAvailable}
         />
+
+        <div className="flex items-center space-x-2 rounded-md border px-2">
+          <Switch
+            id="stream"
+            checked={stream}
+            onCheckedChange={(checked) => updateSession((s) => (s.parameters.stream = checked))}
+          />
+          <Label htmlFor="stream">Stream</Label>
+        </div>
       </div>
 
-      {/* // TODO n */}
+      {/* //* temperature */}
       <SliderInput
+        label="temperature"
+        min={0}
+        max={2}
+        step={0.01}
+        value={temperature ?? 1}
+        onChange={(v) => updateSession((s) => (s.parameters.temperature = v))}
+        decimal={2}
+      />
+
+      {/* // TODO n */}
+      {/* <SliderInput
         label="n"
         min={1}
         max={10}
         step={1}
         value={n ?? 1}
         onChange={(v) => updateSession((s) => (s.parameters.n = v))}
+      /> */}
+
+      {/* //* max_tokens */}
+      <SliderInput
+        label="max_tokens"
+        min={1}
+        max={max_tokensMax}
+        step={1}
+        value={max_tokens ?? max_tokensMax}
+        onChange={(v) => updateSession((s) => (s.parameters.max_tokens = v))}
       />
 
       {/* //* frequency_penalty */}
@@ -91,71 +115,6 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         decimal={2}
       />
 
-      {/* //* max_tokens */}
-      <SliderInput
-        label="max_tokens"
-        min={1}
-        max={max_tokensMax}
-        step={1}
-        value={max_tokens ?? max_tokensMax}
-        onChange={(v) => updateSession((s) => (s.parameters.max_tokens = v))}
-      />
-
-      {/* //* stop */}
-      <div className="flex w-full flex-col items-center font-mono">
-        <Label htmlFor="stop">stop</Label>
-
-        {/* //* input */}
-        <div className="flex gap-2 px-3 py-2">
-          <Input
-            className="font-sans"
-            id="add_stop"
-            value={stopInputValue}
-            onChange={(e) => setStopInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.metaKey) handleStopInput()
-            }}
-          />
-          <Button variant="outline" size="icon" onClick={handleStopInput}>
-            <PlusCircledIcon />
-          </Button>
-        </div>
-
-        {/* //* values */}
-        <div className="w-full space-y-1">
-          {stop.map((v, i) => (
-            <Badge
-              className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
-              key={v}
-            >
-              {v}
-              <Button
-                className="h-5 w-7"
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  const newStop = stop.filter((_, _i) => i !== _i)
-                  updateSession((s) => (s.parameters.stop = newStop))
-                }}
-              >
-                <CrossCircledIcon />
-              </Button>
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      {/* //* temperature */}
-      <SliderInput
-        label="temperature"
-        min={0}
-        max={2}
-        step={0.01}
-        value={temperature ?? 1}
-        onChange={(v) => updateSession((s) => (s.parameters.temperature = v))}
-        decimal={2}
-      />
-
       {/* //* top_p */}
       <SliderInput
         label="top_p"
@@ -166,6 +125,45 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         onChange={(v) => updateSession((s) => (s.parameters.top_p = v))}
         decimal={2}
       />
+
+      {/* //* stop */}
+      <div className="flex w-full flex-col items-center space-y-1 font-mono">
+        <div className="flex w-full items-center gap-2">
+          <Switch />
+          <Label htmlFor="stop">stop</Label>
+        </div>
+
+        {/* //* stop input */}
+        <div className="flex w-full gap-2">
+          <Input
+            className="font-sans"
+            id="add_stop"
+            value={stopInputValue}
+            onChange={(e) => setStopInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.metaKey) handleStopInput()
+            }}
+          />
+          <Button variant="outline" onClick={handleStopInput}>
+            <PlusCircledIcon />
+          </Button>
+        </div>
+
+        {/* //* stop values */}
+        <div className="w-full space-y-1">
+          {stop.map((v, i) => (
+            <Badge
+              className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
+              key={v}
+            >
+              {v}
+              <Button className="h-5 w-7" variant="ghost" size="icon" onClick={handleStopInput}>
+                <CrossCircledIcon />
+              </Button>
+            </Badge>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -192,7 +190,11 @@ function SliderInput({ label, min, max, step, decimal, ...props }: SliderInputPr
 
   return (
     <div className="flex flex-col items-center font-mono">
-      <Label htmlFor={id}>{label}</Label>
+      <div className="flex w-full items-center gap-3">
+        {/* <Checkbox /> */}
+        <Switch />
+        <Label htmlFor={id}>{label}</Label>
+      </div>
       <div className="flex w-full space-x-1">
         <Slider
           id={`${id}_slider`}
