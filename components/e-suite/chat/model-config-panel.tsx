@@ -59,6 +59,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         step={0.01}
         value={frequency_penalty ?? 0}
         onChange={(v) => updateSession((s) => (s.parameters.frequency_penalty = v))}
+        decimal={2}
       />
 
       {/* //* presence_penalty */}
@@ -69,6 +70,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         step={0.01}
         value={presence_penalty ?? 0}
         onChange={(v) => updateSession((s) => (s.parameters.presence_penalty = v))}
+        decimal={2}
       />
 
       {/* //* max_tokens */}
@@ -77,12 +79,12 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         min={1}
         max={max_tokensMax}
         step={1}
-        value={max_tokens ?? Infinity}
+        value={max_tokens ?? max_tokensMax}
         onChange={(v) => updateSession((s) => (s.parameters.max_tokens = v))}
       />
 
       {/* //* stop */}
-      <div className="flex flex-col items-center space-x-2 space-y-1 font-mono">
+      <div className="flex flex-col items-center font-mono">
         <Label htmlFor="stop">stop</Label>
 
         <div className="flex space-x-1">
@@ -101,6 +103,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         step={0.01}
         value={temperature ?? 1}
         onChange={(v) => updateSession((s) => (s.parameters.temperature = v))}
+        decimal={2}
       />
 
       {/* //* top_p */}
@@ -111,6 +114,7 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
         step={0.01}
         value={top_p ?? 1}
         onChange={(v) => updateSession((s) => (s.parameters.top_p = v))}
+        decimal={2}
       />
     </div>
   )
@@ -124,15 +128,20 @@ type SliderInputProps = {
   step: number
   value: number
   onChange: (value: number | undefined) => void
+  decimal?: number
 }
-function SliderInput({ label, min, max, step, value, ...props }: SliderInputProps) {
+function SliderInput({ label, min, max, step, decimal, ...props }: SliderInputProps) {
   const id = props.id ?? label
+
+  const valueNumber = props.value
+  const valueFixed = decimal ? valueNumber.toFixed(decimal) : valueNumber
+
   const handleInputChange = (value: string | number | undefined) => {
     props.onChange(typeof value === 'undefined' ? value : Number(value))
   }
 
   return (
-    <div className="flex w-full flex-col items-center space-x-2 space-y-0 font-mono">
+    <div className="flex flex-col items-center font-mono">
       <Label htmlFor={id}>{label}</Label>
       <div className="flex w-full space-x-1">
         <Slider
@@ -140,18 +149,18 @@ function SliderInput({ label, min, max, step, value, ...props }: SliderInputProp
           min={min}
           max={max}
           step={step}
-          value={[value]}
+          value={[valueNumber]}
           onValueChange={([v]) => handleInputChange(v)}
           minStepsBetweenThumbs={step}
         />
         <Input
-          className="w-20 pr-[0.25rem]"
+          className="w-20 px-1 text-right"
           id={id}
           type="number"
           min={min}
           max={max}
           step={step}
-          value={value}
+          value={valueFixed}
           onChange={(v) => handleInputChange(v.target.value)}
         />
       </div>
