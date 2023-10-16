@@ -22,19 +22,23 @@ export const initialChatsConfig: ChatSession[] = [
     id: 'P1',
     api: defaultApi,
     panel: { title: 'Piñata', active: true },
-    parameters: { provider: 'openrouter', model: 'meta-llama/llama-2-70b-chat', stream: true },
+    parameters: {
+      ...defaultParameters,
+      provider: 'openrouter',
+      model: 'meta-llama/llama-2-70b-chat',
+    },
   },
   {
     id: 'H3',
     api: defaultApi,
     panel: { title: 'Hideko', active: false },
-    parameters: { provider: 'openrouter', model: 'migtissera/synthia-70b', stream: true },
+    parameters: { ...defaultParameters, provider: 'openrouter', model: 'migtissera/synthia-70b' },
   },
 
   {
     id: 'E4',
     api: defaultApi,
     panel: { title: 'Ernest', active: false },
-    parameters: { provider: 'openrouter', model: 'xwin-lm/xwin-lm-70b', stream: true },
+    parameters: { ...defaultParameters, provider: 'openrouter', model: 'xwin-lm/xwin-lm-70b' },
   },
 ]

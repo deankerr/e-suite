@@ -38,7 +38,8 @@ export function ChatApp({ modelsAvailable }: Props) {
 
   useEffect(() => {
     console.log(chatSessions, modelsAvailable)
-  }, [chatSessions, modelsAvailable])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="bg-grid-grey grid h-[100svh] grid-rows-[2.75rem_minmax(0,_1fr)]">

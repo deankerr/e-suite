@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { ChatModelOption } from '@/lib/api'
+import { cn } from '@/lib/utils'
 import { CrossCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { ModelsCombobox } from './models-combobox'
@@ -40,12 +41,12 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
   }
 
   return (
-    <div className="w-full space-y-3 rounded-md border-2 px-4 py-2">
+    <div className="w-full space-y-2 rounded-md border-2 px-4 py-2">
       <div className="text-center text-sm">
         ModelConfigPanel - {session.id} {panel.title}
       </div>
 
-      <div className="flex gap-2 pb-1">
+      <div className="flex gap-2 px-2 py-1">
         <ModelsCombobox
           session={session}
           updateSession={updateSession}
@@ -60,81 +61,81 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
           />
           <Label htmlFor="stream">Stream</Label>
         </div>
+
+        <div className="flex items-center space-x-2 rounded-md border pl-2">
+          <Switch disabled />
+          <Label htmlFor="n">n</Label>
+          <Input type="number" placeholder="1" className="w-14 px-1 text-right" disabled />
+        </div>
       </div>
 
       {/* //* temperature */}
-      <SliderInput
-        label="temperature"
-        min={0}
-        max={2}
-        step={0.01}
-        value={temperature ?? 1}
-        onChange={(v) => updateSession((s) => (s.parameters.temperature = v))}
-        decimal={2}
-      />
-
-      {/* // TODO n */}
-      {/* <SliderInput
-        label="n"
-        min={1}
-        max={10}
-        step={1}
-        value={n ?? 1}
-        onChange={(v) => updateSession((s) => (s.parameters.n = v))}
-      /> */}
+      <OptionalControl label="temperature" enabled={true}>
+        <SliderInput
+          id="temperature"
+          min={0}
+          max={2}
+          step={0.01}
+          value={temperature ?? 1}
+          onChange={(v) => updateSession((s) => (s.parameters.temperature = v))}
+          decimal={2}
+        />
+      </OptionalControl>
 
       {/* //* max_tokens */}
-      <SliderInput
-        label="max_tokens"
-        min={1}
-        max={max_tokensMax}
-        step={1}
-        value={max_tokens ?? max_tokensMax}
-        onChange={(v) => updateSession((s) => (s.parameters.max_tokens = v))}
-      />
+      <OptionalControl label="max_tokens" enabled={true}>
+        <SliderInput
+          id="max_tokens"
+          min={1}
+          max={max_tokensMax}
+          step={1}
+          value={max_tokens ?? max_tokensMax}
+          onChange={(v) => updateSession((s) => (s.parameters.max_tokens = v))}
+        />
+      </OptionalControl>
 
       {/* //* frequency_penalty */}
-      <SliderInput
-        label="frequency_penalty"
-        min={-2.0}
-        max={2.0}
-        step={0.01}
-        value={frequency_penalty ?? 0}
-        onChange={(v) => updateSession((s) => (s.parameters.frequency_penalty = v))}
-        decimal={2}
-      />
+      <OptionalControl label="frequency_penalty" enabled={true}>
+        <SliderInput
+          id="frequency_penalty"
+          min={-2.0}
+          max={2.0}
+          step={0.01}
+          value={frequency_penalty ?? 0}
+          onChange={(v) => updateSession((s) => (s.parameters.frequency_penalty = v))}
+          decimal={2}
+        />
+      </OptionalControl>
 
       {/* //* presence_penalty */}
-      <SliderInput
-        label="presence_penalty"
-        min={-2.0}
-        max={2.0}
-        step={0.01}
-        value={presence_penalty ?? 0}
-        onChange={(v) => updateSession((s) => (s.parameters.presence_penalty = v))}
-        decimal={2}
-      />
+      <OptionalControl label="presence_penalty" enabled={true}>
+        <SliderInput
+          id="presence_penalty"
+          min={-2.0}
+          max={2.0}
+          step={0.01}
+          value={presence_penalty ?? 0}
+          onChange={(v) => updateSession((s) => (s.parameters.presence_penalty = v))}
+          decimal={2}
+        />
+      </OptionalControl>
 
       {/* //* top_p */}
-      <SliderInput
-        label="top_p"
-        min={0}
-        max={2}
-        step={0.01}
-        value={top_p ?? 1}
-        onChange={(v) => updateSession((s) => (s.parameters.top_p = v))}
-        decimal={2}
-      />
+      <OptionalControl label="top_p" enabled={true}>
+        <SliderInput
+          id="top_p"
+          min={0}
+          max={2}
+          step={0.01}
+          value={top_p ?? 1}
+          onChange={(v) => updateSession((s) => (s.parameters.top_p = v))}
+          decimal={2}
+        />
+      </OptionalControl>
 
       {/* //* stop */}
-      <div className="flex w-full flex-col items-center space-y-1 font-mono">
-        <div className="flex w-full items-center gap-2">
-          <Switch />
-          <Label htmlFor="stop">stop</Label>
-        </div>
-
-        {/* //* stop input */}
-        <div className="flex w-full gap-2">
+      <OptionalControl label="stop" enabled={true} className="space-y-2">
+        <div className="mt-1 flex w-full gap-2">
           <Input
             className="font-sans"
             id="add_stop"
@@ -149,9 +150,8 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
           </Button>
         </div>
 
-        {/* //* stop values */}
         <div className="w-full space-y-1">
-          {stop.map((v, i) => (
+          {stop.map((v) => (
             <Badge
               className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
               key={v}
@@ -163,14 +163,35 @@ export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Pr
             </Badge>
           ))}
         </div>
+      </OptionalControl>
+    </div>
+  )
+}
+
+type OptionalControl = {
+  label: string
+  id?: string
+  enabled: boolean
+  children?: React.ReactNode
+  className?: string
+}
+
+function OptionalControl({ label, enabled, children, className, ...props }: OptionalControl) {
+  const id = props.id ?? label
+
+  return (
+    <div className={cn('flex w-full flex-col items-center px-2 py-1 font-mono', className)}>
+      <div className="flex w-full items-center justify-start gap-3">
+        <Switch />
+        <Label htmlFor={id}>{label}</Label>
       </div>
+      {children}
     </div>
   )
 }
 
 type SliderInputProps = {
-  label: string
-  id?: string
+  id: string
   min: number
   max: number
   step: number
@@ -178,9 +199,7 @@ type SliderInputProps = {
   onChange: (value: number | undefined) => void
   decimal?: number
 }
-function SliderInput({ label, min, max, step, decimal, ...props }: SliderInputProps) {
-  const id = props.id ?? label
-
+function SliderInput({ id, min, max, step, decimal, ...props }: SliderInputProps) {
   const valueNumber = props.value
   const valueFixed = decimal ? valueNumber.toFixed(decimal) : valueNumber
 
@@ -189,33 +208,26 @@ function SliderInput({ label, min, max, step, decimal, ...props }: SliderInputPr
   }
 
   return (
-    <div className="flex flex-col items-center font-mono">
-      <div className="flex w-full items-center gap-3">
-        {/* <Checkbox /> */}
-        <Switch />
-        <Label htmlFor={id}>{label}</Label>
-      </div>
-      <div className="flex w-full space-x-1">
-        <Slider
-          id={`${id}_slider`}
-          min={min}
-          max={max}
-          step={step}
-          value={[valueNumber]}
-          onValueChange={([v]) => handleInputChange(v)}
-          minStepsBetweenThumbs={step}
-        />
-        <Input
-          className="w-20 px-1 text-right"
-          id={id}
-          type="number"
-          min={min}
-          max={max}
-          step={step}
-          value={valueFixed}
-          onChange={(v) => handleInputChange(v.target.value)}
-        />
-      </div>
+    <div className="flex w-full space-x-1">
+      <Slider
+        id={`${id}_slider`}
+        min={min}
+        max={max}
+        step={step}
+        value={[valueNumber]}
+        onValueChange={([v]) => handleInputChange(v)}
+        minStepsBetweenThumbs={step}
+      />
+      <Input
+        className="w-20 px-1 text-right"
+        id={id}
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={valueFixed}
+        onChange={(v) => handleInputChange(v.target.value)}
+      />
     </div>
   )
 }
