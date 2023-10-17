@@ -1,4 +1,4 @@
-import type { SchemaOpenAIChatRequest } from '@/lib/providers'
+import { OpenAIInferenceParameters } from '@/lib/providers'
 import type { Message } from 'ai'
 import type { OpenAI } from 'openai'
 
@@ -18,12 +18,6 @@ export type ChatPanelState = {
 
 export type ChatInferenceParameters = {
   provider: string
-  model: string
-  stream: boolean
-} & ExcludeNullProps<OpenAI.Chat.ChatCompletionCreateParams>
+} & Partial<OpenAIInferenceParameters>
 
 export type ChatMessage = Message & { hidden?: boolean }
-
-type ExcludeNullProps<T> = {
-  [P in keyof T]: Exclude<T[P], null>
-}

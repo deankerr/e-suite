@@ -22,13 +22,13 @@ type Props = {
 export function InferenceParameterControls({ session, updateSession, modelsAvailable }: Props) {
   const { parameters, panel } = session
 
-  const { frequency_penalty, presence_penalty, stream, max_tokens, n, temperature, top_p } =
+  const { frequency_penalty, presence_penalty, stream, max_tokens, n, temperature, top_p, stop } =
     parameters
 
   const max_tokensMax = 4097 // TODO
 
   // coerce to string[]
-  const stop = Array.isArray(parameters.stop)
+  const stopCurrent = Array.isArray(parameters.stop)
     ? parameters.stop
     : parameters.stop == null
     ? []
@@ -36,8 +36,8 @@ export function InferenceParameterControls({ session, updateSession, modelsAvail
 
   const [stopInputValue, setStopInputValue] = useState('')
   const handleStopInput = () => {
-    if (!stopInputValue || stop.includes(stopInputValue)) return
-    updateSession((s) => (s.parameters.stop = [...stop, stopInputValue]))
+    if (!stopInputValue || stopCurrent.includes(stopInputValue)) return
+    updateSession((s) => (s.parameters.stop = [...stopCurrent, stopInputValue]))
     setStopInputValue('')
   }
 
@@ -152,7 +152,7 @@ export function InferenceParameterControls({ session, updateSession, modelsAvail
         </div>
 
         <div className="w-full space-y-1">
-          {stop.map((v, i) => (
+          {stopCurrent.map((v, i) => (
             <Badge
               className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
               key={v}
@@ -163,7 +163,7 @@ export function InferenceParameterControls({ session, updateSession, modelsAvail
                 variant="ghost"
                 size="icon"
                 onClick={() => {
-                  const newStop = stop.filter((_, _i) => i !== _i)
+                  const newStop = stopCurrent.filter((_, _i) => i !== _i)
                   updateSession((s) => (s.parameters.stop = newStop))
                 }}
               >

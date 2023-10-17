@@ -1,4 +1,5 @@
 import { createErrorResponse } from '@/lib/api'
+import { ExcludeNullProps } from '@/lib/types'
 import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
@@ -69,7 +70,7 @@ export const schemaOpenAIChatRequest = z.object({
       content: z.string(),
     }),
   ),
-  stream: z.union([z.boolean(), z.null()]),
+  stream: z.union([z.boolean(), z.null()]).optional(),
 
   frequency_penalty: z.union([z.number(), z.null()]).optional(),
   function_call: z.unknown().optional(), // TODO
@@ -83,4 +84,8 @@ export const schemaOpenAIChatRequest = z.object({
   top_p: z.union([z.number(), z.null()]).optional(),
   user: z.string().optional(),
 })
-export type SchemaOpenAIChatRequest = z.infer<typeof schemaOpenAIChatRequest>
+
+// remove null from all props, remove non-array string from 'stop'
+export type OpenAIInferenceParameters = ExcludeNullProps<
+  Omit<z.infer<typeof schemaOpenAIChatRequest>, 'stop'>
+> & { stop?: string[] }
