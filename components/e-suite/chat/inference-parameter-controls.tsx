@@ -9,6 +9,7 @@ import { ChatModelOption } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { CrossCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
+import { useImmer } from 'use-immer'
 import { ModelsCombobox } from './models-combobox'
 import { ChatSession } from './types'
 
@@ -43,7 +44,7 @@ export function InferenceParameterControls({ session, updateSession, modelsAvail
   return (
     <>
       <div className="text-center text-sm">
-        ModelConfigPanel - {session.id} {panel.title}
+        Chat Inference Parameters - {session.id} {panel.title}
       </div>
 
       <div className="flex flex-wrap justify-center gap-2 px-2 py-1">

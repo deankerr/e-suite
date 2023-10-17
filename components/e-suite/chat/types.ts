@@ -20,6 +20,10 @@ export type ChatInferenceParameters = {
   provider: string
   model: string
   stream: boolean
-} & Partial<OpenAI.Chat.ChatCompletionCreateParams>
+} & ExcludeNullProps<OpenAI.Chat.ChatCompletionCreateParams>
 
 export type ChatMessage = Message & { hidden?: boolean }
+
+type ExcludeNullProps<T> = {
+  [P in keyof T]: Exclude<T[P], null>
+}
