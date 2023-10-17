@@ -7,10 +7,10 @@ import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-ic
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import * as R from 'remeda'
+import { InferenceParameterControls } from './inference-parameter-controls'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
-import { ModelConfigPanel } from './model-config-panel'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 import type { ChatSession } from './types'
 import { useChatApp } from './use-chat-app'
@@ -90,9 +90,9 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
-        {/* ParameterConfig */}
+        {/* Parameter Config Panel */}
         <div className="w-11/12 space-y-2 rounded-md border-2 px-1 py-2">
-          <ModelConfigPanel
+          <InferenceParameterControls
             session={session}
             updateSession={updateSession}
             modelsAvailable={modelsAvailable}

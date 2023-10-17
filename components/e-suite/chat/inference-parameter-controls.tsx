@@ -18,7 +18,7 @@ type Props = {
   modelsAvailable: ChatModelOption[]
 }
 
-export function ModelConfigPanel({ session, updateSession, modelsAvailable }: Props) {
+export function InferenceParameterControls({ session, updateSession, modelsAvailable }: Props) {
   const { parameters, panel } = session
 
   const { frequency_penalty, presence_penalty, stream, max_tokens, n, temperature, top_p } =
