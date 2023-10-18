@@ -7,7 +7,6 @@ import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-ic
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import * as R from 'remeda'
-import { InferenceParameterControls } from '../inference-parameter-form/inference-parameter-controls'
 import { InferenceParameterForm } from '../inference-parameter-form/inference-parameter-form'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
