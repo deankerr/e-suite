@@ -18,6 +18,7 @@ export type ChatPanelState = {
 
 export type ChatInferenceParameters = {
   provider: string
+  model: string
 } & Partial<OpenAIInferenceParameters>
 
 export type ChatMessage = Message & { hidden?: boolean }

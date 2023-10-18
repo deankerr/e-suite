@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import * as R from 'remeda'
 import { InferenceParameterControls } from './inference-parameter-controls'
+import { InferenceParameterForm } from './inference-parameter-form'
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
@@ -92,6 +93,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
       >
         {/* Parameter Config Panel */}
         <div className="w-11/12 space-y-2 rounded-md border-2 px-1 py-2">
+          <InferenceParameterForm modelsAvailable={modelsAvailable} />
           <InferenceParameterControls
             session={session}
             updateSession={updateSession}
@@ -138,3 +140,9 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
     </div>
   )
 }
+
+const ttttest = (
+  <div>
+    <p>Gabbababab</p>
+  </div>
+)

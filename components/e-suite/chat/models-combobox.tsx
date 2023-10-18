@@ -37,3 +37,25 @@ export function ModelsCombobox({ session, updateSession, modelsAvailable }: Prop
     />
   )
 }
+
+type ModelsComboboxFormProps = {
+  value: string
+  onSelect: (value: string) => void
+  modelsAvailable: ChatModelOption[]
+}
+
+export function ModelsComboboxForm({ value, onSelect, modelsAvailable }: ModelsComboboxFormProps) {
+  const list = modelsAvailable.map((m) => ({ value: `${m.provider}::${m.model}`, label: m.label }))
+
+  return (
+    <Combobox
+      items={list}
+      buttonProps={{ className: 'w-[230px]' }}
+      popoverProps={{ className: 'w-[230px]' }}
+      selectText="Select model..."
+      searchText="Search model..."
+      value={value}
+      onSelect={onSelect}
+    />
+  )
+}
