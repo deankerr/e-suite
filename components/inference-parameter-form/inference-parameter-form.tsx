@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/form'
 import { ChatModelOption } from '@/lib/api'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { ModelsComboboxForm } from './models-combobox'
@@ -82,6 +83,11 @@ export function InferenceParameterForm({ modelsAvailable, ...props }: Props) {
       stop: ['### INSTRUCTION:', 'you are a turkey'],
     },
   })
+
+  useEffect(() => {
+    console.log('form up')
+    return () => console.log('form down')
+  }, [])
 
   return (
     <Form {...form}>

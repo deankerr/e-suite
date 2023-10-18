@@ -54,60 +54,36 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
   const [bottomRef, bottomIsVisible] = useInView()
 
   const _params = Object.entries(parameters).map(([key, value]) => ` ${key}: ${value}`)
-  return (
-    <div
-      id="e-chat-panel"
-      className="flex h-full w-screen flex-col rounded-md border-2 bg-background sm:max-w-2xl"
-      ref={panelRef}
-    >
-      {/* //* Control Bar */}
+
+  const [content, setContent] = useState<'messages' | 'form'>('messages')
+
+  const formContent = (
+    <InferenceParameterForm
+      className="h-96 grow space-y-4 overflow-y-auto px-2 py-2"
+      modelsAvailable={modelsAvailable}
+    />
+  )
+
+  const messagesContent = (
+    <>
       <div
-        id="e-chat-control-bar"
-        className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium"
-      >
-        {/* //* Bar Left */}
-        <div className="flex w-[50%]"></div>
-
-        {/* //* Bar Middle */}
-        <div className="">
-          <h2>{panel.title}</h2>
-        </div>
-
-        {/* //* Bar Right */}
-        <div className="flex w-[50%] justify-end">
-          <Button variant="outline" size="icon">
-            <MixerHorizontalIcon />
-          </Button>
-          <Button variant="outline" onClick={() => resetChatMessages()}>
-            clear
-          </Button>
-        </div>
-      </div>
-
-      {/* //* Messages */}
-      <div
-        id="e-chat-messages-container"
+        id="e-chat-content-messages"
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
-        {/* Parameter Config Panel */}
-        <div className="w-11/12 space-y-2 rounded-md border-2 px-4 py-2">
-          <InferenceParameterForm className="space-y-2" modelsAvailable={modelsAvailable} />
-        </div>
-
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
 
-        {/* //* Awaiting Response Indicator */}
+        {/* Awaiting Response Indicator */}
         {isLoading && !isLastMessageStreaming ? (
           <ChatMessageBubble message={null} showLoader={true} />
         ) : null}
-        {/* //* Auto Scroll Target */}
+        {/* Auto Scroll Target */}
         <div id="scroll-to-btm-observer" ref={bottomRef} className="w-full" />
       </div>
 
-      {/* //* Scroll To Bottom Button */}
+      {/* Scroll To Bottom Button */}
       <div className="relative w-12 self-end">
         <Button
           variant="outline"
@@ -120,7 +96,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         </Button>
       </div>
 
-      {/* //* Input Panel */}
+      {/* Input Panel */}
       <ChatBarMenuItem
         label={<FaceIcon />}
         heading="Debug"
@@ -131,6 +107,40 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         ]}
       />
       <ChatInputPanel chatHelpers={chatHelpers} />
+    </>
+  )
+
+  return (
+    <div
+      id="e-chat-panel"
+      className="flex h-full w-screen flex-col rounded-md border-2 bg-background sm:max-w-2xl"
+      ref={panelRef}
+    >
+      {/* Control Bar */}
+      <div
+        id="e-chat-control-bar"
+        className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium"
+      >
+        <div id="e-bar-left" className="flex w-[50%]"></div>
+        <div id="e-bar-middle">
+          <h2>{panel.title}</h2>
+        </div>
+        <div id="e-bar-right" className="flex w-[50%] justify-end">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => (content === 'messages' ? setContent('form') : setContent('messages'))}
+          >
+            <MixerHorizontalIcon />
+          </Button>
+          <Button variant="outline" onClick={() => resetChatMessages()}>
+            clear
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      {content === 'messages' ? messagesContent : formContent}
     </div>
   )
 }
