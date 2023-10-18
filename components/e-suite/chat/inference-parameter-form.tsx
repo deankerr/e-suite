@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -12,7 +13,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { ChatModelOption } from '@/lib/api'
 import { ExtractPropsOfType } from '@/lib/types'
@@ -27,7 +27,7 @@ import { InputSlider } from './slider-input'
 const max_tokens_max = 4097
 
 export const formSchemaOpenAI = z.object({
-  model: z.string(),
+  model: z.string().nonempty(),
   stream: z.boolean().optional(),
   temperature: z.coerce.number().gte(0).lte(2).optional(),
   frequency_penalty: z.coerce.number().gte(-2).lte(2).optional(),
@@ -73,8 +73,8 @@ function onSubmit(values: z.infer<typeof formSchemaOpenAI>) {
 
 type Props = {
   modelsAvailable: ChatModelOption[]
-}
-export function InferenceParameterForm({ modelsAvailable }: Props) {
+} & React.HTMLAttributes<HTMLFormElement>
+export function InferenceParameterForm({ modelsAvailable, ...props }: Props) {
   const form = useForm<FormSchemaOpenAI>({
     resolver: zodResolver(formSchemaOpenAI),
     defaultValues: {
@@ -91,44 +91,28 @@ export function InferenceParameterForm({ modelsAvailable }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <FormField
-          control={form.control}
-          name="model"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Model</FormLabel>
-              <FormControl>
-                <ModelsComboboxForm
-                  value={field.value}
-                  onSelect={field.onChange}
-                  modelsAvailable={modelsAvailable}
-                />
-              </FormControl>
-              {/* <FormDescription>This is the model we will chat with.</FormDescription> */}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* stream */}
-        <FormField
-          control={form.control}
-          name="stream"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center gap-3 px-2 py-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} {...props}>
+        {/* model combobox */}
+        <div className="flex items-center justify-evenly py-1">
+          <FormField
+            control={form.control}
+            name="model"
+            render={({ field }) => (
+              <FormItem>
+                {/* <FormLabel>Model</FormLabel> */}
                 <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  <ModelsComboboxForm
+                    value={field.value}
+                    onSelect={field.onChange}
+                    modelsAvailable={modelsAvailable}
+                  />
                 </FormControl>
-                <FormLabel className="font-mono">{field.name}</FormLabel>
-              </div>
-              {/* <FormDescription>Stream the result</FormDescription> */}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+                {/* <FormDescription>This is the model we will chat with.</FormDescription> */}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         {/* temperature */}
         <ToggleSliderInputField
           control={form.control}
@@ -169,13 +153,34 @@ export function InferenceParameterForm({ modelsAvailable }: Props) {
           inputProps={inputPropsOAI['max_tokens']}
         />
 
+        {/* stop values */}
         <TagInputControl
           control={form.control}
           inputName="stop"
           inputDescription="put a stop to it"
         />
 
-        <Button type="submit">Submit</Button>
+        {/* stream */}
+        <FormField
+          control={form.control}
+          name="stream"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex w-fit items-center gap-2 px-2 py-1.5">
+                <FormControl>
+                  {/* <Switch checked={field.value} onCheckedChange={field.onChange} /> */}
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <FormLabel className="">Stream</FormLabel>
+              </div>
+              {/* <FormDescription>Stream the result</FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" variant="secondary" className="inline">
+          Test Submit
+        </Button>
       </form>
     </Form>
   )
@@ -204,7 +209,7 @@ function ToggleSliderInputField({
       render={({ field }) => {
         const { value, ...rest } = field
         return (
-          <FormItem className="flex w-full flex-col space-y-0 px-2 py-1">
+          <FormItem className="flex w-full flex-col space-y-0">
             <div className="flex w-full items-center gap-3">
               <Switch checked={!disabled} onCheckedChange={(checked) => setDisabled(!checked)} />
               <FormLabel className="font-mono">{field.name}</FormLabel>
@@ -258,7 +263,7 @@ function TagInputControl({ control, inputName, inputDescription }: TagInputContr
         }
 
         return (
-          <FormItem className="flex w-full flex-col px-2 py-1">
+          <FormItem className="flex w-full flex-col">
             <div className="flex w-full items-center gap-3">
               <Switch checked={!disabled} onCheckedChange={(checked) => setDisabled(!checked)} />
               <FormLabel className="font-mono">{field.name}</FormLabel>
@@ -266,7 +271,7 @@ function TagInputControl({ control, inputName, inputDescription }: TagInputContr
             </div>
             <FormControl>
               {/* add tags */}
-              <div className="mt-1 flex w-full gap-2">
+              <div className="flex w-full gap-2">
                 <Input
                   ref={inputRef}
                   className="font-sans"

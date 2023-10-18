@@ -92,15 +92,8 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         ref={messageContainerRef}
       >
         {/* Parameter Config Panel */}
-        <div className="w-11/12 space-y-2 rounded-md border-2 px-1 py-2">
-          <InferenceParameterControls
-            session={session}
-            updateSession={updateSession}
-            modelsAvailable={modelsAvailable}
-          />
-        </div>
-        <div className="w-11/12 space-y-2 rounded-md border-2 px-1 py-2">
-          <InferenceParameterForm modelsAvailable={modelsAvailable} />
+        <div className="w-11/12 space-y-2 rounded-md border-2 px-4 py-2">
+          <InferenceParameterForm className="space-y-2" modelsAvailable={modelsAvailable} />
         </div>
 
         {messages.map((m) => (
@@ -142,9 +135,3 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
     </div>
   )
 }
-
-const ttttest = (
-  <div>
-    <p>Gabbababab</p>
-  </div>
-)
