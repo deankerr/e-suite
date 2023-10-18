@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { ChatModelOption } from '@/lib/api'
 import { ExtractPropsOfType } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CrossCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 import { useRef, useState } from 'react'
@@ -207,7 +208,7 @@ function ToggleSliderInputField({
       control={control}
       name={inputName}
       render={({ field }) => {
-        const { value, ...rest } = field
+        const { value, disabled, ...fieldProps } = field
         return (
           <FormItem className="flex w-full flex-col space-y-0">
             <div className="flex w-full items-center gap-3">
@@ -217,10 +218,13 @@ function ToggleSliderInputField({
             </div>
 
             <FormControl>
-              <div className="flex w-full space-x-1">
-                <InputSlider {...rest} value={Number(value)} {...inputProps} />
+              <div
+                className={cn('flex w-full space-x-1', disabled && 'opacity-50')}
+                onClick={() => disabled && setDisabled(false)}
+              >
+                <InputSlider {...fieldProps} value={Number(value)} {...inputProps} />
                 <Input
-                  {...rest}
+                  {...fieldProps}
                   value={Number(value)}
                   className="w-20 px-1 text-right font-mono"
                   type="number"
@@ -264,6 +268,7 @@ function TagInputControl({ control, inputName, inputDescription }: TagInputContr
 
         return (
           <FormItem className="flex w-full flex-col">
+            {/* switch + label */}
             <div className="flex w-full items-center gap-3">
               <Switch checked={!disabled} onCheckedChange={(checked) => setDisabled(!checked)} />
               <FormLabel className="font-mono">{field.name}</FormLabel>
@@ -271,7 +276,10 @@ function TagInputControl({ control, inputName, inputDescription }: TagInputContr
             </div>
             <FormControl>
               {/* add tags */}
-              <div className="flex w-full gap-2">
+              <div
+                className={cn('flex w-full gap-2', disabled && 'opacity-50')}
+                onMouseDown={() => disabled && setDisabled(false)}
+              >
                 <Input
                   ref={inputRef}
                   className="font-sans"
@@ -284,12 +292,13 @@ function TagInputControl({ control, inputName, inputDescription }: TagInputContr
                 </Button>
               </div>
             </FormControl>
-            {/* show / remove tags */}
-            <div className="w-full space-y-1">
+            {/* show + remove tags */}
+            <div className={cn('w-full space-y-1', disabled && 'opacity-50')}>
               {field.value?.map((v, i) => (
                 <Badge
                   className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
                   key={v}
+                  onMouseDown={() => disabled && setDisabled(false)}
                 >
                   {v}
                   <Button
