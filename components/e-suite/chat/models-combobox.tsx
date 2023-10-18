@@ -9,6 +9,7 @@ type Props = {
   modelsAvailable: ChatModelOption[]
 }
 
+// TODO probably remove this
 export function ModelsCombobox({ session, updateSession, modelsAvailable }: Props) {
   const getKey = (provider: string, model: string) => `${provider}::${model}`
 
@@ -45,7 +46,7 @@ type ModelsComboboxFormProps = {
 }
 
 export function ModelsComboboxForm({ value, onSelect, modelsAvailable }: ModelsComboboxFormProps) {
-  const list = modelsAvailable.map((m) => ({ value: `${m.provider}::${m.model}`, label: m.label }))
+  const list = modelsAvailable.map((m) => ({ value: m.id, label: m.label }))
 
   return (
     <Combobox

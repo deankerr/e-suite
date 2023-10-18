@@ -6,37 +6,37 @@ export function createErrorResponse(message: string, status = 400) {
 
 const models: ChatModelOption[] = [
   {
-    id: nanoid(),
+    id: 'openai::gpt-3.5-turbo',
     provider: 'openai',
     model: 'gpt-3.5-turbo',
     label: 'OpenAI: GPT-3.5 Turbo',
   },
   {
-    id: nanoid(),
+    id: 'openai::gpt-4',
     provider: 'openai',
     model: 'gpt-4',
     label: 'OpenAI: GPT-4',
   },
   {
-    id: nanoid(),
+    id: 'openrouter::meta-llama/llama-2-70b-chat',
     provider: 'openrouter',
     model: 'meta-llama/llama-2-70b-chat',
     label: 'Meta: Llama v2 70B Chat',
   },
   {
-    id: nanoid(),
+    id: 'openrouter::jondurbin/airoboros-l2-70b',
     provider: 'openrouter',
     model: 'jondurbin/airoboros-l2-70b',
     label: 'Airoboros L2 70B',
   },
   {
-    id: nanoid(),
+    id: 'openrouter::migtissera/synthia-70b',
     provider: 'openrouter',
     model: 'migtissera/synthia-70b',
     label: 'Synthia 70B',
   },
   {
-    id: nanoid(),
+    id: 'openrouter::xwin-lm/xwin-lm-70b',
     provider: 'openrouter',
     model: 'xwin-lm/xwin-lm-70b',
     label: 'Xwin 70B',

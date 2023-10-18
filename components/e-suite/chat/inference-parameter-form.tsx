@@ -1,5 +1,6 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -16,7 +17,8 @@ import { Switch } from '@/components/ui/switch'
 import { ChatModelOption } from '@/lib/api'
 import { ExtractPropsOfType } from '@/lib/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { CrossCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
+import { useRef, useState } from 'react'
 import { Control, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { ModelsComboboxForm } from './models-combobox'
@@ -32,8 +34,7 @@ export const formSchemaOpenAI = z.object({
   presence_penalty: z.coerce.number().gte(-2).lte(2).optional(),
   max_tokens: z.coerce.number().gte(1).lte(max_tokens_max).optional(),
   top_p: z.coerce.number().gte(0).lte(2).optional(),
-
-  // stop: z.string().array(),
+  stop: z.string().array().optional(),
 })
 type FormSchemaOpenAI = z.infer<typeof formSchemaOpenAI>
 
@@ -65,22 +66,26 @@ const inputPropsOAI = {
   },
 } as const
 
+function onSubmit(values: z.infer<typeof formSchemaOpenAI>) {
+  console.log('submit!')
+  console.log('values', values)
+}
+
 type Props = {
   modelsAvailable: ChatModelOption[]
 }
-
 export function InferenceParameterForm({ modelsAvailable }: Props) {
   const form = useForm<FormSchemaOpenAI>({
     resolver: zodResolver(formSchemaOpenAI),
     defaultValues: {
-      model: 'OpenAI: Turbo',
+      model: 'openai::gpt-3.5-turbo',
       stream: true,
       temperature: 1,
       max_tokens: max_tokens_max,
       frequency_penalty: 0,
       presence_penalty: 0,
       top_p: 1,
-      // stop: [],
+      stop: ['### INSTRUCTION:', 'you are a turkey'],
     },
   })
 
@@ -164,6 +169,12 @@ export function InferenceParameterForm({ modelsAvailable }: Props) {
           inputProps={inputPropsOAI['max_tokens']}
         />
 
+        <TagInputControl
+          control={form.control}
+          inputName="stop"
+          inputDescription="put a stop to it"
+        />
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>
@@ -220,7 +231,80 @@ function ToggleSliderInputField({
   )
 }
 
-function onSubmit(values: z.infer<typeof formSchemaOpenAI>) {
-  console.log('submit!')
-  console.log('values', values)
+type TagInputControlProps = {
+  control: Control<FormSchemaOpenAI>
+  inputName: keyof ExtractPropsOfType<FormSchemaOpenAI, string[] | undefined>
+  inputDescription: string
+}
+function TagInputControl({ control, inputName, inputDescription }: TagInputControlProps) {
+  const [disabled, setDisabled] = useState(false)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  return (
+    <FormField
+      disabled={disabled}
+      control={control}
+      name={inputName}
+      render={({ field }) => {
+        const fieldValue = field.value ?? []
+
+        const addTag = () => {
+          if (!inputRef.current) return
+          const { value } = inputRef.current
+
+          if (value === '' || fieldValue.includes(value)) return
+          field.onChange([...fieldValue, value])
+          inputRef.current.value = ''
+        }
+
+        return (
+          <FormItem className="flex w-full flex-col px-2 py-1">
+            <div className="flex w-full items-center gap-3">
+              <Switch checked={!disabled} onCheckedChange={(checked) => setDisabled(!checked)} />
+              <FormLabel className="font-mono">{field.name}</FormLabel>
+              {/* <FormDescription className="contents">{inputDescription}</FormDescription> */}
+            </div>
+            <FormControl>
+              {/* add tags */}
+              <div className="mt-1 flex w-full gap-2">
+                <Input
+                  ref={inputRef}
+                  className="font-sans"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.metaKey) addTag()
+                  }}
+                />
+                <Button variant="outline" type="button" onClick={addTag}>
+                  <PlusCircledIcon />
+                </Button>
+              </div>
+            </FormControl>
+            {/* show / remove tags */}
+            <div className="w-full space-y-1">
+              {field.value?.map((v, i) => (
+                <Badge
+                  className="ml-1 justify-between gap-1 pr-1 font-sans text-sm font-normal"
+                  key={v}
+                >
+                  {v}
+                  <Button
+                    className="h-5 w-7"
+                    variant="ghost"
+                    size="icon"
+                    type="button"
+                    onClick={() => {
+                      field.onChange([...fieldValue.filter((_, _i) => i !== _i)])
+                    }}
+                  >
+                    <CrossCircledIcon />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )
+      }}
+    />
+  )
 }
