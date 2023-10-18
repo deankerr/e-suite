@@ -1,4 +1,4 @@
-import { ChatApp } from '@/components/e-suite/chat/chat-app'
+import { ChatApp } from '@/components/chat/chat-app'
 import { ShowTailwindBreakpoint } from '@/components/show-tailwind-breakpoint'
 import { getChatModels } from '@/lib/api'
 

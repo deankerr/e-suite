@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'
 import { CrossCircledIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { useImmer } from 'use-immer'
+import { ChatSession } from '../chat/types'
 import { ModelsCombobox } from './models-combobox'
-import { ChatSession } from './types'
 
 type Props = {
   session: ChatSession

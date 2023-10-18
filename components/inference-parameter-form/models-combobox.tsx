@@ -1,7 +1,7 @@
 import { Combobox } from '@/components/ui/combobox'
 import { ChatModelOption } from '@/lib/api'
 import { raise } from '@/lib/utils'
-import { ChatSession } from './types'
+import { ChatSession } from '../chat/types'
 
 type Props = {
   session: ChatSession

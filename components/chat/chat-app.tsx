@@ -1,6 +1,6 @@
 'use client'
 
-import { ChatPanel } from '@/components/e-suite/chat/chat-panel'
+import { ChatPanel } from '@/components/chat/chat-panel'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Toggle } from '@/components/ui/toggle'
 import { ChatModelOption } from '@/lib/api'
