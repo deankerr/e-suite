@@ -18,15 +18,15 @@ type Props = {
   label: React.ReactNode
   heading: React.ReactNode
   items: Array<[React.ReactNode, () => void]>
-}
+} & React.HTMLAttributes<HTMLButtonElement>
 
-export function ChatBarMenuItem(props: Props) {
-  const { label, heading, items } = props
-
+export function ChatBarMenuItem({ label, heading, items, ...props }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{label}</Button>
+        <Button variant="outline" {...props}>
+          {label}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="">
         {heading ? (

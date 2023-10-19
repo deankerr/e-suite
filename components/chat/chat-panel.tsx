@@ -11,6 +11,7 @@ import { InferenceParameterForm } from '../inference-parameter-form/inference-pa
 import { ChatInputPanel } from './input-panel'
 import { ChatBarMenuItem } from './menu'
 import { ChatMessageBubble } from './message-bubble'
+import { MessageTextInput } from './message-text-input'
 import { sampleCode, sampleConvo, sampleMessages } from './sample-data'
 import type { ChatSession } from './types'
 import { useChatApp } from './use-chat-app'
@@ -110,7 +111,9 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
       </div>
 
       {/* Input Panel */}
+      <MessageTextInput chatHelpers={chatHelpers} />
       <ChatBarMenuItem
+        className="rounded-none bg-muted"
         label={<FaceIcon />}
         heading="Debug"
         items={[
@@ -119,7 +122,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
           ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
         ]}
       />
-      <ChatInputPanel chatHelpers={chatHelpers} />
+      {/* <ChatInputPanel chatHelpers={chatHelpers} /> */}
     </>
   )
 
@@ -132,7 +135,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
       {/* Control Bar */}
       <div
         id="e-chat-control-bar"
-        className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium"
+        className="flex items-center justify-between border-b bg-muted px-2 py-1 font-medium shadow-md"
       >
         <div id="e-bar-left" className="flex w-[50%]"></div>
         <div id="e-bar-middle">
