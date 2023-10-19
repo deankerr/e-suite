@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/form'
 import { ChatModelOption } from '@/lib/api'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ForwardedRef, forwardRef, useEffect, useRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { ChatInferenceParameters } from '../chat/types'
@@ -77,95 +78,92 @@ type Props = {
   modelsAvailable: ChatModelOption[]
   onSubmit: SubmitHandler<FormSchemaOpenAI>
 } & Omit<React.HTMLAttributes<HTMLFormElement>, 'onSubmit'>
-export function InferenceParameterForm({
-  modelsAvailable,
-  onSubmit,
-  defaultValues,
-  ...props
-}: Props) {
-  const form = useForm<FormSchemaOpenAI>({
-    resolver: zodResolver(formSchemaOpenAI),
-    defaultValues: { ...oaiDefaultValues, ...defaultValues },
-  })
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} {...props}>
-        {/* model combobox */}
-        <div className="flex items-center justify-evenly py-1">
-          <FormField
+export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
+  ({ modelsAvailable, onSubmit, defaultValues, ...props }, ref) => {
+    const form = useForm<FormSchemaOpenAI>({
+      resolver: zodResolver(formSchemaOpenAI),
+      defaultValues: { ...oaiDefaultValues, ...defaultValues },
+    })
+
+    return (
+      <Form {...form}>
+        <form ref={ref} onSubmit={form.handleSubmit(onSubmit)} {...props}>
+          {/* model combobox */}
+          <div className="flex items-center justify-evenly py-1">
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <ModelsComboboxForm
+                      value={field.value}
+                      onSelect={field.onChange}
+                      modelsAvailable={modelsAvailable}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* temperature */}
+          <ToggleSliderInput
             control={form.control}
-            name="model"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <ModelsComboboxForm
-                    value={field.value}
-                    onSelect={field.onChange}
-                    modelsAvailable={modelsAvailable}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            name="temperature"
+            description="Higher values like 0.8 will make the output more random..."
+            range={inputPropsOAI['temperature']}
+            defaultEnabled={defaultValues['temperature'] !== undefined}
           />
-        </div>
 
-        {/* temperature */}
-        <ToggleSliderInput
-          control={form.control}
-          name="temperature"
-          description="Higher values like 0.8 will make the output more random..."
-          range={inputPropsOAI['temperature']}
-          defaultEnabled={defaultValues['temperature'] !== undefined}
-        />
+          {/* frequency_penalty */}
+          <ToggleSliderInput
+            control={form.control}
+            name="frequency_penalty"
+            description="Positive values penalize new tokens based..."
+            range={inputPropsOAI['frequency_penalty']}
+            defaultEnabled={defaultValues['frequency_penalty'] !== undefined}
+          />
 
-        {/* frequency_penalty */}
-        <ToggleSliderInput
-          control={form.control}
-          name="frequency_penalty"
-          description="Positive values penalize new tokens based..."
-          range={inputPropsOAI['frequency_penalty']}
-          defaultEnabled={defaultValues['frequency_penalty'] !== undefined}
-        />
+          {/* presence_penalty */}
+          <ToggleSliderInput
+            control={form.control}
+            name="presence_penalty"
+            description="Positive values penalize new tokens based..."
+            range={inputPropsOAI['presence_penalty']}
+            defaultEnabled={defaultValues['presence_penalty'] !== undefined}
+          />
 
-        {/* presence_penalty */}
-        <ToggleSliderInput
-          control={form.control}
-          name="presence_penalty"
-          description="Positive values penalize new tokens based..."
-          range={inputPropsOAI['presence_penalty']}
-          defaultEnabled={defaultValues['presence_penalty'] !== undefined}
-        />
+          {/* top_p */}
+          <ToggleSliderInput
+            control={form.control}
+            name="top_p"
+            description="An alternative to sampling with temperature..."
+            range={inputPropsOAI['top_p']}
+            defaultEnabled={defaultValues['top_p'] !== undefined}
+          />
 
-        {/* top_p */}
-        <ToggleSliderInput
-          control={form.control}
-          name="top_p"
-          description="An alternative to sampling with temperature..."
-          range={inputPropsOAI['top_p']}
-          defaultEnabled={defaultValues['top_p'] !== undefined}
-        />
+          {/* max_token */}
+          <ToggleSliderInput
+            control={form.control}
+            name="max_tokens"
+            description="The maximum number of tokens to generate...."
+            range={inputPropsOAI['max_tokens']}
+            defaultEnabled={defaultValues['max_tokens'] !== undefined}
+          />
 
-        {/* max_token */}
-        <ToggleSliderInput
-          control={form.control}
-          name="max_tokens"
-          description="The maximum number of tokens to generate...."
-          range={inputPropsOAI['max_tokens']}
-          defaultEnabled={defaultValues['max_tokens'] !== undefined}
-        />
+          {/* stop values */}
+          <ToggleTagInput
+            control={form.control}
+            name="stop"
+            description="put a stop to it"
+            defaultEnabled={defaultValues['stop'] !== undefined}
+          />
 
-        {/* stop values */}
-        <ToggleTagInput
-          control={form.control}
-          name="stop"
-          description="put a stop to it"
-          defaultEnabled={defaultValues['stop'] !== undefined}
-        />
-
-        {/* stream */}
-        <FormField
+          {/* stream */}
+          {/* <FormField
           control={form.control}
           name="stream"
           render={({ field }) => (
@@ -179,11 +177,13 @@ export function InferenceParameterForm({
               <FormMessage />
             </FormItem>
           )}
-        />
-        <Button type="submit" variant="secondary" className="inline">
+        /> */}
+          {/* <Button type="submit" variant="secondary" className="inline">
           Test Submit
-        </Button>
-      </form>
-    </Form>
-  )
-}
+        </Button> */}
+        </form>
+      </Form>
+    )
+  },
+)
+InferenceParameterForm.displayName = 'InferenceParameterForm'

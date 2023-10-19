@@ -57,9 +57,12 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
 
   const [content, setContent] = useState<'messages' | 'form'>('messages')
 
+  //* <Form>
+  const formRef = useRef<HTMLFormElement | null>(null)
   const formContent = (
     <InferenceParameterForm
-      className="h-96 grow space-y-4 overflow-y-auto px-2 py-2"
+      ref={formRef}
+      className="h-96 grow space-y-6 overflow-y-auto px-2 py-2"
       defaultValues={session.parameters}
       modelsAvailable={modelsAvailable}
       onSubmit={(values) => {
@@ -69,6 +72,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
     />
   )
 
+  //* <Messages>
   const messagesContent = (
     <>
       <div
@@ -76,6 +80,10 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         className="flex h-96 grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
         ref={messageContainerRef}
       >
+        <p className="text-sm text-muted-foreground">
+          {modelsAvailable.find((m) => m.id === parameters.model)?.label}
+        </p>
+
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
@@ -134,7 +142,14 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => (content === 'messages' ? setContent('form') : setContent('messages'))}
+            onClick={() => {
+              if (content === 'messages') {
+                setContent('form')
+              } else {
+                if (formRef.current) formRef.current.requestSubmit()
+                setContent('messages')
+              }
+            }}
           >
             <MixerHorizontalIcon />
           </Button>
