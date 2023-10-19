@@ -1,6 +1,7 @@
 'use-client'
 
 import { useToast } from '@/components/ui/use-toast'
+import { raise } from '@/lib/utils'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useState } from 'react'
@@ -13,7 +14,12 @@ const numId = customAlphabet('0123456789', 3)
 const rootPrompt = 'Format your answers using Markdown.'
 
 export function useChatApp(config: useChatAppConfig, prompt: string) {
-  const { id, api, parameters } = config
+  const { id, api } = config
+
+  //! temp modelId patch
+  const [provider, model] = config.parameters.modelId.split('::')
+  if (!(provider || model)) raise('invalid model')
+  const parameters = { ...config.parameters, provider, model }
 
   //* create initial messages
   const [initialMessages] = useState<Message[]>(() => {

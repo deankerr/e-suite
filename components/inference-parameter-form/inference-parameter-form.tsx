@@ -11,8 +11,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { ChatModelOption } from '@/lib/api'
+import { raise } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ForwardedRef, forwardRef, useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { ChatInferenceParameters } from '../chat/types'
@@ -23,7 +24,7 @@ import { ToggleTagInput } from './toggle-tag-input'
 const max_tokens_max = 4097
 
 export const formSchemaOpenAI = z.object({
-  model: z.string().nonempty(),
+  modelId: z.string().nonempty(),
   stream: z.boolean().optional(),
   temperature: z.coerce.number().gte(0).lte(2).optional(),
   frequency_penalty: z.coerce.number().gte(-2).lte(2).optional(),
@@ -63,7 +64,7 @@ const inputPropsOAI = {
 } as const
 
 const oaiDefaultValues = {
-  model: 'openai::gpt-3.5-turbo',
+  modelId: 'openai::gpt-3.5-turbo',
   stream: true,
   temperature: 1,
   max_tokens: max_tokens_max,
@@ -74,16 +75,16 @@ const oaiDefaultValues = {
 }
 
 type Props = {
-  defaultValues: ChatInferenceParameters
+  currentValues: ChatInferenceParameters
   modelsAvailable: ChatModelOption[]
   onSubmit: SubmitHandler<FormSchemaOpenAI>
 } & Omit<React.HTMLAttributes<HTMLFormElement>, 'onSubmit'>
 
 export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
-  ({ modelsAvailable, onSubmit, defaultValues, ...props }, ref) => {
+  ({ modelsAvailable, onSubmit, currentValues, ...props }, ref) => {
     const form = useForm<FormSchemaOpenAI>({
       resolver: zodResolver(formSchemaOpenAI),
-      defaultValues: { ...oaiDefaultValues, ...defaultValues },
+      defaultValues: { ...oaiDefaultValues, ...currentValues },
     })
 
     return (
@@ -93,7 +94,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
           <div className="flex items-center justify-evenly py-1">
             <FormField
               control={form.control}
-              name="model"
+              name="modelId"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -115,7 +116,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
             name="temperature"
             description="Higher values like 0.8 will make the output more random..."
             range={inputPropsOAI['temperature']}
-            defaultEnabled={defaultValues['temperature'] !== undefined}
+            defaultEnabled={currentValues['temperature'] !== undefined}
           />
 
           {/* frequency_penalty */}
@@ -124,7 +125,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
             name="frequency_penalty"
             description="Positive values penalize new tokens based..."
             range={inputPropsOAI['frequency_penalty']}
-            defaultEnabled={defaultValues['frequency_penalty'] !== undefined}
+            defaultEnabled={currentValues['frequency_penalty'] !== undefined}
           />
 
           {/* presence_penalty */}
@@ -133,7 +134,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
             name="presence_penalty"
             description="Positive values penalize new tokens based..."
             range={inputPropsOAI['presence_penalty']}
-            defaultEnabled={defaultValues['presence_penalty'] !== undefined}
+            defaultEnabled={currentValues['presence_penalty'] !== undefined}
           />
 
           {/* top_p */}
@@ -142,7 +143,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
             name="top_p"
             description="An alternative to sampling with temperature..."
             range={inputPropsOAI['top_p']}
-            defaultEnabled={defaultValues['top_p'] !== undefined}
+            defaultEnabled={currentValues['top_p'] !== undefined}
           />
 
           {/* max_token */}
@@ -151,7 +152,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
             name="max_tokens"
             description="The maximum number of tokens to generate...."
             range={inputPropsOAI['max_tokens']}
-            defaultEnabled={defaultValues['max_tokens'] !== undefined}
+            defaultEnabled={currentValues['max_tokens'] !== undefined}
           />
 
           {/* stop values */}
@@ -159,7 +160,7 @@ export const InferenceParameterForm = forwardRef<HTMLFormElement, Props>(
             control={form.control}
             name="stop"
             description="put a stop to it"
-            defaultEnabled={defaultValues['stop'] !== undefined}
+            defaultEnabled={currentValues['stop'] !== undefined}
           />
 
           {/* stream */}

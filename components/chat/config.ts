@@ -1,8 +1,7 @@
 import type { ChatInferenceParameters, ChatSession } from './types'
 
 const defaultParameters: ChatInferenceParameters = {
-  provider: 'openai',
-  model: 'openai::gpt-3.5-turbo',
+  modelId: 'openai::gpt-3.5-turbo',
   stream: true,
   stop: ['### USER:', 'duran duran'],
 }
@@ -24,8 +23,7 @@ export const initialChatsConfig: ChatSession[] = [
     panel: { title: 'Piñata', active: true },
     parameters: {
       ...defaultParameters,
-      provider: 'openrouter',
-      model: 'openrouter::meta-llama/llama-2-70b-chat',
+      modelId: 'openrouter::meta-llama/llama-2-70b-chat',
     },
   },
   {
@@ -34,8 +32,7 @@ export const initialChatsConfig: ChatSession[] = [
     panel: { title: 'Hideko', active: false },
     parameters: {
       ...defaultParameters,
-      provider: 'openrouter',
-      model: 'openrouter::migtissera/synthia-70b',
+      modelId: 'openrouter::migtissera/synthia-70b',
     },
   },
 
@@ -45,8 +42,7 @@ export const initialChatsConfig: ChatSession[] = [
     panel: { title: 'Ernest', active: false },
     parameters: {
       ...defaultParameters,
-      provider: 'openrouter',
-      model: 'openrouter::xwin-lm/xwin-lm-70b',
+      modelId: 'openrouter::xwin-lm/xwin-lm-70b',
     },
   },
 ]

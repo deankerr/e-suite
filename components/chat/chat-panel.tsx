@@ -64,7 +64,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
     <InferenceParameterForm
       ref={formRef}
       className="h-96 grow space-y-6 overflow-y-auto px-2 py-2"
-      defaultValues={session.parameters}
+      currentValues={session.parameters}
       modelsAvailable={modelsAvailable}
       onSubmit={(values) => {
         console.log('submit', values)
@@ -82,7 +82,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
         ref={messageContainerRef}
       >
         <p className="text-sm text-muted-foreground">
-          {modelsAvailable.find((m) => m.id === parameters.model)?.label}
+          {modelsAvailable.find((m) => m.id === parameters.modelId)?.label ?? 'huh?'}
         </p>
 
         {messages.map((m) => (
