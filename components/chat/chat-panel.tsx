@@ -63,6 +63,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
       defaultValues={session.parameters}
       modelsAvailable={modelsAvailable}
       onSubmit={(values) => {
+        console.log('submit', values)
         updateSession((s) => (s.parameters = { ...s.parameters, ...values }))
       }}
     />
@@ -127,7 +128,7 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
       >
         <div id="e-bar-left" className="flex w-[50%]"></div>
         <div id="e-bar-middle">
-          <h2>{panel.title}</h2>
+          <h2 onClick={() => console.log(session.panel.title, session)}>{panel.title}</h2>
         </div>
         <div id="e-bar-right" className="flex w-[50%] justify-end">
           <Button

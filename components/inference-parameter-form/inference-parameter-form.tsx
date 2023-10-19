@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/form'
 import { ChatModelOption } from '@/lib/api'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { ChatInferenceParameters } from '../chat/types'
@@ -73,11 +72,6 @@ const oaiDefaultValues = {
   stop: ['### INSTRUCTION:', 'you are a turkey'],
 }
 
-function onSubmit(values: z.infer<typeof formSchemaOpenAI>) {
-  console.log('submit!')
-  console.log('values', values)
-}
-
 type Props = {
   defaultValues: ChatInferenceParameters
   modelsAvailable: ChatModelOption[]
@@ -93,11 +87,6 @@ export function InferenceParameterForm({
     resolver: zodResolver(formSchemaOpenAI),
     defaultValues: { ...oaiDefaultValues, ...defaultValues },
   })
-
-  useEffect(() => {
-    console.log('form up')
-    return () => console.log('form down')
-  }, [])
 
   return (
     <Form {...form}>
@@ -128,6 +117,7 @@ export function InferenceParameterForm({
           name="temperature"
           description="Higher values like 0.8 will make the output more random..."
           range={inputPropsOAI['temperature']}
+          defaultEnabled={defaultValues['temperature'] !== undefined}
         />
 
         {/* frequency_penalty */}
@@ -136,6 +126,7 @@ export function InferenceParameterForm({
           name="frequency_penalty"
           description="Positive values penalize new tokens based..."
           range={inputPropsOAI['frequency_penalty']}
+          defaultEnabled={defaultValues['frequency_penalty'] !== undefined}
         />
 
         {/* presence_penalty */}
@@ -144,6 +135,7 @@ export function InferenceParameterForm({
           name="presence_penalty"
           description="Positive values penalize new tokens based..."
           range={inputPropsOAI['presence_penalty']}
+          defaultEnabled={defaultValues['presence_penalty'] !== undefined}
         />
 
         {/* top_p */}
@@ -152,6 +144,7 @@ export function InferenceParameterForm({
           name="top_p"
           description="An alternative to sampling with temperature..."
           range={inputPropsOAI['top_p']}
+          defaultEnabled={defaultValues['top_p'] !== undefined}
         />
 
         {/* max_token */}
@@ -160,10 +153,16 @@ export function InferenceParameterForm({
           name="max_tokens"
           description="The maximum number of tokens to generate...."
           range={inputPropsOAI['max_tokens']}
+          defaultEnabled={defaultValues['max_tokens'] !== undefined}
         />
 
         {/* stop values */}
-        <ToggleTagInput control={form.control} name="stop" description="put a stop to it" />
+        <ToggleTagInput
+          control={form.control}
+          name="stop"
+          description="put a stop to it"
+          defaultEnabled={defaultValues['stop'] !== undefined}
+        />
 
         {/* stream */}
         <FormField
