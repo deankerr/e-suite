@@ -37,25 +37,24 @@ export function ChatApp({ modelsAvailable }: Props) {
 
   const [panels, setPanels] = useState(() => initialChatsConfig.map((c) => c.id))
 
-  // debug log
-  useEffect(() => {
-    console.log(chatSessions, modelsAvailable)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
-    <div className="bg-grid-grey grid h-[100svh] grid-rows-[2.75rem_minmax(0,_1fr)]">
-      {/* //* Header Bar */}
+    <div className="grid h-[100svh] grid-rows-[2.75rem_minmax(0,_1fr)]">
+      {/* Header Bar */}
       <div
         id="ui-header"
         className="fixed top-0 flex w-full flex-row items-center justify-between gap-1 bg-background px-2 py-1 text-foreground md:px-8"
       >
         <div className="w-[50%]">
-          <h1 className={cn('text-xl font-extrabold tracking-tight')}>e/suite</h1>
+          <h1
+            className={cn('text-xl font-extrabold tracking-tight')}
+            onClick={() => console.log(chatSessions, modelsAvailable)}
+          >
+            e/suite
+          </h1>
         </div>
 
         <div className="flex gap-1">
-          {/* //* Active Chat Toggles */}
+          {/* Active Chat Toggles */}
           {panels.map((id) => (
             <Toggle
               variant="outline"
@@ -78,7 +77,7 @@ export function ChatApp({ modelsAvailable }: Props) {
         </div>
       </div>
 
-      {/* //* Chat Panels */}
+      {/* Chat Panels */}
       <main className="row-start-2 flex h-full justify-center">
         {panels.map((id) => {
           const session = getChatById(id)

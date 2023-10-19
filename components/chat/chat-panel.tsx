@@ -60,7 +60,11 @@ export function ChatPanel({ session, updateSession, modelsAvailable }: Props) {
   const formContent = (
     <InferenceParameterForm
       className="h-96 grow space-y-4 overflow-y-auto px-2 py-2"
+      defaultValues={session.parameters}
       modelsAvailable={modelsAvailable}
+      onSubmit={(values) => {
+        updateSession((s) => (s.parameters = { ...s.parameters, ...values }))
+      }}
     />
   )
 

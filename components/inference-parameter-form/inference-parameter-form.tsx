@@ -13,8 +13,9 @@ import {
 import { ChatModelOption } from '@/lib/api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { ChatInferenceParameters } from '../chat/types'
 import { ModelsComboboxForm } from './models-combobox'
 import { ToggleSliderInput } from './toggle-slider-input'
 import { ToggleTagInput } from './toggle-tag-input'
@@ -61,27 +62,36 @@ const inputPropsOAI = {
   },
 } as const
 
+const oaiDefaultValues = {
+  model: 'openai::gpt-3.5-turbo',
+  stream: true,
+  temperature: 1,
+  max_tokens: max_tokens_max,
+  frequency_penalty: 0,
+  presence_penalty: 0,
+  top_p: 1,
+  stop: ['### INSTRUCTION:', 'you are a turkey'],
+}
+
 function onSubmit(values: z.infer<typeof formSchemaOpenAI>) {
   console.log('submit!')
   console.log('values', values)
 }
 
 type Props = {
+  defaultValues: ChatInferenceParameters
   modelsAvailable: ChatModelOption[]
-} & React.HTMLAttributes<HTMLFormElement>
-export function InferenceParameterForm({ modelsAvailable, ...props }: Props) {
+  onSubmit: SubmitHandler<FormSchemaOpenAI>
+} & Omit<React.HTMLAttributes<HTMLFormElement>, 'onSubmit'>
+export function InferenceParameterForm({
+  modelsAvailable,
+  onSubmit,
+  defaultValues,
+  ...props
+}: Props) {
   const form = useForm<FormSchemaOpenAI>({
     resolver: zodResolver(formSchemaOpenAI),
-    defaultValues: {
-      model: 'openai::gpt-3.5-turbo',
-      stream: true,
-      temperature: 1,
-      max_tokens: max_tokens_max,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-      top_p: 1,
-      stop: ['### INSTRUCTION:', 'you are a turkey'],
-    },
+    defaultValues: { ...oaiDefaultValues, ...defaultValues },
   })
 
   useEffect(() => {
