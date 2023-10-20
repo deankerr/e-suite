@@ -6,10 +6,10 @@ import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
 import { useState } from 'react'
 import type { ChatMessage, ChatSession } from './types'
+import { useLocalGuestAuth } from './use-local-guest-auth'
 
 type useChatAppConfig = ChatSession
 
-const isServer = typeof window === 'undefined'
 const numId = customAlphabet('0123456789', 3)
 // Hidden initial system prompt
 const rootPrompt = 'Format your answers using Markdown.'
@@ -39,7 +39,7 @@ export function useChatApp(config: useChatAppConfig, prompt: string) {
   })
 
   //* guest auth
-  const token = getGuestAuthToken()
+  const token = useLocalGuestAuth()
 
   const { toast } = useToast()
 
@@ -90,8 +90,3 @@ function createMessage(role: Role, content: string, others: MessageOptional = {}
 }
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
-
-function getGuestAuthToken() {
-  if (isServer) return 'no'
-  return localStorage.getItem('e/suite-guest-auth-token') ?? 'none'
-}
