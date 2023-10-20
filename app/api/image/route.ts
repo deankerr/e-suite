@@ -1,3 +1,4 @@
+import { authenticateGuest } from '@/lib/api'
 import { openai, replicate, togetherai } from '@/lib/providers'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,8 +12,11 @@ const endpoints = {
   togetherai,
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   log.info('POST %s', request.url)
+
+  const auth = authenticateGuest(request.headers.get('Authorization'))
+  if (!auth.ok) return auth.response
 
   const { provider, ...params } = requestSchema.parse(await request.json())
   log.info(params, 'parameters')

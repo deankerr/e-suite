@@ -1,10 +1,15 @@
 import { writeFile } from 'node:fs/promises'
+import { authenticateGuest } from '@/lib/api'
 import { env, raise } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 export async function POST(request: NextRequest) {
   console.log('POST text-to-speech')
+
+  const auth = authenticateGuest(request.headers.get('Authorization'))
+  if (!auth.ok) return auth.response
+
   const { provider, ...params } = requestSchema.parse(await request.json())
 
   switch (provider) {

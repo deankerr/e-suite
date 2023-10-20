@@ -1,3 +1,4 @@
+import { authenticateGuest } from '@/lib/api'
 import { fal } from '@/lib/providers'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
@@ -7,6 +8,10 @@ const log = logger.child({}, { msgPrefix: '[api/image/illusion] ' })
 
 export async function POST(request: NextRequest) {
   log.info('POST image/illusion')
+
+  const auth = authenticateGuest(request.headers.get('Authorization'))
+  if (!auth.ok) return auth.response
+
   const params = requestSchema.parse(await request.json())
   log.info(params, 'params')
 
