@@ -33,11 +33,3 @@ export function raise(message: string): never {
 export function env(key: string, fallback?: string) {
   return process.env[key] ?? fallback ?? raise(`${key} not provided`)
 }
-
-export function isFriendly(value: string | null) {
-  if (!value || value !== 'yes sir') {
-    console.error('value:', value)
-    return false
-  }
-  return true
-}

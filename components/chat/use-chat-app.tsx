@@ -1,14 +1,16 @@
-'use-client'
+'use client'
 
 import { useToast } from '@/components/ui/use-toast'
 import { raise } from '@/lib/utils'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
-import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import type { ChatMessage, ChatSession } from './types'
 
 type useChatAppConfig = ChatSession
 
+const isServer = typeof window === 'undefined'
 const numId = customAlphabet('0123456789', 3)
 // Hidden initial system prompt
 const rootPrompt = 'Format your answers using Markdown.'
@@ -37,6 +39,10 @@ export function useChatApp(config: useChatAppConfig, prompt: string) {
     return [rootMessage, systemMessage]
   })
 
+  //* guest auth
+  const newAuthToken = useSearchParams().get('key')
+  const token = getGuestAuthToken(newAuthToken)
+
   const { toast } = useToast()
 
   const chatHelpers = useChat({
@@ -45,7 +51,7 @@ export function useChatApp(config: useChatAppConfig, prompt: string) {
     initialMessages: [...initialMessages],
     body: { ...parameters },
     headers: {
-      pirce: 'yes sir',
+      Authorization: token,
     },
     onResponse: (response) => {
       console.log('[response]', response)
@@ -86,3 +92,16 @@ function createMessage(role: Role, content: string, others: MessageOptional = {}
 }
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
+
+function getGuestAuthToken(key: string | null) {
+  if (isServer) return 'no'
+
+  try {
+    if (key) localStorage.setItem('e/suite-guest-auth-token', key)
+    const token = localStorage.getItem('e/suite-guest-auth-token')
+    if (token) return token
+  } catch {
+    console.log('im on the server')
+  }
+  return 'no'
+}
