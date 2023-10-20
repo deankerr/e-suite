@@ -5,6 +5,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Toggle } from '@/components/ui/toggle'
 import { ChatModelOption } from '@/lib/api'
 import { cn, raise } from '@/lib/utils'
+import { redirect, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { DraftFunction, useImmer } from 'use-immer'
 import { initialChatsConfig } from './config'
@@ -15,6 +16,29 @@ type Props = {
 }
 
 export function ChatApp({ modelsAvailable }: Props) {
+  const key = useSearchParams().get('key')
+  useEffect(() => {
+    const currentKey = localStorage.getItem('e/suite-guest-auth-token')
+    console.log('current key:', currentKey)
+
+    if (key) {
+      if (key === currentKey) {
+        console.log('same key, nothing to do')
+        redirect('e')
+      }
+
+      console.log('new key:', key)
+      localStorage.setItem('e/suite-guest-auth-token', key)
+
+      if (localStorage.getItem('e/suite-guest-auth-token') === key) {
+        console.log('key added, redirecting')
+        redirect('e')
+      } else {
+        console.log('localstorage key does not match')
+      }
+    }
+  }, [key])
+
   const [chatSessions, setChatSessions] = useImmer(() => {
     const chats: Record<ChatSession['id'], ChatSession> = {}
     for (const chat of initialChatsConfig) {

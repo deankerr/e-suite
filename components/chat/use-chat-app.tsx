@@ -4,8 +4,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { raise } from '@/lib/utils'
 import { useChat, type Message } from 'ai/react'
 import { customAlphabet } from 'nanoid/non-secure'
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { ChatMessage, ChatSession } from './types'
 
 type useChatAppConfig = ChatSession
@@ -40,8 +39,7 @@ export function useChatApp(config: useChatAppConfig, prompt: string) {
   })
 
   //* guest auth
-  const newAuthToken = useSearchParams().get('key')
-  const token = getGuestAuthToken(newAuthToken)
+  const token = getGuestAuthToken()
 
   const { toast } = useToast()
 
@@ -93,15 +91,7 @@ function createMessage(role: Role, content: string, others: MessageOptional = {}
 
 const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 7)
 
-function getGuestAuthToken(key: string | null) {
+function getGuestAuthToken() {
   if (isServer) return 'no'
-
-  try {
-    if (key) localStorage.setItem('e/suite-guest-auth-token', key)
-    const token = localStorage.getItem('e/suite-guest-auth-token')
-    if (token) return token
-  } catch {
-    console.log('im on the server')
-  }
-  return 'no'
+  return localStorage.getItem('e/suite-guest-auth-token') ?? 'none'
 }
