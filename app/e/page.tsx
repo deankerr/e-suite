@@ -1,5 +1,5 @@
 import { ChatApp } from '@/components/chat/chat-app'
-import { ShowTailwindBreakpoint } from '@/components/show-tailwind-breakpoint'
+import { ShowTailwindBreakpoint } from '@/components/util/show-tailwind-breakpoint'
 import { getChatModels } from '@/lib/api'
 
 export default function eSuitePage() {
