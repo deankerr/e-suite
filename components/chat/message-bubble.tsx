@@ -1,4 +1,4 @@
-import { Markdown } from '@/components/Markdown'
+import { Markdown } from '@/components/markdown'
 import { cn } from '@/lib/utils'
 import { ChatMessage } from './types'
 
