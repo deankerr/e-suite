@@ -1,10 +1,11 @@
+import { cn } from '@/lib/utils'
 import { AvatarIcon, ChatBubbleIcon, IdCardIcon, ImageIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { NavTab } from './nav-tab'
 
-type Props = {}
+type Props = {} & React.HTMLAttributes<HTMLDivElement>
 
-export function MainNav(props: Props) {
+export function MainNav({ className }: Props) {
   const tabs = [
     { route: 'chat', label: 'Chat', icon: <ChatBubbleIcon /> },
     { route: 'image', label: 'Image', icon: <ImageIcon /> },
@@ -13,7 +14,7 @@ export function MainNav(props: Props) {
   ]
 
   return (
-    <nav className="flex w-full text-xs sm:max-w-[4rem] sm:flex-col">
+    <nav className={cn('flex w-full text-xs sm:max-w-[4rem] sm:flex-col', className)}>
       {tabs.map((tab) => {
         return (
           <Link key={tab.route} href={tab.route} className="contents">

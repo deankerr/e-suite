@@ -7,12 +7,10 @@ type Props = {
 
 export default function Layout({ children }: Props) {
   return (
-    <div className="flex h-screen w-screen flex-col">
-      <MainHeader />
-      <div className="flex grow flex-col-reverse justify-between sm:flex-row">
-        <MainNav />
-        {children}
-      </div>
+    <div className="main-grid">
+      <MainHeader className="main-header" />
+      <MainNav className="main-nav" />
+      <main className="main-content flex overflow-x-auto">{children}</main>
     </div>
   )
 }

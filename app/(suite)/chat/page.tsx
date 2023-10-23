@@ -8,7 +8,7 @@ export default function ChatPage(props: Props) {
   const modelsAvailable = getChatModels()
 
   return (
-    <div className="flex h-full overflow-y-hidden overflow-x-scroll">
+    <>
       {initialChatsConfig.map((chat) => (
         <ChatPanel
           key={chat.id}
@@ -17,7 +17,7 @@ export default function ChatPage(props: Props) {
           modelsAvailable={modelsAvailable}
         />
       ))}
-    </div>
+    </>
   )
 }
 
