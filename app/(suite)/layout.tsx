@@ -10,7 +10,7 @@ export default function Layout({ children }: Props) {
     <div className="main-grid">
       <MainHeader className="main-header" />
       <MainNav className="main-nav" />
-      <main className="main-content flex overflow-x-auto">{children}</main>
+      <main className="main-content overflow-x-auto">{children}</main>
     </div>
   )
 }

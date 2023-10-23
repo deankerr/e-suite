@@ -13,7 +13,7 @@ export function MainNav({ className }: Props) {
   ]
 
   return (
-    <nav className={cn('flex text-xs sm:flex-col', className)}>
+    <nav className={cn('flex border-t text-xs sm:flex-col sm:border-r sm:border-t-0', className)}>
       {tabs.map((t) => (
         <TabLink
           href={t.route}
