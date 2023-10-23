@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils'
 import { AvatarIcon, ChatBubbleIcon, IdCardIcon, ImageIcon } from '@radix-ui/react-icons'
-import Link from 'next/link'
-import { NavTab } from './nav-tab'
+import { TabLink } from './tab-link'
 
 type Props = {} & React.HTMLAttributes<HTMLDivElement>
 
@@ -14,17 +13,17 @@ export function MainNav({ className }: Props) {
   ]
 
   return (
-    <nav className={cn('flex w-full text-xs sm:max-w-[4rem] sm:flex-col', className)}>
-      {tabs.map((tab) => {
-        return (
-          <Link key={tab.route} href={tab.route} className="contents">
-            <NavTab route={tab.route}>
-              {tab.icon}
-              {tab.label}
-            </NavTab>
-          </Link>
-        )
-      })}
+    <nav className={cn('flex text-xs sm:flex-col', className)}>
+      {tabs.map((t) => (
+        <TabLink
+          href={t.route}
+          key={t.route}
+          className="flex max-h-[4rem] grow flex-col items-center justify-center gap-1.5 border-b-[3px] hover:bg-muted hover:text-foreground sm:border-b-0 sm:border-l-[3px]"
+        >
+          {t.icon}
+          {t.label}
+        </TabLink>
+      ))}
     </nav>
   )
 }
