@@ -7,7 +7,7 @@ import { ChatModelOption } from '@/lib/api'
 import { cn, raise } from '@/lib/utils'
 import { useState } from 'react'
 import { DraftFunction, useImmer } from 'use-immer'
-import { initialChatsConfig } from './config'
+import { initialChat1Config } from './chat1-config'
 import { ChatSession } from './types'
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 export function ChatApp({ modelsAvailable }: Props) {
   const [chatSessions, setChatSessions] = useImmer(() => {
     const chats: Record<ChatSession['id'], ChatSession> = {}
-    for (const chat of initialChatsConfig) {
+    for (const chat of initialChat1Config) {
       chats[chat.id] = chat
     }
     return chats
@@ -35,7 +35,7 @@ export function ChatApp({ modelsAvailable }: Props) {
     }
   }
 
-  const [panels, setPanels] = useState(() => initialChatsConfig.map((c) => c.id))
+  const [panels, setPanels] = useState(() => initialChat1Config.map((c) => c.id))
 
   return (
     <div className="grid h-[100svh] grid-rows-[2.75rem_minmax(0,_1fr)]">

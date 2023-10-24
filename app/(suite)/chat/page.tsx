@@ -1,7 +1,12 @@
-import ChatPanelTabPage from '@/components/chat/chat-panel-tab-page'
+import { ChatTab } from '@/components/chat/chat-tab'
 
 type Props = {}
 
 export default function ChatPage(props: Props) {
-  return <ChatPanelTabPage />
+  return (
+    <>
+      <div>ChatPage</div>
+      <ChatTab />
+    </>
+  )
 }

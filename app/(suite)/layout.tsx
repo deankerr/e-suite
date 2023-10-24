@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode
 }
 
-export default function Layout({ children }: Props) {
+export default function SuiteLayout({ children }: Props) {
   return (
     <div className="main-grid overflow-hidden">
       <MainHeader className="main-header" />

@@ -2,7 +2,7 @@
 
 //# layout mockup implementation
 import { ChatPanelTab } from '@/components/chat/chat-panel-tab'
-import { initialChatsConfig } from '@/components/chat/config'
+import { initialChat1Config } from '@/components/chat/chat1-config'
 import { getChatModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { DotFilledIcon } from '@radix-ui/react-icons'
@@ -13,12 +13,12 @@ type Props = {}
 export default function ChatPanelTabPage(props: Props) {
   const modelsAvailable = getChatModels()
 
-  const [currentTab, setCurrentTab] = useState(initialChatsConfig[1]!)
+  const [currentTab, setCurrentTab] = useState(initialChat1Config[1]!)
 
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-10 w-full flex-none bg-muted">
-        {initialChatsConfig.map((c) => (
+        {initialChat1Config.map((c) => (
           <Tab
             key={c.id}
             title={c.panel.title}
