@@ -16,7 +16,7 @@ export function MainNav({ className }: Props) {
     <nav className={cn('flex border-t text-xs sm:flex-col sm:border-r sm:border-t-0', className)}>
       {tabs.map((t) => (
         <TabLink
-          href={t.route}
+          href={`/${t.route}`}
           key={t.route}
           className="flex max-h-[4rem] grow flex-col items-center justify-center gap-1.5 border-b-[3px] text-xs uppercase text-foreground/50 hover:bg-muted hover:text-foreground sm:border-b-0 sm:border-l-[3px]"
           activeClassName="border-primary bg-muted/70 text-foreground"
