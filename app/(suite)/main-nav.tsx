@@ -18,7 +18,8 @@ export function MainNav({ className }: Props) {
         <TabLink
           href={t.route}
           key={t.route}
-          className="flex max-h-[4rem] grow flex-col items-center justify-center gap-1.5 border-b-[3px] text-xs uppercase hover:bg-muted hover:text-foreground sm:border-b-0 sm:border-l-[3px]"
+          className="flex max-h-[4rem] grow flex-col items-center justify-center gap-1.5 border-b-[3px] text-xs uppercase text-foreground/50 hover:bg-muted hover:text-foreground sm:border-b-0 sm:border-l-[3px]"
+          activeClassName="border-primary bg-muted/70 text-foreground"
         >
           {t.icon}
           {t.label}
