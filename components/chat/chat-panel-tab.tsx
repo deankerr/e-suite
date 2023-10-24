@@ -104,29 +104,33 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
       </div>
 
       <MessageTextInput chatHelpers={chatHelpers} />
-      <ChatBarMenuItem
-        className="rounded-none bg-muted"
-        label={<FaceIcon />}
-        heading="Debug"
-        items={[
-          ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
-          ['Add code', () => setMessages([...messages, ...sampleCode])],
-          ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
-        ]}
-      />
+      <div className="flex h-10 items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">
+        Press Enter ⏎ for a new line / Press ⌘ + Enter to send
+      </div>
     </>
   )
 
   return (
     <>
       {/* top panel */}
-      <div className="flex h-10 flex-none items-center justify-between px-1 text-sm text-muted-foreground shadow-md">
-        <div></div>
+      <div className="flex h-10 flex-none items-center justify-between text-sm text-muted-foreground shadow-md">
+        <div className="pr-2">
+          <ChatBarMenuItem
+            className="rounded-none border-none"
+            label={<FaceIcon />}
+            heading="Debug"
+            items={[
+              ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
+              ['Add code', () => setMessages([...messages, ...sampleCode])],
+              ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
+            ]}
+          />
+        </div>
         {modelsAvailable.find((m) => m.id === parameters.modelId)?.label ?? 'huh?'}
-        <div className="space-x-1">
+        <div className="">
           <Button
+            className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
             variant="outline"
-            size="icon"
             onClick={() => {
               if (content === 'messages') {
                 setContent('form')
@@ -136,10 +140,14 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
               }
             }}
           >
-            <MixerHorizontalIcon className="h-4 w-4" />
+            <MixerHorizontalIcon className="" />
           </Button>
-          <Button variant="outline" size="icon" onClick={() => resetChatMessages()}>
-            <TrashIcon className="h-4 w-4" />
+          <Button
+            className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
+            variant="outline"
+            onClick={() => resetChatMessages()}
+          >
+            <TrashIcon className="" />
           </Button>
         </div>
       </div>
