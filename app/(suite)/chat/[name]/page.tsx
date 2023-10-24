@@ -1,4 +1,5 @@
 import { ChatMessageBubble } from '@/components/chat/message-bubble'
+import { DynamicTextarea } from '@/components/dynamic-textarea'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getAvailableChatModels } from '@/lib/api'
@@ -19,6 +20,7 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
 
   return (
     <div className="chat-tab-grid">
+      {/* Header */}
       <div className="chat-tab-header flex items-center justify-between text-sm text-muted-foreground shadow-md">
         <div className="pl-2 font-mono text-xs">
           {chat.id}/{chat.name}
@@ -39,11 +41,16 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
           </Button>
         </div>
       </div>
-      <div className="chat-tab-content flex flex-col items-center py-4">
+
+      {/* Content */}
+      <div className="chat-tab-content flex flex-col items-center justify-end space-y-4 py-4">
         <ChatMessageBubble
           message={{ id: 'aaaaa', role: 'system', content: 'Messages will appear here soon!' }}
         />
+        <DynamicTextarea />
       </div>
+
+      {/* Status */}
       <div className="chat-tab-status flex items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">
         Press Enter ⏎ for a new line / Press ⌘ + Enter to send
       </div>
