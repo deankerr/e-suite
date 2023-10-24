@@ -1,6 +1,4 @@
-import { ChatTab } from '@/components/chat/chat-tab'
-
-export default function ChatPage() {
+export default function ChatIndexPage() {
   return (
     <>
       <div>Chat Index Page</div>

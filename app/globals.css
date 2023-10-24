@@ -122,6 +122,7 @@
       'header'
       'content'
       'nav';
+    overflow: hidden;
   }
 
   .main-header {
@@ -132,8 +133,14 @@
     grid-area: nav;
   }
 
-  .main-content {
+  /* .main-content {
     grid-area: content;
+  } */
+
+  .main-grid main {
+    grid-area: content;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   @media (min-width: 640px) {
@@ -145,5 +152,30 @@
         'nav      content'
         'nav      content';
     }
+  }
+}
+
+@layer components {
+  .chat-tab-grid {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 2.5rem 1fr 2.5rem;
+    grid-template-columns: 100%;
+    grid-template-areas:
+      'header'
+      'content'
+      'status';
+  }
+
+  .chat-tab-header {
+    grid-area: header;
+  }
+
+  .chat-tab-content {
+    grid-area: content;
+  }
+
+  .chat-tab-status {
+    grid-area: status;
   }
 }
