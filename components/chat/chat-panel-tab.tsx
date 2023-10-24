@@ -37,7 +37,7 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
   const isLastMessageStreaming =
     isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 
-  //* scroll to panel on mount
+  //  scroll to panel on mount
   // const panelRef = useRef<HTMLDivElement | null>(null)
   // useEffect(() => {
   //   panelRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -54,8 +54,6 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
   //* auto scroll on message change
   useEffect(() => scrollToBottom(), [messages.length])
   const [bottomRef, bottomIsVisible] = useInView()
-
-  const _params = Object.entries(parameters).map(([key, value]) => ` ${key}: ${value}`)
 
   const [content, setContent] = useState<'messages' | 'form'>('messages')
 

@@ -16,7 +16,7 @@ export default function ChatPage(props: Props) {
 
   return (
     <>
-      <div className="flex h-10 flex-none bg-muted">
+      <div className="flex h-10 w-full flex-none bg-muted">
         {initialChatsConfig.map((c) => (
           <Tab
             key={c.id}
@@ -37,7 +37,7 @@ function Tab(props: { title: string; active: boolean } & React.ComponentProps<'d
   return (
     <div
       className={cn(
-        'flex h-full w-40 items-center justify-between border-primary px-3 text-sm font-medium',
+        'flex h-full items-center justify-between border-primary px-3 text-sm font-medium',
         active ? 'border-t-2 bg-background' : 'bg-muted',
       )}
       {...rest}

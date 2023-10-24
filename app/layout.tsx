@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html lang="en" className="h-full overscroll-none" suppressHydrationWarning>
       <body className={`${inter.className} h-full`}>
         <ThemeProvider
           attribute="class"

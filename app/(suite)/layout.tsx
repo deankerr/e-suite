@@ -7,7 +7,7 @@ type Props = {
 
 export default function Layout({ children }: Props) {
   return (
-    <div className="main-grid">
+    <div className="main-grid overflow-hidden">
       <MainHeader className="main-header" />
       <MainNav className="main-nav" />
       <main className="main-content flex flex-col overflow-x-auto">{children}</main>

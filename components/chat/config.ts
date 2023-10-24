@@ -35,11 +35,19 @@ export const initialChatsConfig: ChatSession[] = [
       modelId: 'openrouter::migtissera/synthia-70b',
     },
   },
-
   {
     id: 'E4',
     api: defaultApi,
     panel: { title: 'Ernest', active: false },
+    parameters: {
+      ...defaultParameters,
+      modelId: 'openrouter::xwin-lm/xwin-lm-70b',
+    },
+  },
+  {
+    id: 'C5',
+    api: defaultApi,
+    panel: { title: 'Craig', active: false },
     parameters: {
       ...defaultParameters,
       modelId: 'openrouter::xwin-lm/xwin-lm-70b',

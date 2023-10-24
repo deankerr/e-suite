@@ -114,13 +114,14 @@
 
 @layer components {
   .main-grid {
+    height: 100%;
     display: grid;
     grid-template-rows: 2.5rem 1fr 4rem;
+    grid-template-columns: 100%;
     grid-template-areas:
       'header'
       'content'
       'nav';
-    height: 100%;
   }
 
   .main-header {
@@ -137,6 +138,7 @@
 
   @media (min-width: 640px) {
     .main-grid {
+      grid-template-rows: 2.5rem 1fr;
       grid-template-columns: 4rem 1fr;
       grid-template-areas:
         'header   header'
