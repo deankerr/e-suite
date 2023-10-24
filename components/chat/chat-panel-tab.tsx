@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { ChatModelOption } from '@/lib/api'
 import { cn, raise } from '@/lib/utils'
-import { FaceIcon, MixerHorizontalIcon, PinBottomIcon } from '@radix-ui/react-icons'
+import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import * as R from 'remeda'
@@ -24,6 +24,8 @@ const defaultPrompt = 'You are a cheerful and helpful AI assistant named %%title
 
 export function ChatPanelTab({ session, modelsAvailable }: Props) {
   const { panel, parameters } = session
+
+  //! temp dummy update function
   const updateSession = (temp: (temp2: Record<string, object>) => void) => {}
 
   //* chat configuration
@@ -36,10 +38,10 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
     isLoading && messages.at(-1)?.role === 'assistant' ? messages.at(-1)?.id : ''
 
   //* scroll to panel on mount
-  const panelRef = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    panelRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+  // const panelRef = useRef<HTMLDivElement | null>(null)
+  // useEffect(() => {
+  //   panelRef.current?.scrollIntoView({ behavior: 'smooth' })
+  // }, [])
 
   //* scroll panel to bottom
   const messageContainerRef = useRef<HTMLDivElement | null>(null)
@@ -72,31 +74,23 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
     />
   )
 
-  //* <Messages>
-  const messagesContent = (
+  const messageContent = (
     <>
       <div
         id="e-chat-content-messages"
-        className="flex grow flex-col items-center space-y-4 overflow-y-auto px-2 pt-4"
+        className="flex grow flex-col items-center space-y-4 overflow-y-auto px-3 pt-4"
         ref={messageContainerRef}
       >
-        <p className="text-sm text-muted-foreground">
-          {modelsAvailable.find((m) => m.id === parameters.modelId)?.label ?? 'huh?'}
-        </p>
-
         {messages.map((m) => (
           <ChatMessageBubble message={m} showLoader={m.id === isLastMessageStreaming} key={m.id} />
         ))}
 
-        {/* Awaiting Response Indicator */}
         {isLoading && !isLastMessageStreaming ? (
           <ChatMessageBubble message={null} showLoader={true} />
         ) : null}
-        {/* Auto Scroll Target */}
         <div id="scroll-to-btm-observer" ref={bottomRef} className="w-full" />
       </div>
 
-      {/* Scroll To Bottom Button */}
       <div className="relative w-12 self-end">
         <Button
           variant="outline"
@@ -109,7 +103,6 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
         </Button>
       </div>
 
-      {/* Input Panel */}
       <MessageTextInput chatHelpers={chatHelpers} />
       <ChatBarMenuItem
         className="rounded-none bg-muted"
@@ -121,26 +114,16 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
           ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
         ]}
       />
-      {/* <ChatInputPanel chatHelpers={chatHelpers} /> */}
     </>
   )
 
   return (
-    <div
-      id="e-chat-panel"
-      className="flex h-full max-h-fit w-screen flex-col bg-background sm:w-full"
-      ref={panelRef}
-    >
-      {/* Control Bar */}
-      {/* <div
-        id="e-chat-control-bar"
-        className="flex items-center justify-between border-b px-2 py-1 font-medium shadow-md"
-      >
-        <div id="e-bar-left" className="flex w-[50%]"></div>
-        <div id="e-bar-middle">
-          <h2 onClick={() => console.log(session.panel.title, session)}>{panel.title}</h2>
-        </div>
-        <div id="e-bar-right" className="flex w-[50%] justify-end">
+    <>
+      {/* top panel */}
+      <div className="flex h-10 flex-none items-center justify-between px-1 text-sm text-muted-foreground shadow-md">
+        <div></div>
+        {modelsAvailable.find((m) => m.id === parameters.modelId)?.label ?? 'huh?'}
+        <div className="space-x-1">
           <Button
             variant="outline"
             size="icon"
@@ -153,16 +136,15 @@ export function ChatPanelTab({ session, modelsAvailable }: Props) {
               }
             }}
           >
-            <MixerHorizontalIcon />
+            <MixerHorizontalIcon className="h-4 w-4" />
           </Button>
-          <Button variant="outline" onClick={() => resetChatMessages()}>
-            clear
+          <Button variant="outline" size="icon" onClick={() => resetChatMessages()}>
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
-      </div> */}
+      </div>
 
-      {/* Main Content */}
-      {content === 'messages' ? messagesContent : formContent}
-    </div>
+      {content === 'form' ? formContent : messageContent}
+    </>
   )
 }
