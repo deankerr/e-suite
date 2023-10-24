@@ -1,11 +1,7 @@
 import { chatsConfig } from '@/config/chats'
 import { TabLink } from '../tab-link'
 
-type Props = {
-  children: React.ReactNode
-}
-
-export default function ChatLayout({ children }: Props) {
+export default function ChatLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="flex h-10 bg-muted">

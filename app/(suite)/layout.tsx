@@ -1,11 +1,7 @@
 import { MainHeader } from './main-header'
 import { MainNav } from './main-nav'
 
-type Props = {
-  children: React.ReactNode
-}
-
-export default function SuiteLayout({ children }: Props) {
+export default function SuiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="main-grid overflow-hidden">
       <MainHeader className="main-header" />

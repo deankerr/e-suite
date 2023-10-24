@@ -2,9 +2,7 @@ import { cn } from '@/lib/utils'
 import { AvatarIcon, ChatBubbleIcon, IdCardIcon, ImageIcon } from '@radix-ui/react-icons'
 import { TabLink } from './tab-link'
 
-type Props = {} & React.HTMLAttributes<HTMLDivElement>
-
-export function MainNav({ className }: Props) {
+export function MainNav({ className }: React.HTMLAttributes<HTMLDivElement>) {
   const tabs = [
     { route: 'chat', label: 'Chat', icon: <ChatBubbleIcon /> },
     { route: 'image', label: 'Image', icon: <ImageIcon /> },
