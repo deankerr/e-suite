@@ -1,21 +1,32 @@
 'use client'
 
+import { ChatBarMenuItem } from '@/components/chat/menu'
 import { ChatMessageBubble } from '@/components/chat/message-bubble'
+import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sample-data'
+import { FaceIcon } from '@radix-ui/react-icons'
 import { ChatForm } from './form/chatForm'
 import { ChatTabData } from './types'
 import { useChatApi } from './use-chat-api'
 
 export function ChatContent({ chat }: { chat: ChatTabData }) {
   const chatHelpers = useChatApi(chat)
-
+  const { setMessages } = chatHelpers
   return (
-    <div className="chat-tab-content overflow-y-auto">
-      <div className="flex flex-col items-center space-y-4 border">
-        {chatHelpers.messages.map((m) => (
-          <ChatMessageBubble message={m} key={m.id} />
-        ))}
-      </div>
-      <br />
+    <div className="chat-layout-content">
+      <ChatBarMenuItem
+        className="rounded-none border-none"
+        label={<FaceIcon />}
+        heading="Debug"
+        items={[
+          ['Add lorem', () => setMessages([...sampleConvo])],
+          ['Add code', () => setMessages([...sampleCode])],
+          ['Add markdown', () => setMessages([...sampleMessages])],
+        ]}
+      />
+      {chatHelpers.messages.map((m) => (
+        <ChatMessageBubble message={m} key={m.id} />
+      ))}
+
       {/* Form */}
       <ChatForm
         className="w-full space-y-4"

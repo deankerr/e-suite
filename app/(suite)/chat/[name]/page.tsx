@@ -17,9 +17,9 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
   const { chat, model } = getChatConfig(params.name)
 
   return (
-    <div className="chat-tab-grid">
+    <>
       {/* Header */}
-      <div className="chat-tab-header flex items-center justify-between text-sm text-muted-foreground shadow-md">
+      <div className="chat-layout-top-panel flex items-center justify-between text-sm text-muted-foreground shadow-md">
         <div className="pl-2 font-mono text-xs">
           {chat.id}/{chat.name}
         </div>
@@ -44,9 +44,9 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
       <ChatContent chat={chat} />
 
       {/* Status */}
-      <div className="chat-tab-status flex items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">
+      <div className="chat-layout-bottom-panel flex items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">
         Press Enter ⏎ for a new line / Press ⌘ + Enter to send
       </div>
-    </div>
+    </>
   )
 }

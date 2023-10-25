@@ -117,30 +117,22 @@
     height: 100%;
     display: grid;
     grid-template-rows: 2.5rem 1fr 4rem;
-    grid-template-columns: 100%;
     grid-template-areas:
-      'header'
-      'content'
-      'nav';
-    overflow: hidden;
+      'main-header'
+      'main-content'
+      'main-nav';
   }
 
   .main-header {
-    grid-area: header;
+    grid-area: main-header;
   }
 
   .main-nav {
-    grid-area: nav;
+    grid-area: main-nav;
   }
 
-  /* .main-content {
-    grid-area: content;
-  } */
-
-  .main-grid main {
-    grid-area: content;
-    overflow-x: auto;
-    overflow-y: hidden;
+  .main-content {
+    grid-area: main-content;
   }
 
   @media (min-width: 640px) {
@@ -148,34 +140,40 @@
       grid-template-rows: 2.5rem 1fr;
       grid-template-columns: 4rem 1fr;
       grid-template-areas:
-        'header   header'
-        'nav      content'
-        'nav      content';
+        'main-header   main-header'
+        'main-nav      main-content'
+        'main-nav      main-content';
     }
   }
 }
 
 @layer components {
-  .chat-tab-grid {
-    height: 100%;
+  .chat-layout-grid {
     display: grid;
-    grid-template-rows: 2.5rem 1fr 2.5rem;
-    grid-template-columns: 100%;
+    grid-template-rows: 2.5rem 2.5rem 1fr 2.5rem;
     grid-template-areas:
-      'header'
-      'content'
-      'status';
+      'chat-layout-tab-bar'
+      'chat-layout-top-panel'
+      'chat-layout-content'
+      'chat-layout-bottom-panel';
+    overflow: hidden;
   }
 
-  .chat-tab-header {
-    grid-area: header;
+  .chat-layout-tab-bar {
+    grid-area: chat-layout-tab-bar;
+    overflow-x: hidden;
   }
 
-  .chat-tab-content {
-    grid-area: content;
+  .chat-layout-header {
+    grid-area: chat-layout-top-panel;
   }
 
-  .chat-tab-status {
-    grid-area: status;
+  .chat-layout-content {
+    grid-area: chat-layout-content;
+    overflow-y: auto;
+  }
+
+  .chat-layout-bottom-panel {
+    grid-area: chat-layout-bottom-panel;
   }
 }

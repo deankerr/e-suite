@@ -4,8 +4,8 @@ import { TabLink } from '../tab-link'
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="flex flex-col">
-      <div className="flex h-10 flex-none bg-muted">
+    <main className="main-content chat-layout-grid">
+      <div className="chat-layout-tab-bar flex bg-muted">
         {chatsConfig.map((c) => (
           <TabLink
             key={c.id}
