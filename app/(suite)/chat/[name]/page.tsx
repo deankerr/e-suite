@@ -18,7 +18,7 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
 
   return (
     <>
-      {/* Header */}
+      {/* Top Panel */}
       <div className="chat-layout-top-panel flex items-center justify-between text-sm text-muted-foreground shadow-md">
         <div className="pl-2 font-mono text-xs">
           {chat.id}/{chat.name}
@@ -40,10 +40,10 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Chat Content */}
       <ChatContent chat={chat} />
 
-      {/* Status */}
+      {/* Bottom Panel */}
       <div className="chat-layout-bottom-panel flex items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">
         Press Enter ⏎ for a new line / Press ⌘ + Enter to send
       </div>

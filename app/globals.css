@@ -135,7 +135,7 @@
     grid-area: main-content;
   }
 
-  @media (min-width: 640px) {
+  @media screen(sm) {
     .main-grid {
       grid-template-rows: 2.5rem 1fr;
       grid-template-columns: 4rem 1fr;
