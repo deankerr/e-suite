@@ -1,4 +1,3 @@
-import { ChatMessageBubble } from '@/components/chat/message-bubble'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getAvailableChatModels } from '@/lib/api'
@@ -42,12 +41,7 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
       </div>
 
       {/* Content */}
-      <div className="chat-tab-content flex flex-col items-center justify-end space-y-4 py-4">
-        <ChatMessageBubble
-          message={{ id: 'aaaaa', role: 'system', content: 'Messages will appear here soon!' }}
-        />
-        <ChatContent chat={chat} />
-      </div>
+      <ChatContent chat={chat} />
 
       {/* Status */}
       <div className="chat-tab-status flex items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">

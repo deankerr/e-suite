@@ -17,19 +17,24 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { TextareaAutosize } from '@/components/ui/textarea-autosize'
 import { getAvailableChatModels } from '@/lib/api'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { chatFormOpenAI, ChatFormSchemaOpenAI } from './schema'
 import { SliderInput } from './slider-input'
 import { TagInput } from './tag-input'
 
-type Props = {} & React.ComponentProps<'form'>
+type Props = { handleSubmit: SubmitHandler<ChatFormSchemaOpenAI> } & React.ComponentProps<'form'>
 
 const currentValues: Record<string, number> = {}
 
-export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(props, ref) {
+export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
+  { handleSubmit, ...props },
+  ref,
+) {
   const models = getAvailableChatModels()
 
   const form = useForm<ChatFormSchemaOpenAI>({
@@ -59,11 +64,12 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(pro
     'top_p',
   ] as const
 
+  const isValidInput = false
   return (
     <Form {...form}>
       <form
         ref={ref}
-        onSubmit={form.handleSubmit((values) => console.log('submit:', values))}
+        onSubmit={form.handleSubmit(handleSubmit, (err) => console.log('submit error:', err))}
         {...props}
       >
         <div className="grid grid-cols-[1fr,2fr,1fr] items-center justify-items-center">
@@ -73,11 +79,11 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(pro
             control={form.control}
             name="modelId"
             render={({ field }) => (
-              <FormItem className="w-64">
+              <FormItem className="">
                 <FormLabel className="mx-auto block text-center font-normal">Model</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-64">
                       <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                   </FormControl>
@@ -145,6 +151,38 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(pro
               </div>
               <FormControl>
                 <TagInput field={field} setEnabled={() => setFieldEnabled('stop', true)} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Dynamic Textarea */}
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => (
+            <FormItem className="flex w-96 flex-col space-y-0">
+              <FormLabel className="font-mono">{field.name}</FormLabel>
+              <FormControl>
+                <div className="flex items-end rounded-3xl border px-2 py-2 focus-within:ring-1 focus-within:ring-ring">
+                  <Button className="rounded-2xl" variant="outline" type="button">
+                    <HeartIcon />
+                  </Button>
+                  <TextareaAutosize
+                    className="w-full resize-none bg-transparent px-2 py-1.5 placeholder:text-muted-foreground focus-visible:outline-none"
+                    placeholder="Speak..."
+                    rows={1}
+                    {...field}
+                  />
+                  <Button
+                    className="rounded-2xl"
+                    variant={isValidInput ? 'default' : 'outline'}
+                    type="submit"
+                  >
+                    <PaperPlaneIcon />
+                  </Button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

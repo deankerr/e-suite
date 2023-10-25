@@ -3,6 +3,10 @@ import { z } from 'zod'
 const max_tokens_max = 4097
 
 const formSchema = z.object({
+  //* meta
+  fieldsEnabled: z.string().array(),
+  modelId: z.string().nonempty(),
+
   //* inference params
   // model: z.string().nonempty(), //* set externally
   // stream: z.boolean().optional(), //* set externally (currently always on)
@@ -15,9 +19,7 @@ const formSchema = z.object({
   top_p: z.coerce.number().gte(0).lte(2),
   stop: z.string().array(),
 
-  //* metadata
-  modelId: z.string().nonempty(),
-  fieldsEnabled: z.string().array(),
+  message: z.string().nonempty(),
 })
 
 const inputValues = {
@@ -49,14 +51,15 @@ const inputValues = {
 }
 
 const defaultValues = {
+  fieldsEnabled: [],
+  modelId: '',
   temperature: 1,
   frequency_penalty: 0,
   presence_penalty: 0,
   max_tokens: max_tokens_max,
   top_p: 1,
   stop: [],
-  modelId: '',
-  fieldsEnabled: [],
+  message: '',
 }
 
 export type ChatFormSchemaOpenAI = z.infer<typeof chatFormOpenAI.formSchema>

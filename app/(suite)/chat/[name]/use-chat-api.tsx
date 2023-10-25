@@ -8,6 +8,8 @@ import { ChatTabData } from './types'
 
 const endpoint = '/api/chat'
 
+export type ChatHelpers = ReturnType<typeof useChatApi>
+
 export function useChatApi(chat: ChatTabData) {
   const { toast } = useToast()
   const models = getAvailableChatModels()
@@ -18,7 +20,7 @@ export function useChatApi(chat: ChatTabData) {
 
   const token = useLocalGuestAuth('e/suite-guest-auth-token', '')
 
-  const chatHelpers = useChat({
+  const useChatHelpers = useChat({
     id: chat.id,
     api: endpoint,
     initialMessages: [createMessage('system', systemPrompt)],
@@ -42,9 +44,11 @@ export function useChatApi(chat: ChatTabData) {
     },
   })
 
-  const resetMessages = () => chatHelpers.setMessages([createMessage('system', systemPrompt)])
+  const resetMessages = () => useChatHelpers.setMessages([createMessage('system', systemPrompt)])
 
-  return { ...chatHelpers, resetMessages }
+  const chatHelpers = { ...useChatHelpers, resetMessages }
+
+  return chatHelpers
 }
 
 function createMessage(role: 'system' | 'user' | 'assistant', content: string) {
