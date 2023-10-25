@@ -1,9 +1,14 @@
+'use client'
+
+import { ChatBarMenuItem } from '@/components/chat/menu'
+import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sample-data'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getAvailableChatModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { MixerHorizontalIcon, TrashIcon } from '@radix-ui/react-icons'
+import { FaceIcon, MixerHorizontalIcon, TrashIcon } from '@radix-ui/react-icons'
 import { ChatContent } from './chat-content'
+import { useChatApi } from './use-chat-api'
 
 function getChatConfig(name: string) {
   const chat = chatsConfig.find((c) => c.name === decodeURI(name))
@@ -13,14 +18,25 @@ function getChatConfig(name: string) {
   return { chat, model }
 }
 
-export default function ChatNamePage({ params }: { params: { name: string } }) {
+export default function ChatPage({ params }: { params: { name: string } }) {
   const { chat, model } = getChatConfig(params.name)
-
+  const chatHelpers = useChatApi(chat)
+  const { messages, setMessages, resetMessages } = chatHelpers
   return (
     <>
       {/* Top Panel */}
-      <div className=" chat-layout-top-panel flex max-w-3xl items-center justify-between text-sm text-muted-foreground shadow-md">
-        <div className="pl-2 font-mono text-xs">
+      <div className="chat-layout-top-panel flex max-w-3xl items-center justify-between text-sm text-muted-foreground shadow-md">
+        <div className="font-mono text-xs">
+          <ChatBarMenuItem
+            className="rounded-none border-none"
+            label={<FaceIcon />}
+            heading="Debug"
+            items={[
+              ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
+              ['Add code', () => setMessages([...messages, ...sampleCode])],
+              ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
+            ]}
+          />
           {chat.id}/{chat.name}
         </div>
         <div>{model.label}</div>
@@ -34,6 +50,7 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
           <Button
             className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
             variant="outline"
+            onClick={() => resetMessages()}
           >
             <TrashIcon />
           </Button>
@@ -41,7 +58,7 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
       </div>
 
       {/* Chat Content */}
-      <ChatContent chat={chat} />
+      <ChatContent chat={chat} chatHelpers={chatHelpers} />
 
       {/* Bottom Panel */}
       <div className=" chat-layout-bottom-panel flex max-w-3xl items-center justify-center border-t px-2 py-1 text-sm text-muted-foreground">
