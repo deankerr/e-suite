@@ -73,8 +73,8 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(pro
             control={form.control}
             name="modelId"
             render={({ field }) => (
-              <FormItem className="space-y-0">
-                <FormLabel className="w-full pl-3 text-center font-normal">Model</FormLabel>
+              <FormItem className="w-64">
+                <FormLabel className="mx-auto block text-center font-normal">Model</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>

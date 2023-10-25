@@ -54,7 +54,7 @@ const defaultValues = {
   presence_penalty: 0,
   max_tokens: max_tokens_max,
   top_p: 1,
-  stop: ['### INSTRUCTION:', 'eggs', 'gobs'],
+  stop: [],
   modelId: '',
   fieldsEnabled: [],
 }
