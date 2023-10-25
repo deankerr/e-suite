@@ -5,6 +5,7 @@ import { chatsConfig } from '@/config/chats'
 import { getAvailableChatModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { MixerHorizontalIcon, TrashIcon } from '@radix-ui/react-icons'
+import { ChatForm } from './form/chatForm'
 
 function getChatConfig(name: string) {
   const chat = chatsConfig.find((c) => c.name === decodeURI(name))
@@ -47,6 +48,8 @@ export default function ChatNamePage({ params }: { params: { name: string } }) {
         <ChatMessageBubble
           message={{ id: 'aaaaa', role: 'system', content: 'Messages will appear here soon!' }}
         />
+        {/* Form */}
+        <ChatForm className="w-full space-y-4" />
         <DynamicTextarea />
       </div>
 
