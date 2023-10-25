@@ -39,7 +39,7 @@ export function useChatApp(config: useChatAppConfig, prompt: string) {
   })
 
   //* guest auth
-  const token = useLocalGuestAuth()
+  const token = useLocalGuestAuth('e/suite-guest-auth-token', 'e')
 
   const { toast } = useToast()
 
