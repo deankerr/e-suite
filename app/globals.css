@@ -113,6 +113,12 @@
 }
 
 @layer components {
+  .inline-loading-ball {
+    @apply daisy-loading daisy-loading-ball align-bottom;
+  }
+}
+
+@layer components {
   .main-grid {
     height: 100%;
     display: grid;

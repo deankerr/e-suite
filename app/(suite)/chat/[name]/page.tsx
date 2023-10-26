@@ -86,11 +86,16 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       >
         {/* Message Feed */}
         <div className={cn('space-y-4 py-2.5', showChatForm && 'hidden')}>
-          {messages.map((m, i) => (
-            <MessageBubble variant={m.role} content={m.content} key={m.id} />
+          {messages.map((m) => (
+            <MessageBubble
+              variant={m.role}
+              content={m.content}
+              loading={messages.at(-1)?.id === m.id && requestStatus === 'streaming'}
+              key={m.id}
+            />
           ))}
           {requestStatus === 'waiting' && (
-            <MessageBubble variant="assistant" content="[icon](loadingball)" />
+            <MessageBubble variant="assistant" content="" loading={true} />
           )}
           <div ref={contentScrolledRef}></div>
         </div>

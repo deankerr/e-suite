@@ -1,6 +1,6 @@
 import { Markdown } from '@/components/util/markdown'
 import { cn } from '@/lib/utils'
-import { forwardRef } from 'react'
+import { ComponentProps, forwardRef } from 'react'
 
 const messageBubbleVariants = {
   container: {
@@ -30,10 +30,11 @@ type VariantProp = 'default' | 'user' | 'assistant'
 type Props = {
   content: string
   variant: VariantProp | (string & {})
+  loading?: boolean
 }
 
 export const MessageBubble = forwardRef<HTMLDivElement, Props>(function MessageBubble(
-  { content, variant },
+  { content, variant, loading },
   ref,
 ) {
   const key = getVariantKey(variant)
@@ -43,6 +44,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, Props>(function MessageB
         className={cn(
           'prose prose-stone col-start-2 overflow-hidden rounded-lg px-3 py-2 dark:prose-invert',
           variants.content(key),
+          loading && '[&>_:last-child:not(pre)]:after:inline-loading-ball',
         )}
       >
         <Markdown>{content}</Markdown>
