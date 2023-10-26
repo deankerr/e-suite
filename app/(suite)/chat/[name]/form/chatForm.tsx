@@ -63,6 +63,12 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
     }
   }
 
+  const submit = (values: ChatFormSchemaOpenAI) => {
+    console.log('submit', values)
+    handleSubmit(values)
+    form.resetField('message')
+  }
+
   const sliderInputFields = [
     'temperature',
     'frequency_penalty',
@@ -75,14 +81,7 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
     <Form {...form}>
       <form
         ref={ref}
-        onSubmit={form.handleSubmit(
-          (values) => {
-            console.log('submit', values)
-            handleSubmit(values)
-            form.resetField('message')
-          },
-          (err) => console.log('submit error:', err),
-        )}
+        onSubmit={form.handleSubmit(submit, (err) => console.log('submit error:', err))}
         {...props}
       >
         {/* model select */}
@@ -200,6 +199,11 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
                     className="w-full resize-none bg-transparent px-2 py-1.5 placeholder:text-muted-foreground focus-visible:outline-none"
                     placeholder="Speak..."
                     rows={1}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.metaKey) {
+                        form.handleSubmit(submit)()
+                      }
+                    }}
                     {...field}
                   />
                   <Button
