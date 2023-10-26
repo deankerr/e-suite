@@ -1,7 +1,7 @@
 'use client'
 
+import { DebugMenu } from '@/components/chat/debug-menu'
 import { ChatForm } from '@/components/chat/form/chatForm'
-import { ChatBarMenuItem } from '@/components/chat/menu'
 import { MessageBubble } from '@/components/chat/message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sample-data'
 import { useChatApi } from '@/components/chat/use-chat-api'
@@ -51,7 +51,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       {/* Top Panel */}
       <div className="chat-layout-top-panel flex max-w-3xl items-center justify-between border-b border-r text-sm text-muted-foreground">
         <div className="font-mono text-xs">
-          <ChatBarMenuItem
+          <DebugMenu
             className="rounded-none border-none"
             label={<FaceIcon />}
             heading={`${chat.id}/${chat.name}`}

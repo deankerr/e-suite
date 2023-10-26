@@ -2,15 +2,9 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -20,7 +14,7 @@ type Props = {
   items: Array<[React.ReactNode, () => void]>
 } & React.HTMLAttributes<HTMLButtonElement>
 
-export function ChatBarMenuItem({ label, heading, items, ...props }: Props) {
+export function DebugMenu({ label, heading, items, ...props }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
