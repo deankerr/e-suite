@@ -60,8 +60,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
             ]}
           />
         </div>
-        {/* <div>{model.label}</div> */}
-        <div>{isScrolledToEnd ? 'SCROLL MAX' : 'up'}</div>
+        <div>{model.label}</div>
         <div>
           <Button
             className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
@@ -104,8 +103,8 @@ export default function ChatPage({ params }: { params: { name: string } }) {
               ? 'space-y-8 [&>_:last-child]:hidden'
               : 'sticky bottom-0 [&>*:not(:last-child)]:hidden',
           )}
+          session={chat}
           handleSubmit={(values) => {
-            console.log('submit', values)
             const { modelId, message, ...params } = values
             setChat((c) => {
               c.modelId = modelId

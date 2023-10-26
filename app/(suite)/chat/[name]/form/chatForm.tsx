@@ -24,23 +24,29 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { ChatTabData } from '../types'
 import { chatFormOpenAI, ChatFormSchemaOpenAI } from './schema'
 import { SliderInput } from './slider-input'
 import { TagBadge } from './tag-badge'
 
-type Props = { handleSubmit: SubmitHandler<ChatFormSchemaOpenAI> } & React.ComponentProps<'form'>
-
-const currentValues: Record<string, number> = {}
+type Props = {
+  handleSubmit: SubmitHandler<ChatFormSchemaOpenAI>
+  session: ChatTabData
+} & React.ComponentProps<'form'>
 
 export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
-  { handleSubmit, ...props },
+  { handleSubmit, session, ...props },
   ref,
 ) {
   const models = getAvailableChatModels()
 
   const form = useForm<ChatFormSchemaOpenAI>({
     resolver: zodResolver(chatFormOpenAI.formSchema),
-    defaultValues: chatFormOpenAI.defaultValues,
+    defaultValues: {
+      ...chatFormOpenAI.defaultValues,
+      ...session.parameters,
+      modelId: session.modelId,
+    },
   })
 
   const fieldsEnabled = form.watch('fieldsEnabled')
@@ -69,7 +75,14 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
     <Form {...form}>
       <form
         ref={ref}
-        onSubmit={form.handleSubmit(handleSubmit, (err) => console.log('submit error:', err))}
+        onSubmit={form.handleSubmit(
+          (values) => {
+            console.log('submit', values)
+            handleSubmit(values)
+            form.resetField('message')
+          },
+          (err) => console.log('submit error:', err),
+        )}
         {...props}
       >
         {/* model select */}
