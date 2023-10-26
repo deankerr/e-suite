@@ -7,4 +7,6 @@ export type ChatTabData = {
   parameters: ChatTabInferenceParameters
 }
 
-export type ChatTabInferenceParameters = Partial<OpenAIInferenceParameters>
+export type ChatTabInferenceParameters = Partial<OpenAIInferenceParameters> & {
+  fieldsEnabled?: string[]
+}
