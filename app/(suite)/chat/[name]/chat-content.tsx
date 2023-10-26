@@ -17,11 +17,9 @@ export function ChatContent({
 
   const hideForm = true
   return (
-    <div className="chat-layout-content max-w-3xl space-y-4 border-r pb-2">
-      <div className="grid grid-cols-5 px-3"></div>
-
+    <div className="chat-layout-content max-w-3xl space-y-4 border-r py-4">
       {/* Messages Feed */}
-      <div className="mx-auto max-w-3xl space-y-4">
+      <div className="grid grid-flow-row grid-cols-[minmax(0,_0.75rem)_repeat(10,_minmax(0,_1fr))_minmax(0,_0.75rem)] gap-y-4">
         {messages.map((m) => (
           <MessageBubble
             variant={m.role === 'user' ? 'local' : m.role === 'assistant' ? 'remote' : 'default'}
