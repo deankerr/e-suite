@@ -3,13 +3,13 @@ import { useToast } from '@/components/ui/use-toast'
 import { getModelById } from '@/lib/api'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
-import { ChatTabData } from './types'
+import { ChatSession } from './types'
 
 const endpoint = '/api/chat'
 
 export type ChatHelpers = ReturnType<typeof useChatApi>
 
-export function useChatApi(chat: ChatTabData) {
+export function useChatApi(chat: ChatSession) {
   const { toast } = useToast()
 
   const modelData = getModelById(chat.modelId)

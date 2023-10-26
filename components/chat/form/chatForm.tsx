@@ -24,14 +24,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { ChatTabData } from '../types'
+import { ChatSession } from '../types'
 import { chatFormOpenAI, ChatFormSchemaOpenAI } from './schema'
 import { SliderInput } from './slider-input'
 import { TagBadge } from './tag-badge'
 
 type Props = {
   handleSubmit: SubmitHandler<ChatFormSchemaOpenAI>
-  session: ChatTabData
+  session: ChatSession
 } & React.ComponentProps<'form'>
 
 export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(

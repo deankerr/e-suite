@@ -1,6 +1,6 @@
-import { ChatTabData } from '@/components/chat/types'
+import { ChatSession } from '@/components/chat/types'
 
-export const chatsConfig: ChatTabData[] = [
+export const chatsConfig: ChatSession[] = [
   {
     id: 'p1',
     name: 'Piñata',

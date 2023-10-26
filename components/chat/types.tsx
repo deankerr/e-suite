@@ -1,12 +1,12 @@
 import { OpenAIInferenceParameters } from '@/lib/providers'
 
-export type ChatTabData = {
+export type ChatSession = {
   id: Readonly<string> // id
   name: string // unique
   modelId: string
-  parameters: ChatTabInferenceParameters
+  parameters: ChatSessionModelParameters
 }
 
-export type ChatTabInferenceParameters = Partial<OpenAIInferenceParameters> & {
+export type ChatSessionModelParameters = Partial<OpenAIInferenceParameters> & {
   fieldsEnabled?: string[]
 }
