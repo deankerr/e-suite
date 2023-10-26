@@ -9,6 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -25,7 +26,7 @@ import { forwardRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { chatFormOpenAI, ChatFormSchemaOpenAI } from './schema'
 import { SliderInput } from './slider-input'
-import { TagInput } from './tag-input'
+import { TagBadge } from './tag-badge'
 
 type Props = { handleSubmit: SubmitHandler<ChatFormSchemaOpenAI> } & React.ComponentProps<'form'>
 
@@ -71,36 +72,31 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
         onSubmit={form.handleSubmit(handleSubmit, (err) => console.log('submit error:', err))}
         {...props}
       >
-        <div className="grid grid-cols-[1fr,2fr,1fr] items-center justify-items-center">
-          <div></div>
-          {/* model select */}
-          <FormField
-            control={form.control}
-            name="modelId"
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel className="sr-only mx-auto block text-center font-normal">
-                  Model
-                </FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-64">
-                      <SelectValue placeholder="Select a model" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {models.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        {/* model select */}
+        <FormField
+          control={form.control}
+          name="modelId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="sr-only mx-auto block text-center font-normal">Model</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="mx-auto w-64">
+                    <SelectValue placeholder="Select a model" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {models.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* slider inputs */}
         {sliderInputFields.map((name) => {
@@ -137,25 +133,43 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
           control={form.control}
           name="stop"
           render={({ field }) => (
-            <FormItem className="flex w-full flex-col space-y-0">
-              <div className="flex w-full items-center gap-3">
+            <FormItem className="space-x-1">
+              <div className="flex items-center gap-3">
                 <Switch
                   checked={getFieldEnabled('stop')}
                   onCheckedChange={(checked) => setFieldEnabled('stop', checked)}
                 />
                 <FormLabel className="font-mono">{field.name}</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Add stop sequence..."
+                    className="ml-1 h-8 w-52 grow"
+                    onKeyDown={(e) => {
+                      const value = e.currentTarget.value
+                      if (e.key !== 'Enter' || !value || field.value.includes(value)) return
+                      setFieldEnabled('stop', true)
+                      field.onChange([...field.value, value])
+                      e.currentTarget.value = ''
+                    }}
+                  />
+                </FormControl>
               </div>
-              <FormControl>
-                <TagInput field={field} setEnabled={() => setFieldEnabled('stop', true)} />
-              </FormControl>
+              {field.value.map((tag) => (
+                <TagBadge
+                  key={tag}
+                  tag={tag}
+                  onButtonClick={() => {
+                    setFieldEnabled('stop', true)
+                    field.onChange(field.value.filter((t) => t !== tag))
+                  }}
+                />
+              ))}
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" variant="secondary" className="inline">
-          Test Submit
-        </Button>
+        <Button type="submit">Test Submit</Button>
 
         {/* Dynamic Textarea */}
         <FormField
