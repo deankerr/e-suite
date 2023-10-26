@@ -162,10 +162,10 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
           control={form.control}
           name="message"
           render={({ field }) => (
-            <FormItem className="mx-auto flex max-w-2xl flex-col space-y-0">
+            <FormItem className="mx-auto flex max-w-[90%] flex-col space-y-0">
               <FormLabel className="sr-only font-mono">{field.name}</FormLabel>
               <FormControl>
-                <div className="flex items-end rounded-3xl border px-2 py-2 focus-within:ring-1 focus-within:ring-ring">
+                <div className="flex items-end rounded-3xl border bg-background px-2 py-2 focus-within:ring-1 focus-within:ring-ring">
                   <Button className="rounded-2xl" variant="outline" type="button">
                     <HeartIcon />
                   </Button>
@@ -177,7 +177,7 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
                   />
                   <Button
                     className="rounded-2xl"
-                    variant={isValidInput ? 'default' : 'outline'}
+                    variant={field.value !== '' ? 'default' : 'outline'}
                     type="submit"
                   >
                     <PaperPlaneIcon />
