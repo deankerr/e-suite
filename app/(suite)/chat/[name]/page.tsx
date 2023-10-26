@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getModelById } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { FaceIcon, MixerHorizontalIcon, TrashIcon } from '@radix-ui/react-icons'
-import { useState } from 'react'
+import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
+import { useRef, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { useImmer } from 'use-immer'
 import { ChatForm } from './form/chatForm'
 import { MessageBubble } from './message-bubble'
@@ -28,6 +29,18 @@ export default function ChatPage({ params }: { params: { name: string } }) {
   const { messages, setMessages, resetMessages, addMessage } = chatHelpers
 
   const [showChatForm, setShowChatForm] = useState(false)
+
+  const contentAreaRef = useRef<HTMLDivElement | null>(null)
+  const scrollFeedToEnd = () => {
+    if (!contentAreaRef.current) return
+    const { scrollHeight } = contentAreaRef.current
+    contentAreaRef.current.scrollTo({ top: scrollHeight, behavior: 'smooth' })
+  }
+  const [contentScrolledRef, isContentScrolled] = useInView({
+    initialInView: true,
+    fallbackInView: true,
+  })
+
   return (
     <>
       {/* Top Panel */}
@@ -67,20 +80,25 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       </div>
 
       {/* Chat Content */}
-      <div className="chat-layout-content grid max-w-3xl grid-rows-[1fr,_auto] border-r shadow-inner">
-        {/* Messages Feed */}
+      <div
+        ref={contentAreaRef}
+        className="chat-layout-content relative grid max-w-3xl grid-rows-[1fr,_auto] border-r shadow-inner"
+      >
+        {/* Message Feed */}
         <div className={cn('space-y-4 py-2.5', showChatForm && 'hidden')}>
-          {messages.map((m) => (
+          {messages.map((m, i) => (
             <MessageBubble variant={m.role} content={m.content} key={m.id} />
           ))}
         </div>
 
+        <div ref={contentScrolledRef}></div>
+
         {/* Chat Form */}
         <ChatForm
           className={cn(
-            'w-full space-y-8 px-4 py-2',
+            'w-full px-4 py-2',
             showChatForm
-              ? '[&>_:last-child]:hidden'
+              ? 'space-y-8 [&>_:last-child]:hidden'
               : 'sticky bottom-0 [&>*:not(:last-child)]:hidden',
           )}
           handleSubmit={(values) => {
@@ -96,8 +114,18 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       </div>
 
       {/* Bottom Panel */}
-      <div className="chat-layout-bottom-panel flex max-w-3xl items-center justify-center border-r border-t px-2 text-xs text-muted-foreground sm:text-sm">
+      <div className="chat-layout-bottom-panel relative flex max-w-3xl items-center justify-center border-r border-t px-2 text-xs text-muted-foreground sm:text-sm">
         Press Enter ⏎ for a new line / Press ⌘ + Enter to send
+        {/* Scroll to end button */}
+        <Button
+          variant="outline"
+          size="icon"
+          name="scroll to bottom"
+          className={cn('absolute inset-x-[89%] -top-32', isContentScrolled ? 'hidden' : '')}
+          onClick={() => scrollFeedToEnd()}
+        >
+          <PinBottomIcon className="h-6 w-6" />
+        </Button>
       </div>
     </>
   )

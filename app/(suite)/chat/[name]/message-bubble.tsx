@@ -1,5 +1,6 @@
 import { Markdown } from '@/components/util/markdown'
 import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 
 const messageBubbleVariants = {
   container: {
@@ -26,16 +27,18 @@ function getVariantKey(key: string): VariantProp {
 
 type VariantProp = 'default' | 'user' | 'assistant'
 
-export function MessageBubble({
-  content,
-  variant,
-}: {
+type Props = {
   content: string
   variant: VariantProp | (string & {})
-}) {
+}
+
+export const MessageBubble = forwardRef<HTMLDivElement, Props>(function MessageBubble(
+  { content, variant },
+  ref,
+) {
   const key = getVariantKey(variant)
   return (
-    <div className={cn('grid', variants.container(key))}>
+    <div ref={ref} className={cn('grid place-content-center', variants.container(key))}>
       <div
         className={cn(
           'prose prose-stone col-start-2 overflow-hidden rounded-lg px-3 py-2 dark:prose-invert',
@@ -46,4 +49,4 @@ export function MessageBubble({
       </div>
     </div>
   )
-}
+})
