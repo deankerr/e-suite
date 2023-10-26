@@ -56,14 +56,21 @@ export function useChatApi(chat: ChatTabData) {
 
   // create chat
   const useChatHelpers = useChat(requestConfig)
-
-  const resetMessages = () => useChatHelpers.setMessages([createMessage('system', systemPrompt)])
+  const { messages, setMessages, isLoading } = useChatHelpers
+  // extra helpers
+  const resetMessages = () => setMessages([createMessage('system', systemPrompt)])
 
   const addMessage = (role: Roles, content: string) => {
-    chatHelpers.setMessages([...useChatHelpers.messages, createMessage(role, content)])
+    chatHelpers.setMessages([...messages, createMessage(role, content)])
   }
 
-  const chatHelpers = { ...useChatHelpers, resetMessages, addMessage }
+  const requestStatus: ChatRequestStatus = isLoading
+    ? messages.at(-1)?.role === 'assistant'
+      ? 'streaming'
+      : 'waiting'
+    : 'idle'
+
+  const chatHelpers = { ...useChatHelpers, resetMessages, addMessage, requestStatus }
   return chatHelpers
 }
 
@@ -76,3 +83,4 @@ function createMessage(role: Roles, content: string) {
 }
 
 type Roles = 'system' | 'user' | 'assistant'
+type ChatRequestStatus = 'streaming' | 'waiting' | 'idle'

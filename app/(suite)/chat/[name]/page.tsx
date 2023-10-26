@@ -26,7 +26,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
   const model = getModelById(chat.modelId)
 
   const chatHelpers = useChatApi(chat)
-  const { messages, setMessages, resetMessages, addMessage } = chatHelpers
+  const { messages, setMessages, resetMessages, addMessage, requestStatus } = chatHelpers
 
   const [showChatForm, setShowChatForm] = useState(false)
 
@@ -36,7 +36,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
     const { scrollHeight } = contentAreaRef.current
     contentAreaRef.current.scrollTo({ top: scrollHeight, behavior: 'smooth' })
   }
-  const [contentScrolledRef, isContentScrolled] = useInView({
+  const [contentScrolledRef, isScrolledToEnd] = useInView({
     initialInView: true,
     fallbackInView: true,
   })
@@ -60,7 +60,8 @@ export default function ChatPage({ params }: { params: { name: string } }) {
             ]}
           />
         </div>
-        <div>{model.label}</div>
+        {/* <div>{model.label}</div> */}
+        <div>{isScrolledToEnd ? 'SCROLL MAX' : 'up'}</div>
         <div>
           <Button
             className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
@@ -89,9 +90,11 @@ export default function ChatPage({ params }: { params: { name: string } }) {
           {messages.map((m, i) => (
             <MessageBubble variant={m.role} content={m.content} key={m.id} />
           ))}
+          {requestStatus === 'waiting' && (
+            <MessageBubble variant="assistant" content="[icon](loadingball)" />
+          )}
+          <div ref={contentScrolledRef}></div>
         </div>
-
-        <div ref={contentScrolledRef}></div>
 
         {/* Chat Form */}
         <ChatForm
@@ -121,7 +124,10 @@ export default function ChatPage({ params }: { params: { name: string } }) {
           variant="outline"
           size="icon"
           name="scroll to bottom"
-          className={cn('absolute inset-x-[89%] -top-32', isContentScrolled ? 'hidden' : '')}
+          className={cn(
+            'absolute inset-x-[89%] -top-32 hidden',
+            !isScrolledToEnd && !showChatForm && 'flex',
+          )}
           onClick={() => scrollFeedToEnd()}
         >
           <PinBottomIcon className="h-6 w-6" />
