@@ -22,7 +22,7 @@ function getChatConfig(name: string) {
 export default function ChatPage({ params }: { params: { name: string } }) {
   const { chat, model } = getChatConfig(params.name)
   const chatHelpers = useChatApi(chat)
-  const { messages, setMessages, resetMessages } = chatHelpers
+  const { messages, setMessages, resetMessages, addMessage } = chatHelpers
   const hideForm = true
   return (
     <>
@@ -37,6 +37,8 @@ export default function ChatPage({ params }: { params: { name: string } }) {
               ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
               ['Add code', () => setMessages([...messages, ...sampleCode])],
               ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
+              ['Add user message', () => addMessage('user', 'Hello friend.')],
+              ['Add ai message', () => addMessage('assistant', 'Greetings, I am a prototype.')],
             ]}
           />
         </div>
@@ -59,22 +61,17 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       </div>
 
       {/* Chat Content */}
-      <div className="chat-layout-content grid max-w-3xl grid-flow-row grid-cols-[minmax(0,_0.75rem)_repeat(10,_minmax(0,_1fr))_minmax(0,_0.75rem)] gap-y-4 border-r py-4 shadow-inner">
+      <div className="chat-layout-content grid max-w-3xl grid-rows-[1fr,_auto] border-r shadow-inner">
         {/* Messages Feed */}
-        {messages.map((m) => (
-          <MessageBubble
-            variant={m.role === 'user' ? 'local' : m.role === 'assistant' ? 'remote' : 'default'}
-            content={m.content}
-            key={m.id}
-          />
-        ))}
+        <div className="space-y-4 py-2.5">
+          {messages.map((m) => (
+            <MessageBubble variant={m.role} content={m.content} key={m.id} />
+          ))}
+        </div>
 
         {/* Chat Form */}
         <ChatForm
-          className={cn(
-            'sticky bottom-0 col-span-full w-full space-y-4',
-            hideForm && '[&>*:not(:last-child)]:hidden',
-          )}
+          className={cn('sticky bottom-0 w-full pb-2', hideForm && '[&>*:not(:last-child)]:hidden')}
           handleSubmit={(values) => {
             console.log('submit', values)
             chatHelpers.append({ role: 'user', content: values.message })
@@ -83,7 +80,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       </div>
 
       {/* Bottom Panel */}
-      <div className=" chat-layout-bottom-panel flex max-w-3xl items-center justify-center border-r border-t px-2 py-1 text-sm text-muted-foreground">
+      <div className="chat-layout-bottom-panel flex max-w-3xl items-center justify-center border-r border-t px-2 text-xs text-muted-foreground sm:text-sm">
         Press Enter ⏎ for a new line / Press ⌘ + Enter to send
       </div>
     </>

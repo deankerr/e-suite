@@ -1,31 +1,49 @@
 import { Markdown } from '@/components/util/markdown'
 import { cn } from '@/lib/utils'
-import { cva, type VariantProps } from 'class-variance-authority'
 
-const messageBubbleVariants = cva(
-  'prose prose-stone rounded-lg px-3 py-2 dark:prose-invert w-fit col-span-9',
-  {
-    variants: {
-      variant: {
-        default:
-          'bg-secondary text-center text-secondary-foreground col-start-2 col-end-12 justify-self-center',
-        local: 'bg-primary text-primary-foreground justify-self-end col-end-12',
-        remote: 'bg-muted text-secondary-foreground col-start-2 justify-self-start',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
+const messageBubbleVariants = {
+  container: {
+    default: 'grid-cols-[2rem_auto_2rem]',
+    user: 'grid-cols-[minmax(2.5rem,1fr)_auto_1rem]',
+    assistant: 'grid-cols-[1rem_auto_minmax(2.5rem,1fr)]',
   },
-)
+  content: {
+    default: 'bg-secondary text-center text-secondary-foreground',
+    user: 'bg-primary text-primary-foreground',
+    assistant: 'bg-muted text-secondary-foreground',
+  },
+} as const
+
+const variants = {
+  container: (name: VariantProp) => messageBubbleVariants.container[name],
+  content: (name: VariantProp) => messageBubbleVariants.content[name],
+}
+
+function getVariantKey(key: string): VariantProp {
+  if (key in messageBubbleVariants.container) return key as VariantProp
+  else return 'default'
+}
+
+type VariantProp = 'default' | 'user' | 'assistant'
 
 export function MessageBubble({
   content,
   variant,
-}: { content: string } & VariantProps<typeof messageBubbleVariants>) {
+}: {
+  content: string
+  variant: VariantProp | (string & {})
+}) {
+  const key = getVariantKey(variant)
   return (
-    <div className={cn(messageBubbleVariants({ variant }))}>
-      <Markdown>{content}</Markdown>
+    <div className={cn('grid', variants.container(key))}>
+      <div
+        className={cn(
+          'prose prose-stone col-start-2 overflow-hidden rounded-lg px-3 py-2 dark:prose-invert',
+          variants.content(key),
+        )}
+      >
+        <Markdown>{content}</Markdown>
+      </div>
     </div>
   )
 }

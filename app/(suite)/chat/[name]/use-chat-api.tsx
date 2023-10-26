@@ -46,15 +46,21 @@ export function useChatApi(chat: ChatTabData) {
 
   const resetMessages = () => useChatHelpers.setMessages([createMessage('system', systemPrompt)])
 
-  const chatHelpers = { ...useChatHelpers, resetMessages }
+  const addMessage = (role: Roles, content: string) => {
+    chatHelpers.setMessages([...useChatHelpers.messages, createMessage(role, content)])
+  }
+
+  const chatHelpers = { ...useChatHelpers, resetMessages, addMessage }
 
   return chatHelpers
 }
 
-function createMessage(role: 'system' | 'user' | 'assistant', content: string) {
+function createMessage(role: Roles, content: string) {
   return {
     role,
     content,
     id: `_${nanoid(6)}`,
   }
 }
+
+type Roles = 'system' | 'user' | 'assistant'
