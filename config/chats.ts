@@ -1,4 +1,6 @@
-export const chatsConfig = [
+import { ChatTabData } from '@/app/(suite)/chat/[name]/types'
+
+export const chatsConfig: ChatTabData[] = [
   {
     id: 'p1',
     name: 'Piñata',
@@ -29,4 +31,4 @@ export const chatsConfig = [
     modelId: 'openai::gpt-3.5-turbo',
     parameters: {},
   },
-] as const
+]

@@ -81,6 +81,12 @@ export function getAvailableChatModels() {
   return chatModels
 }
 
+export function getModelById(id: string) {
+  const model = chatModels.find((m) => m.id === id)
+  if (!model) throw new Error(`Unable to find model id ${id}`)
+  return model
+}
+
 const chatModels = [
   {
     id: 'openai::gpt-3.5-turbo',
