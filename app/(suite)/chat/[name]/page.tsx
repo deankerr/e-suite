@@ -7,6 +7,7 @@ import { chatsConfig } from '@/config/chats'
 import { getAvailableChatModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, TrashIcon } from '@radix-ui/react-icons'
+import { useState } from 'react'
 import { ChatForm } from './form/chatForm'
 import { MessageBubble } from './message-bubble'
 import { useChatApi } from './use-chat-api'
@@ -21,9 +22,11 @@ function getChatConfig(name: string) {
 
 export default function ChatPage({ params }: { params: { name: string } }) {
   const { chat, model } = getChatConfig(params.name)
+
   const chatHelpers = useChatApi(chat)
   const { messages, setMessages, resetMessages, addMessage } = chatHelpers
-  const hideForm = true
+
+  const [showChatForm, setShowChatForm] = useState(false)
   return (
     <>
       {/* Top Panel */}
@@ -47,6 +50,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
           <Button
             className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
             variant="outline"
+            onClick={() => setShowChatForm(!showChatForm)}
           >
             <MixerHorizontalIcon />
           </Button>
@@ -63,7 +67,7 @@ export default function ChatPage({ params }: { params: { name: string } }) {
       {/* Chat Content */}
       <div className="chat-layout-content grid max-w-3xl grid-rows-[1fr,_auto] border-r shadow-inner">
         {/* Messages Feed */}
-        <div className="space-y-4 py-2.5">
+        <div className={cn('space-y-4 py-2.5', showChatForm && 'hidden')}>
           {messages.map((m) => (
             <MessageBubble variant={m.role} content={m.content} key={m.id} />
           ))}
@@ -71,7 +75,12 @@ export default function ChatPage({ params }: { params: { name: string } }) {
 
         {/* Chat Form */}
         <ChatForm
-          className={cn('sticky bottom-0 w-full pb-2', hideForm && '[&>*:not(:last-child)]:hidden')}
+          className={cn(
+            'w-full space-y-8 px-4 py-2',
+            showChatForm
+              ? '[&>_:last-child]:hidden'
+              : 'sticky bottom-0 [&>*:not(:last-child)]:hidden',
+          )}
           handleSubmit={(values) => {
             console.log('submit', values)
             chatHelpers.append({ role: 'user', content: values.message })

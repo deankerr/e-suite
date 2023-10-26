@@ -64,7 +64,6 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
     'top_p',
   ] as const
 
-  const isValidInput = false
   return (
     <Form {...form}>
       <form
@@ -80,7 +79,9 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
             name="modelId"
             render={({ field }) => (
               <FormItem className="">
-                <FormLabel className="mx-auto block text-center font-normal">Model</FormLabel>
+                <FormLabel className="sr-only mx-auto block text-center font-normal">
+                  Model
+                </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-64">
@@ -99,11 +100,6 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
               </FormItem>
             )}
           />
-          <div>
-            <Button type="submit" variant="secondary" className="inline">
-              Test Submit
-            </Button>
-          </div>
         </div>
 
         {/* slider inputs */}
@@ -156,6 +152,10 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
             </FormItem>
           )}
         />
+
+        <Button type="submit" variant="secondary" className="inline">
+          Test Submit
+        </Button>
 
         {/* Dynamic Textarea */}
         <FormField
