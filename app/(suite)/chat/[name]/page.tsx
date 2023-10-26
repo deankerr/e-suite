@@ -1,7 +1,10 @@
 'use client'
 
+import { ChatForm } from '@/components/chat/form/chatForm'
 import { ChatBarMenuItem } from '@/components/chat/menu'
+import { MessageBubble } from '@/components/chat/message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sample-data'
+import { useChatApi } from '@/components/chat/use-chat-api'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getModelById } from '@/lib/api'
@@ -10,9 +13,6 @@ import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useImmer } from 'use-immer'
-import { ChatForm } from './form/chatForm'
-import { MessageBubble } from './message-bubble'
-import { useChatApi } from './use-chat-api'
 
 function getChatConfig(name: string) {
   const chatConfig = chatsConfig.find((c) => c.name === decodeURI(name))

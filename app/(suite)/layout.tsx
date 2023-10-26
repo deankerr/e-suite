@@ -1,5 +1,5 @@
-import { MainHeader } from './main-header'
-import { MainNav } from './main-nav'
+import { MainHeader } from '@/components/main-header'
+import { MainNav } from '@/components/main-nav'
 
 export default function SuiteLayout({ children }: { children: React.ReactNode }) {
   return (

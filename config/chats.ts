@@ -1,4 +1,4 @@
-import { ChatTabData } from '@/app/(suite)/chat/[name]/types'
+import { ChatTabData } from '@/components/chat/types'
 
 export const chatsConfig: ChatTabData[] = [
   {

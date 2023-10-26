@@ -1,6 +1,6 @@
+import { TabLink } from '@/components/tab-link'
 import { chatsConfig } from '@/config/chats'
 import { DotFilledIcon } from '@radix-ui/react-icons'
-import { TabLink } from '../tab-link'
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
   return (
