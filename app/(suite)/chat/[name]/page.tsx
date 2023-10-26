@@ -7,7 +7,7 @@ import { chatsConfig } from '@/config/chats'
 import { getModelById } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useImmer } from 'use-immer'
 import { ChatForm } from './form/chatForm'
@@ -31,15 +31,20 @@ export default function ChatPage({ params }: { params: { name: string } }) {
   const [showChatForm, setShowChatForm] = useState(false)
 
   const contentAreaRef = useRef<HTMLDivElement | null>(null)
+  const [contentScrolledRef, isScrolledToEnd] = useInView({
+    initialInView: true,
+    fallbackInView: true,
+  })
+
   const scrollFeedToEnd = () => {
     if (!contentAreaRef.current) return
     const { scrollHeight } = contentAreaRef.current
     contentAreaRef.current.scrollTo({ top: scrollHeight, behavior: 'smooth' })
   }
-  const [contentScrolledRef, isScrolledToEnd] = useInView({
-    initialInView: true,
-    fallbackInView: true,
-  })
+
+  useEffect(() => {
+    scrollFeedToEnd()
+  }, [messages.length])
 
   return (
     <>
