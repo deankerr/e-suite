@@ -30,6 +30,7 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle": "^1.0.3",
     "@uidotdev/usehooks": "^2.3.1",
+    "@vercel/analytics": "^1.1.1",
     "ai": "^2.2.14",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",

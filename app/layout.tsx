@@ -2,6 +2,7 @@ import { ThemeProvider } from '@/components/util/theme-provider'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Toaster />
           <TailwindBreakpointIndicator />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
