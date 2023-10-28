@@ -3,7 +3,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { getModelById } from '@/lib/api'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
-import { ChatSession } from './types'
+import { ChatSession, ChatSessionModelParameters } from './types'
 
 const endpoint = '/api/chat'
 
@@ -24,6 +24,26 @@ export function useChatApi(chat: ChatSession) {
     const key = field as keyof typeof chat.parameters
     body[key] = chat.parameters[key]
   }
+  const createModelParamsBody = (modelId: string, parameters: ChatSessionModelParameters) => {
+    const modelData = getModelById(modelId)
+
+    const body: Record<string, unknown> = {
+      ...modelData.parameters,
+      provider: modelData.provider,
+      stream: true,
+    }
+    const { fieldsEnabled = [] } = parameters
+
+    for (const field of fieldsEnabled) {
+      if (!(field in parameters)) continue
+      const key = field as keyof typeof parameters
+      body[key] = parameters[key]
+    }
+
+    body['stream'] = true
+
+    return body
+  }
 
   const requestConfig: UseChatOptions = {
     id: chat.id,
@@ -31,12 +51,6 @@ export function useChatApi(chat: ChatSession) {
     initialMessages: [createMessage('system', systemPrompt)],
     headers: {
       Authorization: token,
-    },
-    body: {
-      ...body,
-      provider: modelData.provider,
-      stream: true,
-      ...modelData.parameters,
     },
     onResponse: (response) => {
       console.log('[response]', response)
@@ -57,11 +71,22 @@ export function useChatApi(chat: ChatSession) {
   // create chat
   const useChatHelpers = useChat(requestConfig)
   const { messages, setMessages, isLoading } = useChatHelpers
+
   // extra helpers
   const resetMessages = () => setMessages([createMessage('system', systemPrompt)])
 
   const addMessage = (role: Roles, content: string) => {
     chatHelpers.setMessages([...messages, createMessage(role, content)])
+  }
+
+  const submitMessage = (
+    role: Roles,
+    content: string,
+    params: { modelId: string; parameters: ChatSessionModelParameters },
+  ) => {
+    const { modelId, parameters } = params
+    const body = createModelParamsBody(modelId, parameters)
+    useChatHelpers.append({ role, content }, { options: { body } })
   }
 
   const requestStatus: ChatRequestStatus = isLoading
@@ -70,7 +95,7 @@ export function useChatApi(chat: ChatSession) {
       : 'waiting'
     : 'idle'
 
-  const chatHelpers = { ...useChatHelpers, resetMessages, addMessage, requestStatus }
+  const chatHelpers = { ...useChatHelpers, resetMessages, addMessage, requestStatus, submitMessage }
   return chatHelpers
 }
 

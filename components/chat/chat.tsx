@@ -120,7 +120,11 @@ export function Chat(props: { name: string }) {
               c.modelId = modelId
               c.parameters = params
             })
-            chatHelpers.append({ role: 'user', content: message })
+            // chatHelpers.append({ role: 'user', content: message })
+            chatHelpers.submitMessage('user', message, {
+              modelId: modelId,
+              parameters: params,
+            })
           }}
         />
       </div>
