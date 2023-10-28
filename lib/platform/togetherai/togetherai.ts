@@ -1,7 +1,7 @@
 import { env, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
-import { paths } from './togetherai'
+import type { paths } from './togetherai.api'
 
 const { POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',

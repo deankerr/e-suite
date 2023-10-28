@@ -1,6 +1,6 @@
 import { authenticateGuest, createErrorResponse } from '@/lib/api'
-import { openai } from '@/lib/providers/openai'
-import { openrouter } from '@/lib/providers/openrouter'
+import { openai } from '@/lib/platform/openai/openai'
+import { openrouter } from '@/lib/platform/openrouter/openrouter'
 import { logger } from '@/lib/utils'
 import { z } from 'zod'
 

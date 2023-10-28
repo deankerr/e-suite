@@ -1,5 +1,5 @@
 import { authenticateGuest } from '@/lib/api'
-import { fal } from '@/lib/providers'
+import { fal } from '@/lib/platform'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
