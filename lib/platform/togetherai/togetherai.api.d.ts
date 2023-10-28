@@ -10,16 +10,20 @@ export interface paths {
     post: operations["inference"];
   };
   "/instances": {
-    /** Instances */
+    /** List Running Instances */
     get: operations["instances"];
   };
+  "/instances/stop": {
+    /** Stop Fine-tuned Instance */
+    post: operations["instances-stop"];
+  };
   "/instances/start": {
-    /** Start Instance */
+    /** Start Fine-tuned Instance */
     post: operations["instances-start"];
   };
-  "/instances/stop": {
-    /** Stop Instance */
-    post: operations["instances-stop"];
+  "/models/info?options=": {
+    /** Model Options */
+    get: operations["model-options"];
   };
 }
 
@@ -194,7 +198,7 @@ export interface operations {
       };
     };
   };
-  /** Instances */
+  /** List Running Instances */
   instances: {
     requestBody?: {
       content: {
@@ -295,12 +299,12 @@ export interface operations {
       };
     };
   };
-  /** Start Instance */
-  "instances-start": {
+  /** Stop Fine-tuned Instance */
+  "instances-stop": {
     parameters: {
-      path: {
-        /** @description Required. The name of the model to start. */
-        modelId: string;
+      query?: {
+        /** @description Required. The name of the fine-tuned model to stop. */
+        model?: string;
       };
     };
     requestBody?: {
@@ -402,12 +406,12 @@ export interface operations {
       };
     };
   };
-  /** Stop Instance */
-  "instances-stop": {
+  /** Start Fine-tuned Instance */
+  "instances-start": {
     parameters: {
-      path: {
-        /** @description Required. The name of the model to start. */
-        modelId: string;
+      query?: {
+        /** @description Required. The name of the fine-tuned model to start. */
+        model?: string;
       };
     };
     requestBody?: {
@@ -505,6 +509,23 @@ export interface operations {
       500: {
         content: {
           "text/plain": unknown;
+        };
+      };
+    };
+  };
+  /** Model Options */
+  "model-options": {
+    responses: {
+      /** @description 200 */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description 400 */
+      400: {
+        content: {
+          "application/json": Record<string, never>;
         };
       };
     };

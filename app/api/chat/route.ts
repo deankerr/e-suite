@@ -1,4 +1,5 @@
 import { authenticateGuest, createErrorResponse } from '@/lib/api'
+import { togetherai } from '@/lib/platform'
 import { openai } from '@/lib/platform/openai/openai'
 import { openrouter } from '@/lib/platform/openrouter/openrouter'
 import { logger } from '@/lib/utils'
@@ -19,20 +20,17 @@ export async function POST(request: Request) {
     return openai.chatModerated(params)
   } else if (provider === 'openrouter') {
     return openrouter.chat(params)
+  } else if (provider === 'togetherai') {
+    return await togetherai.chat(params)
   } else {
     throw new Error(`unsupported provider: ${provider}`)
   }
 }
 
-const requestSchema = z.object({
-  messages: z.array(
-    z.object({
-      role: z.enum(['system', 'user', 'assistant']),
-      name: z.optional(z.string()),
-      content: z.string(),
-    }),
-  ),
-  model: z.string(),
-  provider: z.string(),
-  stream: z.boolean().optional(),
-})
+const requestSchema = z
+  .object({
+    model: z.string(),
+    provider: z.string(),
+    stream: z.boolean().optional(),
+  })
+  .passthrough()

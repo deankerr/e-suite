@@ -15,25 +15,31 @@ export const openai = {
   image,
 }
 
-async function chat(input: OpenAI.Chat.ChatCompletionCreateParams) {
-  if (input.stream) {
-    const response = await api.chat.completions.create(input)
+async function chat(input: unknown) {
+  const body = schemaOpenAIChatRequest.parse(input)
+  if (body.stream === true) {
+    const response = await api.chat.completions.create(
+      body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
+    )
     const stream = OpenAIStream(response)
     log.info('chat stream')
     return new StreamingTextResponse(stream)
   } else {
-    const response = await api.chat.completions.create(input)
+    const response = await api.chat.completions.create(
+      body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
+    )
     const item = response.choices[0]?.message.content ?? raise('response missing expected data')
     log.info(item, 'chat')
     return new Response(item)
   }
 }
 
-async function chatModerated(input: OpenAI.Chat.ChatCompletionCreateParams) {
+async function chatModerated(input: unknown) {
   log.info('chatModerated')
-  const messages = input.messages.map((m) => `${m.content}`)
+  const body = schemaOpenAIChatRequest.parse(input)
+  const messages = body.messages.map((m) => `${m.content}`)
   const response = await api.moderations.create({ input: messages })
-  const flagged = input.messages.filter((_, i) => response.results[i]?.flagged)
+  const flagged = body.messages.filter((_, i) => response.results[i]?.flagged)
 
   if (flagged.length === 0) {
     log.info('allow chat')
@@ -73,8 +79,8 @@ export const schemaOpenAIChatRequest = z.object({
   stream: z.union([z.boolean(), z.null()]).optional(),
 
   frequency_penalty: z.union([z.number(), z.null()]).optional(),
-  function_call: z.unknown().optional(), // TODO
-  functions: z.unknown().optional(), // TODO
+  // function_call: z.unknown().optional(), // TODO
+  // functions: z.unknown().optional(), // TODO
   logit_bias: z.union([z.record(z.number()), z.null()]).optional(),
   max_tokens: z.union([z.number(), z.null()]).optional(),
   n: z.union([z.number(), z.null()]).optional(),

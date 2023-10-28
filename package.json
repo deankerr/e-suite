@@ -6,7 +6,8 @@
     "dev": "next dev -p 21200 | pino-pretty --translateTime HH:MM:ss",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -32,7 +33,6 @@
     "@uidotdev/usehooks": "^2.3.1",
     "@vercel/analytics": "^1.1.1",
     "ai": "^2.2.14",
-    "api": "^6.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",

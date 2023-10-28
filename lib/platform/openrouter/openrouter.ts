@@ -1,6 +1,7 @@
 import { env, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
+import { schemaOpenAIChatRequest } from '..'
 
 const api = new OpenAI({
   apiKey: env('OPENROUTER_API_KEY'),
@@ -11,13 +12,18 @@ const api = new OpenAI({
 })
 
 export const openrouter = {
-  async chat(input: OpenAI.Chat.ChatCompletionCreateParams) {
-    if (input.stream) {
-      const response = await api.chat.completions.create(input)
+  async chat(input: unknown) {
+    const body = schemaOpenAIChatRequest.parse(input)
+    if (body.stream) {
+      const response = await api.chat.completions.create(
+        body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
+      )
       const stream = OpenAIStream(response)
       return new StreamingTextResponse(stream)
     } else {
-      const response = await api.chat.completions.create(input)
+      const response = await api.chat.completions.create(
+        body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
+      )
       const item = response.choices[0]?.message.content ?? raise('response missing expected data')
       return new Response(item)
     }
