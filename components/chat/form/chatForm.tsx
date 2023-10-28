@@ -158,7 +158,10 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
                     className="ml-1 h-8 w-52 grow"
                     onKeyDown={(e) => {
                       const value = e.currentTarget.value
-                      if (e.key !== 'Enter' || !value || field.value.includes(value)) return
+                      if (e.key !== 'Enter') return
+                      e.preventDefault()
+                      if (!value || field.value.includes(value)) return
+
                       setFieldEnabled('stop', true)
                       field.onChange([...field.value, value])
                       e.currentTarget.value = ''
@@ -181,7 +184,7 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
           )}
         />
 
-        <Button type="submit">Test Submit</Button>
+        {/* <Button type="submit">Test Submit</Button> */}
 
         {/* Dynamic Textarea */}
         <FormField
