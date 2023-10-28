@@ -1,4 +1,5 @@
-import { createErrorResponse } from '@/lib/api'
+import { EChatRequestSchema } from '@/app/api/chat/route'
+import { convertMessagesToPromptFormat, createErrorResponse } from '@/lib/api'
 import { env, logger, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
@@ -6,7 +7,7 @@ import type { paths } from './togetherai.api'
 
 const log = logger.child({}, { msgPrefix: '[platform/togetherai] ' })
 
-const { POST } = createClient<paths>({
+const { GET, POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
   headers: {
     Authorization: `Bearer ${env('TOGETHERAI_API_KEY')}`,
@@ -14,10 +15,13 @@ const { POST } = createClient<paths>({
 })
 
 export const togetherai = {
-  async chat(input: object) {
+  async chat(input: EChatRequestSchema) {
     log.info('chat')
+    input.prompt = convertMessagesToPromptFormat(input.messages)
+    input.stream = undefined
     const body = schemaTogetheraiChatRequest.parse(input)
-    log.info(body, 'request body')
+    // log.info(body, 'request body')
+    console.log('request body', body)
     const { data, error } = await POST('/inference', { body })
 
     if (data) {
@@ -35,6 +39,7 @@ export const togetherai = {
       return createErrorResponse(error as string)
     }
   },
+
   async image(input: object) {
     // api spec is missing image parameters
     const { data, error } = await POST('/inference', { body: input })
@@ -50,11 +55,40 @@ export const togetherai = {
   },
 }
 
+export async function models() {
+  const { data, error } = await GET('/models/info?options=', {})
+  log.info(data, 'models data')
+  log.info(error, 'models error')
+
+  /* 
+  hidden_keys = [
+            "_id",
+            "modelInstanceConfig",
+            "created_at",
+            "update_at",
+            "pricing",
+            "show_in_playground",
+            "access",
+            "pricing_tier",
+            "hardware_label",
+            "depth",
+            "descriptionLink",
+        ]
+  */
+}
+
 const schemaTogetheraiChatRequest = z.object({
   model: z.string(),
   prompt: z.string(),
   max_tokens: z.number(),
-  stop: z.string().optional(), //# Chat ui uses string[]
+  stop: z.union([
+    z.string().optional(),
+    z
+      .string()
+      .array()
+      .optional()
+      .transform((arr) => (arr ? arr[0] : undefined)),
+  ]), //^ e/Chat UI uses string[], together uses string
   temperature: z.number().optional(),
   top_p: z.number().optional(),
   top_k: z.number().optional(),

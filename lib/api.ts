@@ -1,3 +1,4 @@
+import { EChatRequestSchema } from '@/app/api/chat/route'
 import { env } from './utils'
 
 export function createErrorResponse(message: string, status = 400) {
@@ -74,4 +75,22 @@ const chatModels = [
     label: 'Xwin 70B',
     parameters: { model: 'xwin-lm/xwin-lm-70b' },
   },
+  {
+    id: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
+    provider: 'togetherai',
+    label: 'RedPajama INCITE 7B Chat',
+    parameters: { model: 'togethercomputer/RedPajama-INCITE-7B-Chat' },
+  },
 ] as const
+
+export function convertMessagesToPromptFormat(messages: EChatRequestSchema['messages']) {
+  let prompt = ''
+  for (const m of messages) {
+    if (m.role === 'system') prompt = prompt.concat(m.content + '\n')
+    if (m.role === 'user') prompt = prompt.concat('<human>: ' + m.content + '\n')
+    if (m.role === 'assistant') prompt = prompt.concat('<bot>: ' + m.content + '\n')
+  }
+  prompt = prompt.concat('<bot>:')
+
+  return prompt
+}

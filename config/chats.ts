@@ -22,7 +22,7 @@ export const chatsConfig: ChatSession[] = [
   {
     id: 'h1',
     name: 'Hideko',
-    modelId: 'openrouter::migtissera/synthia-70b',
+    modelId: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
     parameters: {},
   },
   {

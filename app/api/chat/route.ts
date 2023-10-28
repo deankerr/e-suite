@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   const auth = authenticateGuest(request.headers.get('Authorization'))
   if (!auth.ok) return auth.response
 
-  const { provider, ...params } = requestSchema.parse(await request.json())
+  const { provider, ...params } = eChatRequestSchema.parse(await request.json())
   log.info(params, 'parameters')
 
   if (provider === 'openai') {
@@ -27,10 +27,19 @@ export async function POST(request: Request) {
   }
 }
 
-const requestSchema = z
+export const eChatRequestSchema = z
   .object({
     model: z.string(),
-    provider: z.string(),
+    provider: z.string().optional(),
     stream: z.boolean().optional(),
+    messages: z.array(
+      z.object({
+        role: z.enum(['user', 'assistant', 'system', 'function']),
+        name: z.string().optional(),
+        content: z.string(),
+      }),
+    ),
+    prompt: z.string().optional(),
   })
   .passthrough()
+export type EChatRequestSchema = z.infer<typeof eChatRequestSchema>
