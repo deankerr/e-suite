@@ -1,4 +1,4 @@
-import { createErrorResponse } from '@/lib/api'
+import { createErrorResponse } from '@/lib/api/api'
 import { env, raise } from '@/lib/utils'
 import Replicate from 'replicate'
 import { z } from 'zod'

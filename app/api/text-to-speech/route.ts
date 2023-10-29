@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises'
-import { authenticateGuest } from '@/lib/api'
+import { authenticateGuest } from '@/lib/api/api'
 import { env, raise } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'

@@ -7,7 +7,7 @@ import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sampl
 import { useChatApi } from '@/components/chat/use-chat-api'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
-import { getModelById } from '@/lib/api'
+import { getModelById } from '@/lib/api/api'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'

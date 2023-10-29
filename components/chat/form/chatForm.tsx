@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { TextareaAutosize } from '@/components/ui/textarea-autosize'
-import { getAvailableChatModels } from '@/lib/api'
+import { getAvailableChatModels } from '@/lib/api/api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'

@@ -1,4 +1,4 @@
-import { authenticateGuest } from '@/lib/api'
+import { authenticateGuest } from '@/lib/api/api'
 import { NextResponse } from 'next/server'
 
 const testData = [

@@ -1,4 +1,4 @@
-import { authenticateGuest, createErrorResponse } from '@/lib/api'
+import { authenticateGuest, createErrorResponse } from '@/lib/api/api'
 import { togetherai } from '@/lib/platform'
 import { openai } from '@/lib/platform/openai/openai'
 import { openrouter } from '@/lib/platform/openrouter/openrouter'

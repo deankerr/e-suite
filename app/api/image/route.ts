@@ -1,4 +1,4 @@
-import { authenticateGuest } from '@/lib/api'
+import { authenticateGuest } from '@/lib/api/api'
 import { openai, replicate, togetherai } from '@/lib/platform'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'

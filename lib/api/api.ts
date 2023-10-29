@@ -1,5 +1,5 @@
 import { EChatRequestSchema } from '@/app/api/chat/route'
-import { env } from './utils'
+import { env } from '../utils'
 
 export function createErrorResponse(message: string, status = 400) {
   return new Response(message, { status, statusText: message })

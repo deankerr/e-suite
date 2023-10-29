@@ -16,11 +16,14 @@ const formSchema = z.object({
   frequency_penalty: z.coerce.number().gte(-2).lte(2),
   presence_penalty: z.coerce.number().gte(-2).lte(2),
   max_tokens: z.coerce.number().gte(1).lte(max_tokens_max),
-  top_p: z.coerce.number().gte(0).lte(2),
+  top_p: z.coerce.number().gte(0).lte(2).step(0.01),
   stop: z.string().array(),
 
   message: z.string().nonempty(),
 })
+
+const tp = formSchema.shape.top_p
+console.log('TESTn', tp.maxValue, tp.minValue, tp._def.checks)
 
 const inputValues = {
   temperature: {

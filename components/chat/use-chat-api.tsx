@@ -1,6 +1,6 @@
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { useToast } from '@/components/ui/use-toast'
-import { getModelById } from '@/lib/api'
+import { getModelById } from '@/lib/api/api'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { ChatSession, ChatSessionModelParameters } from './types'

@@ -1,5 +1,5 @@
 import { EChatRequestSchema } from '@/app/api/chat/route'
-import { convertMessagesToPromptFormat, createErrorResponse } from '@/lib/api'
+import { convertMessagesToPromptFormat, createErrorResponse } from '@/lib/api/api'
 import { env, logger, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'

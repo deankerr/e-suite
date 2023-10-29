@@ -1,4 +1,4 @@
-import { createErrorResponse } from '@/lib/api'
+import { createErrorResponse } from '@/lib/api/api'
 import { ExcludeNullProps } from '@/lib/types'
 import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
