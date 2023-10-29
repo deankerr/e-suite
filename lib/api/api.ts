@@ -1,5 +1,7 @@
+import { adapters } from '../platform/platforms'
 import { env } from '../utils'
-import { Messages } from './schema'
+import { getEngineById } from './engines'
+import { EChatRequestSchema, Messages } from './schema'
 
 export function createErrorResponse(message: string, status = 400) {
   return new Response(message, { status, statusText: message })
@@ -38,4 +40,11 @@ export function convertMessagesToPromptFormat(messages: Messages) {
   prompt = prompt.concat('<bot>:')
 
   return prompt
+}
+
+export function runChatEngine(chatRequest: EChatRequestSchema) {
+  const engine = getEngineById(chatRequest.engineId)
+  const adapter = adapters[engine.platform]
+  if (!('chat' in adapter)) throw new Error('Invalid engine: ' + chatRequest.engineId)
+  return adapter.chat(chatRequest)
 }

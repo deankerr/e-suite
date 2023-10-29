@@ -1,7 +1,6 @@
 import { EChatEngine } from './schema'
 
-// TODO remove export, use function
-export const engines: EChatEngine[] = [
+const engines: EChatEngine[] = [
   {
     id: 'openai::gpt-3.5-turbo',
     type: 'chat',
@@ -54,7 +53,9 @@ export function getEngines() {
 }
 
 export function getEngineById(id: string) {
-  return engines.find((e) => e.id === id)
+  const engine = engines.find((e) => e.id === id)
+  if (!engine) throw new Error('Unknown engineID: ' + id)
+  return engine
 }
 
 // const chatModels = [
