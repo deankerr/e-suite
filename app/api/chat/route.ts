@@ -12,15 +12,15 @@ export async function POST(request: Request) {
   const auth = authenticateGuest(request.headers.get('Authorization'))
   if (!auth.ok) return auth.response
 
-  const { engineId, messages, parameters } = eChatRequestSchema.parse(await request.json())
-  log.info(parameters, 'parameters')
+  const chatRequest = eChatRequestSchema.parse(await request.json())
+  log.info(chatRequest, 'parameters')
 
-  const engine = getEngineById(engineId)
+  const engine = getEngineById(chatRequest.engineId)
   if (!engine) return createErrorResponse('invalid engine id')
 
   const adapter = adapters[engine.platform]
   if ('chat' in adapter) {
-    return adapter.chat({ ...parameters, messages })
+    return adapter.chat(chatRequest)
   } else {
     return createErrorResponse('invalid platform for adapter')
   }

@@ -13,8 +13,8 @@ const api = new OpenAI({
 })
 
 export const openrouter = {
-  async chat(input: EChatRequestSchema['parameters']) {
-    const body = schemaOpenAIChatRequest.parse(input)
+  async chat(chatRequest: EChatRequestSchema) {
+    const body = schemaOpenAIChatRequest.parse(chatRequest)
     if (body.stream) {
       const response = await api.chat.completions.create(
         body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,

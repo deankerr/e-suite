@@ -13,14 +13,8 @@ export type Messages = z.infer<typeof messages>
 export const eChatRequestSchema = z
   .object({
     engineId: z.string(),
-    messages,
-    parameters: z
-      .object({
-        prompt: z.string().optional(),
-        messages: messages.optional(),
-        // TODO everything else?
-      })
-      .passthrough(),
+    messages: messages.optional(),
+    prompt: z.string().optional(),
   })
   .passthrough()
 export type EChatRequestSchema = z.infer<typeof eChatRequestSchema>

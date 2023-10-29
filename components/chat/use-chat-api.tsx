@@ -1,6 +1,7 @@
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { useToast } from '@/components/ui/use-toast'
 import { getEngineById } from '@/lib/api/engines'
+import { EChatRequestSchema } from '@/lib/api/schema'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { ChatSession, ChatSessionModelParameters } from './types'
@@ -18,16 +19,16 @@ export function useChatApi(chat: ChatSession) {
   const createModelParamsBody = (engineId: string, parameters: ChatSessionModelParameters) => {
     const engine = getEngineById(engineId)
 
-    const body = {
+    const body: EChatRequestSchema = {
       engineId,
-      parameters: { ...engine?.parameters },
+      ...engine?.parameters,
     }
     const { fieldsEnabled = [] } = parameters
 
     for (const field of fieldsEnabled) {
       if (!(field in parameters)) continue
       const key = field as keyof typeof parameters
-      body.parameters[key] = parameters[key]
+      Object.assign(body, { [key]: parameters[key] })
     }
     console.log('body', body)
     return body

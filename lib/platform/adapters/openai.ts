@@ -15,8 +15,8 @@ export const openai = {
   image,
 }
 
-async function chat(input: EChatRequestSchema['parameters']) {
-  const body = schemaOpenAIChatRequest.parse(input)
+async function chat(chatRequest: EChatRequestSchema) {
+  const body = schemaOpenAIChatRequest.parse(chatRequest)
   if (body.stream === true) {
     const response = await api.chat.completions.create(
       body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
@@ -34,16 +34,16 @@ async function chat(input: EChatRequestSchema['parameters']) {
   }
 }
 
-async function chatModerated(input: EChatRequestSchema['parameters']) {
+async function chatModerated(chatRequest: EChatRequestSchema) {
   log.info('chatModerated')
-  const body = schemaOpenAIChatRequest.parse(input)
+  const body = schemaOpenAIChatRequest.parse(chatRequest)
   const messages = body.messages.map((m) => `${m.content}`)
   const response = await api.moderations.create({ input: messages })
   const flagged = body.messages.filter((_, i) => response.results[i]?.flagged)
 
   if (flagged.length === 0) {
     log.info('allow chat')
-    return chat(input)
+    return chat(chatRequest)
   } else {
     log.warn(flagged, 'reject chat')
     const message = `OpenAI Moderation rejected: ${flagged.map((m) => `"${m.content}"`).join(', ')}`

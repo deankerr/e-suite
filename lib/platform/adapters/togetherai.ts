@@ -15,13 +15,13 @@ const { GET, POST } = createClient<paths>({
 })
 
 export const togetherai = {
-  async chat(input: EChatRequestSchema['parameters']) {
+  async chat(chatRequest: EChatRequestSchema) {
     log.info('chat')
-    if (input.messages) {
-      input.prompt = convertMessagesToPromptFormat(input.messages)
+    if (chatRequest.messages) {
+      chatRequest.prompt = convertMessagesToPromptFormat(chatRequest.messages)
     }
 
-    const body = schemaTogetheraiChatRequest.parse(input)
+    const body = schemaTogetheraiChatRequest.parse(chatRequest)
     console.log('request body', body)
     const { data, error } = await POST('/inference', { body })
 
