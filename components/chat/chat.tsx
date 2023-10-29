@@ -7,7 +7,7 @@ import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sampl
 import { useChatApi } from '@/components/chat/use-chat-api'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
-import { getModelById } from '@/lib/api/api'
+import { getEngineById } from '@/lib/api/engines'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
@@ -23,7 +23,10 @@ function getChatConfig(name: string) {
 export function Chat(props: { name: string }) {
   const chatConfig = getChatConfig(props.name)
   const [chat, setChat] = useImmer(chatConfig)
-  const model = getModelById(chat.modelId)
+  const engine = getEngineById(chat.engineId)
+
+  // TODO
+  if (!engine) throw new Error('invalid engine')
 
   const chatHelpers = useChatApi(chat)
   const { messages, setMessages, resetMessages, addMessage, requestStatus } = chatHelpers
@@ -65,7 +68,7 @@ export function Chat(props: { name: string }) {
             ]}
           />
         </div>
-        <div>{model.label}</div>
+        <div>{engine?.metadata.label}</div>
         <div>
           <Button
             className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
@@ -115,14 +118,14 @@ export function Chat(props: { name: string }) {
           )}
           session={chat}
           handleSubmit={(values) => {
-            const { modelId, message, ...params } = values
+            const { engineId, message, ...params } = values
             setChat((c) => {
-              c.modelId = modelId
+              c.engineId = engineId
               c.parameters = params
             })
-            // chatHelpers.append({ role: 'user', content: message })
+
             chatHelpers.submitMessage('user', message, {
-              modelId: modelId,
+              engineId: engineId,
               parameters: params,
             })
           }}

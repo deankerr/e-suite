@@ -1,9 +1,9 @@
-import { OpenAIInferenceParameters } from '@/lib/platform'
+import { OpenAIInferenceParameters } from '@/lib/platform/adapters/openai'
 
 export type ChatSession = {
   id: Readonly<string> // id
   name: string // unique
-  modelId: string
+  engineId: string
   parameters: ChatSessionModelParameters
 }
 

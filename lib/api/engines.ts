@@ -1,5 +1,6 @@
 import { EChatEngine } from './schema'
 
+// TODO remove export, use function
 export const engines: EChatEngine[] = [
   {
     id: 'openai::gpt-3.5-turbo',
@@ -14,7 +15,7 @@ export const engines: EChatEngine[] = [
       description: 'GPT 3.5 from OpenAI',
       license: 'i dont know',
     },
-    parameters: { model: 'gpt-3.5-turbo' },
+    parameters: { model: 'gpt-3.5-turbo', stream: true },
   },
   {
     id: 'openrouter::meta-llama/llama-2-70b-chat',
@@ -29,7 +30,7 @@ export const engines: EChatEngine[] = [
       description: 'Llama by Meta',
       license: 'i dont know',
     },
-    parameters: { model: 'meta-llama/llama-2-70b-chat' },
+    parameters: { model: 'meta-llama/llama-2-70b-chat', stream: true },
   },
   {
     id: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
@@ -48,46 +49,37 @@ export const engines: EChatEngine[] = [
   },
 ]
 
+export function getEngines() {
+  return engines
+}
+
 export function getEngineById(id: string) {
   return engines.find((e) => e.id === id)
 }
 
-const chatModels = [
-  {},
-  {
-    id: 'openai::gpt-4',
-    provider: 'openai',
-    label: 'OpenAI: GPT-4',
-    parameters: { model: 'gpt-4' },
-  },
-  {
-    id: 'openrouter::meta-llama/llama-2-70b-chat',
-    provider: 'openrouter',
-    label: 'Meta: Llama v2 70B Chat',
-    parameters: { model: 'meta-llama/llama-2-70b-chat' },
-  },
-  {
-    id: 'openrouter::jondurbin/airoboros-l2-70b',
-    provider: 'openrouter',
-    label: 'Airoboros L2 70B',
-    parameters: { model: 'jondurbin/airoboros-l2-70b' },
-  },
-  {
-    id: 'openrouter::migtissera/synthia-70b',
-    provider: 'openrouter',
-    label: 'Synthia 70B',
-    parameters: { model: 'migtissera/synthia-70b' },
-  },
-  {
-    id: 'openrouter::xwin-lm/xwin-lm-70b',
-    provider: 'openrouter',
-    label: 'Xwin 70B',
-    parameters: { model: 'xwin-lm/xwin-lm-70b' },
-  },
-  {
-    id: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
-    provider: 'togetherai',
-    label: 'RedPajama INCITE 7B Chat',
-    parameters: { model: 'togethercomputer/RedPajama-INCITE-7B-Chat' },
-  },
-] as const
+// const chatModels = [
+//   {
+//     id: 'openai::gpt-4',
+//     provider: 'openai',
+//     label: 'OpenAI: GPT-4',
+//     parameters: { model: 'gpt-4' },
+//   },
+//   {
+//     id: 'openrouter::jondurbin/airoboros-l2-70b',
+//     provider: 'openrouter',
+//     label: 'Airoboros L2 70B',
+//     parameters: { model: 'jondurbin/airoboros-l2-70b' },
+//   },
+//   {
+//     id: 'openrouter::migtissera/synthia-70b',
+//     provider: 'openrouter',
+//     label: 'Synthia 70B',
+//     parameters: { model: 'migtissera/synthia-70b' },
+//   },
+//   {
+//     id: 'openrouter::xwin-lm/xwin-lm-70b',
+//     provider: 'openrouter',
+//     label: 'Xwin 70B',
+//     parameters: { model: 'xwin-lm/xwin-lm-70b' },
+//   },
+// ] as const

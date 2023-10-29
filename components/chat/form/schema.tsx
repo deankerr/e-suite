@@ -5,7 +5,7 @@ const max_tokens_max = 4097
 const formSchema = z.object({
   //* meta
   fieldsEnabled: z.string().array(),
-  modelId: z.string().nonempty(),
+  engineId: z.string().nonempty(),
 
   //* inference params
   // model: z.string().nonempty(), //* set externally
@@ -21,9 +21,6 @@ const formSchema = z.object({
 
   message: z.string().nonempty(),
 })
-
-const tp = formSchema.shape.top_p
-console.log('TESTn', tp.maxValue, tp.minValue, tp._def.checks)
 
 const inputValues = {
   temperature: {
@@ -55,7 +52,7 @@ const inputValues = {
 
 const defaultValues = {
   fieldsEnabled: [],
-  modelId: '',
+  engineId: '',
   temperature: 1,
   frequency_penalty: 0,
   presence_penalty: 0,

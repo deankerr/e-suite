@@ -1,4 +1,4 @@
-import z, { ZodObject, ZodType } from 'zod'
+import z from 'zod'
 import { ADAPTERS, PLATFORMS } from '../platform/platforms'
 
 const messages = z.array(
@@ -10,14 +10,19 @@ const messages = z.array(
 )
 export type Messages = z.infer<typeof messages>
 
-export const eChatRequestSchema = z.object({
-  engineId: z.string(),
-  parameters: z.object({
-    messages: messages.optional(),
-    prompt: z.string().optional(),
-    // TODO everything else?
-  }),
-})
+export const eChatRequestSchema = z
+  .object({
+    engineId: z.string(),
+    messages,
+    parameters: z
+      .object({
+        prompt: z.string().optional(),
+        messages: messages.optional(),
+        // TODO everything else?
+      })
+      .passthrough(),
+  })
+  .passthrough()
 export type EChatRequestSchema = z.infer<typeof eChatRequestSchema>
 
 const eChatEngine = z.object({

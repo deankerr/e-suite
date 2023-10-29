@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { TextareaAutosize } from '@/components/ui/textarea-autosize'
-import { getAvailableChatModels } from '@/lib/api/api'
+import { getEngines } from '@/lib/api/engines'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'
@@ -38,14 +38,14 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
   { handleSubmit, session, ...props },
   ref,
 ) {
-  const models = getAvailableChatModels()
+  const engines = getEngines()
 
   const form = useForm<ChatFormSchemaOpenAI>({
     resolver: zodResolver(chatFormOpenAI.formSchema),
     defaultValues: {
       ...chatFormOpenAI.defaultValues,
       ...session.parameters,
-      modelId: session.modelId,
+      engineId: session.engineId,
     },
   })
 
@@ -87,7 +87,7 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
         {/* model select */}
         <FormField
           control={form.control}
-          name="modelId"
+          name="engineId"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="sr-only mx-auto block text-center font-normal">Model</FormLabel>
@@ -98,9 +98,9 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {models.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.label}
+                  {engines.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.metadata.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -1,6 +1,6 @@
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { useToast } from '@/components/ui/use-toast'
-import { getModelById } from '@/lib/api/api'
+import { getEngineById } from '@/lib/api/engines'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { ChatSession, ChatSessionModelParameters } from './types'
@@ -12,36 +12,24 @@ export type ChatHelpers = ReturnType<typeof useChatApi>
 export function useChatApi(chat: ChatSession) {
   const { toast } = useToast()
 
-  const modelData = getModelById(chat.modelId)
   const token = useLocalGuestAuth('e/suite-guest-auth-token', '')
   const systemPrompt = `You are a helpful and cheerful AI assistant named ${chat.name}. Use Markdown in your answers when appropriate.`
 
-  // construct request body
-  const body: Record<string, unknown> = {}
-  const { fieldsEnabled = [] } = chat.parameters
-  for (const field of fieldsEnabled) {
-    if (!(field in chat.parameters)) continue
-    const key = field as keyof typeof chat.parameters
-    body[key] = chat.parameters[key]
-  }
-  const createModelParamsBody = (modelId: string, parameters: ChatSessionModelParameters) => {
-    const modelData = getModelById(modelId)
+  const createModelParamsBody = (engineId: string, parameters: ChatSessionModelParameters) => {
+    const engine = getEngineById(engineId)
 
-    const body: Record<string, unknown> = {
-      ...modelData.parameters,
-      provider: modelData.provider,
-      stream: true,
+    const body = {
+      engineId,
+      parameters: { ...engine?.parameters },
     }
     const { fieldsEnabled = [] } = parameters
 
     for (const field of fieldsEnabled) {
       if (!(field in parameters)) continue
       const key = field as keyof typeof parameters
-      body[key] = parameters[key]
+      body.parameters[key] = parameters[key]
     }
-
-    body['stream'] = true
-
+    console.log('body', body)
     return body
   }
 
@@ -82,10 +70,10 @@ export function useChatApi(chat: ChatSession) {
   const submitMessage = (
     role: Roles,
     content: string,
-    params: { modelId: string; parameters: ChatSessionModelParameters },
+    params: { engineId: string; parameters: ChatSessionModelParameters },
   ) => {
-    const { modelId, parameters } = params
-    const body = createModelParamsBody(modelId, parameters)
+    const { engineId, parameters } = params
+    const body = createModelParamsBody(engineId, parameters)
     useChatHelpers.append({ role, content }, { options: { body } })
   }
 

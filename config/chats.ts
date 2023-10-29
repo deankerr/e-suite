@@ -4,31 +4,19 @@ export const chatsConfig: ChatSession[] = [
   {
     id: 'p1',
     name: 'Piñata',
-    modelId: 'openrouter::meta-llama/llama-2-70b-chat',
+    engineId: 'openrouter::meta-llama/llama-2-70b-chat',
     parameters: {},
   },
   {
     id: 'g1',
     name: 'Gretchen',
-    modelId: 'openai::gpt-4',
-    parameters: {},
-  },
-  {
-    id: 'e1',
-    name: 'Ernest',
-    modelId: 'openrouter::xwin-lm/xwin-lm-70b',
+    engineId: 'openai::gpt-3.5-turbo',
     parameters: {},
   },
   {
     id: 'h1',
     name: 'Hideko',
-    modelId: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
-    parameters: {},
-  },
-  {
-    id: 'c1',
-    name: 'Craig',
-    modelId: 'openai::gpt-3.5-turbo',
+    engineId: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
     parameters: {},
   },
 ]
