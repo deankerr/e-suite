@@ -1,6 +1,6 @@
 import { env, logger } from '@/lib/utils'
 import createClient from 'openapi-fetch'
-import { components, paths } from './illusion-diffusion'
+import { components, paths } from './fal.illusion-diffusion'
 
 const client = createClient<paths>({
   baseUrl: 'https://54285744-illusion-diffusion.gateway.alpha.fal.ai/',

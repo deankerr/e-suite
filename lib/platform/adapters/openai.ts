@@ -1,4 +1,5 @@
 import { createErrorResponse } from '@/lib/api/api'
+import { EChatRequestSchema } from '@/lib/api/schema'
 import { ExcludeNullProps } from '@/lib/types'
 import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
@@ -10,12 +11,11 @@ const log = logger.child({}, { msgPrefix: '[provider/openai] ' })
 const api = new OpenAI()
 
 export const openai = {
-  chat,
-  chatModerated,
+  chat: chatModerated,
   image,
 }
 
-async function chat(input: unknown) {
+async function chat(input: EChatRequestSchema['parameters']) {
   const body = schemaOpenAIChatRequest.parse(input)
   if (body.stream === true) {
     const response = await api.chat.completions.create(
@@ -34,7 +34,7 @@ async function chat(input: unknown) {
   }
 }
 
-async function chatModerated(input: unknown) {
+async function chatModerated(input: EChatRequestSchema['parameters']) {
   log.info('chatModerated')
   const body = schemaOpenAIChatRequest.parse(input)
   const messages = body.messages.map((m) => `${m.content}`)

@@ -1,9 +1,8 @@
 import { authenticateGuest, createErrorResponse } from '@/lib/api/api'
-import { togetherai } from '@/lib/platform'
-import { openai } from '@/lib/platform/openai/openai'
-import { openrouter } from '@/lib/platform/openrouter/openrouter'
+import { getEngineById } from '@/lib/api/engines'
+import { eChatRequestSchema } from '@/lib/api/schema'
+import { adapters } from '@/lib/platform/platforms'
 import { logger } from '@/lib/utils'
-import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[api/chat] ' })
 
@@ -13,33 +12,16 @@ export async function POST(request: Request) {
   const auth = authenticateGuest(request.headers.get('Authorization'))
   if (!auth.ok) return auth.response
 
-  const { provider, ...params } = eChatRequestSchema.parse(await request.json())
-  log.info(params, 'parameters')
+  const { engineId, parameters } = eChatRequestSchema.parse(await request.json())
+  log.info(parameters, 'parameters')
 
-  if (provider === 'openai') {
-    return openai.chatModerated(params)
-  } else if (provider === 'openrouter') {
-    return openrouter.chat(params)
-  } else if (provider === 'togetherai') {
-    return await togetherai.chat(params)
+  const engine = getEngineById(engineId)
+  if (!engine) return createErrorResponse('invalid engine id')
+
+  const adapter = adapters[engine.platform]
+  if ('chat' in adapter) {
+    return adapter.chat(parameters)
   } else {
-    throw new Error(`unsupported provider: ${provider}`)
+    return createErrorResponse('invalid platform for adapter')
   }
 }
-
-export const eChatRequestSchema = z
-  .object({
-    model: z.string(),
-    provider: z.string().optional(),
-    stream: z.boolean().optional(),
-    messages: z.array(
-      z.object({
-        role: z.enum(['user', 'assistant', 'system', 'function']),
-        name: z.string().optional(),
-        content: z.string(),
-      }),
-    ),
-    prompt: z.string().optional(),
-  })
-  .passthrough()
-export type EChatRequestSchema = z.infer<typeof eChatRequestSchema>

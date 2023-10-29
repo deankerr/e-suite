@@ -1,22 +1,41 @@
-import z from 'zod'
+import z, { ZodObject, ZodType } from 'zod'
+import { ADAPTERS, PLATFORMS } from '../platform/platforms'
 
-const eChatRequestSchema = z.object({
+const messages = z.array(
+  z.object({
+    role: z.enum(['user', 'assistant', 'system', 'function']),
+    name: z.string().optional(),
+    content: z.string(),
+  }),
+)
+export type Messages = z.infer<typeof messages>
+
+export const eChatRequestSchema = z.object({
   engineId: z.string(),
-  parameters: z.record(z.string(), z.unknown()),
+  parameters: z.object({
+    messages: messages.optional(),
+    prompt: z.string().optional(),
+    // TODO everything else?
+  }),
 })
+export type EChatRequestSchema = z.infer<typeof eChatRequestSchema>
 
 const eChatEngine = z.object({
   id: z.string(), // our id
-  type: z.enum(['chat', 'completion', 'image', 'tts']),
-  platform: z.string(),
-  model: z.string(),
-  chatFormat: z.enum(['messages', 'prompt']), // Chat specific (could determine from schema?)
-  suggestedPromptFormat: z.string(), // suggested from togetherAI
-  suggestedStopToken: z.string(), // - can be wrong?
-  parametersSchema: z.record(z.string(), z.unknown()), // ?
+  type: z.enum(ADAPTERS),
+  platform: z.enum(PLATFORMS),
+  model: z.string(), // our name string
+  messages: z.boolean(),
+  prompt: z.boolean(),
+  suggestedPromptFormat: z.string().optional(), // suggested from togetherAI
+  suggestedStopToken: z.string().optional(), // - can be wrong?
+  parameters: z.record(z.string(), z.unknown()),
+  // schema: typeof z.ZodAny,
   metadata: z.object({
     label: z.string(), // human friendly name
+    creator: z.string(),
     description: z.string(),
     license: z.string(),
   }),
 })
+export type EChatEngine = z.infer<typeof eChatEngine>

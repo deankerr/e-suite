@@ -1,16 +1,10 @@
 import { authenticateGuest } from '@/lib/api/api'
-import { openai, replicate, togetherai } from '@/lib/platform'
+import { adapters } from '@/lib/platform/platforms'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[api/image] ' })
-
-const endpoints = {
-  openai,
-  replicate,
-  togetherai,
-}
 
 export async function POST(request: Request) {
   log.info('POST %s', request.url)
@@ -27,13 +21,6 @@ export async function POST(request: Request) {
   return NextResponse.json(result)
 }
 
-function endpoint(provider: string) {
-  if (!(provider in endpoints)) {
-    throw new Error('Unsupported provider')
-  }
-  const key = provider as keyof typeof endpoints
-  return endpoints[key]
-}
 // const endpoints = {
 //   async openai(params: RequestParameters) {
 //     try {

@@ -1,5 +1,5 @@
-import { EChatRequestSchema } from '@/app/api/chat/route'
 import { env } from '../utils'
+import { Messages } from './schema'
 
 export function createErrorResponse(message: string, status = 400) {
   return new Response(message, { status, statusText: message })
@@ -83,7 +83,7 @@ const chatModels = [
   },
 ] as const
 
-export function convertMessagesToPromptFormat(messages: EChatRequestSchema['messages']) {
+export function convertMessagesToPromptFormat(messages: Messages) {
   let prompt = ''
   for (const m of messages) {
     if (m.role === 'system') prompt = prompt.concat(m.content + '\n')

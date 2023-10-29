@@ -1,5 +1,5 @@
-import { EChatRequestSchema } from '@/app/api/chat/route'
 import { convertMessagesToPromptFormat, createErrorResponse } from '@/lib/api/api'
+import { EChatRequestSchema } from '@/lib/api/schema'
 import { env, logger, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
@@ -15,12 +15,13 @@ const { GET, POST } = createClient<paths>({
 })
 
 export const togetherai = {
-  async chat(input: EChatRequestSchema) {
+  async chat(input: EChatRequestSchema['parameters']) {
     log.info('chat')
-    input.prompt = convertMessagesToPromptFormat(input.messages)
-    input.stream = undefined
+    if (input.messages) {
+      input.prompt = convertMessagesToPromptFormat(input.messages)
+    }
+
     const body = schemaTogetheraiChatRequest.parse(input)
-    // log.info(body, 'request body')
     console.log('request body', body)
     const { data, error } = await POST('/inference', { body })
 
