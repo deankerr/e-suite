@@ -1,5 +1,5 @@
 import { createErrorResponse } from '@/lib/api/api'
-import { EChatRequestSchema } from '@/lib/api/schema'
+import { EChatRequestSchema } from '@/lib/api/schemas'
 import { env, logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'

@@ -7,7 +7,7 @@ import {
   CommandItem,
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { EChatEngine } from '@/lib/api/schema'
+import { EChatEngine } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'

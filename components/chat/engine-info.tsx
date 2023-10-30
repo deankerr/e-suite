@@ -1,4 +1,4 @@
-import { EChatEngine } from '@/lib/api/schema'
+import { EChatEngine } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 

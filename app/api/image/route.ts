@@ -1,25 +1,25 @@
 import { authenticateGuest } from '@/lib/api/api'
-import { adapters } from '@/lib/platform/platforms'
+// import { adapters } from '@/lib/platform/platforms'
 import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[api/image] ' })
 
-export async function POST(request: Request) {
-  log.info('POST %s', request.url)
+// export async function POST(request: Request) {
+//   log.info('POST %s', request.url)
 
-  const auth = authenticateGuest(request.headers.get('Authorization'))
-  if (!auth.ok) return auth.response
+//   const auth = authenticateGuest(request.headers.get('Authorization'))
+//   if (!auth.ok) return auth.response
 
-  const { provider, ...params } = requestSchema.parse(await request.json())
-  log.info(params, 'parameters')
+//   const { provider, ...params } = requestSchema.parse(await request.json())
+//   log.info(params, 'parameters')
 
-  const result = await endpoint(provider).image(params)
+//   const result = await endpoint(provider).image(params)
 
-  log.info(result, 'result')
-  return NextResponse.json(result)
-}
+//   log.info(result, 'result')
+//   return NextResponse.json(result)
+// }
 
 // const endpoints = {
 //   async openai(params: RequestParameters) {

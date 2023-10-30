@@ -1,4 +1,4 @@
-import { EChatEngine } from './schema'
+import { EChatEngine } from './schemas'
 
 const engines: EChatEngine[] = [
   {

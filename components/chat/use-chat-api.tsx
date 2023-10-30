@@ -1,7 +1,7 @@
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { useToast } from '@/components/ui/use-toast'
 import { getEngineById } from '@/lib/api/engines'
-import { EChatRequestSchema } from '@/lib/api/schema'
+import { EChatRequestSchema } from '@/lib/api/schemas'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { ChatSession, EngineInput } from './types'

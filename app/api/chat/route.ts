@@ -1,5 +1,5 @@
 import { authenticateGuest, createErrorResponse, runChatEngine } from '@/lib/api/api'
-import { eChatRequestSchema } from '@/lib/api/schema'
+import { eChatRequestSchema } from '@/lib/api/schemas'
 import { logger } from '@/lib/utils'
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
