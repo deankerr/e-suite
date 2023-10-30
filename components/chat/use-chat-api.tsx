@@ -4,38 +4,38 @@ import { getEngineById } from '@/lib/api/engines'
 import { EChatRequestSchema } from '@/lib/api/schema'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
-import { ChatSession, ChatSessionModelParameters } from './types'
+import { ChatSession, EngineInput } from './types'
 
 const endpoint = '/api/chat'
 
 export type ChatHelpers = ReturnType<typeof useChatApi>
 
-export function useChatApi(chat: ChatSession) {
+export function useChatApi(session: ChatSession) {
   const { toast } = useToast()
 
   const token = useLocalGuestAuth('e/suite-guest-auth-token', '')
-  const systemPrompt = `You are a helpful and cheerful AI assistant named ${chat.name}. Use Markdown in your answers when appropriate.`
+  const systemPrompt = `You are a helpful and cheerful AI assistant named ${session.name}. Use Markdown in your answers when appropriate.`
 
-  const createModelParamsBody = (engineId: string, parameters: ChatSessionModelParameters) => {
+  const createRequestBody = (engineId: string, input: EngineInput) => {
     const engine = getEngineById(engineId)
 
     const body: EChatRequestSchema = {
       engineId,
-      ...engine?.parameters,
+      ...engine?.input,
     }
-    const { fieldsEnabled = [] } = parameters
+    const { fieldsEnabled = [] } = input
 
     for (const field of fieldsEnabled) {
-      if (!(field in parameters)) continue
-      const key = field as keyof typeof parameters
-      Object.assign(body, { [key]: parameters[key] })
+      if (!(field in input)) continue
+      const key = field as keyof typeof input
+      Object.assign(body, { [key]: input[key] })
     }
     console.log('body', body)
     return body
   }
 
   const requestConfig: UseChatOptions = {
-    id: chat.id,
+    id: session.id,
     api: endpoint,
     initialMessages: [createMessage('system', systemPrompt)],
     headers: {
@@ -71,10 +71,10 @@ export function useChatApi(chat: ChatSession) {
   const submitMessage = (
     role: Roles,
     content: string,
-    params: { engineId: string; parameters: ChatSessionModelParameters },
+    engineInput: { engineId: string; input: EngineInput },
   ) => {
-    const { engineId, parameters } = params
-    const body = createModelParamsBody(engineId, parameters)
+    const { engineId, input } = engineInput
+    const body = createRequestBody(engineId, input)
     useChatHelpers.append({ role, content }, { options: { body } })
   }
 

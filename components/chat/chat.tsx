@@ -22,13 +22,13 @@ function getChatConfig(name: string) {
 
 export function Chat(props: { name: string }) {
   const chatConfig = getChatConfig(props.name)
-  const [chat, setChat] = useImmer(chatConfig)
-  const engine = getEngineById(chat.engineId)
+  const [session, setSession] = useImmer(chatConfig)
+  const engine = getEngineById(session.engineId)
 
   // TODO
   if (!engine) throw new Error('invalid engine')
 
-  const chatHelpers = useChatApi(chat)
+  const chatHelpers = useChatApi(session)
   const { messages, setMessages, resetMessages, addMessage, requestStatus } = chatHelpers
 
   const [showChatForm, setShowChatForm] = useState(false)
@@ -57,14 +57,14 @@ export function Chat(props: { name: string }) {
           <DebugMenu
             className="rounded-none border-none"
             label={<FaceIcon />}
-            heading={`${chat.id}/${chat.name}`}
+            heading={`${session.id}/${session.name}`}
             items={[
               ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
               ['Add code', () => setMessages([...messages, ...sampleCode])],
               ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
               ['Add user message', () => addMessage('user', 'Hello friend.')],
               ['Add ai message', () => addMessage('assistant', 'Greetings, I am a prototype.')],
-              ['log chat', () => console.log(chat)],
+              ['log chat', () => console.log(session)],
             ]}
           />
         </div>
@@ -116,17 +116,18 @@ export function Chat(props: { name: string }) {
               ? 'space-y-8 [&>_:last-child]:hidden'
               : 'sticky bottom-0 [&>*:not(:last-child)]:hidden',
           )}
-          session={chat}
+          engine={engine}
+          currentInput={session.engineInput}
           handleSubmit={(values) => {
             const { engineId, message, ...params } = values
-            setChat((c) => {
+            setSession((c) => {
               c.engineId = engineId
-              c.parameters = params
+              c.engineInput = params
             })
 
             chatHelpers.submitMessage('user', message, {
               engineId: engineId,
-              parameters: params,
+              input: params,
             })
           }}
         />

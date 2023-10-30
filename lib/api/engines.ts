@@ -15,7 +15,7 @@ const engines: EChatEngine[] = [
       description: 'GPT 3.5 from OpenAI',
       license: 'i dont know',
     },
-    parameters: { model: 'gpt-3.5-turbo', stream: true },
+    input: { model: 'gpt-3.5-turbo', stream: true },
   },
   {
     id: 'openrouter::meta-llama/llama-2-70b-chat',
@@ -31,7 +31,7 @@ const engines: EChatEngine[] = [
       description: 'Llama by Meta',
       license: 'i dont know',
     },
-    parameters: { model: 'meta-llama/llama-2-70b-chat', stream: true },
+    input: { model: 'meta-llama/llama-2-70b-chat', stream: true },
   },
   {
     id: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
@@ -47,7 +47,7 @@ const engines: EChatEngine[] = [
       description: 'RedPajama is gonna INCITE some wicked chat',
       license: 'i dont know',
     },
-    parameters: { model: 'togethercomputer/RedPajama-INCITE-7B-Chat' },
+    input: { model: 'togethercomputer/RedPajama-INCITE-7B-Chat' },
   },
 ]
 

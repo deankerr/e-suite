@@ -20,22 +20,40 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { TextareaAutosize } from '@/components/ui/textarea-autosize'
 import { getEngines } from '@/lib/api/engines'
+import { EChatEngine } from '@/lib/api/schema'
+import { schemas } from '@/lib/api/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { ChatSession } from '../types'
+import z from 'zod'
+import { EngineInput } from '../types'
 import { chatFormOpenAI, ChatFormSchemaOpenAI } from './schema'
 import { SliderInput } from './slider-input'
 import { TagBadge } from './tag-badge'
 
+const zExtra = z.object({
+  engineId: z.string().nonempty(),
+  fieldsEnabled: z.string().array(),
+})
+
+const extraDefaults = {
+  fieldsEnabled: [],
+}
+
+const ignoredKeys = ['model', 'prompt', 'messages'] as const
+
+console.log('chatFormOpenAI.', chatFormOpenAI.formSchema.shape)
+console.log('oai', schemas.openai.chat.input.shape)
+
 type Props = {
   handleSubmit: SubmitHandler<ChatFormSchemaOpenAI>
-  session: ChatSession
+  engine: EChatEngine
+  currentInput: EngineInput
 } & React.ComponentProps<'form'>
 
 export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
-  { handleSubmit, session, ...props },
+  { handleSubmit, engine, currentInput, ...props },
   ref,
 ) {
   const engines = getEngines()
@@ -44,8 +62,8 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
     resolver: zodResolver(chatFormOpenAI.formSchema),
     defaultValues: {
       ...chatFormOpenAI.defaultValues,
-      ...session.parameters,
-      engineId: session.engineId,
+      ...currentInput,
+      engineId: engine.id,
     },
   })
 

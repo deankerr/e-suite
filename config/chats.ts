@@ -5,18 +5,18 @@ export const chatsConfig: ChatSession[] = [
     id: 'p1',
     name: 'Piñata',
     engineId: 'openrouter::meta-llama/llama-2-70b-chat',
-    parameters: {},
+    engineInput: {},
   },
   {
     id: 'g1',
     name: 'Gretchen',
     engineId: 'openai::gpt-3.5-turbo',
-    parameters: {},
+    engineInput: {},
   },
   {
     id: 'h1',
     name: 'Hideko',
     engineId: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
-    parameters: {},
+    engineInput: {},
   },
 ]
