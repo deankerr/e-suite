@@ -1,5 +1,5 @@
 import z from 'zod'
-import { ADAPTERS, PLATFORMS } from '../platform/platforms'
+import { adapterKeys, platformKeys } from './platforms'
 
 const messages = z.array(
   z.object({
@@ -21,8 +21,8 @@ export type EChatRequestSchema = z.infer<typeof eChatRequestSchema>
 
 const eChatEngine = z.object({
   id: z.string(), // our id
-  type: z.enum(ADAPTERS),
-  platform: z.enum(PLATFORMS),
+  type: z.enum(adapterKeys),
+  platform: z.enum(platformKeys),
   model: z.string(), // our name string
   messages: z.boolean(),
   prompt: z.boolean(),
