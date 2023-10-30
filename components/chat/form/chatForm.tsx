@@ -27,7 +27,7 @@ import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { forwardRef } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import z from 'zod'
-import { EngineInput } from '../types'
+import { ChatSession } from '../types'
 import { chatFormOpenAI, ChatFormSchemaOpenAI } from './schema'
 import { SliderInput } from './slider-input'
 import { TagBadge } from './tag-badge'
@@ -49,7 +49,7 @@ console.log('oai', schemas.openai.chat.input.shape)
 type Props = {
   handleSubmit: SubmitHandler<ChatFormSchemaOpenAI>
   engine: EChatEngine
-  currentInput: EngineInput
+  currentInput: ChatSession['engineInput']
 } & React.ComponentProps<'form'>
 
 export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
@@ -62,7 +62,7 @@ export const ChatForm = forwardRef<HTMLFormElement, Props>(function ChatForm(
     resolver: zodResolver(chatFormOpenAI.formSchema),
     defaultValues: {
       ...chatFormOpenAI.defaultValues,
-      ...currentInput,
+      ...currentInput[engine.id],
       engineId: engine.id,
     },
   })

@@ -7,12 +7,14 @@ import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sampl
 import { useChatApi } from '@/components/chat/use-chat-api'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
-import { getEngineById } from '@/lib/api/engines'
+import { getEngineById, getEngines } from '@/lib/api/engines'
 import { cn } from '@/lib/utils'
 import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useImmer } from 'use-immer'
+import { EngineCombobox } from './engine-combobox'
+import { EngineInfo } from './engine-info'
 
 function getChatConfig(name: string) {
   const chatConfig = chatsConfig.find((c) => c.name === decodeURI(name))
@@ -24,6 +26,7 @@ export function Chat(props: { name: string }) {
   const chatConfig = getChatConfig(props.name)
   const [session, setSession] = useImmer(chatConfig)
   const engine = getEngineById(session.engineId)
+  const engines = getEngines()
 
   // TODO
   if (!engine) throw new Error('invalid engine')
@@ -52,39 +55,53 @@ export function Chat(props: { name: string }) {
   return (
     <>
       {/* Top Panel */}
-      <div className="chat-layout-top-panel flex max-w-3xl items-center justify-between border-b border-r text-sm text-muted-foreground">
-        <div className="font-mono text-xs">
-          <DebugMenu
-            className="rounded-none border-none"
-            label={<FaceIcon />}
-            heading={`${session.id}/${session.name}`}
-            items={[
-              ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
-              ['Add code', () => setMessages([...messages, ...sampleCode])],
-              ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
-              ['Add user message', () => addMessage('user', 'Hello friend.')],
-              ['Add ai message', () => addMessage('assistant', 'Greetings, I am a prototype.')],
-              ['log chat', () => console.log(session)],
-            ]}
-          />
+      <div className="chat-layout-top-panel max-w-3xl border-b border-r p-2">
+        <div className="grid grid-cols-[1fr_2fr_1fr]">
+          <div className="font-mono text-sm text-muted-foreground">
+            <DebugMenu
+              className="rounded-none border-none"
+              label={<FaceIcon />}
+              heading={`${session.id}/${session.name}`}
+              items={[
+                ['Add lorem', () => setMessages([...messages, ...sampleConvo])],
+                ['Add code', () => setMessages([...messages, ...sampleCode])],
+                ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
+                ['Add user message', () => addMessage('user', 'Hello friend.')],
+                ['Add ai message', () => addMessage('assistant', 'Greetings, I am a prototype.')],
+                ['log chat', () => console.log(session)],
+              ]}
+            />
+          </div>
+          <div className="max-w-md">
+            <EngineCombobox
+              engines={engines}
+              current={engine.id}
+              setCurrent={(id) =>
+                setSession((s) => {
+                  s.engineId = id
+                })
+              }
+            />
+          </div>
+          <div className="text-right">
+            <Button
+              className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
+              variant="outline"
+              onClick={() => setShowChatForm(!showChatForm)}
+            >
+              <MixerHorizontalIcon />
+            </Button>
+            <Button
+              className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
+              variant="outline"
+              onClick={() => resetMessages()}
+            >
+              <TrashIcon />
+            </Button>
+          </div>
         </div>
-        <div>{engine?.metadata.label}</div>
-        <div>
-          <Button
-            className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
-            variant="outline"
-            onClick={() => setShowChatForm(!showChatForm)}
-          >
-            <MixerHorizontalIcon />
-          </Button>
-          <Button
-            className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
-            variant="outline"
-            onClick={() => resetMessages()}
-          >
-            <TrashIcon />
-          </Button>
-        </div>
+
+        <EngineInfo engine={engine} />
       </div>
 
       {/* Chat Content */}
@@ -119,15 +136,15 @@ export function Chat(props: { name: string }) {
           engine={engine}
           currentInput={session.engineInput}
           handleSubmit={(values) => {
-            const { engineId, message, ...params } = values
+            const { engineId, message, ...input } = values
             setSession((c) => {
               c.engineId = engineId
-              c.engineInput = params
+              c.engineInput = { [engineId]: input }
             })
 
             chatHelpers.submitMessage('user', message, {
               engineId: engineId,
-              input: params,
+              input: input,
             })
           }}
         />

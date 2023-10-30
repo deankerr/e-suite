@@ -12,8 +12,9 @@ const engines: EChatEngine[] = [
     metadata: {
       label: 'OpenAI: GPT-3.5 Turbo',
       creator: 'OpenAI',
-      description: 'GPT 3.5 from OpenAI',
-      license: 'i dont know',
+      description:
+        'Most capable GPT-3.5 model and optimized for chat at 1/10th the cost of text-davinci-003. Will be updated with our latest model iteration 2 weeks after it is released.',
+      licence: 'OpenAI',
     },
     input: { model: 'gpt-3.5-turbo', stream: true },
   },
@@ -28,13 +29,14 @@ const engines: EChatEngine[] = [
     metadata: {
       label: 'Meta: Llama v2 70B Chat',
       creator: 'Meta',
-      description: 'Llama by Meta',
-      license: 'i dont know',
+      description:
+        'Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters',
+      licence: 'LLaMA license Agreement (Meta)',
     },
     input: { model: 'meta-llama/llama-2-70b-chat', stream: true },
   },
   {
-    id: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
+    id: 'togetherai::togethercomputer/redpajama-incite-7b-chat',
     type: 'chat',
     platform: 'togetherai',
     model: 'RedPajama-INCITE-7B-Chat',
@@ -44,8 +46,9 @@ const engines: EChatEngine[] = [
     metadata: {
       label: 'Together.ai: RedPajama INCITE 7B Chat',
       creator: 'Together.ai',
-      description: 'RedPajama is gonna INCITE some wicked chat',
-      license: 'i dont know',
+      description:
+        'Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-7B-v1 base model.',
+      licence: 'apache-2.0',
     },
     input: { model: 'togethercomputer/RedPajama-INCITE-7B-Chat' },
   },

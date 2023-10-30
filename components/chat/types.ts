@@ -4,7 +4,7 @@ export type ChatSession = {
   id: Readonly<string> // id
   name: string // unique
   engineId: string
-  engineInput: EngineInput
+  engineInput: Record<string, EngineInput>
 }
 
 export type EngineInput = Partial<OpenAIInferenceParameters> & {

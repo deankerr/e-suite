@@ -16,7 +16,7 @@ export const chatsConfig: ChatSession[] = [
   {
     id: 'h1',
     name: 'Hideko',
-    engineId: 'togetherai::togethercomputer/RedPajama-INCITE-7B-Chat',
+    engineId: 'togetherai::togethercomputer/redpajama-incite-7b-chat',
     engineInput: {},
   },
 ]

@@ -34,7 +34,7 @@ const eChatEngine = z.object({
     label: z.string(), // human friendly name
     creator: z.string(),
     description: z.string(),
-    license: z.string(),
+    licence: z.string(),
   }),
   //? isModerated
 })
