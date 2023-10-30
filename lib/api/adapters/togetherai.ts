@@ -14,70 +14,6 @@ const { GET, POST } = createClient<paths>({
   },
 })
 
-export const togetherai = {
-  async chat(chatRequest: EChatRequestSchema) {
-    log.info('chat')
-    if (chatRequest.messages) {
-      chatRequest.prompt = convertMessagesToPromptFormat(chatRequest.messages)
-    }
-
-    const body = schemaTogetheraiChatRequest.parse(chatRequest)
-    console.log('request body', body)
-    const { data, error } = await POST('/inference', { body })
-
-    if (data) {
-      log.info(data, 'chat response')
-      const choices = data.output?.choices
-      if (choices) {
-        const item = choices[0]?.text ?? '(e unhandled) no text'
-        return new Response(item)
-      }
-      return createErrorResponse('(e error) unknown response')
-    }
-
-    if (error) {
-      log.error(error, 'chat response')
-      return createErrorResponse(error as string)
-    }
-  },
-
-  async image(input: object) {
-    // api spec is missing image parameters
-    const { data, error } = await POST('/inference', { body: input })
-    if (data) {
-      const response = imageResponseSchema.parse(data)
-      const base64 =
-        response.output.choices[0]?.image_base64 ?? raise('response missing expected data')
-      return { response, item: { base64 } }
-    } else {
-      console.error(error)
-      throw new Error('Unknown togetherai error')
-    }
-  },
-}
-
-export async function models() {
-  const { data, error } = await GET('/models/info?options=', {})
-  log.info(data, 'models data')
-  log.info(error, 'models error')
-
-  /* 
-  hidden_keys = [
-            "_id",
-            "modelInstanceConfig",
-            "created_at",
-            "update_at",
-            "pricing",
-            "show_in_playground",
-            "access",
-            "pricing_tier",
-            "hardware_label",
-            "depth",
-            "descriptionLink",
-        ]
-  */
-}
-
 const schemaTogetheraiChatRequest = z.object({
   model: z.string(),
   prompt: z.string(),
@@ -116,3 +52,75 @@ const imageResponseSchema = z.object({
     result_type: z.string(),
   }),
 })
+
+export const togetherai = {
+  label: 'Together.ai',
+  chat: {
+    run: chat,
+    schema: {
+      input: schemaTogetheraiChatRequest,
+    },
+  },
+}
+
+async function chat(chatRequest: EChatRequestSchema) {
+  log.info('chat')
+  if (chatRequest.messages) {
+    chatRequest.prompt = convertMessagesToPromptFormat(chatRequest.messages)
+  }
+
+  const body = schemaTogetheraiChatRequest.parse(chatRequest)
+  console.log('request body', body)
+  const { data, error } = await POST('/inference', { body })
+
+  if (data) {
+    log.info(data, 'chat response')
+    const choices = data.output?.choices
+    if (choices) {
+      const item = choices[0]?.text ?? '(e unhandled) no text'
+      return new Response(item)
+    }
+    return createErrorResponse('(e error) unknown response')
+  }
+
+  if (error) {
+    log.error(error, 'chat response')
+    return createErrorResponse(error as string)
+  }
+}
+
+async function image(input: object) {
+  // api spec is missing image parameters
+  const { data, error } = await POST('/inference', { body: input })
+  if (data) {
+    const response = imageResponseSchema.parse(data)
+    const base64 =
+      response.output.choices[0]?.image_base64 ?? raise('response missing expected data')
+    return { response, item: { base64 } }
+  } else {
+    console.error(error)
+    throw new Error('Unknown togetherai error')
+  }
+}
+
+export async function models() {
+  const { data, error } = await GET('/models/info?options=', {})
+  log.info(data, 'models data')
+  log.info(error, 'models error')
+
+  /* 
+  hidden_keys = [
+            "_id",
+            "modelInstanceConfig",
+            "created_at",
+            "update_at",
+            "pricing",
+            "show_in_playground",
+            "access",
+            "pricing_tier",
+            "hardware_label",
+            "depth",
+            "descriptionLink",
+        ]
+  */
+}

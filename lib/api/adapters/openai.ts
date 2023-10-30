@@ -1,6 +1,5 @@
 import { createErrorResponse } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schema'
-import { ExcludeNullProps } from '@/lib/types'
 import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
@@ -8,28 +7,59 @@ import { z } from 'zod'
 
 const log = logger.child({}, { msgPrefix: '[provider/openai] ' })
 
-const api = new OpenAI()
+export const schemaOpenAIChatRequest = z.object({
+  model: z.string(),
+  messages: z.array(
+    z.object({
+      role: z.enum(['user', 'assistant', 'system', 'function']),
+      name: z.string().optional(),
+      content: z.string(),
+    }),
+  ),
+  stream: z.boolean().optional(),
+
+  frequency_penalty: z.number().min(-2).max(2).step(0.01).optional(),
+  // function_call: z.unknown().optional(),
+  // functions: z.unknown().optional(),
+  // logit_bias: z.union([z.record(z.number()), z.null()]).optional(),
+  max_tokens: z.number().min(1).step(1).optional(), //? max per model?
+  // n: z.number().optional(),
+  presence_penalty: z.number().min(-2).max(2).step(0.01).optional(),
+  stop: z.string().array().min(0).max(4).optional(),
+  temperature: z.number().min(0).max(2).step(0.01).optional(),
+  top_p: z.number().min(0).max(2).step(0.01).optional(),
+  // user: z.string().optional(),
+})
+export type OpenAIInferenceParameters = z.infer<typeof schemaOpenAIChatRequest>
 
 export const openai = {
-  chat: chatModerated,
-  image,
+  label: 'OpenAI',
+  chat: {
+    run: chatModerated,
+    schema: {
+      input: schemaOpenAIChatRequest,
+    },
+  },
 }
+
+const api = new OpenAI()
 
 async function chat(chatRequest: EChatRequestSchema) {
   const body = schemaOpenAIChatRequest.parse(chatRequest)
+
   if (body.stream === true) {
     const response = await api.chat.completions.create(
       body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
     )
+
     const stream = OpenAIStream(response)
-    log.info('chat stream')
     return new StreamingTextResponse(stream)
   } else {
     const response = await api.chat.completions.create(
       body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
     )
+
     const item = response.choices[0]?.message.content ?? raise('response missing expected data')
-    log.info(item, 'chat')
     return new Response(item)
   }
 }
@@ -66,35 +96,6 @@ async function image(input: OpenAI.ImageGenerateParams) {
     }
   }
 }
-
-export const schemaOpenAIChatRequest = z.object({
-  model: z.string(),
-  messages: z.array(
-    z.object({
-      role: z.enum(['user', 'assistant', 'system', 'function']),
-      name: z.string().optional(),
-      content: z.string(),
-    }),
-  ),
-  stream: z.union([z.boolean(), z.null()]).optional(),
-
-  frequency_penalty: z.union([z.number(), z.null()]).optional(),
-  // function_call: z.unknown().optional(), // TODO
-  // functions: z.unknown().optional(), // TODO
-  logit_bias: z.union([z.record(z.number()), z.null()]).optional(),
-  max_tokens: z.union([z.number(), z.null()]).optional(),
-  n: z.union([z.number(), z.null()]).optional(),
-  presence_penalty: z.union([z.number(), z.null()]).optional(),
-  stop: z.union([z.string(), z.null(), z.string().array()]).optional(),
-  temperature: z.union([z.number(), z.null()]).optional(),
-  top_p: z.union([z.number(), z.null()]).optional(),
-  user: z.string().optional(),
-})
-
-// remove null from all props, remove non-array string from 'stop'
-export type OpenAIInferenceParameters = ExcludeNullProps<
-  Omit<z.infer<typeof schemaOpenAIChatRequest>, 'stop'>
-> & { stop?: string[] }
 
 const chatModels = [
   'gpt-4',

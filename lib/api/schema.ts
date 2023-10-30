@@ -23,7 +23,8 @@ const eChatEngine = z.object({
   id: z.string(), // our id
   type: z.enum(adapterKeys),
   platform: z.enum(platformKeys),
-  model: z.string(), // our name string
+  model: z.string(), // "our" canonical name string
+  contextLength: z.number(),
   messages: z.boolean(),
   prompt: z.boolean(),
   suggestedPromptFormat: z.string().optional(), // suggested from togetherAI
@@ -36,5 +37,6 @@ const eChatEngine = z.object({
     description: z.string(),
     license: z.string(),
   }),
+  //? isModerated
 })
 export type EChatEngine = z.infer<typeof eChatEngine>

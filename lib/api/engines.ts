@@ -6,6 +6,7 @@ const engines: EChatEngine[] = [
     type: 'chat',
     platform: 'openai',
     model: 'gpt-3.5-turbo',
+    contextLength: 4097,
     messages: true,
     prompt: false,
     metadata: {
@@ -21,6 +22,7 @@ const engines: EChatEngine[] = [
     type: 'chat',
     platform: 'openrouter',
     model: 'llama-2-70b-chat',
+    contextLength: 4096,
     messages: true,
     prompt: true,
     metadata: {
@@ -36,6 +38,7 @@ const engines: EChatEngine[] = [
     type: 'chat',
     platform: 'togetherai',
     model: 'RedPajama-INCITE-7B-Chat',
+    contextLength: 2048,
     messages: false,
     prompt: true,
     metadata: {

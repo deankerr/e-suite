@@ -44,7 +44,7 @@ export function convertMessagesToPromptFormat(messages: Messages) {
 
 export function runChatEngine(chatRequest: EChatRequestSchema) {
   const engine = getEngineById(chatRequest.engineId)
-  const adapter = platforms[engine.platform].adapters
+  const adapter = platforms[engine.platform]
   if (!('chat' in adapter)) throw new Error('Invalid engine: ' + chatRequest.engineId)
-  return adapter.chat(chatRequest)
+  return adapter.chat.run(chatRequest)
 }

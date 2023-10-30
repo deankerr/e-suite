@@ -12,21 +12,31 @@ const api = new OpenAI({
   },
 })
 
+const schemaOpenRouterChatRequest = schemaOpenAIChatRequest
+
 export const openrouter = {
-  async chat(chatRequest: EChatRequestSchema) {
-    const body = schemaOpenAIChatRequest.parse(chatRequest)
-    if (body.stream) {
-      const response = await api.chat.completions.create(
-        body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
-      )
-      const stream = OpenAIStream(response)
-      return new StreamingTextResponse(stream)
-    } else {
-      const response = await api.chat.completions.create(
-        body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
-      )
-      const item = response.choices[0]?.message.content ?? raise('response missing expected data')
-      return new Response(item)
-    }
+  label: 'OpenRouter',
+  chat: {
+    run: chat,
+    schema: {
+      input: schemaOpenRouterChatRequest,
+    },
   },
+}
+
+async function chat(chatRequest: EChatRequestSchema) {
+  const body = schemaOpenAIChatRequest.parse(chatRequest)
+  if (body.stream) {
+    const response = await api.chat.completions.create(
+      body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
+    )
+    const stream = OpenAIStream(response)
+    return new StreamingTextResponse(stream)
+  } else {
+    const response = await api.chat.completions.create(
+      body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
+    )
+    const item = response.choices[0]?.message.content ?? raise('response missing expected data')
+    return new Response(item)
+  }
 }
