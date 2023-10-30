@@ -1,10 +1,18 @@
 import { EChatEngine } from '@/lib/api/schema'
+import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 
-export function EngineInfo({ engine }: { engine: EChatEngine }) {
+export function EngineInfo({
+  engine,
+  children,
+  className,
+}: {
+  engine: EChatEngine
+  children?: React.ReactNode
+} & React.ComponentProps<'div'>) {
   return (
     <>
-      <div className="mx-auto max-w-xl">
+      <div className={cn('mx-auto max-w-xl', className)}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -48,6 +56,7 @@ export function EngineInfo({ engine }: { engine: EChatEngine }) {
             </TableRow>
           </TableBody>
         </Table>
+        {children}
       </div>
     </>
   )

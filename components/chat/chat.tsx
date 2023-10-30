@@ -5,6 +5,12 @@ import { ChatForm } from '@/components/chat/form/chatForm'
 import { MessageBubble } from '@/components/chat/message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sample-data'
 import { useChatApi } from '@/components/chat/use-chat-api'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getEngineById, getEngines } from '@/lib/api/engines'
@@ -35,6 +41,7 @@ export function Chat(props: { name: string }) {
   const { messages, setMessages, resetMessages, addMessage, requestStatus } = chatHelpers
 
   const [showChatForm, setShowChatForm] = useState(false)
+  const [showEngineInfo, setShowEngineInfo] = useState(false)
 
   const contentAreaRef = useRef<HTMLDivElement | null>(null)
   const [contentScrolledRef, isScrolledToEnd] = useInView({
@@ -72,7 +79,8 @@ export function Chat(props: { name: string }) {
               ]}
             />
           </div>
-          <div className="max-w-md">
+
+          <div className="max-w-md" onClick={() => setShowEngineInfo(true)}>
             <EngineCombobox
               engines={engines}
               current={engine.id}
@@ -83,6 +91,7 @@ export function Chat(props: { name: string }) {
               }
             />
           </div>
+
           <div className="text-right">
             <Button
               className={cn('rounded-none border-transparent shadow-none', 'border-l-input')}
@@ -100,8 +109,14 @@ export function Chat(props: { name: string }) {
             </Button>
           </div>
         </div>
-
-        <EngineInfo engine={engine} />
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="justify-center font-normal">engine info</AccordionTrigger>
+            <AccordionContent>
+              <EngineInfo engine={engine} className={''}></EngineInfo>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
 
       {/* Chat Content */}
