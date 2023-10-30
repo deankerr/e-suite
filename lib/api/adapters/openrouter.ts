@@ -2,7 +2,7 @@ import { EChatRequestSchema } from '@/lib/api/schema'
 import { env, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
-import { schemaOpenAIChatRequest } from './openai'
+import { schemas } from '../schemas'
 
 const api = new OpenAI({
   apiKey: env('OPENROUTER_API_KEY'),
@@ -12,20 +12,12 @@ const api = new OpenAI({
   },
 })
 
-const schemaOpenRouterChatRequest = schemaOpenAIChatRequest
-
 export const openrouter = {
-  label: 'OpenRouter',
-  chat: {
-    run: chat,
-    schema: {
-      input: schemaOpenRouterChatRequest,
-    },
-  },
+  chat,
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
-  const body = schemaOpenAIChatRequest.parse(chatRequest)
+  const body = schemas.openrouter.chat.input.parse(chatRequest)
   if (body.stream) {
     const response = await api.chat.completions.create(
       body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,

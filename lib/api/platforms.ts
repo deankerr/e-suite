@@ -4,13 +4,13 @@ import { openrouter } from './adapters/openrouter'
 import { replicate } from './adapters/replicate'
 import { togetherai } from './adapters/togetherai'
 
-export const platformKeys = ['openai', 'openrouter', 'replicate', 'togetherai', 'fal'] as const
+export const platformKeys = ['openai', 'openrouter', 'togetherai'] as const
 export const platforms = {
   openai,
   openrouter,
-  replicate,
+  // replicate,
   togetherai,
-  fal,
+  // fal,
 } as const
 
 export const adapterKeys = ['chat', 'image', 'illusion', 'tts'] as const

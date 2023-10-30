@@ -3,6 +3,7 @@ import { EChatRequestSchema } from '@/lib/api/schema'
 import { env, logger, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
+import { schemas } from '../schemas'
 import type { paths } from './togetherai.api'
 
 const log = logger.child({}, { msgPrefix: '[platform/togetherai] ' })
@@ -14,53 +15,8 @@ const { GET, POST } = createClient<paths>({
   },
 })
 
-const schemaTogetheraiChatRequest = z.object({
-  model: z.string(),
-  prompt: z.string(),
-  max_tokens: z.number(),
-  stop: z.union([
-    z.string().optional(),
-    z
-      .string()
-      .array()
-      .optional()
-      .transform((arr) => (arr ? arr[0] : undefined)),
-  ]), //^ e/Chat UI uses string[], together uses string
-  temperature: z.number().optional(),
-  top_p: z.number().optional(),
-  top_k: z.number().optional(),
-  repetition_penalty: z.number().optional(),
-  logprobs: z.number().optional(),
-  stream_tokens: z.boolean().optional(),
-})
-
-const imageResponseSchema = z.object({
-  status: z.string(),
-  prompt: z.string().array(),
-  model: z.string(),
-  model_owner: z.string(),
-  tags: z.object({}).passthrough(), // ?
-  num_returns: z.number(),
-  args: z.object({}).passthrough(), // ? request params
-  subjobs: z.unknown().array(), // ?
-  output: z.object({
-    choices: z.array(
-      z.object({
-        image_base64: z.string(),
-      }),
-    ),
-    result_type: z.string(),
-  }),
-})
-
 export const togetherai = {
-  label: 'Together.ai',
-  chat: {
-    run: chat,
-    schema: {
-      input: schemaTogetheraiChatRequest,
-    },
-  },
+  chat,
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
@@ -69,7 +25,7 @@ async function chat(chatRequest: EChatRequestSchema) {
     chatRequest.prompt = convertMessagesToPromptFormat(chatRequest.messages)
   }
 
-  const body = schemaTogetheraiChatRequest.parse(chatRequest)
+  const body = schemas.togetherai.chat.input.parse(chatRequest)
   console.log('request body', body)
   const { data, error } = await POST('/inference', { body })
 
@@ -93,7 +49,7 @@ async function image(input: object) {
   // api spec is missing image parameters
   const { data, error } = await POST('/inference', { body: input })
   if (data) {
-    const response = imageResponseSchema.parse(data)
+    const response = schemas.togetherai.image.output.parse(data)
     const base64 =
       response.output.choices[0]?.image_base64 ?? raise('response missing expected data')
     return { response, item: { base64 } }
