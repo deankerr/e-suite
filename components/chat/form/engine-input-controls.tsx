@@ -1,5 +1,5 @@
 import { Switch } from '@/components/ui/switch'
-import { EChatEngine } from '@/lib/api/schemas'
+import { EChatEngine, schemas } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { ImmerHook } from 'use-immer'
 import { ChatSession, EngineInput } from '../types'
@@ -88,6 +88,8 @@ export function EngineInputControls({
   }
   const inputKeys = Object.keys(inputs)
 
+  const schemaKeys = schemas[engine.platform].chat.input.keyof().options as string[]
+
   const setInput = <T extends keyof EngineInput>(key: T, value: EngineInput[T]) => {
     setSession((s) => {
       s.engineInput[engine.id] = {
@@ -112,7 +114,7 @@ export function EngineInputControls({
   return (
     <div className={cn(className)}>
       {sliderInputKeys.map((key) => {
-        if (inputKeys.includes(key)) {
+        if (inputKeys.includes(key) && schemaKeys.includes(key)) {
           return (
             <div key={key}>
               <div className="font-mono text-sm">
@@ -133,7 +135,7 @@ export function EngineInputControls({
       })}
 
       {tagInputKeys.map((key) => {
-        if (inputKeys.includes(key)) {
+        if (inputKeys.includes(key) && schemaKeys.includes(key)) {
           return (
             <div key={key} className="grid grid-cols-[auto_1fr] items-center gap-x-2">
               <div className="font-mono text-sm">
