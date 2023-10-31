@@ -98,15 +98,15 @@ export function EngineInputControls({
     })
   }
 
-  const setFieldEnabled = (key: keyof EngineInput, value: boolean) => {
-    if (value) {
-      setInput('fieldsEnabled', [...inputs.fieldsEnabled, key])
-    } else {
-      setInput(
-        'fieldsEnabled',
-        inputs.fieldsEnabled.filter((f) => f === key),
-      )
-    }
+  const setFieldEnabled = (key: keyof EngineInput, enabled: boolean) => {
+    setSession((s) => {
+      s.engineInput[engine.id] = {
+        ...inputs,
+        fieldsEnabled: enabled
+          ? [...inputs.fieldsEnabled, key]
+          : inputs.fieldsEnabled.filter((k) => k !== key),
+      }
+    })
   }
 
   return (
