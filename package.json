@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "migrate": "prisma migrate"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"

@@ -11,18 +11,18 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? 
-  access_token       String? 
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? 
-  session_state      String?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
   refresh_token_expires_in Int?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -54,4 +54,35 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Engine {
+  id             String   @id
+  type           String // chat | completion | image ?
+  modelId        String // should link same model from different hosts
+  host           Host     @relation(fields: [hostId], references: [id]) // platform - relation
+  hostId         String
+  // info
+  displayName    String
+  creatorName    String
+  releaseDate    DateTime
+  description    String
+  link           String
+  license        String
+  licenseLink    String
+  isOpenSource   Boolean
+  // specs
+  contextLength  Int
+  parametersSize String // 7B | 13B | 70B etc
+  promptFormat   String
+  stopTokens     String
+
+  includeParameters String // {model: 'gpt-4', stream: true} etc
+}
+
+model Host {
+  id          String   @id // openai | openrouter | togetherai
+  displayName String
+  link        String
+  engines     Engine[]
 }
