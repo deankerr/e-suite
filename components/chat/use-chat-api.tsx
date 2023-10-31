@@ -1,7 +1,7 @@
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { useToast } from '@/components/ui/use-toast'
 import { getEngineById } from '@/lib/api/engines'
-import { EChatRequestSchema } from '@/lib/api/schemas'
+import { EChatEngine, EChatRequestSchema } from '@/lib/api/schemas'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { ChatSession, EngineInput } from './types'
@@ -10,28 +10,27 @@ const endpoint = '/api/chat'
 
 export type ChatHelpers = ReturnType<typeof useChatApi>
 
-export function useChatApi(session: ChatSession) {
+export function useChatApi(session: ChatSession, engine: EChatEngine) {
   const { toast } = useToast()
 
   const token = useLocalGuestAuth('e/suite-guest-auth-token', '')
   const systemPrompt = `You are a helpful and cheerful AI assistant named ${session.name}. Use Markdown in your answers when appropriate.`
 
-  const createRequestBody = (engineId: string, input: EngineInput) => {
-    const engine = getEngineById(engineId)
+  const engineInput = session.engineInput[engine.id]
 
-    const body: EChatRequestSchema = {
-      engineId,
-      ...engine?.input,
-    }
-    const { fieldsEnabled = [] } = input
+  const body: EChatRequestSchema = {
+    engineId: engine.id,
+    ...engine.input,
+  }
+
+  if (engineInput) {
+    const fieldsEnabled = engineInput.fieldsEnabled
 
     for (const field of fieldsEnabled) {
-      if (!(field in input)) continue
-      const key = field as keyof typeof input
-      Object.assign(body, { [key]: input[key] })
+      if (!(field in engineInput)) continue
+      const key = field as keyof typeof engineInput
+      Object.assign(body, { [key]: engineInput[key] })
     }
-    console.log('body', body)
-    return body
   }
 
   const requestConfig: UseChatOptions = {
@@ -41,6 +40,7 @@ export function useChatApi(session: ChatSession) {
     headers: {
       Authorization: token,
     },
+    body,
     onResponse: (response) => {
       console.log('[response]', response)
     },
@@ -68,14 +68,9 @@ export function useChatApi(session: ChatSession) {
     chatHelpers.setMessages([...messages, createMessage(role, content)])
   }
 
-  const submitMessage = (
-    role: Roles,
-    content: string,
-    engineInput: { engineId: string; input: EngineInput },
-  ) => {
-    const { engineId, input } = engineInput
-    const body = createRequestBody(engineId, input)
-    useChatHelpers.append({ role, content }, { options: { body } })
+  const submitMessage = (role: Roles, content: string) => {
+    console.log('body', body)
+    useChatHelpers.append({ role, content })
   }
 
   const requestStatus: ChatRequestStatus = isLoading

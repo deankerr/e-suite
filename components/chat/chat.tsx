@@ -1,7 +1,6 @@
 'use client'
 
 import { DebugMenu } from '@/components/chat/debug-menu'
-import { ChatForm } from '@/components/chat/form/chatForm'
 import { MessageBubble } from '@/components/chat/message-bubble'
 import { sampleCode, sampleConvo, sampleMessages } from '@/components/chat/sample-data'
 import { useChatApi } from '@/components/chat/use-chat-api'
@@ -15,12 +14,21 @@ import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
 import { getEngineById, getEngines } from '@/lib/api/engines'
 import { cn } from '@/lib/utils'
-import { FaceIcon, MixerHorizontalIcon, PinBottomIcon, TrashIcon } from '@radix-ui/react-icons'
+import {
+  FaceIcon,
+  HeartIcon,
+  MixerHorizontalIcon,
+  PaperPlaneIcon,
+  PinBottomIcon,
+  TrashIcon,
+} from '@radix-ui/react-icons'
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useImmer } from 'use-immer'
+import { TextareaAutosize } from '../ui/textarea-autosize'
 import { EngineCombobox } from './engine-combobox'
 import { EngineInfo } from './engine-info'
+import { EngineInputControls } from './form/engine-input-controls'
 
 function getChatConfig(name: string) {
   const chatConfig = chatsConfig.find((c) => c.name === decodeURI(name))
@@ -31,13 +39,16 @@ function getChatConfig(name: string) {
 export function Chat(props: { name: string }) {
   const chatConfig = getChatConfig(props.name)
   const [session, setSession] = useImmer(chatConfig)
+
   const engine = getEngineById(session.engineId)
+  const engineInput = session.engineInput[engine.id]
+
   const engines = getEngines()
 
   // TODO
   if (!engine) throw new Error('invalid engine')
 
-  const chatHelpers = useChatApi(session)
+  const chatHelpers = useChatApi(session, engine)
   const { messages, setMessages, resetMessages, addMessage, requestStatus } = chatHelpers
 
   const [showChatForm, setShowChatForm] = useState(false)
@@ -59,6 +70,13 @@ export function Chat(props: { name: string }) {
     scrollFeedToEnd()
   }, [messages.length])
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const message = textareaRef.current?.value
+  const isValidMessage = message && message !== ''
+  const submitMessage = () => {
+    if (message && isValidMessage) chatHelpers.submitMessage('user', message)
+  }
+
   return (
     <>
       {/* Top Panel */}
@@ -75,7 +93,8 @@ export function Chat(props: { name: string }) {
                 ['Add markdown', () => setMessages([...messages, ...sampleMessages])],
                 ['Add user message', () => addMessage('user', 'Hello friend.')],
                 ['Add ai message', () => addMessage('assistant', 'Greetings, I am a prototype.')],
-                ['log chat', () => console.log(session)],
+                ['session', () => console.log(session)],
+                ['engineInput', () => console.log(session.engineInput[engine.id])],
               ]}
             />
           </div>
@@ -140,28 +159,44 @@ export function Chat(props: { name: string }) {
           <div ref={contentScrolledRef}></div>
         </div>
 
-        {/* Chat Form */}
-        <ChatForm
+        {/* Message Input */}
+        <div
           className={cn(
-            'w-full px-4 py-2',
-            showChatForm
-              ? 'space-y-8 [&>_:last-child]:hidden'
-              : 'sticky bottom-0 [&>*:not(:last-child)]:hidden',
+            'flex items-end rounded-3xl border bg-background px-2 py-2 focus-within:ring-1 focus-within:ring-ring',
+            showChatForm && 'hidden',
           )}
-          engine={engine}
-          currentInput={session.engineInput}
-          handleSubmit={(values) => {
-            const { engineId, message, ...input } = values
-            setSession((c) => {
-              c.engineId = engineId
-              c.engineInput = { [engineId]: input }
-            })
+        >
+          <Button className="rounded-2xl" variant="outline" type="button">
+            <HeartIcon />
+          </Button>
+          <TextareaAutosize
+            ref={textareaRef}
+            className="w-full resize-none bg-transparent px-2 py-1.5 placeholder:text-muted-foreground focus-visible:outline-none"
+            placeholder="Speak..."
+            rows={1}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.metaKey) {
+                submitMessage()
+              }
+            }}
+          />
+          <Button
+            className="rounded-2xl"
+            variant={isValidMessage ? 'default' : 'outline'}
+            onClick={submitMessage}
+          >
+            <PaperPlaneIcon />
+          </Button>
+        </div>
 
-            chatHelpers.submitMessage('user', message, {
-              engineId: engineId,
-              input: input,
-            })
-          }}
+        {/* Engine Input */}
+        <EngineInputControls
+          className={cn(
+            'mx-auto w-full max-w-2xl space-y-8 px-4 py-4',
+            showChatForm ? '' : 'hidden',
+          )}
+          immerSession={[session, setSession]}
+          engine={engine}
         />
       </div>
 

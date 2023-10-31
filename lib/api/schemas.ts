@@ -4,6 +4,8 @@ import { openrouter } from './platforms/openrouter.schema'
 import { togetherai } from './platforms/togetherai.schema'
 
 export const platformKeys = ['openai', 'openrouter', 'togetherai'] as const
+export type PlatformKeys = (typeof platformKeys)[number]
+
 export const adapterKeys = ['chat', 'image', 'illusion', 'tts'] as const
 
 export const schemas = {

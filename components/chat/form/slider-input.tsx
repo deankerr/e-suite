@@ -2,24 +2,21 @@ import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 
 export function SliderInput({
-  field,
+  value,
+  onChange,
   range,
-  setEnabled,
 }: {
-  field: { value: number; onChange: (newValue: unknown) => void }
-  range: Record<'min' | 'max' | 'step', number>
-  setEnabled: () => void
+  value: number
+  onChange: (value: number) => void
+  range: Record<'min' | 'max' | 'step' | 'default', number>
 }) {
-  const { value, onChange, ...rest } = field
-
   return (
     <div className="flex w-full space-x-1">
       <Slider
         {...range}
-        value={[value]}
+        value={[value ?? 0]}
         onValueChange={([newValue]) => {
-          setEnabled()
-          onChange(newValue)
+          onChange(newValue ?? range.default)
         }}
       />
       <Input
@@ -28,10 +25,8 @@ export function SliderInput({
         type="number"
         value={value}
         onChange={(e) => {
-          setEnabled()
-          onChange(e.target.value)
+          onChange(Number(e.target.value))
         }}
-        {...rest}
       />
     </div>
   )
