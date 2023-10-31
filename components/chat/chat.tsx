@@ -70,11 +70,13 @@ export function Chat(props: { name: string }) {
     scrollFeedToEnd()
   }, [messages.length])
 
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
-  const message = textareaRef.current?.value
-  const isValidMessage = message && message !== ''
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null) // ?
+
+  const [message, setMessage] = useState('')
+  const isValidMessage = message !== ''
+
   const submitMessage = () => {
-    if (message && isValidMessage) chatHelpers.submitMessage('user', message)
+    if (isValidMessage) chatHelpers.submitMessage('user', message)
   }
 
   return (
@@ -144,7 +146,7 @@ export function Chat(props: { name: string }) {
         className="chat-layout-content relative grid max-w-3xl grid-rows-[1fr,_auto] border-r shadow-inner"
       >
         {/* Message Feed */}
-        <div className={cn('space-y-4 py-2.5', showChatForm && 'hidden')}>
+        <div className={cn('space-y-4 pb-14 pt-2.5', showChatForm && 'hidden')}>
           {messages.map((m) => (
             <MessageBubble
               variant={m.role}
@@ -159,10 +161,41 @@ export function Chat(props: { name: string }) {
           <div ref={contentScrolledRef}></div>
         </div>
 
+        {/* Engine Input */}
+        <EngineInputControls
+          className={cn(
+            'mx-auto w-full max-w-2xl space-y-8 px-4 py-4',
+            showChatForm ? '' : 'hidden',
+          )}
+          immerSession={[session, setSession]}
+          engine={engine}
+        />
+      </div>
+
+      {/* Bottom Panel */}
+      <div className="chat-layout-bottom-panel relative flex max-w-3xl items-center justify-center border-r border-t px-2">
+        <span className="hidden text-muted-foreground sm:inline sm:text-sm">
+          Press Enter ⏎ for a new line / Press ⌘ + Enter to send
+        </span>
+
+        {/* Scroll to end button */}
+        <Button
+          variant="outline"
+          size="icon"
+          name="scroll to bottom"
+          className={cn(
+            'absolute inset-x-[89%] -top-32 hidden',
+            !isScrolledToEnd && !showChatForm && 'flex',
+          )}
+          onClick={() => scrollFeedToEnd()}
+        >
+          <PinBottomIcon className="h-6 w-6" />
+        </Button>
+
         {/* Message Input */}
         <div
           className={cn(
-            'flex items-end rounded-3xl border bg-background px-2 py-2 focus-within:ring-1 focus-within:ring-ring',
+            'absolute -top-16 flex w-11/12 items-end rounded-3xl border bg-background px-2 py-2 focus-within:ring-1 focus-within:ring-ring',
             showChatForm && 'hidden',
           )}
         >
@@ -179,6 +212,7 @@ export function Chat(props: { name: string }) {
                 submitMessage()
               }
             }}
+            onChange={(e) => setMessage(e.target.value)}
           />
           <Button
             className="rounded-2xl"
@@ -188,34 +222,6 @@ export function Chat(props: { name: string }) {
             <PaperPlaneIcon />
           </Button>
         </div>
-
-        {/* Engine Input */}
-        <EngineInputControls
-          className={cn(
-            'mx-auto w-full max-w-2xl space-y-8 px-4 py-4',
-            showChatForm ? '' : 'hidden',
-          )}
-          immerSession={[session, setSession]}
-          engine={engine}
-        />
-      </div>
-
-      {/* Bottom Panel */}
-      <div className="chat-layout-bottom-panel relative flex max-w-3xl items-center justify-center border-r border-t px-2 text-xs text-muted-foreground sm:text-sm">
-        Press Enter ⏎ for a new line / Press ⌘ + Enter to send
-        {/* Scroll to end button */}
-        <Button
-          variant="outline"
-          size="icon"
-          name="scroll to bottom"
-          className={cn(
-            'absolute inset-x-[89%] -top-32 hidden',
-            !isScrolledToEnd && !showChatForm && 'flex',
-          )}
-          onClick={() => scrollFeedToEnd()}
-        >
-          <PinBottomIcon className="h-6 w-6" />
-        </Button>
       </div>
     </>
   )
