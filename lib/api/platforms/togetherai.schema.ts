@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const schemaTogetheraiChatRequest = z.object({
   model: z.string(),
   prompt: z.string(),
-  max_tokens: z.number(),
+  max_tokens: z.number().default(1024), //! workaround default
   stop_token: z.string().optional(),
   temperature: z.number().optional(),
   top_p: z.number().optional(),

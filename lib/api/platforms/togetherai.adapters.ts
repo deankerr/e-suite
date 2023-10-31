@@ -1,4 +1,4 @@
-import { convertMessagesToPromptFormat, createErrorResponse } from '@/lib/api/api'
+import { convertMessagesToPromptFormat, createErrorResponse, handleChatError } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schemas'
 import { env, logger, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
@@ -20,28 +20,26 @@ export const togetherai = {
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
-  log.info('chat')
-  if (chatRequest.messages) {
-    chatRequest.prompt = convertMessagesToPromptFormat(chatRequest.messages)
-  }
-
-  const body = schemas.togetherai.chat.input.parse(chatRequest)
-  console.log('request body', body)
-  const { data, error } = await POST('/inference', { body })
-
-  if (data) {
-    log.info(data, 'chat response')
-    const choices = data.output?.choices
-    if (choices) {
-      const item = choices[0]?.text ?? '(e unhandled) no text'
-      return new Response(item)
+  try {
+    if (chatRequest.messages) {
+      chatRequest.prompt = convertMessagesToPromptFormat(chatRequest.messages)
     }
-    return createErrorResponse('(e error) unknown response')
-  }
 
-  if (error) {
-    log.error(error, 'chat response')
-    return createErrorResponse(error as string)
+    const body = schemas.togetherai.chat.input.parse(chatRequest)
+    const { data, error } = await POST('/inference', { body })
+
+    if (data) {
+      log.info(data, 'chat response')
+      const choices = data.output?.choices
+      if (choices) {
+        const item = choices[0]?.text ?? '(e unhandled) no text'
+        return new Response(item)
+      }
+    }
+
+    throw error ?? new Error('Unknown error')
+  } catch (err) {
+    return handleChatError(err)
   }
 }
 

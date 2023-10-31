@@ -1,3 +1,5 @@
+import z from 'zod'
+import { fromZodError } from 'zod-validation-error'
 import { env } from '../utils'
 import { adapters } from './adapters'
 import { getEngineById } from './engines'
@@ -42,9 +44,14 @@ export function convertMessagesToPromptFormat(messages: Messages) {
   return prompt
 }
 
-export function runChatEngine(chatRequest: EChatRequestSchema) {
-  const engine = getEngineById(chatRequest.engineId)
-  const adapter = adapters[engine.platform]
-  if (!('chat' in adapter)) throw new Error('Invalid engine: ' + chatRequest.engineId)
-  return adapter.chat(chatRequest)
+export function handleChatError(err: unknown) {
+  if (err instanceof z.ZodError) {
+    const validationError = fromZodError(err)
+    console.error(validationError)
+    return createErrorResponse(validationError.message)
+  }
+
+  console.error(err)
+  if (err instanceof Error) return createErrorResponse(err.message)
+  return createErrorResponse('Unknown error')
 }

@@ -2,6 +2,7 @@ import { EChatRequestSchema } from '@/lib/api/schemas'
 import { env, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
+import { handleChatError } from '../api'
 import { schemas } from '../schemas'
 
 const api = new OpenAI({
@@ -17,18 +18,22 @@ export const openrouter = {
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
-  const body = schemas.openrouter.chat.input.parse(chatRequest)
-  if (body.stream) {
-    const response = await api.chat.completions.create(
-      body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
-    )
-    const stream = OpenAIStream(response)
-    return new StreamingTextResponse(stream)
-  } else {
-    const response = await api.chat.completions.create(
-      body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
-    )
-    const item = response.choices[0]?.message.content ?? raise('response missing expected data')
-    return new Response(item)
+  try {
+    const body = schemas.openrouter.chat.input.parse(chatRequest)
+    if (body.stream) {
+      const response = await api.chat.completions.create(
+        body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
+      )
+      const stream = OpenAIStream(response)
+      return new StreamingTextResponse(stream)
+    } else {
+      const response = await api.chat.completions.create(
+        body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
+      )
+      const item = response.choices[0]?.message.content ?? raise('response missing expected data')
+      return new Response(item)
+    }
+  } catch (err) {
+    return handleChatError(err)
   }
 }

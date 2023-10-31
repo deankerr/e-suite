@@ -1,4 +1,6 @@
-import { authenticateGuest, createErrorResponse, runChatEngine } from '@/lib/api/api'
+import { adapters } from '@/lib/api/adapters'
+import { authenticateGuest, createErrorResponse } from '@/lib/api/api'
+import { getEngineById } from '@/lib/api/engines'
 import { eChatRequestSchema } from '@/lib/api/schemas'
 import { logger } from '@/lib/utils'
 import z from 'zod'
@@ -12,7 +14,11 @@ export async function POST(request: Request) {
     if (!auth.ok) return auth.response
 
     const chatRequest = eChatRequestSchema.parse(await request.json())
-    return runChatEngine(chatRequest)
+
+    const engine = getEngineById(chatRequest.engineId)
+    const adapter = adapters[engine.platform]
+    if (!('chat' in adapter)) throw new Error('Invalid engine: ' + chatRequest.engineId)
+    return adapter.chat(chatRequest)
   } catch (err) {
     if (err instanceof z.ZodError) {
       const validationError = fromZodError(err)

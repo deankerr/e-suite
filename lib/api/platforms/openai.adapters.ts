@@ -1,6 +1,6 @@
-import { createErrorResponse } from '@/lib/api/api'
+import { createErrorResponse, handleChatError } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schemas'
-import { env, logger, raise } from '@/lib/utils'
+import { logger, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import { schemas } from '../schemas'
@@ -14,39 +14,48 @@ export const openai = {
 const api = new OpenAI()
 
 async function chat(chatRequest: EChatRequestSchema) {
-  const body = schemas.openai.chat.input.parse(chatRequest)
+  try {
+    const body = schemas.openai.chat.input.parse(chatRequest)
 
-  if (body.stream === true) {
-    const response = await api.chat.completions.create(
-      body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
-    )
+    if (body.stream === true) {
+      const response = await api.chat.completions.create(
+        body as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
+      )
 
-    const stream = OpenAIStream(response)
-    return new StreamingTextResponse(stream)
-  } else {
-    const response = await api.chat.completions.create(
-      body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
-    )
+      const stream = OpenAIStream(response)
+      return new StreamingTextResponse(stream)
+    } else {
+      const response = await api.chat.completions.create(
+        body as OpenAI.Chat.ChatCompletionCreateParamsNonStreaming,
+      )
 
-    const item = response.choices[0]?.message.content ?? raise('response missing expected data')
-    return new Response(item)
+      const item = response.choices[0]?.message.content ?? raise('response missing expected data')
+      return new Response(item)
+    }
+  } catch (err) {
+    return handleChatError(err)
   }
 }
 
 async function chatModerated(chatRequest: EChatRequestSchema) {
-  log.info('chatModerated')
-  const body = schemas.openai.chat.input.parse(chatRequest)
-  const messages = body.messages.map((m) => `${m.content}`)
-  const response = await api.moderations.create({ input: messages })
-  const flagged = body.messages.filter((_, i) => response.results[i]?.flagged)
+  try {
+    const body = schemas.openai.chat.input.parse(chatRequest)
+    const messages = body.messages.map((m) => `${m.content}`)
+    const response = await api.moderations.create({ input: messages })
+    const flagged = body.messages.filter((_, i) => response.results[i]?.flagged)
 
-  if (flagged.length === 0) {
-    log.info('allow chat')
-    return chat(chatRequest)
-  } else {
-    log.warn(flagged, 'reject chat')
-    const message = `OpenAI Moderation rejected: ${flagged.map((m) => `"${m.content}"`).join(', ')}`
-    return createErrorResponse(message, 403)
+    if (flagged.length === 0) {
+      log.info('allow chat')
+      return chat(chatRequest)
+    } else {
+      log.warn(flagged, 'reject chat')
+      const message = `OpenAI Moderation rejected: ${flagged
+        .map((m) => `"${m.content}"`)
+        .join(', ')}`
+      return createErrorResponse(message, 403)
+    }
+  } catch (err) {
+    return handleChatError(err)
   }
 }
 
