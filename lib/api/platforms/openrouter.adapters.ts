@@ -42,5 +42,6 @@ async function chat(chatRequest: EChatRequestSchema) {
 async function models() {
   console.log('fetching openrouter model list')
   const response = await fetch('https://openrouter.ai/api/v1/models')
-  return await response.json()
+  const json = await response.json()
+  return json.data
 }
