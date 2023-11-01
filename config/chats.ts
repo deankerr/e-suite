@@ -10,7 +10,7 @@ export const chatsConfig: ChatSession[] = [
   {
     id: 'g1',
     name: 'Gretchen',
-    engineId: 'openai::gpt-4',
+    engineId: 'openai::gpt-3.5-turbo',
     engineInput: {},
   },
   {
