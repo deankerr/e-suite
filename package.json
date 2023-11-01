@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "types": "tsc --noEmit",
-    "migrate": "prisma migrate"
+    "migrate": "prisma migrate",
+    "db": "prisma db",
+    "studio": "prisma studio"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"

@@ -57,32 +57,37 @@ model VerificationToken {
 }
 
 model Engine {
-  id             String   @id
-  type           String // chat | completion | image ?
-  modelId        String // should link same model from different hosts
-  host           Host     @relation(fields: [hostId], references: [id]) // platform - relation
-  hostId         String
+  id                      String   @id
+  type                    String // chat | completion | image ?
+  model                   String // should link same model from different hosts
+  host                    Host     @relation(fields: [hostId], references: [id])
+  hostId                  String
   // info
-  displayName    String
-  creatorName    String
-  releaseDate    DateTime
-  description    String
-  link           String
-  license        String
-  licenseLink    String
-  isOpenSource   Boolean
+  displayName             String
+  creatorName             String
+  releaseDate             DateTime
+  description             String
+  url                     String
+  license                 String
+  licenseUrl              String
   // specs
-  contextLength  Int
-  parametersSize String // 7B | 13B | 70B etc
-  promptFormat   String
-  stopTokens     String
+  contextLength           Int
+  parameterSize           String // 7 | 13 | 70 etc billion
+  promptFormat            String
+  stopTokens              String // string[]
+  // host
+  hostMaxCompletionTokens Int // host imposed maximum, same as contextLength if no limit
+  priceInput              String // USD per 1k tokens
+  priceOutput             String // can be Infinity/E notation etc.
 
   includeParameters String // {model: 'gpt-4', stream: true} etc
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model Host {
   id          String   @id // openai | openrouter | togetherai
   displayName String
-  link        String
+  url         String
   engines     Engine[]
 }

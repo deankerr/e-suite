@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import { convertMessagesToPromptFormat, createErrorResponse, handleChatError } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schemas'
 import { env, logger, raise } from '@/lib/utils'
@@ -17,6 +18,7 @@ const { GET, POST } = createClient<paths>({
 
 export const togetherai = {
   chat,
+  models,
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
@@ -58,23 +60,9 @@ async function image(input: object) {
 }
 
 export async function models() {
-  const { data, error } = await GET('/models/info?options=', {})
-  log.info(data, 'models data')
-  log.info(error, 'models error')
-
-  /* 
-  hidden_keys = [
-            "_id",
-            "modelInstanceConfig",
-            "created_at",
-            "update_at",
-            "pricing",
-            "show_in_playground",
-            "access",
-            "pricing_tier",
-            "hardware_label",
-            "depth",
-            "descriptionLink",
-        ]
-  */
+  console.log('fetching togetherai model list')
+  const { data, error } = await GET('/models/info?=', {})
+  console.log('data', data)
+  if (error) console.error('openapi-fetch error', error)
+  return data
 }

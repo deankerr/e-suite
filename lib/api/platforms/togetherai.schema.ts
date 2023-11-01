@@ -4,7 +4,11 @@ export const schemaTogetheraiChatRequest = z.object({
   model: z.string(),
   prompt: z.string(),
   max_tokens: z.number().default(1024), //! workaround default
-  stop_token: z.string().optional(),
+  stop_token: z
+    .string()
+    .or(z.string().array())
+    .optional()
+    .transform((val) => (Array.isArray(val) ? val[0] : val)),
   temperature: z.number().optional(),
   top_p: z.number().optional(),
   top_k: z.number().optional(),

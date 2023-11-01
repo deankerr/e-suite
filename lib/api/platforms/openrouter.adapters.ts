@@ -15,6 +15,7 @@ const api = new OpenAI({
 
 export const openrouter = {
   chat,
+  models,
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
@@ -36,4 +37,10 @@ async function chat(chatRequest: EChatRequestSchema) {
   } catch (err) {
     return handleChatError(err)
   }
+}
+
+async function models() {
+  console.log('fetching openrouter model list')
+  const response = await fetch('https://openrouter.ai/api/v1/models')
+  return await response.json()
 }
