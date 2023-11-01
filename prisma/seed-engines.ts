@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import { prisma } from '@/lib/prisma'
 import { Engine } from '@prisma/client'
 
-const fallbackEngineValues: Omit<Engine, 'hostId' | 'createdAt' | 'updatedAt'> = {
+const fallbackEngineValues: Omit<Engine, 'providerId' | 'createdAt' | 'updatedAt'> = {
   id: '',
   type: '',
   model: '',
@@ -21,6 +21,7 @@ const fallbackEngineValues: Omit<Engine, 'hostId' | 'createdAt' | 'updatedAt'> =
   priceInput: '',
   priceOutput: '',
   includeParameters: JSON.stringify({}),
+  available: true,
 }
 
 async function createOpenRouterEngines() {
@@ -52,7 +53,7 @@ async function createOpenRouterEngines() {
     await prisma.engine.create({
       data: {
         ...engine,
-        host: {
+        provider: {
           connect: {
             id: 'openrouter',
           },
@@ -97,7 +98,7 @@ async function createTogetheraiEngines() {
     await prisma.engine.create({
       data: {
         ...engine,
-        host: {
+        provider: {
           connect: {
             id: 'togetherai',
           },
@@ -115,15 +116,16 @@ const openaiCommon = {
   promptFormat: '',
   stopTokens: JSON.stringify([]),
   type: 'chat',
-  hostId: 'openai',
+  providerId: 'openai',
 }
 
 async function createOpenAiEngines() {
   await prisma.engine.create({
     data: {
+      ...fallbackEngineValues,
       ...openaiCommon,
       id: 'openai::gpt-3.5-turbo',
-      model: 'openai/gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo',
       displayName: 'GPT-3.5 Turbo',
       releaseDate: new Date('01 Mar 2023').toISOString(),
       description:
@@ -139,6 +141,7 @@ async function createOpenAiEngines() {
 
   await prisma.engine.create({
     data: {
+      ...fallbackEngineValues,
       ...openaiCommon,
       id: 'openai::gpt-3.5-turbo-16k',
       model: 'gpt-3.5-turbo-16k',
@@ -157,10 +160,11 @@ async function createOpenAiEngines() {
 
   await prisma.engine.create({
     data: {
+      ...fallbackEngineValues,
       ...openaiCommon,
       id: 'openai::gpt-3.5-turbo-instruct',
       type: 'completion',
-      model: 'openai/gpt-3.5-turbo-instruct',
+      model: 'gpt-3.5-turbo-instruct',
       displayName: 'GPT-3.5 Turbo Instruct',
       releaseDate: new Date('19 Sep 2023').toISOString(),
       description:
@@ -176,6 +180,7 @@ async function createOpenAiEngines() {
 
   await prisma.engine.create({
     data: {
+      ...fallbackEngineValues,
       ...openaiCommon,
       id: 'openai::gpt-4',
       model: 'gpt-4',
@@ -194,6 +199,7 @@ async function createOpenAiEngines() {
 
   await prisma.engine.create({
     data: {
+      ...fallbackEngineValues,
       ...openaiCommon,
       id: 'openai::gpt-4-32k',
       model: 'gpt-4-32k',

@@ -60,8 +60,8 @@ model Engine {
   id                      String   @id
   type                    String // chat | completion | image ?
   model                   String // should link same model from different hosts
-  host                    Host     @relation(fields: [hostId], references: [id])
-  hostId                  String
+  provider                Provider @relation(fields: [providerId], references: [id])
+  providerId              String
   // info
   displayName             String
   creatorName             String
@@ -83,9 +83,10 @@ model Engine {
   includeParameters String // {model: 'gpt-4', stream: true} etc
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  available         Boolean  @default(true) // eg. taken down
 }
 
-model Host {
+model Provider {
   id          String   @id // openai | openrouter | togetherai
   displayName String
   url         String

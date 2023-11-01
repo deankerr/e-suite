@@ -4,7 +4,7 @@ import { seedEngineData } from './seed-engines'
 const prisma = new PrismaClient()
 
 async function main() {
-  const openai = await prisma.host.upsert({
+  await prisma.provider.upsert({
     where: { id: 'openai' },
     update: {},
     create: {
@@ -14,7 +14,7 @@ async function main() {
     },
   })
 
-  const openrouter = await prisma.host.upsert({
+  await prisma.provider.upsert({
     where: { id: 'openrouter' },
     update: {},
     create: {
@@ -24,7 +24,7 @@ async function main() {
     },
   })
 
-  const togetherai = await prisma.host.upsert({
+  await prisma.provider.upsert({
     where: { id: 'togetherai' },
     update: {},
     create: {
@@ -34,7 +34,7 @@ async function main() {
     },
   })
 
-  const replicate = await prisma.host.upsert({
+  await prisma.provider.upsert({
     where: { id: 'replicate' },
     update: {},
     create: {
@@ -44,7 +44,7 @@ async function main() {
     },
   })
 
-  const fal = await prisma.host.upsert({
+  await prisma.provider.upsert({
     where: { id: 'fal' },
     update: {},
     create: {

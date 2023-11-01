@@ -40,7 +40,7 @@ export function EngineInfo({
             </TableRow>
             <TableRow>
               <TableCell>platform:</TableCell>
-              <TableCell>{engine?.hostId}</TableCell>
+              <TableCell>{engine?.providerId}</TableCell>
             </TableRow>
           </TableBody>
           <TableHeader>

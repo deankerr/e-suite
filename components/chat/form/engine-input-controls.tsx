@@ -89,7 +89,8 @@ export function EngineInputControls({
   }
   const inputKeys = Object.keys(inputs)
 
-  const schemaKeys = schemas[engine.hostId as PlatformKeys].chat.input.keyof().options as string[]
+  const schemaKeys = schemas[engine.providerId as PlatformKeys].chat.input.keyof()
+    .options as string[]
 
   const setInput = <T extends keyof EngineInput>(key: T, value: EngineInput[T]) => {
     setSession((s) => {

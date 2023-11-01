@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const chatRequest = eChatRequestSchema.parse(await request.json())
 
     const engine = await prisma.engine.findFirstOrThrow({ where: { id: chatRequest.engineId } })
-    const adapter = adapters[engine.hostId as PlatformKeys]
+    const adapter = adapters[engine.providerId as PlatformKeys]
     if (!('chat' in adapter)) throw new Error('Invalid engine: ' + chatRequest.engineId)
     return adapter.chat(chatRequest)
   } catch (err) {
