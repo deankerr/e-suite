@@ -4,7 +4,7 @@ export const chatsConfig: ChatSession[] = [
   {
     id: 'p1',
     name: 'Piñata',
-    engineId: 'openrouter::meta-llama/llama-2-70b-chat',
+    engineId: 'openrouter::airoboros-l2-70b',
     engineInput: {},
   },
   {
@@ -16,7 +16,7 @@ export const chatsConfig: ChatSession[] = [
   {
     id: 'h1',
     name: 'Hideko',
-    engineId: 'togetherai::togethercomputer/redpajama-incite-7b-chat',
+    engineId: 'togetherai::dolly-v2-12b',
     engineInput: {},
   },
 ]

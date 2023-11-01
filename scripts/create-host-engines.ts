@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import { join } from 'node:path'
 import { adapters } from '@/lib/api/adapters'
-import { prisma } from '@/lib/db'
+import { prisma } from '@/lib/prisma'
 import { env } from '@/lib/utils'
 import { Engine } from '@prisma/client'
 

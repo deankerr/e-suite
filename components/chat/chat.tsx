@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
-import { getEngineById, getEngines } from '@/lib/api/engines'
 import { cn } from '@/lib/utils'
+import { Engine } from '@prisma/client'
 import {
   FaceIcon,
   HeartIcon,
@@ -29,21 +29,23 @@ import { TextareaAutosize } from '../ui/textarea-autosize'
 import { EngineCombobox } from './engine-combobox'
 import { EngineInfo } from './engine-info'
 import { EngineInputControls } from './form/engine-input-controls'
+import { ChatSession } from './types'
 
-function getChatConfig(name: string) {
-  const chatConfig = chatsConfig.find((c) => c.name === decodeURI(name))
-  if (!chatConfig) throw new Error(`Unable to find chat config for ${name}`)
-  return chatConfig
-}
+export function Chat({
+  sessionConfig,
+  currentEngine,
+  engineList,
+}: {
+  sessionConfig: ChatSession
+  currentEngine: Engine
+  engineList: Pick<Engine, 'id' | 'displayName'>[]
+}) {
+  const [session, setSession] = useImmer(sessionConfig)
 
-export function Chat(props: { name: string }) {
-  const chatConfig = getChatConfig(props.name)
-  const [session, setSession] = useImmer(chatConfig)
+  const engine = currentEngine
+  // const engineInput = session.engineInput[engine.id]
 
-  const engine = getEngineById(session.engineId)
-  const engineInput = session.engineInput[engine.id]
-
-  const engines = getEngines()
+  // const engines = getEngines()
 
   // TODO
   if (!engine) throw new Error('invalid engine')
@@ -103,7 +105,7 @@ export function Chat(props: { name: string }) {
 
           <div className="max-w-md" onClick={() => setShowEngineInfo(true)}>
             <EngineCombobox
-              engines={engines}
+              engineList={engineList}
               current={engine.id}
               setCurrent={(id) =>
                 setSession((s) => {

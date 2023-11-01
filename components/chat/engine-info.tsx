@@ -1,5 +1,5 @@
-import { EChatEngine } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
+import { Engine } from '@prisma/client'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 
 export function EngineInfo({
@@ -7,7 +7,7 @@ export function EngineInfo({
   children,
   className,
 }: {
-  engine: EChatEngine
+  engine: Engine
   children?: React.ReactNode
 } & React.ComponentProps<'div'>) {
   return (
@@ -24,7 +24,7 @@ export function EngineInfo({
           <TableBody>
             <TableRow>
               <TableCell>creator:</TableCell>
-              <TableCell>{engine?.metadata.creator}</TableCell>
+              <TableCell>{engine?.creatorName}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>model:</TableCell>
@@ -36,11 +36,11 @@ export function EngineInfo({
             </TableRow>
             <TableRow>
               <TableCell>licence:</TableCell>
-              <TableCell>{engine?.metadata.licence}</TableCell>
+              <TableCell>{engine?.license}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>platform:</TableCell>
-              <TableCell>{engine?.platform}</TableCell>
+              <TableCell>{engine?.hostId}</TableCell>
             </TableRow>
           </TableBody>
           <TableHeader>
@@ -52,7 +52,7 @@ export function EngineInfo({
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell colSpan={2}>{engine?.metadata.description}</TableCell>
+              <TableCell colSpan={2}>{engine?.description}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

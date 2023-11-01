@@ -7,18 +7,18 @@ import {
   CommandItem,
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { EChatEngine } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
+import { Engine } from '@prisma/client'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
 export function EngineCombobox({
-  engines,
+  engineList,
   current,
   setCurrent,
 }: {
-  engines: EChatEngine[]
-  current: string
+  engineList: Pick<Engine, 'id' | 'displayName'>[]
+  current: Engine['id']
   setCurrent: (id: string) => void
 }) {
   const [open, setOpen] = useState(false)
@@ -33,9 +33,7 @@ export function EngineCombobox({
           className="w-full justify-between font-normal"
         >
           <div className="w-4" />
-          {current
-            ? engines.find((engine) => engine.id === current)?.metadata.label
-            : 'Select engine...'}
+          {current ? engineList.find((e) => e.id === current)?.displayName : 'Select engine...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -44,21 +42,18 @@ export function EngineCombobox({
           <CommandInput placeholder="Search engine..." className="h-9" />
           <CommandEmpty>No engine found.</CommandEmpty>
           <CommandGroup>
-            {engines.map((engine) => (
+            {engineList.map((e) => (
               <CommandItem
-                key={engine.id}
-                value={engine.id}
+                key={e.id}
+                value={e.id}
                 onSelect={(value) => {
                   setCurrent(value === current ? '' : value)
                   setOpen(false)
                 }}
               >
-                {engine.metadata.label}
+                {e.displayName}
                 <CheckIcon
-                  className={cn(
-                    'ml-auto h-4 w-4',
-                    current === engine.id ? 'opacity-100' : 'opacity-0',
-                  )}
+                  className={cn('ml-auto h-4 w-4', current === e.id ? 'opacity-100' : 'opacity-0')}
                 />
               </CommandItem>
             ))}

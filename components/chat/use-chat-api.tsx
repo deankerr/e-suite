@@ -1,7 +1,7 @@
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { useToast } from '@/components/ui/use-toast'
-import { getEngineById } from '@/lib/api/engines'
-import { EChatEngine, EChatRequestSchema } from '@/lib/api/schemas'
+import { EChatRequestSchema } from '@/lib/api/schemas'
+import { Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { ChatSession, EngineInput } from './types'
@@ -10,7 +10,7 @@ const endpoint = '/api/chat'
 
 export type ChatHelpers = ReturnType<typeof useChatApi>
 
-export function useChatApi(session: ChatSession, engine: EChatEngine) {
+export function useChatApi(session: ChatSession, engine: Engine) {
   const { toast } = useToast()
 
   const token = useLocalGuestAuth('e/suite-guest-auth-token', '')
@@ -20,7 +20,7 @@ export function useChatApi(session: ChatSession, engine: EChatEngine) {
 
   const body: EChatRequestSchema = {
     engineId: engine.id,
-    ...engine.input,
+    ...JSON.parse(engine.includeParameters),
   }
 
   if (engineInput) {

@@ -1,6 +1,7 @@
 import { Switch } from '@/components/ui/switch'
-import { EChatEngine, schemas } from '@/lib/api/schemas'
+import { PlatformKeys, schemas } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
+import { Engine } from '@prisma/client'
 import { ImmerHook } from 'use-immer'
 import { ChatSession, EngineInput } from '../types'
 import { SliderInput } from './slider-input'
@@ -78,7 +79,7 @@ export function EngineInputControls({
   className,
 }: {
   immerSession: ImmerHook<ChatSession>
-  engine: EChatEngine
+  engine: Engine
 } & React.ComponentProps<'div'>) {
   const [session, setSession] = immerSession
 
@@ -88,7 +89,7 @@ export function EngineInputControls({
   }
   const inputKeys = Object.keys(inputs)
 
-  const schemaKeys = schemas[engine.platform].chat.input.keyof().options as string[]
+  const schemaKeys = schemas[engine.hostId as PlatformKeys].chat.input.keyof().options as string[]
 
   const setInput = <T extends keyof EngineInput>(key: T, value: EngineInput[T]) => {
     setSession((s) => {

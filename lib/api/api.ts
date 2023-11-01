@@ -1,9 +1,7 @@
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { env } from '../utils'
-import { adapters } from './adapters'
-import { getEngineById } from './engines'
-import { EChatRequestSchema, Messages } from './schemas'
+import { Messages } from './schemas'
 
 export function createErrorResponse(message: string, status = 400) {
   return new Response(message, { status, statusText: message })

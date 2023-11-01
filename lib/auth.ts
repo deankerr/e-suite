@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db'
+import { prisma } from '@/lib/prisma'
 import { env } from '@/lib/utils'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next'
