@@ -4,6 +4,7 @@ import { EChatRequestSchema } from '@/lib/api/schemas'
 import { Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
+import { toast } from 'sonner'
 import { ChatSession, EngineInput } from './types'
 
 const endpoint = '/api/chat'
@@ -11,8 +12,6 @@ const endpoint = '/api/chat'
 export type ChatHelpers = ReturnType<typeof useChatApi>
 
 export function useChatApi(session: ChatSession, engine: Engine) {
-  const { toast } = useToast()
-
   const token = useLocalGuestAuth('e/suite-guest-auth-token', '')
   const systemPrompt = `You are a helpful and cheerful AI assistant named ${session.name}. Use Markdown in your answers when appropriate.`
 
@@ -49,11 +48,7 @@ export function useChatApi(session: ChatSession, engine: Engine) {
     },
     onError: (error) => {
       console.error('[error]', error)
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      })
+      toast.error(error.message)
     },
   }
 

@@ -66,6 +66,7 @@
     "remark-gfm": "^4.0.0",
     "remeda": "^1.27.0",
     "replicate": "^0.18.1",
+    "sonner": "^1.1.0",
     "supports-color": "8.1.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",

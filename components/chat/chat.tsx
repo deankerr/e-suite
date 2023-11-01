@@ -11,7 +11,6 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { chatsConfig } from '@/config/chats'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
 import {
@@ -43,12 +42,6 @@ export function Chat({
   const [session, setSession] = useImmer(sessionConfig)
 
   const engine = currentEngine
-  // const engineInput = session.engineInput[engine.id]
-
-  // const engines = getEngines()
-
-  // TODO
-  if (!engine) throw new Error('invalid engine')
 
   const chatHelpers = useChatApi(session, engine)
   const { messages, setMessages, resetMessages, addMessage, requestStatus } = chatHelpers
@@ -72,13 +65,16 @@ export function Chat({
     scrollFeedToEnd()
   }, [messages.length])
 
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null) // ?
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   const [message, setMessage] = useState('')
   const isValidMessage = message !== ''
 
   const submitMessage = () => {
-    if (isValidMessage) chatHelpers.submitMessage('user', message)
+    if (isValidMessage) {
+      chatHelpers.submitMessage('user', message)
+      setMessage('')
+    }
   }
 
   return (
@@ -214,6 +210,7 @@ export function Chat({
                 submitMessage()
               }
             }}
+            value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
           <Button
