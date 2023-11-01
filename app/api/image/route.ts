@@ -1,10 +1,8 @@
 import { authenticateGuest } from '@/lib/api/api'
 // import { adapters } from '@/lib/platform/platforms'
-import { logger } from '@/lib/utils'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-
-const log = logger.child({}, { msgPrefix: '[api/image] ' })
 
 // export async function POST(request: Request) {
 //   log.info('POST %s', request.url)

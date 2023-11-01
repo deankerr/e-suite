@@ -1,9 +1,6 @@
 import { authenticateGuest } from '@/lib/api/api'
-import { logger } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-
-const log = logger.child({}, { msgPrefix: '[api/image/illusion] ' })
 
 // export async function POST(request: NextRequest) {
 //   log.info('POST image/illusion')

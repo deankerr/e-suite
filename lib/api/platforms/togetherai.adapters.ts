@@ -1,13 +1,11 @@
 import fs from 'node:fs'
 import { convertMessagesToPromptFormat, createErrorResponse, handleChatError } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schemas'
-import { env, logger, raise } from '@/lib/utils'
+import { env, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
 import { schemas } from '../schemas'
 import type { paths } from './togetherai.api'
-
-const log = logger.child({}, { msgPrefix: '[platform/togetherai] ' })
 
 const { GET, POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
@@ -31,7 +29,6 @@ async function chat(chatRequest: EChatRequestSchema) {
     const { data, error } = await POST('/inference', { body })
 
     if (data) {
-      log.info(data, 'chat response')
       const choices = data.output?.choices
       if (choices) {
         const item = choices[0]?.text ?? '(e unhandled) no text'

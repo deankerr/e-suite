@@ -1,4 +1,4 @@
-import { env, logger } from '@/lib/utils'
+import { env } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { components, paths } from './fal.illusion-diffusion'
 
@@ -16,7 +16,7 @@ export const fal = {
     const { data, error } = await client.POST('/', { body })
 
     if (error) {
-      logger.error(error, 'fal illusion')
+      console.error(error, 'fal illusion')
       throw new Error('fal illusion')
     }
 

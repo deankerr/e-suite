@@ -1,11 +1,9 @@
 import { createErrorResponse, handleChatError } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schemas'
-import { logger, raise } from '@/lib/utils'
+import { raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import { schemas } from '../schemas'
-
-const log = logger.child({}, { msgPrefix: '[provider/openai] ' })
 
 export const openai = {
   chat: chatModerated,
@@ -45,10 +43,10 @@ async function chatModerated(chatRequest: EChatRequestSchema) {
     const flagged = body.messages.filter((_, i) => response.results[i]?.flagged)
 
     if (flagged.length === 0) {
-      log.info('allow chat')
+      console.log('allow chat')
       return chat(chatRequest)
     } else {
-      log.warn(flagged, 'reject chat')
+      console.warn(flagged, 'reject chat')
       const message = `OpenAI Moderation rejected: ${flagged
         .map((m) => `"${m.content}"`)
         .join(', ')}`
@@ -63,7 +61,7 @@ async function image(input: OpenAI.ImageGenerateParams) {
   try {
     const response = await api.images.generate(input)
     const item = { url: response.data[0]?.url ?? raise('response missing expected url') }
-    log.info(item, 'image')
+    console.log(item, 'image')
     return { response, item }
   } catch (error) {
     if (error instanceof OpenAI.APIError) {
