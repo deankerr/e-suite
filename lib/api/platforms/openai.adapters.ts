@@ -7,6 +7,7 @@ import { schemas } from '../schemas'
 
 export const openai = {
   chat: chatModerated,
+  models,
 }
 
 const api = new OpenAI()
@@ -71,6 +72,11 @@ async function image(input: OpenAI.ImageGenerateParams) {
       throw error
     }
   }
+}
+
+async function models() {
+  const { data } = await api.models.list()
+  return data
 }
 
 const chatModels = [
