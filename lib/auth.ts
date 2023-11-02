@@ -7,6 +7,7 @@ import DiscordProvider from 'next-auth/providers/discord'
 import GithubProvider from 'next-auth/providers/github'
 
 export const nextAuthConfig = {
+  session: { strategy: 'jwt' },
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({

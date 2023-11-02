@@ -1,22 +1,28 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Session } from 'next-auth'
 import { signIn, signOut } from 'next-auth/react'
 import { Button } from './ui/button'
 
-export function SignInOutButton({
-  session,
-  className,
-  ...props
-}: { session: Session | null } & React.ComponentProps<typeof Button>) {
-  return (
+export function SignInOutButton({ session }: { session: Session | null }) {
+  const [userFirstName] = session?.user?.name ? session.user.name.split(' ') : ''
+
+  return session ? (
     <Button
-      {...props}
-      className={cn('text-sm', className)}
-      onClick={() => (session ? signOut() : signIn())}
+      variant="outline"
+      className="flex items-center gap-2 font-mono"
+      onClick={() => signOut()}
     >
-      {session ? 'sign out' : 'sign in'}
+      {userFirstName}
+      <Avatar>
+        <AvatarImage src={session.user?.image ?? ''} alt="avatar" />
+        <AvatarFallback>e</AvatarFallback>
+      </Avatar>
+    </Button>
+  ) : (
+    <Button className="" variant="outline" onClick={() => signIn()}>
+      log in
     </Button>
   )
 }
