@@ -1,6 +1,6 @@
+import { sampleCode } from '@/components/chat/sample-data'
 import { ChatSession } from '@/components/chat/types'
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
-import { useToast } from '@/components/ui/use-toast'
 import { EChatRequestSchema } from '@/lib/api/schemas'
 import { Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
@@ -36,6 +36,7 @@ export function useAiChat(session: ChatSession, engine: Engine) {
     id: session.id,
     api: endpoint,
     initialMessages: [createMessage('system', systemPrompt)],
+    // initialMessages: [createMessage('system', systemPrompt), ...sampleCode],
     headers: {
       Authorization: token,
     },

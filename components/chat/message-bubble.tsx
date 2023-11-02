@@ -5,8 +5,8 @@ import { forwardRef } from 'react'
 const messageBubbleVariants = {
   container: {
     default: 'grid-cols-[2rem_auto_2rem]',
-    user: 'grid-cols-[minmax(2.5rem,1fr)_auto_1rem]',
-    assistant: 'grid-cols-[1rem_auto_minmax(2.5rem,1fr)]',
+    user: 'grid-cols-[minmax(2.5rem,1fr)_auto] sm:pl-.5 sm:pr-1',
+    assistant: 'grid-cols-[auto_minmax(2.5rem,1fr)]',
   },
   content: {
     default: 'bg-secondary text-center text-secondary-foreground',

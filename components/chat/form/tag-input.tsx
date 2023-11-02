@@ -12,7 +12,7 @@ export function TagInput({
     <>
       <Input
         placeholder="Add stop sequence..."
-        className="ml-1 h-8"
+        className="h-8"
         onKeyDown={(e) => {
           const newValue = e.currentTarget.value
           if (e.key !== 'Enter') return

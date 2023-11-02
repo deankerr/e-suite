@@ -12,11 +12,11 @@ export function EngineInfo({
 } & React.ComponentProps<'div'>) {
   return (
     <>
-      <div className={cn('mx-auto max-w-xl', className)}>
+      <div className={cn('', className)}>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead colSpan={2} className="w-full text-center">
+              <TableHead colSpan={2} className="w-full font-bold">
                 Specifications
               </TableHead>
             </TableRow>
@@ -43,9 +43,12 @@ export function EngineInfo({
               <TableCell>{engine?.providerId}</TableCell>
             </TableRow>
           </TableBody>
+        </Table>
+
+        <Table>
           <TableHeader>
             <TableRow>
-              <TableHead colSpan={2} className="w-full text-center">
+              <TableHead colSpan={2} className="w-full font-bold">
                 Description
               </TableHead>
             </TableRow>
