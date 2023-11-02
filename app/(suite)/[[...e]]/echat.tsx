@@ -8,19 +8,24 @@ import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { chatsConfig } from '@/config/chats'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
-import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { useImmer } from 'use-immer'
+import { MessageBar } from './message-bar'
 import { MessageFeed } from './message-feed'
 import { TabTop } from './tab-top'
 
 export function Echat({ chatSession, engine }: { chatSession: ChatSession; engine: Engine }) {
   const [panes, setPanes] = useImmer({ engineInfo: false, messages: true, controls: false })
+
   const togglePane = (key: keyof typeof panes) =>
     setPanes({ engineInfo: false, messages: false, controls: false, [key]: true })
 
+  const submitMessage = (value: string) => {
+    // refactor first
+  }
+
   return (
     <>
-      <main className="bg-grid-grey grid grid-rows-[3rem_minmax(5rem,auto)_1fr] overflow-hidden border-x sm:col-start-2">
+      <main className="bg-grid-grey grid grid-rows-[2.75rem_minmax(5rem,auto)_1fr] overflow-hidden border-x sm:col-start-2">
         {/* Tab Bar */}
         <div className="flex overflow-x-auto bg-muted">
           {chatsConfig.map((c) => (
@@ -53,7 +58,7 @@ export function Echat({ chatSession, engine }: { chatSession: ChatSession; engin
         </div>
 
         {/* content area */}
-        <div className="max-w-4xl overflow-y-auto overflow-x-hidden border-r bg-background shadow-inner">
+        <div className="col-start-1 row-start-3 max-w-4xl overflow-y-auto overflow-x-hidden border-r bg-background shadow-inner">
           {panes.engineInfo && (
             <EngineInfo
               engine={engine}
@@ -77,13 +82,18 @@ export function Echat({ chatSession, engine }: { chatSession: ChatSession; engin
             />
           )}
         </div>
+
+        <MessageBar
+          className={cn('col-start-1 row-start-3 mb-4 max-w-3xl self-end', 'ml-16')} //! temp workaround
+          handleSubmit={submitMessage}
+        />
       </main>
 
       {/* bottom panel */}
-      <div className="col-start-1 flex items-center justify-between border-t bg-background px-3 sm:col-span-3">
+      <div className="flex items-center justify-between border-t bg-background px-3 sm:col-span-3">
         {/* <ChatBubbleIcon /> */}
         <div />
-        <span className="text-sm text-muted-foreground">
+        <span className="hidden text-sm text-muted-foreground sm:flex">
           Press Enter ⏎ for a new line / Press ⌘ + Enter to send
         </span>
         <ThemeToggle />

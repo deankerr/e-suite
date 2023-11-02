@@ -13,7 +13,7 @@ export function TabTop({ title }: { title: string }) {
     <Link
       href={`/${title}`}
       className={cn(
-        'flex h-full min-w-[9rem] items-center justify-between border-r border-r-border border-t-primary px-3 text-sm font-medium',
+        'flex h-full w-full max-w-[12rem] items-center justify-between border-r border-r-border border-t-primary px-3 text-sm font-medium',
         isActive && 'border-t-2 bg-background',
       )}
     >
