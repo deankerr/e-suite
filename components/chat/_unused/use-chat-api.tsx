@@ -5,7 +5,7 @@ import { Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
-import { ChatSession, EngineInput } from './types'
+import { ChatSession, EngineInput } from '../types'
 
 const endpoint = '/api/chat'
 
