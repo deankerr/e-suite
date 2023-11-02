@@ -1,8 +1,10 @@
+'use client'
+
 import { Switch } from '@/components/ui/switch'
 import { PlatformKeys, schemas } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
-import { ImmerHook } from 'use-immer'
+import { ImmerHook, useImmer } from 'use-immer'
 import { ChatSession, EngineInput } from '../types'
 import { SliderInput } from './slider-input'
 import { TagInput } from './tag-input'
@@ -74,14 +76,14 @@ const defaultInput: EngineInput = {
 }
 
 export function EngineInputControls({
-  immerSession,
+  chatSession,
   engine,
   className,
 }: {
-  immerSession: ImmerHook<ChatSession>
+  chatSession: ChatSession
   engine: Engine
 } & React.ComponentProps<'div'>) {
-  const [session, setSession] = immerSession
+  const [session, setSession] = useImmer(chatSession)
 
   const inputs: EngineInput = {
     ...defaultInput,

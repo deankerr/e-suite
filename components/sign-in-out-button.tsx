@@ -6,7 +6,11 @@ import { Button } from './ui/button'
 
 export function SignInOutButton({ session }: { session: Session | null }) {
   return (
-    <Button variant="outline" onClick={() => (session ? signOut() : signIn())}>
+    <Button
+      variant="outline"
+      className="text-sm font-normal"
+      onClick={() => (session ? signOut() : signIn())}
+    >
       {session ? 'sign out' : 'sign in'}
     </Button>
   )
