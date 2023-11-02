@@ -10,6 +10,7 @@
     "types": "tsc --noEmit",
     "migrate": "prisma migrate",
     "db": "prisma db",
+    "generate": "prisma generate",
     "studio": "prisma studio"
   },
   "prisma": {

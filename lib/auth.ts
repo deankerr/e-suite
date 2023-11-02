@@ -5,6 +5,7 @@ import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 
 import { getServerSession, type NextAuthOptions } from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'
 import GithubProvider from 'next-auth/providers/github'
+import Google from 'next-auth/providers/google'
 
 export const nextAuthConfig = {
   session: { strategy: 'jwt' },
@@ -17,6 +18,10 @@ export const nextAuthConfig = {
     DiscordProvider({
       clientId: env('DISCORD_ID'),
       clientSecret: env('DISCORD_SECRET'),
+    }),
+    Google({
+      clientId: env('GOOGLE_ID'),
+      clientSecret: env('GOOGLE_SECRET'),
     }),
   ],
 } satisfies NextAuthOptions
