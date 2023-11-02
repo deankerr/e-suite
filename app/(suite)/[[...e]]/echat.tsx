@@ -19,73 +19,76 @@ export function Echat({ chatSession, engine }: { chatSession: ChatSession; engin
     setPanes({ engineInfo: false, messages: false, controls: false, [key]: true })
 
   return (
-    <main className="grid grid-rows-[3rem_minmax(5rem,auto)_1fr_3rem] overflow-hidden sm:grid-cols-[2.5rem_auto]">
-      {/* Left Column */}
-      <div className="row-span-3 hidden border-r sm:flex"></div>
-
-      {/* Tab Bar */}
-      <div className="flex overflow-x-auto bg-muted">
-        {chatsConfig.map((c) => (
-          <TabTop key={c.id} title={c.name} />
-        ))}
-      </div>
-
-      {/* Top Panel */}
-      <div className="flex max-w-4xl flex-col items-center justify-end gap-2 border-b border-r">
-        <div className="text-sm text-muted-foreground">
-          <p className="h-full">{engine.displayName}</p>
+    <>
+      <main className="bg-grid-grey grid grid-rows-[3rem_minmax(5rem,auto)_1fr] overflow-hidden border-x sm:col-start-2">
+        {/* Tab Bar */}
+        <div className="flex overflow-x-auto bg-muted">
+          {chatsConfig.map((c) => (
+            <TabTop key={c.id} title={c.name} />
+          ))}
         </div>
-        <div className="">
-          <TabButton
-            text="Engine Info"
-            isActive={panes.engineInfo}
-            onClick={() => togglePane('engineInfo')}
-          />
-          <TabButton
-            text="Messages"
-            isActive={panes.messages}
-            onClick={() => togglePane('messages')}
-          />
-          <TabButton
-            text="Parameters"
-            isActive={panes.controls}
-            onClick={() => togglePane('controls')}
-          />
+
+        {/* Top Panel */}
+        <div className="flex max-w-4xl flex-col items-center justify-end gap-2 border-b border-r bg-background">
+          <div className="text-sm text-muted-foreground">
+            <p className="h-full">{engine.displayName}</p>
+          </div>
+          <div className="">
+            <TabButton
+              text="Engine Info"
+              isActive={panes.engineInfo}
+              onClick={() => togglePane('engineInfo')}
+            />
+            <TabButton
+              text="Messages"
+              isActive={panes.messages}
+              onClick={() => togglePane('messages')}
+            />
+            <TabButton
+              text="Parameters"
+              isActive={panes.controls}
+              onClick={() => togglePane('controls')}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* content area */}
-      <div className="max-w-4xl overflow-x-hidden overflow-y-scroll border-r shadow-inner">
-        {panes.engineInfo && (
-          <EngineInfo engine={engine} className="mx-auto w-full max-w-3xl space-y-8 pt-3 sm:pt-6" />
-        )}
+        {/* content area */}
+        <div className="max-w-4xl overflow-y-auto overflow-x-hidden border-r bg-background shadow-inner">
+          {panes.engineInfo && (
+            <EngineInfo
+              engine={engine}
+              className="mx-auto w-full max-w-3xl space-y-8 pt-3 sm:pt-6"
+            />
+          )}
 
-        {panes.messages && (
-          <MessageFeed
-            session={chatSession}
-            engine={engine}
-            className="mx-auto w-full max-w-3xl space-y-4 overflow-x-hidden pt-5 sm:pt-6"
-          />
-        )}
+          {panes.messages && (
+            <MessageFeed
+              session={chatSession}
+              engine={engine}
+              className="mx-auto w-full max-w-3xl space-y-4 overflow-x-hidden pt-5 sm:pt-6"
+            />
+          )}
 
-        {panes.controls && (
-          <EngineInputControls
-            className={cn('mx-auto w-full max-w-3xl space-y-8 px-16 pt-8')}
-            chatSession={chatSession}
-            engine={engine}
-          />
-        )}
-      </div>
+          {panes.controls && (
+            <EngineInputControls
+              className={cn('mx-auto w-full max-w-3xl space-y-8 px-16 pt-8')}
+              chatSession={chatSession}
+              engine={engine}
+            />
+          )}
+        </div>
+      </main>
 
       {/* bottom panel */}
-      <div className="flex items-center justify-between border-t px-3 sm:col-span-2">
-        <ChatBubbleIcon />
+      <div className="col-start-1 flex items-center justify-between border-t bg-background px-3 sm:col-span-3">
+        {/* <ChatBubbleIcon /> */}
+        <div />
         <span className="text-sm text-muted-foreground">
           Press Enter ⏎ for a new line / Press ⌘ + Enter to send
         </span>
         <ThemeToggle />
       </div>
-    </main>
+    </>
   )
 }
 

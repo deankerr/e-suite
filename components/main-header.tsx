@@ -8,21 +8,21 @@ import { SignInOutButton } from './sign-in-out-button'
 export async function MainHeader({ className }: React.HTMLAttributes<HTMLDivElement>) {
   const session = await serverSession()
   return (
-    <header
-      className={cn('flex items-center justify-between border-b py-2 pl-[2.5rem] pr-6', className)}
-    >
-      <div className="flex items-center space-x-2 pl-3">
-        <ChatBubbleIcon className="" />
-        <h1 className="font-semibold tracking-tight">{siteConfig.name}</h1>
-      </div>
+    <header className={cn('border-b px-[3rem]', className)}>
+      <div className="flex h-full items-center justify-between px-2">
+        <h1 className="flex items-center gap-2 font-semibold tracking-tight">
+          <ChatBubbleIcon className="" />
+          {siteConfig.name}
+        </h1>
 
-      {session && (
-        <Avatar>
-          <AvatarImage src={session.user?.image ?? ''} alt="avatar" />
-          <AvatarFallback>e</AvatarFallback>
-        </Avatar>
-      )}
-      <SignInOutButton session={session} variant={session ? 'outline' : 'default'} />
+        {session && (
+          <Avatar>
+            <AvatarImage src={session.user?.image ?? ''} alt="avatar" />
+            <AvatarFallback>e</AvatarFallback>
+          </Avatar>
+        )}
+        <SignInOutButton session={session} variant={session ? 'outline' : 'default'} className="" />
+      </div>
     </header>
   )
 }
