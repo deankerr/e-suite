@@ -126,7 +126,7 @@ async function createOpenAiEngines() {
       ...openaiCommon,
       id: 'openai::gpt-3.5-turbo',
       model: 'gpt-3.5-turbo',
-      displayName: 'GPT-3.5 Turbo',
+      displayName: 'OpenAI: GPT-3.5 Turbo',
       releaseDate: new Date('01 Mar 2023').toISOString(),
       description:
         'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat completions API but works well for traditional completions tasks as well.',
@@ -145,7 +145,7 @@ async function createOpenAiEngines() {
       ...openaiCommon,
       id: 'openai::gpt-3.5-turbo-16k',
       model: 'gpt-3.5-turbo-16k',
-      displayName: 'GPT-3.5 Turbo 16K',
+      displayName: 'OpenAI: GPT-3.5 Turbo 16K',
       releaseDate: new Date('01 Mar 2023').toISOString(),
       description:
         'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat completions API but works well for traditional completions tasks as well.',
@@ -165,7 +165,7 @@ async function createOpenAiEngines() {
       id: 'openai::gpt-3.5-turbo-instruct',
       type: 'completion',
       model: 'gpt-3.5-turbo-instruct',
-      displayName: 'GPT-3.5 Turbo Instruct',
+      displayName: 'OpenAI: GPT-3.5 Turbo Instruct',
       releaseDate: new Date('19 Sep 2023').toISOString(),
       description:
         "GPT-3.5 Turbo Instruct is an InstructGPT 3.5 class model. It's trained similarly to previous Instruct models such as the text-davinci series while maintaining the same speed as our Turbo models.",
@@ -184,7 +184,7 @@ async function createOpenAiEngines() {
       ...openaiCommon,
       id: 'openai::gpt-4',
       model: 'gpt-4',
-      displayName: 'GPT-4',
+      displayName: 'OpenAI: GPT-4',
       releaseDate: new Date('14 Mar 2023').toISOString(),
       description:
         'GPT-4 is a large multimodal model (accepting text inputs and emitting text outputs today, with image inputs coming in the future) that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. Like gpt-3.5-turbo, GPT-4 is optimized for chat but works well for traditional completions tasks using the Chat completions API.',
@@ -203,7 +203,7 @@ async function createOpenAiEngines() {
       ...openaiCommon,
       id: 'openai::gpt-4-32k',
       model: 'gpt-4-32k',
-      displayName: 'GPT-4 32K',
+      displayName: 'OpenAI: GPT-4 32K',
       releaseDate: new Date('14 Mar 2023').toISOString(),
       description: 'Same capabilities as the standard gpt-4 mode but with 4x the context length.',
       contextLength: 32_768,

@@ -1,6 +1,6 @@
 'use client'
 
-import { EngineInfo } from '@/components/chat/engine-info'
+import { EngineTable } from '@/components/chat/engine-table'
 import { EngineInputControls } from '@/components/chat/form/engine-input-controls'
 import { ChatSession } from '@/components/chat/types'
 import { Button } from '@/components/ui/button'
@@ -9,15 +9,21 @@ import { chatsConfig } from '@/config/chats'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
 import { useImmer } from 'use-immer'
+import { EngineBrowser } from './engine-browser'
 import { MessageBar } from './message-bar'
 import { MessageFeed } from './message-feed'
 import { TabTop } from './tab-top'
 
 export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine: Engine }) {
-  const [panes, setPanes] = useImmer({ engineInfo: false, messages: true, controls: false })
+  const [panes, setPanes] = useImmer({
+    engineInfo: false,
+    messages: false,
+    controls: false,
+    browser: true,
+  })
 
   const togglePane = (key: keyof typeof panes) =>
-    setPanes({ engineInfo: false, messages: false, controls: false, [key]: true })
+    setPanes({ engineInfo: false, messages: false, controls: false, browser: false, [key]: true })
 
   const submitMessage = (value: string) => {
     // refactor first
@@ -40,7 +46,7 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
           </div>
           <div className="">
             <TabButton
-              text="Engine Info"
+              text="Model Details"
               isActive={panes.engineInfo}
               onClick={() => togglePane('engineInfo')}
             />
@@ -54,13 +60,18 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
               isActive={panes.controls}
               onClick={() => togglePane('controls')}
             />
+            <TabButton
+              text="Browser"
+              isActive={panes.browser}
+              onClick={() => togglePane('browser')}
+            />
           </div>
         </div>
 
         {/* content area */}
         <div className="col-start-1 row-start-3 max-w-4xl overflow-y-auto overflow-x-hidden border-r bg-background shadow-inner">
           {panes.engineInfo && (
-            <EngineInfo
+            <EngineTable
               engine={engine}
               className="mx-auto w-full max-w-3xl space-y-8 pt-3 sm:pt-6"
             />
@@ -81,10 +92,18 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
               engine={engine}
             />
           )}
+
+          {panes.browser && (
+            <EngineBrowser current={engine} className="mx-auto w-full max-w-3xl " />
+          )}
         </div>
 
         <MessageBar
-          className={cn('col-start-1 row-start-3 mb-4 max-w-3xl self-end', 'ml-16')} //! temp workaround
+          className={cn(
+            'col-start-1 row-start-3 mb-4 hidden max-w-3xl self-end',
+            panes.messages && 'flex',
+            'ml-16',
+          )} //! temp workaround
           handleSubmit={submitMessage}
         />
       </main>

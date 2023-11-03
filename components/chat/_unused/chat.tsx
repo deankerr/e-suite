@@ -25,7 +25,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useImmer } from 'use-immer'
 import { TextareaAutosize } from '../../ui/textarea-autosize'
-import { EngineInfo } from '../engine-info'
+import { EngineTable } from '../engine-table'
 import { EngineInputControls } from '../form/engine-input-controls'
 import { ChatSession } from '../types'
 import { EngineCombobox } from './engine-combobox'
@@ -132,7 +132,7 @@ export function Chat({
           <AccordionItem value="item-1">
             <AccordionTrigger className="justify-center font-normal">engine info</AccordionTrigger>
             <AccordionContent>
-              <EngineInfo engine={engine} className={''}></EngineInfo>
+              <EngineTable engine={engine} className={''}></EngineTable>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
