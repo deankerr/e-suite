@@ -116,7 +116,7 @@ export function EngineInputControls({
   }
 
   return (
-    <div className={cn(className)}>
+    <div className={cn('space-y-4', className)}>
       {sliderInputKeys.map((key) => {
         if (inputKeys.includes(key) && schemaKeys.includes(key)) {
           return (

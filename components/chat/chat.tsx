@@ -4,7 +4,6 @@ import { EngineTable } from '@/components/chat/engine-table'
 import { EngineInputControls } from '@/components/chat/form/engine-input-controls'
 import { ChatSession } from '@/components/chat/types'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { chatsConfig } from '@/config/chats'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
@@ -12,6 +11,7 @@ import { useImmer } from 'use-immer'
 import { EngineBrowser } from './engine-browser'
 import { MessageBar } from './message-bar'
 import { MessageFeed } from './message-feed'
+import { TabContent } from './tab-content'
 import { TabTop } from './tab-top'
 
 export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine: Engine }) {
@@ -19,11 +19,19 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
     engineInfo: false,
     messages: false,
     controls: false,
-    browser: true,
+    browser: false,
+    testContent: true,
   })
 
   const togglePane = (key: keyof typeof panes) =>
-    setPanes({ engineInfo: false, messages: false, controls: false, browser: false, [key]: true })
+    setPanes({
+      engineInfo: false,
+      messages: false,
+      controls: false,
+      browser: false,
+      testContent: false,
+      [key]: true,
+    })
 
   const submitMessage = (value: string) => {
     // refactor first
@@ -31,22 +39,22 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
 
   return (
     <>
-      <main className="bg-grid-grey grid grid-rows-[2.75rem_minmax(5rem,auto)_1fr] overflow-hidden border-x sm:col-start-2">
+      <main className="bg-grid-grey/0 grid grid-rows-[2.75rem_minmax(5rem,auto)_1fr] overflow-hidden border-x sm:col-start-2">
         {/* Tab Bar */}
-        <div className="flex overflow-x-auto bg-muted">
+        <div className="flex w-full max-w-4xl justify-self-center overflow-x-auto border-x bg-muted">
           {chatsConfig.map((c) => (
             <TabTop key={c.id} title={c.name} />
           ))}
         </div>
 
         {/* Top Panel */}
-        <div className="flex max-w-4xl flex-col items-center justify-end gap-2 border-b border-r bg-background">
+        <div className="flex w-full max-w-4xl flex-col items-center justify-end gap-2 justify-self-center border-x border-b bg-background">
           <div className="text-sm text-muted-foreground">
             <p className="h-full">{engine.displayName}</p>
           </div>
-          <div className="">
+          <div className="flex w-full overflow-x-auto">
             <TabButton
-              text="Model Details"
+              text="Details"
               isActive={panes.engineInfo}
               onClick={() => togglePane('engineInfo')}
             />
@@ -69,32 +77,29 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
         </div>
 
         {/* content area */}
-        <div className="col-start-1 row-start-3 max-w-4xl overflow-y-auto overflow-x-hidden border-r bg-background shadow-inner">
+        <div className="col-start-1 row-start-3 w-full max-w-4xl justify-self-center overflow-y-auto overflow-x-hidden border-x bg-background shadow-inner">
           {panes.engineInfo && (
-            <EngineTable
-              engine={engine}
-              className="mx-auto w-full max-w-3xl space-y-8 pt-3 sm:pt-6"
-            />
+            <TabContent className="">
+              <EngineTable engine={engine} className="" />
+            </TabContent>
           )}
 
           {panes.messages && (
-            <MessageFeed
-              session={chatSession}
-              engine={engine}
-              className="mx-auto w-full max-w-3xl space-y-4 overflow-x-hidden pt-5 sm:pt-6"
-            />
+            <TabContent className="">
+              <MessageFeed session={chatSession} engine={engine} className="" />
+            </TabContent>
           )}
 
           {panes.controls && (
-            <EngineInputControls
-              className={cn('mx-auto w-full max-w-3xl space-y-8 px-16 pt-8')}
-              chatSession={chatSession}
-              engine={engine}
-            />
+            <TabContent>
+              <EngineInputControls className={cn('')} chatSession={chatSession} engine={engine} />
+            </TabContent>
           )}
 
           {panes.browser && (
-            <EngineBrowser current={engine} className="mx-auto w-full max-w-3xl " />
+            <TabContent title="Engine Browser">
+              <EngineBrowser current={engine} />
+            </TabContent>
           )}
         </div>
 
@@ -110,12 +115,11 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
 
       {/* bottom panel */}
       <div className="flex items-center justify-between border-t bg-background px-3 sm:col-span-3">
-        {/* <ChatBubbleIcon /> */}
-        <div />
+        <div></div>
         <span className="hidden text-sm text-muted-foreground sm:flex">
           Press Enter ⏎ for a new line / Press ⌘ + Enter to send
         </span>
-        <ThemeToggle />
+        <div></div>
       </div>
     </>
   )

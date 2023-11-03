@@ -12,7 +12,7 @@ export function EngineTable({
   return (
     <>
       <div className={cn('', className)}>
-        <h3 className="mb-0">Details</h3>
+        <h3 className="">Details</h3>
         <Table>
           <TableBody>
             <TableRow>
@@ -48,10 +48,10 @@ export function EngineTable({
           </TableBody>
         </Table>
 
-        <h3 className="mb-0 mt-4">Description</h3>
+        <h3 className="">Description</h3>
         <p className="p-2 text-sm">{engine?.description}</p>
 
-        <h3 className="mb-0 mt-4">Provider</h3>
+        <h3 className="">Provider</h3>
         <Table>
           <TableBody>
             <TableRow>

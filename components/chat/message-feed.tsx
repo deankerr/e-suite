@@ -19,7 +19,7 @@ export function MessageFeed({
 
   const chatHelpers = useAiChat(session, engine)
   return (
-    <div className={cn('', className)}>
+    <div className={cn('space-y-4', className)}>
       {chatHelpers.messages.map((m) => (
         <MessageBubble
           variant={m.role}
