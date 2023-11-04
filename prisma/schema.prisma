@@ -38,6 +38,7 @@ model User {
   image         String?
   role          String? // access level
   accounts      Account[]
+  chatTabs      ChatTab[]
 }
 
 model VerificationToken {
@@ -76,6 +77,8 @@ model Engine {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   available         Boolean  @default(true) // eg. taken down
+
+  ChatTab ChatTab[]
 }
 
 model Provider {
@@ -83,4 +86,16 @@ model Provider {
   displayName String
   url         String
   engines     Engine[]
+}
+
+model ChatTab {
+  id       String  @id
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String
+  engine   Engine? @relation(fields: [engineId], references: [id])
+  engineId String?
+
+  name      String   @default("Untitled")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

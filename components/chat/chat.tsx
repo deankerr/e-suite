@@ -3,16 +3,12 @@
 import { EngineTable } from '@/components/chat/engine-table'
 import { EngineInputControls } from '@/components/chat/form/engine-input-controls'
 import { ChatSession } from '@/components/chat/types'
-import { Button } from '@/components/ui/button'
 import { chatsConfig } from '@/config/chats'
-import { prisma } from '@/lib/prisma'
-import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
 import { useImmer } from 'use-immer'
 import { EngineBrowser } from './engine-browser'
-import { columns } from './engines/columns'
-import { EnginesDataTable } from './engines/data-table'
 import { MessageFeed } from './message-feed'
+import { TabButton } from './tab-button'
 import { TabContent } from './tab-content'
 import { TabTop } from './tab-top'
 
@@ -105,28 +101,5 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
         <div></div>
       </div>
     </>
-  )
-}
-
-function TabButton({
-  text,
-  isActive,
-  onClick,
-}: {
-  text: string
-  isActive: boolean
-  onClick: () => void
-}) {
-  return (
-    <Button
-      variant="ghost"
-      className={cn(
-        'rounded-none py-2 text-sm text-foreground/60 hover:bg-inherit hover:text-foreground',
-        isActive && 'border-b-2 border-primary text-foreground',
-      )}
-      onClick={onClick}
-    >
-      {text}
-    </Button>
   )
 }

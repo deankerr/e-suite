@@ -13,12 +13,6 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'e/suite',
   description: "it's the e/suite",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
