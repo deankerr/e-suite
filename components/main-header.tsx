@@ -1,12 +1,12 @@
+import { auth } from '@/auth'
 import { siteConfig } from '@/config/site'
-import { serverSession } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { SignInOutButton } from './sign-in-out-button'
 import { ThemeToggle } from './ui/theme-toggle'
 
 export async function MainHeader({ className }: React.HTMLAttributes<HTMLDivElement>) {
-  const session = await serverSession()
+  const session = await auth()
 
   return (
     <header className={cn('', className)}>

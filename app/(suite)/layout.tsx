@@ -1,14 +1,17 @@
+import { auth } from '@/auth'
 import { ChatNav } from '@/components/chat/chat-nav'
 import { MainHeader } from '@/components/main-header'
-import { serverSession } from '@/lib/auth'
+import { getUser } from '@/lib/db'
 
 export default async function SuiteLayout({ children }: { children: React.ReactNode }) {
-  const session = await serverSession()
+  const session = await auth()
+
+  const user = await getUser(session?.user.id)
 
   return (
     <div className="grid h-full grid-rows-[3rem_2.75rem_1fr_2.75rem]">
       <MainHeader className="" />
-      <ChatNav />
+      <ChatNav user={user} />
       {children}
     </div>
   )

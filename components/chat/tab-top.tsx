@@ -5,9 +5,10 @@ import { DotFilledIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export function TabTop({ title }: { title: string }) {
+export function TabTop({ title, segActive }: { title: string; segActive?: boolean }) {
   const pathname = usePathname()
-  const isActive = decodeURI(pathname) === '/' + title
+  // const isActive = decodeURI(pathname) === '/' + title
+  const isActive = segActive
 
   return (
     <Link

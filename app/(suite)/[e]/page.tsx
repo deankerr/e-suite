@@ -1,8 +1,8 @@
+import { auth } from '@/auth'
 import { Chat } from '@/components/chat/chat'
 import { TabButton } from '@/components/chat/tab-button'
 import { TabContent } from '@/components/chat/tab-content'
 import { TabTop } from '@/components/chat/tab-top'
-import { serverSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { nanoid } from 'nanoid/non-secure'
 
@@ -14,10 +14,7 @@ const panes = {
 }
 
 export default async function IndexPage() {
-  const session = await serverSession()
-
-  // const chatSession = chatsConfig[1]!
-  // const engine = await prisma.engine.findFirstOrThrow({ where: { id: chatSession.engineId } })
+  const session = await auth()
 
   if (!session || !session.user) {
     return (
@@ -27,29 +24,10 @@ export default async function IndexPage() {
     )
   }
 
-  console.log('!!! getServerSession !!!', session)
-
   const user = await prisma.user.findFirstOrThrow({
     where: { id: session.user.id },
     include: { chatTabs: true },
   })
-  console.log('user', user)
-
-  if (user.chatTabs.length === 0) {
-    const newTab = await prisma.chatTab.create({
-      data: {
-        id: nanoid(),
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
-      },
-    })
-    console.log('newTab', newTab)
-  }
-
-  const togglePane = (pane: string) => {}
 
   return (
     <>

@@ -11,19 +11,18 @@ datasource db {
 }
 
 model Account {
-  id                       String  @id @default(cuid())
-  userId                   String
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String?
-  access_token             String?
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String?
-  session_state            String?
-  refresh_token_expires_in Int?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -36,9 +35,10 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          String? // access level
-  accounts      Account[]
-  chatTabs      ChatTab[]
+  role          String    @default("user") // access level
+
+  accounts Account[]
+  chatTabs ChatTab[]
 }
 
 model VerificationToken {
@@ -89,13 +89,14 @@ model Provider {
 }
 
 model ChatTab {
-  id       String  @id
+  id       String  @id @default(cuid())
   user     User    @relation(fields: [userId], references: [id])
   userId   String
   engine   Engine? @relation(fields: [engineId], references: [id])
   engineId String?
 
-  name      String   @default("Untitled")
+  name String @unique
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
