@@ -3,11 +3,6 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-export async function getEngines() {
-  console.log('getEnginesData')
-  return await prisma.engine.findMany()
-}
-
 export async function createChatTab(uid: string, name: string) {
   await prisma.chatTab.create({
     data: {
@@ -20,4 +15,20 @@ export async function createChatTab(uid: string, name: string) {
     },
   })
   revalidatePath('/')
+}
+
+export async function setChatTabEngine(chatTabId: string, engineId: string) {
+  await prisma.chatTab.update({
+    where: {
+      id: chatTabId,
+    },
+    data: {
+      engine: {
+        connect: {
+          id: engineId,
+        },
+      },
+    },
+  })
+  revalidatePath('/[tab]')
 }

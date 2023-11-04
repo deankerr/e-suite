@@ -19,19 +19,20 @@ export function ChatNav({ user }: { user: User }) {
   return (
     <nav className="flex overflow-x-auto bg-muted">
       {chatTabs.map((t) => (
-        <TabTop key={t.id} title={t.name} segActive={t.name === segment} />
+        <TabTop key={t.id} title={t.name} segActive={encodeURI(t.name) === segment} />
       ))}
-      <Button
-        onClick={() => {
-          startTransition(() => {
-            // addOptimisticChatTab({ id: 'sdasdas', name: 'Untitled' } as ChatTab)
-            addOptimisticChatTab({ id: `${Date.now()}`, name: 'Untitled' } as ChatTab)
-            createChatTab(user?.id ?? '', `Untitled ${chatTabs.length + 1}`)
-          })
-        }}
-      >
-        add
-      </Button>
+      {user && (
+        <Button
+          onClick={() => {
+            startTransition(() => {
+              addOptimisticChatTab({ id: `${Date.now()}`, name: 'Untitled' } as ChatTab)
+              createChatTab(user?.id ?? '', `Untitled ${chatTabs.length + 1}`)
+            })
+          }}
+        >
+          add
+        </Button>
+      )}
     </nav>
   )
 }

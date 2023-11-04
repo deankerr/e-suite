@@ -1,24 +1,24 @@
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
-import { Engine } from '@prisma/client'
-import { useEffect, useState } from 'react'
-import { getEngines } from './actions'
-import { EngineTable } from './engine-table'
-import { columns } from './engines/columns'
+'use client'
+
+import { ChatTab, Engine } from '@/lib/db'
+import { useTransition } from 'react'
+import { setChatTabEngine } from './actions'
 import { EnginesDataTable } from './engines/data-table'
 
-export function EngineBrowser({ current }: { current: Engine }) {
-  const [enginesData, setEnginesData] = useState<Engine[]>()
+export function EngineBrowser({ engines = [], chatTab }: { engines: Engine[]; chatTab?: ChatTab }) {
+  const [isPending, startTransition] = useTransition()
 
-  if (!enginesData) {
-    getEngines().then((res) => setEnginesData(res))
+  const setActive = (engineId: string) => {
+    if (!chatTab) return
+    startTransition(() => {
+      setChatTabEngine(chatTab.id, engineId)
+    })
   }
 
   return (
     <>
-      <Input placeholder="search for a model" />
-      <p className="my-4 italic text-muted-foreground">Search info/feedback</p>
-      <EnginesDataTable columns={columns} data={enginesData ?? []} />
+      <h3 className="font-semibold leading-none tracking-tight">EngineBrowser</h3>
+      <EnginesDataTable data={engines} active={chatTab?.engineId} setActive={setActive} />
     </>
   )
 }

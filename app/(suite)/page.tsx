@@ -12,7 +12,7 @@ export default async function SuiteIndexPage() {
 
   return (
     <div>
-      <p>SuitePage</p>
+      <p>SuiteIndexPage</p>
       <pre className="overflow-x-auto">{sesh}</pre>
     </div>
   )
