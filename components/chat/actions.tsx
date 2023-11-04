@@ -33,6 +33,45 @@ export async function deleteChatTab(chatTabId: string) {
   revalidatePath('/')
 }
 
+export async function renameChatTab(id: string, title: string) {
+  console.log('rename tab', id, title)
+  const targetChatTab = await prisma.chatTab.findFirstOrThrow({
+    where: {
+      id: id,
+    },
+    include: {
+      user: {
+        include: {
+          chatTabs: true,
+        },
+      },
+    },
+  })
+
+  const userChatTabs = targetChatTab.user.chatTabs.filter((t) => t.id !== targetChatTab.id)
+  const slug = encodeURI(title.replaceAll(' ', '-'))
+
+  let newSlug = slug
+  if (userChatTabs.some((t) => t.slug === slug)) {
+    let n = 1
+    while (n++) if (userChatTabs.every((t) => t.slug !== `${slug}-${n}`)) break
+    newSlug = `${slug}-${n}`
+  }
+
+  await prisma.chatTab.update({
+    where: {
+      id: targetChatTab.id,
+    },
+    data: {
+      title,
+      slug: newSlug,
+    },
+  })
+  console.log('newSlug', newSlug)
+  revalidatePath('/(suite)/[tab]', 'layout')
+  return newSlug
+}
+
 export async function setChatTabEngine(chatTabId: string, engineId: string) {
   await prisma.chatTab.update({
     where: {

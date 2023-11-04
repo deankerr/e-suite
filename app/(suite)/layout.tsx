@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
 import { BottomPanel } from '@/components/chat/bottom-panel'
-import { ChatNav } from '@/components/chat/chat-nav'
+import { TabBar } from '@/components/chat/tab-bar'
 import { MainHeader } from '@/components/main-header'
 import { getUser } from '@/lib/db'
 
@@ -11,7 +11,7 @@ export default async function SuiteLayout({ children }: { children: React.ReactN
   return (
     <div className="grid h-full grid-rows-[3rem_2.75rem_1fr_2.75rem]">
       <MainHeader className="" />
-      <ChatNav user={user} />
+      <TabBar user={user} />
       {children}
       <BottomPanel />
     </div>
