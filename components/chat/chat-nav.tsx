@@ -13,29 +13,43 @@ export function ChatNav({ user }: { user: User }) {
   let [isPending, startTransition] = useTransition()
   const segment = useSelectedLayoutSegment()
 
-  const [chatTabs, addOptimisticChatTab] = useOptimistic<ChatTab[], ChatTab | string>(
-    user?.chatTabs ?? [],
-    (state, newChatTab) => {
-      if (typeof newChatTab === 'string') {
-        return state.filter((t) => t.id !== newChatTab)
-      } else return [...state, newChatTab]
+  const chatTabs = user?.chatTabs ?? []
+  const [optimisticChatTabs, modifyOptimisticChatTabs] = useOptimistic<ChatTab[], string | void>(
+    chatTabs,
+    (state, chatTabId) => {
+      if (chatTabId) {
+        return state.filter((t) => t.id !== chatTabId)
+      } else {
+        return [
+          ...state,
+          {
+            id: `${Date.now()}`,
+            userId: `${Date.now()}`,
+            title: 'Untitled',
+            slug: `${Date.now()}`,
+            engineId: null,
+          },
+        ]
+      }
     },
   )
 
   return (
-    <nav className="flex items-center overflow-x-auto bg-muted">
-      {chatTabs.map((t) => (
+    <nav className="flex items-center overflow-x-auto bg-muted/50">
+      {optimisticChatTabs.map((t) => (
         <Link
           key={t.id}
-          href={`/${t.name}`}
+          href={`/${t.slug}`}
           className={cn(
-            'group flex h-full w-full max-w-[12rem] items-center border-r-border border-t-primary text-sm font-medium',
-            encodeURI(t.name) === segment && 'border-t-2 bg-background',
+            'group flex h-full w-full max-w-[12rem] items-center border-t-primary bg-muted text-sm font-medium',
+            encodeURI(t.slug) === segment
+              ? 'border-t-2 bg-background'
+              : 'opacity-50 hover:border-x hover:opacity-100',
           )}
         >
           {/* <CaretRightIcon width={20} height={20} className="inline-block" /> */}
           <div className="w-[26px]"></div>
-          <div className="w-full text-center">{t.name}</div>
+          <div className="w-full text-center">{t.title}</div>
 
           {/* dot / close button */}
           <div className="flex w-7 items-center">
@@ -45,7 +59,7 @@ export function ChatNav({ user }: { user: User }) {
               onClick={(e) => {
                 e.preventDefault()
                 startTransition(() => {
-                  addOptimisticChatTab(t.id)
+                  modifyOptimisticChatTabs(t.id)
                   deleteChatTab(t.id)
                 })
               }}
@@ -64,8 +78,8 @@ export function ChatNav({ user }: { user: User }) {
           className="h-full rounded-none px-1 hover:text-primary"
           onClick={() => {
             startTransition(() => {
-              addOptimisticChatTab({ id: `${Date.now()}`, name: 'Untitled' } as ChatTab)
-              createChatTab(user?.id ?? '', `Untitled ${chatTabs.length + 1}`)
+              modifyOptimisticChatTabs()
+              createChatTab(user?.id ?? '')
             })
           }}
         >

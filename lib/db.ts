@@ -3,13 +3,13 @@ import { prisma } from './prisma'
 
 export async function getUser(id?: string) {
   if (!id) return undefined
-  return await prisma.user.findFirstOrThrow({ where: { id }, include: { chatTabs: true } })
+  return (await prisma.user.findFirst({ where: { id }, include: { chatTabs: true } })) ?? undefined
 }
 
-export async function getUserAndChatTab(userId?: string, tabName?: string) {
+export async function getUserAndChatTab(userId?: string, slug?: string) {
   const user = await getUser(userId)
   if (!user) return {}
-  const chatTab = user.chatTabs.find((t) => t.name === tabName)
+  const chatTab = user.chatTabs.find((t) => t.slug === slug)
   return { user, chatTab }
 }
 

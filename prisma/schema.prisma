@@ -95,8 +95,11 @@ model ChatTab {
   engine   Engine? @relation(fields: [engineId], references: [id])
   engineId String?
 
-  name String @unique
+  title String @default("Untitled")
+  slug  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, slug])
 }
