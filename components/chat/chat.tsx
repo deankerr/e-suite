@@ -6,11 +6,11 @@ import { ChatSession } from '@/components/chat/types'
 import { chatsConfig } from '@/config/chats'
 import { Engine } from '@prisma/client'
 import { useImmer } from 'use-immer'
+import { TabTop } from './_tab-top'
 import { EngineBrowser } from './engine-browser'
 import { MessageFeed } from './message-feed'
 import { TabButton } from './tab-button'
 import { TabContent } from './tab-content'
-import { TabTop } from './tab-top'
 
 const panesConfig = {
   engineInfo: false,
@@ -86,7 +86,7 @@ export function Chat({ chatSession, engine }: { chatSession: ChatSession; engine
           {panes.browser && (
             <TabContent title="Engine Browser">
               {/* <EngineBrowser current={engine} /> */}
-              <EngineBrowser current={engine} />
+              {/* <EngineBrowser  /> */}
             </TabContent>
           )}
         </div>

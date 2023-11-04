@@ -13,12 +13,6 @@ export default async function TabIndexPage({ params }: { params: { tab: string }
     <>
       TabIndexPage
       <div className="space-y-2 p-6">
-        <div className="w-fit rounded-md border p-2 text-sm">
-          <p>
-            Info: {chatTab?.id} {chatTab?.name}
-          </p>
-          <p>Current model: {chatTab?.engineId ?? 'not selected'}</p>
-        </div>
         <EngineBrowser engines={engines} chatTab={chatTab} />
       </div>
       <pre className="overflow-x-auto text-xs">{JSON.stringify(session, null, 2)}</pre>

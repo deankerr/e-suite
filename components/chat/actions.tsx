@@ -17,6 +17,15 @@ export async function createChatTab(uid: string, name: string) {
   revalidatePath('/')
 }
 
+export async function deleteChatTab(chatTabId: string) {
+  await prisma.chatTab.delete({
+    where: {
+      id: chatTabId,
+    },
+  })
+  revalidatePath('/')
+}
+
 export async function setChatTabEngine(chatTabId: string, engineId: string) {
   await prisma.chatTab.update({
     where: {
@@ -30,5 +39,5 @@ export async function setChatTabEngine(chatTabId: string, engineId: string) {
       },
     },
   })
-  revalidatePath('/[tab]')
+  revalidatePath('/')
 }

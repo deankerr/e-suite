@@ -1,11 +1,8 @@
 'use client'
 
-import { User } from '@/lib/db'
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { ChatTab, User } from '@/lib/db'
 
-export function TabInfo({ user }: { user: User }) {
-  const segment = useSelectedLayoutSegment()
-  const chatTab = user && user.chatTabs.find((tab) => encodeURI(tab.name) === segment)
+export function TabInfo({ user, chatTab }: { user?: User; chatTab?: ChatTab }) {
   return (
     <div className="w-fit rounded-md border p-2 text-sm">
       <p>
