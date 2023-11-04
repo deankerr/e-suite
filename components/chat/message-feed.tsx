@@ -4,6 +4,7 @@ import { MessageBubble } from '@/components/chat/message-bubble'
 import { ChatSession } from '@/components/chat/types'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
+import { MessageBar } from './message-bar'
 import { useAiChat } from './use-ai-chat'
 
 type ReqStat = 'idle' | 'waiting' | 'streaming'
@@ -19,16 +20,19 @@ export function MessageFeed({
 
   const chatHelpers = useAiChat(session, engine)
   return (
-    <div className={cn('space-y-4', className)}>
-      {chatHelpers.messages.map((m) => (
-        <MessageBubble
-          variant={m.role}
-          content={m.content}
-          loading={chatHelpers.messages.at(-1)?.id === m.id && isStreaming}
-          key={m.id}
-        />
-      ))}
-      {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
-    </div>
+    <>
+      <div className={cn('space-y-4', className)}>
+        {chatHelpers.messages.map((m) => (
+          <MessageBubble
+            variant={m.role}
+            content={m.content}
+            loading={chatHelpers.messages.at(-1)?.id === m.id && isStreaming}
+            key={m.id}
+          />
+        ))}
+        {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
+      </div>
+      <MessageBar className={cn('')} handleSubmit={() => {}} />
+    </>
   )
 }
