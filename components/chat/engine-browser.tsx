@@ -18,6 +18,7 @@ export function EngineBrowser({ engines = [], chatTab }: { engines: Engine[]; ch
   return (
     <>
       <h3 className="font-semibold leading-none tracking-tight">EngineBrowser</h3>
+      <p>active: {chatTab?.engineId ?? 'none'}</p>
       <EnginesDataTable data={engines} active={chatTab?.engineId} setActive={setActive} />
     </>
   )

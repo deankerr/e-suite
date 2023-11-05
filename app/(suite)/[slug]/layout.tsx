@@ -1,5 +1,4 @@
-import { TabButton } from '@/components/chat/tab-button'
-import { TabInfo } from '@/components/chat/tab-info'
+import { InnerTabBar } from '@/components/chat/inner-tab-bar'
 import { authServerProtected } from '@/lib/db'
 
 export default async function ChatTabLayout({
@@ -13,30 +12,14 @@ export default async function ChatTabLayout({
 
   return (
     <main className="grid grid-rows-[minmax(5rem,auto)_1fr] overflow-hidden">
-      <div className="space-y-2 border-b px-2 pt-2">
-        <TabInfo chatTab={chatTab} />
-        <div className="flex w-full overflow-x-auto">
-          <TabButton
-            text="Details"
-            isActive={false}
-            // onClick={() => togglePane('engineInfo')}
-          />
-          <TabButton
-            text="Messages"
-            isActive={false}
-            // onClick={() => togglePane('messages')}
-          />
-          <TabButton
-            text="Parameters"
-            isActive={false}
-            // onClick={() => togglePane('controls')}
-          />
-          <TabButton
-            text="Browser"
-            isActive={false}
-            // onClick={() => togglePane('browser')}
-          />
+      <div className="grid grid-rows-[1fr_auto] border-b px-2 pt-2">
+        {/* grid upper row */}
+        <div className="text-xs text-muted-foreground">
+          {chatTab?.title} {chatTab?.engineId}
         </div>
+
+        {/* grid lower row */}
+        <InnerTabBar chatTab={chatTab} />
       </div>
       <div className="overflow-y-auto overflow-x-hidden">{children}</div>
     </main>

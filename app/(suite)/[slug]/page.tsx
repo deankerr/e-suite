@@ -1,6 +1,4 @@
-import { auth } from '@/auth'
 import { EngineBrowser } from '@/components/chat/engine-browser'
-import { Button } from '@/components/ui/button'
 import { authServerProtected, getEngines } from '@/lib/db'
 
 export default async function TabIndexPage({ params }: { params: { slug: string } }) {
