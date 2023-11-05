@@ -13,6 +13,7 @@ import { Button } from '../ui/button'
 import { createChatTab, deleteChatTab, renameChatTab } from './actions'
 
 export function TabBar({ user }: { user: User }) {
+  const router = useRouter()
   let [isPending, startTransition] = useTransition()
   const segment = useSelectedLayoutSegment()
 
@@ -31,6 +32,8 @@ export function TabBar({ user }: { user: User }) {
             title: 'Untitled',
             slug: `${Date.now()}`,
             engineId: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
           },
         ]
       }
@@ -39,58 +42,62 @@ export function TabBar({ user }: { user: User }) {
 
   return (
     <nav className="flex items-center overflow-x-auto bg-muted/50">
-      {optimisticChatTabs.map((t) => {
-        const isActive = t.slug === segment
-        return (
-          <Link
-            key={t.id + t.slug}
-            href={`/${t.slug}`}
-            className={cn(
-              'group flex h-full w-full max-w-[12rem] items-center border-t-primary bg-muted text-sm font-medium',
-              isActive ? 'border-t-2 bg-background' : 'opacity-50 hover:border-x hover:opacity-100',
-            )}
-          >
-            {/* <CaretRightIcon width={20} height={20} className="inline-block" /> */}
-            <div className="w-[26px]"></div>
-            <div
-              className="w-full text-center"
-              onClick={(e) => {
-                if (!isActive) return
-              }}
+      {optimisticChatTabs
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+        .map((t) => {
+          const isActive = t.slug === segment
+          return (
+            <Link
+              key={t.id}
+              href={`/${t.slug}`}
+              className={cn(
+                'group flex h-full w-full max-w-[12rem] items-center border-t-primary bg-muted text-sm font-medium',
+                isActive
+                  ? 'border-t-2 bg-background'
+                  : 'opacity-50 hover:border-x hover:opacity-100',
+              )}
             >
-              <EditTitlePopover
-                enabled={isActive}
-                currentTitle={t.title}
-                onClose={(title) =>
-                  startTransition(() =>
-                    renameChatTab(t.id, title).then((newSlug) => redirect(`/${newSlug}`)),
-                  )
-                }
-              >
-                <p className={isActive ? 'group-hover:underline' : ''}>{t.title}</p>
-              </EditTitlePopover>
-            </div>
-
-            {/* dot / close button */}
-            <div className="flex w-7 items-center">
-              <Button
-                variant="ghost"
-                className="h-min w-min rounded-none p-0 hover:text-destructive"
+              {/* <CaretRightIcon width={20} height={20} className="inline-block" /> */}
+              <div className="w-[26px]"></div>
+              <div
+                className="w-full text-center"
                 onClick={(e) => {
-                  e.preventDefault()
-                  startTransition(() => {
-                    modifyOptimisticChatTabs(t.id)
-                    deleteChatTab(t.id)
-                  })
+                  if (!isActive) return
                 }}
               >
-                <DotFilledIcon className="group-hover:hidden" />
-                <Cross1Icon width={16} height={16} className="hidden group-hover:inline-flex" />
-              </Button>
-            </div>
-          </Link>
-        )
-      })}
+                <EditTitlePopover
+                  enabled={isActive}
+                  currentTitle={t.title}
+                  onClose={(title) =>
+                    startTransition(() =>
+                      renameChatTab(t.id, title).then((newSlug) => redirect(`/${newSlug}`)),
+                    )
+                  }
+                >
+                  <p className={isActive ? 'group-hover:underline' : ''}>{t.title}</p>
+                </EditTitlePopover>
+              </div>
+
+              {/* dot / close button */}
+              <div className="flex w-7 items-center">
+                <Button
+                  variant="ghost"
+                  className="h-min w-min rounded-none p-0 hover:text-destructive"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    startTransition(() => {
+                      modifyOptimisticChatTabs(t.id)
+                      deleteChatTab(t.id)
+                    })
+                  }}
+                >
+                  <DotFilledIcon className="group-hover:hidden" />
+                  <Cross1Icon width={16} height={16} className="hidden group-hover:inline-flex" />
+                </Button>
+              </div>
+            </Link>
+          )
+        })}
 
       {/* add new */}
       {user && (

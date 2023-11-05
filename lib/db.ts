@@ -24,5 +24,5 @@ export async function getEngines() {
 }
 
 export type User = Awaited<ReturnType<typeof getUser>>
-export type ChatTab = Omit<_ChatTab, 'createdAt' | 'updatedAt'>
+export type ChatTab = _ChatTab
 export type Engine = Awaited<ReturnType<typeof getEngines>>[number]
