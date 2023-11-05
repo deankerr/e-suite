@@ -35,11 +35,18 @@ export const {
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session, account, profile }) {
       if (user) {
         token.uid = user.id
         token.role = user.role
+        console.log('=== JWT ===', trigger)
+        console.log('account', account)
+        console.log('profile', profile)
+        console.log('token', token)
+        console.log('session', session)
+        console.log('user', user)
       }
+
       return token
     },
     async session({ session, token }) {

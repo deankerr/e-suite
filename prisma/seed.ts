@@ -4,6 +4,7 @@ import { seedEngineData } from './seed-engines'
 const prisma = new PrismaClient()
 
 async function main() {
+  console.log('add Providers')
   await prisma.provider.upsert({
     where: { id: 'openai' },
     update: {},

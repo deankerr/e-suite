@@ -25,6 +25,7 @@ const fallbackEngineValues: Omit<Engine, 'providerId' | 'createdAt' | 'updatedAt
 }
 
 async function createOpenRouterEngines() {
+  console.log('add OpenRouter')
   const cache = await fs.readFile('data/openrouter.modelcache.json', 'ascii')
   const models = JSON.parse(cache) as OpenRouterModelRecord[]
 
@@ -65,6 +66,7 @@ async function createOpenRouterEngines() {
 }
 
 async function createTogetheraiEngines() {
+  console.log('add TogetherAI')
   const cache = await fs.readFile('data/togetherai.modelcache.json', 'ascii')
   const models = JSON.parse(cache) as TogetheraiModelRecord[]
 
@@ -120,6 +122,7 @@ const openaiCommon = {
 }
 
 async function createOpenAiEngines() {
+  console.log('add OpenAI')
   await prisma.engine.create({
     data: {
       ...fallbackEngineValues,
