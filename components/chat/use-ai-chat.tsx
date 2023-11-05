@@ -1,7 +1,7 @@
-import { sampleCode } from '@/components/chat/sample-data'
 import { ChatSession } from '@/components/chat/types'
 import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { EChatRequestSchema } from '@/lib/api/schemas'
+import { validateJsonRecord } from '@/lib/validators'
 import { Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
@@ -19,18 +19,19 @@ export function useAiChat(session: ChatSession, engine: Engine) {
 
   const body: EChatRequestSchema = {
     engineId: engine.id,
-    ...JSON.parse(engine.includeParameters),
   }
 
   if (engineInput) {
     const fieldsEnabled = engineInput.fieldsEnabled
-
     for (const field of fieldsEnabled) {
       if (!(field in engineInput)) continue
       const key = field as keyof typeof engineInput
       Object.assign(body, { [key]: engineInput[key] })
     }
   }
+
+  const includeParameters = validateJsonRecord(engine.includeParameters)
+  if (includeParameters) Object.assign(body, includeParameters)
 
   const requestConfig: UseChatOptions = {
     id: session.id,

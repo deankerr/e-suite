@@ -35,7 +35,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          String    @default("user") // access level
+  role          Role      @default(USER)
 
   accounts Account[]
   chatTabs ChatTab[]
@@ -49,6 +49,11 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model Engine {
   id                      String   @id
   type                    String // chat | completion | image ?
@@ -58,7 +63,7 @@ model Engine {
   // info
   displayName             String
   creatorName             String
-  releaseDate             DateTime
+  releaseDate             DateTime @default("1999-09-09T00:00:00+00:00")
   description             String
   url                     String
   license                 String
@@ -67,13 +72,13 @@ model Engine {
   contextLength           Int
   parameterSize           String // 7 | 13 | 70 etc billion
   promptFormat            String
-  stopTokens              String // string[]
+  stopTokens              String[] @default([])
   // host
   hostMaxCompletionTokens Int // host imposed maximum, same as contextLength if no limit
   priceInput              String // USD per 1k tokens
   priceOutput             String // can be Infinity/E notation etc.
 
-  includeParameters String // {model: 'gpt-4', stream: true} etc
+  includeParameters Json     @default("{}") // {model: 'gpt-4', stream: true} etc
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   available         Boolean  @default(true) // eg. taken down

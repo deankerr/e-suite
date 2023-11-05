@@ -1,28 +1,30 @@
 import fs from 'node:fs/promises'
 import { prisma } from '@/lib/prisma'
-import { Engine } from '@prisma/client'
+import { Engine, Prisma } from '@prisma/client'
 
-const fallbackEngineValues: Omit<Engine, 'providerId' | 'createdAt' | 'updatedAt'> = {
+type aaaa = Prisma.EngineCreateInput
+const fallbackEngineValues = {
   id: '',
   type: '',
   model: '',
   displayName: '',
   creatorName: '',
-  releaseDate: new Date('30 Dec 1999'),
+  releaseDate: new Date('1999-09-09T00:00:00+00:00'),
   description: '',
   url: '',
   license: '',
   licenseUrl: '',
-  contextLength: 1,
+  contextLength: 0,
   parameterSize: '',
   promptFormat: '',
-  stopTokens: JSON.stringify([]),
-  hostMaxCompletionTokens: 1,
+  hostMaxCompletionTokens: 0,
   priceInput: '',
   priceOutput: '',
-  includeParameters: JSON.stringify({}),
   available: true,
-}
+} satisfies Omit<
+  Engine,
+  'providerId' | 'createdAt' | 'updatedAt' | 'stopTokens' | 'includeParameters'
+>
 
 async function createOpenRouterEngines() {
   console.log('add OpenRouter')
@@ -48,7 +50,7 @@ async function createOpenRouterEngines() {
       hostMaxCompletionTokens: item.top_provider.max_completion_tokens,
       priceInput: item.pricing.prompt,
       priceOutput: item.pricing.completion,
-      includeParameters: JSON.stringify({ model: item.id, stream: true }),
+      includeParameters: { model: item.id, stream: true },
     })
 
     await prisma.engine.create({
@@ -62,7 +64,6 @@ async function createOpenRouterEngines() {
       },
     })
   }
-  console.log('done')
 }
 
 async function createTogetheraiEngines() {
@@ -90,11 +91,11 @@ async function createTogetheraiEngines() {
       contextLength: item.context_length ?? 1,
       parameterSize,
       promptFormat: item.config?.prompt_format ?? '',
-      stopTokens: JSON.stringify(item.config?.stop) ?? '[]',
+      stopTokens: item.config?.stop ?? [],
       hostMaxCompletionTokens: item.context_length ?? 1,
       priceInput: nanodollarsToDollars(item.pricing.input).toString(),
       priceOutput: nanodollarsToDollars(item.pricing.output).toString(),
-      includeParameters: JSON.stringify({ model: item.name, stream_tokens: false }),
+      includeParameters: { model: item.name, stream_tokens: false },
     })
 
     await prisma.engine.create({
@@ -116,7 +117,7 @@ const openaiCommon = {
   license: 'OpenAI',
   licenseUrl: 'https://openai.com',
   promptFormat: '',
-  stopTokens: JSON.stringify([]),
+  stopTokens: [],
   type: 'chat',
   providerId: 'openai',
 }
@@ -138,7 +139,7 @@ async function createOpenAiEngines() {
       hostMaxCompletionTokens: 4097,
       priceInput: '0.0015',
       priceOutput: '0.002',
-      includeParameters: JSON.stringify({ model: 'gpt-3.5-turbo', stream: true }),
+      includeParameters: { model: 'gpt-3.5-turbo', stream: true },
     },
   })
 
@@ -157,7 +158,7 @@ async function createOpenAiEngines() {
       hostMaxCompletionTokens: 16_385,
       priceInput: '0.003',
       priceOutput: '0.004',
-      includeParameters: JSON.stringify({ model: 'gpt-3.5-turbo-16k', stream: true }),
+      includeParameters: { model: 'gpt-3.5-turbo-16k', stream: true },
     },
   })
 
@@ -177,7 +178,7 @@ async function createOpenAiEngines() {
       hostMaxCompletionTokens: 4097,
       priceInput: '0.0015',
       priceOutput: '0.002',
-      includeParameters: JSON.stringify({ model: 'gpt-3.5-turbo-instruct', stream: true }),
+      includeParameters: { model: 'gpt-3.5-turbo-instruct', stream: true },
     },
   })
 
@@ -196,7 +197,7 @@ async function createOpenAiEngines() {
       hostMaxCompletionTokens: 8192,
       priceInput: '0.03',
       priceOutput: '0.06',
-      includeParameters: JSON.stringify({ model: 'gpt-4', stream: true }),
+      includeParameters: { model: 'gpt-4', stream: true },
     },
   })
 
@@ -214,7 +215,7 @@ async function createOpenAiEngines() {
       hostMaxCompletionTokens: 32_768,
       priceInput: '0.06',
       priceOutput: '0.12',
-      includeParameters: JSON.stringify({ model: 'gpt-4-32k', stream: true }),
+      includeParameters: { model: 'gpt-4-32k', stream: true },
     },
   })
 }
