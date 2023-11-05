@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 21200",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "types": "tsc --noEmit",
-    "migrate": "prisma migrate",
-    "db": "prisma db",
-    "generate": "prisma generate",
-    "studio": "prisma studio"
+    "postinstall": "prisma generate",
+    "ts": "tsc --noEmit",
+    "db:mig": "prisma migrate dev --name",
+    "db:push": "prisma db push && prisma generate",
+    "db:seed": "prisma db seed",
+    "db:gen": "prisma generate",
+    "db:studio": "prisma studio"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
