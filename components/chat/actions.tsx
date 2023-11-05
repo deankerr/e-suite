@@ -10,7 +10,7 @@ export async function createChatTab(userId: string) {
   let n = 1
   while (n++) if (tabs.every((t) => t.slug !== `Untitled-${n}`)) break
 
-  await prisma.chatTab.create({
+  const newTab = await prisma.chatTab.create({
     data: {
       slug: `Untitled-${n}`,
       user: {
@@ -21,6 +21,7 @@ export async function createChatTab(userId: string) {
     },
   })
   revalidatePath('/')
+  return newTab
 }
 
 export async function deleteChatTab(chatTabId: string) {

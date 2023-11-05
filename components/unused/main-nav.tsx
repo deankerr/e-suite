@@ -1,15 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { siteConfig } from '@/config/site'
-import { serverSession } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 import { AvatarIcon, ChatBubbleIcon, IdCardIcon, ImageIcon } from '@radix-ui/react-icons'
-import { SignInOutButton } from './sign-in-out-button'
+import { SignInOutButton } from '../sign-in-out-button'
 import { TabLink } from './tab-link'
 
 export async function MainNav({ className }: React.HTMLAttributes<HTMLDivElement>) {
-  const session = await serverSession()
-
   const tabs = [
     { route: 'chat', label: 'Chat', icon: <ChatBubbleIcon /> },
     { route: '/', label: 'e', icon: <ImageIcon /> },

@@ -8,11 +8,11 @@ import { cn } from '@/lib/utils'
 import { Cross1Icon, DotFilledIcon, PlusIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { redirect, useRouter, useSelectedLayoutSegment } from 'next/navigation'
-import { useOptimistic, useRef, useState, useTransition } from 'react'
+import { useOptimistic, useState, useTransition } from 'react'
 import { Button } from '../ui/button'
 import { createChatTab, deleteChatTab, renameChatTab } from './actions'
 
-export function TabBar({ user }: { user: User }) {
+export function TabBar({ user }: { user?: User }) {
   const router = useRouter()
   let [isPending, startTransition] = useTransition()
   const segment = useSelectedLayoutSegment()

@@ -1,18 +1,15 @@
-import { auth } from '@/auth'
 import { TabButton } from '@/components/chat/tab-button'
 import { TabInfo } from '@/components/chat/tab-info'
-import { getUserAndChatTab } from '@/lib/db'
+import { authServerProtected } from '@/lib/db'
 
 export default async function ChatTabLayout({
   params,
   children,
 }: {
-  params: { tab: string }
+  params: { slug: string }
   children: React.ReactNode
 }) {
-  const session = await auth()
-
-  const { user, chatTab } = await getUserAndChatTab(session?.user.id, params.tab)
+  const { chatTab } = await authServerProtected({ chatTabSlug: params.slug })
 
   return (
     <main className="grid grid-rows-[minmax(5rem,auto)_1fr] overflow-hidden">
