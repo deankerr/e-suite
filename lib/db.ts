@@ -57,8 +57,8 @@ export async function getUserSession(session: Session) {
 }
 
 export async function getEngines() {
+  console.log('get all engines')
   const engines = await prisma.engine.findMany({ include: { provider: true } })
-  // return engines.map((e) => ({...e, createdAt: e.createdAt.toISOString(), updatedAt: e.updatedAt.toISOString() }))
   return engines.map((e) => ({
     ...e,
     stopTokens: JSON.parse(e.stopTokens) as string[],

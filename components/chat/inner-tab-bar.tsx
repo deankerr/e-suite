@@ -15,7 +15,7 @@ export function InnerTabBar({ chatTab }: { chatTab?: ChatTab }) {
   const segment = useSelectedLayoutSegment()
 
   if (!chatTab) return null
-  console.log('inner tab seg', segment)
+
   const subTabs = chatTab.engineId ? subTabsList : [{ title: 'Models', path: '/models' }]
 
   return (
@@ -29,7 +29,7 @@ export function InnerTabBar({ chatTab }: { chatTab?: ChatTab }) {
             t.path === segment &&
               'border-b-2 border-primary font-medium text-foreground opacity-100',
           )}
-          href={t.path}
+          href={`/${chatTab.slug}/${t.path}`}
         >
           {t.title}
         </Link>
