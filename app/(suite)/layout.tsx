@@ -6,10 +6,13 @@ import { MainStatusBar } from '@/components/main-status-bar'
 
 export default async function SuiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid h-full grid-rows-[3rem_1fr_2.75rem]">
-      <MainHeader />
-      {children}
-      <MainStatusBar />
-    </div>
+    <>
+      <div className="grid h-full grid-rows-[3rem_auto_2.75rem] overflow-hidden">
+        <MainHeader />
+        {children}
+        <MainStatusBar />
+      </div>
+      {/* <div className="absolute inset-0 grid grid-rows-6">gupm</div> */}
+    </>
   )
 }
