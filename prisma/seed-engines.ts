@@ -2,7 +2,6 @@ import fs from 'node:fs/promises'
 import { prisma } from '@/lib/prisma'
 import { Engine, Prisma } from '@prisma/client'
 
-type aaaa = Prisma.EngineCreateInput
 const fallbackEngineValues = {
   id: '',
   type: '',

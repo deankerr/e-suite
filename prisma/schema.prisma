@@ -73,7 +73,8 @@ model Agent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String @default("Untitled")
+  name  String @default("Untitled")
+  image String @default("")
 
   engine     Engine @relation(fields: [engineId], references: [id])
   engineId   String

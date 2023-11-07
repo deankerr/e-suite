@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { seedAgents } from './seed-agents'
 import { seedEngineData } from './seed-engines'
 
 const prisma = new PrismaClient()
@@ -58,4 +59,11 @@ async function main() {
   await seedEngineData()
 }
 
-await main()
+const env = process.env.SEED
+
+if (!env) {
+  console.error('no SEED env provided')
+}
+
+if (env === 'engines') await main()
+if (env === 'agents') await seedAgents()
