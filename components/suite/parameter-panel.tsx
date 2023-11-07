@@ -21,7 +21,7 @@ export function ParameterPanel({ className }: React.ComponentProps<'div'>) {
 function ParamPresetSelectDemo() {
   //
   return (
-    <div className="flex justify-between gap-1 rounded-md border">
+    <div className="flex justify-between gap-1">
       <Select>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Select Preset" />

@@ -6,11 +6,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 import { Button } from '../ui/button'
 
 export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
   return (
-    <div className={cn('grid grid-rows-[1fr_auto] border-b', className)}>
+    <div className={cn('grid grid-cols-[1fr_auto] items-center', className)}>
       <div className="flex flex-col gap-2">
         <div className="flex min-h-[2rem] items-center text-sm">
           Agent: Horus Model: OpenAI: GPT-3.5 Turbo Instruct Status: Online
@@ -25,6 +26,9 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
         <div className="flex min-h-[2rem] items-center text-xs">
           Agent: Horus Model: OpenAI: GPT-3.5 Turbo Instruct Status: Online
         </div>
+      </div>
+      <div className="px-6">
+        <Image src="/mock_dp.png" alt="mock dp" width={200} height={200} className="" />
       </div>
     </div>
   )

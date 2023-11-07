@@ -6,13 +6,15 @@ import {
   RocketIcon,
   StarFilledIcon,
 } from '@radix-ui/react-icons'
+import { Session } from 'next-auth/types'
+import Link from 'next/link'
+import { SignInOutButton } from '../sign-in-out-button'
+import { ThemeToggle } from '../ui/theme-toggle'
 
 export function AppSidebarList({ className }: React.ComponentProps<'div'>) {
   return (
-    <div className={cn('grid grid-rows-[4rem_7rem_auto] border-2 border-r', className)}>
-      <div></div>
-      <div className="border-y"></div>
-      <div className="p-3">
+    <div className={cn('flex flex-col justify-between pb-4', className)}>
+      <div className="grow p-3">
         <h6>
           <CaretDownIcon className="inline" /> Active
         </h6>

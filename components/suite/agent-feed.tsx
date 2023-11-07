@@ -6,7 +6,8 @@ export function AgentFeed({ className }: React.ComponentProps<'div'>) {
   const isStreaming = false
   const isWaiting = false
 
-  const msg = sampleMessages.slice()
+  // const msg = sampleMessages.slice(0, 1)
+  const msg = sampleMessages
 
   return (
     <div className={cn('space-y-4', className)}>
