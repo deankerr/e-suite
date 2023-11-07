@@ -9,15 +9,11 @@ export function SignInOutButton({ session }: { session: Session | null }) {
   const [userFirstName] = session?.user?.name ? session.user.name.split(' ') : ''
 
   return session ? (
-    <Button
-      variant="outline"
-      className="flex items-center gap-2 font-mono"
-      onClick={() => signOut()}
-    >
+    <Button variant="outline" className="flex items-center gap-2" onClick={() => signOut()}>
       {userFirstName}
       <Avatar>
         <AvatarImage src={session.user?.image ?? ''} alt="avatar" />
-        <AvatarFallback>e</AvatarFallback>
+        <AvatarFallback>e?</AvatarFallback>
       </Avatar>
     </Button>
   ) : (

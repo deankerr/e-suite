@@ -75,15 +75,22 @@ const defaultInput: EngineInput = {
   stop_token: [],
 }
 
-export function EngineInputControls({
-  chatSession,
-  engine,
-  className,
-}: {
-  chatSession: ChatSession
-  engine: Engine
-} & React.ComponentProps<'div'>) {
-  const [session, setSession] = useImmer(chatSession)
+const temp_chatSession = {
+  id: 'temp123' as const,
+  name: 'Temp',
+  engineId: 'temp-engine',
+  engineInput: {} as Record<string, EngineInput>,
+}
+
+const labelClass = 'font-mono text-sm'
+
+export function EngineInputControls({ className }: {} & React.ComponentProps<'div'>) {
+  const [session, setSession] = useImmer(temp_chatSession)
+
+  const engine = {
+    id: 'temp-engine-id',
+    providerId: 'openai',
+  }
 
   const inputs: EngineInput = {
     ...defaultInput,
@@ -116,12 +123,12 @@ export function EngineInputControls({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('space-y-8', className)}>
       {sliderInputKeys.map((key) => {
         if (inputKeys.includes(key) && schemaKeys.includes(key)) {
           return (
             <div key={key}>
-              <div className="font-mono text-sm">
+              <div className={labelClass}>
                 <Switch
                   checked={inputs.fieldsEnabled.includes(key)}
                   onCheckedChange={(value) => setFieldEnabled(key, value)}
@@ -142,7 +149,7 @@ export function EngineInputControls({
         if (inputKeys.includes(key) && schemaKeys.includes(key)) {
           return (
             <div key={key} className="grid grid-cols-[auto_1fr] items-center gap-x-2">
-              <div className="font-mono text-sm">
+              <div className={labelClass}>
                 <Switch
                   checked={inputs.fieldsEnabled.includes(key)}
                   onCheckedChange={(value) => setFieldEnabled(key, value)}

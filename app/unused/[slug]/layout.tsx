@@ -1,6 +1,12 @@
 import { InnerTabBar } from '@/components/chat/inner-tab-bar'
 import { authServerProtected } from '@/lib/db'
 
+/* 
+  ^ [slug] layout
+  & protected
+  TODO deprecated 
+*/
+
 export default async function ChatTabLayout({
   params,
   children,

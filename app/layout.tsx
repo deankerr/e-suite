@@ -1,5 +1,5 @@
-import { ThemeProvider } from '@/components/util/theme-provider'
 import './globals.css'
+import { Providers } from '@/components/util/providers'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
@@ -17,16 +17,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className="h-full overflow-hidden overscroll-none" suppressHydrationWarning>
       <body className={`${inter.className} h-full`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <Providers>
           {children}
           <Toaster richColors />
           <TailwindBreakpointIndicator />
-        </ThemeProvider>
+        </Providers>
         {process.env.NODE_ENV !== 'development' && <Analytics />}
       </body>
     </html>

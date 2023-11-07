@@ -1,36 +1,22 @@
 import { auth } from '@/auth'
-import { createChatTab } from '@/components/chat/actions'
-import { authServerPublic, getUserSession } from '@/lib/db'
+import { MainContent } from '@/components/main-content'
+import { PrePrint } from '@/components/util/pre-print'
+import Link from 'next/link'
 
-export default async function SuiteIndexPage() {
-  const { session, user } = await authServerPublic()
+//#   (suite) page / home page
+//*   public
 
-  if (!session || !user)
-    return (
-      <div>
-        <p>Consider logging in to improve your e/suite experience.</p>
-        <PrePrint>{session}</PrePrint>
-      </div>
-    )
-
-  if (user.chatTabs.length === 0) {
-    console.log('creating initial tab')
-    const newTab = await createChatTab(user.id)
-  }
+export default async function LandingPage() {
+  const session = await auth()
 
   return (
-    <div>
-      <h1>
-        Welcome, <span className="font-mono">{user.name}</span>
-      </h1>
-      <p>
-        You are my favourite <span className="font-mono">{user.role}.</span>
-      </p>
-      <PrePrint>{session}</PrePrint>
-    </div>
+    <>
+      <MainContent className="flex flex-col items-center justify-center space-y-4">
+        <Link href="/e" className="text-center text-9xl font-semibold">
+          e
+        </Link>
+        <PrePrint title="session">{session}</PrePrint>
+      </MainContent>
+    </>
   )
-}
-
-function PrePrint({ children }: { children: any }) {
-  return <pre className="overflow-x-auto text-sm">{JSON.stringify(children, null, 2)}</pre>
 }

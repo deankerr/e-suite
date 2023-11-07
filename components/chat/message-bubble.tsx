@@ -42,7 +42,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, Props>(function MessageB
     <div ref={ref} className={cn('grid place-content-center', variants.container(key))}>
       <div
         className={cn(
-          'prose prose-stone col-start-2 overflow-hidden rounded-lg px-3 py-2 dark:prose-invert',
+          'prose prose-stone col-start-2 overflow-hidden rounded-lg px-3 py-2 text-sm dark:prose-invert',
           variants.content(key),
           loading && '[&>_:last-child:not(pre)]:after:inline-loading-ball',
         )}

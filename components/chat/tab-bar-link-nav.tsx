@@ -12,10 +12,9 @@ import { useOptimistic, useState, useTransition } from 'react'
 import { Button } from '../ui/button'
 import { createChatTab, deleteChatTab, renameChatTab } from './actions'
 
-export function TabBar({ user }: { user?: User }) {
+export function TabBarLinkNav({ user }: { user?: User }) {
   const router = useRouter()
   let [isPending, startTransition] = useTransition()
-  const segment = useSelectedLayoutSegment()
 
   const chatTabs = user?.chatTabs ?? []
   const [optimisticChatTabs, modifyOptimisticChatTabs] = useOptimistic<ChatTab[], string | void>(
@@ -45,11 +44,12 @@ export function TabBar({ user }: { user?: User }) {
       {optimisticChatTabs
         .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
         .map((t) => {
-          const isActive = t.slug === segment
+          // const isActive = t.slug === segment
+          const isActive = true
           return (
             <Link
               key={t.id}
-              href={`/${t.slug}`}
+              href={`/e/${t.slug}`}
               className={cn(
                 'group flex h-full w-full max-w-[12rem] items-center border-t-primary bg-muted text-sm font-medium',
                 isActive
@@ -70,7 +70,7 @@ export function TabBar({ user }: { user?: User }) {
                   currentTitle={t.title}
                   onClose={(title) =>
                     startTransition(() =>
-                      renameChatTab(t.id, title).then((newSlug) => redirect(`/${newSlug}`)),
+                      renameChatTab(t.id, title).then((newSlug) => router.refresh()),
                     )
                   }
                 >
