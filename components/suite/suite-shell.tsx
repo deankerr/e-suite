@@ -32,11 +32,11 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
       {/* SuiteRail */}
-      <div className="flex flex-col border-r p-3">
-        <SuiteAppTitle />
-        <SuiteRailList className="grow" uid={session.user.id} />
-        <ThemeToggle />
-        <div className="flex justify-center gap-4">
+      <div className="flex flex-col border-r">
+        <SuiteAppTitle className="h-12 border-b" />
+        <SuiteRailList className="grow px-2 py-4" />
+        <div className="flex justify-around px-2 py-4">
+          <ThemeToggle />
           <SignInOutButton session={session} />
         </div>
       </div>
@@ -68,7 +68,7 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
 
 function SuiteAppTitle({ className }: React.ComponentProps<'div'>) {
   return (
-    <div className={cn('', className)}>
+    <div className={cn('flex items-center justify-center', className)}>
       <Link
         className="inline-flex items-center justify-center gap-1.5 font-semibold tracking-tight"
         href="/"

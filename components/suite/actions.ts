@@ -14,9 +14,35 @@ async function getUserSession() {
   return session.user
 }
 
+// TODO remove this
 export async function getUser(userId: string) {
   const user = await db.getUser(userId)
   return user
+}
+
+export async function getUserAgents() {
+  try {
+    const user = await getUserSession()
+
+    const userAgents = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        agents: true,
+      },
+    })
+
+    if (!userAgents) throw new Error('You are not logged in.')
+
+    return userAgents.agents
+  } catch (err) {
+    if (err instanceof Error) {
+      // TODO handle error
+      console.error(err)
+    } else {
+      console.error(err)
+    }
+    throw err
+  }
 }
 
 export async function getAgent(agentId: string) {

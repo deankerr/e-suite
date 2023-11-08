@@ -37,7 +37,7 @@ export function AgentDetailPanel({
     isPlaceholderData,
   } = useQuery({
     queryKey: ['agent', agentId],
-    queryFn: () => getAgent(agentId),
+    queryFn: () => (agentId ? getAgent(agentId) : placeholderAgent),
     placeholderData: placeholderAgent,
   })
 
