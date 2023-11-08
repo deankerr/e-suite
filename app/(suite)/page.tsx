@@ -1,5 +1,6 @@
 import { auth } from '@/auth'
 import { MainContent } from '@/components/main-content'
+import { MainHeader } from '@/components/main-header'
 import { PrePrint } from '@/components/util/pre-print'
 import Link from 'next/link'
 
@@ -11,6 +12,7 @@ export default async function LandingPage() {
 
   return (
     <>
+      <MainHeader />
       <MainContent className="flex flex-col items-center justify-center space-y-4">
         <Link href="/e" className="text-center text-9xl font-semibold">
           e

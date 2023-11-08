@@ -11,9 +11,9 @@ import Link from 'next/link'
 import { SignInOutButton } from '../sign-in-out-button'
 import { ThemeToggle } from '../ui/theme-toggle'
 
-export function AppSidebarList({ className }: React.ComponentProps<'div'>) {
+export function SuiteRailList({ uid, className }: { uid: string } & React.ComponentProps<'div'>) {
   return (
-    <div className={cn('flex flex-col justify-between pb-4', className)}>
+    <div className={cn('flex flex-col justify-between', className)}>
       <div className="grow p-3">
         <h6>
           <CaretDownIcon className="inline" /> Active

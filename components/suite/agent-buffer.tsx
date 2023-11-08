@@ -3,7 +3,7 @@ import { MessageBar } from '../chat/message-bar'
 import { MessageBubble } from '../chat/message-bubble'
 import { sampleMessages } from '../chat/sample-data'
 
-export function Feed({ className }: {} & React.ComponentProps<'div'>) {
+export function AgentBuffer({ className }: {} & React.ComponentProps<'div'>) {
   // const requestStatus: ReqStat = 'idle'
   const isStreaming = false
   const isWaiting = false

@@ -2,15 +2,20 @@
 
 import { cn } from '@/lib/utils'
 import { Cross1Icon, DotFilledIcon, PlusIcon } from '@radix-ui/react-icons'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '../ui/button'
+import { getUser } from './actions'
 
-export function TabBar({}: {}) {
+export function SuiteTabBar({ uid, className }: { uid: string } & React.ComponentProps<'div'>) {
+  const { data, error, isFetched } = useQuery({
+    queryKey: ['user'],
+    queryFn: () => getUser(uid),
+  })
+
   return (
-    <div className="flex items-center overflow-x-auto bg-muted/50">
-      <Tab title="Artemis" isActive={true} />
-      <Tab title="Charon" isActive={false} />
-      <Tab title="Dionysus" isActive={false} />
-      <Tab title="Piñata" isActive={false} />
+    <div className={cn('flex items-center overflow-x-auto bg-muted/50', className)}>
+      {data?.agents.map((a) => <Tab key={a.id} title={a.name} isActive={false} />)}
+
       <Button variant="ghost" className="h-full rounded-none px-1 hover:text-primary">
         <PlusIcon width={20} height={20} />
       </Button>

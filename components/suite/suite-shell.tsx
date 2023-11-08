@@ -1,37 +1,45 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { User } from '@prisma/client'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
+import { useQuery } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import Link from 'next/link'
 import { MainStatusBar } from '../main-status-bar'
 import { SignInOutButton } from '../sign-in-out-button'
 import { ThemeToggle } from '../ui/theme-toggle'
+import { getUser } from './actions'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { AgentFeed } from './agent-feed'
 import { AgentTabBar } from './agent-tab-bar'
-import { AppSidebarList } from './app-sidebar-list'
-import { AppTabBar } from './app-tab-bar'
 import { ParameterPanel } from './parameter-panel'
+import { SuiteRailList } from './suite-rail-list'
+import { SuiteTabBar } from './suite-tab-bar'
 
-export function AppShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
+export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
+  const { data, error, isFetched } = useQuery({
+    queryKey: ['user'],
+    queryFn: () => getUser(session.user.id),
+  })
+
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
       {/* SuiteRail */}
       <div className="flex flex-col border-r p-3">
-        <MainAppTitle />
-        <AppSidebarList />
+        <SuiteAppTitle />
+        <SuiteRailList className="grow" uid={session.user.id} />
         <div className="flex justify-center gap-4">
-          <SignInOutButton session={session} />
           <ThemeToggle />
+          <SignInOutButton session={session} />
         </div>
       </div>
 
       {/* SuiteMain */}
       <div className="grid grid-rows-[auto_1fr] overflow-hidden">
         <div className="">
-          <AppTabBar className="h-12" />
-          <AgentDetailPanel className="p-6" />
+          <SuiteTabBar className="h-12" uid={session.user.id} />
+          <AgentDetailPanel className="p-6" uid={session.user.id} />
           <AgentTabBar className="" />
         </div>
 
@@ -46,10 +54,8 @@ export function AppShell({ session }: { session: Session } & React.ComponentProp
     </div>
   )
 }
-{
-}
 
-function MainAppTitle({ className }: React.ComponentProps<'div'>) {
+function SuiteAppTitle({ className }: React.ComponentProps<'div'>) {
   return (
     <div className={cn('', className)}>
       <Link

@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 
 export function AgentTabBar({ className }: React.ComponentProps<'div'>) {
   return (
-    <div className={cn('h-full overflow-x-auto border-b', className)}>
+    <div className={cn('overflow-x-auto border-b', className)}>
       <div
         className={cn(
           'inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
