@@ -8,34 +8,65 @@ import {
 import { cn } from '@/lib/utils'
 import type { Agent } from '@prisma/client'
 import { useQuery } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { toast } from 'sonner'
 import { Button } from '../ui/button'
+import { Loading } from '../ui/loading'
 import { getAgent } from './actions'
+
+const placeholderAgent: Agent = {
+  id: 'id-placeholder-agent',
+  name: 'Agent',
+  image: 'dp0.png',
+  ownerId: 'id-placeholder-owner',
+  engineId: 'id-placeholder-engine',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  parameters: {},
+}
 
 export function AgentDetailPanel({
   agentId,
   className,
-}: { agentId?: string } & React.ComponentProps<'div'>) {
-  const { data, error, isFetched, status, fetchStatus } = useQuery({
+}: { agentId: string } & React.ComponentProps<'div'>) {
+  const {
+    data: agent,
+    error,
+    isPending,
+    isError,
+    isPlaceholderData,
+  } = useQuery({
     queryKey: ['agent', agentId],
-    queryFn: () => (agentId ? getAgent(agentId) : null),
+    queryFn: () => getAgent(agentId),
+    placeholderData: placeholderAgent,
   })
 
-  const agent = data
-  const imageSrc = agent?.image ? `/${agent.image}` : ''
-  const debugString = agent ? `${agent.id} ${agent.name} ${agent.engineId}` : 'no agent selected'
+  if (isError) {
+    toast.error(error.message)
+  }
+
+  const debugString = error
+    ? `Error: ${'error.message'}`
+    : agent
+    ? `${agent.id} ${agent.name} ${agent.engineId}`
+    : 'no agent selected'
+
+  const image = isPlaceholderData ? (
+    <Loading />
+  ) : agent?.image ? (
+    <Image src={`/${agent.image}`} alt="agent avatar" width={200} height={200} className="h-auto" />
+  ) : (
+    <div className="w-[200px]" />
+  )
 
   return (
     <div className={cn('grid grid-cols-[1fr_auto] items-center', className)}>
       <div className="flex flex-col gap-2">
-        <div className="flex min-h-[2rem] items-center text-sm">
-          {data ? data.name : 'no agent selected'}
-          {error ? error.message : null}
+        <div className="min-h-[2rem] text-sm">
+          {isPlaceholderData ? <Loading /> : <p className="">{agent?.name}</p>}
         </div>
         <div className="space-x-2">
-          <ModelSelectDemo placeholder={data?.engineId} />
+          <ModelSelectDemo placeholder={agent?.engineId} />
           <Button variant="secondary">Rename</Button>
           <Button variant="default">Deploy</Button>
           <Button variant="outline">Edit</Button>
@@ -43,36 +74,10 @@ export function AgentDetailPanel({
         </div>
         <div className="flex min-h-[2rem] items-center text-xs">{debugString}</div>
       </div>
-      <div className="px-6">
-        <Image src={imageSrc} alt="agent avatar" width={200} height={200} className="" />
-      </div>
+      <div className="px-6">{image}</div>
     </div>
   )
 }
-
-/* 
-<div className={cn('grid grid-cols-[1fr_auto] items-center', className)}>
-      <div className="flex flex-col gap-2">
-        <div className="flex min-h-[2rem] items-center text-sm">
-          Agent: Horus Model: OpenAI: GPT-3.5 Turbo Instruct Status: Online Agent: {} Model: OpenAI:
-          GPT-3.5 Turbo Instruct Status: Online
-        </div>
-        <div className="space-x-2">
-          <ModelSelectDemo />
-          <Button variant="secondary">Rename</Button>
-          <Button variant="default">Deploy</Button>
-          <Button variant="outline">Edit</Button>
-          <Button variant="destructive">Delete</Button>
-        </div>
-        <div className="flex min-h-[2rem] items-center text-xs">
-          Agent: Horus Model: OpenAI: GPT-3.5 Turbo Instruct Status: Online
-        </div>
-      </div>
-      <div className="px-6">
-        <Image src="/mock_dp.png" alt="mock dp" width={200} height={200} className="" />
-      </div>
-    </div>
-*/
 
 function ModelSelectDemo({ placeholder }: { placeholder?: string }) {
   //
