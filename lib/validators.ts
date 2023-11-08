@@ -15,3 +15,27 @@ export function validateJsonRecord(jsonValue: Prisma.JsonValue) {
     return result.data
   }
 }
+
+export function validateUserWorkbench(data: unknown) {
+  const workbench = workbenchSchema.safeParse(data)
+  if (workbench.success) {
+    return workbench.data
+  } else {
+    console.error(fromZodError(workbench.error))
+    return {
+      tabs: [],
+      tabBar: [],
+    }
+  }
+}
+
+const workbenchSchema = z.object({
+  tabs: z.array(
+    z.object({
+      id: z.string(), // tabId
+      agentId: z.string(), // TODO no agent/new tab etc.
+      focused: z.boolean(),
+    }),
+  ),
+  tabBar: z.string().array(), // tabIds
+})

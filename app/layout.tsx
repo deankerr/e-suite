@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import './globals.css'
 import { Providers } from '@/components/util/providers'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
@@ -14,10 +15,11 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth()
   return (
     <html lang="en" className="h-full overflow-hidden overscroll-none" suppressHydrationWarning>
       <body className={`${inter.className} h-full`}>
-        <Providers>
+        <Providers session={session}>
           {children}
           <Toaster richColors />
           <TailwindBreakpointIndicator />

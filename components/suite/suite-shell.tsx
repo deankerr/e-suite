@@ -6,6 +6,7 @@ import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import Link from 'next/link'
+import { useState } from 'react'
 import { MainStatusBar } from '../main-status-bar'
 import { SignInOutButton } from '../sign-in-out-button'
 import { ThemeToggle } from '../ui/theme-toggle'
@@ -23,14 +24,19 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
     queryFn: () => getUser(session.user.id),
   })
 
+  //& separate user / agents / workbench?
+
+  //! currently tab = agentId
+  const [activeTab, setActiveTab] = useState('')
+
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
       {/* SuiteRail */}
       <div className="flex flex-col border-r p-3">
         <SuiteAppTitle />
         <SuiteRailList className="grow" uid={session.user.id} />
+        <ThemeToggle />
         <div className="flex justify-center gap-4">
-          <ThemeToggle />
           <SignInOutButton session={session} />
         </div>
       </div>
@@ -38,8 +44,13 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
       {/* SuiteMain */}
       <div className="grid grid-rows-[auto_1fr] overflow-hidden">
         <div className="">
-          <SuiteTabBar className="h-12" uid={session.user.id} />
-          <AgentDetailPanel className="p-6" uid={session.user.id} />
+          <SuiteTabBar
+            className="h-12"
+            uid={session.user.id}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+          <AgentDetailPanel className="p-6" agentId={activeTab} />
           <AgentTabBar className="" />
         </div>
 
