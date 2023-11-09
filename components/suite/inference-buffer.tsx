@@ -32,26 +32,18 @@ export function InferenceBuffer({
     )
 
   //& temp
-  const isStreaming = false
-  const isWaiting = false
-
-  const debugInfo = (
-    <div className="font-mono text-xs">
-      {'InferenceBuffer ' + (agent ? `${chatId} ${agent?.id} ${agent?.engineId}` : 'no agent')}
-    </div>
-  )
+  const isWaiting = chat.isLoading && !chat.streamingId
 
   return (
     <div className={cn('relative overflow-y-auto', className)}>
       <div className={cn('min-h-[80%] space-y-4 p-4', className)}>
-        {debugInfo}
         {isPending && <Loading />}
 
         {chat.messages.map((m) => (
           <MessageBubble
             variant={m.role}
             content={m.content}
-            loading={chat.messages.at(-1)?.id === m.id && isStreaming}
+            loading={chat.streamingId === m.id}
             key={m.id}
           />
         ))}

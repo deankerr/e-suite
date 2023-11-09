@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import { Loading } from '../ui/loading'
 import { getSuiteUser } from './actions'
 
@@ -29,20 +30,14 @@ export function AgentDetailPanel({
 
   const agent = user?.agents.find((a) => a.id === agentId)
 
-  const debugInfo = (
-    <div className="font-mono text-xs">AgentDetail {agent?.id ?? 'no agent selected'}</div>
-  )
-
   return (
     <div className={cn('', className)}>
-      {debugInfo}
       {agent ? (
         <div className="grid grid-cols-[1fr_auto] rounded-md border">
           <div className="space-y-4 p-6">
-            <h3 className="text-lg font-semibold leading-none">
-              {isPending && <Loading />}
-              {agent.name}
-            </h3>
+            {isPending && <Loading />}
+            <h3 className="text-lg font-semibold leading-none">{agent.name}</h3>
+            <Input defaultValue={agent.name} />
             <div className="font-mono text-xs">
               ID: {agent.id} Created: {agent.createdAt.toLocaleDateString()}{' '}
               {agent.createdAt.toLocaleTimeString()}

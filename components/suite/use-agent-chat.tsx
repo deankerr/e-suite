@@ -42,9 +42,14 @@ export function useAgentChat(chatId: string, agent: (Agent & { engine: Engine })
     },
   })
 
+  const streamingId =
+    chat.isLoading && chat.messages.at(-1)?.role === 'assistant'
+      ? chat.messages.at(-1)?.id
+      : undefined
+
   const submitUserMessage = (content: string) => {
     chat.append({ role: 'user', content })
   }
 
-  return { ...chat, submitUserMessage }
+  return { ...chat, submitUserMessage, streamingId }
 }
