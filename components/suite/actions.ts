@@ -21,3 +21,17 @@ export async function getSuiteUser() {
     throw new Error('Failed to get current user')
   }
 }
+
+export async function renameAgent(agentId: string, name: string) {
+  console.log('<renameAgent>')
+  const user = await getUserSession()
+
+  if (name === '') throw new Error('Name cannot be blank.')
+
+  try {
+    return await db.updateUserAgent(user.id, agentId, { name })
+  } catch (err) {
+    console.error(err)
+    throw new Error('An error occurred while renaming agent.')
+  }
+}

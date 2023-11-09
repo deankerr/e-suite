@@ -34,9 +34,22 @@ async function getSuiteUser(userId: string) {
   })
 }
 
+async function updateUserAgent(userId: string, agentId: string, { name }: { name: string }) {
+  await prisma.agent.update({
+    where: {
+      id: agentId,
+      ownerId: userId,
+    },
+    data: {
+      name,
+    },
+  })
+}
+
 export const db = {
   getUser,
   getSuiteUser,
+  updateUserAgent,
 }
 
 export type SuiteUser = Awaited<ReturnType<typeof getSuiteUser>>
