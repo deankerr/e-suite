@@ -9,23 +9,26 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { MainStatusBar } from '../main-status-bar'
 import { SignInOutButton } from '../sign-in-out-button'
+import { Loading } from '../ui/loading'
 import { ThemeToggle } from '../ui/theme-toggle'
-import { getUser } from './actions'
+import { getSuiteUser } from './actions'
 import { AgentDetailPanel } from './agent-detail-panel'
-import { AgentFeed } from './agent-feed'
 import { AgentTabBar } from './agent-tab-bar'
 import { InferenceBuffer } from './inference-buffer'
 import { ParameterPanel } from './parameter-panel'
 import { SuiteRailList } from './suite-rail-list'
+import { SuiteStatusBar } from './suite-status-bar'
 import { SuiteTabBar } from './suite-tab-bar'
 
 export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
-  const { data, error, isFetched } = useQuery({
-    queryKey: ['user'],
-    queryFn: () => getUser(session.user.id),
+  const {
+    data: user,
+    error,
+    isPending,
+  } = useQuery({
+    queryKey: ['suiteUser'],
+    queryFn: () => getSuiteUser(),
   })
-
-  //& separate user / agents / workbench?
 
   //! currently tab = agentId
   const [activeTab, setActiveTab] = useState('')
@@ -35,6 +38,7 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
       {/* SuiteRail */}
       <div className="flex flex-col border-r">
         <SuiteAppTitle className="h-12 border-b" />
+        <div className="pt-2 text-center font-mono text-sm">{user?.name}</div>
         <SuiteRailList className="grow px-2 py-4" />
         <div className="flex justify-around px-2 py-4">
           <ThemeToggle />
@@ -45,24 +49,25 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
       {/* SuiteMain */}
       <div className="grid grid-rows-[auto_1fr] overflow-hidden">
         <div className="">
-          <SuiteTabBar
-            className="h-12"
-            uid={session.user.id}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-          />
+          <SuiteTabBar className="h-12" activeTab={activeTab} setActiveTab={setActiveTab} />
           <AgentDetailPanel className="p-6" agentId={activeTab} />
           <AgentTabBar className="" />
         </div>
 
-        <div className="grid grid-flow-col overflow-hidden">
+        <div className="grid grid-cols-[60%_auto] overflow-hidden">
           <InferenceBuffer agentId={activeTab} />
           <ParameterPanel className="border-l" />
         </div>
       </div>
 
-      {/* SuiteStatus */}
-      <MainStatusBar className="col-span-full col-start-1" session={session} />
+      {/* SuiteStatusBar */}
+      <SuiteStatusBar className="col-span-full col-start-1">
+        <div>
+          {session.user.role} {session.user.id}
+        </div>
+        <div>{error && error.message}</div>
+        <div>{isPending && <Loading size="xs" />}</div>
+      </SuiteStatusBar>
     </div>
   )
 }

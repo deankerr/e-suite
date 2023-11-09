@@ -12,6 +12,7 @@ import { Button } from '../ui/button'
 export function ParameterPanel({ className }: React.ComponentProps<'div'>) {
   return (
     <div className={cn('space-y-6 overflow-y-auto p-6', className)}>
+      <div className="font-mono text-xs">ParameterPanel demo</div>
       <ParamPresetSelectDemo />
       <EngineInputControls />
     </div>

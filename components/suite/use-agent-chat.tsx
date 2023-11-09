@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent?: Agent & { engine: Engine }) {
+export function useAgentChat(chatId: string, agent: (Agent & { engine: Engine }) | null) {
   const initialMessages = agent
     ? [
         {

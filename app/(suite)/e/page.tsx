@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
-import { getUser } from '@/components/suite/actions'
 import { SuiteShell } from '@/components/suite/suite-shell'
+import { db } from '@/lib/db'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
 export default async function EPage() {
@@ -10,8 +10,8 @@ export default async function EPage() {
   const queryClient = new QueryClient()
 
   await queryClient.prefetchQuery({
-    queryKey: ['user'],
-    queryFn: () => getUser(session.user.id),
+    queryKey: ['suiteUser'],
+    queryFn: () => db.getSuiteUser(session.user.id),
   })
 
   return (

@@ -6,75 +6,62 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import type { Agent } from '@prisma/client'
 import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { Loading } from '../ui/loading'
-import { getAgent } from './actions'
-
-const placeholderAgent: Agent = {
-  id: 'id-placeholder-agent',
-  name: 'Agent',
-  image: 'dp10.png',
-  ownerId: 'id-placeholder-owner',
-  engineId: 'id-placeholder-engine',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  parameters: {},
-}
+import { getSuiteUser } from './actions'
 
 export function AgentDetailPanel({
   agentId,
   className,
 }: { agentId: string } & React.ComponentProps<'div'>) {
   const {
-    data: agent,
-    error,
+    data: user,
     isPending,
-    isError,
-    isPlaceholderData,
-  } = useQuery({
-    queryKey: ['agent', agentId],
-    queryFn: () => (agentId ? getAgent(agentId) : placeholderAgent),
-    placeholderData: placeholderAgent,
-  })
+    error,
+  } = useQuery({ queryKey: ['suiteUser'], queryFn: () => getSuiteUser() })
 
-  if (isError) {
+  if (error) {
     toast.error(error.message)
   }
 
-  const debugString = error
-    ? `Error: ${'error.message'}`
-    : agent
-    ? `${agent.id} ${agent.name} ${agent.engineId}`
-    : 'no agent selected'
+  const agent = user?.agents.find((a) => a.id === agentId)
 
-  const image = isPlaceholderData ? (
-    <Loading />
-  ) : agent?.image ? (
-    <Image src={`/${agent.image}`} alt="agent avatar" width={200} height={200} className="h-auto" />
-  ) : (
-    <div className="w-[200px]" />
+  const debugInfo = (
+    <div className="font-mono text-xs">AgentDetail {agent?.id ?? 'no agent selected'}</div>
   )
 
   return (
-    <div className={cn('grid grid-cols-[1fr_auto] items-center', className)}>
-      <div className="flex flex-col gap-2">
-        <div className="min-h-[2rem] text-sm">
-          {isPlaceholderData ? <Loading /> : <p className="">{agent?.name}</p>}
+    <div className={cn('', className)}>
+      {debugInfo}
+      {agent ? (
+        <div className="grid grid-cols-[1fr_auto] rounded-md border">
+          <div className="space-y-4 p-6">
+            <h3 className="text-lg font-semibold leading-none">
+              {isPending && <Loading />}
+              {agent.name}
+            </h3>
+            <div className="font-mono text-xs">
+              ID: {agent.id} Created: {agent.createdAt.toLocaleDateString()}{' '}
+              {agent.createdAt.toLocaleTimeString()}
+            </div>
+            {/* EngineCard */}
+            <div className="space-x-2">
+              <ModelSelectDemo placeholder={agent.engine.displayName} />
+              <Button variant="secondary">Rename</Button>
+              <Button variant="default">Deploy</Button>
+              <Button variant="outline">Edit</Button>
+              <Button variant="destructive">Delete</Button>
+            </div>
+          </div>
+
+          <div className="">
+            <Image src={`/${agent.image}`} alt="agent avatar" width={200} height={200} />
+          </div>
         </div>
-        <div className="space-x-2">
-          <ModelSelectDemo placeholder={agent?.engineId} />
-          <Button variant="secondary">Rename</Button>
-          <Button variant="default">Deploy</Button>
-          <Button variant="outline">Edit</Button>
-          <Button variant="destructive">Delete</Button>
-        </div>
-        <div className="flex min-h-[2rem] items-center text-xs">{debugString}</div>
-      </div>
-      <div className="px-6">{image}</div>
+      ) : null}
     </div>
   )
 }

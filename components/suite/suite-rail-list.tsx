@@ -1,41 +1,22 @@
 import { cn } from '@/lib/utils'
-import {
-  CaretDownIcon,
-  CaretRightIcon,
-  CircleIcon,
-  RocketIcon,
-  StarFilledIcon,
-} from '@radix-ui/react-icons'
+import { CaretDownIcon, CaretRightIcon } from '@radix-ui/react-icons'
 import { useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { Loading } from '../ui/loading'
-import { getUserAgents } from './actions'
+import { getSuiteUser } from './actions'
 
 export function SuiteRailList({ className }: {} & React.ComponentProps<'div'>) {
-  const agents = useQuery({
-    queryKey: ['agents'],
-    queryFn: () => getUserAgents(),
-  })
-
-  const availableList = agents.isError ? (
-    'error'
-  ) : agents.isPending ? (
-    <Loading icon="bars" />
-  ) : (
-    agents.data.map((a) => (
-      <li key={a.id} className="pl-6">
-        {a.name}
-      </li>
-    ))
-  )
-
-  if (agents.isError) toast.error(agents.error.message)
+  const {
+    data: user,
+    isPending,
+    error,
+  } = useQuery({ queryKey: ['suiteUser'], queryFn: () => getSuiteUser() })
 
   return (
     <div className={cn('space-y-4', className)}>
       <AgentList title="Active"></AgentList>
       <AgentList title="Available" open={true}>
-        {availableList}
+        {isPending && <Loading />}
+        {user && user.agents.map((a) => <li key={a.id}>{a.name}</li>)}
       </AgentList>
     </div>
   )
@@ -54,7 +35,7 @@ function AgentList({
         {icon}
         {title}
       </div>
-      <ul>{children}</ul>
+      <ul className="list-inside list-disc px-2">{children}</ul>
     </div>
   )
 }
