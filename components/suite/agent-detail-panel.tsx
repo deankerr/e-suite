@@ -17,7 +17,7 @@ import { getAgent } from './actions'
 const placeholderAgent: Agent = {
   id: 'id-placeholder-agent',
   name: 'Agent',
-  image: 'dp0.png',
+  image: 'dp10.png',
   ownerId: 'id-placeholder-owner',
   engineId: 'id-placeholder-engine',
   createdAt: new Date(),

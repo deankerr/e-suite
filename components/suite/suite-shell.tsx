@@ -14,6 +14,7 @@ import { getUser } from './actions'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { AgentFeed } from './agent-feed'
 import { AgentTabBar } from './agent-tab-bar'
+import { InferenceBuffer } from './inference-buffer'
 import { ParameterPanel } from './parameter-panel'
 import { SuiteRailList } from './suite-rail-list'
 import { SuiteTabBar } from './suite-tab-bar'
@@ -55,7 +56,8 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
         </div>
 
         <div className="grid grid-flow-col overflow-hidden">
-          <AgentFeed className="overflow-y-auto p-6" />
+          {/* <AgentFeed className="overflow-y-auto p-6" /> */}
+          <InferenceBuffer agentId={activeTab} />
           <ParameterPanel className="border-l" />
         </div>
       </div>
