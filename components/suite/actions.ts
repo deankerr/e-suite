@@ -57,6 +57,9 @@ export async function getAgent(agentId: string) {
         where: {
           id: agentId,
         },
+        include: {
+          engine: true,
+        },
       },
     },
   })

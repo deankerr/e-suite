@@ -25,20 +25,18 @@ export function InferenceBuffer({
   })
 
   const chatId = agent ? agent.id + '-tmpchatId' : ''
-  const engineId = agent ? agent.engineId : ''
-  const agentName = agent ? agent.name : ''
 
-  const chat = useAgentChat({ chatId, agentName, engineId })
+  const chat = useAgentChat(chatId, agent)
 
   //& temp
   const isStreaming = false
   const isWaiting = false
 
   return (
-    <div className="relative">
+    <div className={cn('relative overflow-y-auto', className)}>
       <div className={cn('space-y-4', className)}>
         <div className="font-mono text-xs">
-          InferenceBuffer {chatId} / {engineId}
+          InferenceBuffer {chatId} / {agent?.id} / {agent?.engineId}
           {error && <span>Error: {error.message}</span>}
           {!isEnabled && <span>not enabled</span>}
         </div>
@@ -54,7 +52,7 @@ export function InferenceBuffer({
         ))}
         {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
       </div>
-      <div className="absolute bottom-0 w-full p-2">
+      <div className="sticky bottom-0 w-full p-4">
         <MessageBar className="mx-auto" handleSubmit={chat.submitUserMessage} />
       </div>
     </div>

@@ -56,7 +56,6 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
         </div>
 
         <div className="grid grid-flow-col overflow-hidden">
-          {/* <AgentFeed className="overflow-y-auto p-6" /> */}
           <InferenceBuffer agentId={activeTab} />
           <ParameterPanel className="border-l" />
         </div>

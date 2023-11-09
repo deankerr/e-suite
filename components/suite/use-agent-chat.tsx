@@ -1,38 +1,34 @@
-import { useLocalGuestAuth } from '@/components/chat/use-local-guest-auth'
 import { EChatRequestSchema } from '@/lib/api/schemas'
 import { validateJsonRecord } from '@/lib/validators'
-import { Engine } from '@prisma/client'
+import { Agent, Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat({
-  chatId,
-  agentName,
-  engineId,
-}: {
-  chatId: string
-  agentName: string
-  engineId: string
-}) {
-  const initialMessages = agentName
+export function useAgentChat(chatId: string, agent?: Agent & { engine: Engine }) {
+  const initialMessages = agent
     ? [
         {
           id: nanoid(5),
           role: `system` as const,
-          content: `You are an AI assistant named ${agentName}.`,
+          content: `You are an AI assistant named ${agent.name}.`,
         },
       ]
     : []
 
+  const include = validateJsonRecord(agent?.engine?.includeParameters ?? {})
+
   const chat = useChat({
     id: chatId,
     api: endpoint,
-    body: {
-      engineId,
-    },
+    body: agent
+      ? {
+          engineId: agent.engineId,
+          ...include,
+        }
+      : {},
     initialMessages,
     onResponse: (response) => {
       console.log('[response]', response)

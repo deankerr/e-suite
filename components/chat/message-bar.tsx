@@ -11,6 +11,12 @@ export function MessageBar({
 }: { handleSubmit: (value: string) => void } & React.ComponentProps<'div'>) {
   const [value, setValue] = useState('')
 
+  const send = () => {
+    if (value === '') return
+    handleSubmit(value)
+    setValue('')
+  }
+
   return (
     <div
       {...props}
@@ -28,7 +34,7 @@ export function MessageBar({
         rows={1}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && e.metaKey) {
-            handleSubmit(value)
+            send()
           }
         }}
         value={value}
@@ -37,7 +43,7 @@ export function MessageBar({
       <Button
         className="rounded-2xl"
         variant={value && value !== '' ? 'default' : 'outline'}
-        onClick={() => handleSubmit(value)}
+        onClick={send}
       >
         <PaperPlaneIcon />
       </Button>

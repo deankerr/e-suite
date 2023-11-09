@@ -7,7 +7,7 @@ import { schemas } from '../schemas'
 
 const api = new OpenAI({
   apiKey: env('OPENROUTER_API_KEY'),
-  baseURL: 'https://openrouter.ai/api/v1/',
+  baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
     'HTTP-Referer': env('SITE_URL', 'https://esuite.devel'),
   },

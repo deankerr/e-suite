@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import { adapters } from '@/lib/api/adapters'
 import { authenticateGuest, createErrorResponse } from '@/lib/api/api'
 import { eChatRequestSchema, PlatformKeys } from '@/lib/api/schemas'
@@ -7,10 +8,11 @@ import { fromZodError } from 'zod-validation-error'
 
 export async function POST(request: Request) {
   try {
-    const auth = authenticateGuest(request.headers.get('Authorization'))
-    if (!auth.ok) return auth.response
+    const session = auth()
+    if (!session) createErrorResponse('Not logged in.', 403)
 
     const chatRequest = eChatRequestSchema.parse(await request.json())
+    console.log(chatRequest)
 
     const engine = await prisma.engine.findFirstOrThrow({ where: { id: chatRequest.engineId } })
     const adapter = adapters[engine.providerId as PlatformKeys]
