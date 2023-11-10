@@ -1,5 +1,10 @@
 import { prisma } from './prisma'
-import { SuiteAgentUpdateMergeObject, SuiteWorkbench, validateWorkbench } from './schemas'
+import {
+  jsonRecord,
+  SuiteAgentUpdateMergeObject,
+  SuiteWorkbenchUpdateMergeObject,
+  validateWorkbench,
+} from './schemas'
 
 // TODO check whos using these, move into db{}
 export async function getEngines() {
@@ -39,8 +44,13 @@ async function getSuiteUser(userId: string) {
   }
 }
 
-async function updateWorkbench(userId: string, workbench: SuiteWorkbench) {
-  await prisma.user.update({ where: { id: userId }, data: { workbench } })
+async function updateWorkbench(userId: string, merge: SuiteWorkbenchUpdateMergeObject) {
+  const current = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { workbench: true },
+  })
+  const parsed = jsonRecord.parse(current.workbench)
+  await prisma.user.update({ where: { id: userId }, data: { workbench: { ...parsed, ...merge } } })
 }
 
 async function updateUserAgent(

@@ -1,52 +1,36 @@
 import { SuiteWorkbench } from '@/lib/schemas'
+import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import { CaretDownIcon, CaretRightIcon } from '@radix-ui/react-icons'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { nanoid } from 'nanoid/non-secure'
 import { Loading } from '../ui/loading'
-import { getSuiteUser, updateWorkbench } from './actions'
 
-export function SuiteRailList({ className }: {} & React.ComponentProps<'div'>) {
-  const {
-    data: user,
-    isPending,
-    error,
-  } = useQuery({ queryKey: ['suiteUser'], queryFn: () => getSuiteUser() })
+export function SuiteRailList({ className }: React.ComponentProps<'div'>) {
+  const suite = useSuite()
 
-  const queryClient = useQueryClient()
-  const mutWorkbench = useMutation({
-    mutationKey: ['workbench'],
-    mutationFn: (workbench: SuiteWorkbench) => updateWorkbench(workbench),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suiteUser'] }),
-  })
-
-  // TODO tabs hook + reducer
-  const workbench = user ? user.workbench : undefined
-
-  const openAgentTab = (agentId: string) => {
-    if (!workbench) return
-    const tab = workbench.tabs.find((tab) => tab.agentId === agentId)
-    if (tab) {
-      // set tab active
-      if (workbench.active !== tab.id) {
-        mutWorkbench.mutate({ ...workbench, active: tab.id })
+  const activateAgentTab = (agentId: string) => {
+    if (!suite.workbench) return
+    const existingTab = suite.tabs.find((tab) => tab.agentId === agentId)
+    if (existingTab) {
+      // tab already open
+      if (suite.activeTab?.id !== existingTab.id) {
+        suite.workbenchMutation.mutate({ merge: { active: existingTab.id } })
         return
       }
     } else {
-      // create tab
+      // create new tab
       const tab: SuiteWorkbench['tabs'][number] = {
         id: nanoid(7),
         agentId,
         open: true,
       }
 
-      const newWorkbench: SuiteWorkbench = {
-        ...workbench,
-        tabs: [...workbench.tabs, tab],
-        active: tab.id,
-      }
-
-      mutWorkbench.mutate(newWorkbench)
+      suite.workbenchMutation.mutate({
+        merge: {
+          tabs: [...suite.workbench.tabs, tab],
+          active: tab.id,
+        },
+      })
     }
   }
 
@@ -54,13 +38,12 @@ export function SuiteRailList({ className }: {} & React.ComponentProps<'div'>) {
     <div className={cn('space-y-4', className)}>
       {/* <AgentList title="Active"></AgentList> */}
       <AgentList title="Available" open={true}>
-        {isPending && <Loading />}
-        {user &&
-          user.agents.map((a) => (
-            <li key={a.id} onClick={() => openAgentTab(a.id)}>
-              {a.name}
-            </li>
-          ))}
+        {suite.userQuery.isPending && <Loading />}
+        {suite.agents.map((agent) => (
+          <li key={agent.id} onClick={() => activateAgentTab(agent.id)}>
+            {agent.name}
+          </li>
+        ))}
       </AgentList>
     </div>
   )

@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
-const jsonRecord = z.record(z.unknown())
+export const jsonRecord = z.record(z.unknown())
 const jsonRecordArray = jsonRecord.array()
 
 export function validateJsonRecord(jsonValue: Prisma.JsonValue) {
@@ -37,6 +37,9 @@ export const workbenchSchema = z.object({
   active: z.string(), // tabId
 })
 export type SuiteWorkbench = z.infer<typeof workbenchSchema>
+
+export const suiteWorkbenchUpdateMergeSchema = workbenchSchema.partial()
+export type SuiteWorkbenchUpdateMergeObject = z.infer<typeof suiteWorkbenchUpdateMergeSchema>
 
 const workbenchDefault: SuiteWorkbench = {
   tabs: [],

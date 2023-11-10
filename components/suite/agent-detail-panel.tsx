@@ -25,7 +25,6 @@ import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Loading } from '../ui/loading'
-import { getSuiteUser, renameAgent } from './actions'
 import { EnginesCombobox } from './engines-combobox'
 
 export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
@@ -68,7 +67,7 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
             </div>
             {/* debug info */}
             <div className="font-mono text-xs">
-              <p className="">
+              <p className="atypewriter">
                 <span className="">ID: {agent.id} </span>
                 <span className="">Created: {agent.createdAt.toISOString()} </span>
                 <span className="">Updated: {agent.updatedAt.toISOString()} </span>
