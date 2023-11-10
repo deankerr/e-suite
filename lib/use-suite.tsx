@@ -51,12 +51,13 @@ export function useSuite() {
     userQuery,
     agentMutation,
     workbenchMutation,
+
     user: userQuery.data,
     workbench: userQuery.data?.workbench,
     agents: userQuery.data?.agents ?? [],
     tabs: userQuery.data?.workbench.tabs ?? [],
     activeTab: userQuery.data?.workbench.tabs.find(
-      (tab) => tab.id === userQuery.data?.workbench.active,
+      (tab) => tab.id === userQuery.data?.workbench.active && tab.open,
     ),
   }
 }

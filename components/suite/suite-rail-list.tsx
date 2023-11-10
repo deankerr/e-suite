@@ -12,9 +12,16 @@ export function SuiteRailList({ className }: React.ComponentProps<'div'>) {
     if (!suite.workbench) return
     const existingTab = suite.tabs.find((tab) => tab.agentId === agentId)
     if (existingTab) {
-      // tab already open
+      // tab already open, set active
       if (suite.activeTab?.id !== existingTab.id) {
-        suite.workbenchMutation.mutate({ merge: { active: existingTab.id } })
+        suite.workbenchMutation.mutate({
+          merge: {
+            tabs: suite.tabs.map((tab) =>
+              tab.id === existingTab.id ? { ...tab, open: true } : tab,
+            ),
+            active: existingTab.id,
+          },
+        })
         return
       }
     } else {
@@ -40,8 +47,12 @@ export function SuiteRailList({ className }: React.ComponentProps<'div'>) {
       <AgentList title="Available" open={true}>
         {suite.userQuery.isPending && <Loading />}
         {suite.agents.map((agent) => (
-          <li key={agent.id} onClick={() => activateAgentTab(agent.id)}>
-            {agent.name}
+          <li
+            key={agent.id}
+            className={cn('cursor-pointer text-muted-foreground hover:text-foreground')}
+            onClick={() => activateAgentTab(agent.id)}
+          >
+            <span className="ml-6">{agent.name}</span>
           </li>
         ))}
       </AgentList>
@@ -62,7 +73,9 @@ function AgentList({
         {icon}
         {title}
       </div>
-      <ul className="list-inside px-2">{children}</ul>
+      <ul className="list-inside divide-y-2 pt-1">{children}</ul>
     </div>
   )
 }
+
+//[&_li]:py-1
