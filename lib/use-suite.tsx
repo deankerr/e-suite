@@ -1,5 +1,5 @@
 import { getSuiteUser, updateSuiteUserAgent, updateWorkbench } from '@/components/suite/actions'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { fromZodError } from 'zod-validation-error'
 import {
@@ -9,13 +9,17 @@ import {
   suiteWorkbenchUpdateMergeSchema,
 } from './schemas'
 
-export function useSuite() {
-  const queryClient = useQueryClient()
-
-  const userQuery = useQuery({
+function getSuiteUserQueryOptions() {
+  return queryOptions({
     queryKey: ['suiteUser'],
     queryFn: () => getSuiteUser(),
   })
+}
+
+export function useSuite() {
+  const queryClient = useQueryClient()
+
+  const userQuery = useQuery(getSuiteUserQueryOptions())
 
   const agentMutation = useMutation({
     mutationKey: ['agent'],
@@ -43,8 +47,29 @@ export function useSuite() {
 
       return updateWorkbench(parsedMerge.data)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suiteUser'] }),
-    onError: (error) => toast.error(error.message),
+    onMutate: async ({ merge }) => {
+      await queryClient.cancelQueries({ queryKey: ['suiteUser'] })
+      const previousSuiteUser = queryClient.getQueryData<typeof getSuiteUser>(['suiteUser'])
+
+      queryClient.setQueryData(getSuiteUserQueryOptions().queryKey, (suiteUser) => {
+        const su = suiteUser! //* ??? we can't get here without a suiteUser
+        const newWorkbench = {
+          ...su.workbench,
+          ...merge,
+        }
+        return {
+          ...su,
+          workbench: newWorkbench,
+        }
+      })
+
+      return { previousSuiteUser }
+    },
+    onError: (error, variables, context) => {
+      toast.error(error.message)
+      queryClient.setQueryData(['suiteUser'], context!.previousSuiteUser)
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['suiteUser'] }),
   })
 
   return {
