@@ -20,6 +20,9 @@ export function useSuite() {
   const queryClient = useQueryClient()
 
   const userQuery = useQuery(getSuiteUserQueryOptions())
+  const { data: user } = userQuery
+
+  if (!user) throw new Error('There is no user.')
 
   const agentMutation = useMutation({
     mutationKey: ['agent'],
@@ -77,12 +80,10 @@ export function useSuite() {
     agentMutation,
     workbenchMutation,
 
-    user: userQuery.data,
-    workbench: userQuery.data?.workbench,
-    agents: userQuery.data?.agents ?? [],
-    tabs: userQuery.data?.workbench.tabs ?? [],
-    activeTab: userQuery.data?.workbench.tabs.find(
-      (tab) => tab.id === userQuery.data?.workbench.active && tab.open,
-    ),
+    user,
+    workbench: user.workbench,
+    agents: user.agents,
+    tabs: user.workbench.tabs,
+    activeTab: user.workbench.tabs.find((tab) => tab.id === user.workbench.active && tab.open),
   }
 }
