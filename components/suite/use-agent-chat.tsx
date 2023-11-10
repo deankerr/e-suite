@@ -1,5 +1,5 @@
 import { EChatRequestSchema } from '@/lib/api/schemas'
-import { validateJsonRecord } from '@/lib/validators'
+import { validateJsonRecord } from '@/lib/schemas'
 import { Agent, Engine } from '@prisma/client'
 import { useChat, UseChatOptions } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent: (Agent & { engine: Engine }) | null) {
+export function useAgentChat(chatId: string, agent: (Agent & { engine: Engine }) | undefined) {
   const initialMessages = agent
     ? [
         {

@@ -1,8 +1,9 @@
+import { SuiteWorkbench } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { Cross1Icon, DotFilledIcon, PlusIcon } from '@radix-ui/react-icons'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '../ui/button'
-import { getSuiteUser } from './actions'
+import { getSuiteUser, updateWorkbench } from './actions'
 
 export function SuiteTabBar({
   activeTab,
@@ -18,9 +19,31 @@ export function SuiteTabBar({
     error,
   } = useQuery({ queryKey: ['suiteUser'], queryFn: () => getSuiteUser() })
 
+  const queryClient = useQueryClient()
+  const mutWorkbench = useMutation({
+    mutationKey: ['workbench'],
+    mutationFn: (workbench: SuiteWorkbench) => updateWorkbench(workbench),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suiteUser'] }),
+  })
+
+  const workbench = user ? user.workbench : undefined
+
+  const getTabAgent = (agentId: string) =>
+    user ? user.agents.find((a) => a.id === agentId) : undefined
+
+  const setTabActive = (tabId: string) => {
+    if (!workbench) return
+    if (workbench.active === tabId) return
+    const newWorkbench: SuiteWorkbench = {
+      ...workbench,
+      active: tabId,
+    }
+    mutWorkbench.mutate(newWorkbench)
+  }
+
   return (
     <div className={cn('flex items-center overflow-x-auto bg-muted/50', className)}>
-      {user
+      {/* {user
         ? user?.agents.map((a) => (
             <Tab
               key={a.id}
@@ -29,6 +52,20 @@ export function SuiteTabBar({
               onClick={() => setActiveTab(a.id)}
             />
           ))
+        : null} */}
+      {workbench
+        ? workbench.tabs.map((tab) => {
+            const agent = getTabAgent(tab.agentId)
+            if (!agent) return null
+            return (
+              <Tab
+                key={tab.id}
+                title={agent.name}
+                isActive={workbench.active === tab.id}
+                onClick={() => setTabActive(tab.id)}
+              />
+            )
+          })
         : null}
 
       <Button variant="ghost" className="h-full rounded-none px-1 hover:text-primary">

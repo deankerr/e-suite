@@ -17,15 +17,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { CopyIcon, ReloadIcon } from '@radix-ui/react-icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Loading } from '../ui/loading'
 import { getSuiteUser, renameAgent } from './actions'
+import { EnginesCombobox } from './engines-combobox'
 
 export function AgentDetailPanel({
   agentId,
@@ -52,7 +52,12 @@ export function AgentDetailPanel({
     },
   })
 
-  const agent = user?.agents.find((a) => a.id === agentId)
+  const workbench = user ? user.workbench : undefined
+
+  const activeTab = workbench
+    ? workbench.tabs.find((tab) => tab.id === workbench.active)
+    : undefined
+  const agent = activeTab && user ? user.agents.find((a) => a.id === activeTab.agentId) : undefined
 
   return (
     <div className={cn('', className)}>
@@ -61,6 +66,7 @@ export function AgentDetailPanel({
           <div className="space-y-4 p-6">
             {isPending && <Loading />}
             <div className="space-x-4">
+              {/* title / buttons */}
               <h3 className="inline text-lg font-semibold leading-none">{agent.name}</h3>
               <RenameDialog current={agent.name} onSubmit={mutRename.mutate}>
                 <Button variant="outline" size="sm" disabled={mutRename.isPending}>
@@ -68,45 +74,40 @@ export function AgentDetailPanel({
                   Rename
                 </Button>
               </RenameDialog>
+              <Button variant="default" size="sm" disabled>
+                Deploy
+              </Button>
+              <Button variant="outline" size="sm" disabled>
+                Edit
+              </Button>
+              <Button variant="destructive" size="sm" disabled>
+                Delete
+              </Button>
             </div>
-            <Input defaultValue={agent.name} />
+            {/* debug info */}
             <div className="font-mono text-xs">
-              ID: {agent.id} Created: {agent.createdAt.toLocaleDateString()}
-              {agent.createdAt.toLocaleTimeString()}
+              <p className="">
+                <span className="">ID: {agent.id} </span>
+                <span className="">Created: {agent.createdAt.toISOString()} </span>
+                <span className="">Updated: {agent.updatedAt.toISOString()} </span>
+              </p>
+              <p>
+                <span className="">active: {agent.engineId} </span>
+              </p>
             </div>
             {/* EngineCard */}
             <div className="space-x-2">
-              <ModelSelectDemo placeholder={agent.engine.displayName} />
-              <Button variant="secondary">Rename</Button>
-              <Button variant="default">Deploy</Button>
-              <Button variant="outline">Edit</Button>
-              <Button variant="destructive">Delete</Button>
+              <EnginesCombobox current={agent.engineId} />
             </div>
           </div>
 
+          {/* avatar */}
           <div className="">
             <Image src={`/${agent.image}`} alt="agent avatar" width={200} height={200} />
           </div>
         </div>
       ) : null}
     </div>
-  )
-}
-
-function ModelSelectDemo({ placeholder }: { placeholder?: string }) {
-  //
-  return (
-    <Select>
-      <SelectTrigger className="inline-flex w-[450px]">
-        <SelectValue placeholder={placeholder ?? 'no agent selected'} />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="gpt">OpenAI: GPT-3.5 Turbo Instruct</SelectItem>
-        <SelectItem value="cllama">Meta: CodeLlama 34B Instruct (beta)</SelectItem>
-        <SelectItem value="orca">OpenOrca Mistral (7B) 8K</SelectItem>
-        <SelectItem value="red">RedPajama-INCITE Chat (3B)</SelectItem>
-      </SelectContent>
-    </Select>
   )
 }
 

@@ -18,7 +18,13 @@ export function InferenceBuffer({
     error,
   } = useQuery({ queryKey: ['suiteUser'], queryFn: () => getSuiteUser() })
 
-  const agent = user?.agents.find((a) => a.id === agentId) ?? null
+  const workbench = user ? user.workbench : undefined
+
+  const activeTab = workbench
+    ? workbench.tabs.find((tab) => tab.id === workbench.active)
+    : undefined
+  const agent = activeTab && user ? user.agents.find((a) => a.id === activeTab.agentId) : undefined
+
   const chatId = agent ? agent.id + '-tmpchatId' : ''
 
   const chat = useAgentChat(chatId, agent)

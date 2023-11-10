@@ -1,13 +1,11 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { User } from '@prisma/client'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import Link from 'next/link'
 import { useState } from 'react'
-import { MainStatusBar } from '../main-status-bar'
 import { SignInOutButton } from '../sign-in-out-button'
 import { Loading } from '../ui/loading'
 import { ThemeToggle } from '../ui/theme-toggle'

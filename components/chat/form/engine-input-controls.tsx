@@ -5,9 +5,21 @@ import { PlatformKeys, schemas } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { Engine } from '@prisma/client'
 import { ImmerHook, useImmer } from 'use-immer'
-import { ChatSession, EngineInput } from '../types'
 import { SliderInput } from './slider-input'
 import { TagInput } from './tag-input'
+
+type EngineInput = {
+  fieldsEnabled: string[]
+  temperature: number
+  max_tokens: number
+  frequency_penalty: number
+  presence_penalty: number
+  repetition_penalty: number
+  top_p: number
+  top_k: number
+  stop: string[]
+  stop_token: string[]
+}
 
 const sliderInputData = {
   temperature: {

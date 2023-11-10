@@ -16,26 +16,29 @@ export function validateJsonRecord(jsonValue: Prisma.JsonValue) {
   }
 }
 
-export function validateUserWorkbench(data: unknown) {
+export function validateWorkbench(data: unknown) {
   const workbench = workbenchSchema.safeParse(data)
   if (workbench.success) {
     return workbench.data
   } else {
     console.error(fromZodError(workbench.error))
-    return {
-      tabs: [],
-      tabBar: [],
-    }
+    return { ...workbenchDefault }
   }
 }
 
-const workbenchSchema = z.object({
+export const workbenchSchema = z.object({
   tabs: z.array(
     z.object({
       id: z.string(), // tabId
-      agentId: z.string(), // TODO no agent/new tab etc.
-      focused: z.boolean(),
+      agentId: z.string(), // TODO handle new agent
+      open: z.boolean(),
     }),
   ),
-  tabBar: z.string().array(), // tabIds
+  active: z.string(), // tabId
 })
+export type SuiteWorkbench = z.infer<typeof workbenchSchema>
+
+const workbenchDefault: SuiteWorkbench = {
+  tabs: [],
+  active: '',
+}
