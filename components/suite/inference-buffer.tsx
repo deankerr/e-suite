@@ -7,11 +7,7 @@ import { Loading } from '../ui/loading'
 import { getSuiteUser } from './actions'
 import { useAgentChat } from './use-agent-chat'
 
-export function InferenceBuffer({
-  agentId,
-  className,
-  children,
-}: { agentId: string } & React.ComponentProps<'div'>) {
+export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
   const {
     data: user,
     isPending,

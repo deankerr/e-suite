@@ -5,14 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '../ui/button'
 import { getSuiteUser, updateWorkbench } from './actions'
 
-export function SuiteTabBar({
-  activeTab,
-  setActiveTab,
-  className,
-}: {
-  activeTab: string
-  setActiveTab: (id: string) => void
-} & React.ComponentProps<'div'>) {
+export function SuiteTabBar({ className }: {} & React.ComponentProps<'div'>) {
   const {
     data: user,
     isPending,

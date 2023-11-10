@@ -2,9 +2,15 @@
 
 import { auth } from '@/auth'
 import { db } from '@/lib/db'
-import { SuiteWorkbench, workbenchSchema } from '@/lib/schemas'
+import {
+  SuiteAgentUpdateMergeObject,
+  suiteAgentUpdateMergeSchema,
+  SuiteWorkbench,
+  workbenchSchema,
+} from '@/lib/schemas'
 import { fromZodError } from 'zod-validation-error'
 
+// TODO integrate with db -> actions can only ever modify current session user
 async function getUserSession() {
   const session = await auth()
   if (!session) throw new Error('You are not logged in.')
@@ -45,6 +51,7 @@ export async function updateWorkbench(workbench: SuiteWorkbench) {
   }
 }
 
+// TODO remove
 export async function renameAgent(agentId: string, name: string) {
   console.log('<renameAgent>')
   const user = await getUserSession()
@@ -56,6 +63,27 @@ export async function renameAgent(agentId: string, name: string) {
   } catch (err) {
     console.error(err)
     throw new Error('An error occurred while renaming agent.')
+  }
+}
+
+export async function updateSuiteUserAgent(agentId: string, merge: SuiteAgentUpdateMergeObject) {
+  const user = await getUserSession()
+
+  const parsedMerge = suiteAgentUpdateMergeSchema.safeParse(merge)
+  if (!parsedMerge.success) {
+    console.error(fromZodError(parsedMerge.error))
+    throw new Error('Invalid Agent update.')
+  }
+
+  const suiteUser = await db.getSuiteUser(user.id)
+  const agent = suiteUser.agents.find((agent) => agent.id === agentId)
+  if (!agent) throw new Error('Invalid Agent id.')
+
+  try {
+    await db.updateUserAgent(user.id, agent.id, parsedMerge.data)
+  } catch (err) {
+    console.error(err)
+    throw new Error('Failed to update Agent.')
   }
 }
 

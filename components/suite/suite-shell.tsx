@@ -1,15 +1,13 @@
 'use client'
 
+import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
-import { useQuery } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import Link from 'next/link'
-import { useState } from 'react'
 import { SignInOutButton } from '../sign-in-out-button'
 import { Loading } from '../ui/loading'
 import { ThemeToggle } from '../ui/theme-toggle'
-import { getSuiteUser } from './actions'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { AgentTabBar } from './agent-tab-bar'
 import { InferenceBuffer } from './inference-buffer'
@@ -19,41 +17,36 @@ import { SuiteStatusBar } from './suite-status-bar'
 import { SuiteTabBar } from './suite-tab-bar'
 
 export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
-  const {
-    data: user,
-    error,
-    isPending,
-  } = useQuery({
-    queryKey: ['suiteUser'],
-    queryFn: () => getSuiteUser(),
-  })
-
-  //! currently tab = agentId
-  const [activeTab, setActiveTab] = useState('')
+  const suite = useSuite()
 
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
       {/* SuiteRail */}
       <div className="flex flex-col border-r">
         <SuiteAppTitle className="h-12 border-b" />
-        <div className="pt-2 text-center font-mono text-sm">{user?.name}</div>
-        <SuiteRailList className="grow px-2 py-4" />
-        <div className="flex justify-around px-2 py-4">
-          <ThemeToggle />
-          <SignInOutButton session={session} />
+        <div className="flex grow flex-col justify-between">
+          <SuiteRailList className=" px-2 py-4" />
+          {/* debug info */}
+          <div className="mx-2 border p-2">
+            <div className="text-center font-mono text-sm">{suite.userQuery.data?.name}</div>
+          </div>
+          <div className="flex justify-around px-2 py-4">
+            <ThemeToggle />
+            <SignInOutButton session={session} />
+          </div>
         </div>
       </div>
 
       {/* SuiteMain */}
       <div className="grid grid-rows-[auto_1fr] overflow-hidden">
         <div className="">
-          <SuiteTabBar className="h-12" activeTab={activeTab} setActiveTab={setActiveTab} />
-          <AgentDetailPanel className="p-6" agentId={activeTab} />
+          <SuiteTabBar className="h-12" />
+          <AgentDetailPanel className="p-6" />
           <AgentTabBar className="" />
         </div>
 
         <div className="grid grid-cols-[60%_auto] overflow-hidden">
-          <InferenceBuffer agentId={activeTab} />
+          <InferenceBuffer />
           <ParameterPanel className="border-l" />
         </div>
       </div>
@@ -61,10 +54,10 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
       {/* SuiteStatusBar */}
       <SuiteStatusBar className="col-span-full col-start-1">
         <div>
-          {session.user.role} {session.user.id}
+          Session: {session.user.role} {session.user.id}
         </div>
-        <div>{error && error.message}</div>
-        <div>{isPending && <Loading size="xs" />}</div>
+        <div>{suite.userQuery.error?.message}</div>
+        <div>{suite.userQuery.isPending && <Loading size="xs" />}</div>
       </SuiteStatusBar>
     </div>
   )

@@ -27,10 +27,7 @@ import { Loading } from '../ui/loading'
 import { getSuiteUser, renameAgent } from './actions'
 import { EnginesCombobox } from './engines-combobox'
 
-export function AgentDetailPanel({
-  agentId,
-  className,
-}: { agentId: string } & React.ComponentProps<'div'>) {
+export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
   const {
     data: user,
     isPending,
