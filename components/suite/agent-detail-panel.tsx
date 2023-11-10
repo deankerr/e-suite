@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
@@ -28,26 +29,9 @@ import { getSuiteUser, renameAgent } from './actions'
 import { EnginesCombobox } from './engines-combobox'
 
 export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
-  const {
-    data: user,
-    isPending,
-    error,
-  } = useQuery({ queryKey: ['suiteUser'], queryFn: () => getSuiteUser() })
+  const suite = useSuite()
 
-  if (error) {
-    toast.error(error.message)
-  }
-
-  const queryClient = useQueryClient()
-
-  const mutRename = useMutation({
-    mutationKey: ['renameAgent'],
-    mutationFn: (name: string) => renameAgent(agent?.id ?? '', name),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suiteUser'] }),
-    onError(error, variables, context) {
-      toast.error(error.message)
-    },
-  })
+  const { user, agentMutation } = suite
 
   const workbench = user ? user.workbench : undefined
 
@@ -61,14 +45,15 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
       {agent ? (
         <div className="grid grid-cols-[1fr_auto] rounded-md border">
           <div className="space-y-4 p-6">
-            {isPending && <Loading />}
-            <div className="space-x-4">
-              {/* title / buttons */}
-              <h3 className="inline text-lg font-semibold leading-none">{agent.name}</h3>
-              <RenameDialog current={agent.name} onSubmit={mutRename.mutate}>
-                <Button variant="outline" size="sm" disabled={mutRename.isPending}>
-                  {mutRename.isPending && <Loading size="xs" />}
-                  Rename
+            {/* title / buttons */}
+            <div className="flex items-center space-x-4">
+              <h3 className=" text-lg font-semibold leading-none">{agent.name}</h3>
+              <RenameDialog
+                current={agent.name}
+                onSubmit={(name) => agentMutation.mutate({ agentId: agent.id, merge: { name } })}
+              >
+                <Button variant="outline" size="sm" disabled={agentMutation.isPending}>
+                  {agentMutation.isPending ? <Loading size="xs" /> : 'Rename'}
                 </Button>
               </RenameDialog>
               <Button variant="default" size="sm" disabled>
@@ -121,11 +106,11 @@ export function RenameDialog({
 
   const submit = () => {
     const value = ref.current?.value
-    if (!value) {
-      console.log('no value')
-      return
-    }
-    onSubmit(value)
+    // if (!value) {
+    //   console.log('no value')
+    //   return
+    // }
+    onSubmit(value ?? '')
   }
 
   return (
