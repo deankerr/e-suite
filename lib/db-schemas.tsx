@@ -79,7 +79,7 @@ async function getUserAuth() {
   return session.user
 }
 
-//* "Private" / client requests / session
+//* "Private" / client requests / session`
 // Get the user + all relevant relations
 export async function getSuiteUser() {
   try {
