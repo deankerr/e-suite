@@ -1,10 +1,17 @@
-import { getSuiteUser, updateSuiteUserAgent, updateWorkbench } from '@/components/suite/actions'
+import {
+  getSuiteUser,
+  updateAgentInferenceParameters,
+  updateSuiteUserAgent,
+  updateWorkbench,
+} from '@/components/suite/actions'
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { fromZodError } from 'zod-validation-error'
 import {
   SuiteAgentUpdateMergeObject,
   suiteAgentUpdateMergeSchema,
+  suiteInferenceParametersSchema,
+  SuiteInferenceParametersSchema,
   SuiteWorkbenchUpdateMergeObject,
   suiteWorkbenchUpdateMergeSchema,
 } from './schemas'
@@ -22,7 +29,7 @@ export function useSuite() {
   const userQuery = useQuery(getSuiteUserQueryOptions())
   const { data: user } = userQuery
 
-  if (!user) throw new Error('There is no user.')
+  if (!user) throw new Error(userQuery.error?.message ?? 'There is no user.')
 
   const agentMutation = useMutation({
     mutationKey: ['agent'],
@@ -37,6 +44,25 @@ export function useSuite() {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['suiteUser'] }),
     onError: (error) => toast.error(error.message),
+  })
+
+  const agentInferenceParametersMutation = useMutation({
+    mutationKey: ['agent'],
+    mutationFn: ({
+      agentId,
+      merge,
+    }: {
+      agentId: string
+      merge: SuiteInferenceParametersSchema
+    }) => {
+      const parsedMerge = suiteInferenceParametersSchema.safeParse(merge)
+
+      if (!parsedMerge.success) {
+        throw new Error(fromZodError(parsedMerge.error).message)
+      }
+
+      return updateAgentInferenceParameters(agentId, parsedMerge.data)
+    },
   })
 
   const workbenchMutation = useMutation({
@@ -79,6 +105,7 @@ export function useSuite() {
     userQuery,
     agentMutation,
     workbenchMutation,
+    agentInferenceParametersMutation,
 
     user,
     workbench: user.workbench,

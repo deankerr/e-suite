@@ -5,12 +5,16 @@ import { db } from '@/lib/db'
 import {
   SuiteAgentUpdateMergeObject,
   suiteAgentUpdateMergeSchema,
+  suiteInferenceParametersSchema,
+  SuiteInferenceParametersSchema,
   SuiteWorkbenchUpdateMergeObject,
   suiteWorkbenchUpdateMergeSchema,
 } from '@/lib/schemas'
 import { fromZodError } from 'zod-validation-error'
 
 // TODO integrate with db -> actions can only ever modify current session user
+// TODO standard ownership of functionality implementation (db or actions)
+
 async function getUserSession() {
   const session = await auth()
   if (!session) throw new Error('You are not logged in.')
@@ -66,6 +70,46 @@ export async function updateSuiteUserAgent(agentId: string, merge: SuiteAgentUpd
   } catch (err) {
     console.error(err)
     throw new Error('Failed to update Agent.')
+  }
+}
+
+export async function updateAgentInferenceParameters(
+  agentId: string,
+  merge: SuiteInferenceParametersSchema,
+) {
+  const user = await getUserSession()
+
+  const parsedMerge = suiteInferenceParametersSchema.safeParse(merge)
+  if (!parsedMerge.success) {
+    console.error(fromZodError(parsedMerge.error))
+    throw new Error('Invalid Agent Inference Parameter update.')
+  }
+  console.log('merge', parsedMerge.data)
+  let agent
+  try {
+    agent = await db.getSuiteUserAgent(user.id, agentId)
+  } catch (err) {
+    console.error(err)
+    throw new Error('Invalid Agent.')
+  }
+
+  const parsedCurrent = suiteInferenceParametersSchema.safeParse(agent.parameters)
+  const current = parsedCurrent.success ? parsedCurrent.data : {}
+
+  console.log('current', current)
+
+  const merged = {
+    ...current,
+    ...parsedMerge.data,
+  }
+
+  console.log('merged', merged)
+
+  try {
+    await db.updateUserAgent(user.id, agentId, { parameters: merged })
+  } catch (err) {
+    console.error(err)
+    throw new Error('Failed to update Agent parameters.')
   }
 }
 

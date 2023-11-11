@@ -44,6 +44,15 @@ async function getSuiteUser(userId: string) {
   }
 }
 
+async function getSuiteUserAgent(userId: string, agentId: string) {
+  return await prisma.agent.findUniqueOrThrow({
+    where: {
+      id: agentId,
+      ownerId: userId,
+    },
+  })
+}
+
 async function updateWorkbench(userId: string, merge: SuiteWorkbenchUpdateMergeObject) {
   const current = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -72,6 +81,7 @@ async function updateUserAgent(
 export const db = {
   getUser,
   getSuiteUser,
+  getSuiteUserAgent,
   updateWorkbench,
   updateUserAgent,
   getEngines,

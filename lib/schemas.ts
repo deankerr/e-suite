@@ -46,6 +46,41 @@ const workbenchDefault: SuiteWorkbench = {
   active: '',
 }
 
+/*
+  parameters: {
+    [key: engineId]: {
+      values: {
+        temperature: 1,
+        max_tokens: 100,
+        ...
+      },
+      enabled: {
+        max_tokens: true
+        ...
+      }
+    }
+  }
+*/
+export const suiteInferenceParametersSchema = z.record(
+  z.object({
+    values: z
+      .object({
+        temperature: z.number(),
+        max_tokens: z.number(),
+        frequency_penalty: z.number(),
+        presence_penalty: z.number(),
+        repetition_penalty: z.number(),
+        top_p: z.number(),
+        top_k: z.number(),
+        stop: z.string().array(),
+        stop_token: z.string().array(),
+      })
+      .partial(),
+    enabled: z.record(z.boolean()),
+  }),
+)
+export type SuiteInferenceParametersSchema = z.infer<typeof suiteInferenceParametersSchema>
+
 export const suiteAgentSchema = z.object({
   id: z.string().min(1), //? isCUID
   //? owner?
@@ -58,7 +93,7 @@ export const suiteAgentSchema = z.object({
 
   //? engine?
   engineId: z.string().min(1),
-  parameters: jsonRecord,
+  parameters: suiteInferenceParametersSchema,
 })
 
 //? handle parameters
@@ -68,7 +103,6 @@ export const suiteAgentUpdateMergeSchema = suiteAgentSchema
     ownerId: true,
     createdAt: true,
     updatedAt: true,
-    parameters: true,
   })
   .partial()
 export type SuiteAgentUpdateMergeObject = z.infer<typeof suiteAgentUpdateMergeSchema>

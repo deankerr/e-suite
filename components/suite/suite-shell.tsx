@@ -11,6 +11,7 @@ import { ThemeToggle } from '../ui/theme-toggle'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { AgentTabBar } from './agent-tab-bar'
 import { InferenceBuffer } from './inference-buffer'
+import { InferenceParameterPanel } from './inference-parameter-panel'
 import { ParameterPanel } from './parameter-panel'
 import { SuiteRailList } from './suite-rail-list'
 import { SuiteStatusBar } from './suite-status-bar'
@@ -47,7 +48,8 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
 
         <div className="grid grid-cols-[60%_auto] overflow-hidden">
           <InferenceBuffer />
-          <ParameterPanel className="border-l" />
+          {/* <ParameterPanel className="border-l" /> */}
+          <InferenceParameterPanel className="border-l" />
         </div>
       </div>
 
