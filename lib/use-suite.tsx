@@ -29,7 +29,7 @@ export function useSuite() {
   const userQuery = useQuery(getSuiteUserQueryOptions())
   const { data: user } = userQuery
 
-  if (!user) throw new Error(userQuery.error?.message ?? 'There is no user.')
+  if (!user) throw new Error(userQuery.error?.message ?? 'Failed to rehydrate SuiteUser.')
 
   const agentMutation = useMutation({
     mutationKey: ['agent'],

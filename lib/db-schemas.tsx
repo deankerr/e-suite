@@ -1,12 +1,7 @@
-'use server'
-
-import { auth } from '@/auth'
 import z from 'zod'
-import { AppError } from './error'
-import { prisma } from './prisma'
 
 // TODO complete
-const schemaEngine = z.object({
+export const schemaEngine = z.object({
   id: z.string(),
   model: z.string(),
   providerId: z.string(),
@@ -14,7 +9,7 @@ const schemaEngine = z.object({
   creatorName: z.string(),
 })
 
-const schemaAgentParameters = z
+export const schemaAgentParameters = z
   .object({
     temperature: z.number(),
     max_tokens: z.number(),
@@ -28,7 +23,7 @@ const schemaAgentParameters = z
   })
   .partial()
 
-const schemaAgent = z.object({
+export const schemaAgent = z.object({
   id: z.string(),
   // owner
   ownerId: z.string(),
@@ -43,7 +38,7 @@ const schemaAgent = z.object({
   parameters: z.record(schemaAgentParameters),
 })
 
-const schemaWorkbench = z
+export const schemaWorkbench = z
   .object({
     tabs: z.array(
       z.object({
@@ -60,12 +55,12 @@ const schemaWorkbench = z
     activeTabId: '',
   })
 
-const schemaUser = z.object({
+export const schemaSuiteUserAll = z.object({
   id: z.string(),
-  name: z.string().optional(),
-  email: z.string().optional(),
-  emailVerified: z.string().optional(),
-  image: z.string().optional(),
+  name: z.string().nullable(),
+  email: z.string().nullable(),
+  emailVerified: z.string().nullable(),
+  image: z.string().nullable(),
 
   role: z.enum(['USER', 'ADMIN']),
   workbench: schemaWorkbench,
@@ -73,39 +68,14 @@ const schemaUser = z.object({
   agents: z.array(schemaAgent),
 })
 
-async function getUserAuth() {
-  const session = await auth()
-  if (!session) throw new AppError('You are not logged in.')
-  return session.user
-}
+export const schemaUser = z.object({
+  id: z.string(),
+  name: z.string().nullable(),
+  email: z.string().nullable(),
+  emailVerified: z.string().nullable(),
+  image: z.string().nullable(),
 
-//* "Private" / client requests / session`
-// Get the user + all relevant relations
-export async function getSuiteUser() {
-  try {
-    const user = await getUserAuth()
-    const suiteUser = await prisma.user.findUniqueOrThrow({
-      where: {
-        id: user.id,
-      },
-      include: {
-        agents: {
-          include: {
-            engine: true,
-          },
-        },
-      },
-    })
+  role: z.enum(['USER', 'ADMIN']),
 
-    const parsed = schemaUser.parse(suiteUser)
-    return parsed
-  } catch (err) {
-    if (err instanceof AppError) {
-      console.error(err)
-      throw err
-    } else {
-      console.error(err)
-      throw new Error('An unknown error occurred.')
-    }
-  }
-}
+  agentIds: z.array(z.string()),
+})
