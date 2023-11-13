@@ -14,9 +14,10 @@ export function SliderInput({
     <div className="flex w-full space-x-1">
       <Slider
         {...range}
-        value={[value ?? 0]}
-        onValueChange={([newValue]) => {
+        defaultValue={[value ?? 0]}
+        onValueCommit={([newValue]) => {
           onChange(newValue ?? range.default)
+          console.log('i commit')
         }}
       />
       <Input
@@ -25,6 +26,7 @@ export function SliderInput({
         type="number"
         value={value}
         onChange={(e) => {
+          console.log('input change')
           onChange(Number(e.target.value))
         }}
       />

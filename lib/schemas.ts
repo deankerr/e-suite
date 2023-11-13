@@ -9,8 +9,26 @@ export const schemaEngine = z.object({
   creatorName: z.string(),
 })
 
+const parameterKeys = [
+  'temperature',
+  'max_tokens',
+  'frequency_penalty',
+  'presence_penalty',
+  'repetition_penalty',
+  'top_p',
+  'top_k',
+  'stop',
+  'stop_token',
+]
 export const schemaAgentParameters = z
   .object({
+    fieldsEnabled: z
+      .string()
+      .array()
+      .transform((fieldsEnabled) => [
+        // only allowed, unique keys
+        ...new Set(fieldsEnabled.filter((field) => parameterKeys.includes(field))),
+      ]),
     temperature: z.number(),
     max_tokens: z.number(),
     frequency_penalty: z.number(),
@@ -36,22 +54,29 @@ export const schemaAgent = z.object({
   image: z.string(),
 
   engineId: z.string(),
-  parameters: z.record(schemaAgentParameters),
+  parameters: schemaAgentParametersRecord,
 })
 
 export const schemaAgentMerge = schemaAgent
   .omit({ id: true, ownerId: true, parameters: true })
   .partial()
 
-export const schemaWorkbench = z.object({
-  tabs: z.array(
-    z.object({
-      id: z.string(),
-      agentId: z.string(),
-    }),
-  ),
-  focusedTabId: z.string(),
-})
+export const schemaWorkbench = z
+  .object({
+    tabs: z.array(
+      z.object({
+        id: z.string(),
+        agentId: z.string(),
+      }),
+    ),
+    focusedTabId: z.string(),
+    inferenceParameterForms: schemaAgentParametersRecord,
+  })
+  .catch({
+    tabs: [],
+    focusedTabId: '',
+    inferenceParameterForms: {},
+  })
 
 export const schemaSuiteUserAll = z.object({
   id: z.string(),

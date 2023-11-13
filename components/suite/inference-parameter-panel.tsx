@@ -1,10 +1,10 @@
 import { PlatformKeys, schemas } from '@/lib/api/schemas'
-import { schemaAgentParameters, schemaAgentParametersRecord } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { SliderInput } from '../chat/form/slider-input'
 import { TagInput } from '../chat/form/tag-input'
+import { Loading } from '../ui/loading'
 import { Switch } from '../ui/switch'
-import { useAgentQuery, useEngineQuery, useTabs } from './queries'
+import { useAgentParametersMutation, useAgentQuery, useEngineQuery, useTabs } from './queries'
 
 const labelClass = 'font-mono text-sm'
 
@@ -12,17 +12,20 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
   const { data: engine } = useEngineQuery(agent?.engineId)
+  const agentParametersMutation = useAgentParametersMutation()
 
-  if (!agent || !engine) return null
+  if (!agent || !engine)
+    return (
+      <div className={cn('space-y-8 p-4 text-center', className)}>
+        <Loading />
+      </div>
+    )
 
-  const parsed = schemaAgentParametersRecord.safeParse(agent.parameters)
-
-  const agentParameters = parsed.success ? parsed.data : {}
-  const currentEngineParameters = agentParameters ?? {}
+  const current = agent.parameters[engine.id]
 
   const parameters = {
     ...defaultValues,
-    ...currentEngineParameters.values,
+    ...current,
   }
 
   type Parameter = typeof parameters
@@ -35,27 +38,25 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
     enabled: boolean,
     value?: Parameter[T],
   ) => {
-    const newParameters = { ...parameters }
+    const fieldsEnabled = parameters.fieldsEnabled.filter((field) => field !== key)
+    if (enabled) {
+      fieldsEnabled.push(key)
+    }
+    const newParameters = { ...parameters, fieldsEnabled }
     if (value) newParameters[key] = value
-    // newParameters.enabled[key] = enabled
 
-    console.log('newParameters', newParameters)
-    // agentInferenceParametersMutation.mutate({
-    //   agentId: agent.id,
-    //   merge: { [agent.engineId]: newParameters },
-    // })
+    agentParametersMutation.mutate({ agentId: agent.id, merge: { [engine.id]: newParameters } })
   }
 
   return (
-    <div className={cn('space-y-8', className)}>
-      <p className="font-mono text-xs">{agent.id}</p>
+    <div className={cn('space-y-8 p-4', className)}>
       {sliderInputKeys.map((key) => {
         if (parameterKeys.includes(key) && schemaKeys.includes(key)) {
           return (
             <div key={key}>
               <div className={labelClass}>
                 <Switch
-                  // checked={parameters.enabled[key]}
+                  checked={parameters.fieldsEnabled.includes(key)}
                   onCheckedChange={(enabled) => setParameter(key, enabled)}
                 />{' '}
                 {key}
@@ -76,7 +77,7 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
             <div key={key} className="grid grid-cols-[auto_1fr] items-center gap-x-2">
               <div className={labelClass}>
                 <Switch
-                  // checked={parameters.enabled[key]}
+                  checked={parameters.fieldsEnabled.includes(key)}
                   onCheckedChange={(enabled) => setParameter(key, enabled)}
                 />{' '}
                 {key}
@@ -147,6 +148,7 @@ const tagInputData = {
 const tagInputKeys = Object.keys(tagInputData) as Array<keyof typeof tagInputData>
 
 const defaultValues = {
+  fieldsEnabled: [],
   temperature: 1,
   max_tokens: 1234,
   frequency_penalty: 0,

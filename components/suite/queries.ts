@@ -1,9 +1,11 @@
 import {
+  AgentParametersUpdate,
   getAgent,
   getEngine,
   getEngines,
   getUser,
   getWorkbench,
+  updateAgentParameters,
   updateWorkbench,
   WorkbenchMerge,
 } from '@/components/suite/actions'
@@ -36,7 +38,7 @@ export function useWorkbenchMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationKey: ['workbench'],
-    mutationFn: async ({ merge }: { merge: WorkbenchMerge }) => await updateWorkbench({ merge }),
+    mutationFn: async (merge: WorkbenchMerge) => await updateWorkbench(merge),
     onMutate: async ({ merge }) => {
       await queryClient.cancelQueries({ queryKey: ['workbench'] })
       const previousWorkbench = queryClient.getQueryData(['workbench'])
@@ -78,11 +80,11 @@ export function useTabs() {
 
   const setFocusTab = (tabId: string) => {
     if (focusedTabId === tabId) return
-    const merge: WorkbenchMerge = {}
+
     if (!tabs.find((tab) => tab.id === tabId)) {
       return
     }
-    merge.focusedTabId = tabId
+    const merge = { focusedTabId: tabId }
     workbenchMutation.mutate({ merge })
   }
 
@@ -109,6 +111,38 @@ export function useAgentQueries(agentIds: string[]) {
       queryKey: ['agent', agentId],
       queryFn: async () => await getAgent(agentId),
     })),
+  })
+}
+
+function getAgentQueryOptions(agentId: string) {
+  return queryOptions({
+    queryKey: ['agent', agentId],
+    queryFn: async () => await getAgent(agentId),
+  })
+}
+
+export function useAgentParametersMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: ['agent', 'parameters'],
+    mutationFn: async (update: AgentParametersUpdate) => await updateAgentParameters(update),
+    onMutate: async ({ agentId, merge }) => {
+      await queryClient.cancelQueries({ queryKey: ['agent', agentId] })
+      const previousAgent = queryClient.getQueryData(['agent', agentId])
+
+      queryClient.setQueryData(getAgentQueryOptions(agentId).queryKey, (prevAgent) => {
+        if (prevAgent) {
+          const parameters = {
+            ...prevAgent.parameters,
+            ...merge,
+          }
+          return { ...prevAgent, parameters }
+        }
+      })
+
+      return { previousAgent }
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['agent', 'parameters'] }),
   })
 }
 

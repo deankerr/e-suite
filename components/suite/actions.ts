@@ -7,6 +7,7 @@ import {
   schemaAgent,
   schemaAgentMerge,
   schemaAgentParameters,
+  schemaAgentParametersRecord,
   schemaEngine,
   schemaSuiteUserAll,
   schemaUser,
@@ -76,6 +77,30 @@ export const getAgent = action(z.string(), async (session, agentId) => {
   return parsedAgent
 })
 
+const schemaUpdateAgentParametersUpdate = z.object({
+  agentId: z.string(),
+  merge: schemaAgentParametersRecord,
+})
+export type AgentParametersUpdate = z.infer<typeof schemaUpdateAgentParametersUpdate>
+export const updateAgentParameters = action(
+  schemaUpdateAgentParametersUpdate,
+  async (session, { agentId, merge }) => {
+    const { parameters } = await prisma.agent.findUniqueOrThrow({
+      where: { id: agentId, ownerId: session.user.id },
+      select: { parameters: true },
+    })
+    const parsedCurrentParameters = schemaAgentParametersRecord.parse(parameters)
+    const newParameters = {
+      ...parsedCurrentParameters,
+      ...merge,
+    }
+    await prisma.agent.update({
+      where: { id: agentId, ownerId: session.user.id },
+      data: { parameters: newParameters },
+    })
+  },
+)
+
 export const getWorkbench = action(z.void(), async (session) => {
   const { workbench } = await prisma.user.findUniqueOrThrow({
     where: {
@@ -86,17 +111,13 @@ export const getWorkbench = action(z.void(), async (session) => {
     },
   })
 
-  const parsedWorkbench = schemaWorkbench
-    .catch({
-      tabs: [],
-      focusedTabId: '',
-    })
-    .parse(workbench)
+  const parsedWorkbench = schemaWorkbench.parse(workbench)
   return parsedWorkbench
 })
 
-export type WorkbenchMerge = Partial<z.infer<typeof schemaWorkbench>>
-const schemaWorkbenchMerge = z.object({ merge: schemaWorkbench.partial() })
+const schemaWorkbenchMerge = z.object({ merge: schemaWorkbench.removeCatch().partial() })
+export type WorkbenchMerge = z.infer<typeof schemaWorkbenchMerge>
+
 export const updateWorkbench = action(schemaWorkbenchMerge, async (session, { merge }) => {
   const { workbench } = await prisma.user.findUniqueOrThrow({
     where: {
@@ -107,12 +128,7 @@ export const updateWorkbench = action(schemaWorkbenchMerge, async (session, { me
     },
   })
 
-  const parsedWorkbench = schemaWorkbench
-    .catch({
-      tabs: [],
-      focusedTabId: '',
-    })
-    .parse(workbench)
+  const parsedWorkbench = schemaWorkbench.parse(workbench)
 
   const newWorkbench = {
     ...parsedWorkbench,
