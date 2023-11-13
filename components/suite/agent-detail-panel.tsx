@@ -23,11 +23,12 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Loading } from '../ui/loading'
 import { EnginesCombobox } from './engines-combobox'
-import { useAgentQuery, useTabs } from './queries'
+import { useAgentMutation, useAgentQuery, useTabs } from './queries'
 
 export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
+  const mutator = useAgentMutation(agent?.id)
 
   return (
     <div className={cn('', className)}>
@@ -39,12 +40,10 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
               <h3 className=" text-lg font-semibold leading-none">{agent.name}</h3>
               <RenameDialog
                 current={agent.name}
-                // onSubmit={(name) => agentMutation.mutate({ agentId: agent.id, merge: { name } })}
-                onSubmit={() => {}}
+                onSubmit={(name) => mutator.mutate({ agentId: agent.id, merge: { name } })}
               >
-                <Button variant="outline" size="sm">
-                  {/* disabled={agentMutation.isPending} */}
-                  {/* {agentMutation.isPending ? <Loading size="xs" /> : 'Rename'} */}
+                <Button variant="outline" size="sm" disabled={mutator.isPending}>
+                  {mutator.isPending ? <Loading size="xs" /> : 'Rename'}
                 </Button>
               </RenameDialog>
               <Button variant="default" size="sm" disabled>
@@ -97,11 +96,7 @@ export function RenameDialog({
 
   const submit = () => {
     const value = ref.current?.value
-    // if (!value) {
-    //   console.log('no value')
-    //   return
-    // }
-    onSubmit(value ?? '')
+    if (value) onSubmit(value)
   }
 
   return (

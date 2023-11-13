@@ -77,6 +77,19 @@ export const getAgent = action(z.string(), async (session, agentId) => {
   return parsedAgent
 })
 
+export const updateAgent = action(
+  z.object({ agentId: z.string(), merge: schemaAgentMerge }),
+  async (session, {agentId, merge}) => {
+    await prisma.agent.update({where: {
+      id: agentId, ownerId: session.user.id
+    },
+    data: {
+      ...merge
+    }
+  })
+  },
+)
+
 const schemaUpdateAgentParametersUpdate = z.object({
   agentId: z.string(),
   merge: schemaAgentParametersRecord,

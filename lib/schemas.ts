@@ -61,8 +61,9 @@ export const schemaAgent = z.object({
 export type Agent = z.infer<typeof schemaAgent>
 
 export const schemaAgentMerge = schemaAgent
-  .omit({ id: true, ownerId: true, parameters: true })
+  .omit({ id: true, ownerId: true, createdAt: true, updatedAt: true, parameters: true })
   .partial()
+export type AgentUpdate = z.infer<typeof schemaAgentMerge>
 
 export const schemaWorkbench = z
   .object({

@@ -5,6 +5,7 @@ import {
   getEngines,
   getUser,
   getWorkbench,
+  updateAgent,
   updateAgentParameters,
   updateWorkbench,
   WorkbenchMerge,
@@ -16,9 +17,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { useDebounce } from '@uidotdev/usehooks'
 import { nanoid } from 'nanoid/non-secure'
-import { useEffect, useState } from 'react'
 
 export function useUserQuery() {
   return useQuery({
@@ -120,6 +119,15 @@ function getAgentQueryOptions(agentId: string) {
   return queryOptions({
     queryKey: ['agent', agentId],
     queryFn: async () => await getAgent(agentId),
+  })
+}
+
+export function useAgentMutation(agentId = '') {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: ['agent', agentId],
+    mutationFn: async (input: Parameters<typeof updateAgent>[0]) => await updateAgent(input),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['agent', agentId] }),
   })
 }
 
