@@ -3,6 +3,7 @@ import {
   getEngine,
   getUser,
   getWorkbench,
+  testGetUser,
   updateWorkbench,
   WorkbenchMerge,
 } from '@/components/suite/actions'
@@ -14,6 +15,13 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { nanoid } from 'nanoid/non-secure'
+
+export function useTestActionQuery() {
+  return useQuery({
+    queryKey: ['tesetaction'],
+    queryFn: async () => await testGetUser(''),
+  })
+}
 
 export function useUserQuery() {
   return useQuery({

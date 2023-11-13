@@ -39,6 +39,10 @@ export const schemaAgent = z.object({
   parameters: z.record(schemaAgentParameters),
 })
 
+export const schemaAgentMerge = schemaAgent
+  .omit({ id: true, ownerId: true, parameters: true })
+  .partial()
+
 export const schemaWorkbench = z.object({
   tabs: z.array(
     z.object({

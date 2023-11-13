@@ -5,12 +5,14 @@ import { AppError } from '@/lib/error'
 import { prisma } from '@/lib/prisma'
 import {
   schemaAgent,
+  schemaAgentMerge,
   schemaAgentParameters,
   schemaEngine,
   schemaSuiteUserAll,
   schemaUser,
   schemaWorkbench,
 } from '@/lib/schemas'
+import { Session } from 'next-auth'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
@@ -19,6 +21,34 @@ async function getUserAuth() {
   if (!session) throw new AppError('You are not logged in.')
   return session.user
 }
+
+//* encapsulate logged in check, pass in session token
+//* encapsulate error handling
+//* validate user input
+//? validate db output?
+
+type AuthAction<TInput extends z.ZodTypeAny, ROutput extends object | undefined> = (
+  input: z.infer<TInput>,
+) => Promise<ROutput>
+
+//& take a schema param
+function authActionCreator<InputSchema extends z.ZodTypeAny, Result extends object | undefined>(
+  inputSchema: InputSchema,
+  actionFunc: (session: Session, input: z.infer<InputSchema>) => Result,
+): AuthAction<InputSchema, Result> {
+  return async (actualInputObj: z.infer<InputSchema>) => {
+    const session = await auth()
+    if (!session) throw new AppError('You are not logged in.')
+    const parsedInput = inputSchema.parse(actualInputObj)
+
+    const result = await actionFunc(session, parsedInput)
+    return result
+  }
+}
+
+export const testGetUser = authActionCreator(z.any(), async (session, input) => {
+  return await prisma.user.findUniqueOrThrow({ where: { id: session.user.id } })
+})
 
 //* "Private" / client requests / session`
 // Get the user + all relevant relations
