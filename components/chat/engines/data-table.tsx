@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Engine } from '@/lib/db'
+import { Engine } from '@prisma/client'
 import {
   ColumnDef,
   ColumnFiltersState,

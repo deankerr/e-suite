@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { useRef } from 'react'
@@ -24,18 +23,11 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Loading } from '../ui/loading'
 import { EnginesCombobox } from './engines-combobox'
+import { useAgentQuery, useTabs } from './queries'
 
 export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
-  const suite = useSuite()
-
-  const { user, agentMutation } = suite
-
-  const workbench = user ? user.workbench : undefined
-
-  const activeTab = workbench
-    ? workbench.tabs.find((tab) => tab.id === workbench.active)
-    : undefined
-  const agent = activeTab && user ? user.agents.find((a) => a.id === activeTab.agentId) : undefined
+  const { focusedTab } = useTabs()
+  const { data: agent } = useAgentQuery(focusedTab?.agentId)
 
   return (
     <div className={cn('', className)}>
@@ -47,10 +39,12 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
               <h3 className=" text-lg font-semibold leading-none">{agent.name}</h3>
               <RenameDialog
                 current={agent.name}
-                onSubmit={(name) => agentMutation.mutate({ agentId: agent.id, merge: { name } })}
+                // onSubmit={(name) => agentMutation.mutate({ agentId: agent.id, merge: { name } })}
+                onSubmit={() => {}}
               >
-                <Button variant="outline" size="sm" disabled={agentMutation.isPending}>
-                  {agentMutation.isPending ? <Loading size="xs" /> : 'Rename'}
+                <Button variant="outline" size="sm">
+                  {/* disabled={agentMutation.isPending} */}
+                  {/* {agentMutation.isPending ? <Loading size="xs" /> : 'Rename'} */}
                 </Button>
               </RenameDialog>
               <Button variant="default" size="sm" disabled>
@@ -65,7 +59,7 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
             </div>
             {/* debug info */}
             <div className="font-mono text-xs">
-              <p className="atypewriter">
+              <p className="">
                 <span className="">ID: {agent.id} </span>
                 <span className="">Created: {agent.createdAt.toISOString()} </span>
                 <span className="">Updated: {agent.updatedAt.toISOString()} </span>

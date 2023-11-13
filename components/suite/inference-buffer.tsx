@@ -1,13 +1,13 @@
-import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import { MessageBar } from '../chat/message-bar'
 import { MessageBubble } from '../chat/message-bubble'
+import { useAgentQuery, useTabs } from './queries'
 import { useAgentChat } from './use-agent-chat'
 
 export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
-  const { activeTab, agents } = useSuite()
+  const { focusedTab } = useTabs()
+  const { data: agent } = useAgentQuery(focusedTab?.agentId)
 
-  const agent = agents.find((a) => a.id === activeTab?.agentId)
   const chatId = agent ? agent.id + '-tmpchatId' : ''
 
   const chat = useAgentChat(chatId, agent)

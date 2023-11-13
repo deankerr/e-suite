@@ -1,24 +1,21 @@
 'use client'
 
-import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { Session } from 'next-auth'
 import Link from 'next/link'
 import { SignInOutButton } from '../sign-in-out-button'
-import { Loading } from '../ui/loading'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { AgentTabBar } from './agent-tab-bar'
 import { InferenceBuffer } from './inference-buffer'
 import { InferenceParameterPanel } from './inference-parameter-panel'
-import { ParameterPanel } from './parameter-panel'
 import { SuiteRailList } from './suite-rail-list'
 import { SuiteStatusBar } from './suite-status-bar'
 import { SuiteTabBar } from './suite-tab-bar'
 
 export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
-  const suite = useSuite()
+  // const suite = useSuite()
 
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
@@ -29,7 +26,7 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
           <SuiteRailList className=" px-2 py-4" />
           {/* debug info */}
           <div className="mx-2 border p-2">
-            <div className="text-center font-mono text-sm">{suite.userQuery.data?.name}</div>
+            {/* <div className="text-center font-mono text-sm">{suite.userQuery.data?.name}</div> */}
           </div>
           <div className="flex justify-around px-2 py-4">
             <ThemeToggle />
@@ -48,7 +45,6 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
 
         <div className="grid grid-cols-[60%_auto] overflow-hidden">
           <InferenceBuffer />
-          {/* <ParameterPanel className="border-l" /> */}
           <InferenceParameterPanel className="border-l" />
         </div>
       </div>
@@ -58,8 +54,8 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
         <div>
           Session: {session.user.role} {session.user.id}
         </div>
-        <div>{suite.userQuery.error?.message}</div>
-        <div>{suite.userQuery.isPending && <Loading size="xs" />}</div>
+        {/* <div>{suite.userQuery.error?.message}</div> */}
+        {/* <div>{suite.userQuery.isPending && <Loading size="xs" />}</div> */}
       </SuiteStatusBar>
     </div>
   )

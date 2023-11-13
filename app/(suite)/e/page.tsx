@@ -1,8 +1,7 @@
 import { auth } from '@/auth'
 import { SuiteShell } from '@/components/suite/suite-shell'
-import { db } from '@/lib/db'
-import { schemaSuiteUserAll, schemaUser, schemaWorkbench } from '@/lib/db-schemas'
 import { prisma } from '@/lib/prisma'
+import { schemaSuiteUserAll, schemaUser, schemaWorkbench } from '@/lib/schemas'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
 export default async function EPage() {

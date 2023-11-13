@@ -1,129 +1,185 @@
 'use server'
 
 import { auth } from '@/auth'
-import { db } from '@/lib/db'
+import { AppError } from '@/lib/error'
+import { prisma } from '@/lib/prisma'
 import {
-  SuiteAgentUpdateMergeObject,
-  suiteAgentUpdateMergeSchema,
-  suiteInferenceParametersSchema,
-  SuiteInferenceParametersSchema,
-  SuiteWorkbenchUpdateMergeObject,
-  suiteWorkbenchUpdateMergeSchema,
+  schemaAgent,
+  schemaAgentParameters,
+  schemaEngine,
+  schemaSuiteUserAll,
+  schemaUser,
+  schemaWorkbench,
 } from '@/lib/schemas'
+import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
-// TODO integrate with db -> actions can only ever modify current session user
-// TODO standard ownership of functionality implementation (db or actions)
-
-async function getUserSession() {
+async function getUserAuth() {
   const session = await auth()
-  if (!session) throw new Error('You are not logged in.')
+  if (!session) throw new AppError('You are not logged in.')
   return session.user
 }
 
-export async function getSuiteUser() {
-  console.log('action getSuite')
-  const user = await getUserSession()
-
+//* "Private" / client requests / session`
+// Get the user + all relevant relations
+export async function getSuiteUserAll() {
   try {
-    const suite = await db.getSuiteUser(user.id)
-    return suite
+    const user = await getUserAuth()
+    const suiteUser = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: user.id,
+      },
+      include: {
+        agents: {
+          include: {
+            engine: true,
+          },
+        },
+      },
+    })
+
+    const parsed = schemaSuiteUserAll.parse(suiteUser)
+    return parsed
   } catch (err) {
-    console.error(err)
-    throw new Error('Failed to get current user')
+    return handleError(err)
   }
 }
 
-export async function updateWorkbench(workbench: SuiteWorkbenchUpdateMergeObject) {
-  const user = await getUserSession()
-
-  const validated = suiteWorkbenchUpdateMergeSchema.safeParse(workbench)
-
-  if (!validated.success) {
-    console.error(fromZodError(validated.error))
-    throw new Error('Invalid workbench.')
-  }
-
+// return User with agentId[] only
+export async function getUser() {
   try {
-    await db.updateWorkbench(user.id, validated.data)
+    const user = await getUserAuth()
+    const suiteUser = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: user.id,
+      },
+      include: {
+        agents: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+    return { ...suiteUser, agentIds: suiteUser.agents.map((agent) => agent.id) }
   } catch (err) {
-    console.error(err)
-    throw new Error('Failed to update workbench.')
+    return handleError(err)
   }
 }
 
-export async function updateSuiteUserAgent(agentId: string, merge: SuiteAgentUpdateMergeObject) {
-  const user = await getUserSession()
-
-  const parsedMerge = suiteAgentUpdateMergeSchema.safeParse(merge)
-  if (!parsedMerge.success) {
-    console.error(fromZodError(parsedMerge.error))
-    throw new Error('Invalid Agent update.')
-  }
-
-  const suiteUser = await db.getSuiteUser(user.id)
-  const agent = suiteUser.agents.find((agent) => agent.id === agentId)
-  if (!agent) throw new Error('Invalid Agent id.')
-
+export async function getAgent(agentId: string) {
   try {
-    await db.updateUserAgent(user.id, agent.id, parsedMerge.data)
+    const user = await getUserAuth()
+    const agent = await prisma.agent.findUniqueOrThrow({
+      where: {
+        id: agentId,
+        ownerId: user.id,
+      },
+    })
+
+    const parsedAgent = schemaAgent.parse(agent)
+    return parsedAgent
   } catch (err) {
-    console.error(err)
-    throw new Error('Failed to update Agent.')
+    return handleError(err)
   }
 }
 
-export async function updateAgentInferenceParameters(
-  agentId: string,
-  merge: SuiteInferenceParametersSchema,
-) {
-  const user = await getUserSession()
-
-  const parsedMerge = suiteInferenceParametersSchema.safeParse(merge)
-  if (!parsedMerge.success) {
-    console.error(fromZodError(parsedMerge.error))
-    throw new Error('Invalid Agent Inference Parameter update.')
-  }
-  console.log('merge', parsedMerge.data)
-  let agent
+export async function getWorkbench() {
   try {
-    agent = await db.getSuiteUserAgent(user.id, agentId)
+    const user = await getUserAuth()
+    const { workbench } = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: user.id,
+      },
+      select: {
+        workbench: true,
+      },
+    })
+
+    const parsedWorkbench = schemaWorkbench
+      .catch({
+        tabs: [],
+        focusedTabId: '',
+      })
+      .parse(workbench)
+    return parsedWorkbench
   } catch (err) {
-    console.error(err)
-    throw new Error('Invalid Agent.')
+    return handleError(err)
   }
+}
 
-  const parsedCurrent = suiteInferenceParametersSchema.safeParse(agent.parameters)
-  const current = parsedCurrent.success ? parsedCurrent.data : {}
-
-  console.log('current', current)
-
-  const merged = {
-    ...current,
-    ...parsedMerge.data,
-  }
-
-  console.log('merged', merged)
-
+export type WorkbenchMerge = Partial<z.infer<typeof schemaWorkbench>>
+export async function updateWorkbench(merge: WorkbenchMerge) {
   try {
-    await db.updateUserAgent(user.id, agentId, { parameters: merged })
+    const user = await getUserAuth()
+
+    const parsedMerge = schemaWorkbench.partial().safeParse(merge)
+    if (!parsedMerge.success) {
+      throw new AppError(fromZodError(parsedMerge.error).message)
+    }
+
+    const { workbench } = await prisma.user.findUniqueOrThrow({
+      where: {
+        id: user.id,
+      },
+      select: {
+        workbench: true,
+      },
+    })
+
+    const parsedWorkbench = schemaWorkbench.parse(workbench)
+
+    const newWorkbench = {
+      ...parsedWorkbench,
+      ...merge,
+    }
+    console.log('newWorkbench', newWorkbench)
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        workbench: newWorkbench,
+      },
+    })
   } catch (err) {
-    console.error(err)
-    throw new Error('Failed to update Agent parameters.')
+    return handleError(err)
   }
 }
 
 export async function getEngines() {
-  await getUserSession()
-
   try {
-    return await db.getEngines()
+    await getUserAuth()
+    const engines = await prisma.engine.findMany({})
+    const parsedEngines = z.array(schemaEngine).nonempty().parse(engines)
+    return parsedEngines
   } catch (err) {
-    if (err instanceof Error) {
-      console.error(err)
-    } else {
-      console.error(err)
-    }
-    throw new Error('An error occured while fetching engines.')
+    return handleError(err)
   }
+}
+
+export async function getEngine(engineId: string) {
+  try {
+    await getUserAuth()
+    const engine = await prisma.engine.findUniqueOrThrow({ where: { id: engineId } })
+    return engine
+  } catch (err) {
+    return handleError(err)
+  }
+}
+
+function handleError(err: unknown): never {
+  if (err instanceof AppError) {
+    console.error(err)
+    throw err
+  }
+
+  if (err instanceof ZodError) {
+    console.error(fromZodError(err))
+    throw new Error(fromZodError(err).message)
+  }
+
+  console.error(err)
+  throw new Error('An unknown error occurred.')
 }

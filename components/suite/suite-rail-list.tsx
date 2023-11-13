@@ -1,60 +1,39 @@
-import { SuiteWorkbench } from '@/lib/schemas'
-import { useSuite } from '@/lib/use-suite'
 import { cn } from '@/lib/utils'
 import { CaretDownIcon, CaretRightIcon } from '@radix-ui/react-icons'
 import { nanoid } from 'nanoid/non-secure'
 import { Loading } from '../ui/loading'
+import {
+  useAgentQueries,
+  useTabs,
+  useUserQuery,
+  useWorkbenchMutation,
+  useWorkbenchQuery,
+} from './queries'
 
 export function SuiteRailList({ className }: React.ComponentProps<'div'>) {
-  const suite = useSuite()
+  const user = useUserQuery()
+  const agents = useAgentQueries(user.data?.agentIds ?? [])
 
-  const activateAgentTab = (agentId: string) => {
-    if (!suite.workbench) return
-    const existingTab = suite.tabs.find((tab) => tab.agentId === agentId)
-    if (existingTab) {
-      // tab already open, set active
-      if (suite.activeTab?.id !== existingTab.id) {
-        suite.workbenchMutation.mutate({
-          merge: {
-            tabs: suite.tabs.map((tab) =>
-              tab.id === existingTab.id ? { ...tab, open: true } : tab,
-            ),
-            active: existingTab.id,
-          },
-        })
-        return
-      }
-    } else {
-      // create new tab
-      const tab: SuiteWorkbench['tabs'][number] = {
-        id: nanoid(7),
-        agentId,
-        open: true,
-      }
-
-      suite.workbenchMutation.mutate({
-        merge: {
-          tabs: [...suite.workbench.tabs, tab],
-          active: tab.id,
-        },
-      })
-    }
-  }
+  const { createTab } = useTabs()
 
   return (
     <div className={cn('space-y-4', className)}>
       {/* <AgentList title="Active"></AgentList> */}
       <AgentList title="Available" open={true}>
-        {suite.userQuery.isPending && <Loading />}
-        {suite.agents.map((agent) => (
-          <li
-            key={agent.id}
-            className={cn('cursor-pointer text-muted-foreground hover:text-foreground')}
-            onClick={() => activateAgentTab(agent.id)}
-          >
-            <span className="ml-6">{agent.name}</span>
-          </li>
-        ))}
+        {agents.map((agent, i) => {
+          if (agent.isError) return null
+          return (
+            <li
+              key={agent.data?.id ?? i}
+              className={cn('cursor-pointer text-muted-foreground hover:text-foreground')}
+              onClick={() => createTab({ agentId: agent.data?.id ?? '' })}
+            >
+              <span className="ml-6">
+                {agent.isPending ? <Loading icon="bars" size="sm" key={i} /> : agent.data.name}
+              </span>
+            </li>
+          )
+        })}
       </AgentList>
     </div>
   )

@@ -1,13 +1,15 @@
-import { EChatRequestSchema } from '@/lib/api/schemas'
-import { validateJsonRecord } from '@/lib/schemas'
+import { schemaAgentParameters, schemaAgentParametersRecord } from '@/lib/schemas'
 import { Agent, Engine } from '@prisma/client'
-import { useChat, UseChatOptions } from 'ai/react'
+import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
+import { useEngineQuery } from './queries'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent: (Agent & { engine: Engine }) | undefined) {
+export function useAgentChat(chatId: string, agent: Agent | undefined) {
+  const engine = useEngineQuery(agent?.engineId)
+
   const initialMessages = agent
     ? [
         {
@@ -18,7 +20,9 @@ export function useAgentChat(chatId: string, agent: (Agent & { engine: Engine })
       ]
     : []
 
-  const include = validateJsonRecord(agent?.engine?.includeParameters ?? {})
+  // TODO parameters[engineid]
+  // const include = schemaAgentParametersRecord.parse(agent?.parameters)
+  const include = {}
 
   const chat = useChat({
     id: chatId,

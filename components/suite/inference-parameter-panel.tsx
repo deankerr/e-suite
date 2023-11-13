@@ -1,40 +1,33 @@
 import { PlatformKeys, schemas } from '@/lib/api/schemas'
-import { suiteInferenceParametersSchema, SuiteInferenceParametersSchema } from '@/lib/schemas'
-import { useSuite } from '@/lib/use-suite'
+import { schemaAgentParameters, schemaAgentParametersRecord } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { SliderInput } from '../chat/form/slider-input'
 import { TagInput } from '../chat/form/tag-input'
 import { Switch } from '../ui/switch'
+import { useAgentQuery, useEngineQuery, useTabs } from './queries'
 
 const labelClass = 'font-mono text-sm'
 
 export function InferenceParameterPanel({ className }: React.ComponentProps<'div'>) {
-  const { activeTab, agents, agentInferenceParametersMutation } = useSuite()
+  const { focusedTab } = useTabs()
+  const { data: agent } = useAgentQuery(focusedTab?.agentId)
+  const { data: engine } = useEngineQuery(agent?.engineId)
 
-  const agent = agents.find((agent) => agent.id === activeTab?.agentId)
-  if (!agent) return null
+  if (!agent || !engine) return null
 
-  const parsed = suiteInferenceParametersSchema.safeParse(agent.parameters)
+  const parsed = schemaAgentParametersRecord.safeParse(agent.parameters)
 
   const agentParameters = parsed.success ? parsed.data : {}
-  const currentEngineParameters = agentParameters[agent.engineId] ?? {
-    values: {},
-    enabled: {},
-  }
+  const currentEngineParameters = agentParameters ?? {}
 
   const parameters = {
-    values: {
-      ...defaultValues,
-      ...currentEngineParameters.values,
-    },
-    enabled: {
-      ...currentEngineParameters.enabled,
-    },
-  } satisfies SuiteInferenceParametersSchema[string]
+    ...defaultValues,
+    ...currentEngineParameters.values,
+  }
 
-  type Parameter = Required<SuiteInferenceParametersSchema[string]['values']>
-  const parameterKeys = Object.keys(parameters.values)
-  const schemaKeys = schemas[agent.engine.providerId as PlatformKeys].chat.input.keyof()
+  type Parameter = typeof parameters
+  const parameterKeys = Object.keys(parameters)
+  const schemaKeys = schemas[engine.providerId as PlatformKeys].chat.input.keyof()
     .options as string[]
 
   const setParameter = <T extends keyof Parameter>(
@@ -43,14 +36,14 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
     value?: Parameter[T],
   ) => {
     const newParameters = { ...parameters }
-    if (value) newParameters.values[key] = value
-    newParameters.enabled[key] = enabled
+    if (value) newParameters[key] = value
+    // newParameters.enabled[key] = enabled
 
     console.log('newParameters', newParameters)
-    agentInferenceParametersMutation.mutate({
-      agentId: agent.id,
-      merge: { [agent.engineId]: newParameters },
-    })
+    // agentInferenceParametersMutation.mutate({
+    //   agentId: agent.id,
+    //   merge: { [agent.engineId]: newParameters },
+    // })
   }
 
   return (
@@ -62,13 +55,13 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
             <div key={key}>
               <div className={labelClass}>
                 <Switch
-                  checked={parameters.enabled[key]}
+                  // checked={parameters.enabled[key]}
                   onCheckedChange={(enabled) => setParameter(key, enabled)}
                 />{' '}
                 {key}
               </div>
               <SliderInput
-                value={parameters.values[key]}
+                value={parameters[key]}
                 onChange={(value) => setParameter(key, true, value)}
                 range={sliderInputData[key]}
               />
@@ -83,13 +76,13 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
             <div key={key} className="grid grid-cols-[auto_1fr] items-center gap-x-2">
               <div className={labelClass}>
                 <Switch
-                  checked={parameters.enabled[key]}
+                  // checked={parameters.enabled[key]}
                   onCheckedChange={(enabled) => setParameter(key, enabled)}
                 />{' '}
                 {key}
               </div>
               <TagInput
-                values={parameters.values[key]}
+                values={parameters[key]}
                 onChange={(value) => setParameter(key, true, value)}
               />
             </div>
@@ -163,4 +156,4 @@ const defaultValues = {
   top_k: 1,
   stop: [],
   stop_token: [],
-} satisfies SuiteInferenceParametersSchema[string]['values']
+}
