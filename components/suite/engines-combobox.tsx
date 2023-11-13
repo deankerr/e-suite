@@ -16,9 +16,8 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
-import { useQuery } from '@tanstack/react-query'
 import * as React from 'react'
-import { getEngines } from './actions'
+import { useEnginesQuery } from './queries'
 
 export function EnginesCombobox({ current = '' }: { current?: string }) {
   const [open, setOpen] = React.useState(false)
@@ -27,12 +26,7 @@ export function EnginesCombobox({ current = '' }: { current?: string }) {
   const value = localValue
   const setValue = setLocalValue
 
-  const enginesQuery = useQuery({
-    queryKey: ['engines'],
-    queryFn: () => getEngines(),
-  })
-
-  const engines = enginesQuery.data ?? []
+  const { data: engines = [] } = useEnginesQuery()
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

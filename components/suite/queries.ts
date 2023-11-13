@@ -1,9 +1,9 @@
 import {
   getAgent,
   getEngine,
+  getEngines,
   getUser,
   getWorkbench,
-  testGetUser,
   updateWorkbench,
   WorkbenchMerge,
 } from '@/components/suite/actions'
@@ -16,23 +16,16 @@ import {
 } from '@tanstack/react-query'
 import { nanoid } from 'nanoid/non-secure'
 
-export function useTestActionQuery() {
-  return useQuery({
-    queryKey: ['tesetaction'],
-    queryFn: async () => await testGetUser(''),
-  })
-}
-
 export function useUserQuery() {
   return useQuery({
     queryKey: ['user'],
-    queryFn: () => getUser(),
+    queryFn: async () => await getUser(),
   })
 }
 
 const workbenchQueryOptions = queryOptions({
   queryKey: ['workbench'],
-  queryFn: () => getWorkbench(),
+  queryFn: async () => await getWorkbench(),
 })
 
 export function useWorkbenchQuery() {
@@ -43,7 +36,7 @@ export function useWorkbenchMutation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationKey: ['workbench'],
-    mutationFn: ({ merge }: { merge: WorkbenchMerge }) => updateWorkbench(merge),
+    mutationFn: async ({ merge }: { merge: WorkbenchMerge }) => await updateWorkbench({ merge }),
     onMutate: async ({ merge }) => {
       await queryClient.cancelQueries({ queryKey: ['workbench'] })
       const previousWorkbench = queryClient.getQueryData(['workbench'])
@@ -105,7 +98,7 @@ export function useTabs() {
 export function useAgentQuery(agentId = '') {
   return useQuery({
     queryKey: ['agent', agentId],
-    queryFn: () => getAgent(agentId),
+    queryFn: async () => await getAgent(agentId),
     enabled: !!agentId,
   })
 }
@@ -114,7 +107,7 @@ export function useAgentQueries(agentIds: string[]) {
   return useQueries({
     queries: agentIds.map((agentId) => ({
       queryKey: ['agent', agentId],
-      queryFn: () => getAgent(agentId),
+      queryFn: async () => await getAgent(agentId),
     })),
   })
 }
@@ -122,7 +115,14 @@ export function useAgentQueries(agentIds: string[]) {
 export function useEngineQuery(engineId = '') {
   return useQuery({
     queryKey: ['engine', engineId],
-    queryFn: () => getEngine(engineId),
+    queryFn: async () => await getEngine(engineId),
     enabled: !!engineId,
+  })
+}
+
+export function useEnginesQuery() {
+  return useQuery({
+    queryKey: ['engines'],
+    queryFn: async () => await getEngines(),
   })
 }

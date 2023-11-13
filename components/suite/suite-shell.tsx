@@ -6,21 +6,15 @@ import { Session } from 'next-auth'
 import Link from 'next/link'
 import { SignInOutButton } from '../sign-in-out-button'
 import { ThemeToggle } from '../ui/theme-toggle'
-import { getUser, testGetUser } from './actions'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { AgentTabBar } from './agent-tab-bar'
 import { InferenceBuffer } from './inference-buffer'
 import { InferenceParameterPanel } from './inference-parameter-panel'
-import { useTestActionQuery } from './queries'
 import { SuiteRailList } from './suite-rail-list'
 import { SuiteStatusBar } from './suite-status-bar'
 import { SuiteTabBar } from './suite-tab-bar'
 
 export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
-  // const suite = useSuite()
-  const testaction = useTestActionQuery()
-
-  console.log('testaction', testaction?.data)
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
       {/* SuiteRail */}
@@ -28,10 +22,6 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
         <SuiteAppTitle className="h-12 border-b" />
         <div className="flex grow flex-col justify-between">
           <SuiteRailList className=" px-2 py-4" />
-          {/* debug info */}
-          <div className="mx-2 border p-2">
-            <div className="text-center font-mono text-sm">{testaction.data?.name}</div>
-          </div>
           <div className="flex justify-around px-2 py-4">
             <ThemeToggle />
             <SignInOutButton session={session} />
