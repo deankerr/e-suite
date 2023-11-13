@@ -17,7 +17,6 @@ export function SliderInput({
         defaultValue={[value ?? 0]}
         onValueCommit={([newValue]) => {
           onChange(newValue ?? range.default)
-          console.log('i commit')
         }}
       />
       <Input
@@ -26,7 +25,6 @@ export function SliderInput({
         type="number"
         value={value}
         onChange={(e) => {
-          console.log('input change')
           onChange(Number(e.target.value))
         }}
       />

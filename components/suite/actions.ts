@@ -150,5 +150,6 @@ export const getEngines = action(z.void(), async () => {
 })
 
 export const getEngine = action(z.string(), async (session, engineId) => {
-  return await prisma.engine.findUniqueOrThrow({ where: { id: engineId } })
+  const engine = await prisma.engine.findUniqueOrThrow({ where: { id: engineId } })
+  return schemaEngine.parse(engine)
 })

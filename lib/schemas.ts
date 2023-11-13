@@ -7,7 +7,9 @@ export const schemaEngine = z.object({
   providerId: z.string(),
   displayName: z.string(),
   creatorName: z.string(),
+  includeParameters: z.record(z.unknown()),
 })
+export type Engine = z.infer<typeof schemaEngine>
 
 const parameterKeys = [
   'temperature',
@@ -56,6 +58,7 @@ export const schemaAgent = z.object({
   engineId: z.string(),
   parameters: schemaAgentParametersRecord,
 })
+export type Agent = z.infer<typeof schemaAgent>
 
 export const schemaAgentMerge = schemaAgent
   .omit({ id: true, ownerId: true, parameters: true })

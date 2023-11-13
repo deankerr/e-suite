@@ -1,16 +1,17 @@
 import { cn } from '@/lib/utils'
 import { MessageBar } from '../chat/message-bar'
 import { MessageBubble } from '../chat/message-bubble'
-import { useAgentQuery, useTabs } from './queries'
+import { useAgentQuery, useEngineQuery, useTabs } from './queries'
 import { useAgentChat } from './use-agent-chat'
 
 export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
+  const { data: engine } = useEngineQuery(agent?.engineId)
 
   const chatId = agent ? agent.id + '-tmpchatId' : ''
 
-  const chat = useAgentChat(chatId, agent)
+  const chat = useAgentChat(chatId, agent, engine)
   const isWaiting = chat.isLoading && !chat.streamingId
 
   return (

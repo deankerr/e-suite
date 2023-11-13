@@ -1,15 +1,11 @@
-import { schemaAgentParameters, schemaAgentParametersRecord } from '@/lib/schemas'
-import { Agent, Engine } from '@prisma/client'
+import { Agent, Engine, schemaAgentParameters, schemaAgentParametersRecord } from '@/lib/schemas'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
-import { useEngineQuery } from './queries'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent: Agent | undefined) {
-  const engine = useEngineQuery(agent?.engineId)
-
+export function useAgentChat(chatId: string, agent: Agent | undefined, engine: Engine | undefined) {
   const initialMessages = agent
     ? [
         {
@@ -20,19 +16,28 @@ export function useAgentChat(chatId: string, agent: Agent | undefined) {
       ]
     : []
 
-  // TODO parameters[engineid]
-  // const include = schemaAgentParametersRecord.parse(agent?.parameters)
-  const include = {}
+  const body: Record<string, unknown> =
+    agent && engine
+      ? {
+          ...engine.includeParameters,
+          engineId: agent.engineId,
+        }
+      : {}
+
+  if (agent && engine) {
+    const parameters = agent.parameters[agent.engineId]
+    if (parameters && parameters.fieldsEnabled) {
+      for (const key of parameters.fieldsEnabled) {
+        const param = parameters[key as keyof typeof parameters]
+        if (param) body[key] = param
+      }
+    }
+  }
 
   const chat = useChat({
     id: chatId,
     api: endpoint,
-    body: agent
-      ? {
-          engineId: agent.engineId,
-          ...include,
-        }
-      : {},
+    body,
     initialMessages,
     onResponse: (response) => {
       console.log('[response]', response)
