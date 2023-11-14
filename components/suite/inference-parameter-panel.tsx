@@ -45,7 +45,7 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
   }
 
   return (
-    <div className={cn('space-y-8 p-6', className)}>
+    <div className={cn('space-y-8 overflow-y-auto p-6', className)}>
       {sliderInputKeys.map((key) => {
         if (schemaKeys.includes(key)) {
           return (

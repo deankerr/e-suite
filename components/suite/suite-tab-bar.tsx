@@ -11,7 +11,7 @@ export function SuiteTabBar({ className }: React.ComponentProps<'div'>) {
   return (
     <div className={cn('flex items-center overflow-x-auto bg-muted/50', className)}>
       {tabs.map((tab, i) => {
-        const isActive = tab.agentId === focusedTabId
+        const isActive = tab.id === focusedTabId
         const agent = agents[i]
         return (
           <div
