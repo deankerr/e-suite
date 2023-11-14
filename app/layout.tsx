@@ -1,6 +1,5 @@
-import { auth } from '@/auth'
 import './globals.css'
-import { Providers } from '@/components/util/providers'
+import { ClientProviders } from '@/components/util/client-providers'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
@@ -15,15 +14,14 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth()
   return (
     <html lang="en" className="h-full overflow-hidden overscroll-none" suppressHydrationWarning>
       <body className={`${inter.className} h-full`}>
-        <Providers session={session}>
+        <ClientProviders>
           {children}
           <Toaster richColors />
           <TailwindBreakpointIndicator />
-        </Providers>
+        </ClientProviders>
         {process.env.NODE_ENV !== 'development' && <Analytics />}
       </body>
     </html>
