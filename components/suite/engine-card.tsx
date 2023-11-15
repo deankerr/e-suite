@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn, nanoUSDToDollars } from '@/lib/utils'
 import { Engine } from '@prisma/client'
 import Big from 'big.js'
 
@@ -12,8 +12,8 @@ export function EngineCard({
     ['category', engine.type],
     ['context length', engine.contextLength],
     ['license', engine.license || '[unknown]'],
-    ['price (input)', formatPrice(engine.providerId, engine.costInputNanoUSD.toString())],
-    ['price (output)', formatPrice(engine.providerId, engine.costOutputNanoUSD.toString())],
+    ['price (input)', nanoUSDToDollars(Number(engine.costInputNanoUSD)).toString()],
+    ['price (output)', nanoUSDToDollars(Number(engine.costOutputNanoUSD)).toString()],
     // ['debug price raw (input)', engine.priceInput],
     // ['debug price raw (output)', engine.priceOutput],
   ] // availability, sources, datasheet, moderation
@@ -40,19 +40,4 @@ export function EngineCard({
       ))}
     </div>
   )
-}
-
-//* temp, move to api parsing
-Big.NE = -10
-function formatPrice(providerId: string, n: string) {
-  if (providerId === 'openrouter') {
-    return '$' + new Big(n).times(1000).toString()
-  }
-
-  // if (providerId === 'togetherai') {
-  //   // (price * 4000) / 1000000000
-  //   return '$' + new Big(n).times(4000).div(1000000000).toString()
-  // }
-
-  return n
 }

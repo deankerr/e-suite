@@ -62,7 +62,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '4_096',
+    contextLength: 4_096,
     tokenizer: 'GPT',
   },
 
@@ -79,7 +79,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '4_096',
+    contextLength: 4_096,
     tokenizer: 'GPT',
   },
 
@@ -96,7 +96,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '4_096',
+    contextLength: 4_096,
     tokenizer: 'GPT',
   },
 
@@ -113,7 +113,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '4_096',
+    contextLength: 4_096,
     tokenizer: 'GPT',
   },
 
@@ -130,7 +130,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '4_096',
+    contextLength: 4_096,
     tokenizer: 'GPT',
   },
 
@@ -147,9 +147,9 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'The latest GPT-3.5 Turbo model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens.',
     url: 'https://openai.com',
-    contextLength: '16_385',
+    contextLength: 16_385,
     tokenizer: 'GPT',
-    outputTokenLimit: '4_096',
+    outputTokenLimit: 4_096,
   },
 
   {
@@ -165,7 +165,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '16_385',
+    contextLength: 16_385,
     tokenizer: 'GPT',
   },
 
@@ -182,7 +182,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-3.5 models can understand and generate natural language or code. Our most capable and cost effective model in the GPT-3.5 family is gpt-3.5-turbo which has been optimized for chat using the Chat Completions API but works well for traditional completions tasks as well.',
     url: 'https://openai.com',
-    contextLength: '16_385',
+    contextLength: 16_385,
     tokenizer: 'GPT',
   },
 
@@ -199,7 +199,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-4 is a large multimodal model (accepting text or image inputs and outputting text) that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. GPT-4 is available in the OpenAI API to paying customers. Like gpt-3.5-turbo, GPT-4 is optimized for chat but works well for traditional completions tasks using the Chat Completions API.',
     url: 'https://openai.com',
-    contextLength: '8_192',
+    contextLength: 8_192,
     tokenizer: 'GPT',
   },
 
@@ -216,7 +216,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-4 is a large multimodal model (accepting text or image inputs and outputting text) that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. GPT-4 is available in the OpenAI API to paying customers. Like gpt-3.5-turbo, GPT-4 is optimized for chat but works well for traditional completions tasks using the Chat Completions API.',
     url: 'https://openai.com',
-    contextLength: '8_192',
+    contextLength: 8_192,
     tokenizer: 'GPT',
   },
 
@@ -233,7 +233,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'GPT-4 is a large multimodal model (accepting text or image inputs and outputting text) that can solve difficult problems with greater accuracy than any of our previous models, thanks to its broader general knowledge and advanced reasoning capabilities. GPT-4 is available in the OpenAI API to paying customers. Like gpt-3.5-turbo, GPT-4 is optimized for chat but works well for traditional completions tasks using the Chat Completions API.',
     url: 'https://openai.com',
-    contextLength: '8_192',
+    contextLength: 8_192,
     tokenizer: 'GPT',
   },
 
@@ -250,7 +250,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'The latest GPT-4 model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens. This preview model is not yet suited for production traffic.',
     url: 'https://openai.com',
-    contextLength: '128_000',
+    contextLength: 128_000,
     tokenizer: 'GPT',
   },
 
@@ -267,7 +267,7 @@ export const openaiStaticModelData: EngineCreate[] = [
     description:
       'Ability to understand images, in addition to all other GPT-4 Turbo capabilities. Returns a maximum of 4,096 output tokens. This is a preview model version and not suited yet for production traffic.',
     url: 'https://openai.com',
-    contextLength: '128_000',
+    contextLength: 128_000,
     tokenizer: 'GPT',
     comment: ['Additional cost incurred per image size'],
   },

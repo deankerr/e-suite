@@ -28,3 +28,11 @@ function isLocalStorageAvailable() {
     return false
   }
 }
+
+export function dollarsToNanoUSD(dollars: number) {
+  return (dollars / 4000) * 1_000_000_000
+}
+
+export function nanoUSDToDollars(nano: number) {
+  return (nano * 4000) / 1_000_000_000
+}

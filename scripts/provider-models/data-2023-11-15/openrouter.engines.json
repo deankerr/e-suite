@@ -1,19 +1,5 @@
 [
   {
-    "id": "openrouter@auto",
-    "model": "auto",
-    "type": "chat",
-    "providerId": "openrouter",
-    "providerModelId": "openrouter/auto",
-    "displayName": "Auto (best for prompt)",
-    "creator": "Auto (best for prompt)",
-    "costInputNanoUSD": -250000000,
-    "costOutputNanoUSD": -250000000,
-    "contextLength": "32767",
-    "tokenizer": "Router",
-    "instructType": null
-  },
-  {
     "id": "openrouter@mistral-7b-instruct",
     "model": "mistral-7b-instruct",
     "type": "instruct",
@@ -23,8 +9,8 @@
     "creator": "Mistral 7B Instruct (beta)",
     "costInputNanoUSD": 0,
     "costOutputNanoUSD": 0,
-    "parameterSize": "7000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 7000,
+    "contextLength": 8192,
     "tokenizer": "Mistral",
     "instructType": "llama2"
   },
@@ -38,8 +24,8 @@
     "creator": "Hugging Face",
     "costInputNanoUSD": 0,
     "costOutputNanoUSD": 0,
-    "parameterSize": "7000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 7000,
+    "contextLength": 4096,
     "tokenizer": "Mistral",
     "instructType": "zephyr"
   },
@@ -53,11 +39,11 @@
     "creator": "Toppy M 7B (beta)",
     "costInputNanoUSD": 0,
     "costOutputNanoUSD": 0,
-    "parameterSize": "7000000000",
-    "contextLength": "32768",
+    "parameterSizeMil": 7000,
+    "contextLength": 32768,
     "tokenizer": "Mistral",
     "instructType": "alpaca",
-    "outputTokenLimit": "2048"
+    "outputTokenLimit": 2048
   },
   {
     "id": "openrouter@gpt-3.5-turbo",
@@ -69,7 +55,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 250,
     "costOutputNanoUSD": 500,
-    "contextLength": "4095",
+    "contextLength": 4095,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -83,10 +69,10 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 250,
     "costOutputNanoUSD": 500,
-    "contextLength": "16385",
+    "contextLength": 16385,
     "tokenizer": "GPT",
     "instructType": null,
-    "outputTokenLimit": "4096"
+    "outputTokenLimit": 4096
   },
   {
     "id": "openrouter@gpt-3.5-turbo-0301",
@@ -98,7 +84,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 250,
     "costOutputNanoUSD": 500,
-    "contextLength": "4095",
+    "contextLength": 4095,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -112,7 +98,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 750,
     "costOutputNanoUSD": 1000,
-    "contextLength": "16385",
+    "contextLength": 16385,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -126,10 +112,10 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 2500,
     "costOutputNanoUSD": 7500,
-    "contextLength": "128000",
+    "contextLength": 128000,
     "tokenizer": "GPT",
     "instructType": null,
-    "outputTokenLimit": "4096"
+    "outputTokenLimit": 4096
   },
   {
     "id": "openrouter@gpt-4",
@@ -141,7 +127,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 7500,
     "costOutputNanoUSD": 15000,
-    "contextLength": "8191",
+    "contextLength": 8191,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -155,7 +141,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 7500,
     "costOutputNanoUSD": 15000,
-    "contextLength": "8191",
+    "contextLength": 8191,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -169,7 +155,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 15000,
     "costOutputNanoUSD": 30000,
-    "contextLength": "32767",
+    "contextLength": 32767,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -183,7 +169,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 15000,
     "costOutputNanoUSD": 30000,
-    "contextLength": "32767",
+    "contextLength": 32767,
     "tokenizer": "GPT",
     "instructType": null
   },
@@ -197,10 +183,10 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 2500,
     "costOutputNanoUSD": 7500,
-    "contextLength": "128000",
+    "contextLength": 128000,
     "tokenizer": "GPT",
     "instructType": null,
-    "outputTokenLimit": "4096"
+    "outputTokenLimit": 4096
   },
   {
     "id": "openrouter@text-davinci-002",
@@ -212,7 +198,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 5000,
     "costOutputNanoUSD": 5000,
-    "contextLength": "4095",
+    "contextLength": 4095,
     "tokenizer": "GPT",
     "instructType": "gpt"
   },
@@ -226,7 +212,7 @@
     "creator": "OpenAI",
     "costInputNanoUSD": 375,
     "costOutputNanoUSD": 500,
-    "contextLength": "4095",
+    "contextLength": 4095,
     "tokenizer": "GPT",
     "instructType": "gpt"
   },
@@ -240,10 +226,10 @@
     "creator": "Google",
     "costInputNanoUSD": 125,
     "costOutputNanoUSD": 125,
-    "contextLength": "9216",
+    "contextLength": 9216,
     "tokenizer": "PaLM",
     "instructType": null,
-    "outputTokenLimit": "1024"
+    "outputTokenLimit": 1024
   },
   {
     "id": "openrouter@palm-2-codechat-bison",
@@ -255,10 +241,10 @@
     "creator": "Google",
     "costInputNanoUSD": 125,
     "costOutputNanoUSD": 125,
-    "contextLength": "7168",
+    "contextLength": 7168,
     "tokenizer": "PaLM",
     "instructType": null,
-    "outputTokenLimit": "1024"
+    "outputTokenLimit": 1024
   },
   {
     "id": "openrouter@palm-2-chat-bison-32k",
@@ -270,10 +256,10 @@
     "creator": "Google",
     "costInputNanoUSD": 125,
     "costOutputNanoUSD": 125,
-    "contextLength": "32000",
+    "contextLength": 32000,
     "tokenizer": "PaLM",
     "instructType": null,
-    "outputTokenLimit": "8192"
+    "outputTokenLimit": 8192
   },
   {
     "id": "openrouter@palm-2-codechat-bison-32k",
@@ -285,10 +271,10 @@
     "creator": "Google",
     "costInputNanoUSD": 125,
     "costOutputNanoUSD": 125,
-    "contextLength": "32000",
+    "contextLength": 32000,
     "tokenizer": "PaLM",
     "instructType": null,
-    "outputTokenLimit": "8192"
+    "outputTokenLimit": 8192
   },
   {
     "id": "openrouter@llama-2-13b-chat",
@@ -300,8 +286,8 @@
     "creator": "Meta",
     "costInputNanoUSD": 58.625,
     "costOutputNanoUSD": 58.625,
-    "parameterSize": "13000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 13000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "llama2"
   },
@@ -315,8 +301,8 @@
     "creator": "Meta",
     "costInputNanoUSD": 175,
     "costOutputNanoUSD": 237.5,
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "llama2"
   },
@@ -330,8 +316,8 @@
     "creator": "Nous",
     "costInputNanoUSD": 37.5,
     "costOutputNanoUSD": 37.5,
-    "parameterSize": "13000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 13000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "alpaca"
   },
@@ -345,8 +331,8 @@
     "creator": "Nous",
     "costInputNanoUSD": 225,
     "costOutputNanoUSD": 225,
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "alpaca"
   },
@@ -360,8 +346,8 @@
     "creator": "Meta",
     "costInputNanoUSD": 100,
     "costOutputNanoUSD": 100,
-    "parameterSize": "34000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 34000,
+    "contextLength": 8192,
     "tokenizer": "Llama2",
     "instructType": "llama2"
   },
@@ -375,8 +361,8 @@
     "creator": "Phind",
     "costInputNanoUSD": 100,
     "costOutputNanoUSD": 100,
-    "parameterSize": "34000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 34000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "alpaca"
   },
@@ -390,8 +376,8 @@
     "creator": "Airoboros 70B (beta)",
     "costInputNanoUSD": 175,
     "costOutputNanoUSD": 237.5,
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "airoboros"
   },
@@ -405,11 +391,11 @@
     "creator": "Synthia 70B (beta)",
     "costInputNanoUSD": 2343.75,
     "costOutputNanoUSD": 2343.75,
-    "parameterSize": "70000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 70000,
+    "contextLength": 8192,
     "tokenizer": "Llama2",
     "instructType": "airoboros",
-    "outputTokenLimit": "300"
+    "outputTokenLimit": 300
   },
   {
     "id": "openrouter@mistral-7b-openorca",
@@ -421,8 +407,8 @@
     "creator": "Mistral OpenOrca 7B (beta)",
     "costInputNanoUSD": 50,
     "costOutputNanoUSD": 50,
-    "parameterSize": "7000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 7000,
+    "contextLength": 8192,
     "tokenizer": "Mistral",
     "instructType": "gpt"
   },
@@ -436,8 +422,8 @@
     "creator": "Mistral OpenHermes 7B (beta)",
     "costInputNanoUSD": 50,
     "costOutputNanoUSD": 50,
-    "parameterSize": "7000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 7000,
+    "contextLength": 4096,
     "tokenizer": "Mistral",
     "instructType": "gpt"
   },
@@ -451,11 +437,11 @@
     "creator": "Pygmalion",
     "costInputNanoUSD": 281.25,
     "costOutputNanoUSD": 281.25,
-    "parameterSize": "13000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 13000,
+    "contextLength": 8192,
     "tokenizer": "Llama2",
     "instructType": "alpaca",
-    "outputTokenLimit": "250"
+    "outputTokenLimit": 250
   },
   {
     "id": "openrouter@remm-slerp-l2-13b",
@@ -467,11 +453,11 @@
     "creator": "ReMM SLERP 13B (beta)",
     "costInputNanoUSD": 281.25,
     "costOutputNanoUSD": 281.25,
-    "parameterSize": "13000000000",
-    "contextLength": "6144",
+    "parameterSizeMil": 13000,
+    "contextLength": 6144,
     "tokenizer": "Llama2",
     "instructType": "alpaca",
-    "outputTokenLimit": "250"
+    "outputTokenLimit": 250
   },
   {
     "id": "openrouter@mythomax-l2-13b",
@@ -483,8 +469,8 @@
     "creator": "MythoMax 13B",
     "costInputNanoUSD": 150,
     "costOutputNanoUSD": 150,
-    "parameterSize": "13000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 13000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "alpaca"
   },
@@ -498,11 +484,11 @@
     "creator": "Xwin 70B (beta)",
     "costInputNanoUSD": 2343.75,
     "costOutputNanoUSD": 2343.75,
-    "parameterSize": "70000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 70000,
+    "contextLength": 8192,
     "tokenizer": "Llama2",
     "instructType": "airoboros",
-    "outputTokenLimit": "300"
+    "outputTokenLimit": 300
   },
   {
     "id": "openrouter@mythomax-l2-13b-8k",
@@ -514,11 +500,11 @@
     "creator": "MythoMax 13B 8k (beta)",
     "costInputNanoUSD": 281.25,
     "costOutputNanoUSD": 281.25,
-    "parameterSize": "13000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 13000,
+    "contextLength": 8192,
     "tokenizer": "Llama2",
     "instructType": "alpaca",
-    "outputTokenLimit": "300"
+    "outputTokenLimit": 300
   },
   {
     "id": "openrouter@goliath-120b",
@@ -530,11 +516,11 @@
     "creator": "Goliath 120B (beta)",
     "costInputNanoUSD": 1406.25,
     "costOutputNanoUSD": 1406.25,
-    "parameterSize": "120000000000",
-    "contextLength": "6144",
+    "parameterSizeMil": 120000,
+    "contextLength": 6144,
     "tokenizer": "Llama2",
     "instructType": "airoboros",
-    "outputTokenLimit": "300"
+    "outputTokenLimit": 300
   },
   {
     "id": "openrouter@lzlv-70b-fp16-hf",
@@ -546,8 +532,8 @@
     "creator": "lzlv 70B (beta)",
     "costInputNanoUSD": 175,
     "costOutputNanoUSD": 237.5,
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "tokenizer": "Llama2",
     "instructType": "airoboros"
   },
@@ -561,7 +547,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 2755,
     "costOutputNanoUSD": 8170,
-    "contextLength": "100000",
+    "contextLength": 100000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -575,7 +561,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 407.5,
     "costOutputNanoUSD": 1377.5,
-    "contextLength": "100000",
+    "contextLength": 100000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -589,7 +575,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 2755,
     "costOutputNanoUSD": 8170,
-    "contextLength": "9000",
+    "contextLength": 9000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -603,7 +589,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 2755,
     "costOutputNanoUSD": 8170,
-    "contextLength": "9000",
+    "contextLength": 9000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -617,7 +603,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 407.5,
     "costOutputNanoUSD": 1377.5,
-    "contextLength": "100000",
+    "contextLength": 100000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -631,7 +617,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 2755,
     "costOutputNanoUSD": 8170,
-    "contextLength": "100000",
+    "contextLength": 100000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -645,7 +631,7 @@
     "creator": "Anthropic",
     "costInputNanoUSD": 407.5,
     "costOutputNanoUSD": 1377.5,
-    "contextLength": "9000",
+    "contextLength": 9000,
     "tokenizer": "Claude",
     "instructType": "claude"
   },
@@ -659,9 +645,9 @@
     "creator": "Mancer",
     "costInputNanoUSD": 1125,
     "costOutputNanoUSD": 1125,
-    "contextLength": "8000",
+    "contextLength": 8000,
     "tokenizer": "Llama2",
     "instructType": "alpaca",
-    "outputTokenLimit": "400"
+    "outputTokenLimit": 400
   }
 ]

@@ -56,8 +56,8 @@ async function providers() {
 }
 
 async function main() {
-  // await providers()
-  // await fetchAndAddProviderModels()
+  await providers()
+  await fetchAndAddProviderModels()
   await seedAgents()
 }
 

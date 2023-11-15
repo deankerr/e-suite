@@ -1,6 +1,7 @@
 import { openrouter } from '@/lib/api/platforms/openrouter.adapters'
+import { dollarsToNanoUSD } from '@/lib/utils'
 import z from 'zod'
-import { dollarsToNanoUSD, EngineCreate, getParamSize, writeModelResultJsonFile } from './run'
+import { EngineCreate, getParamSize, writeModelResultJsonFile } from './run'
 
 const schema = z.array(
   z
@@ -38,10 +39,10 @@ export async function processOpenRouter() {
     const isInstruct = entry.id.includes('instruct') || entry.name.includes('Instruct')
     const type = isInstruct ? 'instruct' : 'chat'
     const creator = entry.name.split(':')[0] ?? creatorSlug ?? ''
-    const parameterSize = getParamSize(entry.name)
+    const parameterSizeMil = getParamSize(entry.name)
     const outputTokenLimit =
       entry.top_provider.max_completion_tokens !== entry.context_length
-        ? String(entry.top_provider.max_completion_tokens)
+        ? entry.top_provider.max_completion_tokens
         : undefined
 
     const record: EngineCreate = {
@@ -58,8 +59,8 @@ export async function processOpenRouter() {
       costInputNanoUSD: dollarsToNanoUSD(Number(entry.pricing.prompt) * 1000),
       costOutputNanoUSD: dollarsToNanoUSD(Number(entry.pricing.completion) * 1000),
 
-      parameterSize,
-      contextLength: String(entry.context_length),
+      parameterSizeMil,
+      contextLength: entry.context_length,
 
       tokenizer: entry.architecture.tokenizer,
       instructType: entry.architecture.instruct_type,

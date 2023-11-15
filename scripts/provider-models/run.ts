@@ -16,16 +16,8 @@ export function writeModelResultJsonFile<T extends any>(name: string, data: T) {
 export function getParamSize(text: string) {
   const regex = /\d+(?=B)/g
   const match = text.match(regex)
-  if (match) return match[0] + '000000000'
+  if (match) return Number(match[0]) * 1000
   return undefined
-}
-
-export function dollarsToNanoUSD(dollars: number) {
-  return (dollars / 4000) * 1_000_000_000
-}
-
-export function nanoUSDToDollars(nano: number) {
-  return (nano * 4000) / 1_000_000_000
 }
 
 const modelMainTypes = [
@@ -41,10 +33,8 @@ const modelMainTypes = [
 export type EngineCreate = Prisma.EngineCreateManyInput
 async function createDbEngines(...records: EngineCreate[][]) {
   for (const engines of records) {
-    for (const engine of engines) {
-      const e = await prisma.engine.create({ data: engine })
-      console.log('created:', e)
-    }
+    console.log('creating engines')
+    await prisma.engine.createMany({ data: engines })
   }
 }
 

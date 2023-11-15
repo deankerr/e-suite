@@ -2,9 +2,12 @@ import { prisma } from '@/lib/prisma'
 
 export async function seedAgents() {
   console.log('create agents')
-  const user = await prisma.user.findFirstOrThrow({ where: { role: 'ADMIN' } })
+  const user = await prisma.user.findFirst({})
+  if (!user) {
+    console.log('unable to seed agents because there are no users')
+    return
+  }
 
-  console.log('user', user)
   const ag1 = await prisma.agent.upsert({
     where: {
       id: 'seed-ag1',

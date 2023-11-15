@@ -12,8 +12,8 @@
     "description": "This model is a 75/25 merge of Chronos (13B) and Nous Hermes (13B) models resulting in having a great ability to produce evocative storywriting and follow a narrative.",
     "url": "",
     "license": "other",
-    "parameterSize": "13000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 13000,
+    "contextLength": 2048,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "</s>"
@@ -32,8 +32,8 @@
     "description": "Llemma 7B is a language model for mathematics. It was initialized with Code Llama 7B weights, and trained on the Proof-Pile-2 for 200B tokens.",
     "url": "https://huggingface.co/EleutherAI/llemma_7b",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "6738546688",
-    "contextLength": "4096"
+    "parameterSizeMil": 6738.546688,
+    "contextLength": 4096
   },
   {
     "id": "togetherai@pythia-12b-v0",
@@ -48,8 +48,8 @@
     "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
     "url": "https://huggingface.co/EleutherAI/pythia-12b-v0",
     "license": "apache-2.0",
-    "parameterSize": "12000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 12000,
+    "contextLength": 2048,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -67,8 +67,8 @@
     "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
     "url": "https://huggingface.co/EleutherAI/pythia-1b-v0",
     "license": "apache-2.0",
-    "parameterSize": "1000000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 1000,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@pythia-2.8b-v0",
@@ -83,8 +83,8 @@
     "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
     "url": "",
     "license": "apache-2.0",
-    "parameterSize": "2800000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 2800,
+    "contextLength": 2048,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -102,8 +102,8 @@
     "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
     "url": "",
     "license": "apache-2.0",
-    "parameterSize": "6900000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 6900,
+    "contextLength": 2048,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -121,8 +121,8 @@
     "description": "MythoLogic-L2 and Huginn merge using a highly experimental tensor type merge technique. The main difference with MythoMix is that I allowed more of Huginn to intermingle with the single tensors located at the front and end of a model",
     "url": "",
     "license": "other",
-    "parameterSize": "13000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 13000,
+    "contextLength": 4096,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:",
     "stopTokens": [
       "</s>"
@@ -141,8 +141,8 @@
     "description": "Fine-tuned from StarCoder to act as a helpful coding assistant. As an alpha release is only intended for educational or research purpopses.",
     "url": "https://huggingface.co/HuggingFaceH4/starchat-alpha",
     "license": "bigcode-openrail-m",
-    "parameterSize": "16000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 16000,
+    "contextLength": 8192,
     "promptFormat": "<|system|>\n<|end|>\n<|user|>\n{prompt}<|end|>\n<|assistant|>",
     "stopTokens": [
       "<|endoftext|>",
@@ -162,8 +162,8 @@
     "description": "LLaMA 13B fine-tuned on over 300,000 instructions. Designed for long responses, low hallucination rate, and absence of censorship mechanisms.",
     "url": "https://huggingface.co/NousResearch/Nous-Hermes-13b",
     "license": "gpl, LLaMA License Agreement (Meta)",
-    "parameterSize": "13000000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 13000,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@nous-hermes-llama2-13b",
@@ -178,8 +178,8 @@
     "description": "Nous-Hermes-Llama2-13b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
     "url": "",
     "license": "mit",
-    "parameterSize": "13000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 13000,
+    "contextLength": 4096,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "###",
@@ -199,8 +199,8 @@
     "description": "Nous-Hermes-Llama2-70b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
     "url": "https://huggingface.co/NousResearch/Nous-Hermes-Llama2-70b",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "promptFormat": "### Instruction:\n{prompt}\n\n### Response:\n",
     "stopTokens": [
       "###",
@@ -220,8 +220,8 @@
     "description": "Nous-Hermes-Llama2-7b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
     "url": "https://huggingface.co/NousResearch/Nous-Hermes-llama-2-7b",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "6738415616",
-    "contextLength": "4096",
+    "parameterSizeMil": 6738.415616,
+    "contextLength": 4096,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "###",
@@ -241,8 +241,8 @@
     "description": "NSQL is a family of autoregressive open-source large foundation models (FMs) designed specifically for SQL generation tasks.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "7000000000",
-    "contextLength": "4096"
+    "parameterSizeMil": 7000,
+    "contextLength": 4096
   },
   {
     "id": "togetherai@mistral-7b-openorca",
@@ -257,8 +257,8 @@
     "description": "An OpenOrca dataset fine-tune on top of Mistral 7B by the OpenOrca team.",
     "url": "https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca",
     "license": "apache-2.0",
-    "parameterSize": "7241748480",
-    "contextLength": "8192",
+    "parameterSizeMil": 7241.74848,
+    "contextLength": 8192,
     "promptFormat": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant",
     "stopTokens": [
       "<|im_end|>"
@@ -277,8 +277,8 @@
     "description": "Chat-based and open-source assistant. The vision of the project is to make a large language model that can run on a single high-end consumer GPU. ",
     "url": "https://huggingface.co/OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
     "license": "apache-2.0",
-    "parameterSize": "12000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 12000,
+    "contextLength": 2048,
     "promptFormat": "<|prompter|>{prompt}<|endoftext|><|assistant|>",
     "stopTokens": [
       "<|endoftext|>"
@@ -297,8 +297,8 @@
     "description": "Chat-based and open-source assistant. The vision of the project is to make a large language model that can run on a single high-end consumer GPU. ",
     "url": "https://huggingface.co/OpenAssistant/stablelm-7b-sft-v7-epoch-3",
     "license": "cc-by-sa-4.0",
-    "parameterSize": "7000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 7000,
+    "contextLength": 4096,
     "promptFormat": "<|prompter|>{prompt}<|endoftext|><|assistant|>",
     "stopTokens": [
       "<|endoftext|>"
@@ -317,8 +317,8 @@
     "description": "This model is fine-tuned from CodeLlama-34B-Python and achieves 69.5% pass@1 on HumanEval.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "33743970304",
-    "contextLength": "16384",
+    "parameterSizeMil": 33743.970304,
+    "contextLength": 16384,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "</s>",
@@ -338,8 +338,8 @@
     "description": "Phind-CodeLlama-34B-v1 trained on additional 1.5B tokens high-quality programming-related data proficient in Python, C/C++, TypeScript, Java, and more.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "33743970304",
-    "contextLength": "16384",
+    "parameterSizeMil": 33743.970304,
+    "contextLength": 16384,
     "promptFormat": "### System Prompt\nYou are an intelligent programming assistant.\n\n### User Message\n{prompt}n\n### Assistant\n",
     "stopTokens": [
       "</s>"
@@ -372,8 +372,8 @@
     "description": "This model empowers Code LLMs with complex instruction fine-tuning, by adapting the Evol-Instruct method to the domain of code.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "15517462528",
-    "contextLength": "8192",
+    "parameterSizeMil": 15517.462528,
+    "contextLength": 8192,
     "promptFormat": "### Instruction:\n{prompt}\n\n### Response:\n",
     "stopTokens": [
       "###",
@@ -393,8 +393,8 @@
     "description": "This model achieves a substantial and comprehensive improvement on coding, mathematical reasoning and open-domain conversation capacities.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "promptFormat": "USER: {prompt} ASSISTANT:",
     "stopTokens": [
       "</s>"
@@ -413,8 +413,8 @@
     "description": "Trained on 80+ coding languages, uses Multi Query Attention, an 8K context window, and was trained using the Fill-in-the-Middle objective on 1T tokens.",
     "url": "https://huggingface.co/bigcode/starcoder",
     "license": "bigcode-openrail-m",
-    "parameterSize": "16000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 16000,
+    "contextLength": 8192,
     "stopTokens": [
       "<|endoftext|>",
       "<|end|>"
@@ -433,8 +433,8 @@
     "description": "An instruction-following LLM based on pythia-3b, and trained on ~15k instruction/response fine tuning records generated by Databricks employees.",
     "url": "https://huggingface.co/databricks/dolly-v2-3b",
     "license": "mit",
-    "parameterSize": "3000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 3000,
+    "contextLength": 2048,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:",
     "stopTokens": [
       "### End"
@@ -453,8 +453,8 @@
     "description": "An instruction-following LLM based on pythia-7b, and trained on ~15k instruction/response fine tuning records generated by Databricks employees.",
     "url": "https://huggingface.co/databricks/dolly-v2-7b",
     "license": "mit",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:",
     "stopTokens": [
       "### End"
@@ -473,8 +473,8 @@
     "description": "Defog's SQLCoder is a state-of-the-art LLM for converting natural language questions to SQL queries, fine-tuned from Bigcode's Starcoder 15B model.",
     "url": "",
     "license": "other",
-    "parameterSize": "15000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 15000,
+    "contextLength": 8192,
     "promptFormat": "### Instructions:\n\n{prompt}\n\n### Response:\n",
     "stopTokens": [
       "<|endoftext|>"
@@ -493,8 +493,8 @@
     "description": "An instruction fine-tuned LLaMA-2 (70B) model by merging Platypus2 (70B) by garage-bAInd and LLaMA-2 Instruct v2 (70B) by upstage.",
     "url": "",
     "license": "CC BY-NC-4.0",
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "</s>",
@@ -514,8 +514,8 @@
     "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
     "url": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "13000000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 13000,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@llama-30b",
@@ -530,8 +530,8 @@
     "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
     "url": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "33000000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 33000,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@llama-65b",
@@ -546,8 +546,8 @@
     "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
     "url": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "65000000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 65000,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@llama-7b",
@@ -562,8 +562,8 @@
     "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
     "url": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "7000000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 7000,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@fastchat-t5-3b-v1.0",
@@ -578,8 +578,8 @@
     "description": "Chatbot trained by fine-tuning Flan-t5-xl on user-shared conversations collected from ShareGPT.",
     "url": "https://huggingface.co/lmsys/fastchat-t5-3b-v1.0",
     "license": "apache-2.0",
-    "parameterSize": "3000000000",
-    "contextLength": "512",
+    "parameterSizeMil": 3000,
+    "contextLength": 512,
     "promptFormat": "### Human: {prompt}\n### Assistant:",
     "stopTokens": [
       "###",
@@ -599,8 +599,8 @@
     "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "13015864320",
-    "contextLength": "16384",
+    "parameterSizeMil": 13015.86432,
+    "contextLength": 16384,
     "promptFormat": "USER: {prompt}\nASSISTANT:",
     "stopTokens": [
       "</s>"
@@ -619,8 +619,8 @@
     "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
     "url": "",
     "license": "llama2",
-    "parameterSize": "13000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 13000,
+    "contextLength": 4096,
     "promptFormat": "USER: {prompt}\nASSISTANT:",
     "stopTokens": [
       "</s>"
@@ -639,8 +639,8 @@
     "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
     "url": "https://huggingface.co/lmsys/vicuna-7b-v1.5",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "6738415616",
-    "contextLength": "4096",
+    "parameterSizeMil": 6738.415616,
+    "contextLength": 4096,
     "promptFormat": "USER: {prompt}\nASSISTANT: Hello!",
     "stopTokens": [
       "</s>",
@@ -660,8 +660,8 @@
     "description": "instruct fine-tuned version of Mistral-7B-v0.1",
     "url": "",
     "license": "Apache-2",
-    "parameterSize": "7241732096",
-    "contextLength": "4096",
+    "parameterSizeMil": 7241.732096,
+    "contextLength": 4096,
     "promptFormat": "<s>[INST] {prompt} [/INST]",
     "stopTokens": [
       "[/INST]",
@@ -681,8 +681,8 @@
     "description": "7.3B parameter model that outperforms Llama 2 13B on all benchmarks, approaches CodeLlama 7B performance on code, Uses Grouped-query attention (GQA) for faster inference and Sliding Window Attention (SWA) to handle longer sequences at smaller cost",
     "url": "",
     "license": "Apache-2",
-    "parameterSize": "7241732096",
-    "contextLength": "4096",
+    "parameterSizeMil": 7241.732096,
+    "contextLength": 4096,
     "promptFormat": "{prompt}",
     "stopTokens": [
       "</s>"
@@ -701,7 +701,7 @@
     "description": "An open source Stable Diffusion model fine tuned model on Midjourney images. ",
     "url": "https://huggingface.co/prompthero/openjourney",
     "license": "creativeml-openrail-m",
-    "parameterSize": "13000000000"
+    "parameterSizeMil": 13000
   },
   {
     "id": "togetherai@stable-diffusion-v1-5",
@@ -758,7 +758,7 @@
     "description": "State of the art Mistral Fine-tuned on extensive public datasets",
     "url": "",
     "license": "Apache-2",
-    "parameterSize": "7241732096",
+    "parameterSizeMil": 7241.732096,
     "promptFormat": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
     "stopTokens": [
       "<|im_end|>",
@@ -778,8 +778,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "13016028160",
-    "contextLength": "8192",
+    "parameterSizeMil": 13016.02816,
+    "contextLength": 8192,
     "promptFormat": "[INST] {prompt} [/INST]",
     "stopTokens": [
       "</s>",
@@ -799,8 +799,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "13016028160",
-    "contextLength": "8192",
+    "parameterSizeMil": 13016.02816,
+    "contextLength": 8192,
     "stopTokens": [
       "</s>"
     ]
@@ -818,8 +818,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "13016028160",
-    "contextLength": "8192",
+    "parameterSizeMil": 13016.02816,
+    "contextLength": 8192,
     "stopTokens": [
       "</s>"
     ]
@@ -837,8 +837,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "34000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 34000,
+    "contextLength": 8192,
     "promptFormat": "[INST] {prompt} [/INST]",
     "stopTokens": [
       "</s>",
@@ -858,8 +858,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "34000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 34000,
+    "contextLength": 8192,
     "stopTokens": [
       "</s>"
     ]
@@ -877,8 +877,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "34000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 34000,
+    "contextLength": 8192,
     "stopTokens": [
       "</s>"
     ]
@@ -896,8 +896,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "6738546688",
-    "contextLength": "8192",
+    "parameterSizeMil": 6738.546688,
+    "contextLength": 8192,
     "promptFormat": "[INST] {prompt} [/INST]",
     "stopTokens": [
       "</s>",
@@ -917,8 +917,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "6738546688",
-    "contextLength": "8192",
+    "parameterSizeMil": 6738.546688,
+    "contextLength": 8192,
     "stopTokens": [
       "</s>"
     ]
@@ -936,8 +936,8 @@
     "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
     "url": "",
     "license": "LLAMA 2 Community license Agreement (Meta)",
-    "parameterSize": "6738546688",
-    "contextLength": "8192",
+    "parameterSizeMil": 6738.546688,
+    "contextLength": 8192,
     "stopTokens": [
       "</s>"
     ]
@@ -955,8 +955,8 @@
     "description": "Fork of GPT-J instruction tuned to excel at few-shot prompts (blog post).",
     "url": "https://huggingface.co/togethercomputer/GPT-JT-6B-v1",
     "license": "apache-2.0",
-    "parameterSize": "6700000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 6700,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@gpt-jt-moderation-6b",
@@ -971,8 +971,8 @@
     "description": "This model can be used to moderate other chatbot models. Built using GPT-JT model fine-tuned on Ontocord.ai's OIG-moderation dataset v0.1.",
     "url": "https://huggingface.co/togethercomputer/GPT-JT-Moderation-6B",
     "license": "apache-2.0",
-    "parameterSize": "6700000000",
-    "contextLength": "2048"
+    "parameterSizeMil": 6700,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@gpt-neoxt-chat-base-20b",
@@ -987,8 +987,8 @@
     "description": "Chat model fine-tuned from EleutherAI’s GPT-NeoX with over 40 million instructions on carbon reduced compute.",
     "url": "https://huggingface.co/togethercomputer/GPT-NeoXT-Chat-Base-20B",
     "license": "apache-2.0",
-    "parameterSize": "20000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 20000,
+    "contextLength": 2048,
     "promptFormat": "<human>: {prompt}\n<bot>:",
     "stopTokens": [
       "<human>"
@@ -1007,8 +1007,8 @@
     "description": "Chatbot trained by fine-tuning LLaMA on dialogue data gathered from the web.",
     "url": "https://huggingface.co/TheBloke/koala-13B-HF",
     "license": "other",
-    "parameterSize": "13000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 13000,
+    "contextLength": 2048,
     "promptFormat": "USER: {prompt} GPT:",
     "stopTokens": [
       "</s>"
@@ -1027,8 +1027,8 @@
     "description": "Extending LLaMA-2 to 32K context, built with Meta's Position Interpolation and Together AI's data recipe and system optimizations.",
     "url": "https://huggingface.co/togethercomputer/LLaMA-2-7B-32K",
     "license": "Meta license",
-    "parameterSize": "6738415616",
-    "contextLength": "32768",
+    "parameterSizeMil": 6738.415616,
+    "contextLength": 32768,
     "stopTokens": [
       "\n\n\n\n",
       "<|endoftext|>"
@@ -1047,8 +1047,8 @@
     "description": "Extending LLaMA-2 to 32K context, built with Meta's Position Interpolation and Together AI's data recipe and system optimizations, instruction tuned by Together",
     "url": "",
     "license": "Meta license",
-    "parameterSize": "7000000000",
-    "contextLength": "32768",
+    "parameterSizeMil": 7000,
+    "contextLength": 32768,
     "promptFormat": "[INST]\n {prompt} \n[/INST]\n\n",
     "stopTokens": [
       "[INST]",
@@ -1068,8 +1068,8 @@
     "description": "Chat model based on EleutherAI’s Pythia-7B model, and is fine-tuned with data focusing on dialog-style interactions.",
     "url": "",
     "license": "apache-2.0",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "<human>: {prompt}\n<bot>:",
     "stopTokens": [
       "<human>"
@@ -1088,8 +1088,8 @@
     "description": "7B-parameter version of the large language model series, Qwen (abbr. Tongyi Qianwen), proposed by Aibaba Cloud. Qwen-7B-Chat is a large-model-based AI assistant, which is trained with alignment techniques.   ",
     "url": "",
     "license": "Tongyi Qianwen LICENSE AGREEMENT",
-    "parameterSize": "7000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 7000,
+    "contextLength": 8192,
     "promptFormat": "\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
     "stopTokens": [
       "<|im_end|>",
@@ -1109,8 +1109,8 @@
     "description": "7B-parameter version of the large language model series, Qwen (abbr. Tongyi Qianwen), proposed by Aibaba Cloud. Qwen-7B is a Transformer-based large language model, which is pretrained on a large volume of data, including web texts, books, codes, etc. ",
     "url": "",
     "license": "Tongyi Qianwen LICENSE AGREEMENT",
-    "parameterSize": "7000000000",
-    "contextLength": "8192",
+    "parameterSizeMil": 7000,
+    "contextLength": 8192,
     "stopTokens": [
       "<|im_end|>",
       "<|endoftext|>"
@@ -1129,8 +1129,8 @@
     "description": "Base model that aims to replicate the LLaMA recipe as closely as possible (blog post).",
     "url": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Base",
     "license": "apache-2.0",
-    "parameterSize": "6857302016",
-    "contextLength": "2048"
+    "parameterSizeMil": 6857.302016,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@redpajama-incite-7b-chat",
@@ -1145,8 +1145,8 @@
     "description": "Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-7B-v1 base model.",
     "url": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Chat",
     "license": "apache-2.0",
-    "parameterSize": "6857302016",
-    "contextLength": "2048",
+    "parameterSizeMil": 6857.302016,
+    "contextLength": 2048,
     "promptFormat": "<human>: {prompt}\n<bot>:",
     "stopTokens": [
       "<human>"
@@ -1165,8 +1165,8 @@
     "description": "Designed for few-shot prompts, fine-tuned over the RedPajama-INCITE-Base-7B-v1 base model.",
     "url": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Instruct",
     "license": "apache-2.0",
-    "parameterSize": "6857302016",
-    "contextLength": "2048"
+    "parameterSizeMil": 6857.302016,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@redpajama-incite-base-3b-v1",
@@ -1181,8 +1181,8 @@
     "description": "Base model that aims to replicate the LLaMA recipe as closely as possible (blog post).",
     "url": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Base-3B-v1",
     "license": "apache-2.0",
-    "parameterSize": "2775864320",
-    "contextLength": "2048"
+    "parameterSizeMil": 2775.86432,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@redpajama-incite-chat-3b-v1",
@@ -1197,8 +1197,8 @@
     "description": "Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-3B-v1 base model.",
     "url": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
     "license": "apache-2.0",
-    "parameterSize": "2775864320",
-    "contextLength": "2048",
+    "parameterSizeMil": 2775.86432,
+    "contextLength": 2048,
     "promptFormat": "<human>: {prompt}\n<bot>:",
     "stopTokens": [
       "<human>"
@@ -1217,8 +1217,8 @@
     "description": "Designed for few-shot prompts, fine-tuned over the RedPajama-INCITE-Base-3B-v1 base model.",
     "url": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Instruct-3B-v1",
     "license": "apache-2.0",
-    "parameterSize": "2775864320",
-    "contextLength": "2048"
+    "parameterSizeMil": 2775.86432,
+    "contextLength": 2048
   },
   {
     "id": "togetherai@alpaca-7b",
@@ -1233,8 +1233,8 @@
     "description": "Fine-tuned from the LLaMA 7B model on 52K instruction-following demonstrations. ",
     "url": "https://huggingface.co/tatsu-lab/alpaca-7b-wdiff",
     "license": "cc-by-nc-4.0",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "</s>",
@@ -1254,8 +1254,8 @@
     "description": "An autoregressive language models for program synthesis.",
     "url": "https://huggingface.co/Salesforce/codegen2-3_7B",
     "license": "apache-2.0",
-    "parameterSize": "16000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 16000,
+    "contextLength": 2048,
     "stopTokens": [
       "\n\n"
     ]
@@ -1273,8 +1273,8 @@
     "description": "An autoregressive language models for program synthesis.",
     "url": "https://huggingface.co/Salesforce/codegen2-3_7B",
     "license": "apache-2.0",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "stopTokens": [
       "\n\n"
     ]
@@ -1292,8 +1292,8 @@
     "description": "Falcon-40B-Instruct is a causal decoder-only model built by TII based on Falcon-40B and finetuned on a mixture of Baize. ",
     "url": "https://huggingface.co/tiiuae/falcon-40b-instruct",
     "license": "apache-2.0",
-    "parameterSize": "40000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 40000,
+    "contextLength": 2048,
     "promptFormat": "User: {prompt}\nAssistant:",
     "stopTokens": [
       "User:",
@@ -1313,8 +1313,8 @@
     "description": "Falcon-40B is a causal decoder-only model built by TII and trained on 1,000B tokens of RefinedWeb enhanced with curated corpora.",
     "url": "https://huggingface.co/tiiuae/falcon-40b",
     "license": "apache-2.0",
-    "parameterSize": "40000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 40000,
+    "contextLength": 2048,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -1332,8 +1332,8 @@
     "description": "Casual decoder-only model built by TII based on Falcon-7B and finetuned on a mixture of chat/instruct datasets. ",
     "url": "https://huggingface.co/tiiuae/falcon-7b-instruct",
     "license": "apache-2.0",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "User: {prompt}\nAssistant:",
     "stopTokens": [
       "User:",
@@ -1353,8 +1353,8 @@
     "description": "Causal decoder-only model built by TII and trained on 1,500B tokens of RefinedWeb enhanced with curated corpora.",
     "url": "https://huggingface.co/tiiuae/falcon-7b",
     "license": "apache-2.0",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -1372,8 +1372,8 @@
     "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks.",
     "url": "https://huggingface.co/timdettmers/guanaco-33b-merged",
     "license": "apache-2.0, LLaMA License Agreement (Meta)",
-    "parameterSize": "13000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 13000,
+    "contextLength": 2048,
     "promptFormat": "### Human: {prompt} ### Assistant:",
     "stopTokens": [
       "###"
@@ -1392,8 +1392,8 @@
     "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks.",
     "url": "https://huggingface.co/timdettmers/guanaco-65b-merged",
     "license": "apache-2.0, LLaMA License Agreement (Meta)",
-    "parameterSize": "65000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 65000,
+    "contextLength": 2048,
     "promptFormat": "### Human: {prompt} ### Assistant:",
     "stopTokens": [
       "###"
@@ -1412,8 +1412,8 @@
     "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks. ",
     "url": "https://huggingface.co/timdettmers/guanaco-7b",
     "license": "apache-2.0, LLaMA License Agreement (Meta)",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "### Human: {prompt} ### Assistant:",
     "stopTokens": [
       "###"
@@ -1432,8 +1432,8 @@
     "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
     "url": "https://huggingface.co/togethercomputer/llama-2-13b-chat",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "13015864320",
-    "contextLength": "4096",
+    "parameterSizeMil": 13015.86432,
+    "contextLength": 4096,
     "promptFormat": "[INST] {prompt} [/INST]",
     "stopTokens": [
       "[/INST]",
@@ -1453,8 +1453,8 @@
     "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
     "url": "https://huggingface.co/togethercomputer/llama-2-13b",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "13015864320",
-    "contextLength": "4096"
+    "parameterSizeMil": 13015.86432,
+    "contextLength": 4096
   },
   {
     "id": "togetherai@llama-2-70b-chat",
@@ -1469,8 +1469,8 @@
     "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
     "url": "https://huggingface.co/togethercomputer/llama-2-70b-chat",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "68976648192",
-    "contextLength": "4096",
+    "parameterSizeMil": 68976.648192,
+    "contextLength": 4096,
     "promptFormat": "[INST] {prompt} [/INST]",
     "stopTokens": [
       "[/INST]",
@@ -1490,8 +1490,8 @@
     "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
     "url": "https://huggingface.co/togethercomputer/llama-2-70b",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "68976648192",
-    "contextLength": "4096"
+    "parameterSizeMil": 68976.648192,
+    "contextLength": 4096
   },
   {
     "id": "togetherai@llama-2-7b-chat",
@@ -1506,8 +1506,8 @@
     "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
     "url": "https://huggingface.co/togethercomputer/llama-2-7b-chat",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "6738415616",
-    "contextLength": "4096",
+    "parameterSizeMil": 6738.415616,
+    "contextLength": 4096,
     "promptFormat": "[INST] {prompt} [/INST]",
     "stopTokens": [
       "[/INST]",
@@ -1527,8 +1527,8 @@
     "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
     "url": "https://huggingface.co/togethercomputer/llama-2-7b",
     "license": "LLaMA license Agreement (Meta)",
-    "parameterSize": "6738415616",
-    "contextLength": "4096"
+    "parameterSizeMil": 6738.415616,
+    "contextLength": 4096
   },
   {
     "id": "togetherai@mpt-30b-instruct",
@@ -1543,8 +1543,8 @@
     "description": "Designed for short-form instruction following, finetuned on Dolly and Anthropic HH-RLHF and other datasets",
     "url": "https://huggingface.co/mosaicml/mpt-30b-instruct",
     "license": "CC-By-SA-3.0",
-    "parameterSize": "30000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 30000,
+    "contextLength": 2048,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:\n",
     "stopTokens": [
       "<|endoftext|>",
@@ -1564,8 +1564,8 @@
     "description": "Decoder-style transformer pretrained from scratch on 1T tokens of English text and code.",
     "url": "https://huggingface.co/mosaicml/mpt-30b",
     "license": "apache-2.0",
-    "parameterSize": "30000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 30000,
+    "contextLength": 2048,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -1583,8 +1583,8 @@
     "description": "Chat model for dialogue generation finetuned on ShareGPT-Vicuna, Camel-AI, GPTeacher, Guanaco, Baize and some generated datasets.",
     "url": "https://huggingface.co/mosaicml/mpt-7b-chat",
     "license": "cc-by-nc-sa-4.0",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant",
     "stopTokens": [
       "<|im_end|>"
@@ -1603,8 +1603,8 @@
     "description": "Language model instruction fine-tuned by upstage.ai on Orca and Alpaca style datasets that reached the top spot in openLLM rankings",
     "url": "",
     "license": "CC BY-NC-4.0",
-    "parameterSize": "70000000000",
-    "contextLength": "4096",
+    "parameterSizeMil": 70000,
+    "contextLength": 4096,
     "promptFormat": "### System:\nYou are a respectful and helpful assistant.\n### User:\n{prompt}\n### Assistant:",
     "stopTokens": [
       "###"
@@ -1637,8 +1637,8 @@
     "description": "Chatbot trained by fine-tuning LLaMA on user-shared conversations collected from ShareGPT. Auto-regressive model, based on the transformer architecture.",
     "url": "",
     "license": "",
-    "parameterSize": "13000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 13000,
+    "contextLength": 2048,
     "promptFormat": "USER: {prompt}\nASSISTANT:",
     "stopTokens": [
       "</s>"
@@ -1657,7 +1657,7 @@
     "description": "replit-code-v1-3b is a 2.7B Causal Language Model focused on Code Completion. The model has been trained on a subset of the Stack Dedup v1.2 dataset.",
     "url": "",
     "license": "",
-    "parameterSize": "3000000000"
+    "parameterSizeMil": 3000
   },
   {
     "id": "togetherai@mpt-7b",
@@ -1672,7 +1672,7 @@
     "description": "Decoder-style transformer pretrained from scratch on 1T tokens of English text and code.",
     "url": "",
     "license": "",
-    "parameterSize": "7000000000",
+    "parameterSizeMil": 7000,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -1690,8 +1690,8 @@
     "description": "Chat model for dialogue generation finetuned on ShareGPT-Vicuna, Camel-AI, GPTeacher, Guanaco, Baize and some generated datasets.",
     "url": "",
     "license": "",
-    "parameterSize": "30000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 30000,
+    "contextLength": 2048,
     "promptFormat": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant",
     "stopTokens": [
       "<|im_end|>"
@@ -1724,7 +1724,7 @@
     "description": "T5 fine-tuned on more than 1000 additional tasks covering also more languages, making it better than T5 at majority of tasks. ",
     "url": "",
     "license": "",
-    "parameterSize": "3000000000"
+    "parameterSizeMil": 3000
   },
   {
     "id": "togetherai@mpt-7b-instruct",
@@ -1739,7 +1739,7 @@
     "description": "Designed for short-form instruction following, finetuned on Dolly and Anthropic HH-RLHF and other datasets",
     "url": "",
     "license": "",
-    "parameterSize": "7000000000",
+    "parameterSizeMil": 7000,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -1757,7 +1757,7 @@
     "description": "Foundation model designed specifically for SQL generation tasks. Pre-trained for 3 epochs and fine-tuned for 10 epochs.",
     "url": "",
     "license": "",
-    "parameterSize": "6000000000",
+    "parameterSizeMil": 6000,
     "stopTokens": [
       "<|endoftext|>"
     ]
@@ -1775,7 +1775,7 @@
     "description": "Chatbot trained by fine-tuning LLaMA on dialogue data gathered from the web.",
     "url": "",
     "license": "",
-    "parameterSize": "7000000000",
+    "parameterSizeMil": 7000,
     "promptFormat": "USER: {prompt} GPT:",
     "stopTokens": [
       "</s>"
@@ -1794,8 +1794,8 @@
     "description": "An instruction-following LLM based on pythia-12b, and trained on ~15k instruction/response fine tuning records generated by Databricks employees.",
     "url": "",
     "license": "",
-    "parameterSize": "12000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 12000,
+    "contextLength": 2048,
     "promptFormat": "### Instruction:\n{prompt}\n### Response:",
     "stopTokens": [
       "### End"
@@ -1814,7 +1814,7 @@
     "description": "Autoregressive language model trained on the Pile. Its architecture intentionally resembles that of GPT-3, and is almost identical to that of GPT-J 6B.",
     "url": "",
     "license": "",
-    "parameterSize": "20000000000"
+    "parameterSizeMil": 20000
   },
   {
     "id": "togetherai@oasst-sft-6-llama-30b-xor",
@@ -1847,7 +1847,7 @@
     "description": "Code large language model that can flexibly operate in different modes to support a wide range of code understanding and generation tasks. ",
     "url": "",
     "license": "",
-    "parameterSize": "33000000000"
+    "parameterSizeMil": 33000
   },
   {
     "id": "togetherai@gpt-j-6b",
@@ -1862,7 +1862,7 @@
     "description": "Transformer model trained using Ben Wang's Mesh Transformer JAX. ",
     "url": "",
     "license": "",
-    "parameterSize": "6000000000"
+    "parameterSizeMil": 6000
   },
   {
     "id": "togetherai@vicuna-7b-v1.3",
@@ -1877,8 +1877,8 @@
     "description": "Chatbot trained by fine-tuning LLaMA on user-shared conversations collected from ShareGPT. Auto-regressive model, based on the transformer architecture.",
     "url": "",
     "license": "",
-    "parameterSize": "7000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 7000,
+    "contextLength": 2048,
     "promptFormat": "USER: {prompt}\nASSISTANT:",
     "stopTokens": [
       "</s>"
@@ -1897,7 +1897,7 @@
     "description": "Decoder-only language model pre-trained on a diverse collection of English and Code datasets with a sequence length of 4096.",
     "url": "",
     "license": "",
-    "parameterSize": "3000000000"
+    "parameterSizeMil": 3000
   },
   {
     "id": "togetherai@stablelm-base-alpha-7b",
@@ -1912,7 +1912,7 @@
     "description": "Decoder-only language model pre-trained on a diverse collection of English and Code datasets with a sequence length of 4096.",
     "url": "",
     "license": "",
-    "parameterSize": "7000000000"
+    "parameterSizeMil": 7000
   },
   {
     "id": "togetherai@guanaco-33b",
@@ -1927,8 +1927,8 @@
     "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks.",
     "url": "",
     "license": "",
-    "parameterSize": "33000000000",
-    "contextLength": "2048",
+    "parameterSizeMil": 33000,
+    "contextLength": 2048,
     "promptFormat": "### Human: {prompt} ### Assistant:",
     "stopTokens": [
       "###"

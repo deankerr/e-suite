@@ -69,10 +69,10 @@ export async function processTogetherAi(readFile: string) {
     const [creatorSlug, modelSlug] = entry.name.split('/')
     const model = modelSlug?.toLowerCase() ?? entry.name
     const isInstruct = entry.name.includes('instruct') || entry.display_name.includes('Instruct')
-    const parameterSize = entry.num_parameters
-      ? String(entry.num_parameters)
+    const parameterSizeMil = entry.num_parameters
+      ? entry.num_parameters / 1_000_000
       : getParamSize(entry.name)
-    const contextLength = entry.context_length ? String(entry.context_length) : undefined
+    const contextLength = entry.context_length
 
     const record: EngineCreate = {
       id: 'togetherai@' + model,
@@ -91,7 +91,7 @@ export async function processTogetherAi(readFile: string) {
       description: entry.description,
       url: entry.link,
       license: entry.license,
-      parameterSize,
+      parameterSizeMil,
       contextLength,
 
       promptFormat: entry.config?.prompt_format,

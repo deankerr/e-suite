@@ -61,17 +61,17 @@ model Engine {
   costInputNanoUSD  Int
   costOutputNanoUSD Int
 
-  description   String?
-  url           String?
-  license       String?
-  parameterSize String?
-  contextLength String?
+  description      String?
+  url              String?
+  license          String?
+  parameterSizeMil Int? // millions
+  contextLength    Int?
 
   tokenizer        String?
   instructType     String?
   promptFormat     String?
   stopTokens       String[] @default([])
-  outputTokenLimit String?
+  outputTokenLimit Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

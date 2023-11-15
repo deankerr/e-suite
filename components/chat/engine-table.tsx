@@ -25,7 +25,7 @@ export function EngineTable({
               <TableCell className="font-medium">Released</TableCell>
               <TableCell>{'?'}</TableCell>
               <TableCell className="font-medium">Parameters</TableCell>
-              <TableCell>{engine.parameterSize} billion</TableCell>
+              <TableCell>{engine.parameterSizeMil} billion</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">License</TableCell>
