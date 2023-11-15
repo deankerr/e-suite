@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-export function AgentTabBar({ className }: React.ComponentProps<'div'>) {
+export function SubMenuTabBar({ className }: React.ComponentProps<'div'>) {
   return (
     <div className={cn('overflow-x-auto border-b', className)}>
       <div

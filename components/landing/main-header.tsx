@@ -3,8 +3,8 @@ import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
-import { SignInOutButton } from './sign-in-out-button'
-import { ThemeToggle } from './ui/theme-toggle'
+import { SignInOutButton } from '../sign-in-out-button'
+import { ThemeToggle } from '../ui/theme-toggle'
 
 export async function MainHeader({ className }: React.HTMLAttributes<HTMLDivElement>) {
   const session = await auth()

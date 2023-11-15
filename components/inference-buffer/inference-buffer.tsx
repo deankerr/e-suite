@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
-import { MessageBar } from '../chat/message-bar'
-import { MessageBubble } from '../chat/message-bubble'
-import { useAgentQuery, useEngineQuery, useTabs } from './queries'
-import { useAgentChat } from './use-agent-chat'
+import { useAgentQuery, useEngineQuery, useTabs } from '../suite/queries'
+import { useAgentChat } from '../suite/use-agent-chat'
+import { MessageBar } from './message-bar'
+import { MessageBubble } from './message-bubble'
 
 export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()

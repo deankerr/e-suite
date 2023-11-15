@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import { Session } from 'next-auth'
 import Link from 'next/link'
+import { InferenceBuffer } from '../inference-buffer/inference-buffer'
 import { SignInOutButton } from '../sign-in-out-button'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { AgentDetailPanel } from './agent-detail-panel'
-import { AgentTabBar } from './agent-tab-bar'
-import { InferenceBuffer } from './inference-buffer'
 import { InferenceParameterPanel } from './inference-parameter-panel'
+import { SubMenuTabBar } from './submenu-tab-bar'
 import { SuiteRailList } from './suite-rail-list'
 import { SuiteStatusBar } from './suite-status-bar'
 import { SuiteTabBar } from './suite-tab-bar'
@@ -34,7 +34,7 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
         <div className="">
           <SuiteTabBar className="h-12" />
           <AgentDetailPanel className="p-6" />
-          <AgentTabBar className="" />
+          <SubMenuTabBar className="" />
         </div>
 
         <div className="grid grid-cols-[60%_auto] overflow-hidden">

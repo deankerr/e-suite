@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
-import { MainContent } from '@/components/main-content'
-import { MainHeader } from '@/components/main-header'
+import { MainContent } from '@/components/landing/main-content'
+import { MainHeader } from '@/components/landing/main-header'
 import { PrePrint } from '@/components/util/pre-print'
 import Link from 'next/link'
 
