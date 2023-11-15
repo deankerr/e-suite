@@ -22,13 +22,21 @@ import { useRef } from 'react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Loading } from '../ui/loading'
+import { EngineCard } from './engine-card'
 import { EnginesCombobox } from './engines-combobox'
-import { useAgentMutation, useAgentQuery, useTabs } from './queries'
+import {
+  useAgentMutation,
+  useAgentQuery,
+  useEngineQuery,
+  useEnginesQuery,
+  useTabs,
+} from './queries'
 
 export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
   const mutator = useAgentMutation(agent?.id)
+  const { data: engine } = useEngineQuery(agent?.engineId)
 
   return (
     <div className={cn('', className)}>
@@ -37,7 +45,7 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
           <div className="space-y-4 p-6">
             {/* title / buttons */}
             <div className="flex items-center space-x-4">
-              <h3 className=" text-lg font-semibold leading-none">{agent.name}</h3>
+              <h2 className=" text-lg font-semibold leading-none">{agent.name}</h2>
               <RenameDialog
                 current={agent.name}
                 onSubmit={(name) => mutator.mutate({ agentId: agent.id, merge: { name } })}
@@ -68,9 +76,10 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
               </p>
             </div>
             {/* EngineCard */}
-            <div className="space-x-2">
+            <div className="flex w-full justify-center space-x-2">
               <EnginesCombobox current={agent.engineId} />
             </div>
+            {engine && <EngineCard engine={engine} />}
           </div>
 
           {/* avatar */}

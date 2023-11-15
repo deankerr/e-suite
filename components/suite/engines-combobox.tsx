@@ -7,6 +7,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/components/ui/command'
 import {
   Popover,
@@ -35,17 +36,17 @@ export function EnginesCombobox({ current = '' }: { current?: string }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-[400px] justify-between')}
+          className={cn('w-[500px] justify-between')}
         >
           {value ? engines.find((item) => item.id === value)?.displayName : 'Select a model...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn('w-[400px] p-0')}>
-        <Command>
+      <PopoverContent className={cn('w-[500px] p-0')}>
+        <Command label="Model Menu">
           <CommandInput placeholder={'Search models...'} className="h-9" />
           <CommandEmpty>No item found.</CommandEmpty>
-          <CommandGroup>
+          <CommandList>
             {engines.map((item) => {
               return (
                 <CommandItem
@@ -66,7 +67,7 @@ export function EnginesCombobox({ current = '' }: { current?: string }) {
                 </CommandItem>
               )
             })}
-          </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
