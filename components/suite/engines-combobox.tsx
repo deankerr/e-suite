@@ -18,16 +18,26 @@ import {
 import { cn } from '@/lib/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import * as React from 'react'
-import { useEnginesQuery } from './queries'
+import { useAgentMutation, useAgentQuery, useEnginesQuery, useTabs } from './queries'
 
 export function EnginesCombobox({ current = '' }: { current?: string }) {
   const [open, setOpen] = React.useState(false)
-  const [localValue, setLocalValue] = React.useState(current)
+  // const [localValue, setLocalValue] = React.useState(current)
 
-  const value = localValue
-  const setValue = setLocalValue
+  // const value = localValue
+  // const setValue = setLocalValue
 
+  const { focusedTab } = useTabs()
+  const { data: agent } = useAgentQuery(focusedTab?.agentId)
+  const mutator = useAgentMutation(agent?.id)
   const { data: engines = [] } = useEnginesQuery()
+
+  const value = agent?.engineId ?? ''
+  const setValue = (value: string) => {
+    if (agent) {
+      mutator.mutate({ agentId: agent?.id, merge: { engineId: value } })
+    }
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -36,13 +46,13 @@ export function EnginesCombobox({ current = '' }: { current?: string }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-[500px] justify-between')}
+          className={cn('w-[36rem] justify-between')}
         >
           {value ? engines.find((item) => item.id === value)?.displayName : 'Select a model...'}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn('w-[500px] p-0')}>
+      <PopoverContent className={cn('w-[36rem] p-0')}>
         <Command label="Model Menu">
           <CommandInput placeholder={'Search models...'} className="h-9" />
           <CommandEmpty>No item found.</CommandEmpty>

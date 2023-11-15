@@ -41,7 +41,7 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
   return (
     <div className={cn('', className)}>
       {agent ? (
-        <div className="grid grid-cols-[1fr_auto] rounded-md border">
+        <div className="relative grid grid-cols-[1fr_auto] rounded-md border">
           <div className="space-y-4 p-6">
             {/* title / buttons */}
             <div className="flex items-center space-x-4">
@@ -64,22 +64,17 @@ export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
                 Delete
               </Button>
             </div>
-            {/* debug info */}
-            <div className="font-mono text-xs">
-              <p className="">
-                <span className="">ID: {agent.id} </span>
-                <span className="">Created: {agent.createdAt.toISOString()} </span>
-                <span className="">Updated: {agent.updatedAt.toISOString()} </span>
-              </p>
-              <p>
-                <span className="">active: {agent.engineId} </span>
-              </p>
-            </div>
+
             {/* EngineCard */}
-            <div className="flex w-full justify-center space-x-2">
+            <div className="flex w-full space-x-2">
               <EnginesCombobox current={agent.engineId} />
             </div>
             {engine && <EngineCard engine={engine} />}
+
+            {/* debug info */}
+            <div className="absolute bottom-0 left-0 font-mono text-xs text-muted-foreground/50">
+              id={agent.id} engineId={agent.engineId}
+            </div>
           </div>
 
           {/* avatar */}

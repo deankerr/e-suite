@@ -104,6 +104,9 @@ dependencies:
   ai:
     specifier: ^2.2.20
     version: 2.2.20(react@18.2.0)(solid-js@1.8.5)(svelte@4.2.2)(vue@3.3.7)
+  big.js:
+    specifier: ^6.2.1
+    version: 6.2.1
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -193,6 +196,9 @@ devDependencies:
   '@tanstack/eslint-plugin-query':
     specifier: ^5.6.0
     version: 5.6.0(eslint@8.53.0)(typescript@5.2.2)
+  '@types/big.js':
+    specifier: ^6.2.2
+    version: 6.2.2
   '@types/node':
     specifier: ^20.8.10
     version: 20.8.10
@@ -2206,6 +2212,10 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
+  /@types/big.js@6.2.2:
+    resolution: {integrity: sha512-e2cOW9YlVzFY2iScnGBBkplKsrn2CsObHQ2Hiw4V1sSyiGbgWL8IyqE3zFi1Pt5o1pdAtYkDAIsF3KKUPjdzaA==}
+    dev: true
+
   /@types/debug@4.1.10:
     resolution: {integrity: sha512-tOSCru6s732pofZ+sMv9o4o3Zc+Sa8l3bxd/tweTQudFn06vAzb13ZX46Zi6m6EJ+RUbRTHvgQJ1gBtSgkaUYA==}
     dependencies:
@@ -2790,6 +2800,10 @@ packages:
 
   /base-64@0.1.0:
     resolution: {integrity: sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==}
+    dev: false
+
+  /big.js@6.2.1:
+    resolution: {integrity: sha512-bCtHMwL9LeDIozFn+oNhhFoq+yQ3BNdnsLSASUxLciOb1vgvpHsIO1dsENiGMgbb4SkP5TrzWzRiLddn8ahVOQ==}
     dev: false
 
   /binary-extensions@2.2.0:

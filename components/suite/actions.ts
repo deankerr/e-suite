@@ -161,7 +161,9 @@ export const updateWorkbench = action(schemaWorkbenchMerge, async (session, { me
 })
 
 export const getEngines = action(z.void(), async () => {
-  return await prisma.engine.findMany({})
+  return await prisma.engine.findMany({
+    orderBy: [{ providerId: 'asc' }, { displayName: 'asc' }],
+  })
 })
 
 export const getEngine = action(z.string(), async (session, engineId) => {
