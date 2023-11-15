@@ -13,8 +13,8 @@
     "db:push": "prisma db push && prisma generate",
     "db:seed": "prisma db seed",
     "db:gen": "prisma generate",
-    "db:studio": "prisma studio",
-    "get:together": "bun scripts/together/get.ts"
+    "studio": "prisma studio",
+    "script:provider-models": "bun scripts/provider-models/run.ts"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"

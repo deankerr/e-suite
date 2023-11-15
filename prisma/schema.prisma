@@ -77,11 +77,45 @@ model Engine {
   Agent Agent[]
 }
 
+model Engine2 {
+  id    String @id
+  model String
+  type  String
+
+  provider        Provider @relation(fields: [providerId], references: [id])
+  providerId      String
+  providerModelId String
+
+  displayName String
+  creator     String
+
+  costInputNanoUSD  Int
+  costOutputNanoUSD Int
+
+  description   String?
+  url           String?
+  license       String?
+  parameterSize String?
+  contextLength String?
+
+  tokenizer        String?
+  instructType     String?
+  promptFormat     String?
+  stopTokens       String[] @default([])
+  outputTokenLimit String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  available Boolean  @default(true)
+  comment   String[] @default([])
+}
+
 model Provider {
-  id          String   @id // openai | openrouter | togetherai
+  id          String    @id // openai | openrouter | togetherai
   displayName String
   url         String
   engines     Engine[]
+  engines2    Engine2[]
 }
 
 model Account {

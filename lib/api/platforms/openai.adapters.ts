@@ -7,7 +7,7 @@ import { schemas } from '../schemas'
 
 export const openai = {
   chat: chatModerated,
-  models,
+  getAvailableModels,
 }
 
 const api = new OpenAI()
@@ -74,106 +74,7 @@ async function image(input: OpenAI.ImageGenerateParams) {
   }
 }
 
-export async function models() {
+export async function getAvailableModels() {
   const { data } = await api.models.list()
   return data
 }
-
-const chatModels = [
-  'gpt-4',
-  // 'gpt-4-0314',
-  // 'gpt-4-0613',
-  // 'gpt-4-32k',
-  // 'gpt-4-32k-0314',
-  // 'gpt-4-32k-0613',
-  'gpt-3.5-turbo',
-  // 'gpt-3.5-turbo-16k',
-  // 'gpt-3.5-turbo-0301',
-  // 'gpt-3.5-turbo-0613',
-  // 'gpt-3.5-turbo-16k-0613',
-]
-
-/* /models sample
-{
-      id: 'davinci-instruct-beta',
-      object: 'model',
-      created: 1649364042,
-      owned_by: 'openai',
-      permission: [Array],
-      root: 'davinci-instruct-beta',
-      parent: null
-    },
-    {
-      id: 'gpt-3.5-turbo-0613',
-      object: 'model',
-      created: 1686587434,
-      owned_by: 'openai',
-      permission: [Array],
-      root: 'gpt-3.5-turbo-0613',
-      parent: null
-    },
-    {
-      id: 'text-similarity-babbage-001',
-      object: 'model',
-      created: 1651172505,
-      owned_by: 'openai-dev',
-      permission: [Array],
-      root: 'text-similarity-babbage-001',
-      parent: null
-    },
-    {
-      id: 'text-search-davinci-doc-001',
-      object: 'model',
-      created: 1651172505,
-      owned_by: 'openai-dev',
-      permission: [Array],
-      root: 'text-search-davinci-doc-001',
-      parent: null
-    },
-    {
-      id: 'gpt-4-0314',
-      object: 'model',
-      created: 1687882410,
-      owned_by: 'openai',
-      permission: [Array],
-      root: 'gpt-4-0314',
-      parent: null
-    },
-    {
-      id: 'gpt-4-0613',
-      object: 'model',
-      created: 1686588896,
-      owned_by: 'openai',
-      permission: [Array],
-      root: 'gpt-4-0613',
-      parent: null
-    },
-    {
-      id: 'gpt-4',
-      object: 'model',
-      created: 1687882411,
-      owned_by: 'openai',
-      permission: [Array],
-      root: 'gpt-4',
-      parent: null
-    },
-    {
-      id: 'babbage-similarity',
-      object: 'model',
-      created: 1651172505,
-      owned_by: 'openai-dev',
-      permission: [Array],
-      root: 'babbage-similarity',
-      parent: null
-    },
-    {
-      id: 'text-embedding-ada-002',
-      object: 'model',
-      created: 1671217299,
-      owned_by: 'openai-internal',
-      permission: [Array],
-      root: 'text-embedding-ada-002',
-      parent: null
-    },
-
-*/

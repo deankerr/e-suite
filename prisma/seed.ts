@@ -1,8 +1,11 @@
+import { fetchAndAddProviderModels } from '@/scripts/provider-models/run'
 import { PrismaClient } from '@prisma/client'
 import { seedAgents } from './seed-agents'
 import { seedEngineData } from './seed-engines'
 
 const prisma = new PrismaClient()
+
+await fetchAndAddProviderModels()
 
 async function main() {
   console.log('add Providers')
@@ -59,11 +62,11 @@ async function main() {
   await seedEngineData()
 }
 
-const env = process.env.SEED
+// const env = process.env.SEED
 
-if (!env) {
-  console.error('no SEED env provided')
-}
+// if (!env) {
+//   console.error('no SEED env provided')
+// }
 
-if (env === 'engines') await main()
-if (env === 'agents') await seedAgents()
+// if (env === 'engines') await main()
+// if (env === 'agents') await seedAgents()

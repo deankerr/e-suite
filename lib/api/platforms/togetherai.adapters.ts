@@ -16,7 +16,7 @@ const { GET, POST } = createClient<paths>({
 
 export const togetherai = {
   chat,
-  models,
+  getAvailableModels,
 }
 
 async function chat(chatRequest: EChatRequestSchema) {
@@ -56,7 +56,7 @@ async function image(input: object) {
   }
 }
 
-export async function models() {
+export async function getAvailableModels() {
   console.log('fetching togetherai model list')
   const { data, error } = await GET('/models/info', {})
   console.log('data', data)
