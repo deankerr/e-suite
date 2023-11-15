@@ -1,0 +1,943 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Together APIs",
+    "version": "unknown"
+  },
+  "servers": [
+    {
+      "url": "https://api.together.xyz"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sec0": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "x-bearer-format": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "sec0": []
+    }
+  ],
+  "paths": {
+    "/inference": {
+      "post": {
+        "summary": "Inference",
+        "description": "",
+        "operationId": "inference",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "description": "Required. The name of the model to query.",
+                    "default": "togethercomputer/RedPajama-INCITE-7B-Instruct"
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "description": "Required. A string providing context for the model to complete.",
+                    "default": "The capital of France is"
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "description": "Required. The maximum number of tokens to generate.",
+                    "default": 128,
+                    "format": "int32"
+                  },
+                  "stop": {
+                    "type": "string",
+                    "description": "Optional. A string sequence that will truncate (stop) inference text output. For example, \"\\n\\n\" will stop generation as soon as the model generates two newlines.",
+                    "default": "."
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "description": "Optional. A decimal number that determines the degree of randomness in the response. A value of 1 will always yield the same output. A temperature less than 1 favors more correctness and is appropriate for question answering or summarization. A value greater than 1 introduces more randomness in the output.",
+                    "default": 0.7,
+                    "format": "float"
+                  },
+                  "top_p": {
+                    "type": "number",
+                    "description": "Optional. The `top_p` (nucleus) parameter is used to dynamically adjust the number of choices for each predicted token based on the cumulative probabilities. It specifies a probability threshold, below which all less likely tokens are filtered out. This technique helps to maintain diversity and generate more fluent and natural-sounding text.",
+                    "default": 0.7,
+                    "format": "float"
+                  },
+                  "top_k": {
+                    "type": "integer",
+                    "description": "Optional. The `top_k` parameter is used to limit the number of choices for the next predicted word or token. It specifies the maximum number of tokens to consider at each step, based on their probability of occurrence. This technique helps to speed up the generation process and can improve the quality of the generated text by focusing on the most likely options.",
+                    "default": 50,
+                    "format": "int32"
+                  },
+                  "repetition_penalty": {
+                    "type": "number",
+                    "description": "Optional. A number that controls the diversity of generated text by reducing the likelihood of repeated sequences. Higher values decrease repetition.",
+                    "default": 1,
+                    "format": "float"
+                  },
+                  "logprobs": {
+                    "type": "integer",
+                    "description": "Optional. An integer that specifies how many top token log probabilities are included in the response for each token generation step.",
+                    "format": "int32"
+                  },
+                  "stream_tokens": {
+                    "type": "boolean",
+                    "description": "Optional. If true, stream tokens as Server-Sent Events as the model generates them instead of waiting for the full model response. If false, return a single JSON object containing the results."
+                  }
+                }
+              },
+              "examples": {
+                "Text Generation": {
+                  "value": {
+                    "model": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1",
+                    "prompt": "The capital of France is",
+                    "max_tokens": 1,
+                    "temperature": 0.7,
+                    "top_p": 0.7,
+                    "top_k": 50,
+                    "repetition_penalty": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"finished\",\n  \"prompt\": [\n    \"The capital of France is \"\n  ],\n  \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n  \"model_owner\": \"\",\n  \"tags\": {},\n  \"num_returns\": 1,\n  \"args\": {\n    \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n    \"prompt\": \"The capital of France is \",\n    \"temperature\": 0.8,\n    \"top_p\": 0.7,\n    \"top_k\": 50,\n    \"max_tokens\": 1\n  },\n  \"subjobs\": [],\n  \"output\": {\n    \"choices\": [\n      {\n        \"finish_reason\": \"length\",\n        \"index\": 0,\n        \"text\": \" Paris\"\n      }\n    ],\n    \"raw_compute_time\": 0.06382315792143345,\n    \"result_type\": \"language-model-inference\"\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "finished"
+                    },
+                    "prompt": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "The capital of France is "
+                      }
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                    },
+                    "model_owner": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "tags": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "num_returns": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "args": {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "type": "string",
+                          "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "example": "The capital of France is "
+                        },
+                        "temperature": {
+                          "type": "number",
+                          "example": 0.8,
+                          "default": 0
+                        },
+                        "top_p": {
+                          "type": "number",
+                          "example": 0.7,
+                          "default": 0
+                        },
+                        "top_k": {
+                          "type": "integer",
+                          "example": 50,
+                          "default": 0
+                        },
+                        "max_tokens": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        }
+                      }
+                    },
+                    "subjobs": {
+                      "type": "array"
+                    },
+                    "output": {
+                      "type": "object",
+                      "properties": {
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "finish_reason": {
+                                "type": "string",
+                                "example": "length"
+                              },
+                              "index": {
+                                "type": "integer",
+                                "example": 0,
+                                "default": 0
+                              },
+                              "text": {
+                                "type": "string",
+                                "example": " Paris"
+                              }
+                            }
+                          }
+                        },
+                        "raw_compute_time": {
+                          "type": "number",
+                          "example": 0.06382315792143345,
+                          "default": 0
+                        },
+                        "result_type": {
+                          "type": "string",
+                          "example": "language-model-inference"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Input required"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Missing API key"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/instances": {
+      "get": {
+        "summary": "List Running Instances",
+        "description": "",
+        "operationId": "instances",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"finished\",\n  \"prompt\": [\n    \"The capital of France is \"\n  ],\n  \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n  \"model_owner\": \"\",\n  \"tags\": {},\n  \"num_returns\": 1,\n  \"args\": {\n    \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n    \"prompt\": \"The capital of France is \",\n    \"temperature\": 0.8,\n    \"top_p\": 0.7,\n    \"top_k\": 50,\n    \"max_tokens\": 1\n  },\n  \"subjobs\": [],\n  \"output\": {\n    \"choices\": [\n      {\n        \"finish_reason\": \"length\",\n        \"index\": 0,\n        \"text\": \" Paris\"\n      }\n    ],\n    \"raw_compute_time\": 0.06382315792143345,\n    \"result_type\": \"language-model-inference\"\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "finished"
+                    },
+                    "prompt": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "The capital of France is "
+                      }
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                    },
+                    "model_owner": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "tags": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "num_returns": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "args": {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "type": "string",
+                          "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "example": "The capital of France is "
+                        },
+                        "temperature": {
+                          "type": "number",
+                          "example": 0.8,
+                          "default": 0
+                        },
+                        "top_p": {
+                          "type": "number",
+                          "example": 0.7,
+                          "default": 0
+                        },
+                        "top_k": {
+                          "type": "integer",
+                          "example": 50,
+                          "default": 0
+                        },
+                        "max_tokens": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        }
+                      }
+                    },
+                    "subjobs": {
+                      "type": "array"
+                    },
+                    "output": {
+                      "type": "object",
+                      "properties": {
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "finish_reason": {
+                                "type": "string",
+                                "example": "length"
+                              },
+                              "index": {
+                                "type": "integer",
+                                "example": 0,
+                                "default": 0
+                              },
+                              "text": {
+                                "type": "string",
+                                "example": " Paris"
+                              }
+                            }
+                          }
+                        },
+                        "raw_compute_time": {
+                          "type": "number",
+                          "example": 0.06382315792143345,
+                          "default": 0
+                        },
+                        "result_type": {
+                          "type": "string",
+                          "example": "language-model-inference"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Input required"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Missing API key"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "examples": {
+                "Text Generation": {
+                  "value": {
+                    "model": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1",
+                    "prompt": "The capital of France is",
+                    "max_tokens": 1,
+                    "temperature": 0.7,
+                    "top_p": 0.7,
+                    "top_k": 50,
+                    "repetition_penalty": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instances/stop": {
+      "post": {
+        "summary": "Stop Fine-tuned Instance",
+        "description": "",
+        "operationId": "instances-stop",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "query",
+            "description": "Required. The name of the fine-tuned model to stop.",
+            "schema": {
+              "type": "string",
+              "default": "username/ft-model-name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"finished\",\n  \"prompt\": [\n    \"The capital of France is \"\n  ],\n  \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n  \"model_owner\": \"\",\n  \"tags\": {},\n  \"num_returns\": 1,\n  \"args\": {\n    \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n    \"prompt\": \"The capital of France is \",\n    \"temperature\": 0.8,\n    \"top_p\": 0.7,\n    \"top_k\": 50,\n    \"max_tokens\": 1\n  },\n  \"subjobs\": [],\n  \"output\": {\n    \"choices\": [\n      {\n        \"finish_reason\": \"length\",\n        \"index\": 0,\n        \"text\": \" Paris\"\n      }\n    ],\n    \"raw_compute_time\": 0.06382315792143345,\n    \"result_type\": \"language-model-inference\"\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "finished"
+                    },
+                    "prompt": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "The capital of France is "
+                      }
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                    },
+                    "model_owner": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "tags": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "num_returns": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "args": {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "type": "string",
+                          "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "example": "The capital of France is "
+                        },
+                        "temperature": {
+                          "type": "number",
+                          "example": 0.8,
+                          "default": 0
+                        },
+                        "top_p": {
+                          "type": "number",
+                          "example": 0.7,
+                          "default": 0
+                        },
+                        "top_k": {
+                          "type": "integer",
+                          "example": 50,
+                          "default": 0
+                        },
+                        "max_tokens": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        }
+                      }
+                    },
+                    "subjobs": {
+                      "type": "array"
+                    },
+                    "output": {
+                      "type": "object",
+                      "properties": {
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "finish_reason": {
+                                "type": "string",
+                                "example": "length"
+                              },
+                              "index": {
+                                "type": "integer",
+                                "example": 0,
+                                "default": 0
+                              },
+                              "text": {
+                                "type": "string",
+                                "example": " Paris"
+                              }
+                            }
+                          }
+                        },
+                        "raw_compute_time": {
+                          "type": "number",
+                          "example": 0.06382315792143345,
+                          "default": 0
+                        },
+                        "result_type": {
+                          "type": "string",
+                          "example": "language-model-inference"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Input required"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Missing API key"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "examples": {
+                "Text Generation": {
+                  "value": {
+                    "model": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1",
+                    "prompt": "The capital of France is",
+                    "max_tokens": 1,
+                    "temperature": 0.7,
+                    "top_p": 0.7,
+                    "top_k": 50,
+                    "repetition_penalty": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instances/start": {
+      "post": {
+        "summary": "Start Fine-tuned Instance",
+        "description": "",
+        "operationId": "instances-start",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "query",
+            "description": "Required. The name of the fine-tuned model to start.",
+            "schema": {
+              "type": "string",
+              "default": "username/ft-model-name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"status\": \"finished\",\n  \"prompt\": [\n    \"The capital of France is \"\n  ],\n  \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n  \"model_owner\": \"\",\n  \"tags\": {},\n  \"num_returns\": 1,\n  \"args\": {\n    \"model\": \"togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1\",\n    \"prompt\": \"The capital of France is \",\n    \"temperature\": 0.8,\n    \"top_p\": 0.7,\n    \"top_k\": 50,\n    \"max_tokens\": 1\n  },\n  \"subjobs\": [],\n  \"output\": {\n    \"choices\": [\n      {\n        \"finish_reason\": \"length\",\n        \"index\": 0,\n        \"text\": \" Paris\"\n      }\n    ],\n    \"raw_compute_time\": 0.06382315792143345,\n    \"result_type\": \"language-model-inference\"\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "finished"
+                    },
+                    "prompt": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "The capital of France is "
+                      }
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                    },
+                    "model_owner": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "tags": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "num_returns": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "args": {
+                      "type": "object",
+                      "properties": {
+                        "model": {
+                          "type": "string",
+                          "example": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "example": "The capital of France is "
+                        },
+                        "temperature": {
+                          "type": "number",
+                          "example": 0.8,
+                          "default": 0
+                        },
+                        "top_p": {
+                          "type": "number",
+                          "example": 0.7,
+                          "default": 0
+                        },
+                        "top_k": {
+                          "type": "integer",
+                          "example": 50,
+                          "default": 0
+                        },
+                        "max_tokens": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        }
+                      }
+                    },
+                    "subjobs": {
+                      "type": "array"
+                    },
+                    "output": {
+                      "type": "object",
+                      "properties": {
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "finish_reason": {
+                                "type": "string",
+                                "example": "length"
+                              },
+                              "index": {
+                                "type": "integer",
+                                "example": 0,
+                                "default": 0
+                              },
+                              "text": {
+                                "type": "string",
+                                "example": " Paris"
+                              }
+                            }
+                          }
+                        },
+                        "raw_compute_time": {
+                          "type": "number",
+                          "example": 0.06382315792143345,
+                          "default": 0
+                        },
+                        "result_type": {
+                          "type": "string",
+                          "example": "language-model-inference"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Input required"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": "Missing API key"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "403",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "500",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {},
+              "examples": {
+                "Text Generation": {
+                  "value": {
+                    "model": "togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1",
+                    "prompt": "The capital of France is",
+                    "max_tokens": 1,
+                    "temperature": 0.7,
+                    "top_p": 0.7,
+                    "top_k": 50,
+                    "repetition_penalty": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models/info?options=": {
+      "get": {
+        "summary": "Model Options",
+        "description": "",
+        "operationId": "model-options",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "[{   'context_length': 2048,\n        'dedicated_dollars_per_hour_price': '0.70000',\n        'deployment_options': 'this model is available through serverless or '\n                              'dedicated instances',\n        'description': 'Casual decoder-only model built by TII based on '\n                       'Falcon-7B and finetuned on a mixture of chat/instruct '\n                       'datasets. ',\n        'name': 'togethercomputer/falcon-7b-instruct',\n        'num_parameters': 7000000000,\n        'serverless_dollars_per_1ktoken_price': '0.00020'},\n    {   'context_length': 2048,\n        'dedicated_dollars_per_hour_price': '0.70000',\n        'deployment_options': 'this model is available through serverless or '\n                              'dedicated instances',\n        'description': 'Causal decoder-only model built by TII and trained on '\n                       '1,500B tokens of RefinedWeb enhanced with curated '\n                       'corpora.',\n        'name': 'togethercomputer/falcon-7b',\n        'num_parameters': 7000000000,\n        'serverless_dollars_per_1ktoken_price': '0.00020'},\n    {   'context_length': 2048,\n        'dedicated_dollars_per_hour_price': '1.40000',\n        'deployment_options': 'this model is available only through a '\n                              'dedicated instance',\n        'description': 'Instruction-following language model built on LLaMA. '\n                       'Expanding upon the initial 52K dataset from the Alpaca '\n                       'model, an additional 534,530 focused on multi-lingual '\n                       'tasks.',\n        'name': 'togethercomputer/guanaco-13b',\n        'num_parameters': 13000000000,\n        'serverless_dollars_per_1ktoken_price': 'not available'}]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-readme": {
+          "code-samples": [
+            {
+              "language": "python",
+              "code": "endpoint_url = \"https://api.together.xyz/models/info?options=\"\n\nheaders = {\n    \"Accept\": \"application/json\", \n    \"content-type\": \"application/json\",\n    \"Authorization\": f\"Bearer {TOGETHER_API_KEY}\",\n}\n\nresponse = requests.get(\n    endpoint_url,\n    headers=headers,\n)"
+            },
+            {
+              "language": "curl",
+              "code": "curl -X GET \"https://api.together.xyz/models/info?options=\" \\\n-H \"Accept: application/json\" \\\n-H \"Content-Type: application/json\" \\\n-H \"Authorization: Bearer YOUR_TOGETHER_API_KEY\"\n"
+            }
+          ],
+          "samples-languages": [
+            "python",
+            "curl"
+          ]
+        }
+      }
+    }
+  },
+  "x-readme": {
+    "headers": []
+  },
+  "x-readme-fauxas": true
+}

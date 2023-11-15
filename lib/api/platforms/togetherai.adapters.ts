@@ -58,7 +58,7 @@ async function image(input: object) {
 
 export async function models() {
   console.log('fetching togetherai model list')
-  const { data, error } = await GET('/models/info?=', {})
+  const { data, error } = await GET('/models/info', {})
   console.log('data', data)
   if (error) console.error('openapi-fetch error', error)
   return data

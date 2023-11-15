@@ -1,0 +1,5637 @@
+[
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e831864b84b428b8d322d0",
+    "name": "Austism/chronos-hermes-13b",
+    "display_name": "Chronos Hermes (13B)",
+    "display_type": "chat",
+    "description": "This model is a 75/25 merge of Chronos (13B) and Nous Hermes (13B) models resulting in having a great ability to produce evocative storywriting and follow a narrative.",
+    "license": "other",
+    "creator_organization": "Austism",
+    "hardware_label": "2x A100 80GB",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:08:25.379Z",
+    "update_at": "2023-08-24T17:08:25.379Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xFA5C96b20a10cAC5d21E095e6F4f8c3CBC2f3527": 1,
+        "0xa96806eD1168d759DC233DfB636522b72bBbE159": 1
+      },
+      "asks_updated": "2023-11-15T00:11:54.683832661Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017698063,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.81228304,
+      "throughput_out": 1.1833426
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6532f0faf94bacfc629b4cf7",
+    "name": "EleutherAI/llemma_7b",
+    "display_name": "Llemma (7B)",
+    "display_type": "language",
+    "description": "Llemma 7B is a language model for mathematics. It was initialized with Code Llama 7B weights, and trained on the Proof-Pile-2 for 200B tokens.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/EleutherAI/llemma_7b",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": 6738546688,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {},
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-10-20T21:28:26.403Z",
+    "update_at": "2023-10-24T17:42:38.630Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xcFF8989b33958D1640798CD1A7BDc96AF9420C55": 1
+      },
+      "asks_updated": "2023-11-15T01:35:11.835429391Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018540973,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18679434,
+      "throughput_out": 8.748792
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1212907e072b8aecc1",
+    "name": "EleutherAI/pythia-12b-v0",
+    "display_name": "Pythia (12B)",
+    "display_type": "language",
+    "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/EleutherAI/pythia-12b-v0",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 12000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.091Z",
+    "update_at": "2023-06-23T20:22:42.091Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x6376511C715189a6E25495fb3744a5E419F9e520": 1
+      },
+      "asks_updated": "2023-11-15T00:50:32.871946965Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 7.160277e-27,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 9.5762705e-24,
+      "throughput_out": 1.4320554e-26
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1112907e072b8aecbe",
+    "name": "EleutherAI/pythia-1b-v0",
+    "display_name": "Pythia (1B)",
+    "display_type": "language",
+    "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/EleutherAI/pythia-1b-v0",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 1000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:41.925Z",
+    "update_at": "2023-06-23T20:22:41.925Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xAB4d9Fb5cC9d29edf6f9c19F47c9E54c7D33431d": 1
+      },
+      "asks_updated": "2023-11-15T01:18:42.312113054Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 5.704973e-29,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 7.6713863e-26,
+      "throughput_out": 1.1409946e-28
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1112907e072b8aecbf",
+    "name": "EleutherAI/pythia-2.8b-v0",
+    "display_name": "Pythia (2.8B)",
+    "display_type": "language",
+    "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
+    "license": "apache-2.0",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A40 48GB",
+    "num_parameters": 2800000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:41.975Z",
+    "update_at": "2023-06-23T20:22:41.975Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x2903afA0159904c4fE9cABF528495bd9eE91A6b1": 1
+      },
+      "asks_updated": "2023-11-15T01:41:24.777105599Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 1.6098042e-28,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.2186787e-25,
+      "throughput_out": 3.2196084e-28
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1212907e072b8aecc0",
+    "name": "EleutherAI/pythia-6.9b",
+    "display_name": "Pythia (6.9B)",
+    "display_type": "language",
+    "description": "The Pythia Scaling Suite is a collection of models developed to facilitate interpretability research.",
+    "license": "apache-2.0",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "num_parameters": 6900000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.044Z",
+    "update_at": "2023-06-23T20:22:42.044Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xBE2A33177Ca1a8AD6b2e04c713372eA2ec412B8E": 1
+      },
+      "asks_updated": "2023-11-15T01:10:18.86574245Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 1.9823277e-27,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.7146224e-24,
+      "throughput_out": 3.9646554e-27
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f78861d683768020b9f005",
+    "name": "Gryphe/MythoMax-L2-13b",
+    "display_name": "MythoMax-L2 (13B)",
+    "display_type": "chat",
+    "description": "MythoLogic-L2 and Huginn merge using a highly experimental tensor type merge technique. The main difference with MythoMix is that I allowed more of Huginn to intermingle with the single tensors located at the front and end of a model",
+    "license": "other",
+    "creator_organization": "Gryphe",
+    "hardware_label": "1x A40 48GB",
+    "num_parameters": 13000000000,
+    "release_date": "2023-08-01T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-09-05T19:58:25.683Z",
+    "update_at": "2023-09-05T19:58:25.683Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 393,
+      "num_bids": 375,
+      "num_running": 375,
+      "asks": {
+        "0x01637e64a1CFbE292e6EBe2E00f69185DF89d611": 8,
+        "0x0404942cFbc84091E114CC54961e47fa57DaC24e": 6,
+        "0x09D59bBE7Fb86f94F0BCDbD3De7Ff9f13938aB59": 102,
+        "0x13DB1E0FeFBE7Ef3bfAd5CaD76573296597C38ce": 50,
+        "0x15d950e7a86dd574E93217F7b9dB8Fb36Cf18F46": 4,
+        "0x1665e19f3A7e5182f63FfD541a69d6b3aDEC806A": 2,
+        "0x1D0FB3cEd4C102d7DD3F5A7f91Ee107894567fe3": 1,
+        "0x2c31381F43719123B79849Dc4dA85dC6CDF1A274": 1,
+        "0x3389c8b1fd0B00c131932D33d3c6ebd3B916F282": 7,
+        "0x35E577980db3239CEf88954D02eBdef1502a3663": 1,
+        "0x403f05218D0f737Cd6b586217F6ac736f0eF82f5": 4,
+        "0x41EbeCeB5FA3BD1aA6F98C9F14Ffd51cA053C332": 1,
+        "0x46CF94Edae8A3EEa4E26b01908f53Dab6c0B7917": 1,
+        "0x53db12AE9b135179fF38551eb97354374BC3f8c1": 2,
+        "0x553360413A22980874F6e8617949eF2C5dEBbfa3": 4,
+        "0x55CF563C1cC006baB50eC7a7a39B4E9ab04a3a28": 1,
+        "0x57a5582b5E1508d4Fe138bfa26B882aacEE1F848": 40,
+        "0x59296268992b0f0010347D7f644E4c6Bf5FeBBcB": 8,
+        "0x596B525a329196029345E8e0f8661f8576604C62": 4,
+        "0x59f5E0E38120A95080bf6a002a1f773ad5720eF2": 76,
+        "0x5A54A7df4936BceE33DCA74730e2542f6AdFBC14": 1,
+        "0x5C6466982F46A42365A33e44B1D010Ffad3d9f3F": 1,
+        "0x725392F86fbD4DCe5BeEbdE2e053dA6836F59a05": 2,
+        "0x750C7EA5C4fa95c21905E8B78297C61A78A64C1B": 4,
+        "0x9002a77969C00aB958C9936AD8e74dEb89624e8D": 7,
+        "0xB4E600E39345B32aa8962e1Ea49611021f8692C5": 3,
+        "0xBc70B9CA1A9D59e9dF18c5Fa0b85Fa7C6Ea332Be": 1,
+        "0xD3fEB2B8eF1929e07EE21E3c6c4f79Dc8e7068d7": 1,
+        "0xE1539EB8570DB17B7c6BB9072f212d0Df9D8b898": 4,
+        "0xED5394b42f5f70C91Cd44D71aFe8774c341595F9": 5,
+        "0xF3460D53B54E103724F2e16A9279aB52748757E9": 2,
+        "0xFa993B9F9cA9D617Fbc054BB889bdf9D110B02dE": 2,
+        "0xb1B6eccE4D7Ed09B1d9BBB1Db6A5922Cc0F24969": 1,
+        "0xb66062C56F7438Aa0F1163eEAdfEaF5728C45910": 11,
+        "0xd46b944Dc99663df289b03F5bD2e96D2778fd48b": 4,
+        "0xd4dfeFEbE63784d8BBb24A41eF73A8c527A26739": 2,
+        "0xdD49C13bA67d4F4CEEb53F6Eb15F9c8e4f7D92a4": 8,
+        "0xe0aF04A1E85287f1A6f9B19f9e845A384F3B8485": 3,
+        "0xe3d92073c43985563C09f0D3d9401e7b3761731a": 4,
+        "0xf4446f8A31551775ae515447C5140B9B40c6d489": 4
+      },
+      "asks_updated": "2023-11-15T06:59:03.748213097Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 16.47825,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 34074.18,
+      "throughput_out": 9678.362
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acefbe227f790586239d40",
+    "name": "HuggingFaceH4/starchat-alpha",
+    "display_name": "StarCoderChat Alpha (16B)",
+    "display_type": "chat",
+    "description": "Fine-tuned from StarCoder to act as a helpful coding assistant. As an alpha release is only intended for educational or research purpopses.",
+    "license": "bigcode-openrail-m",
+    "link": "https://huggingface.co/HuggingFaceH4/starchat-alpha",
+    "creator_organization": "HuggingFaceH4",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 16000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "<|endoftext|>",
+        "<|end|>"
+      ],
+      "prompt_format": "<|system|>\n<|end|>\n<|user|>\n{prompt}<|end|>\n<|assistant|>"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:59:26.298Z",
+    "update_at": "2023-07-11T05:59:26.298Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0x001fd7d3dCf2085A17fE9B6499180Eca87abB7cE": 2
+      },
+      "asks_updated": "2023-11-15T01:29:54.856992864Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.00067392713,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.2987654,
+      "throughput_out": 0.029652795
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acebb2227f790586239d16",
+    "name": "NousResearch/Nous-Hermes-13b",
+    "display_name": "Nous Hermes (13B)",
+    "display_type": "language",
+    "description": "LLaMA 13B fine-tuned on over 300,000 instructions. Designed for long responses, low hallucination rate, and absence of censorship mechanisms.",
+    "license": "gpl, LLaMA License Agreement (Meta)",
+    "link": "https://huggingface.co/NousResearch/Nous-Hermes-13b",
+    "creator_organization": "Nous Research",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:42:10.444Z",
+    "update_at": "2023-07-11T05:42:10.444Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x7cA1082c90A01Cd7E42637751E76c7a6325D5aFD": 1
+      },
+      "asks_updated": "2023-11-15T00:45:00.096109465Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 1.0523707e-29,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.1114644e-27,
+      "throughput_out": 1.3620843e-27
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64cae18d3ede2fa7e2cbcc7d",
+    "name": "NousResearch/Nous-Hermes-Llama2-13b",
+    "display_name": "Nous Hermes Llama-2 (13B)",
+    "display_type": "chat",
+    "description": "Nous-Hermes-Llama2-13b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
+    "license": "mit",
+    "creator_organization": "Nous Research",
+    "hardware_label": "2x A100 80GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "stop": [
+        "###",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-08-02T23:06:53.926Z",
+    "update_at": "2023-10-07T00:19:33.779Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 28,
+      "num_bids": 18,
+      "num_running": 18,
+      "asks": {
+        "0x0D53DB030355dDa9Bc7973EB57b09bBdf238AB80": 3,
+        "0x147383B31719BcFFF22E084608675179D3ea13A4": 2,
+        "0x1cC1AEe80049A16831a0c55b17B2A4663a891741": 4,
+        "0x27848b3C50Ad9Fba1A2b18A9b5CD3EEa2f14BC4C": 2,
+        "0x41C25A406b37F5DB19aFdCf44235500b8BDEeB15": 2,
+        "0x885A3E8DC52Aa45D5FB886063bcE1d22dBEA77Ce": 4,
+        "0x91eAC4b38D0A4c2C98851350eaEb25f99eCcB62a": 2,
+        "0xD3CD3fc3Bb6c882dbA4c01BB10014E2a81C9c334": 3,
+        "0xe0173b0447B5b32c64cd50979e366B0cc8Ab6FbD": 4,
+        "0xf85F810579a740D35778c03e6aD0CCD44ce413bE": 2
+      },
+      "asks_updated": "2023-11-15T02:50:30.257522881Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 7.308034,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 35346.84,
+      "throughput_out": 1591.1307
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6532f0faf94bacfc629b4cf8",
+    "name": "NousResearch/Nous-Hermes-Llama2-70b",
+    "display_name": "Nous Hermes LLaMA-2 (70B)",
+    "display_type": "chat",
+    "description": "Nous-Hermes-Llama2-70b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/NousResearch/Nous-Hermes-Llama2-70b",
+    "creator_organization": "NousResearch",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": 70000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "###",
+        "</s>"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n\n### Response:\n"
+    },
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-10-20T21:28:26.404Z",
+    "update_at": "2023-10-24T17:43:39.278Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0x9c12E6313B59799fe3c9da9d6D6a2bBc88bC6580": 1
+      },
+      "asks_updated": "2023-11-15T05:33:03.008112573Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.026354486,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 101.089554,
+      "throughput_out": 9.793995
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6532f0faf94bacfc629b4cf6",
+    "name": "NousResearch/Nous-Hermes-llama-2-7b",
+    "display_name": "Nous Hermes LLaMA-2 (7B)",
+    "display_type": "chat",
+    "description": "Nous-Hermes-Llama2-7b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/NousResearch/Nous-Hermes-llama-2-7b",
+    "creator_organization": "NousResearch",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": 6738415616,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "stop": [
+        "###",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-10-20T21:28:26.403Z",
+    "update_at": "2023-10-24T17:41:52.365Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 3,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0xA4845663a0c61e906cB0A2A53DcFE488dF651d33": 2,
+        "0xCdaaBCEF813fC6c6AB7D9eB4CF17164Bd2F2A946": 1
+      },
+      "asks_updated": "2023-11-15T06:39:27.393340352Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017029205,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.19807127,
+      "throughput_out": 0.6633125
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f677bdbc372ce719b97f05",
+    "name": "NumbersStation/nsql-llama-2-7B",
+    "display_name": "NSQL LLaMA-2 (7B)",
+    "display_type": "code",
+    "description": "NSQL is a family of autoregressive open-source large foundation models (FMs) designed specifically for SQL generation tasks.",
+    "license": "llama2",
+    "creator_organization": "Numbers Station",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-09-05T00:35:09.649Z",
+    "update_at": "2023-09-05T00:35:09.649Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xBb702A9526c057836fe845DF91dEAa3B5a48cc84": 1
+      },
+      "asks_updated": "2023-11-15T06:34:06.124016541Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018911855,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.44423312,
+      "throughput_out": 0.22313781
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6532f0faf94bacfc629b4cf5",
+    "name": "Open-Orca/Mistral-7B-OpenOrca",
+    "display_name": "OpenOrca Mistral (7B) 8K",
+    "display_type": "chat",
+    "description": "An OpenOrca dataset fine-tune on top of Mistral 7B by the OpenOrca team.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca",
+    "creator_organization": "OpenOrca",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": 7241748480,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-10-20T21:28:26.403Z",
+    "update_at": "2023-10-24T00:01:52.541Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 7,
+      "num_bids": 5,
+      "num_running": 5,
+      "asks": {
+        "0xcfeC9A83690c2c2e12FA1214B51Cf14545ef7B16": 4,
+        "0xe6a7E80Ea4D0C6190ada009e23f9cc53b36B030a": 3
+      },
+      "asks_updated": "2023-11-15T06:59:05.72384558Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.49171165,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2576.7922,
+      "throughput_out": 244.17653
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1212907e072b8aecc8",
+    "name": "OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
+    "display_name": "Open-Assistant Pythia SFT-4 (12B)",
+    "display_type": "chat",
+    "description": "Chat-based and open-source assistant. The vision of the project is to make a large language model that can run on a single high-end consumer GPU. ",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
+    "creator_organization": "LAION",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 12000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ],
+      "prompt_format": "<|prompter|>{prompt}<|endoftext|><|assistant|>"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.383Z",
+    "update_at": "2023-06-23T20:22:42.383Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x05335b53C553da8cCeE9A334d7E662877D8110A5": 1
+      },
+      "asks_updated": "2023-11-15T01:41:01.26931425Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1212907e072b8aecc9",
+    "name": "OpenAssistant/stablelm-7b-sft-v7-epoch-3",
+    "display_name": "Open-Assistant StableLM SFT-7 (7B)",
+    "display_type": "chat",
+    "description": "Chat-based and open-source assistant. The vision of the project is to make a large language model that can run on a single high-end consumer GPU. ",
+    "license": "cc-by-sa-4.0",
+    "link": "https://huggingface.co/OpenAssistant/stablelm-7b-sft-v7-epoch-3",
+    "creator_organization": "LAION",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ],
+      "prompt_format": "<|prompter|>{prompt}<|endoftext|><|assistant|>"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.425Z",
+    "update_at": "2023-06-23T20:22:42.425Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x6e8C6C3A7d42B20b637c8262356984BE92CeE11B": 1
+      },
+      "asks_updated": "2023-11-15T04:34:13.229866406Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 8.053857e-14,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.3839417e-10,
+      "throughput_out": 1.0470014e-12
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64fbbc5adfdb1e4b06b5d5cc",
+    "name": "Phind/Phind-CodeLlama-34B-Python-v1",
+    "display_name": "Phind Code LLaMA Python v1 (34B)",
+    "display_type": "code",
+    "description": "This model is fine-tuned from CodeLlama-34B-Python and achieves 69.5% pass@1 on HumanEval.",
+    "license": "llama2",
+    "creator_organization": "Phind",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 33743970304,
+    "show_in_playground": "true",
+    "isFeaturedModel": true,
+    "context_length": 16384,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "stop": [
+        "</s>",
+        "###"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-09-09T00:29:14.496Z",
+    "update_at": "2023-09-09T00:29:14.496Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xa471426bFc2d34b820EE7C7a62dc9486bafcCF68": 1
+      },
+      "asks_updated": "2023-11-15T05:33:01.196697418Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64fbbc5adfdb1e4b06b5d5cb",
+    "name": "Phind/Phind-CodeLlama-34B-v2",
+    "display_name": "Phind Code LLaMA v2 (34B)",
+    "display_type": "code",
+    "description": "Phind-CodeLlama-34B-v1 trained on additional 1.5B tokens high-quality programming-related data proficient in Python, C/C++, TypeScript, Java, and more.",
+    "license": "llama2",
+    "creator_organization": "Phind",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 33743970304,
+    "show_in_playground": "true",
+    "isFeaturedModel": true,
+    "context_length": 16384,
+    "config": {
+      "prompt_format": "### System Prompt\nYou are an intelligent programming assistant.\n\n### User Message\n{prompt}n\n### Assistant\n",
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-09-09T00:29:14.496Z",
+    "update_at": "2023-09-09T00:29:14.496Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x92C124672726325e798A1D55E1Fef1D060657f1b": 1
+      },
+      "asks_updated": "2023-11-15T05:33:08.119537775Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 4.358665e-19,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.4743255e-15,
+      "throughput_out": 4.7127494e-16
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acee11227f790586239d36",
+    "name": "SG161222/Realistic_Vision_V3.0_VAE",
+    "display_name": "Realistic Vision 3.0",
+    "display_type": "image",
+    "description": "Fine-tune version of Stable Diffusion focused on photorealism.",
+    "license": "creativeml-openrail-m",
+    "link": "https://huggingface.co/SG161222/Realistic_Vision_V1.4",
+    "creator_organization": "SG161222",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "external_pricing_url": "https://www.together.xyz/apis#pricing",
+    "config": {
+      "height": 1024,
+      "width": 1024,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "created_at": "2023-07-11T05:52:17.219Z",
+    "update_at": "2023-07-11T05:52:17.219Z",
+    "descriptionLink": "",
+    "pricing": {
+      "hourly": 0,
+      "input": 0,
+      "output": 0,
+      "base": 0,
+      "finetune": 0
+    },
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x1E128f472069E38aEF6B8f25147B42EF81f0F3C0": 1
+      },
+      "asks_updated": "2023-11-15T01:35:37.467041098Z",
+      "gpus": {
+        "NVIDIA A40": 1
+      },
+      "options": {
+        "input=text,image": 1
+      },
+      "qps": 0.003020332,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.13893527
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64fbbc5adfdb1e4b06b5d5cd",
+    "name": "WizardLM/WizardCoder-15B-V1.0",
+    "display_name": "WizardCoder v1.0 (15B)",
+    "display_type": "code",
+    "description": "This model empowers Code LLMs with complex instruction fine-tuning, by adapting the Evol-Instruct method to the domain of code.",
+    "license": "llama2",
+    "creator_organization": "WizardLM",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 15517462528,
+    "show_in_playground": "true",
+    "context_length": 8192,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n\n### Response:\n",
+      "stop": [
+        "###",
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-09-09T00:29:14.496Z",
+    "update_at": "2023-09-09T00:29:14.496Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x63199A7778a823BbfffebA3432C7c87831595648": 1
+      },
+      "asks_updated": "2023-11-15T06:59:06.627836614Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f67555bc372ce719b97f03",
+    "name": "WizardLM/WizardLM-70B-V1.0",
+    "display_name": "WizardLM v1.0 (70B)",
+    "display_type": "language",
+    "description": "This model achieves a substantial and comprehensive improvement on coding, mathematical reasoning and open-domain conversation capacities.",
+    "license": "llama2",
+    "creator_organization": "WizardLM",
+    "hardware_label": "2x A100 80GB",
+    "pricing_tier": "supported",
+    "num_parameters": 70000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt} ASSISTANT:"
+    },
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-09-05T00:24:53.327Z",
+    "update_at": "2023-09-05T00:24:53.327Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0x9bFb1a1D28Bd50dE78bcb8A79663dA916ade6f3e": 2
+      },
+      "asks_updated": "2023-11-15T05:52:57.740494279Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.034699623,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 108.52024,
+      "throughput_out": 3.1330223
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acef6e227f790586239d3f",
+    "name": "bigcode/starcoder",
+    "display_name": "StarCoder (16B)",
+    "display_type": "code",
+    "description": "Trained on 80+ coding languages, uses Multi Query Attention, an 8K context window, and was trained using the Fill-in-the-Middle objective on 1T tokens.",
+    "license": "bigcode-openrail-m",
+    "link": "https://huggingface.co/bigcode/starcoder",
+    "creator_organization": "BigCode",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "num_parameters": 16000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "<|endoftext|>",
+        "<|end|>"
+      ]
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:58:06.486Z",
+    "update_at": "2023-07-11T05:58:06.486Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x76Da1c3472516B97b42f8ABa41cCaaB57248fD1E": 1
+      },
+      "asks_updated": "2023-11-15T06:41:21.460367081Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1112907e072b8aecb6",
+    "name": "databricks/dolly-v2-3b",
+    "display_name": "Dolly v2 (3B)",
+    "display_type": "chat",
+    "description": "An instruction-following LLM based on pythia-3b, and trained on ~15k instruction/response fine tuning records generated by Databricks employees.",
+    "license": "mit",
+    "link": "https://huggingface.co/databricks/dolly-v2-3b",
+    "creator_organization": "Databricks",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 3000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "### End"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:"
+    },
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:41.524Z",
+    "update_at": "2023-06-23T20:22:41.524Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x319B7073E931Ed635dA52EE79444D0B29ccC314D": 1,
+        "0xB9363317321b4D6489F4F6EA5649Fb561A49a88B": 1
+      },
+      "asks_updated": "2023-11-15T01:30:47.558818741Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1112907e072b8aecb7",
+    "name": "databricks/dolly-v2-7b",
+    "display_name": "Dolly v2 (7B)",
+    "display_type": "chat",
+    "description": "An instruction-following LLM based on pythia-7b, and trained on ~15k instruction/response fine tuning records generated by Databricks employees.",
+    "license": "mit",
+    "link": "https://huggingface.co/databricks/dolly-v2-7b",
+    "creator_organization": "Databricks",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "### End"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:41.565Z",
+    "update_at": "2023-06-23T20:22:41.565Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xAc5A2142D60E5a359b6097c4fb21D26896f23d1D": 1,
+        "0xc707a80317970C32e3fB5Dbe19acc0EF725A7889": 1
+      },
+      "asks_updated": "2023-11-15T02:05:05.529126423Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f67987bc372ce719b97f07",
+    "name": "defog/sqlcoder",
+    "display_name": "Sqlcoder (15B)",
+    "display_type": "language",
+    "description": "Defog's SQLCoder is a state-of-the-art LLM for converting natural language questions to SQL queries, fine-tuned from Bigcode's Starcoder 15B model.",
+    "license": "other",
+    "creator_organization": "Defog",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 15000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ],
+      "prompt_format": "### Instructions:\n\n{prompt}\n\n### Response:\n"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-09-05T00:42:47.496Z",
+    "update_at": "2023-09-05T00:42:47.496Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x0Becb58958245257D38481a6E793DA05f12309e1": 1
+      },
+      "asks_updated": "2023-11-15T06:39:13.930706012Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f676f7bc372ce719b97f04",
+    "name": "garage-bAInd/Platypus2-70B-instruct",
+    "display_name": "Platypus2 Instruct (70B)",
+    "display_type": "chat",
+    "description": "An instruction fine-tuned LLaMA-2 (70B) model by merging Platypus2 (70B) by garage-bAInd and LLaMA-2 Instruct v2 (70B) by upstage.",
+    "license": "CC BY-NC-4.0",
+    "creator_organization": "garage-bAInd",
+    "hardware_label": "2x A100 80GB",
+    "pricing_tier": "featured",
+    "num_parameters": 70000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "</s>",
+        "###"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
+    },
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-09-05T00:31:51.264Z",
+    "update_at": "2023-09-07T01:46:29.338Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x763611653e222b6a0a8b7E060FB819A1FfcDF025": 1
+      },
+      "asks_updated": "2023-11-15T05:36:27.157370817Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018205835,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.20395441,
+      "throughput_out": 1.2718418
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acea0b227f790586239d0b",
+    "name": "huggyllama/llama-13b",
+    "display_name": "LLaMA (13B)",
+    "display_type": "language",
+    "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:35:07.955Z",
+    "update_at": "2023-07-11T05:35:07.955Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x430582E15b703a2569d9066CeC4518ff98ad428d": 1,
+        "0xC8a1AB4a2091895a853613B5DafdE287b5f88018": 1
+      },
+      "asks_updated": "2023-11-15T06:59:16.193110884Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 1.6334495e-20,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.230451e-17,
+      "throughput_out": 1.6334495e-20
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acea35227f790586239d0c",
+    "name": "huggyllama/llama-30b",
+    "display_name": "LLaMA (30B)",
+    "display_type": "language",
+    "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "access": "open",
+    "num_parameters": 33000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:35:49.870Z",
+    "update_at": "2023-07-11T05:35:49.870Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xE441cE0033288Ef1BF62dED8369C3027603c708E": 1
+      },
+      "asks_updated": "2023-11-15T06:39:19.962975579Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 6.199089e-17,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 8.4868005e-14,
+      "throughput_out": 6.199089e-17
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acea57227f790586239d0d",
+    "name": "huggyllama/llama-65b",
+    "display_name": "LLaMA (65B)",
+    "display_type": "language",
+    "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
+    "creator_organization": "Meta",
+    "hardware_label": "2x A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 65000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:36:23.656Z",
+    "update_at": "2023-07-11T05:36:23.656Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0xb4DF6A506d240a769fA8c4579B8E893C953DCA8C": 2
+      },
+      "asks_updated": "2023-11-15T06:59:12.027851695Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018709699,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18011498,
+      "throughput_out": 1.3475677
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acea6e227f790586239d0e",
+    "name": "huggyllama/llama-7b",
+    "display_name": "LLaMA (7B)",
+    "display_type": "language",
+    "description": "An auto-regressive language model, based on the transformer architecture. The model comes in different sizes: 7B, 13B, 33B and 65B parameters.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/decapoda-research/llama-30b-hf-int4/commit/95d097b272bd0a84a164aa8116e8c09661487581#d2h-740129",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:36:46.255Z",
+    "update_at": "2023-07-11T05:36:46.255Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x3C4F8A629f0656DE757939a434e80532CDa7ecc7": 1
+      },
+      "asks_updated": "2023-11-15T05:33:04.886960345Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acf031227f790586239d44",
+    "name": "lmsys/fastchat-t5-3b-v1.0",
+    "display_name": "Vicuna-FastChat-T5 (3B)",
+    "display_type": "chat",
+    "description": "Chatbot trained by fine-tuning Flan-t5-xl on user-shared conversations collected from ShareGPT.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/lmsys/fastchat-t5-3b-v1.0",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "num_parameters": 3000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 512,
+    "config": {
+      "stop": [
+        "###",
+        "</s>"
+      ],
+      "prompt_format": "### Human: {prompt}\n### Assistant:"
+    },
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T06:01:21.713Z",
+    "update_at": "2023-07-11T06:01:21.713Z",
+    "access": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x898081aaf58c59B3105569A68054475969856a84": 1
+      },
+      "asks_updated": "2023-11-15T02:13:57.717720598Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64fbbc5adfdb1e4b06b5d5ce",
+    "name": "lmsys/vicuna-13b-v1.5-16k",
+    "display_name": "Vicuna v1.5 16K (13B)",
+    "display_type": "chat",
+    "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
+    "license": "llama2",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 13015864320,
+    "show_in_playground": "true",
+    "isFeaturedModel": true,
+    "context_length": 16384,
+    "config": {
+      "prompt_format": "USER: {prompt}\nASSISTANT:",
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-09-09T00:29:14.496Z",
+    "update_at": "2023-09-09T00:29:14.496Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x90E1A82183917BFd52f880DC542ab0C328D9702D": 1
+      },
+      "asks_updated": "2023-11-15T06:16:41.372298311Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 3.0596244e-8,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.000009301259
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f678e7bc372ce719b97f06",
+    "name": "lmsys/vicuna-13b-v1.5",
+    "display_name": "Vicuna v1.5 (13B)",
+    "display_type": "chat",
+    "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
+    "license": "llama2",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt}\nASSISTANT:"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-09-05T00:40:07.763Z",
+    "update_at": "2023-09-05T00:40:07.763Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x4355788cD083a3DFEd4Ab134b49aeC1B9a4820ae": 1,
+        "0xF4D5c7A9a8e29fc48E1B9Cd75e47f548DbC17fAb": 1
+      },
+      "asks_updated": "2023-11-15T02:27:56.85632974Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.048503198,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 59.5971,
+      "throughput_out": 13.612579
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "652da26579174a6bc507647f",
+    "name": "lmsys/vicuna-7b-v1.5",
+    "display_name": "Vicuna v1.5 (7B)",
+    "display_type": "chat",
+    "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/lmsys/vicuna-7b-v1.5",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": 6738415616,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "</s>",
+        "USER:"
+      ],
+      "prompt_format": "USER: {prompt}\nASSISTANT: Hello!"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-10-16T20:51:49.194Z",
+    "update_at": "2023-10-16T20:51:49.194Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xb73DBA565275A7403Cc93D0b99Ef5D795D0eeC05": 1
+      },
+      "asks_updated": "2023-11-15T02:42:25.423009052Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6514c873829715ded9cd17b1",
+    "name": "mistralai/Mistral-7B-Instruct-v0.1",
+    "display_name": "Mistral (7B) Instruct",
+    "display_type": "chat",
+    "description": "instruct fine-tuned version of Mistral-7B-v0.1",
+    "license": "Apache-2",
+    "creator_organization": "mistralai",
+    "hardware_label": "2x A100 80GB",
+    "num_parameters": 7241732096,
+    "release_date": "2023-09-27T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "prompt_format": "<s>[INST] {prompt} [/INST]"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-09-28T00:27:31.815Z",
+    "update_at": "2023-10-12T01:13:51.840Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 3,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xEdedD1266306489E86a81c88C302c17319499427": 1,
+        "0xfAF59BA6f196EA39C1f2a5b0F4a57d84db634A61": 2
+      },
+      "asks_updated": "2023-11-15T01:47:18.937020557Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.095752575,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 118.32148,
+      "throughput_out": 31.983454
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6514c6ee829715ded9cd17b0",
+    "name": "mistralai/Mistral-7B-v0.1",
+    "display_name": "Mistral (7B)",
+    "display_type": "language",
+    "description": "7.3B parameter model that outperforms Llama 2 13B on all benchmarks, approaches CodeLlama 7B performance on code, Uses Grouped-query attention (GQA) for faster inference and Sliding Window Attention (SWA) to handle longer sequences at smaller cost",
+    "license": "Apache-2",
+    "creator_organization": "mistralai",
+    "hardware_label": "2x A100 80GB",
+    "num_parameters": 7241732096,
+    "release_date": "2023-09-27T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "{prompt}"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-09-28T00:21:02.330Z",
+    "update_at": "2023-09-28T00:21:02.330Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x87180d1179ef1edA685F8FAd68c517050EE11FDb": 1
+      },
+      "asks_updated": "2023-11-14T22:34:04.613935004Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017711533,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18264714,
+      "throughput_out": 0.8445395
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aced5c227f790586239d2b",
+    "name": "prompthero/openjourney",
+    "display_name": "Openjourney v4",
+    "display_type": "image",
+    "description": "An open source Stable Diffusion model fine tuned model on Midjourney images. ",
+    "license": "creativeml-openrail-m",
+    "link": "https://huggingface.co/prompthero/openjourney",
+    "creator_organization": "Prompt Hero",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "external_pricing_url": "https://www.together.xyz/apis#pricing",
+    "config": {
+      "height": 512,
+      "width": 512,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:49:16.586Z",
+    "update_at": "2023-07-11T05:49:16.586Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x5C5b60Ea2C7046FDdf7F7be3853d046301334a85": 1,
+        "0xB2bFeaa446Cc0376249ed2d7a8f5C32E0705e556": 1
+      },
+      "asks_updated": "2023-11-14T23:43:06.665075527Z",
+      "gpus": {
+        "NVIDIA A40": 2
+      },
+      "options": {
+        "input=text,image": 2
+      },
+      "qps": 0.0027788396,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.12782662
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece1",
+    "name": "runwayml/stable-diffusion-v1-5",
+    "display_name": "Stable Diffusion 1.5",
+    "display_type": "image",
+    "description": "Latent text-to-image diffusion model capable of generating photo-realistic images given any text input.",
+    "license": "creativeml-openrail-m",
+    "link": "https://huggingface.co/runwayml/stable-diffusion-v1-5",
+    "creator_organization": "Runway ML",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "featured",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "external_pricing_url": "https://www.together.xyz/apis#pricing",
+    "config": {
+      "height": 512,
+      "width": 512,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "created_at": "2023-06-23T20:22:43.572Z",
+    "update_at": "2023-06-23T20:22:43.572Z",
+    "access": "",
+    "descriptionLink": "",
+    "pricing": {
+      "hourly": 0,
+      "input": 0,
+      "output": 0,
+      "base": 0,
+      "finetune": 0
+    },
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x98D41CFC96e488D9810431B65Aa98EBfc87b73c8": 1
+      },
+      "asks_updated": "2023-11-15T01:35:08.358296629Z",
+      "gpus": {
+        "NVIDIA A40": 1
+      },
+      "options": {
+        "input=text,image": 1
+      },
+      "qps": 0.003020332,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.13893527
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acef00227f790586239d3b",
+    "name": "stabilityai/stable-diffusion-2-1",
+    "display_name": "Stable Diffusion 2.1",
+    "display_type": "image",
+    "description": "Latent text-to-image diffusion model capable of generating photo-realistic images given any text input.",
+    "license": "openrail++",
+    "link": "https://huggingface.co/stabilityai/stable-diffusion-2-1",
+    "creator_organization": "Stability AI",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "featured",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "external_pricing_url": "https://www.together.xyz/apis#pricing",
+    "created_at": "2023-06-23T20:22:43.572Z",
+    "update_at": "2023-06-23T20:22:43.572Z",
+    "access": "",
+    "descriptionLink": "",
+    "pricing": {
+      "hourly": 0,
+      "input": 0,
+      "output": 0,
+      "base": 0,
+      "finetune": 0
+    },
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x0D96A4F403d187B804E780018e2549D36f55c65b": 1,
+        "0xc66d66f543678B11C1c7528F7F8f0C07Ed5807bE": 1
+      },
+      "asks_updated": "2023-11-15T05:40:23.645507111Z",
+      "gpus": {
+        "NVIDIA A100 80GB PCIe": 2
+      },
+      "options": {
+        "input=text,image": 2
+      },
+      "qps": 0.003282811,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.1510093
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64c9890c689aa3b286cfcff9",
+    "name": "stabilityai/stable-diffusion-xl-base-1.0",
+    "display_name": "Stable Diffusion XL 1.0",
+    "display_type": "image",
+    "description": "A text-to-image generative AI model that excels at creating 1024x1024 images.",
+    "license": "openrail++",
+    "link": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+    "creator_organization": "Stability AI",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "external_pricing_url": "https://www.together.xyz/apis#pricing",
+    "config": {
+      "height": 1024,
+      "width": 1024,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "created_at": "2023-08-01T22:37:00.851Z",
+    "update_at": "2023-08-01T22:37:00.851Z",
+    "descriptionLink": "",
+    "pricing": {
+      "hourly": 0,
+      "input": 0,
+      "output": 0,
+      "base": 0,
+      "finetune": 0
+    },
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x2E595c6ee5e62FeFF9f426b239a2fB0970476593": 1
+      },
+      "asks_updated": "2023-11-15T05:35:34.966332599Z",
+      "gpus": {
+        "NVIDIA A100 80GB PCIe": 1
+      },
+      "options": {
+        "input=text,image": 1
+      },
+      "qps": 0.009987121,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.16413262
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "653c053fd9679a84df55c4e7",
+    "name": "teknium/OpenHermes-2-Mistral-7B",
+    "display_name": "OpenHermes-2-Mistral (7B)",
+    "display_type": "chat",
+    "description": "State of the art Mistral Fine-tuned on extensive public datasets",
+    "license": "Apache-2",
+    "creator_organization": "teknium",
+    "hardware_label": "A40",
+    "pricing_tier": "Featured",
+    "num_parameters": 7241732096,
+    "release_date": "2023-10-27T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "pre_prompt": "<|im_start|>system\nYou are thoughtful, helpful, polite, honest, and friendly<|im_end|>\n"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-10-27T18:45:19.307Z",
+    "update_at": "2023-10-27T23:53:05.438Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 11,
+      "num_bids": 10,
+      "num_running": 10,
+      "asks": {
+        "0x225D12876bEaA3a822f4460c7cCB603B88Fe6A22": 1,
+        "0x3c3830125a08d2dcf11d6F98a07699Ff8FD13FbD": 1,
+        "0x4C2cFC4aCAA2Bb6e624FAD26f53c3bde1CAd26f7": 1,
+        "0x5A2cDed11221270a5645A5Ea8F16e08D0B0CE516": 2,
+        "0x6Fe2966bB3102935E33769dAF271BbcFf77916d3": 1,
+        "0x6d6a04146e3bd43C5aD1F93D811ba219A5E47d6f": 1,
+        "0x8be9f6F9d4bE0FFBb532e9dF15f135248Cc00949": 1,
+        "0xAa30688b62579459603216203CbdC1ceC025086E": 1,
+        "0xb8e162eCc7787282563447061E4F470885a53a18": 1,
+        "0xf52069127cB67f342b69d3516FB794D2df79996e": 1
+      },
+      "asks_updated": "2023-11-15T06:59:05.863552386Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 1.3663185,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 7793.9355,
+      "throughput_out": 692.17426
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e78eba589782acafe17820",
+    "name": "togethercomputer/CodeLlama-13b-Instruct",
+    "display_name": "Code Llama Instruct (13B)",
+    "display_type": "chat",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": "13016028160",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "</s>",
+        "[INST]"
+      ]
+    },
+    "pricing": {
+      "input": 56.25,
+      "output": 56.25,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:09:14.381Z",
+    "update_at": "2023-08-24T17:09:14.381Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0xC011E7048e89302d22b1ec0919f1Fa9B9C977654": 1,
+        "0xe3721b6679E46589E8Bdf6f28A493af0e3BfD357": 1
+      },
+      "asks_updated": "2023-11-15T00:25:22.465749094Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.042875923,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 46.18375,
+      "throughput_out": 14.778049
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e78eba589782acafe1781f",
+    "name": "togethercomputer/CodeLlama-13b-Python",
+    "display_name": "Code Llama Python (13B)",
+    "display_type": "code",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": "13016028160",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 56.25,
+      "output": 56.25,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:09:14.381Z",
+    "update_at": "2023-08-24T17:09:14.381Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xa114fB4e436A743dddC6951d9d00096247C6B9C7": 1,
+        "0xcE061Eb892Bd2aa34340656F7593d223c31CD831": 1
+      },
+      "asks_updated": "2023-11-15T01:23:38.119537124Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.03474615,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.6659133,
+      "throughput_out": 4.590996
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e78eba589782acafe1781e",
+    "name": "togethercomputer/CodeLlama-13b",
+    "display_name": "Code Llama (13B)",
+    "display_type": "code",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": "13016028160",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 56.25,
+      "output": 56.25,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:09:14.381Z",
+    "update_at": "2023-08-24T17:09:14.381Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xC50a6440D30F170491d69c89960CB2aC6c015aD8": 1
+      },
+      "asks_updated": "2023-11-15T01:32:36.054172933Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.03425565,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.7971397,
+      "throughput_out": 1.2546548
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e7934a589782acafe17823",
+    "name": "togethercomputer/CodeLlama-34b-Instruct",
+    "display_name": "Code Llama Instruct (34B)",
+    "display_type": "chat",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": 34000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "</s>",
+        "[INST]"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:28:42.172Z",
+    "update_at": "2023-08-24T17:28:42.172Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 8,
+      "num_bids": 5,
+      "num_running": 5,
+      "asks": {
+        "0x4a21753191b67D04a48DE1CDAc26093a5e4eB2c1": 2,
+        "0x55a91F5265BAf46101787Ff1874214Ee3CAf7d5F": 1,
+        "0xA0f607C79129A7349d991076b44f3196f7Fe50ae": 3,
+        "0xCEBDf6770F5aD91ccE669442C9e1d7A5aFBb4e25": 1,
+        "0xFD013F20eFFD4E2e526030fb971C32a95ac5e9d2": 1
+      },
+      "asks_updated": "2023-11-15T03:28:44.446599152Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.15094872,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 1210.4888,
+      "throughput_out": 175.17574
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e7934a589782acafe17822",
+    "name": "togethercomputer/CodeLlama-34b-Python",
+    "display_name": "Code Llama Python (34B)",
+    "display_type": "code",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": 34000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:28:42.172Z",
+    "update_at": "2023-08-24T17:28:42.172Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xDa69bb657f960938610a7b0a530B3741690F8365": 1
+      },
+      "asks_updated": "2023-11-15T04:33:17.330407973Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.03674246,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.68347794,
+      "throughput_out": 6.8069773
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e7934a589782acafe17821",
+    "name": "togethercomputer/CodeLlama-34b",
+    "display_name": "Code Llama (34B)",
+    "display_type": "code",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": 34000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:28:42.172Z",
+    "update_at": "2023-08-24T17:28:42.172Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x7bC44410bCe3265343524f72A1d77a7Ff9c36298": 1
+      },
+      "asks_updated": "2023-11-14T23:17:33.106686914Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.03442719,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.79799736,
+      "throughput_out": 1.5881722
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e78e89589782acafe1781d",
+    "name": "togethercomputer/CodeLlama-7b-Instruct",
+    "display_name": "Code Llama Instruct (7B)",
+    "display_type": "chat",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": "6738546688",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "</s>",
+        "[INST]"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:08:25.379Z",
+    "update_at": "2023-08-24T17:08:25.379Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0xd8f9b5CcbbAA2239B137c89911763Cb9916C898c": 2
+      },
+      "asks_updated": "2023-11-15T02:17:09.19263336Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.043021582,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 220.93097,
+      "throughput_out": 8.7205105
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e78e89589782acafe1781c",
+    "name": "togethercomputer/CodeLlama-7b-Python",
+    "display_name": "Code Llama Python (7B)",
+    "display_type": "code",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": "6738546688",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:08:25.379Z",
+    "update_at": "2023-08-24T17:08:25.379Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x58fD2b20117789Ff1221821cA11317B77e3f4D69": 1
+      },
+      "asks_updated": "2023-11-15T06:39:32.899390824Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.034637094,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.6643344,
+      "throughput_out": 2.7778563
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64e78e89589782acafe1781b",
+    "name": "togethercomputer/CodeLlama-7b",
+    "display_name": "Code Llama (7B)",
+    "display_type": "code",
+    "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+    "license": "LLAMA 2 Community license Agreement (Meta)",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "num_parameters": "6738546688",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-08-24T17:08:25.379Z",
+    "update_at": "2023-08-24T17:08:25.379Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x9D1786aDc36708776079569516c441A42Ad089fF": 1
+      },
+      "asks_updated": "2023-11-14T23:49:14.465122682Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.0350985,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.80135393,
+      "throughput_out": 3.9435494
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece2",
+    "name": "togethercomputer/GPT-JT-6B-v1",
+    "display_name": "GPT-JT (6B)",
+    "display_type": "language",
+    "description": "Fork of GPT-J instruction tuned to excel at few-shot prompts (blog post).",
+    "descriptionLink": "https://www.together.xyz/blog/releasing-v1-of-gpt-jt-powered-by-open-source-ai",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/GPT-JT-6B-v1",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 6700000000,
+    "release_date": "2022-11-29T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:43.617Z",
+    "update_at": "2023-06-23T20:22:43.617Z",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x347ed480e16d8df64575Af1b19A9bb84fA787149": 1,
+        "0x825c2eEAf8e191c9c65D333F6e97C91b3459F06C": 1
+      },
+      "asks_updated": "2023-11-15T01:56:02.323803386Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018401757,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.17857528,
+      "throughput_out": 3.6644745
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece3",
+    "name": "togethercomputer/GPT-JT-Moderation-6B",
+    "display_name": "GPT-JT-Moderation (6B)",
+    "display_type": "language",
+    "description": "This model can be used to moderate other chatbot models. Built using GPT-JT model fine-tuned on Ontocord.ai's OIG-moderation dataset v0.1.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/GPT-JT-Moderation-6B",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 6700000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:43.657Z",
+    "update_at": "2023-06-23T20:22:43.657Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 4,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x48F1D63f119474646fFCf2cF7B49258b0B8F8Ba9": 1,
+        "0x6ab061898c6c0b6E7595BFa12c7d3F410a79D480": 1,
+        "0xE2C6fb3BF20e19cce877CB184aE456425B5f20D8": 1,
+        "0xfDb481fb1949C07e4096111E92C426821516AC67": 1
+      },
+      "asks_updated": "2023-11-15T02:35:38.330576009Z",
+      "gpus": {
+        "NVIDIA A100 80GB PCIe": 2,
+        "NVIDIA A40": 2
+      },
+      "qps": 0.020290667,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18801983,
+      "throughput_out": 4.885211
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece4",
+    "name": "togethercomputer/GPT-NeoXT-Chat-Base-20B",
+    "display_name": "GPT-NeoXT-Chat-Base (20B)",
+    "display_type": "chat",
+    "description": "Chat model fine-tuned from EleutherAI’s GPT-NeoX with over 40 million instructions on carbon reduced compute.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/GPT-NeoXT-Chat-Base-20B",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 20000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "<human>: {prompt}\n<bot>:",
+      "stop": [
+        "<human>"
+      ]
+    },
+    "max_tokens": 995,
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:43.702Z",
+    "update_at": "2023-06-23T20:22:43.702Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x0648b3363589FE937639A018781Ea6A1367AeDA3": 1,
+        "0xF336AF86FBFf5dc323F0964f2DF9C8fE9ce804DB": 1
+      },
+      "asks_updated": "2023-11-15T01:27:26.28155345Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018227598,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.19503422,
+      "throughput_out": 2.504171
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace9b1227f790586239d07",
+    "name": "togethercomputer/Koala-13B",
+    "display_name": "Koala (13B)",
+    "display_type": "chat",
+    "description": "Chatbot trained by fine-tuning LLaMA on dialogue data gathered from the web.",
+    "license": "other",
+    "link": "https://huggingface.co/TheBloke/koala-13B-HF",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt} GPT:"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:33:37.737Z",
+    "update_at": "2023-07-11T05:33:37.737Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x8bF5041B749E3277be8685A9B884cC54Afe7D460": 1
+      },
+      "asks_updated": "2023-11-14T21:58:12.459891466Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64c28e8742fa06a9511509d1",
+    "name": "togethercomputer/LLaMA-2-7B-32K",
+    "display_name": "LLaMA-2-32K (7B)",
+    "display_type": "language",
+    "description": "Extending LLaMA-2 to 32K context, built with Meta's Position Interpolation and Together AI's data recipe and system optimizations.",
+    "license": "Meta license",
+    "link": "https://huggingface.co/togethercomputer/LLaMA-2-7B-32K",
+    "creator_organization": "Together",
+    "hardware_label": "2x A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": "6738415616",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 32768,
+    "config": {
+      "stop": [
+        "\n\n\n\n",
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-27T15:34:31.581Z",
+    "update_at": "2023-08-17T17:07:36.346Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 3,
+      "num_bids": 2,
+      "num_running": 2,
+      "asks": {
+        "0x8a9106258C5e7AAbaB1e803828831d61a74749f8": 3
+      },
+      "asks_updated": "2023-11-15T06:59:11.99104933Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018554373,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18686134,
+      "throughput_out": 2.8145864
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64de96090d052d10425df3c9",
+    "name": "togethercomputer/Llama-2-7B-32K-Instruct",
+    "display_name": "LLaMA-2-7B-32K-Instruct (7B)",
+    "display_type": "chat",
+    "description": "Extending LLaMA-2 to 32K context, built with Meta's Position Interpolation and Together AI's data recipe and system optimizations, instruction tuned by Together",
+    "license": "Meta license",
+    "creator_organization": "Together",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "supported",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 32768,
+    "config": {
+      "prompt_format": "[INST]\n {prompt} \n[/INST]\n\n",
+      "stop": [
+        "[INST]",
+        "\n\n"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0x9Dacb4DAafc6EDA891fb305E1E0dC5a80F6d4223": 2
+      },
+      "asks_updated": "2023-11-15T06:39:27.637983589Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.016894445,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18836845,
+      "throughput_out": 1.9504243
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1412907e072b8aecee",
+    "name": "togethercomputer/Pythia-Chat-Base-7B-v0.16",
+    "display_name": "Pythia-Chat-Base (7B)",
+    "display_type": "chat",
+    "description": "Chat model based on EleutherAI’s Pythia-7B model, and is fine-tuned with data focusing on dialog-style interactions.",
+    "license": "apache-2.0",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "<human>: {prompt}\n<bot>:",
+      "stop": [
+        "<human>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:44.251Z",
+    "update_at": "2023-06-23T20:22:44.251Z",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x42899d444e0669B867ECa64983143469F097D9c5": 1,
+        "0xb2858939d66bA1A852903fc4e9C52f6D9cD5F9C2": 1
+      },
+      "asks_updated": "2023-11-15T00:52:40.68808391Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.0181823,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.20383674,
+      "throughput_out": 3.2916465
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64efd5511b76196fc5a54872",
+    "name": "togethercomputer/Qwen-7B-Chat",
+    "display_name": "Qwen-Chat (7B)",
+    "display_type": "chat",
+    "description": "7B-parameter version of the large language model series, Qwen (abbr. Tongyi Qianwen), proposed by Aibaba Cloud. Qwen-7B-Chat is a large-model-based AI assistant, which is trained with alignment techniques.   ",
+    "license": "Tongyi Qianwen LICENSE AGREEMENT",
+    "creator_organization": "Qwen",
+    "hardware_label": "1x A100 80GB",
+    "num_parameters": 7000000000,
+    "release_date": "2023-08-01T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-08-30T23:48:33.852Z",
+    "update_at": "2023-09-07T01:49:42.840Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 3,
+      "num_bids": 2,
+      "num_running": 2,
+      "asks": {
+        "0x3A30F87675923F5dE4d7468Ef492015CC6a862c7": 3
+      },
+      "asks_updated": "2023-11-15T05:51:57.773807478Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.04024344,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 31.36008,
+      "throughput_out": 5.882083
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64efcc2a1b76196fc5a54870",
+    "name": "togethercomputer/Qwen-7B",
+    "display_name": "Qwen (7B)",
+    "display_type": "language",
+    "description": "7B-parameter version of the large language model series, Qwen (abbr. Tongyi Qianwen), proposed by Aibaba Cloud. Qwen-7B is a Transformer-based large language model, which is pretrained on a large volume of data, including web texts, books, codes, etc. ",
+    "license": "Tongyi Qianwen LICENSE AGREEMENT",
+    "creator_organization": "Qwen",
+    "hardware_label": "1x A100 80GB",
+    "num_parameters": 7000000000,
+    "release_date": "2023-08-01T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-08-30T23:09:30.570Z",
+    "update_at": "2023-09-07T01:49:24.716Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x3b8A3B15fBa1c9528653acBA88C329baE2a5a43D": 1
+      },
+      "asks_updated": "2023-11-15T06:39:15.855009917Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018912159,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18865027,
+      "throughput_out": 9.217281
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1412907e072b8aeceb",
+    "name": "togethercomputer/RedPajama-INCITE-7B-Base",
+    "display_name": "RedPajama-INCITE (7B)",
+    "display_type": "language",
+    "description": "Base model that aims to replicate the LLaMA recipe as closely as possible (blog post).",
+    "descriptionLink": "https://www.together.xyz/blog/redpajama-models-v1",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Base",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": "6857302016",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:44.033Z",
+    "update_at": "2023-06-23T20:22:44.033Z",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x7c7007A3ffF953bA357CF3eeF853DD8613B07209": 1,
+        "0xa5c71572Cfa868Ef8616Bb33FccB05B49dA88d8B": 1
+      },
+      "asks_updated": "2023-11-15T01:08:27.878204404Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.018580848,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18699372,
+      "throughput_out": 2.724314
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1412907e072b8aeced",
+    "name": "togethercomputer/RedPajama-INCITE-7B-Chat",
+    "display_name": "RedPajama-INCITE Chat (7B)",
+    "display_type": "chat",
+    "description": "Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-7B-v1 base model.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Chat",
+    "creator_organization": "Together",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": "6857302016",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "<human>: {prompt}\n<bot>:",
+      "stop": [
+        "<human>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:44.190Z",
+    "update_at": "2023-06-23T20:22:44.190Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xcC9323401A6f39efd3C5fc8bFAc74D7b512abd69": 1,
+        "0xd21D8158D6065D9D38d68DEAcd5946F228499b16": 1
+      },
+      "asks_updated": "2023-11-15T02:05:07.370763281Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017175782,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.2086178,
+      "throughput_out": 1.029007
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1412907e072b8aecec",
+    "name": "togethercomputer/RedPajama-INCITE-7B-Instruct",
+    "display_name": "RedPajama-INCITE Instruct (7B)",
+    "display_type": "language",
+    "description": "Designed for few-shot prompts, fine-tuned over the RedPajama-INCITE-Base-7B-v1 base model.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Instruct",
+    "creator_organization": "Together",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": "6857302016",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:44.083Z",
+    "update_at": "2023-06-23T20:22:44.083Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x30D9d6EaFcA72F8913A8661450722E512bD06a9F": 1,
+        "0xF68F3AfE6f0e6a29A16CB73cFB3BEb86E88Df043": 1
+      },
+      "asks_updated": "2023-11-15T02:43:44.168474665Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.0408385,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.90244764,
+      "throughput_out": 2.3022566
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece5",
+    "name": "togethercomputer/RedPajama-INCITE-Base-3B-v1",
+    "display_name": "RedPajama-INCITE (3B)",
+    "display_type": "language",
+    "description": "Base model that aims to replicate the LLaMA recipe as closely as possible (blog post).",
+    "descriptionLink": "https://www.together.xyz/blog/redpajama-models-v1",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Base-3B-v1",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": "2775864320",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:43.751Z",
+    "update_at": "2023-06-23T20:22:43.751Z",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x0aBe21E3ca185164261ef34A239C247300ac8443": 1,
+        "0x930312eb45cEDC07Ca1cFFf399e46693e1f6b0B9": 1
+      },
+      "asks_updated": "2023-11-15T01:55:21.628887235Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017695991,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18256943,
+      "throughput_out": 1.1337342
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece7",
+    "name": "togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+    "display_name": "RedPajama-INCITE Chat (3B)",
+    "display_type": "chat",
+    "description": "Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-3B-v1 base model.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": "2775864320",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "<human>: {prompt}\n<bot>:",
+      "stop": [
+        "<human>"
+      ]
+    },
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:43.839Z",
+    "update_at": "2023-06-23T20:22:43.839Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x314e601Ca3c385ade582C39Ea568fc5F93024899": 1,
+        "0xE5CdaceFC11371aF54F4CEa9B825E299605fC0DB": 1
+      },
+      "asks_updated": "2023-11-15T01:58:48.785327736Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017175678,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.2086173,
+      "throughput_out": 0.68561476
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1312907e072b8aece6",
+    "name": "togethercomputer/RedPajama-INCITE-Instruct-3B-v1",
+    "display_name": "RedPajama-INCITE Instruct (3B)",
+    "display_type": "language",
+    "description": "Designed for few-shot prompts, fine-tuned over the RedPajama-INCITE-Base-3B-v1 base model.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Instruct-3B-v1",
+    "creator_organization": "Together",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": "2775864320",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:43.796Z",
+    "update_at": "2023-06-23T20:22:43.796Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x9212cc97439F70f4a4611c5D93F37087d5DF111b": 1,
+        "0xc627592f6023D78F544e7D643e5aF32c055EEA9D": 1
+      },
+      "asks_updated": "2023-11-15T02:27:45.888450246Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.017695991,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18256943,
+      "throughput_out": 0.8330243
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace317227f790586239ce2",
+    "name": "togethercomputer/alpaca-7b",
+    "display_name": "Alpaca (7B)",
+    "display_type": "chat",
+    "description": "Fine-tuned from the LLaMA 7B model on 52K instruction-following demonstrations. ",
+    "license": "cc-by-nc-4.0",
+    "link": "https://huggingface.co/tatsu-lab/alpaca-7b-wdiff",
+    "creator_organization": "Stanford",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "</s>",
+        "###"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:05:27.713Z",
+    "update_at": "2023-07-11T05:05:27.713Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x4174A3c81710BCd6C43b1F8e8f8a91B1137Baf55": 1
+      },
+      "asks_updated": "2023-11-14T23:30:38.830972776Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.019719163,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 4.3305197,
+      "throughput_out": 1.2384089
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1412907e072b8aecf1",
+    "name": "togethercomputer/codegen2-16B",
+    "display_name": "CodeGen2 (16B)",
+    "display_type": "code",
+    "description": "An autoregressive language models for program synthesis.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/Salesforce/codegen2-3_7B",
+    "creator_organization": "Salesforce",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 16000000000,
+    "release_date": "2022-03-25T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "\n\n"
+      ]
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:44.453Z",
+    "update_at": "2023-06-23T20:22:44.453Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x3709bdf200d58193B462Ddf8A7D36C8a188BC781": 1
+      },
+      "asks_updated": "2023-11-15T01:27:37.347190402Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace476227f790586239cef",
+    "name": "togethercomputer/codegen2-7B",
+    "display_name": "CodeGen2 (7B)",
+    "display_type": "code",
+    "description": "An autoregressive language models for program synthesis.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/Salesforce/codegen2-3_7B",
+    "creator_organization": "Salesforce",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "release_date": "2022-03-25T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "\n\n"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:11:18.328Z",
+    "update_at": "2023-07-11T05:11:18.328Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xd28161c2c7Cab0b6fb262914434ee097bebF1E2E": 1
+      },
+      "asks_updated": "2023-11-15T02:23:37.096432476Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace614227f790586239cf7",
+    "name": "togethercomputer/falcon-40b-instruct",
+    "display_name": "Falcon Instruct (40B)",
+    "display_type": "chat",
+    "description": "Falcon-40B-Instruct is a causal decoder-only model built by TII based on Falcon-40B and finetuned on a mixture of Baize. ",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/tiiuae/falcon-40b-instruct",
+    "creator_organization": "TII UAE",
+    "hardware_label": "2X A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 40000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "User: {prompt}\nAssistant:",
+      "stop": [
+        "User:",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:18:12.323Z",
+    "update_at": "2023-07-11T05:18:12.323Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x0b5481F80C5DEe44b73CC49BA6091F6245545716": 1
+      },
+      "asks_updated": "2023-11-14T23:47:10.203790874Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.01919597,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.45412526,
+      "throughput_out": 2.8828003
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace59f227f790586239cf5",
+    "name": "togethercomputer/falcon-40b",
+    "display_name": "Falcon (40B)",
+    "display_type": "language",
+    "description": "Falcon-40B is a causal decoder-only model built by TII and trained on 1,000B tokens of RefinedWeb enhanced with curated corpora.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/tiiuae/falcon-40b",
+    "creator_organization": "TII UAE",
+    "hardware_label": "2X A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 40000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:16:15.898Z",
+    "update_at": "2023-07-11T05:16:15.898Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x42C59dDFA7fEF158a7d11a675317669893CE0EbC": 1
+      },
+      "asks_updated": "2023-11-15T06:07:14.426893431Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.01898584,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.26076365,
+      "throughput_out": 1.3930994
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace63d227f790586239cf8",
+    "name": "togethercomputer/falcon-7b-instruct",
+    "display_name": "Falcon Instruct (7B)",
+    "display_type": "chat",
+    "description": "Casual decoder-only model built by TII based on Falcon-7B and finetuned on a mixture of chat/instruct datasets. ",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/tiiuae/falcon-7b-instruct",
+    "creator_organization": "TII UAE",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "User: {prompt}\nAssistant:",
+      "stop": [
+        "User:",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:18:53.623Z",
+    "update_at": "2023-07-11T05:18:53.623Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x2b665036860161c962147A49c5Baf87CFbFC6c4b": 1
+      },
+      "asks_updated": "2023-11-15T01:29:09.971188113Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.01702605,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18902649,
+      "throughput_out": 1.1518885
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace5dd227f790586239cf6",
+    "name": "togethercomputer/falcon-7b",
+    "display_name": "Falcon (7B)",
+    "display_type": "language",
+    "description": "Causal decoder-only model built by TII and trained on 1,500B tokens of RefinedWeb enhanced with curated corpora.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/tiiuae/falcon-7b",
+    "creator_organization": "TII UAE",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:17:17.883Z",
+    "update_at": "2023-07-11T05:17:17.883Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xeA9aAE19f2f4423f83eBF38571Cc6F4BC990174d": 1
+      },
+      "asks_updated": "2023-11-15T04:06:52.148731055Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.01762199,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.17467645,
+      "throughput_out": 2.032983
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64f0de22caa9e2eb543b373b",
+    "name": "togethercomputer/guanaco-13b",
+    "display_name": "Guanaco (13B) ",
+    "display_type": "chat",
+    "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks.",
+    "license": "apache-2.0, LLaMA License Agreement (Meta)",
+    "link": "https://huggingface.co/timdettmers/guanaco-33b-merged",
+    "creator_organization": "Tim Dettmers",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "Supported",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "###"
+      ],
+      "prompt_format": "### Human: {prompt} ### Assistant:"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:29:07.717Z",
+    "update_at": "2023-07-11T05:29:07.717Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xFB00E33c5205D85e915AEAaB0F21f210279A2aA7": 1
+      },
+      "asks_updated": "2023-11-15T02:40:10.889416558Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace8d1227f790586239d03",
+    "name": "togethercomputer/guanaco-65b",
+    "display_name": "Guanaco (65B) ",
+    "display_type": "chat",
+    "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks.",
+    "license": "apache-2.0, LLaMA License Agreement (Meta)",
+    "link": "https://huggingface.co/timdettmers/guanaco-65b-merged",
+    "creator_organization": "Tim Dettmers",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "Supported",
+    "access": "open",
+    "num_parameters": 65000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "###"
+      ],
+      "prompt_format": "### Human: {prompt} ### Assistant:"
+    },
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:29:53.740Z",
+    "update_at": "2023-07-11T05:29:53.740Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x1de9B2f4CFe3fc2905B5C38302E77dd823536c73": 1
+      },
+      "asks_updated": "2023-11-15T02:36:17.149981801Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace8ed227f790586239d04",
+    "name": "togethercomputer/guanaco-7b",
+    "display_name": "Guanaco (7B) ",
+    "display_type": "chat",
+    "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks. ",
+    "license": "apache-2.0, LLaMA License Agreement (Meta)",
+    "link": "https://huggingface.co/timdettmers/guanaco-7b",
+    "creator_organization": "Tim Dettmers",
+    "hardware_label": "A40 48GB",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "###"
+      ],
+      "prompt_format": "### Human: {prompt} ### Assistant:"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:30:21.531Z",
+    "update_at": "2023-07-11T05:30:21.531Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x1C29630d8FD98033219EE4C0124f81905CF95654": 1
+      },
+      "asks_updated": "2023-11-15T01:32:09.533865374Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64b7165fcccc52103e2f07e8",
+    "name": "togethercomputer/llama-2-13b-chat",
+    "display_name": "LLaMA-2 Chat (13B)",
+    "display_type": "chat",
+    "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/togethercomputer/llama-2-13b-chat",
+    "creator_organization": "Meta",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": "13015864320",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 56.25,
+      "output": 56.25,
+      "hourly": 0
+    },
+    "created_at": "2023-07-18T22:46:55.042Z",
+    "update_at": "2023-07-18T22:46:55.042Z",
+    "instances": [
+      {
+        "avzone": "us-east-1a",
+        "cluster": "happypiglet"
+      }
+    ],
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 6,
+      "num_bids": 1,
+      "num_running": 1,
+      "asks": {
+        "0x5272F7BB08ADB9C5c36Ae682D6545bE833f10A08": 1,
+        "0x83EdC6b22CecA103CE83a818064fAde6b0F70F29": 1,
+        "0x8fd7A24554466aD85AE1FAAb0Cd83738Dc642fFB": 1,
+        "0xCB5F190FCB6A339083f195585789A0D08DbCbF71": 1,
+        "0xb22aB34Ad15F0E0A481efc5B120D47E329cA1288": 1
+      },
+      "asks_updated": "2023-11-15T03:24:44.358240861Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.8,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "stats": [
+        {
+          "avzone": "us-east-1a",
+          "cluster": "happypiglet",
+          "capacity": 0.030243902439024407
+        }
+      ]
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64b7165fcccc52103e2f07e7",
+    "name": "togethercomputer/llama-2-13b",
+    "display_name": "LLaMA-2 (13B)",
+    "display_type": "language",
+    "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/togethercomputer/llama-2-13b",
+    "creator_organization": "Meta",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": "13015864320",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {},
+    "pricing": {
+      "input": 56.25,
+      "output": 56.25,
+      "hourly": 0
+    },
+    "created_at": "2023-07-18T22:46:55.042Z",
+    "update_at": "2023-07-18T22:46:55.042Z",
+    "instances": [
+      {
+        "avzone": "us-east-1a",
+        "cluster": "happypiglet"
+      },
+      {
+        "avzone": "us-east-2a",
+        "cluster": "jumpyjackal"
+      }
+    ],
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 5,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x4aeAd6811E4E9575Efa144f7eE1FaD171664bA94": 1,
+        "0x5088dC715714fe3ACeC2C5b93bcd9B5b60B41D1C": 1,
+        "0xFEC24537885b347650f48C6809a9C1fA4Ed880E5": 1,
+        "0xb47D7855bf3CA0d5669919692dE6FdD9E425a016": 1
+      },
+      "asks_updated": "2023-11-15T06:59:14.614169408Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "stats": [
+        {
+          "avzone": "us-east-1a",
+          "cluster": "happypiglet",
+          "capacity": 0.045454545454545456
+        },
+        {
+          "avzone": "us-east-2a",
+          "cluster": "jumpyjackal",
+          "capacity": 0.045454545454545456
+        }
+      ]
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64b7165fcccc52103e2f07ea",
+    "name": "togethercomputer/llama-2-70b-chat",
+    "display_name": "LLaMA-2 Chat (70B)",
+    "display_type": "chat",
+    "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/togethercomputer/llama-2-70b-chat",
+    "creator_organization": "Meta",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": "68976648192",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-07-18T22:46:55.042Z",
+    "update_at": "2023-07-18T22:46:55.042Z",
+    "autopilot_pool": "cr-a100-80-2x",
+    "instances": [
+      {
+        "avzone": "us-east-1a",
+        "cluster": "happypiglet"
+      }
+    ],
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 5,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x7D0a8D5EbFAb463bCd57fF224aD375fF5b433165": 1,
+        "0x9d75159093fff6010B7c239dE03025055a7B64a7": 1,
+        "0xECd9a59eace9011d38F996F66BD75b5d7489540E": 1,
+        "0xd7e4346319A7a7096623811b2A0E89FEF180b164": 1
+      },
+      "asks_updated": "2023-11-15T05:20:43.486303143Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.26666666666666666,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "stats": [
+        {
+          "avzone": "us-east-1a",
+          "cluster": "happypiglet",
+          "capacity": 0.17365056818181818
+        }
+      ]
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64b7165fcccc52103e2f07e9",
+    "name": "togethercomputer/llama-2-70b",
+    "display_name": "LLaMA-2 (70B)",
+    "display_type": "language",
+    "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/togethercomputer/llama-2-70b",
+    "creator_organization": "Meta",
+    "hardware_label": "2X A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": "68976648192",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {},
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-07-18T22:46:55.042Z",
+    "update_at": "2023-07-18T22:46:55.042Z",
+    "autopilot_pool": "cr-a100-80-2x",
+    "instances": [
+      {
+        "avzone": "us-east-1a",
+        "cluster": "happypiglet"
+      }
+    ],
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 3,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x854b5F11d72aea8B86ff0727938aC0453741Fb29": 1,
+        "0xD2AEb96bdf3B886A196F68dE9D84B381308AA7EA": 1
+      },
+      "asks_updated": "2023-11-15T06:41:10.546400113Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.5333333333333333,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "stats": [
+        {
+          "avzone": "us-east-1a",
+          "cluster": "happypiglet",
+          "capacity": 0.04828909497921328
+        }
+      ]
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64b7165fcccc52103e2f07e6",
+    "name": "togethercomputer/llama-2-7b-chat",
+    "display_name": "LLaMA-2 Chat (7B)",
+    "display_type": "chat",
+    "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/togethercomputer/llama-2-7b-chat",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": "6738415616",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-18T22:46:55.042Z",
+    "update_at": "2023-07-18T22:46:55.042Z",
+    "instances": [
+      {
+        "avzone": "us-east-1a",
+        "cluster": "happypiglet"
+      }
+    ],
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x97a9FCD90A860DEbCf2cCc3506788b4563C6a7D7": 1
+      },
+      "asks_updated": "2023-11-15T05:27:54.947467488Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "stats": [
+        {
+          "avzone": "us-east-1a",
+          "cluster": "happypiglet",
+          "capacity": 0.0625
+        }
+      ]
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64b7165fcccc52103e2f07e5",
+    "name": "togethercomputer/llama-2-7b",
+    "display_name": "LLaMA-2 (7B)",
+    "display_type": "language",
+    "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
+    "license": "LLaMA license Agreement (Meta)",
+    "link": "https://huggingface.co/togethercomputer/llama-2-7b",
+    "creator_organization": "Meta",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "Featured",
+    "access": "open",
+    "num_parameters": "6738415616",
+    "show_in_playground": true,
+    "finetuning_supported": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {},
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-18T22:46:55.042Z",
+    "update_at": "2023-07-18T22:46:55.042Z",
+    "instances": [
+      {
+        "avzone": "us-east-1a",
+        "cluster": "happypiglet"
+      }
+    ],
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 2,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x5d22aCa5A668844c8a68Ab209035dD1bEa2C676D": 1
+      },
+      "asks_updated": "2023-11-15T00:14:18.09173966Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "stats": [
+        {
+          "avzone": "us-east-1a",
+          "cluster": "happypiglet",
+          "capacity": 0.09375
+        }
+      ]
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aceb50227f790586239d14",
+    "name": "togethercomputer/mpt-30b-instruct",
+    "display_name": "MPT-Instruct (30B)",
+    "display_type": "language",
+    "description": "Designed for short-form instruction following, finetuned on Dolly and Anthropic HH-RLHF and other datasets",
+    "license": "CC-By-SA-3.0",
+    "link": "https://huggingface.co/mosaicml/mpt-30b-instruct",
+    "creator_organization": "Mosaic ML",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 30000000000,
+    "show_in_playground": "true",
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "stop": [
+        "<|endoftext|>",
+        "###"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:40:32.397Z",
+    "update_at": "2023-07-15T03:03:00.719Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0x556F2A8F2B142b7e4B89c84D2f8dfB3e25f06B80": 1
+      },
+      "asks_updated": "2023-11-15T06:39:17.630342052Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      }
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aceac2227f790586239d10",
+    "name": "togethercomputer/mpt-30b",
+    "display_name": "MPT (30B)",
+    "display_type": "language",
+    "description": "Decoder-style transformer pretrained from scratch on 1T tokens of English text and code.",
+    "license": "apache-2.0",
+    "link": "https://huggingface.co/mosaicml/mpt-30b",
+    "creator_organization": "Mosaic ML",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 30000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:38:10.886Z",
+    "update_at": "2023-07-11T05:38:10.886Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 5,
+      "num_bids": 4,
+      "num_running": 4,
+      "asks": {
+        "0x42213033C85E1DeADB90f4e2AC743B5f3986158A": 5
+      },
+      "asks_updated": "2023-11-15T06:26:42.429123289Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.01770206,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.18259977,
+      "throughput_out": 0.3510747
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aceb28227f790586239d13",
+    "name": "togethercomputer/mpt-7b-chat",
+    "display_name": "MPT-Chat (7B)",
+    "display_type": "chat",
+    "description": "Chat model for dialogue generation finetuned on ShareGPT-Vicuna, Camel-AI, GPTeacher, Guanaco, Baize and some generated datasets.",
+    "license": "cc-by-nc-sa-4.0",
+    "link": "https://huggingface.co/mosaicml/mpt-7b-chat",
+    "creator_organization": "Mosaic ML",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|im_end|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:39:52.024Z",
+    "update_at": "2023-07-11T05:39:52.024Z",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xfc366696433341288D2c3dddcD6aDbA9ca1CecBD": 1
+      },
+      "asks_updated": "2023-11-15T03:08:05.526627621Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 7.516767e-14,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2.25503e-10,
+      "throughput_out": 1.2101994e-11
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ee72a0aa4f1b1b2c66f0a5",
+    "name": "upstage/SOLAR-0-70b-16bit",
+    "display_name": "SOLAR v0 (70B)",
+    "display_type": "chat",
+    "description": "Language model instruction fine-tuned by upstage.ai on Orca and Alpaca style datasets that reached the top spot in openLLM rankings",
+    "license": "CC BY-NC-4.0",
+    "creator_organization": "Upstage",
+    "hardware_label": "2x A100 80GB",
+    "num_parameters": 70000000000,
+    "release_date": "2023-08-01T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "context_length": 4096,
+    "config": {
+      "stop": [
+        "###"
+      ],
+      "prompt_format": "### System:\nYou are a respectful and helpful assistant.\n### User:\n{prompt}\n### Assistant:"
+    },
+    "pricing": {
+      "input": 225,
+      "output": 225,
+      "hourly": 0
+    },
+    "created_at": "2023-08-29T22:35:12.294Z",
+    "update_at": "2023-08-29T22:35:12.294Z",
+    "access": "",
+    "link": "",
+    "descriptionLink": "",
+    "depth": {
+      "num_asks": 28,
+      "num_bids": 32,
+      "num_running": 28,
+      "asks": {
+        "0x01f7DC9d043e3762B566c2a459db132534f82093": 1,
+        "0x048C99CA6e64920bD9663852982875c767dCa570": 1,
+        "0x2fE389e01159d5FA740dA38eD0c1277e58fA481E": 1,
+        "0x351f16C3b7f04324b2D58A5c90437A43808D3D23": 2,
+        "0x3f5Cda959016E1dd8B80B94BBb98181e170D9563": 1,
+        "0x4860AA05F83E2f35725824d7d3B718494A4A0890": 1,
+        "0x57CcAE7e1567e3378CbF0E01872bdC7b6D4DdCe4": 1,
+        "0x5dcE62416d59CAe2b6FfBBD306ceB472507ef082": 1,
+        "0x7F669283a7CCc10CC3B698A19D2510BD0333a6ff": 1,
+        "0x821861f8AF06D5717E9237662f128765B14388C2": 8,
+        "0x8fb496BfdAe3ea7fb90B0D6E14ba62C27a7862F3": 2,
+        "0x921B434d0Cd585080510075654c30A59B0B3abb6": 1,
+        "0xB960b437809e587B39301289268f55c633Ea6a60": 1,
+        "0xE7B732fddE1f98d72a4374d184129f46342266f5": 1,
+        "0xECb5b13234cB877DFef0e07de0e3aD368a8F1685": 1,
+        "0xED74A96D14AD52664a526897c30914e5bD790C27": 1,
+        "0xF4BC265A3D33b9545dB04B88631277B38B8C925e": 1,
+        "0xcf2a056DEAe3A6F38402984b8FEf6FC012f021e7": 1,
+        "0xf9f97044459AF50232B6573ba3e897e57b6CE260": 1
+      },
+      "asks_updated": "2023-11-15T07:05:11.127335787Z",
+      "gpus": {
+        "": 0
+      },
+      "qps": 0.40915912,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 2169.7876,
+      "throughput_out": 432.75198
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace3af227f790586239ce6",
+    "name": "wavymulder/Analog-Diffusion",
+    "display_name": "Analog Diffusion",
+    "display_type": "image",
+    "description": "Dreambooth model trained on a diverse set of analog photographs to provide an analog film effect. ",
+    "license": "creativeml-openrail-m",
+    "link": "https://huggingface.co/wavymulder/Analog-Diffusion",
+    "creator_organization": "Wavymulder",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 0,
+    "show_in_playground": true,
+    "isFeaturedModel": true,
+    "external_pricing_url": "https://www.together.xyz/apis#pricing",
+    "created_at": "2023-07-11T05:07:59.364Z",
+    "update_at": "2023-07-11T05:07:59.364Z",
+    "descriptionLink": "",
+    "pricing": {
+      "hourly": 0,
+      "input": 0,
+      "output": 0,
+      "base": 0,
+      "finetune": 0
+    },
+    "depth": {
+      "num_asks": 1,
+      "num_bids": 0,
+      "num_running": 0,
+      "asks": {
+        "0xC830b3583bcA51887185318c0184fbdB622A55f5": 1
+      },
+      "asks_updated": "2023-11-14T23:34:59.990674445Z",
+      "gpus": {
+        "NVIDIA A40": 1
+      },
+      "options": {
+        "input=text,image": 1
+      },
+      "qps": 0.0025566558,
+      "permit_required": false,
+      "price": {
+        "base": 0,
+        "finetune": 0,
+        "hourly": 0,
+        "input": 0,
+        "output": 0
+      },
+      "throughput_in": 0.11760616
+    }
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acefe5227f790586239d41",
+    "name": "lmsys/vicuna-13b-v1.3",
+    "display_name": "Vicuna v1.3 (13B)",
+    "display_type": "chat",
+    "description": "Chatbot trained by fine-tuning LLaMA on user-shared conversations collected from ShareGPT. Auto-regressive model, based on the transformer architecture.",
+    "license": "",
+    "link": "",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 13000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt}\nASSISTANT:"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T06:00:05.166Z",
+    "update_at": "2023-07-15T03:08:44.173Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "649e1ccca073332e47742415",
+    "name": "togethercomputer/replit-code-v1-3b",
+    "display_name": "Replit-Code-v1 (3B)",
+    "display_type": "code",
+    "description": "replit-code-v1-3b is a 2.7B Causal Language Model focused on Code Completion. The model has been trained on a subset of the Stack Dedup v1.2 dataset.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Replit",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "limited",
+    "num_parameters": 3000000000,
+    "release_date": "2023-04-26T00:00:00.000Z",
+    "show_in_playground": "true",
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-30T00:07:40.594Z",
+    "update_at": "2023-07-07T20:09:09.965Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aceada227f790586239d11",
+    "name": "togethercomputer/mpt-7b",
+    "display_name": "MPT (7B)",
+    "display_type": "",
+    "description": "Decoder-style transformer pretrained from scratch on 1T tokens of English text and code.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Mosaic ML",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:38:34.852Z",
+    "update_at": "2023-07-15T03:06:20.780Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aceb0e227f790586239d12",
+    "name": "togethercomputer/mpt-30b-chat",
+    "display_name": "MPT-Chat (30B)",
+    "display_type": "chat",
+    "description": "Chat model for dialogue generation finetuned on ShareGPT-Vicuna, Camel-AI, GPTeacher, Guanaco, Baize and some generated datasets.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Mosaic ML",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 30000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "<|im_end|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant"
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:39:26.078Z",
+    "update_at": "2023-07-11T05:39:26.078Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1212907e072b8aecc5",
+    "name": "google/flan-t5-xxl",
+    "display_name": "Flan T5 XXL (11B)",
+    "description": "Flan T5 XXL (11B parameters) is T5 fine-tuned on 1.8K tasks ([paper](https://arxiv.org/pdf/2210.11416.pdf)).",
+    "creator_organization": "Google",
+    "hardware_label": "A40 48GB",
+    "access": "open",
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.261Z",
+    "update_at": "2023-09-01T14:35:00.161Z",
+    "license": "",
+    "link": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace6df227f790586239cfc",
+    "name": "google/flan-t5-xl",
+    "display_name": "Flan T5 XL (3B)",
+    "description": "T5 fine-tuned on more than 1000 additional tasks covering also more languages, making it better than T5 at majority of tasks. ",
+    "license": "",
+    "link": "",
+    "creator_organization": "Google",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 3000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.261Z",
+    "update_at": "2023-06-23T20:22:42.261Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64aceb6f227f790586239d15",
+    "name": "togethercomputer/mpt-7b-instruct",
+    "display_name": "MPT-Instruct (7B)",
+    "display_type": "",
+    "description": "Designed for short-form instruction following, finetuned on Dolly and Anthropic HH-RLHF and other datasets",
+    "license": "",
+    "link": "",
+    "creator_organization": "Mosaic ML",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:41:03.757Z",
+    "update_at": "2023-07-11T05:41:03.757Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acebe0227f790586239d17",
+    "name": "NumbersStation/nsql-6B",
+    "display_name": "NSQL (6B)",
+    "display_type": "",
+    "description": "Foundation model designed specifically for SQL generation tasks. Pre-trained for 3 epochs and fine-tuned for 10 epochs.",
+    "license": "",
+    "creator_organization": "Numbers Station",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 6000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ]
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:42:56.540Z",
+    "update_at": "2023-07-11T05:42:56.540Z",
+    "link": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace9ca227f790586239d09",
+    "name": "togethercomputer/Koala-7B",
+    "display_name": "Koala (7B)",
+    "display_type": "chat",
+    "description": "Chatbot trained by fine-tuning LLaMA on dialogue data gathered from the web.",
+    "license": "",
+    "link": "",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "featured",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt} GPT:"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:34:02.521Z",
+    "update_at": "2023-07-11T05:34:02.521Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1112907e072b8aecb8",
+    "name": "databricks/dolly-v2-12b",
+    "display_name": "Dolly v2 (12B)",
+    "display_type": "chat",
+    "description": "An instruction-following LLM based on pythia-12b, and trained on ~15k instruction/response fine tuning records generated by Databricks employees.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Databricks",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 12000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "### End"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:"
+    },
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:41.607Z",
+    "update_at": "2023-06-23T20:22:41.607Z",
+    "access": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1212907e072b8aecc2",
+    "name": "EleutherAI/gpt-neox-20b",
+    "display_name": "GPT-NeoX (20B)",
+    "description": "Autoregressive language model trained on the Pile. Its architecture intentionally resembles that of GPT-3, and is almost identical to that of GPT-J 6B.",
+    "license": "",
+    "link": "",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 20000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 75,
+      "output": 75,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.132Z",
+    "update_at": "2023-06-23T20:22:42.132Z",
+    "access": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acec99227f790586239d1c",
+    "name": "OpenAssistant/oasst-sft-6-llama-30b-xor",
+    "display_name": "Open-Assistant LLaMA SFT-6 (30B)",
+    "display_type": "chat",
+    "description": "Chat-based and open-source assistant. The vision of the project is to make a large language model that can run on a single high-end consumer GPU. ",
+    "license": "",
+    "link": "",
+    "creator_organization": "LAION",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "supported",
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ],
+      "prompt_format": "<|prompter|>{prompt}<|endoftext|><|assistant|>"
+    },
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:42.469Z",
+    "update_at": "2023-06-23T20:22:42.469Z",
+    "access": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace955227f790586239d06",
+    "name": "Salesforce/instructcodet5p-16b",
+    "display_name": "InstructCodeT5 (16B)",
+    "display_type": "chat",
+    "description": "Code large language model that can flexibly operate in different modes to support a wide range of code understanding and generation tasks. ",
+    "license": "",
+    "link": "",
+    "creator_organization": "Salesforce",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 33000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:32:05.369Z",
+    "update_at": "2023-07-11T05:32:05.369Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1112907e072b8aecbc",
+    "name": "EleutherAI/gpt-j-6b",
+    "display_name": "GPT-J (6B)",
+    "description": "Transformer model trained using Ben Wang's Mesh Transformer JAX. ",
+    "license": "",
+    "link": "",
+    "creator_organization": "EleutherAI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 6000000000,
+    "release_date": "2021-06-04T00:00:00.000Z",
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:41.831Z",
+    "update_at": "2023-06-23T20:22:41.831Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64acf013227f790586239d43",
+    "name": "lmsys/vicuna-7b-v1.3",
+    "display_name": "Vicuna v1.3 (7B)",
+    "display_type": "chat",
+    "description": "Chatbot trained by fine-tuning LLaMA on user-shared conversations collected from ShareGPT. Auto-regressive model, based on the transformer architecture.",
+    "license": "",
+    "link": "",
+    "creator_organization": "LM Sys",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "access": "open",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt}\nASSISTANT:"
+    },
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T06:00:51.553Z",
+    "update_at": "2023-07-11T06:00:51.553Z",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1412907e072b8aecf4",
+    "name": "stabilityai/stablelm-base-alpha-3b",
+    "display_name": "StableLM-Base-Alpha (3B)",
+    "description": "Decoder-only language model pre-trained on a diverse collection of English and Code datasets with a sequence length of 4096.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Stability AI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 3000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 25,
+      "output": 25,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:44.907Z",
+    "update_at": "2023-06-23T20:22:44.907Z",
+    "access": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "6495ff1512907e072b8aecf5",
+    "name": "stabilityai/stablelm-base-alpha-7b",
+    "display_name": "StableLM-Base-Alpha (7B)",
+    "description": "Decoder-only language model pre-trained on a diverse collection of English and Code datasets with a sequence length of 4096.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Stability AI",
+    "hardware_label": "A40 48GB",
+    "pricing_tier": "supported",
+    "num_parameters": 7000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "pricing": {
+      "input": 50,
+      "output": 50,
+      "hourly": 0
+    },
+    "created_at": "2023-06-23T20:22:45.249Z",
+    "update_at": "2023-06-23T20:22:45.249Z",
+    "access": "",
+    "descriptionLink": ""
+  },
+  {
+    "modelInstanceConfig": {
+      "appearsIn": [],
+      "order": 0
+    },
+    "_id": "64ace8a3227f790586239d02",
+    "name": "togethercomputer/guanaco-33b",
+    "display_name": "Guanaco (33B) ",
+    "display_type": "chat",
+    "description": "Instruction-following language model built on LLaMA. Expanding upon the initial 52K dataset from the Alpaca model, an additional 534,530 focused on multi-lingual tasks.",
+    "license": "",
+    "link": "",
+    "creator_organization": "Tim Dettmers",
+    "hardware_label": "A100 80GB",
+    "pricing_tier": "Supported",
+    "access": "open",
+    "num_parameters": 33000000000,
+    "show_in_playground": true,
+    "isFeaturedModel": false,
+    "context_length": 2048,
+    "config": {
+      "stop": [
+        "###"
+      ],
+      "prompt_format": "### Human: {prompt} ### Assistant:"
+    },
+    "pricing": {
+      "input": 200,
+      "output": 200,
+      "hourly": 0
+    },
+    "created_at": "2023-07-11T05:29:07.717Z",
+    "update_at": "2023-07-11T05:29:07.717Z",
+    "descriptionLink": ""
+  }
+]

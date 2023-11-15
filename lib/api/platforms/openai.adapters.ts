@@ -74,7 +74,7 @@ async function image(input: OpenAI.ImageGenerateParams) {
   }
 }
 
-async function models() {
+export async function models() {
   const { data } = await api.models.list()
   return data
 }
