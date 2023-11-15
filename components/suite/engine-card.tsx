@@ -8,12 +8,12 @@ export function EngineCard({
   children,
 }: { engine: Engine } & React.ComponentProps<'div'>) {
   const data = [
-    ['creator', engine.creatorName],
+    ['creator', engine.creator],
     ['category', engine.type],
     ['context length', engine.contextLength],
     ['license', engine.license || '[unknown]'],
-    ['price (input)', formatPrice(engine.providerId, engine.priceInput)],
-    ['price (output)', formatPrice(engine.providerId, engine.priceOutput)],
+    ['price (input)', formatPrice(engine.providerId, engine.costInputNanoUSD.toString())],
+    ['price (output)', formatPrice(engine.providerId, engine.costOutputNanoUSD.toString())],
     // ['debug price raw (input)', engine.priceInput],
     // ['debug price raw (output)', engine.priceOutput],
   ] // availability, sources, datasheet, moderation

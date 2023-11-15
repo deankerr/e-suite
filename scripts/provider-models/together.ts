@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { getAvailableModels } from '@/lib/api/platforms/togetherai.adapters'
 import z from 'zod'
-import { Engine2Create, getParamSize, writeModelResultJsonFile } from './run'
+import { EngineCreate, getParamSize, writeModelResultJsonFile } from './run'
 
 const schema = z.array(
   z
@@ -74,7 +74,7 @@ export async function processTogetherAi(readFile: string) {
       : getParamSize(entry.name)
     const contextLength = entry.context_length ? String(entry.context_length) : undefined
 
-    const record: Engine2Create = {
+    const record: EngineCreate = {
       id: 'togetherai@' + model,
       model,
       type: isInstruct ? 'instruct' : entry.display_type ?? 'chat',

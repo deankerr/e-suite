@@ -1,4 +1,5 @@
-import { Agent, Engine, schemaAgentParameters, schemaAgentParametersRecord } from '@/lib/schemas'
+import { Agent } from '@/lib/schemas'
+import { Engine } from '@prisma/client'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
@@ -19,7 +20,7 @@ export function useAgentChat(chatId: string, agent: Agent | undefined, engine: E
   const body: Record<string, unknown> =
     agent && engine
       ? {
-          ...engine.includeParameters,
+          model: engine.providerModelId,
           engineId: agent.engineId,
         }
       : {}

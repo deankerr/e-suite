@@ -17,13 +17,13 @@ export function EngineTable({
           <TableBody>
             <TableRow>
               <TableCell className="font-medium">Creator</TableCell>
-              <TableCell>{engine?.creatorName}</TableCell>
+              <TableCell>{engine?.creator}</TableCell>
               <TableCell className="font-medium">Model Type</TableCell>
               <TableCell>{engine.type}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Released</TableCell>
-              <TableCell>{engine.releaseDate.toLocaleDateString('en-gb')}</TableCell>
+              <TableCell>{'?'}</TableCell>
               <TableCell className="font-medium">Parameters</TableCell>
               <TableCell>{engine.parameterSize} billion</TableCell>
             </TableRow>
@@ -66,7 +66,7 @@ export function EngineTable({
                 <br />
                 per 1K tokens
               </TableCell>
-              <TableCell>${engine.priceInput} USD</TableCell>
+              <TableCell>$? USD</TableCell>
               <TableCell className="font-medium">Sources Available</TableCell>
               <TableCell>1</TableCell>
             </TableRow>
@@ -76,9 +76,9 @@ export function EngineTable({
                 <br />
                 per 1K tokens
               </TableCell>
-              <TableCell>${engine.priceOutput} USD</TableCell>
+              <TableCell>$? USD</TableCell>
               <TableCell className="font-medium">Response Limit</TableCell>
-              <TableCell>{engine.hostMaxCompletionTokens} tokens</TableCell>
+              <TableCell>? tokens</TableCell>
             </TableRow>
           </TableBody>
         </Table>

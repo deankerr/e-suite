@@ -1,15 +1,15 @@
 import z from 'zod'
 
 // TODO complete
-export const schemaEngine = z.object({
-  id: z.string(),
-  model: z.string(),
-  providerId: z.string(),
-  displayName: z.string(),
-  creatorName: z.string(),
-  includeParameters: z.record(z.unknown()),
-})
-export type Engine = z.infer<typeof schemaEngine>
+// export const schemaEngine = z.object({
+//   id: z.string(),
+//   model: z.string(),
+//   providerId: z.string(),
+//   displayName: z.string(),
+//   creatorName: z.string(),
+//   includeParameters: z.record(z.unknown()),
+// })
+// export type Engine = z.infer<typeof schemaEngine>
 
 const parameterKeys = [
   'temperature',

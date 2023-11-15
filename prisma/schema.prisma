@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -46,38 +47,6 @@ model Agent {
 }
 
 model Engine {
-  id                      String   @id
-  type                    String // chat | completion | image ?
-  model                   String // should link same model from different hosts
-  provider                Provider @relation(fields: [providerId], references: [id])
-  providerId              String
-  // info
-  displayName             String
-  creatorName             String
-  releaseDate             DateTime @default("1999-09-09T00:00:00+00:00")
-  description             String
-  url                     String
-  license                 String
-  licenseUrl              String
-  // specs
-  contextLength           Int
-  parameterSize           String // 7 | 13 | 70 etc billion
-  promptFormat            String
-  stopTokens              String[] @default([])
-  // host
-  hostMaxCompletionTokens Int // host imposed maximum, same as contextLength if no limit
-  priceInput              String // USD per 1k tokens
-  priceOutput             String // can be Infinity/E notation etc.
-
-  includeParameters Json     @default("{}") // {model: 'gpt-4', stream: true} etc
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  available         Boolean  @default(true) // eg. taken down
-
-  Agent Agent[]
-}
-
-model Engine2 {
   id    String @id
   model String
   type  String
@@ -108,14 +77,15 @@ model Engine2 {
   updatedAt DateTime @updatedAt
   available Boolean  @default(true)
   comment   String[] @default([])
+
+  Agent Agent[]
 }
 
 model Provider {
-  id          String    @id // openai | openrouter | togetherai
+  id          String   @id // openai | openrouter | togetherai
   displayName String
   url         String
   engines     Engine[]
-  engines2    Engine2[]
 }
 
 model Account {

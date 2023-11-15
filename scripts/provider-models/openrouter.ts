@@ -1,6 +1,6 @@
 import { openrouter } from '@/lib/api/platforms/openrouter.adapters'
 import z from 'zod'
-import { dollarsToNanoUSD, Engine2Create, getParamSize, writeModelResultJsonFile } from './run'
+import { dollarsToNanoUSD, EngineCreate, getParamSize, writeModelResultJsonFile } from './run'
 
 const schema = z.array(
   z
@@ -29,7 +29,7 @@ export async function processOpenRouter() {
   const response = await openrouter.getAvailableModels()
   writeModelResultJsonFile('openrouter.response', response)
 
-  const parsed = schema.parse(response).filter((e) => e.id !== 'openrouter@auto')
+  const parsed = schema.parse(response).filter((e) => e.id !== 'openrouter/auto')
 
   // model defs
   const engines = parsed.map((entry) => {
@@ -44,7 +44,7 @@ export async function processOpenRouter() {
         ? String(entry.top_provider.max_completion_tokens)
         : undefined
 
-    const record: Engine2Create = {
+    const record: EngineCreate = {
       id: 'openrouter@' + modelSlug,
       model: modelSlug ?? entry.id,
       type,

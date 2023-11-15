@@ -1,8 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient({
-  log: ['error', 'info', 'query', 'warn'],
-})
+import { prisma } from '@/lib/prisma'
 
 export async function seedAgents() {
   console.log('create agents')
@@ -25,7 +21,7 @@ export async function seedAgents() {
       image: 'dp1.png',
       engine: {
         connect: {
-          id: 'openai::gpt-3.5-turbo',
+          id: 'openai@gpt-3.5-turbo',
         },
       },
     },
@@ -37,7 +33,7 @@ export async function seedAgents() {
       ownerId: user.id,
       name: 'Charon',
       image: 'dp2.png',
-      engineId: 'openrouter::airoboros-l2-70b',
+      engineId: 'openrouter@airoboros-l2-70b',
     },
   })
 
@@ -47,7 +43,7 @@ export async function seedAgents() {
       ownerId: user.id,
       name: 'Dionysus',
       image: 'dp3.png',
-      engineId: 'togetherai::redpajama-incite-7b-chat',
+      engineId: 'togetherai@redpajama-incite-7b-chat',
     },
   })
 
@@ -57,7 +53,7 @@ export async function seedAgents() {
       ownerId: user.id,
       name: 'Piñata',
       image: 'dp4.png',
-      engineId: 'openrouter::mistral-7b-openorca',
+      engineId: 'openrouter@mistral-7b-openorca',
     },
   })
 

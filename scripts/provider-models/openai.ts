@@ -1,6 +1,6 @@
 import { openai } from '@/lib/api/platforms/openai.adapters'
 import z from 'zod'
-import { Engine2Create } from './run'
+import { EngineCreate } from './run'
 
 async function fetchModels() {
   const schema = z.array(
@@ -46,7 +46,7 @@ export function processOpenAi() {
   return openaiStaticModelData
 }
 
-export const openaiStaticModelData: Engine2Create[] = [
+export const openaiStaticModelData: EngineCreate[] = [
   {
     id: 'openai@gpt-3.5-turbo',
     model: 'openai/gpt-3.5-turbo',

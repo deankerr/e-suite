@@ -1,13 +1,8 @@
+import { prisma } from '@/lib/prisma'
 import { fetchAndAddProviderModels } from '@/scripts/provider-models/run'
-import { PrismaClient } from '@prisma/client'
 import { seedAgents } from './seed-agents'
-import { seedEngineData } from './seed-engines'
 
-const prisma = new PrismaClient()
-
-await fetchAndAddProviderModels()
-
-async function main() {
+async function providers() {
   console.log('add Providers')
   await prisma.provider.upsert({
     where: { id: 'openai' },
@@ -58,9 +53,15 @@ async function main() {
       url: 'https://www.fal.ai/',
     },
   })
-
-  await seedEngineData()
 }
+
+async function main() {
+  // await providers()
+  // await fetchAndAddProviderModels()
+  await seedAgents()
+}
+
+await main()
 
 // const env = process.env.SEED
 

@@ -8,7 +8,6 @@ import {
   schemaAgentMerge,
   schemaAgentParameters,
   schemaAgentParametersRecord,
-  schemaEngine,
   schemaSuiteUserAll,
   schemaUser,
   schemaWorkbench,

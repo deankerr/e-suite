@@ -38,18 +38,18 @@ const modelMainTypes = [
   'embedding',
 ] as const
 
-export type Engine2Create = Prisma.Engine2CreateManyInput
-async function createDbEngines(...records: Engine2Create[][]) {
+export type EngineCreate = Prisma.EngineCreateManyInput
+async function createDbEngines(...records: EngineCreate[][]) {
   for (const engines of records) {
     for (const engine of engines) {
-      const e = await prisma.engine2.create({ data: engine })
+      const e = await prisma.engine.create({ data: engine })
       console.log('created:', e)
     }
   }
 }
 
 export async function fetchAndAddProviderModels() {
-  await prisma.engine2.deleteMany({})
+  await prisma.engine.deleteMany({})
 
   console.log('get available models')
   fs.mkdirSync(dir, { recursive: true })
@@ -61,4 +61,4 @@ export async function fetchAndAddProviderModels() {
   await createDbEngines(e1, e2, e3)
 }
 
-await fetchAndAddProviderModels()
+// await fetchAndAddProviderModels()
