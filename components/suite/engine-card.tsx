@@ -1,6 +1,5 @@
 import { cn, nanoUSDToDollars } from '@/lib/utils'
 import { Engine } from '@prisma/client'
-import Big from 'big.js'
 
 export function EngineCard({
   engine,
@@ -14,8 +13,6 @@ export function EngineCard({
     ['license', engine.license || '[unknown]'],
     ['price (input)', nanoUSDToDollars(Number(engine.costInputNanoUSD)).toString()],
     ['price (output)', nanoUSDToDollars(Number(engine.costOutputNanoUSD)).toString()],
-    // ['debug price raw (input)', engine.priceInput],
-    // ['debug price raw (output)', engine.priceOutput],
   ] // availability, sources, datasheet, moderation
 
   return (
