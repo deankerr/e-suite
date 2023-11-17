@@ -1,16 +1,18 @@
-import { auth } from '@/auth'
 import { SuiteShell } from '@/components/suite/suite-shell'
 import { prisma } from '@/lib/prisma'
 import { schemaSuiteUserAll, schemaUser, schemaWorkbench } from '@/lib/schemas'
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
 export default async function EPage() {
-  const session = await auth()
-  if (!session) return <p>Not logged in ehh?</p>
+  const kinde = getKindeServerSession()
+  const kindeUser = await kinde.getUser()
+
+  if (!kindeUser) return <p>Not logged in ehh?</p>
 
   const { agents, workbench, ...user } = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id,
+      id: kindeUser.id,
     },
     include: {
       agents: {
@@ -46,7 +48,7 @@ export default async function EPage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <SuiteShell session={session} />
+      <SuiteShell />
     </HydrationBoundary>
   )
 }

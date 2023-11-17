@@ -1,14 +1,10 @@
-import { auth } from '@/auth'
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { ChatBubbleIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
-import { SignInOutButton } from '../sign-in-out-button'
 import { ThemeToggle } from '../ui/theme-toggle'
 
 export async function MainHeader({ className }: React.HTMLAttributes<HTMLDivElement>) {
-  const session = await auth()
-
   return (
     <header className={cn('border-b border-primary px-4', className)}>
       <div className="flex h-full items-center justify-between">
@@ -21,7 +17,6 @@ export async function MainHeader({ className }: React.HTMLAttributes<HTMLDivElem
 
         <div className="flex space-x-2">
           <ThemeToggle />
-          <SignInOutButton session={session} />
         </div>
       </div>
     </header>

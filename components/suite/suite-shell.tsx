@@ -2,11 +2,9 @@
 
 import { cn } from '@/lib/utils'
 import { ChatBubbleIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
-import { Session } from 'next-auth'
 import Link from 'next/link'
 import { useState } from 'react'
 import { InferenceBuffer } from '../inference-buffer/inference-buffer'
-import { SignInOutButton } from '../sign-in-out-button'
 import { Button } from '../ui/button'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { AgentDetailPanel } from './agent-detail-panel'
@@ -23,7 +21,7 @@ export const tabsEnum = {
   buffer: 'buffer',
 } as const
 
-export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
+export function SuiteShell({}: {} & React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
 
@@ -40,7 +38,6 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
           <SuiteRailList className="px-2 py-4" />
           <div className="flex justify-around px-2 py-4">
             <ThemeToggle />
-            <SignInOutButton session={session} />
           </div>
         </div>
       </div>
@@ -63,9 +60,7 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
 
       {/* SuiteStatusBar */}
       <SuiteStatusBar className="col-span-full col-start-1">
-        <div>
-          Session: {session.user.role} {session.user.id}
-        </div>
+        <div>{/* Session: {session.user.role} {session.user.id} */}</div>
         {/* <div>{suite.userQuery.error?.message}</div> */}
         {/* <div>{suite.userQuery.isPending && <Loading size="xs" />}</div> */}
       </SuiteStatusBar>

@@ -1,15 +1,15 @@
-import { auth } from '@/auth'
 import { adapters } from '@/lib/api/adapters'
 import { authenticateGuest, createErrorResponse } from '@/lib/api/api'
 import { eChatRequestSchema, PlatformKeys } from '@/lib/api/schemas'
 import { prisma } from '@/lib/prisma'
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
 export async function POST(request: Request) {
   try {
-    const session = auth()
-    if (!session) createErrorResponse('Not logged in.', 403)
+    const authed = await getKindeServerSession().isAuthenticated()
+    if (!authed) createErrorResponse('Not logged in.', 403)
 
     const chatRequest = eChatRequestSchema.parse(await request.json())
     console.log(chatRequest)

@@ -1,10 +1,6 @@
 import { cn } from '@/lib/utils'
-import { Session } from 'next-auth'
 
-export function MainStatusBar({
-  session,
-  className,
-}: { session: Session } & React.ComponentProps<'div'>) {
+export function MainStatusBar({ className }: {} & React.ComponentProps<'div'>) {
   return (
     <div
       className={cn(
@@ -13,7 +9,7 @@ export function MainStatusBar({
       )}
     >
       <div></div>
-      <div className="font-mono">{session && `${session?.user.role}.${session?.user.id}`}</div>
+      <div className="font-mono"></div>
       <div></div>
     </div>
   )

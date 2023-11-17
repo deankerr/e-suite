@@ -1,6 +1,5 @@
 'use server'
 
-import { auth } from '@/auth'
 import { AppError } from '@/lib/error'
 import { prisma } from '@/lib/prisma'
 import {
@@ -12,7 +11,8 @@ import {
   schemaUser,
   schemaWorkbench,
 } from '@/lib/schemas'
-import { Session } from 'next-auth'
+import { KindeUser } from '@kinde-oss/kinde-auth-nextjs/dist/types'
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
@@ -21,7 +21,7 @@ type AuthorizedAction<InputSchema extends z.ZodTypeAny, Result extends any> = (
 ) => Promise<Result>
 
 type ActionFunction<InputSchema extends z.ZodTypeAny, Result> = (
-  session: Session,
+  user: KindeUser,
   parsedInput: z.infer<InputSchema>,
 ) => Result
 
@@ -31,12 +31,12 @@ function action<InputSchema extends z.ZodTypeAny, Result extends any>(
 ): AuthorizedAction<InputSchema, Result> {
   return async (actualInputObj) => {
     try {
-      const session = await auth()
-      if (!session) throw new AppError('You are not logged in.')
+      const user = await getKindeServerSession().getUser()
+      if (!user) throw new AppError('You are not logged in.')
 
       const parsedInput = inputSchema.parse(actualInputObj)
 
-      const result = await actionFunc(session, parsedInput)
+      const result = await actionFunc(user, parsedInput)
       return result
     } catch (err) {
       if (err instanceof AppError) {
@@ -58,7 +58,7 @@ function action<InputSchema extends z.ZodTypeAny, Result extends any>(
 // return User with agentId[] only
 export const getUser = action(z.void(), async (session) => {
   const { agents, ...user } = await prisma.user.findUniqueOrThrow({
-    where: { id: session.user.id },
+    where: { id: session.id },
     include: { agents: { select: { id: true } } },
   })
   return { ...user, agentIds: agents.map((agent) => agent.id) }
@@ -68,7 +68,7 @@ export const getAgent = action(z.string(), async (session, agentId) => {
   const agent = await prisma.agent.findUniqueOrThrow({
     where: {
       id: agentId,
-      ownerId: session.user.id,
+      ownerId: session.id,
     },
   })
 
@@ -82,7 +82,7 @@ export const updateAgent = action(
     await prisma.agent.update({
       where: {
         id: agentId,
-        ownerId: session.user.id,
+        ownerId: session.id,
       },
       data: {
         ...merge,
@@ -100,7 +100,7 @@ export const updateAgentParameters = action(
   schemaUpdateAgentParametersUpdate,
   async (session, { agentId, merge }) => {
     const { parameters } = await prisma.agent.findUniqueOrThrow({
-      where: { id: agentId, ownerId: session.user.id },
+      where: { id: agentId, ownerId: session.id },
       select: { parameters: true },
     })
     const parsedCurrentParameters = schemaAgentParametersRecord.parse(parameters)
@@ -109,7 +109,7 @@ export const updateAgentParameters = action(
       ...merge,
     }
     await prisma.agent.update({
-      where: { id: agentId, ownerId: session.user.id },
+      where: { id: agentId, ownerId: session.id },
       data: { parameters: newParameters },
     })
   },
@@ -118,7 +118,7 @@ export const updateAgentParameters = action(
 export const getWorkbench = action(z.void(), async (session) => {
   const { workbench } = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id,
+      id: session.id,
     },
     select: {
       workbench: true,
@@ -135,7 +135,7 @@ export type WorkbenchMerge = z.infer<typeof schemaWorkbenchMerge>
 export const updateWorkbench = action(schemaWorkbenchMerge, async (session, { merge }) => {
   const { workbench } = await prisma.user.findUniqueOrThrow({
     where: {
-      id: session.user.id,
+      id: session.id,
     },
     select: {
       workbench: true,
@@ -151,7 +151,7 @@ export const updateWorkbench = action(schemaWorkbenchMerge, async (session, { me
 
   await prisma.user.update({
     where: {
-      id: session.user.id,
+      id: session.id,
     },
     data: {
       workbench: newWorkbench,
