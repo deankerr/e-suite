@@ -7,12 +7,9 @@ import {
   schemaAgentMerge,
   schemaAgentParameters,
   schemaAgentParametersRecord,
-  schemaSuiteUserAll,
-  schemaUser,
   schemaWorkbench,
 } from '@/lib/schemas'
-import { KindeUser } from '@kinde-oss/kinde-auth-nextjs/dist/types'
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
+import { getSession, Session } from '@/lib/server'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
@@ -21,7 +18,7 @@ type AuthorizedAction<InputSchema extends z.ZodTypeAny, Result extends any> = (
 ) => Promise<Result>
 
 type ActionFunction<InputSchema extends z.ZodTypeAny, Result> = (
-  user: KindeUser,
+  user: Session,
   parsedInput: z.infer<InputSchema>,
 ) => Result
 
@@ -31,7 +28,7 @@ function action<InputSchema extends z.ZodTypeAny, Result extends any>(
 ): AuthorizedAction<InputSchema, Result> {
   return async (actualInputObj) => {
     try {
-      const user = await getKindeServerSession().getUser()
+      const user = await getSession()
       if (!user) throw new AppError('You are not logged in.')
 
       const parsedInput = inputSchema.parse(actualInputObj)

@@ -1,16 +1,5 @@
 import z from 'zod'
 
-// TODO complete
-// export const schemaEngine = z.object({
-//   id: z.string(),
-//   model: z.string(),
-//   providerId: z.string(),
-//   displayName: z.string(),
-//   creatorName: z.string(),
-//   includeParameters: z.record(z.unknown()),
-// })
-// export type Engine = z.infer<typeof schemaEngine>
-
 const parameterKeys = [
   'temperature',
   'max_tokens',
@@ -81,28 +70,3 @@ export const schemaWorkbench = z
     focusedTabId: '',
     inferenceParameterForms: {},
   })
-
-export const schemaSuiteUserAll = z.object({
-  id: z.string(),
-  name: z.string().nullable(),
-  email: z.string().nullable(),
-  emailVerified: z.string().nullable(),
-  image: z.string().nullable(),
-
-  role: z.enum(['USER', 'ADMIN']),
-  workbench: schemaWorkbench,
-
-  agents: z.array(schemaAgent),
-})
-
-export const schemaUser = z.object({
-  id: z.string(),
-  name: z.string().nullable(),
-  email: z.string().nullable(),
-  emailVerified: z.string().nullable(),
-  image: z.string().nullable(),
-
-  role: z.enum(['USER', 'ADMIN']),
-
-  agentIds: z.array(z.string()),
-})

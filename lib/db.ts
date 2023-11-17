@@ -1,79 +1,82 @@
+import { nanoid } from 'nanoid/non-secure'
 import { prisma } from './prisma'
+import { schemaWorkbench } from './schemas'
+import { getSession, Session } from './server'
 
-// // TODO integrate prisma?
-// async function getUser(userId: string) {
-//   return await prisma.user.findFirstOrThrow({ where: { id: userId }, include: { agents: true } })
-// }
+async function getSessionUser() {
+  const session = await getSession()
+  if (!session) return null
 
-// async function getUserById(userId: string) {
-//   return await prisma.user.findFirstOrThrow({ where: { id: userId } })
-// }
+  const existingUser = await prisma.user.findUnique({
+    where: { id: session.id },
+    include: {
+      agents: {
+        include: {
+          engine: true,
+        },
+      },
+    },
+  })
 
-// async function getEngineById(engineId: string) {
-//   return await prisma.engine.findFirstOrThrow({ where: { id: engineId } })
-// }
+  const user = existingUser ?? (await createSessionUser(session))
 
-// async function getSuiteUser(userId: string) {
-//   const suiteUser = await prisma.user.findUniqueOrThrow({
-//     where: {
-//       id: userId,
-//     },
-//     include: {
-//       agents: {
-//         include: {
-//           engine: true,
-//         },
-//       },
-//     },
-//   })
+  return {
+    user: session,
+    workbench: schemaWorkbench.parse(user.workbench),
+    agents: user.agents,
+  }
+}
 
-//   return {
-//     ...suiteUser,
-//   }
-// }
+async function createSessionUser(session: Session) {
+  const { permissions, role, ...newUser } = session
 
-// async function getSuiteUserAgent(userId: string, agentId: string) {
-//   return await prisma.agent.findUniqueOrThrow({
-//     where: {
-//       id: agentId,
-//       ownerId: userId,
-//     },
-//   })
-// }
+  const user = await prisma.user.create({
+    data: {
+      ...newUser,
+      agents: {
+        createMany: {
+          data: [
+            {
+              id: 'seed1-' + nanoid(7),
+              name: 'Artemis',
+              image: 'dp1.png',
+              engineId: 'openai@gpt-3.5-turbo',
+            },
+            {
+              id: 'seed2-' + nanoid(7),
+              name: 'Charon',
+              image: 'dp2.png',
+              engineId: 'openrouter@airoboros-l2-70b',
+            },
+            {
+              id: 'seed3-' + nanoid(7),
+              name: 'Dionysus',
+              image: 'dp3.png',
+              engineId: 'togetherai@redpajama-incite-7b-chat',
+            },
+            {
+              id: 'seed4-' + nanoid(7),
+              name: 'Piñata',
+              image: 'dp4.png',
+              engineId: 'openrouter@mistral-7b-openorca',
+            },
+          ],
+        },
+      },
+    },
+    include: {
+      agents: {
+        include: {
+          engine: true,
+        },
+      },
+    },
+  })
 
-// // async function updateWorkbench(userId: string, merge: SuiteWorkbenchUpdateMergeObject) {
-// //   const current = await prisma.user.findUniqueOrThrow({
-// //     where: { id: userId },
-// //     select: { workbench: true },
-// //   })
-// //   // const parsed = jsonRecord.parse(current.workbench)
-// //   // await prisma.user.update({ where: { id: userId }, data: { workbench: { ...parsed, ...merge } } })
-// // }
+  console.log('new user', user)
+  return user
+}
 
-// async function updateUserAgent(
-//   userId: string,
-//   agentId: string,
-//   merge: SuiteAgentUpdateMergeObject,
-// ) {
-//   await prisma.agent.update({
-//     where: {
-//       id: agentId,
-//       ownerId: userId,
-//     },
-//     data: {
-//       ...merge,
-//     },
-//   })
-// }
-
-// export const db = {
-//   getUser,
-//   getSuiteUser,
-//   getSuiteUserAgent,
-//   updateWorkbench,
-//   updateUserAgent,
-// }
-
-// export type SuiteUser = Awaited<ReturnType<typeof getSuiteUser>>
-// export type User = Awaited<ReturnType<typeof getUser>>
-// export type Engine = Awaited<ReturnType<typeof getEngineById>>
+export const db = {
+  getSessionUser,
+}

@@ -1,6 +1,39 @@
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 
-export async function logAuthData() {
+const userRoles = {
+  admin: 'admin',
+  user: 'user',
+  none: 'none',
+} as const
+
+export type Session = NonNullable<Awaited<ReturnType<typeof getSession>>>
+export async function getSession() {
+  const { getUser, getPermissions } = getKindeServerSession()
+
+  const user = await getUser()
+  const permissions = await getPermissions()
+
+  if (!user || !permissions) return null
+
+  const keys = permissions.permissions
+  const role = keys.includes('role:admin')
+    ? userRoles.admin
+    : keys.includes('role:user')
+    ? userRoles.user
+    : userRoles.none
+
+  return {
+    id: user.id,
+    email: user.email,
+    firstName: user.given_name,
+    lastName: user.family_name,
+    image: user.picture,
+    permissions: keys,
+    role,
+  }
+}
+
+export async function logKindeAuthData() {
   const {
     getAccessToken,
     getBooleanFlag,
