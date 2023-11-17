@@ -21,7 +21,7 @@ export function SuiteRailList({ className }: React.ComponentProps<'div'>) {
       {/* <AgentList title="Active"></AgentList> */}
       <AgentList title="Available" open={true}>
         {agents.map((agent, i) => {
-          if (agent.isError) return null
+          if (agent.isError) return 'error'
           return (
             <li
               key={agent.data?.id ?? i}

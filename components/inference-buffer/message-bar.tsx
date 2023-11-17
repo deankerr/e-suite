@@ -3,17 +3,19 @@ import { TextareaAutosize } from '@/components/ui/textarea-autosize'
 import { cn } from '@/lib/utils'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
+import { AgentChatHelpers } from '../suite/use-agent-chat'
+import { sampleConvo } from './sample-data'
 
 export function MessageBar({
-  handleSubmit,
+  chat,
   className,
   ...props
-}: { handleSubmit: (value: string) => void } & React.ComponentProps<'div'>) {
+}: { chat: AgentChatHelpers } & React.ComponentProps<'div'>) {
   const [value, setValue] = useState('')
 
   const send = () => {
     if (value === '') return
-    handleSubmit(value)
+    chat.submitUserMessage(value)
     setValue('')
   }
 
@@ -25,7 +27,14 @@ export function MessageBar({
         className,
       )}
     >
-      <Button className="rounded-2xl" variant="outline" type="button">
+      <Button
+        className="rounded-2xl"
+        variant="outline"
+        type="button"
+        onClick={() => {
+          chat.setMessages([...chat.messages, ...sampleConvo])
+        }}
+      >
         <HeartIcon />
       </Button>
       <TextareaAutosize

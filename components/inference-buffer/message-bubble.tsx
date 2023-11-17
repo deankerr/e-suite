@@ -4,16 +4,16 @@ import { forwardRef } from 'react'
 
 const messageBubbleVariants = {
   container: {
-    default: 'grid-cols-[2rem_auto_2rem]',
-    user: 'grid-cols-[minmax(2.5rem,1fr)_auto] sm:pl-.5 sm:pr-1',
-    assistant: 'grid-cols-[auto_minmax(2.5rem,1fr)]',
+    default: 'justify-center',
+    user: 'justify-end',
+    assistant: '',
   },
   content: {
     default: 'bg-secondary text-center text-secondary-foreground',
     user: 'bg-primary text-primary-foreground',
     assistant: 'bg-muted text-secondary-foreground',
   },
-} as const
+}
 
 const variants = {
   container: (name: VariantProp) => messageBubbleVariants.container[name],
@@ -39,7 +39,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, Props>(function MessageB
 ) {
   const key = getVariantKey(variant)
   return (
-    <div ref={ref} className={cn('grid place-content-center', variants.container(key))}>
+    <div ref={ref} className={cn('grid grid-cols-[1rem_auto_1rem]', variants.container(key))}>
       <div
         className={cn(
           'prose prose-stone col-start-2 overflow-hidden rounded-lg px-3 py-2 text-sm dark:prose-invert',

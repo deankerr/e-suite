@@ -4,7 +4,7 @@ import { useAgentChat } from '../suite/use-agent-chat'
 import { MessageBar } from './message-bar'
 import { MessageBubble } from './message-bubble'
 
-export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
+export function InferenceBuffer({ className, ...divProps }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
   const { data: engine } = useEngineQuery(agent?.engineId)
@@ -15,8 +15,11 @@ export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
   const isWaiting = chat.isLoading && !chat.streamingId
 
   return (
-    <div className={cn('relative overflow-y-auto', className)}>
-      <div className={cn('min-h-[80%] space-y-4 p-4', className)}>
+    <div
+      {...divProps}
+      className={cn('grid justify-normal [&_>*]:col-start-1 [&_>*]:row-start-1', className)}
+    >
+      <div className={cn('bg-grid-grey space-y-4', className)}>
         {chat.messages.map((m) => (
           <MessageBubble
             variant={m.role}
@@ -27,8 +30,8 @@ export function InferenceBuffer({ className }: React.ComponentProps<'div'>) {
         ))}
         {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
       </div>
-      <div className="sticky bottom-0 w-full p-4">
-        <MessageBar className="mx-auto" handleSubmit={chat.submitUserMessage} />
+      <div className="sticky bottom-0 w-full self-end p-4">
+        <MessageBar className="mx-auto" chat={chat} />
       </div>
     </div>
   )

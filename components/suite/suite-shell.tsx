@@ -1,27 +1,43 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ChatBubbleIcon } from '@radix-ui/react-icons'
+import { ChatBubbleIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
 import { Session } from 'next-auth'
 import Link from 'next/link'
+import { useState } from 'react'
 import { InferenceBuffer } from '../inference-buffer/inference-buffer'
 import { SignInOutButton } from '../sign-in-out-button'
+import { Button } from '../ui/button'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { InferenceParameterPanel } from './inference-parameter-panel'
+import { useAgentQuery, useTabs } from './queries'
 import { SubMenuTabBar } from './submenu-tab-bar'
 import { SuiteRailList } from './suite-rail-list'
 import { SuiteStatusBar } from './suite-status-bar'
 import { SuiteTabBar } from './suite-tab-bar'
 
+export const tabsEnum = {
+  detail: 'detail',
+  parameters: 'parameters',
+  buffer: 'buffer',
+} as const
+
 export function SuiteShell({ session }: { session: Session } & React.ComponentProps<'div'>) {
+  const { focusedTab } = useTabs()
+  const { data: agent } = useAgentQuery(focusedTab?.agentId)
+
+  const [tab, setTab] = useState<keyof typeof tabsEnum>('detail')
+  const [showNav, setShowNav] = useState(true)
+
   return (
     <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
       {/* SuiteRail */}
-      <div className="flex flex-col border-r">
+      {!showNav && <div />}
+      <div className={cn(showNav ? 'flex' : 'hidden', 'flex-col border-r')}>
         <SuiteAppTitle className="h-12 border-b" />
         <div className="flex grow flex-col justify-between">
-          <SuiteRailList className=" px-2 py-4" />
+          <SuiteRailList className="px-2 py-4" />
           <div className="flex justify-around px-2 py-4">
             <ThemeToggle />
             <SignInOutButton session={session} />
@@ -30,17 +46,19 @@ export function SuiteShell({ session }: { session: Session } & React.ComponentPr
       </div>
 
       {/* SuiteMain */}
-      <div className="grid grid-rows-[auto_1fr] overflow-hidden">
+      <div className="grid grid-rows-[auto_1fr] overflow-hidden xl:grid-cols-[auto_auto]">
         <div className="">
-          <SuiteTabBar className="h-12" />
-          <AgentDetailPanel className="p-6" />
-          <SubMenuTabBar className="" />
+          <h2 className="p-6 text-lg font-semibold leading-none">
+            <Button size="icon" variant="outline" onClick={() => setShowNav(!showNav)}>
+              <HamburgerMenuIcon />
+            </Button>{' '}
+            {agent?.name}
+          </h2>
+          <SubMenuTabBar tab={tab} setTab={(v) => setTab(v)} className="" />
         </div>
-
-        <div className="grid grid-cols-[60%_auto] overflow-hidden">
-          <InferenceBuffer />
-          <InferenceParameterPanel className="border-l" />
-        </div>
+        <AgentDetailPanel className={cn(tab !== 'detail' && 'hidden')} />
+        <InferenceParameterPanel className={cn(tab !== 'parameters' && 'hidden')} />
+        <InferenceBuffer className={cn(tab !== 'buffer' && 'hidden')} />
       </div>
 
       {/* SuiteStatusBar */}

@@ -26,6 +26,7 @@ export function useAgentChat(chatId: string, agent: Agent | undefined, engine: E
       : {}
 
   if (agent && engine) {
+    // console.log('agentchat ready')
     const parameters = agent.parameters[agent.engineId]
     if (parameters && parameters.fieldsEnabled) {
       for (const key of parameters.fieldsEnabled) {
@@ -63,3 +64,5 @@ export function useAgentChat(chatId: string, agent: Agent | undefined, engine: E
 
   return { ...chat, submitUserMessage, streamingId }
 }
+
+export type AgentChatHelpers = ReturnType<typeof useAgentChat>

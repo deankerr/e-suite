@@ -32,20 +32,20 @@ import {
   useTabs,
 } from './queries'
 
-export function AgentDetailPanel({ className }: React.ComponentProps<'div'>) {
+export function AgentDetailPanel({ className, ...divProps }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
   const mutator = useAgentMutation(agent?.id)
   const { data: engine } = useEngineQuery(agent?.engineId)
 
   return (
-    <div className={cn('', className)}>
+    <div {...divProps} className={cn('', className)}>
       {agent ? (
         <div className="relative grid grid-cols-[1fr_auto] rounded-md border">
           <div className="space-y-4 p-6">
             {/* title / buttons */}
             <div className="flex items-center space-x-4">
-              <h2 className=" text-lg font-semibold leading-none">{agent.name}</h2>
+              <h2 className="text-lg font-semibold leading-none">{agent.name}</h2>
               <RenameDialog
                 current={agent.name}
                 onSubmit={(name) => mutator.mutate({ agentId: agent.id, merge: { name } })}

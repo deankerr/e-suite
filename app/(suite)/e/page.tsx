@@ -23,6 +23,7 @@ export default async function EPage() {
 
   const getUser = () => schemaUser.parse({ ...user, agentIds: agents.map((agent) => agent.id) })
   const getWorkbench = () => schemaWorkbench.parse(workbench)
+  const getAgent = (id: string) => agents.find((agent) => agent.id === id)!
 
   const queryClient = new QueryClient()
 
@@ -35,6 +36,13 @@ export default async function EPage() {
     queryKey: ['workbench'],
     queryFn: getWorkbench,
   })
+
+  for (const a of agents) {
+    await queryClient.prefetchQuery({
+      queryKey: ['agent', a.id],
+      queryFn: () => getAgent(a.id),
+    })
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

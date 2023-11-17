@@ -8,7 +8,7 @@ import { useAgentParametersMutation, useAgentQuery, useEngineQuery, useTabs } fr
 
 const labelClass = 'font-mono text-sm'
 
-export function InferenceParameterPanel({ className }: React.ComponentProps<'div'>) {
+export function InferenceParameterPanel({ className, ...divProps }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
   const { data: engine } = useEngineQuery(agent?.engineId)
@@ -45,7 +45,7 @@ export function InferenceParameterPanel({ className }: React.ComponentProps<'div
   }
 
   return (
-    <div className={cn('space-y-8 overflow-y-auto p-6', className)}>
+    <div {...divProps} className={cn('space-y-8 p-6', className)}>
       {sliderInputKeys.map((key) => {
         if (schemaKeys.includes(key)) {
           return (
