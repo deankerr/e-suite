@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/prisma'
 import { fetchAndAddProviderModels } from '@/scripts/provider-models/run'
-import { seedAgents } from './seed-agents'
 
 async function providers() {
   console.log('add Providers')
@@ -58,7 +57,6 @@ async function providers() {
 async function main() {
   await providers()
   await fetchAndAddProviderModels()
-  await seedAgents()
 }
 
 await main()

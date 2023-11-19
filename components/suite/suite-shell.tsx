@@ -1,83 +1,83 @@
 'use client'
 
+import { Session } from '@/lib/server'
 import { cn } from '@/lib/utils'
-import { ChatBubbleIcon, HamburgerMenuIcon } from '@radix-ui/react-icons'
-import Link from 'next/link'
-import { useState } from 'react'
+import theSun from '/assets/icons/sun-white.svg'
+import Image from 'next/image'
+import { useParams } from 'next/navigation'
 import { InferenceBuffer } from '../inference-buffer/inference-buffer'
-import { Button } from '../ui/button'
+import { Loading } from '../ui/loading'
 import { ThemeToggle } from '../ui/theme-toggle'
+import { UserMenuButton } from '../user-menu-button'
 import { AgentDetailPanel } from './agent-detail-panel'
 import { InferenceParameterPanel } from './inference-parameter-panel'
-import { useAgentQuery, useTabs } from './queries'
+import { NavTree } from './nav-tree'
+import { useActiveAgent, usePathnameFocusedAgentId } from './queries-reloaded'
 import { SubMenuTabBar } from './submenu-tab-bar'
-import { SuiteRailList } from './suite-rail-list'
-import { SuiteStatusBar } from './suite-status-bar'
-import { SuiteTabBar } from './suite-tab-bar'
+import { SuiteAppTitle } from './suite-app-title'
 
-export const tabsEnum = {
-  detail: 'detail',
-  parameters: 'parameters',
-  buffer: 'buffer',
-} as const
-
-export function SuiteShell({}: {} & React.ComponentProps<'div'>) {
-  const { focusedTab } = useTabs()
-  const { data: agent } = useAgentQuery(focusedTab?.agentId)
-
-  const [tab, setTab] = useState<keyof typeof tabsEnum>('detail')
-  const [showNav, setShowNav] = useState(true)
-
+export function SuiteShell({
+  session,
+  className,
+  children,
+}: { session: Session } & React.ComponentProps<'div'>) {
+  const agentId = usePathnameFocusedAgentId()
+  const params = useParams()
+  const tab = params.id ? params.id[1] : undefined
+  const agent = useActiveAgent()
   return (
-    <div className="grid h-full grid-cols-[auto_1fr] grid-rows-[auto_2.75rem]">
-      {/* SuiteRail */}
-      {!showNav && <div />}
-      <div className={cn(showNav ? 'flex' : 'hidden', 'flex-col border-r')}>
-        <SuiteAppTitle className="h-12 border-b" />
-        <div className="flex grow flex-col justify-between">
-          <SuiteRailList className="px-2 py-4" />
-          <div className="flex justify-around px-2 py-4">
-            <ThemeToggle />
-          </div>
+    <div
+      className={cn(
+        'grid h-full grid-flow-col grid-cols-[auto_1fr] grid-rows-[84px_1fr_50px]',
+        className,
+      )}
+    >
+      {/* navbar title */}
+      <div className="flex items-center justify-center border-r bg-muted p-4">
+        <SuiteAppTitle className="grow" />
+      </div>
+      {/* nav tree */}
+      <div className=" flex flex-col border-r bg-muted">
+        <NavTree className="w-60" />
+        <div className="grid grow place-content-center">
+          {/* eslint-disable-next-line @next/next/no-img-element, react/jsx-no-undef */}
+          <Image src={theSun} alt="sun" className="w-full max-w-[12rem] animate-pulse opacity-60" />
         </div>
       </div>
-
-      {/* SuiteMain */}
-      <div className="grid grid-rows-[auto_1fr] overflow-hidden xl:grid-cols-[auto_auto]">
-        <div className="">
-          <h2 className="p-6 text-lg font-semibold leading-none">
-            <Button size="icon" variant="outline" onClick={() => setShowNav(!showNav)}>
-              <HamburgerMenuIcon />
-            </Button>{' '}
-            {agent?.name}
-          </h2>
-          <SubMenuTabBar tab={tab} setTab={(v) => setTab(v)} className="" />
-        </div>
-        <AgentDetailPanel className={cn(tab !== 'detail' && 'hidden')} />
-        <InferenceParameterPanel className={cn(tab !== 'parameters' && 'hidden')} />
-        <InferenceBuffer className={cn(tab !== 'buffer' && 'hidden')} />
+      {/* navbar end */}
+      <div className="flex items-center justify-between border-r bg-muted px-4">
+        <UserMenuButton session={session} />
+        <ThemeToggle />
       </div>
 
-      {/* SuiteStatusBar */}
-      <SuiteStatusBar className="col-span-full col-start-1">
-        <div>{/* Session: {session.user.role} {session.user.id} */}</div>
-        {/* <div>{suite.userQuery.error?.message}</div> */}
-        {/* <div>{suite.userQuery.isPending && <Loading size="xs" />}</div> */}
-      </SuiteStatusBar>
-    </div>
-  )
-}
+      {/* main */}
+      {/* header bar */}
+      <div className="flex items-center gap-6 px-4">
+        {agent.isLoading && <Loading />}
+        {agent.error && `Error: ${agent.error.message}`}
+        {agent.data && (
+          <>
+            <h2 className="text-lg font-semibold leading-none">{agent.data.name}</h2>
+            <SubMenuTabBar className="self-end" />
+          </>
+        )}
+      </div>
 
-function SuiteAppTitle({ className }: React.ComponentProps<'div'>) {
-  return (
-    <div className={cn('flex items-center justify-center', className)}>
-      <Link
-        className="inline-flex items-center justify-center gap-1.5 font-semibold tracking-tight"
-        href="/"
-      >
-        <ChatBubbleIcon className="mb-0.5 h-5 w-5" />
-        e/suite
-      </Link>
+      {/* content */}
+      <div className="grid">
+        {tab === 'detail' ? (
+          <AgentDetailPanel />
+        ) : tab === 'parameters' ? (
+          <InferenceParameterPanel />
+        ) : tab === 'buffer' ? (
+          <InferenceBuffer />
+        ) : null}
+      </div>
+
+      {/* status bar */}
+      <div className="flex items-center border-t px-4">
+        {agentId && <p className="font-mono text-sm">{agentId}</p>}
+      </div>
     </div>
   )
 }

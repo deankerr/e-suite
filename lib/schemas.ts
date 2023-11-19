@@ -11,6 +11,8 @@ const parameterKeys = [
   'stop',
   'stop_token',
 ]
+
+export const schemaEngine = z.object({})
 export const schemaAgentParameters = z
   .object({
     fieldsEnabled: z
@@ -45,6 +47,7 @@ export const schemaAgent = z.object({
   image: z.string(),
 
   engineId: z.string(),
+  engine: z.any(),
   parameters: schemaAgentParametersRecord,
 })
 export type Agent = z.infer<typeof schemaAgent>

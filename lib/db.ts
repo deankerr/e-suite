@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure'
 import { prisma } from './prisma'
-import { schemaWorkbench } from './schemas'
+import { schemaAgent, schemaWorkbench } from './schemas'
 import { getSession, Session } from './server'
 
 async function getSessionUser() {
@@ -77,6 +77,21 @@ async function createSessionUser(session: Session) {
   return user
 }
 
+async function getAgentsOwnedBy(ownerId: string) {
+  const agents = await prisma.agent.findMany({ where: { ownerId } })
+  return schemaAgent.array().parse(agents)
+}
+
+async function getAgentOwnedBy(id: string, ownerId: string) {
+  const agent = await prisma.agent.findUniqueOrThrow({
+    where: { id, ownerId },
+    include: { engine: { include: { provider: true } } },
+  })
+  return schemaAgent.parse(agent)
+}
+
 export const db = {
   getSessionUser,
+  getAgentsOwnedBy,
+  getAgentOwnedBy,
 }

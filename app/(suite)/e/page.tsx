@@ -1,4 +1,4 @@
-import { SuiteShell } from '@/components/suite/suite-shell'
+import { Suite } from '@/components/suite/suite'
 import { db } from '@/lib/db'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
@@ -7,10 +7,12 @@ export default async function EPage() {
   if (!session) return <p>Not logged in ehh?</p>
 
   const { user, workbench, agents } = session
+  const engines = agents.map((agent) => agent.engine)
 
   const getUser = () => ({ ...user, agentIds: agents.map((agent) => agent.id) })
   const getWorkbench = () => workbench
   const getAgent = (id: string) => agents.find((agent) => agent.id === id)!
+  const getEngine = (id: string) => engines.find((engine) => engine.id === id)!
 
   const queryClient = new QueryClient()
 
@@ -31,9 +33,16 @@ export default async function EPage() {
     })
   }
 
+  for (const engine of engines) {
+    await queryClient.prefetchQuery({
+      queryKey: ['agent', engine.id],
+      queryFn: () => getEngine(engine.id),
+    })
+  }
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <SuiteShell />
+      <Suite />
     </HydrationBoundary>
   )
 }

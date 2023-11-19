@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" style="shape-rendering: geometricprecision;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="color-3-15" gradientUnits="userSpaceOnUse" x1="250" y1="0" x2="250" y2="500" xlink:href="#color-3"/>
+    <linearGradient id="color-3">
+      <stop style="stop-color: #fc4a1a;" offset="0"/>
+      <stop style="stop-color: #f7b733;" offset="1"/>
+    </linearGradient>
+  </defs>
+  <path d="M 458.331 0 L 41.669 0 C 18.756 0 0 18.756 0 41.669 L 0 458.331 C 0 481.244 18.756 500 41.669 500 L 458.331 500 C 481.244 500 500 481.244 500 458.331 L 500 41.669 C 500 18.756 481.244 0 458.331 0 Z M 437.5 354.169 L 250 458.331 L 145.831 400.469 L 145.831 194.869 L 250 137.006 L 354.169 194.869 L 354.169 305.138 L 250 362.994 L 229.169 351.419 L 229.169 243.894 L 250 232.344 L 270.831 243.9 L 270.831 303.756 L 312.5 280.619 L 312.5 219.375 L 250 184.644 L 187.5 219.375 L 187.5 375.931 L 250 410.663 L 395.831 329.65 L 395.831 170.35 L 250 89.338 L 104.169 170.35 L 104.169 377.319 L 62.5 354.169 L 62.5 145.831 L 250 41.669 L 437.5 145.831 L 437.5 354.169 Z" style="fill: url('#color-3-15');" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+</svg>
