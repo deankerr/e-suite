@@ -26,7 +26,7 @@ export function NavTree({ className }: React.ComponentProps<'div'>) {
             height={250}
             onActivate={(node) => {
               if (node.children) return
-              router.push(`/ui/${node.id}`)
+              router.push(`/agent/${node.id}`)
             }}
           >
             {Node}

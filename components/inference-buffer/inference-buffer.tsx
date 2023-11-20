@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { useAgentQuery, useEngineQuery, useTabs } from '../suite/queries'
 import { useAgentChat } from '../suite/use-agent-chat'

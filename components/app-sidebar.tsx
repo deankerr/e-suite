@@ -1,4 +1,4 @@
-import { Session } from '@/lib/server'
+import { getSession } from '@/lib/server'
 import { cn } from '@/lib/utils'
 import theSun from '/assets/icons/sun-white.svg'
 import Image from 'next/image'
@@ -7,10 +7,8 @@ import { SuiteAppTitle } from './suite/suite-app-title'
 import { ThemeToggle } from './ui/theme-toggle'
 import { UserMenuButton } from './user-menu-button'
 
-export function AppSidebar({
-  session,
-  className,
-}: { session: Session } & React.ComponentProps<'div'>) {
+export async function AppSidebar({ className }: React.ComponentProps<'div'>) {
+  const session = await getSession()
   return (
     <div className={cn('flex flex-col items-center gap-4 py-4', className)}>
       <SuiteAppTitle className="pr-6" />

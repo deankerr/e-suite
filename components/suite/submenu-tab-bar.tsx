@@ -3,15 +3,15 @@
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { tabsEnum } from './_suite'
 
-const root = 'ui'
+const root = '/agent/'
 
 export function SubMenuTabBar({ className }: {} & React.ComponentProps<'div'>) {
   const { id } = useParams()
   const readParam = (tab: string) => id && id[1] && id[1] === tab
   const getTabPath = (name: string) => {
-    return `/${root}/${id![0]}/${name}`
+    if (Array.isArray(id)) return `/${root}/${id[0]}/${name}`
+    else return '/'
   }
   // console.log('params', params)
   return (
@@ -24,7 +24,6 @@ export function SubMenuTabBar({ className }: {} & React.ComponentProps<'div'>) {
             'border-b-2 border-primary font-medium text-foreground opacity-100',
         )}
         href={getTabPath('buffer')}
-        // onClick={() => setTab('buffer')}
       >
         Buffer
       </Link>
@@ -35,7 +34,6 @@ export function SubMenuTabBar({ className }: {} & React.ComponentProps<'div'>) {
           readParam('parameters') &&
             'border-b-2 border-primary font-medium text-foreground opacity-100',
         )}
-        // onClick={() => setTab('parameters')}
         href={getTabPath('parameters')}
       >
         Parameters
@@ -47,7 +45,6 @@ export function SubMenuTabBar({ className }: {} & React.ComponentProps<'div'>) {
           readParam('detail') &&
             'border-b-2 border-primary font-medium text-foreground opacity-100',
         )}
-        // onClick={() => setTab('detail')}
         href={getTabPath('detail')}
       >
         Details

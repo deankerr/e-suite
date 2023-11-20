@@ -20,6 +20,7 @@
     "seed": "bun prisma/seed.ts"
   },
   "dependencies": {
+    "@ark-ui/react": "^1.0.1",
     "@hookform/resolvers": "^3.3.2",
     "@kinde-oss/kinde-auth-nextjs": "^2.0.9",
     "@prisma/client": "^5.6.0",

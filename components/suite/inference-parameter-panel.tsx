@@ -1,3 +1,5 @@
+'use client'
+
 import { PlatformKeys, schemas } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { SliderInput } from '../parameter-controls/slider-input'
