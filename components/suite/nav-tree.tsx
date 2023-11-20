@@ -19,7 +19,7 @@ export function NavTree({ className, children }: React.ComponentProps<'div'>) {
       {agents.isLoading && <Loading />}
       {agents.error && agents.error.message}
       {agentTree && (
-        <div className="px-6 py-3">
+        <div className="px-6">
           <Tree
             initialData={agentTree}
             className=""
@@ -29,8 +29,6 @@ export function NavTree({ className, children }: React.ComponentProps<'div'>) {
             height={250}
             onActivate={(node) => {
               if (node.children) return
-              console.log('active', node.id)
-
               router.push(`/ui/${node.id}`)
             }}
           >
@@ -52,10 +50,10 @@ function Node({ node, style, dragHandle }: NodeRendererProps<any>) {
       style={style}
       ref={dragHandle}
       className={cn(
-        'flex h-full items-center',
-        isFolder ? 'font-medium' : 'text-foreground/80',
+        'flex h-full items-center font-medium',
+        isFolder ? 'text-sm' : 'text-foreground',
         node.isFocused && !isFolder && 'border',
-        isFocusedAgent && 'rounded-md bg-primary text-primary-foreground',
+        isFocusedAgent && 'rounded-md bg-primary font-medium text-primary-foreground',
       )}
       onClick={() => node.focus()}
     >
