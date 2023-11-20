@@ -2,17 +2,14 @@
 
 import type { Agent } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { NodeRendererProps, Tree } from 'react-arborist'
 import { Loading } from '../ui/loading'
 import { useAgents, usePathnameFocusedAgentId } from './queries-reloaded'
 
-export function NavTree({ className, children }: React.ComponentProps<'div'>) {
+export function NavTree({ className }: React.ComponentProps<'div'>) {
   const agents = useAgents()
-
   const agentTree = agents.data ? buildNodeTree(agents.data) : null
-  const pathname = usePathname()
-
   const router = useRouter()
   return (
     <div className={cn('', className)}>

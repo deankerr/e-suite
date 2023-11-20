@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { tabsEnum } from './suite'
+import { tabsEnum } from './_suite'
 
 const root = 'ui'
 

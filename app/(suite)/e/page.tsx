@@ -1,4 +1,4 @@
-import { Suite } from '@/components/suite/suite'
+import { Suite } from '@/components/suite/_suite'
 import { db } from '@/lib/db'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
