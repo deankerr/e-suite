@@ -26,6 +26,14 @@ export function useAgents() {
   })
 }
 
+export function useAgentDetail(id = '') {
+  return useQuery({
+    queryKey: agentsQueryKeys.detail(id),
+    queryFn: () => getAgent(id),
+    enabled: !!id,
+  })
+}
+
 export function useActiveAgent() {
   const active = usePathnameFocusedAgentId() ?? ''
 

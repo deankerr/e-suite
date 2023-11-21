@@ -6,5 +6,5 @@ export default async function UiPage() {
   const session = await getSession()
   if (!session) return <p>Not logged in ehh?</p>
 
-  return <AppShell session={session} />
+  return <AppShell />
 }

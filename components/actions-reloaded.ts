@@ -36,6 +36,7 @@ export const getAgents = wrapAction(async (user) => {
 })
 
 export const getAgent = wrapAction(async (user, id) => {
+  console.log('getAgent', user, id)
   const agent = await db.getAgentOwnedBy(id, user.id)
   return agent
 })

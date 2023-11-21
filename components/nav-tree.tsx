@@ -4,8 +4,8 @@ import type { Agent } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { NodeRendererProps, Tree } from 'react-arborist'
-import { Loading } from '../ui/loading'
 import { useAgents, usePathnameFocusedAgentId } from './queries-reloaded'
+import { Loading } from './ui/loading'
 
 export function NavTree({ className }: React.ComponentProps<'div'>) {
   const agents = useAgents()

@@ -4,10 +4,10 @@ import { Session } from '@/lib/server'
 import { cn } from '@/lib/utils'
 import { useParams } from 'next/navigation'
 import { InferenceBuffer } from './inference-buffer/inference-buffer'
+import { useActiveAgent, usePathnameFocusedAgentId } from './queries-reloaded'
 import { AgentDetailPanel } from './suite/agent-detail-panel'
 import { InferenceParameterPanel } from './suite/inference-parameter-panel'
 import { LoadingShapes } from './suite/loading-shapes'
-import { useActiveAgent, usePathnameFocusedAgentId } from './suite/queries-reloaded'
 import { SubMenuTabBar } from './suite/submenu-tab-bar'
 
 export async function AppContent({
