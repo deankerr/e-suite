@@ -21,7 +21,7 @@ export function InferenceBuffer({ className, ...divProps }: React.ComponentProps
       {...divProps}
       className={cn('grid justify-normal [&_>*]:col-start-1 [&_>*]:row-start-1', className)}
     >
-      <div className={cn('bg-grid-grey space-y-4', className)}>
+      <div className={cn('max-w-3xl space-y-4 p-6', className)}>
         {chat.messages.map((m) => (
           <MessageBubble
             variant={m.role}

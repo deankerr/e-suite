@@ -78,8 +78,11 @@ async function createSessionUser(session: Session) {
 }
 
 async function getAgentsOwnedBy(ownerId: string) {
-  const agents = await prisma.agent.findMany({ where: { ownerId } })
-  return schemaAgent.array().parse(agents)
+  const agents = await prisma.agent.findMany({
+    where: { ownerId },
+    include: { engine: { include: { provider: true } } },
+  })
+  return agents
 }
 
 async function getAgentOwnedBy(id: string, ownerId: string) {
@@ -87,8 +90,9 @@ async function getAgentOwnedBy(id: string, ownerId: string) {
     where: { id, ownerId },
     include: { engine: { include: { provider: true } } },
   })
-  return schemaAgent.parse(agent)
+  return agent
 }
+export type Agent = Awaited<ReturnType<typeof getAgentOwnedBy>>
 
 export const db = {
   getSessionUser,

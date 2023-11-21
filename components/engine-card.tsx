@@ -4,7 +4,6 @@ import { Engine } from '@prisma/client'
 export function EngineCard({
   engine,
   className,
-  children,
 }: { engine: Engine } & React.ComponentProps<'div'>) {
   const data = [
     ['creator', engine.creator],
@@ -18,7 +17,7 @@ export function EngineCard({
   return (
     <div
       className={cn(
-        'grid w-full max-w-xl grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))] items-center gap-2 border p-6',
+        'grid grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))] items-center gap-2 rounded-md border p-6',
         className,
       )}
     >

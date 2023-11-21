@@ -4,13 +4,18 @@ import { PlatformKeys, schemas } from '@/lib/api/schemas'
 import { cn } from '@/lib/utils'
 import { SliderInput } from '../inference-parameters/slider-input'
 import { TagInput } from '../inference-parameters/tag-input'
+import {
+  useAgentParametersMutation,
+  useAgentQuery,
+  useEngineQuery,
+  useTabs,
+} from '../suite/queries'
 import { Loading } from '../ui/loading'
 import { Switch } from '../ui/switch'
-import { useAgentParametersMutation, useAgentQuery, useEngineQuery, useTabs } from './queries'
 
 const labelClass = 'font-mono text-sm'
 
-export function InferenceParameterPanel({ className, ...divProps }: React.ComponentProps<'div'>) {
+export function InferenceParameters({ className, ...divProps }: React.ComponentProps<'div'>) {
   const { focusedTab } = useTabs()
   const { data: agent } = useAgentQuery(focusedTab?.agentId)
   const { data: engine } = useEngineQuery(agent?.engineId)

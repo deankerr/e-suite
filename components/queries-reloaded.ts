@@ -14,7 +14,7 @@ export function usePathnameFocusedAgentId() {
   return id ? id[0] : undefined
 }
 
-const agentsQueryKeys = {
+export const agentsQueryKeys = {
   all: ['agents'],
   detail: (id: string) => ['agents', 'detail', id],
 } as const
@@ -27,9 +27,20 @@ export function useAgents() {
 }
 
 export function useAgentDetail(id = '') {
+  const queryClient = useQueryClient()
   return useQuery({
     queryKey: agentsQueryKeys.detail(id),
     queryFn: () => getAgent(id),
+    initialData: () => {
+      return queryClient
+        .getQueryData(
+          queryOptions({
+            queryKey: agentsQueryKeys.all,
+            queryFn: () => getAgents(),
+          }).queryKey,
+        )
+        ?.find((agent) => agent.id === id)
+    },
     enabled: !!id,
   })
 }

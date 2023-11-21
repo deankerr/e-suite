@@ -1,24 +1,22 @@
 'use client'
 
+import { useAgentDetail } from '@/components/queries-reloaded'
+import { LoadingShapes } from '@/components/suite/loading-shapes'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Tabs } from '@ark-ui/react/tabs'
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
-import { useAgentDetail } from './queries-reloaded'
-import { LoadingShapes } from './suite/loading-shapes'
-import { Button } from './ui/button'
 
-export function AgentViewLayout({
+export default function AgentLayout({
   params,
-  className,
   children,
-}: { params: string } & React.ComponentProps<'div'>) {
-  const agentSlug = params
-
+}: {
+  params: { slug: string }
+  children: React.ReactNode
+}) {
+  const agentSlug = params.slug
   const tabSlug = useSelectedLayoutSegment()
-
-  console.log('agentSlug', agentSlug)
-  console.log('tabSlug', tabSlug)
 
   const rootPath = `/agent/${agentSlug}`
   const activeTab = tabSlug ?? 'detail'
@@ -39,7 +37,7 @@ export function AgentViewLayout({
     )
 
   return (
-    <div className={cn('grid grid-rows-[auto_auto_1fr]', className)}>
+    <div className="grid grid-rows-[auto_auto_1fr]">
       <div>
         <h2 className="px-10 py-6 text-lg font-semibold leading-none">{agent.data?.name}</h2>
       </div>
@@ -54,7 +52,9 @@ export function AgentViewLayout({
                   className={cn('text-sm font-normal hover:bg-background')}
                   asChild
                 >
-                  <Link href={rootPath + '/' + t.value}>{t.label}</Link>
+                  <Link href={rootPath + '/' + (t.value === 'detail' ? '' : t.value)}>
+                    {t.label}
+                  </Link>
                 </Button>
               </Tabs.Trigger>
             ))}

@@ -1,6 +1,6 @@
 'use client'
 
-import { EngineCard } from '@/components/suite/engine-card'
+import { EngineCard } from '@/components/engine-card'
 import { useEnginesQuery } from '@/components/suite/queries'
 
 export default function CompPage() {

@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Markdown } from '@/components/util/markdown'
 import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'

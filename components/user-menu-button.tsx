@@ -1,15 +1,17 @@
-'use client'
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Session } from '@/lib/server'
+import { getSession, Session } from '@/lib/server'
+import Link from 'next/link'
 import { Button } from './ui/button'
 
-export function UserMenuButton({
-  session,
-  className,
-}: { session: Session | null } & React.ComponentProps<'div'>) {
-  if (!session) return '(no)'
+export async function UserMenuButton({ className }: {} & React.ComponentProps<'div'>) {
+  const session = await getSession()
+  if (!session)
+    return (
+      <Button asChild>
+        <Link href="/api/auth/login">log in</Link>
+      </Button>
+    )
 
   const { image } = session
 
