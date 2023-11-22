@@ -1,6 +1,6 @@
 'use client'
 
-import type { Agent } from '@/lib/schemas'
+import type { Agent } from '@/lib/db'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { NodeRendererProps, Tree } from 'react-arborist'

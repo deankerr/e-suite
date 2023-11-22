@@ -16,14 +16,14 @@ export default function AgentPage({ params }: { params: { slug: string } }) {
   return (
     <AgentShell className="grid grid-cols-2 overflow-hidden">
       {/* Details */}
-      <div className="flex flex-col gap-4 overflow-y-auto p-6">
+      <div className="flex flex-col gap-4 overflow-y-auto border-r p-6">
         <AgentCard agent={agent.data} />
         <EngineCard engine={agent.data.engine} />
-        <InferenceParameters />
+        <InferenceParameters className="rounded-md border" />
       </div>
 
       {/* Chat */}
-      <InferenceBuffer className="overflow-y-auto border-l" />
+      <InferenceBuffer agent={agent.data} className="overflow-y-auto" />
     </AgentShell>
   )
 }

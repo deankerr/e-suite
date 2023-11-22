@@ -1,30 +1,43 @@
 'use client'
 
+import { Separator } from '@/components/ui/separator'
+import { Agent } from '@/lib/db'
 import { cn } from '@/lib/utils'
-import { useAgentQuery, useEngineQuery, useTabs } from '../suite/queries'
-import { useAgentChat } from '../suite/use-agent-chat'
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
+import { Message } from 'ai'
 import { MessageBar } from './message-bar'
 import { MessageBubble } from './message-bubble'
+import { MessageBubbleNext } from './message-bubble-next'
+import { useAgentChat } from './use-agent-chat'
 
-export function InferenceBuffer({ className, ...divProps }: React.ComponentProps<'div'>) {
-  const { focusedTab } = useTabs()
-  const { data: agent } = useAgentQuery(focusedTab?.agentId)
-  const { data: engine } = useEngineQuery(agent?.engineId)
-
+export function InferenceBuffer({
+  agent,
+  className,
+  ...divProps
+}: { agent: Agent } & React.ComponentProps<'div'>) {
   const chatId = agent ? agent.id + '-tmpchatId' : ''
-
-  const chat = useAgentChat(chatId, agent, engine)
+  const chat = useAgentChat(chatId, agent)
   const isWaiting = chat.isLoading && !chat.streamingId
+
+  const { user } = useKindeBrowserClient()
+  const userAvatar = (user && user.picture) ?? ''
+
+  const avatar = (role: Message['role']) => {
+    if (role === 'user') return userAvatar
+    if (role === 'assistant') return '/' + agent.image
+  }
 
   return (
     <div
       {...divProps}
-      className={cn('grid justify-normal [&_>*]:col-start-1 [&_>*]:row-start-1', className)}
+      className={cn('grid justify-center [&_>*]:col-start-1 [&_>*]:row-start-1', className)}
     >
-      <div className={cn('max-w-3xl space-y-4 p-6', className)}>
+      <div className={cn('max-w-3xl space-y-1 p-6 pb-20')}>
+        <Separator />
         {chat.messages.map((m) => (
-          <MessageBubble
+          <MessageBubbleNext
             variant={m.role}
+            avatar={avatar(m.role)}
             content={m.content}
             loading={chat.streamingId === m.id}
             key={m.id}
@@ -32,7 +45,7 @@ export function InferenceBuffer({ className, ...divProps }: React.ComponentProps
         ))}
         {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
       </div>
-      <div className="sticky bottom-0 w-full self-end p-4">
+      <div className="sticky bottom-0 w-full max-w-3xl self-end p-4">
         <MessageBar className="mx-auto" chat={chat} />
       </div>
     </div>

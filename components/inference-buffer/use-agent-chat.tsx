@@ -1,12 +1,13 @@
-import { Agent } from '@/lib/schemas'
-import { Engine } from '@prisma/client'
+import { Agent } from '@/lib/db'
+import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
+import { sampleConvo } from './sample-data'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent: Agent | undefined, engine: Engine | undefined) {
+export function useAgentChat(chatId: string, agent: Agent | undefined) {
   const initialMessages = agent
     ? [
         {
@@ -14,27 +15,26 @@ export function useAgentChat(chatId: string, agent: Agent | undefined, engine: E
           role: `system` as const,
           content: `You are an AI assistant named ${agent.name}.`,
         },
+        ...sampleConvo,
       ]
     : []
 
-  const body: Record<string, unknown> =
-    agent && engine
-      ? {
-          model: engine.providerModelId,
-          engineId: agent.engineId,
-        }
-      : {}
-
-  if (agent && engine) {
-    // console.log('agentchat ready')
-    const parameters = agent.parameters[agent.engineId]
-    if (parameters && parameters.fieldsEnabled) {
-      for (const key of parameters.fieldsEnabled) {
-        const param = parameters[key as keyof typeof parameters]
-        if (param) body[key] = param
+  const body: Record<string, unknown> = agent
+    ? {
+        model: agent.engine.providerModelId,
+        engineId: agent.engineId,
       }
-    }
-  }
+    : {}
+
+  // if (agent && engine) {
+  //   const parameters = agent.parameters[agent.engineId]
+  //   if (parameters && parameters.fieldsEnabled) {
+  //     for (const key of parameters.fieldsEnabled) {
+  //       const param = parameters[key as keyof typeof parameters]
+  //       if (param) body[key] = param
+  //     }
+  //   }
+  // }
 
   const chat = useChat({
     id: chatId,

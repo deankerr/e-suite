@@ -3,8 +3,8 @@ import { TextareaAutosize } from '@/components/ui/textarea-autosize'
 import { cn } from '@/lib/utils'
 import { HeartIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
-import { AgentChatHelpers } from '../suite/use-agent-chat'
 import { sampleConvo } from './sample-data'
+import { AgentChatHelpers } from './use-agent-chat'
 
 export function MessageBar({
   chat,
