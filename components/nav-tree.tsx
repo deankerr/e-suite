@@ -2,10 +2,12 @@
 
 import type { Agent } from '@/lib/db'
 import { cn } from '@/lib/utils'
-import { useRouter } from 'next/navigation'
-import { NodeRendererProps, Tree } from 'react-arborist'
-import { useAgents, usePathnameFocusedAgentId } from './queries-reloaded'
+import { useParams, useRouter } from 'next/navigation'
+import { NodeApi, NodeRendererProps, Tree } from 'react-arborist'
+import { useAgents } from './queries-reloaded'
 import { Loading } from './ui/loading'
+
+type Node = NodeApi & {}
 
 export function NavTree({ className }: React.ComponentProps<'div'>) {
   const agents = useAgents()
@@ -39,8 +41,8 @@ export function NavTree({ className }: React.ComponentProps<'div'>) {
 
 function Node({ node, style, dragHandle }: NodeRendererProps<any>) {
   const isFolder = Array.isArray(node.children)
-  const focusedId = usePathnameFocusedAgentId()
-  const isFocusedAgent = focusedId === node.data.id
+  const params = useParams()
+  const isCurrentAgent = params?.slug === node.data.id
 
   return (
     <div
@@ -48,11 +50,11 @@ function Node({ node, style, dragHandle }: NodeRendererProps<any>) {
       ref={dragHandle}
       className={cn(
         'flex h-full items-center font-medium',
-        isFolder ? 'text-sm' : 'text-foreground',
-        node.isFocused && !isFolder && 'border',
-        isFocusedAgent && 'rounded-md bg-primary font-medium text-primary-foreground',
+        isFolder && 'text-sm text-muted-foreground',
+        !isFolder && 'cursor-pointer text-foreground/80 hover:text-foreground',
+        isCurrentAgent && 'rounded-md bg-primary font-medium text-primary-foreground',
       )}
-      onClick={() => node.focus()}
+      // onClick={() => node.focus()}
     >
       {node.data.name}
     </div>

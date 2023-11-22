@@ -19,7 +19,9 @@ import { useRef } from 'react'
 
 export function AgentCard({ agent, className }: { agent: Agent } & React.ComponentProps<'div'>) {
   return (
-    <section className={cn('grid grid-cols-[auto_1fr] gap-4 rounded-md border p-6', className)}>
+    <section
+      className={cn('grid grid-cols-[auto_1fr] gap-4 rounded-md border bg-muted p-6', className)}
+    >
       <div className="">
         <Image src={'/' + agent.image} width={100} height={100} alt="display picture" />
       </div>

@@ -12,7 +12,11 @@ async function getSessionUser() {
     include: {
       agents: {
         include: {
-          engine: true,
+          engine: {
+            include: {
+              provider: true,
+            },
+          },
         },
       },
     },
@@ -67,7 +71,11 @@ async function createSessionUser(session: Session) {
     include: {
       agents: {
         include: {
-          engine: true,
+          engine: {
+            include: {
+              provider: true,
+            },
+          },
         },
       },
     },
@@ -82,6 +90,7 @@ async function getAgentsOwnedBy(ownerId: string) {
     where: { ownerId },
     include: { engine: { include: { provider: true } } },
   })
+  console.log('agents', agents)
   return agents
 }
 
@@ -93,6 +102,7 @@ async function getAgentOwnedBy(id: string, ownerId: string) {
   return agent
 }
 export type Agent = Awaited<ReturnType<typeof getAgentOwnedBy>>
+export type Engine = Awaited<ReturnType<typeof getAgentOwnedBy>>['engine']
 
 export const db = {
   getSessionUser,

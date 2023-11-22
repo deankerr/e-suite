@@ -9,11 +9,6 @@ import {
 import { useParams } from 'next/navigation'
 import { getAgent, getAgents } from './actions-reloaded'
 
-export function usePathnameFocusedAgentId() {
-  const { id } = useParams()
-  return id ? id[0] : undefined
-}
-
 export const agentsQueryKeys = {
   all: ['agents'],
   detail: (id: string) => ['agents', 'detail', id],
@@ -42,15 +37,5 @@ export function useAgentDetail(id = '') {
         ?.find((agent) => agent.id === id)
     },
     enabled: !!id,
-  })
-}
-
-export function useActiveAgent() {
-  const active = usePathnameFocusedAgentId() ?? ''
-
-  return useQuery({
-    queryKey: agentsQueryKeys.detail(active),
-    queryFn: ({ queryKey }) => getAgent(queryKey[2]),
-    enabled: !!active,
   })
 }

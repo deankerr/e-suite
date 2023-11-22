@@ -1,1 +1,1 @@
-export function useNavigation() {}
+export function useCurrentAgent() {}
