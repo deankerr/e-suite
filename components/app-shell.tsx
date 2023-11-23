@@ -40,7 +40,7 @@ export async function AppShell({ className, children }: React.ComponentProps<'di
   }
 
   return (
-    <div className={cn('grid h-full grid-flow-col grid-cols-[auto_1fr]', className)}>
+    <div className={cn('flex h-full border', className)}>
       <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>
     </div>
   )

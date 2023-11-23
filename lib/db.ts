@@ -101,6 +101,12 @@ async function getAgentOwnedBy(id: string, ownerId: string) {
   })
   return agent
 }
+
+async function getAllEngines() {
+  const engines = await prisma.engine.findMany({})
+  return engines
+}
+
 export type Agent = Awaited<ReturnType<typeof getAgentOwnedBy>>
 export type Engine = Awaited<ReturnType<typeof getAgentOwnedBy>>['engine']
 
@@ -108,4 +114,5 @@ export const db = {
   getSessionUser,
   getAgentsOwnedBy,
   getAgentOwnedBy,
+  getAllEngines,
 }

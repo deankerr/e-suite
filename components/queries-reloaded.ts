@@ -7,7 +7,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
-import { getAgent, getAgents } from './actions-reloaded'
+import { getAgent, getAgents, getEngines } from './actions-reloaded'
 
 export const agentsQueryKeys = {
   all: ['agents'],
@@ -38,4 +38,15 @@ export function useAgentDetail(id = '') {
     },
     enabled: !!id,
   })
+}
+
+const engineQueries = {
+  all: queryOptions({
+    queryKey: ['engines'],
+    queryFn: () => getEngines(),
+  }),
+} as const
+
+export function useEngines() {
+  return useQuery(engineQueries.all)
 }

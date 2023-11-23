@@ -36,7 +36,7 @@ function Section({
   children,
   className,
 }: { children?: React.ReactNode } & React.ComponentProps<'div'>) {
-  return <div className={cn('flex flex-col py-3', className)}>{children}</div>
+  return <div className={cn('flex flex-col pb-4 pt-3', className)}>{children}</div>
 }
 
 function SectionHead({
@@ -45,7 +45,10 @@ function SectionHead({
 }: { children?: React.ReactNode } & React.ComponentProps<'div'>) {
   return (
     <div
-      className={cn('flex items-center justify-between px-5 font-medium leading-none', className)}
+      className={cn(
+        'flex items-center justify-between gap-2 px-5 font-medium leading-none',
+        className,
+      )}
     >
       {children}
     </div>

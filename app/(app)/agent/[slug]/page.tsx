@@ -3,13 +3,12 @@
 import { AgentShell } from '@/components/agent-shell'
 import { AppPanel } from '@/components/app-panel'
 import { EngineCard } from '@/components/engine-card'
+import { EngineSelect } from '@/components/engine-select'
 import { InferenceBuffer } from '@/components/inference-buffer/inference-buffer'
-import { InferenceParameters } from '@/components/inference-parameters/Inference-parameters'
 import { useAgentDetail } from '@/components/queries-reloaded'
 import { SectionInferenceParameters } from '@/components/section-inference-parameters'
+import { EnginesCombobox } from '@/components/suite/engines-combobox'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { schemaAgentParameters } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
@@ -18,34 +17,39 @@ export default function AgentPage({ params }: { params: { slug: string } }) {
   const agentSlug = params.slug
   const agent = useAgentDetail(agentSlug)
   const [paramEditMode, setParamEditMode] = useState(false)
+  const [engineEditMode, setEngineEditMode] = useState(false)
+  const [engineSelectValue, setEngineSelectValue] = useState('')
+
   if (!agent.data) return <p>No agent?</p>
 
-  // const parameters = schemaAgentParameters.parse(agent.data.parameters)
-
-  // mock
-  const parameters = [
-    ['temperature', '1.0'],
-    ['max_tokens', '1234'],
-    ['frequency_penalty', '0.00'],
-    ['presence_penalty', '0.00'],
-    ['top_p', '1'],
-    ['stop', 'USER:'],
-  ]
-
   return (
-    <AgentShell className="flex divide-x overflow-hidden">
+    <>
       {/* Details */}
-      <AppPanel className="w-full max-w-md">
-        <AppPanel.Header imageStart={'/' + agent.data.image} title={agent.data.name}>
-          {/* <Button variant="ghost" size="icon" className="">
-            <Pencil1Icon />
-          </Button> */}
-        </AppPanel.Header>
+      <AppPanel className="w-full max-w-md border">
+        <AppPanel.Header
+          imageStart={'/' + agent.data.image}
+          title={agent.data.name}
+        ></AppPanel.Header>
 
         <AppPanel.Section>
           <AppPanel.SectionHead>
-            {agent.data.engine.displayName}
-            <Button variant="ghost" size="icon" className="">
+            {engineEditMode ? (
+              <EngineSelect value={engineSelectValue} setValue={setEngineSelectValue} />
+            ) : (
+              agent.data.engine.displayName
+            )}
+            <Button
+              variant={engineEditMode ? 'default' : 'ghost'}
+              size="icon"
+              onClick={() => {
+                if (engineEditMode) {
+                  // save changes
+                } else {
+                  setEngineSelectValue(agent.data.engineId)
+                }
+                setEngineEditMode(!engineEditMode)
+              }}
+            >
               <Pencil1Icon />
             </Button>
           </AppPanel.SectionHead>
@@ -73,13 +77,8 @@ export default function AgentPage({ params }: { params: { slug: string } }) {
         </AppPanel.Section>
       </AppPanel>
 
-      {/* <div className="flex flex-col gap-4 overflow-y-auto border-r-2 px-6 pt-4">
-        <AgentCard agent={agent.data} className="" />
-        
-      </div> */}
-
       {/* Chat */}
       <InferenceBuffer agent={agent.data} className="col-span-2 overflow-y-auto" />
-    </AgentShell>
+    </>
   )
 }
