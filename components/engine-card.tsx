@@ -11,20 +11,17 @@ export function EngineCard({
     ['category', engine.type],
     ['context length', engine.contextLength],
     ['license', engine.license || '[unknown]'],
-    ['price (input)', nanoUSDToDollars(Number(engine.costInputNanoUSD)).toString()],
-    ['price (output)', nanoUSDToDollars(Number(engine.costOutputNanoUSD)).toString()],
+    ['price (input)', '$' + nanoUSDToDollars(Number(engine.costInputNanoUSD)).toString()],
+    ['price (output)', '$' + nanoUSDToDollars(Number(engine.costOutputNanoUSD)).toString()],
   ] // availability, sources, datasheet, moderation
 
   return (
     <div
       className={cn(
-        'grid grid-cols-[repeat(auto-fit,_minmax(10rem,_1fr))] items-center gap-2 rounded-md border-2 p-6',
+        'grid grid-cols-[repeat(auto-fit,_minmax(8rem,_1fr))] items-center gap-2',
         className,
       )}
     >
-      <div className="col-span-2">
-        <h2 className="text-md font-semibold leading-none">{engine.displayName}</h2>
-      </div>
       {data.map((d) => (
         <div key={d[0]} className="h-full">
           <span className="text-xs text-muted-foreground ">{d[0]}</span>
