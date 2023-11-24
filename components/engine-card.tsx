@@ -1,10 +1,13 @@
 import { Engine } from '@/lib/db'
 import { cn, nanoUSDToDollars } from '@/lib/utils'
+import { Loading } from './ui/loading'
 
 export function EngineCard({
   engine,
   className,
-}: { engine: Engine } & React.ComponentProps<'div'>) {
+}: { engine?: Engine } & React.ComponentProps<'div'>) {
+  if (!engine) return <Loading />
+
   const data = [
     ['via', engine.provider?.displayName],
     ['creator', engine.creator],

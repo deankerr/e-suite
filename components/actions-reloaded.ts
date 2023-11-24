@@ -2,30 +2,34 @@
 
 import { db } from '@/lib/db'
 import { AppError } from '@/lib/error'
-import { schemaAgent } from '@/lib/schemas'
 import { getSession, Session } from '@/lib/server'
-import { Return } from '@prisma/client/runtime/library'
-import z from 'zod'
-import { errorMap } from 'zod-validation-error'
+import z, { ZodError } from 'zod'
+import { errorMap, fromZodError } from 'zod-validation-error'
 
 z.setErrorMap(errorMap)
 
 // type WrappedActionInput = (user: Session) => Promise<any>
-type AsyncFunc<T extends any[], U> = (user: Session, id: string) => Promise<U>
+type AsyncFunc<T extends any[], U> = (user: Session, id: string, data?: unknown) => Promise<U>
 
 function wrapAction<T extends any[], U>(action: AsyncFunc<T, U>): (...args: any[]) => Promise<U> {
-  return async (id = '') => {
+  return async (id = '', data?: unknown) => {
     try {
       const user = await getSession()
       if (!user) throw new AppError('You are not logged in.')
-      return action(user, id)
+      const result = action(user, id, data)
+      return result
     } catch (err) {
-      if (err instanceof Error) {
-        console.error(err)
-      } else {
-        console.error(err)
+      console.error('err', err)
+
+      if (err instanceof AppError) {
+        throw err
       }
-      throw err
+
+      if (err instanceof ZodError) {
+        throw new AppError('Validation error ' + fromZodError(err).message)
+      }
+
+      throw new AppError('An unknown error occurred.')
     }
   }
 }
@@ -40,6 +44,27 @@ export const getAgent = wrapAction(async (user, id) => {
   return agent
 })
 
+const updateAgentDataSchema = z
+  .object({
+    name: z.string(),
+    image: z.string(),
+    engineId: z.string(),
+    parameters: z.record(z.any()),
+  })
+  .partial()
+export type UpdateAgentDataSchema = z.infer<typeof updateAgentDataSchema>
+
+export const updateAgent = wrapAction(async (user, id, data) => {
+  console.log('updateAgent')
+  const parsed = updateAgentDataSchema.parse(data)
+  const agent = await db.updateAgentOwnedBy(id, user.id, parsed)
+  return agent
+})
+
 export const getEngines = wrapAction(async () => {
   return await db.getAllEngines()
+})
+
+export const getEngine = wrapAction(async (user, id) => {
+  return await db.getEngineById(id)
 })

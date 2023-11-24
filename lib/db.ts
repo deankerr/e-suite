@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid/non-secure'
-import { prisma } from './prisma'
+import { prisma, Prisma } from './prisma'
 import { schemaAgent, schemaWorkbench } from './schemas'
 import { getSession, Session } from './server'
 
@@ -90,7 +90,6 @@ async function getAgentsOwnedBy(ownerId: string) {
     where: { ownerId },
     include: { engine: { include: { provider: true } } },
   })
-  console.log('agents', agents)
   return agents
 }
 
@@ -102,9 +101,31 @@ async function getAgentOwnedBy(id: string, ownerId: string) {
   return agent
 }
 
+async function updateAgentOwnedBy(
+  id: string,
+  ownerId: string,
+  data: Prisma.AgentUncheckedUpdateInput,
+) {
+  await prisma.agent.update({
+    where: {
+      id,
+      ownerId,
+    },
+    data,
+  })
+}
+
 async function getAllEngines() {
-  const engines = await prisma.engine.findMany({})
+  const engines = await prisma.engine.findMany({ include: { provider: true } })
   return engines
+}
+
+async function getEngineById(id: string) {
+  const engine = await prisma.engine.findUniqueOrThrow({
+    where: { id },
+    include: { provider: true },
+  })
+  return engine
 }
 
 export type Agent = Awaited<ReturnType<typeof getAgentOwnedBy>>
@@ -114,5 +135,7 @@ export const db = {
   getSessionUser,
   getAgentsOwnedBy,
   getAgentOwnedBy,
+  updateAgentOwnedBy,
   getAllEngines,
+  getEngineById,
 }

@@ -19,7 +19,11 @@ import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { useEngines } from './queries-reloaded'
 
-export function EngineSelect(props: { value?: string; setValue?: (value: string) => void }) {
+export function EngineSelect(props: {
+  value?: string
+  setValue?: (value: string) => void
+  className?: React.ComponentProps<typeof Button>['className']
+}) {
   const [open, setOpen] = useState(false)
   const [localValue, setLocalValue] = useState(props.value ?? '')
 
@@ -35,7 +39,7 @@ export function EngineSelect(props: { value?: string; setValue?: (value: string)
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-full max-w-sm justify-between')}
+          className={cn('w-full max-w-sm justify-between', props.className)}
         >
           {value
             ? engines.data?.find((item) => item.id === value)?.displayName

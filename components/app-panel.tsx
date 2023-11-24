@@ -6,12 +6,10 @@ export function AppPanel({ className, children }: {} & React.ComponentProps<'div
 }
 
 function Header({
-  title,
   imageStart,
   children,
   className,
 }: {
-  title?: React.ReactNode
   imageStart?: string
   children?: React.ReactNode
 } & React.ComponentProps<'div'>) {
@@ -26,7 +24,7 @@ function Header({
           className="box-content rounded-lg border border-muted"
         />
       )}
-      {title && <h2 className={cn('py-2 text-lg font-semibold leading-none')}>{title}</h2>}
+
       {children}
     </div>
   )
