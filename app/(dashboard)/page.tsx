@@ -1,16 +1,14 @@
-import { AppShell } from '@/components/app-shell'
-import { getSession } from '@/lib/server'
 import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components'
 
 export default async function AppLandingPage() {
-  // const session = await getSession()
-  // if (!session) return <p>Not logged in ehh?</p>
-
   return (
     <div>
       Hello! App landing page
+      <br />
       <LoginLink>Sign in</LoginLink>
+      <br />
       <RegisterLink>Sign up</RegisterLink>
+      <br />
       <LogoutLink>Log out</LogoutLink>
     </div>
   )

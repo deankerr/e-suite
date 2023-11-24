@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { Message } from 'ai'
 import { MessageBar } from './message-bar'
-import { MessageBubble } from './message-bubble'
 import { MessageBubbleNext } from './message-bubble-next'
 import { useAgentChat } from './use-agent-chat'
 
@@ -43,7 +42,7 @@ export function InferenceBuffer({
             key={m.id}
           />
         ))}
-        {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
+        {/* {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />} */}
       </div>
       <div className="sticky bottom-0 w-full max-w-3xl self-end p-4">
         <MessageBar className="mx-auto" chat={chat} />

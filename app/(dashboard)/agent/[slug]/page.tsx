@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
-export default function AgentPage({ params }: { params: { slug: string } }) {
+export default function AgentSlugPage({ params }: { params: { slug: string } }) {
   const agentSlug = params.slug
   const agent = useAgentDetail(agentSlug)
 
@@ -119,4 +119,52 @@ export default function AgentPage({ params }: { params: { slug: string } }) {
           </Tabs.List>
         </Tabs.Root>
       </div>
+*/
+
+/* 
+
+function RenameDialog({
+  children,
+  current,
+  onSubmit,
+}: {
+  children: React.ReactNode
+  current: string
+  onSubmit: (value: string) => unknown
+}) {
+  const ref = useRef<HTMLInputElement | null>(null)
+
+  const submit = () => {
+    const value = ref.current?.value
+    if (value) onSubmit(value)
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Rename Agent</DialogTitle>
+          <DialogDescription>Rename Agent</DialogDescription> 
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <div className="grid flex-1 gap-2">
+              <Label htmlFor="agent-name" className="sr-only">
+                Name
+              </Label>
+              <Input ref={ref} id="agent-name" defaultValue={current} />
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-start">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary" onClick={submit}>
+                Save
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+  
 */
