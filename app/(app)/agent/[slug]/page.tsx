@@ -97,3 +97,26 @@ export default function AgentPage({ params }: { params: { slug: string } }) {
     </>
   )
 }
+
+/* ark tabs
+   <div className="border-b pb-0.5">
+        <Tabs.Root defaultValue={activeTab}>
+          <Tabs.List className="">
+            {tabs.map((t) => (
+              <Tabs.Trigger key={t.value} value={t.value} asChild>
+                <Button
+                  variant="ghost"
+                  className={cn('text-sm font-normal hover:bg-background')}
+                  asChild
+                >
+                  <Link href={rootPath + '/' + (t.value === 'detail' ? '' : t.value)}>
+                    {t.label}
+                  </Link>
+                </Button>
+              </Tabs.Trigger>
+            ))}
+            <Tabs.Indicator className="h-0.5 bg-primary" />
+          </Tabs.List>
+        </Tabs.Root>
+      </div>
+*/
