@@ -28,7 +28,6 @@ export async function getSession() {
     firstName: user.given_name,
     lastName: user.family_name,
     image: user.picture,
-    permissions: keys,
     role,
   }
 }

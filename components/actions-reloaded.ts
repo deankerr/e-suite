@@ -7,8 +7,6 @@ import { getSession, Session } from '@/lib/server'
 import z, { ZodError } from 'zod'
 import { errorMap, fromZodError } from 'zod-validation-error'
 
-z.setErrorMap(errorMap)
-
 // type WrappedActionInput = (user: Session) => Promise<any>
 type AsyncFunc<T extends any[], U> = (user: Session, id: string, data?: unknown) => Promise<U>
 
@@ -35,12 +33,12 @@ function wrapAction<T extends any[], U>(action: AsyncFunc<T, U>): (...args: any[
   }
 }
 
-export const getAgents = wrapAction(async (user) => {
+export const _dep_getAgents = wrapAction(async (user) => {
   const agents = await db.getAgentsOwnedBy(user.id)
   return agents
 })
 
-export const getAgent = wrapAction(async (user, id) => {
+export const _dep_getAgent = wrapAction(async (user, id) => {
   const agent = await db.getAgentOwnedBy(id, user.id)
   return agent
 })
@@ -55,47 +53,60 @@ const updateAgentDataSchema = z
   .partial()
 export type UpdateAgentDataSchema = z.infer<typeof updateAgentDataSchema>
 
-export const updateAgent = wrapAction(async (user, id, data) => {
+export const _dep_updateAgent = wrapAction(async (user, id, data) => {
   console.log('updateAgent')
   const parsed = updateAgentDataSchema.parse(data)
   const agent = await db.updateAgentOwnedBy(id, user.id, parsed)
   return agent
 })
 
-export const getEngines = wrapAction(async () => {
+export const _dep_getEngines = wrapAction(async () => {
   return await db.getAllEngines()
 })
 
-export const getEngine = wrapAction(async (user, id) => {
+export const _dep_getEngine = wrapAction(async (user, id) => {
   return await db.getEngineById(id)
 })
 
 const inputSch = z.object({ id: z.string() })
 
+//* produced function with added session/input validation
 type ProtectedAction<Z extends z.ZodTypeAny, R extends any> = (rawInput: z.infer<Z>) => Promise<R>
 
 function act<Z extends z.ZodTypeAny, R>(
   inputSchema: Z,
-  serverAction: (parsedInput: { user: Session; data: z.infer<Z> }) => R,
+  serverAction: (parsedInput: { user: Session; data: z.infer<Z> }) => Promise<R>,
 ): ProtectedAction<Z, R> {
   return async function validateRequest(rawInput) {
-    //* login/session check
-    const user = await getSession()
-    if (!user) throw new Error('Not logged in.')
+    try {
+      //* login/session check
+      const user = await getSession()
+      if (!user) throw new AppError('Not logged in.')
 
-    //* validate input
-    z.setErrorMap(errorMap)
-    const parsedInput = inputSchema.parse(rawInput)
+      //* validate input
+      const parsedInput = inputSchema.parse(rawInput)
 
-    const result = await serverAction({ data: parsedInput, user })
-    return result
+      //* execute action
+      const result = await serverAction({ data: parsedInput, user })
+      return result
+    } catch (err) {
+      console.error(err)
+      if (err instanceof AppError) {
+        throw err
+      } else if (err instanceof ZodError) {
+        throw new AppError(fromZodError(err).message)
+      } else {
+        if (process.env.NODE_ENV === 'development') throw err
+        else throw new AppError('An unknown error occurred.')
+      }
+    }
   }
 }
 
 export const getAgent3 = act(inputSch, async ({ user, data }) => {
   const { id } = data
   const agent = await prisma.agent.findUniqueOrThrow({
-    where: { id },
+    where: { id, ownerId: user.id },
     include: { engine: { include: { provider: true } } },
   })
   return agent

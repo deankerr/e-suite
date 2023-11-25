@@ -10,12 +10,12 @@ import {
 import { useParams } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-  getAgent,
+  _dep_getAgent,
+  _dep_getAgents,
+  _dep_getEngine,
+  _dep_getEngines,
+  _dep_updateAgent,
   getAgent3,
-  getAgents,
-  getEngine,
-  getEngines,
-  updateAgent,
   UpdateAgentDataSchema,
 } from './actions-reloaded'
 
@@ -27,7 +27,7 @@ export const agentsQueryKeys = {
 export function useAgents() {
   return useQuery({
     queryKey: agentsQueryKeys.all,
-    queryFn: () => getAgents(),
+    queryFn: () => _dep_getAgents(),
   })
 }
 
@@ -35,13 +35,13 @@ export function useAgentDetail(id = '') {
   const queryClient = useQueryClient()
   return useQuery({
     queryKey: agentsQueryKeys.detail(id),
-    queryFn: () => getAgent(id),
+    queryFn: () => _dep_getAgent(id),
     initialData: () => {
       return queryClient
         .getQueryData(
           queryOptions({
             queryKey: agentsQueryKeys.all,
-            queryFn: () => getAgents(),
+            queryFn: () => _dep_getAgents(),
           }).queryKey,
         )
         ?.find((agent) => agent.id === id)
@@ -53,7 +53,7 @@ export function useAgentDetail(id = '') {
 export function useAgent3({ id }: { id: string }) {
   return useQuery({
     queryKey: ['agent3', id],
-    queryFn: async () => await getAgent3({ id }),
+    queryFn: () => getAgent3({ id }),
     enabled: !!id,
   })
 }
@@ -62,7 +62,7 @@ export function useAgentMutation(id = '') {
   const queryClient = useQueryClient()
   return useMutation({
     mutationKey: ['agent', id],
-    mutationFn: async (data: Partial<Agent>) => await updateAgent(id, data),
+    mutationFn: async (data: Partial<Agent>) => await _dep_updateAgent(id, data),
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey: ['agents'] })
 
@@ -88,12 +88,12 @@ export function useAgentMutation(id = '') {
 const engineQueries = {
   all: queryOptions({
     queryKey: ['engines'],
-    queryFn: () => getEngines(),
+    queryFn: () => _dep_getEngines(),
   }),
   detail: (id: string) =>
     queryOptions({
       queryKey: ['engines', id],
-      queryFn: () => getEngine(id),
+      queryFn: () => _dep_getEngine(id),
     }),
 } as const
 
