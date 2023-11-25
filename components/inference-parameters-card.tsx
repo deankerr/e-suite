@@ -1,12 +1,11 @@
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { Checkbox, NumberInput } from '@ark-ui/react'
-import { CheckboxIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
+import { useEditableCardContext } from './deck'
 
-export function SectionInferenceParameters({
-  editMode = false,
-  className,
-}: { editMode?: boolean } & React.ComponentProps<'div'>) {
+export function InferenceParametersCard({ className }: React.ComponentProps<'div'>) {
+  const { isEditing } = useEditableCardContext()
+
   const parameters = [
     ['temperature', '1.00'],
     ['frequency_penalty', '1.00'],
@@ -16,26 +15,27 @@ export function SectionInferenceParameters({
 
   return (
     <>
+      <h3>Parameters</h3>
       <div
         className={cn(
           'flex flex-col justify-center divide-y font-mono text-sm',
-          editMode && 'divide-transparent',
+          isEditing && 'divide-transparent',
           className,
         )}
       >
         {parameters.map((p) => (
           <label key={p[0]} className="flex items-center py-1">
-            <Check editable={editMode} />
+            <Check editable={isEditing} />
             <span className="grow px-4">{p[0]}</span>
-            <NInput editable={editMode} />
+            <NInput editable={isEditing} />
           </label>
         ))}
 
         <label className="flex items-center py-1">
-          <Check editable={editMode} />
+          <Check editable={isEditing} />
           <span className="grow px-4">max_tokens</span>
           <NInput
-            editable={editMode}
+            editable={isEditing}
             min={1}
             max={2047}
             step={1}
@@ -45,7 +45,7 @@ export function SectionInferenceParameters({
         </label>
 
         <label className="flex items-center py-2">
-          <Check editable={editMode} />
+          <Check editable={isEditing} />
           <span className="grow px-4">stop</span>
           <span className="px-2">todo</span>
         </label>

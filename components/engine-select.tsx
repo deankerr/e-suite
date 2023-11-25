@@ -39,7 +39,7 @@ export function EngineSelect(props: {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('w-full max-w-sm justify-between', props.className)}
+          className={cn('w-full max-w-sm justify-between font-normal', props.className)}
         >
           {value
             ? engines.data?.find((item) => item.id === value)?.displayName
