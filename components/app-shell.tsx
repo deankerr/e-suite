@@ -1,18 +1,16 @@
-import { db } from '@/lib/db'
+import { initializeUserSession } from '@/api/server'
 import { cn } from '@/lib/utils'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import { agentsQueryKeys } from './queries-reloaded'
+import { agentQueries } from './queries'
 
 export async function AppShell({ className, children }: React.ComponentProps<'div'>) {
-  const sessionUser = await db.getSessionUser()
+  const sessionUser = await initializeUserSession()
   const queryClient = new QueryClient()
 
   if (sessionUser) {
-    const { user, workbench, agents } = sessionUser
+    const { user, agents } = sessionUser
     const engines = agents.map((agent) => agent.engine)
 
-    const getUser = () => ({ ...user, agentIds: agents.map((agent) => agent.id) })
-    const getWorkbench = () => workbench
     const getAgents = () => agents
     const getAgent = (id: string) => agents.find((agent) => agent.id === id)!
     const getEngine = (id: string) => engines.find((engine) => engine.id === id)!
@@ -26,10 +24,10 @@ export async function AppShell({ className, children }: React.ComponentProps<'di
     //   queryKey: ['workbench'],
     //   queryFn: getWorkbench,
     // })
-    await queryClient.prefetchQuery({
-      queryKey: agentsQueryKeys.all,
-      queryFn: getAgents,
-    })
+    // await queryClient.prefetchQuery({
+    //   queryKey: agentsQueryKeys.all,
+    //   queryFn: getAgents,
+    // })
 
     // for (const engine of engines) {
     //   await queryClient.prefetchQuery({

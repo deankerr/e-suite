@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import { getAgent, getAllAgents, getAllEngines, getEngine, updateAgent } from './actions'
 
 //* Agents
-const agentQueries = {
+export const agentQueries = {
   list: queryOptions({ queryKey: [{ entity: 'agents' }], queryFn: () => getAllAgents() }),
   detail: (id: string) =>
     queryOptions({

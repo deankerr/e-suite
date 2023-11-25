@@ -13,11 +13,10 @@ import {
   PopoverContentProps,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Engine } from '@/lib/db'
 import { cn } from '@/lib/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
-import { useEngines } from './queries-reloaded'
+import { useGetEngineList } from './queries'
 
 export function EngineSelect(props: {
   value?: string
@@ -30,7 +29,7 @@ export function EngineSelect(props: {
   const value = props.value ?? localValue
   const setValue = props.setValue ?? setLocalValue
 
-  const engines = useEngines()
+  const engines = useGetEngineList()
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
