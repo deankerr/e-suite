@@ -1,7 +1,9 @@
+import type { getAgentOwnedByUserById } from '@/api/user'
 import type { Prisma, Agent as PrismaAgent } from '@prisma/client'
 import z from 'zod'
 
 export type Agent = PrismaAgent
+export type AgentDetail = Awaited<ReturnType<typeof getAgentOwnedByUserById>>
 
 export const agentUpdateInputData = z
   .object({

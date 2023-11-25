@@ -1,4 +1,4 @@
-import { Agent } from '@/schema/user'
+import { Agent, AgentDetail } from '@/schema/user'
 import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
@@ -7,7 +7,7 @@ import { sampleConvo } from './sample-data'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent: Agent | undefined) {
+export function useAgentChat(chatId: string, agent?: AgentDetail) {
   const initialMessages = agent
     ? [
         {

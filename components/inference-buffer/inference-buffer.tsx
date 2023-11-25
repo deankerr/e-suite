@@ -2,7 +2,7 @@
 
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { Agent } from '@/schema/user'
+import { Agent, AgentDetail } from '@/schema/user'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { Message } from 'ai'
 import { MessageBar } from './message-bar'
@@ -13,7 +13,7 @@ export function InferenceBuffer({
   agent,
   className,
   ...divProps
-}: { agent: Agent } & React.ComponentProps<'div'>) {
+}: { agent: AgentDetail } & React.ComponentProps<'div'>) {
   const chatId = agent ? agent.id + '-tmpchatId' : ''
   const chat = useAgentChat(chatId, agent)
   const isWaiting = chat.isLoading && !chat.streamingId

@@ -29,7 +29,7 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
       </Deck>
 
       {/* Chat */}
-      {/* <InferenceBuffer agent={agent.data} className="col-span-2 overflow-y-auto" /> */}
+      <InferenceBuffer agent={agent.data} className="col-span-2 overflow-y-auto" />
     </>
   )
 }
