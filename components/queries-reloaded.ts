@@ -11,6 +11,7 @@ import { useParams } from 'next/navigation'
 import { toast } from 'sonner'
 import {
   getAgent,
+  getAgent3,
   getAgents,
   getEngine,
   getEngines,
@@ -45,6 +46,14 @@ export function useAgentDetail(id = '') {
         )
         ?.find((agent) => agent.id === id)
     },
+    enabled: !!id,
+  })
+}
+
+export function useAgent3({ id }: { id: string }) {
+  return useQuery({
+    queryKey: ['agent3', id],
+    queryFn: async () => await getAgent3({ id }),
     enabled: !!id,
   })
 }

@@ -2,6 +2,7 @@
 
 import { db } from '@/lib/db'
 import { AppError } from '@/lib/error'
+import { prisma } from '@/lib/prisma'
 import { getSession, Session } from '@/lib/server'
 import z, { ZodError } from 'zod'
 import { errorMap, fromZodError } from 'zod-validation-error'
@@ -67,4 +68,35 @@ export const getEngines = wrapAction(async () => {
 
 export const getEngine = wrapAction(async (user, id) => {
   return await db.getEngineById(id)
+})
+
+const inputSch = z.object({ id: z.string() })
+
+type ProtectedAction<Z extends z.ZodTypeAny, R extends any> = (rawInput: z.infer<Z>) => Promise<R>
+
+function act<Z extends z.ZodTypeAny, R>(
+  inputSchema: Z,
+  serverAction: (parsedInput: { user: Session; data: z.infer<Z> }) => R,
+): ProtectedAction<Z, R> {
+  return async function validateRequest(rawInput) {
+    //* login/session check
+    const user = await getSession()
+    if (!user) throw new Error('Not logged in.')
+
+    //* validate input
+    z.setErrorMap(errorMap)
+    const parsedInput = inputSchema.parse(rawInput)
+
+    const result = await serverAction({ data: parsedInput, user })
+    return result
+  }
+}
+
+export const getAgent3 = act(inputSch, async ({ user, data }) => {
+  const { id } = data
+  const agent = await prisma.agent.findUniqueOrThrow({
+    where: { id },
+    include: { engine: { include: { provider: true } } },
+  })
+  return agent
 })
