@@ -1,4 +1,4 @@
-import { Agent } from '@/lib/db'
+import { Agent } from '@/schema/user'
 import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'

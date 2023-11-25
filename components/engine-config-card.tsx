@@ -1,9 +1,9 @@
-import { useAgentDetail, useAgentMutation, useEngine } from '@/components/queries-reloaded'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useEditableCardContext } from './deck'
 import { EngineCard } from './engine-card'
 import { EngineSelect } from './engine-select'
+import { useGetAgentDetail, useGetEngineDetail, useUpdateAgent } from './queries'
 import { Loading } from './ui/loading'
 
 export function EngineConfigCard({
@@ -11,11 +11,11 @@ export function EngineConfigCard({
 }: { agentId?: string } & React.ComponentProps<'div'>) {
   const { isEditing } = useEditableCardContext()
 
-  const agent = useAgentDetail(agentId)
+  const agent = useGetAgentDetail(agentId)
   const [engineSelectValue, setEngineSelectValue] = useState('')
-  const engineSelectData = useEngine(engineSelectValue)
+  const engineSelectData = useGetEngineDetail(engineSelectValue)
 
-  const agentMutation = useAgentMutation(agent.data?.id)
+  const agentMutation = useUpdateAgent(agent.data?.id)
 
   if (
     engineSelectValue &&

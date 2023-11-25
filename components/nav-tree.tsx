@@ -1,16 +1,16 @@
 'use client'
 
-import type { Agent } from '@/lib/db'
 import { cn } from '@/lib/utils'
+import type { Agent } from '@/schema/user'
 import { useParams, useRouter } from 'next/navigation'
 import { NodeApi, NodeRendererProps, Tree } from 'react-arborist'
-import { useAgents } from './queries-reloaded'
+import { useGetAgentList } from './queries'
 import { Loading } from './ui/loading'
 
 type Node = NodeApi & {}
 
 export function NavTree({ className }: React.ComponentProps<'div'>) {
-  const agents = useAgents()
+  const agents = useGetAgentList()
   const agentTree = agents.data ? buildNodeTree(agents.data) : null
   const router = useRouter()
   return (

@@ -4,11 +4,11 @@ import { Deck } from '@/components/deck'
 import { EngineConfigCard } from '@/components/engine-config-card'
 import { InferenceBuffer } from '@/components/inference-buffer/inference-buffer'
 import { InferenceParametersCard } from '@/components/inference-parameters-card'
-import { useAgentDetail } from '@/components/queries-reloaded'
+import { useGetAgentDetail } from '@/components/queries'
 
 export default function AgentSlugPage({ params }: { params: { slug: string } }) {
   const agentSlug = params.slug
-  const agent = useAgentDetail(agentSlug)
+  const agent = useGetAgentDetail(agentSlug)
 
   if (!agent.data) return <p>No agent?</p>
 
@@ -29,7 +29,7 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
       </Deck>
 
       {/* Chat */}
-      <InferenceBuffer agent={agent.data} className="col-span-2 overflow-y-auto" />
+      {/* <InferenceBuffer agent={agent.data} className="col-span-2 overflow-y-auto" /> */}
     </>
   )
 }

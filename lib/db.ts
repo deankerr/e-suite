@@ -32,7 +32,7 @@ async function getSessionUser() {
 }
 
 async function createSessionUser(session: Session) {
-  const { permissions, role, ...newUser } = session
+  const { role, ...newUser } = session
 
   const user = await prisma.user.create({
     data: {

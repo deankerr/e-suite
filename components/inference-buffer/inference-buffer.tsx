@@ -1,8 +1,8 @@
 'use client'
 
 import { Separator } from '@/components/ui/separator'
-import { Agent } from '@/lib/db'
 import { cn } from '@/lib/utils'
+import { Agent } from '@/schema/user'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { Message } from 'ai'
 import { MessageBar } from './message-bar'
