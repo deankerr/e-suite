@@ -13,6 +13,7 @@ export function NavTree({ className }: React.ComponentProps<'div'>) {
   const agents = useGetAgentList()
   const agentTree = agents.data ? buildNodeTree(agents.data) : null
   const router = useRouter()
+
   return (
     <div className={cn('', className)}>
       {agents.isLoading && <Loading />}
@@ -20,7 +21,7 @@ export function NavTree({ className }: React.ComponentProps<'div'>) {
       {agentTree && (
         <div className="px-6">
           <Tree
-            initialData={agentTree}
+            data={agentTree}
             className=""
             rowHeight={32}
             padding={12}

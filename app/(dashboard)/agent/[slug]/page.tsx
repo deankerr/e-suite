@@ -1,5 +1,6 @@
 'use client'
 
+import { AvatarCard } from '@/components/avatar-card'
 import { Deck } from '@/components/deck'
 import { EngineDataCard } from '@/components/engine-data-card'
 import { InferenceBuffer } from '@/components/inference-buffer/inference-buffer'
@@ -16,9 +17,7 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
   return (
     <>
       <Deck className="w-full max-w-md">
-        <Deck.AvatarCard imageSrc={'/' + agent.data.image}>
-          <h2>{agent.data.name}</h2>
-        </Deck.AvatarCard>
+        <AvatarCard agent={agent.data} />
 
         <Deck.EditableCard hidebutton={true}>
           <EngineDataCard agent={agent.data} />
@@ -57,52 +56,4 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
           </Tabs.List>
         </Tabs.Root>
       </div>
-*/
-
-/* 
-
-function RenameDialog({
-  children,
-  current,
-  onSubmit,
-}: {
-  children: React.ReactNode
-  current: string
-  onSubmit: (value: string) => unknown
-}) {
-  const ref = useRef<HTMLInputElement | null>(null)
-
-  const submit = () => {
-    const value = ref.current?.value
-    if (value) onSubmit(value)
-  }
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Rename Agent</DialogTitle>
-          <DialogDescription>Rename Agent</DialogDescription> 
-          </DialogHeader>
-          <div className="flex items-center space-x-2">
-            <div className="grid flex-1 gap-2">
-              <Label htmlFor="agent-name" className="sr-only">
-                Name
-              </Label>
-              <Input ref={ref} id="agent-name" defaultValue={current} />
-            </div>
-          </div>
-          <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary" onClick={submit}>
-                Save
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-  
 */

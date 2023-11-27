@@ -34,7 +34,7 @@ export function useUpdateAgent(id = '') {
     mutationKey: [{ entity: 'agents', id }],
     mutationFn: (data: AgentUpdateInputData) => updateAgent({ id, data }),
     onMutate: async (updateData: AgentUpdateInputData) => {
-      await queryClient.cancelQueries({ queryKey: ['agents'] })
+      await queryClient.cancelQueries({ queryKey: [{ entity: 'agents' }] })
       const previousAgent = queryClient.getQueryData(agentQueries.detail(id).queryKey)
 
       queryClient.setQueryData(
@@ -50,7 +50,7 @@ export function useUpdateAgent(id = '') {
     },
     // Always refetch after error or success:
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: agentQueries.detail(id).queryKey })
+      queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
     },
   })
 }
