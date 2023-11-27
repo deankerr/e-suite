@@ -2,18 +2,36 @@ import { cn } from '@/lib/utils'
 import { AgentDetail } from '@/schema/user'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
-import { Deck, useEditableCardContext } from './deck'
+import { useState } from 'react'
+import { CancelButton, ConfirmButton, EditButton, LoadingButton } from './buttons'
+import { Deck } from './deck'
 
 export function InferenceParametersCard({
   agent,
   className,
 }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
-  const { isEditing } = useEditableCardContext()
+  const [isEditing, setIsEditing] = useState(false)
+
+  const isPending = false
   const parameters = getParametersForVendor(agent.engine.providerId)
 
   return (
     <>
+      <Deck.CardToolbar>
+        {isEditing ? (
+          <>
+            <CancelButton onClick={() => setIsEditing(false)} />
+            <ConfirmButton onClick={() => setIsEditing(false)} />
+          </>
+        ) : isPending ? (
+          <LoadingButton />
+        ) : (
+          <EditButton onClick={() => setIsEditing(true)} />
+        )}
+      </Deck.CardToolbar>
+
       <Deck.CardTitle>Parameters</Deck.CardTitle>
+
       <Deck.CardBody
         className={cn(
           'flex flex-col justify-center space-y-0 divide-y font-mono text-sm',
