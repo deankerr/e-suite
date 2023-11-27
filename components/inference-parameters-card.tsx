@@ -1,60 +1,73 @@
 import { cn } from '@/lib/utils'
+import { AgentDetail } from '@/schema/user'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
 import { Deck, useEditableCardContext } from './deck'
 
-export function InferenceParametersCard({ className }: React.ComponentProps<'div'>) {
+export function InferenceParametersCard({
+  agent,
+  className,
+}: { agent: AgentDetail } & React.ComponentProps<'div'>) {
   const { isEditing } = useEditableCardContext()
-
-  const parameters = [
-    ['temperature', '1.00'],
-    ['frequency_penalty', '1.00'],
-    ['presence_penalty', '1.00'],
-    ['top_p', '1.00'],
-  ]
+  const parameters = getParametersForVendor(agent.engine.providerId)
 
   return (
     <>
       <Deck.CardTitle>Parameters</Deck.CardTitle>
       <Deck.CardBody
         className={cn(
-          'flex flex-col justify-center divide-y font-mono text-sm',
+          'flex flex-col justify-center space-y-0 divide-y font-mono text-sm',
           isEditing && 'divide-transparent',
           className,
         )}
       >
-        {parameters.map((p) => (
-          <label key={p[0]} className="flex items-center py-1">
-            <Check editable={isEditing} />
-            <span className="grow px-4">{p[0]}</span>
-            <NInput editable={isEditing} />
-          </label>
-        ))}
+        {parameters.map((def) => {
+          if (def.type === 'number') {
+            return (
+              <label key={def.key} className="flex items-center py-1">
+                <Check editable={isEditing} />
+                <span className="grow px-4">{def.key}</span>
+                <NumInput
+                  editable={isEditing}
+                  min={def.min}
+                  max={def.max}
+                  formatOptions={{
+                    minimumFractionDigits: def.fractionDigits,
+                    maximumFractionDigits: def.fractionDigits,
+                  }}
+                  step={def.step}
+                  defaultValue={String(def.default)}
+                />
+              </label>
+            )
+          }
 
-        <label className="flex items-center py-1">
-          <Check editable={isEditing} />
-          <span className="grow px-4">max_tokens</span>
-          <NInput
-            editable={isEditing}
-            min={1}
-            max={2047}
-            step={1}
-            formatOptions={{ minimumFractionDigits: 0, maximumFractionDigits: 0 }}
-            defaultValue="300"
-          />
-        </label>
+          if (def.type === 'list') {
+            return (
+              <label key={def.key} className="flex items-center py-2">
+                <Check editable={isEditing} />
+                <span className="grow px-4">{def.key}</span>
+                <span className="px-2">todo list</span>
+              </label>
+            )
+          }
 
-        <label className="flex items-center py-2">
-          <Check editable={isEditing} />
-          <span className="grow px-4">stop</span>
-          <span className="px-2">todo</span>
-        </label>
+          if (def.type === 'string') {
+            return (
+              <label key={def.key} className="flex items-center py-2">
+                <Check editable={isEditing} />
+                <span className="grow px-4">{def.key}</span>
+                <span className="px-2">todo string</span>
+              </label>
+            )
+          }
+        })}
       </Deck.CardBody>
     </>
   )
 }
 
-function NInput({
+function NumInput({
   editable = true,
   className,
   ...props
@@ -64,7 +77,7 @@ function NInput({
       min={0}
       max={2}
       formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-      defaultValue="1.00"
+      defaultValue="1"
       step={0.1}
       allowMouseWheel={true}
       className={cn(
@@ -115,4 +128,118 @@ function Check({
       </Checkbox.Control>
     </Checkbox.Root>
   )
+}
+
+const parameterDefinitions = {
+  temperature: {
+    key: 'temperature',
+    type: 'number',
+    min: 0,
+    max: 2,
+    fractionDigits: 2,
+    step: 0.1,
+    default: 1,
+  },
+  frequency_penalty: {
+    key: 'frequency_penalty',
+    type: 'number',
+    min: -2,
+    max: 2,
+    fractionDigits: 2,
+    step: 0.1,
+    default: 0,
+  },
+  presence_penalty: {
+    key: 'presence_penalty',
+    type: 'number',
+    min: -2,
+    max: 2,
+    fractionDigits: 2,
+    step: 0.1,
+    default: 0,
+  },
+  repetition_penalty: {
+    key: 'repetition_penalty',
+    type: 'number',
+    min: 1,
+    max: 2,
+    fractionDigits: 2,
+    step: 0.1,
+    default: 1,
+  },
+  top_p: {
+    key: 'top_p',
+    type: 'number',
+    min: 0,
+    max: 1,
+    fractionDigits: 2,
+    step: 0.1,
+    default: 1,
+  },
+  top_k: {
+    key: 'top_k',
+    type: 'number',
+    min: 1,
+    max: 100,
+    fractionDigits: 0,
+    step: 1,
+    default: 1,
+  },
+  max_tokens: {
+    key: 'max_tokens',
+    type: 'number',
+    min: 1,
+    max: 2048, // TODO model maxes
+    fractionDigits: 0,
+    step: 1,
+    default: 2048,
+  },
+  stop: {
+    key: 'stop',
+    type: 'list',
+    max: 4, // TODO model maxes
+  },
+  stop_token: {
+    key: 'stop_token',
+    type: 'string',
+  },
+} as const
+
+type ModelParametersList = Array<keyof typeof parameterDefinitions>
+
+const openaiParameters: ModelParametersList = [
+  'temperature',
+  'max_tokens',
+  'frequency_penalty',
+  'presence_penalty',
+  'top_p',
+  'stop',
+]
+const openrouterParameters: ModelParametersList = [
+  'temperature',
+  'max_tokens',
+  'frequency_penalty',
+  'presence_penalty',
+  'top_p',
+  'stop',
+]
+const togetheraiParameters: ModelParametersList = [
+  'temperature',
+  'max_tokens',
+  'repetition_penalty',
+  'top_p',
+  'stop_token',
+]
+
+function getParametersForVendor(vendorId: string) {
+  switch (vendorId) {
+    case 'openai':
+      return openaiParameters.map((key) => parameterDefinitions[key])
+    case 'openrouter':
+      return openrouterParameters.map((key) => parameterDefinitions[key])
+    case 'togetherai':
+      return togetheraiParameters.map((key) => parameterDefinitions[key])
+    default:
+      throw new Error('invalid vendorId')
+  }
 }

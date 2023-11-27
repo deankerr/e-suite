@@ -24,7 +24,7 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
         </Deck.EditableCard>
 
         <Deck.EditableCard>
-          <InferenceParametersCard />
+          <InferenceParametersCard agent={agent.data} />
         </Deck.EditableCard>
       </Deck>
 
