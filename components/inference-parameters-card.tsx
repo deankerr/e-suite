@@ -1,19 +1,34 @@
+import { schemaAgentParametersRecord } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { AgentDetail } from '@/schema/user'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
+import { mapToObj } from 'remeda'
 import { CancelButton, ConfirmButton, EditButton, LoadingButton } from './buttons'
 import { Deck } from './deck'
+
+// TODO move to api layer
+function getStoredAgentParameters(agent: AgentDetail) {
+  const record = schemaAgentParametersRecord.parse(agent.parameters)
+  return record[agent.engineId] ?? {}
+}
 
 export function InferenceParametersCard({
   agent,
   className,
 }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
   const [isEditing, setIsEditing] = useState(false)
-
   const isPending = false
-  const parameters = getParametersForVendor(agent.engine.providerId)
+
+  const definitions = getEngineParametersAvailable(agent.engine.providerId)
+  const storedParameters = getStoredAgentParameters(agent)
+
+  const [currentParameters, setCurrentParameters] = useState(storedParameters)
+  const [currentChecked, setCurrentChecked] = useState(() => {
+    //* map existing values to boolean record
+    return mapToObj(definitions, (def) => [def.key, def.key in storedParameters])
+  })
 
   return (
     <>
@@ -39,12 +54,18 @@ export function InferenceParametersCard({
           className,
         )}
       >
-        {parameters.map((def) => {
+        {definitions.map((def) => {
           if (def.type === 'number') {
             return (
-              <label key={def.key} className="flex items-center py-1">
-                <Check editable={isEditing} />
-                <span className="grow px-4">{def.key}</span>
+              <div key={def.key} className="flex items-center py-1">
+                <Check
+                  editable={isEditing}
+                  checked={currentChecked[def.key]}
+                  onCheckedChange={({ checked }) =>
+                    setCurrentChecked({ ...currentChecked, [def.key]: checked })
+                  }
+                />
+                <label className="grow px-4">{def.key}</label>
                 <NumInput
                   editable={isEditing}
                   min={def.min}
@@ -54,9 +75,13 @@ export function InferenceParametersCard({
                     maximumFractionDigits: def.fractionDigits,
                   }}
                   step={def.step}
-                  defaultValue={String(def.default)}
+                  value={String(currentParameters[def.key] ?? def.default)}
+                  onValueChange={({ valueAsNumber }) => {
+                    setCurrentParameters({ ...currentParameters, [def.key]: valueAsNumber })
+                    setCurrentChecked({ ...currentChecked, [def.key]: true })
+                  }}
                 />
-              </label>
+              </div>
             )
           }
 
@@ -223,9 +248,10 @@ const parameterDefinitions = {
   },
 } as const
 
-type ModelParametersList = Array<keyof typeof parameterDefinitions>
+type ParameterKey = keyof typeof parameterDefinitions
+type EngineParametersList = ParameterKey[]
 
-const openaiParameters: ModelParametersList = [
+const openaiParameters: EngineParametersList = [
   'temperature',
   'max_tokens',
   'frequency_penalty',
@@ -233,7 +259,7 @@ const openaiParameters: ModelParametersList = [
   'top_p',
   'stop',
 ]
-const openrouterParameters: ModelParametersList = [
+const openrouterParameters: EngineParametersList = [
   'temperature',
   'max_tokens',
   'frequency_penalty',
@@ -241,7 +267,7 @@ const openrouterParameters: ModelParametersList = [
   'top_p',
   'stop',
 ]
-const togetheraiParameters: ModelParametersList = [
+const togetheraiParameters: EngineParametersList = [
   'temperature',
   'max_tokens',
   'repetition_penalty',
@@ -249,7 +275,7 @@ const togetheraiParameters: ModelParametersList = [
   'stop_token',
 ]
 
-function getParametersForVendor(vendorId: string) {
+function getEngineParametersAvailable(vendorId: string) {
   switch (vendorId) {
     case 'openai':
       return openaiParameters.map((key) => parameterDefinitions[key])

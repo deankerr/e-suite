@@ -15,13 +15,6 @@ const parameterKeys = [
 export const schemaEngine = z.object({})
 export const schemaAgentParameters = z
   .object({
-    fieldsEnabled: z
-      .string()
-      .array()
-      .transform((fieldsEnabled) => [
-        // only allowed, unique keys
-        ...new Set(fieldsEnabled.filter((field) => parameterKeys.includes(field))),
-      ]),
     temperature: z.number(),
     max_tokens: z.number(),
     frequency_penalty: z.number(),
@@ -30,7 +23,7 @@ export const schemaAgentParameters = z
     top_p: z.number(),
     top_k: z.number(),
     stop: z.string().array(),
-    stop_token: z.string().array(),
+    stop_token: z.string(),
   })
   .partial()
 
