@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
-import { useEditableCardContext } from './deck'
+import { Deck, useEditableCardContext } from './deck'
 
 export function InferenceParametersCard({ className }: React.ComponentProps<'div'>) {
   const { isEditing } = useEditableCardContext()
@@ -15,8 +15,8 @@ export function InferenceParametersCard({ className }: React.ComponentProps<'div
 
   return (
     <>
-      <h3>Parameters</h3>
-      <div
+      <Deck.CardTitle>Parameters</Deck.CardTitle>
+      <Deck.CardBody
         className={cn(
           'flex flex-col justify-center divide-y font-mono text-sm',
           isEditing && 'divide-transparent',
@@ -49,7 +49,7 @@ export function InferenceParametersCard({ className }: React.ComponentProps<'div
           <span className="grow px-4">stop</span>
           <span className="px-2">todo</span>
         </label>
-      </div>
+      </Deck.CardBody>
     </>
   )
 }

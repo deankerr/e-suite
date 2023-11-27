@@ -1,7 +1,7 @@
 'use client'
 
 import { Deck } from '@/components/deck'
-import { EngineConfigCard } from '@/components/engine-config-card'
+import { EngineDataCard } from '@/components/engine-data-card'
 import { InferenceBuffer } from '@/components/inference-buffer/inference-buffer'
 import { InferenceParametersCard } from '@/components/inference-parameters-card'
 import { useGetAgentDetail } from '@/components/queries'
@@ -19,8 +19,8 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
           <h2>{agent.data.name}</h2>
         </Deck.AvatarCard>
 
-        <Deck.EditableCard>
-          <EngineConfigCard agentId={agent.data.id} />
+        <Deck.EditableCard hidebutton={true}>
+          <EngineDataCard agent={agent.data} />
         </Deck.EditableCard>
 
         <Deck.EditableCard>

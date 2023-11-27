@@ -1,8 +1,8 @@
-import { Engine } from '@/lib/db'
 import { cn, nanoUSDToDollars } from '@/lib/utils'
+import { Engine } from '@/schema/data'
 import { Loading } from './ui/loading'
 
-export function EngineCard({
+export function EngineDataGrid({
   engine,
   className,
 }: { engine?: Engine } & React.ComponentProps<'div'>) {

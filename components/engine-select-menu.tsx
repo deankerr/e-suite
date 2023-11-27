@@ -13,37 +13,43 @@ import {
   PopoverContentProps,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, raise } from '@/lib/utils'
+import { Engine } from '@/schema/data'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
-import { useGetEngineList } from './queries'
 
-export function EngineSelect(props: {
-  value?: string
-  setValue?: (value: string) => void
+export function EngineSelectMenu({
+  engines,
+  value,
+  onValueChange,
+  className,
+  editable = true,
+}: {
+  engines: Engine[]
+  value?: Engine
+  onValueChange: (value: Engine) => void
   className?: React.ComponentProps<typeof Button>['className']
+  editable?: boolean
 }) {
   const [open, setOpen] = useState(false)
-  const [localValue, setLocalValue] = useState(props.value ?? '')
-
-  const value = props.value ?? localValue
-  const setValue = props.setValue ?? setLocalValue
-
-  const engines = useGetEngineList()
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={editable ? setOpen : undefined}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant={editable ? 'outline' : 'static'}
           role="combobox"
           aria-expanded={open}
-          className={cn('w-full max-w-sm justify-between font-normal', props.className)}
+          className={cn(
+            'flex justify-between px-2 font-normal',
+            editable ? '' : 'shadow-none',
+            className,
+          )}
         >
-          {value
-            ? engines.data?.find((item) => item.id === value)?.displayName
-            : 'Select a model...'}
-          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {value ? value.displayName : 'Select a model...'}
+          <CaretSortIcon
+            className={cn('ml-2 h-4 w-4 shrink-0', editable ? 'opacity-50' : 'opacity-0')}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent className={cn('w-[24rem] p-0')}>
@@ -51,21 +57,26 @@ export function EngineSelect(props: {
           <CommandInput placeholder={'Search models...'} className="h-9" />
           <CommandEmpty>No item found.</CommandEmpty>
           <CommandList>
-            {engines.data?.map((item) => {
+            {engines.map((engine) => {
               return (
                 <CommandItem
-                  key={item.id}
-                  value={item.id}
-                  onSelect={(selectedValue) => {
-                    if (selectedValue !== value) setValue(selectedValue)
+                  key={engine.id}
+                  value={engine.id}
+                  onSelect={(newValue) => {
+                    if (newValue !== value?.id) {
+                      const newEngine =
+                        engines.find((e) => e.id === newValue) ??
+                        raise('Invalid model select state')
+                      onValueChange(newEngine)
+                    }
                     setOpen(false)
                   }}
                 >
-                  {item.displayName}
+                  {engine.displayName}
                   <CheckIcon
                     className={cn(
                       'ml-auto h-4 w-4',
-                      value === item.id ? 'opacity-100' : 'opacity-0',
+                      value?.id === engine.id ? 'opacity-100' : 'opacity-0',
                     )}
                   />
                 </CommandItem>
