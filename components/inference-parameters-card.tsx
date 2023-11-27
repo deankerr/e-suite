@@ -1,42 +1,69 @@
-import { schemaAgentParametersRecord } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
-import { AgentDetail } from '@/schema/user'
+import { AgentDetail, AgentParametersRecord } from '@/schema/user'
 import { Checkbox, NumberInput } from '@ark-ui/react'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons'
-import { useState } from 'react'
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Cross2Icon,
+  PlusIcon,
+} from '@radix-ui/react-icons'
+import { useRef, useState } from 'react'
 import { mapToObj } from 'remeda'
 import { CancelButton, ConfirmButton, EditButton, LoadingButton } from './buttons'
 import { Deck } from './deck'
-
-// TODO move to api layer
-function getStoredAgentParameters(agent: AgentDetail) {
-  const record = schemaAgentParametersRecord.parse(agent.parameters)
-  return record[agent.engineId] ?? {}
-}
+import { useUpdateAgent } from './queries'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Textarea } from './ui/textarea'
 
 export function InferenceParametersCard({
   agent,
   className,
 }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
+  const updateAgent = useUpdateAgent(agent.id)
+  const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)
-  const isPending = false
 
   const definitions = getEngineParametersAvailable(agent.engine.providerId)
-  const storedParameters = getStoredAgentParameters(agent)
+  const storedParameters = agent.parameters[agent.engineId] ?? {}
 
-  const [currentParameters, setCurrentParameters] = useState(storedParameters)
-  const [currentChecked, setCurrentChecked] = useState(() => {
+  const [currentParameters, setCurrentParameters] = useState({ ...storedParameters })
+  const [currentChecked, setCurrentChecked] = useState(
     //* map existing values to boolean record
-    return mapToObj(definitions, (def) => [def.key, def.key in storedParameters])
-  })
+    mapToObj(definitions, (def) => [def.key, storedParameters[def.key] !== undefined]),
+  )
+
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   return (
     <>
       <Deck.CardToolbar>
         {isEditing ? (
           <>
-            <CancelButton onClick={() => setIsEditing(false)} />
-            <ConfirmButton onClick={() => setIsEditing(false)} />
+            <CancelButton
+              onClick={() => {
+                setCurrentParameters({ ...storedParameters })
+                setIsEditing(false)
+              }}
+            />
+            <ConfirmButton
+              onClick={() => {
+                if (!isPending) {
+                  //* create record of only checked parameter values
+                  const parameters = mapToObj(definitions, (def) => [
+                    def.key,
+                    currentChecked[def.key] ? currentParameters[def.key] : undefined,
+                  ])
+                  const record = {
+                    ...agent.parameters,
+                    [agent.engineId]: parameters,
+                  } as AgentParametersRecord
+                  updateAgent.mutate({ parameters: record })
+                }
+                setIsEditing(false)
+              }}
+            />
           </>
         ) : isPending ? (
           <LoadingButton />
@@ -57,7 +84,7 @@ export function InferenceParametersCard({
         {definitions.map((def) => {
           if (def.type === 'number') {
             return (
-              <div key={def.key} className="flex items-center py-1">
+              <div key={agent.id + def.key} className="flex items-center py-1">
                 <Check
                   editable={isEditing}
                   checked={currentChecked[def.key]}
@@ -87,21 +114,109 @@ export function InferenceParametersCard({
 
           if (def.type === 'list') {
             return (
-              <label key={def.key} className="flex items-center py-2">
-                <Check editable={isEditing} />
-                <span className="grow px-4">{def.key}</span>
-                <span className="px-2">todo list</span>
-              </label>
+              <div key={agent.id + def.key} className="mt-1 flex h-10 py-2">
+                <Check
+                  editable={isEditing}
+                  checked={currentChecked[def.key]}
+                  onCheckedChange={({ checked }) =>
+                    setCurrentChecked({ ...currentChecked, [def.key]: Boolean(checked) })
+                  }
+                />
+                <label className="grow px-4">{def.key}</label>
+                {!isEditing && (
+                  <div className="-mt-1 divide-y px-2">
+                    {currentParameters[def.key]?.map((item) => (
+                      <div key={agent.id + def.key + item} className="py-1">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {isEditing && (
+                  <div className="">
+                    {currentParameters[def.key]?.map((item) => (
+                      <div
+                        key={agent.id + def.key + item}
+                        className="flex w-full gap-3 pb-1 pl-2 pr-1"
+                      >
+                        <Textarea
+                          className="h-10 resize-none py-2 disabled:opacity-90"
+                          placeholder={item}
+                          rows={1}
+                          disabled
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="mt-0.5 shrink-0 rounded-full"
+                          onClick={() => {
+                            if (textAreaRef.current) {
+                              const list = currentParameters[def.key] ?? []
+                              setCurrentParameters({
+                                ...currentParameters,
+                                [def.key]: list.filter((listItem) => listItem !== item),
+                              })
+                              setCurrentChecked({ ...currentChecked, [def.key]: true })
+                            }
+                          }}
+                        >
+                          <Cross2Icon className="h-5 w-5 text-foreground/80" />
+                        </Button>
+                      </div>
+                    ))}
+
+                    <div className="flex w-full gap-3 pl-2 pr-1">
+                      <Textarea className="h-10 resize-none py-2" rows={1} ref={textAreaRef} />
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="mt-0.5 shrink-0 rounded-full"
+                        onClick={() => {
+                          if (textAreaRef.current) {
+                            if (textAreaRef.current.value === '') return
+                            const list = currentParameters[def.key] ?? []
+                            setCurrentParameters({
+                              ...currentParameters,
+                              [def.key]: [...list, textAreaRef.current.value],
+                            })
+                            setCurrentChecked({ ...currentChecked, [def.key]: true })
+                            textAreaRef.current.value = ''
+                          }
+                        }}
+                      >
+                        <PlusIcon className="h-5 w-5 text-foreground/80" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
             )
           }
 
           if (def.type === 'string') {
             return (
-              <label key={def.key} className="flex items-center py-2">
-                <Check editable={isEditing} />
-                <span className="grow px-4">{def.key}</span>
-                <span className="px-2">todo string</span>
-              </label>
+              <div key={agent.id + def.key} className="flex items-center py-2">
+                <Check
+                  editable={isEditing}
+                  checked={currentChecked[def.key]}
+                  onCheckedChange={({ checked }) =>
+                    setCurrentChecked({ ...currentChecked, [def.key]: Boolean(checked) })
+                  }
+                />
+                <label className="grow px-4">{def.key}</label>
+                {isEditing ? (
+                  <Input
+                    value={currentParameters[def.key]}
+                    onChange={(e) => {
+                      setCurrentParameters({ ...currentParameters, [def.key]: e.target.value })
+                      setCurrentChecked({ ...currentChecked, [def.key]: true })
+                    }}
+                  />
+                ) : (
+                  <span className="px-2">{currentParameters[def.key]}</span>
+                )}
+              </div>
             )
           }
         })}
@@ -117,11 +232,6 @@ function NumInput({
 }: { editable?: boolean } & React.ComponentPropsWithRef<typeof NumberInput.Root>) {
   return (
     <NumberInput.Root
-      min={0}
-      max={2}
-      formatOptions={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-      defaultValue="1"
-      step={0.1}
       allowMouseWheel={true}
       className={cn(
         'box-content flex w-24 rounded-md border border-transparent',
@@ -156,7 +266,7 @@ function Check({
   ...props
 }: { editable?: boolean } & React.ComponentPropsWithRef<typeof Checkbox.Root>) {
   return (
-    <Checkbox.Root defaultChecked {...props} disabled={!editable}>
+    <Checkbox.Root {...props} disabled={!editable}>
       <Checkbox.Control
         className={cn(
           'grid h-5 w-5 place-content-center rounded-sm border border-input shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',

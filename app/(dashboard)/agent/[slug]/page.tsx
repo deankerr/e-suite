@@ -5,6 +5,7 @@ import { EngineDataCard } from '@/components/engine-data-card'
 import { InferenceBuffer } from '@/components/inference-buffer/inference-buffer'
 import { InferenceParametersCard } from '@/components/inference-parameters-card'
 import { useGetAgentDetail } from '@/components/queries'
+import { PrePrint } from '@/components/util/pre-print'
 
 export default function AgentSlugPage({ params }: { params: { slug: string } }) {
   const agentSlug = params.slug
@@ -29,6 +30,7 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
       </Deck>
 
       {/* Chat */}
+      {/* <PrePrint>{agent.data}</PrePrint> */}
       <InferenceBuffer agent={agent.data} className="col-span-2 overflow-y-auto" />
     </>
   )

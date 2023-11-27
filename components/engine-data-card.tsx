@@ -10,9 +10,9 @@ import { Button } from './ui/button'
 import { Loading } from './ui/loading'
 
 export function EngineDataCard({ agent }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
-  const [isEditing, setIsEditing] = useState(false)
   const updateAgent = useUpdateAgent(agent.id)
   const isPending = updateAgent.isPending
+  const [isEditing, setIsEditing] = useState(false)
 
   const engines = useGetEngineList()
   const [selectedEngine, setSelectedEngine] = useState(agent.engine)

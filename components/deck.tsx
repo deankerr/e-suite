@@ -33,7 +33,7 @@ Deck.Card = function Card({ className, children }: React.ComponentProps<'div'>) 
   return (
     <div
       className={cn(
-        'bg-card text-card-foreground shadow',
+        'bg-card text-card-foreground',
         '[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:leading-none',
         '[&_h3]:pb-2 [&_h3]:font-medium [&_h3]:leading-none',
         className,

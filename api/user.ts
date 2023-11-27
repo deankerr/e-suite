@@ -1,45 +1,37 @@
 import { prisma, Prisma } from '@/lib/prisma'
-import { AgentUpdateInputData } from '@/schema/user'
+import { AgentUpdateInputData, schemaAgentParametersRecord } from '@/schema/user'
 
 //* Agents
+const withEngineProvider = Prisma.validator<Prisma.AgentDefaultArgs>()({
+  include: {
+    engine: {
+      include: {
+        provider: true,
+      },
+    },
+  },
+})
+export type AgentWithEngineProvider = Prisma.AgentGetPayload<typeof withEngineProvider>
+
+function validateAgentParameters(parameters: Prisma.JsonValue) {
+  const parsed = schemaAgentParametersRecord.safeParse(parameters)
+  if (parsed.success) {
+    return parsed.data
+  }
+
+  return {}
+}
+
 export async function getAgentOwnedByUserById({ ownerId, id }: { ownerId: string; id: string }) {
-  return await prisma.agent.findUniqueOrThrow({
+  const agent = await prisma.agent.findUniqueOrThrow({
     where: {
       ownerId,
       id,
     },
-    include: {
-      engine: {
-        include: {
-          provider: true,
-        },
-      },
-    },
+    include: withEngineProvider.include,
   })
-}
-
-export async function getAgentsOwnedByUserById({
-  ownerId,
-  ids,
-}: {
-  ownerId: string
-  ids: string[]
-}) {
-  return await prisma.agent.findMany({
-    where: {
-      ownerId,
-      id: {
-        in: ids,
-      },
-    },
-    include: {
-      engine: {
-        include: {
-          provider: true,
-        },
-      },
-    },
-  })
+  const parsed = { ...agent, parameters: validateAgentParameters(agent.parameters) }
+  return parsed
 }
 
 export async function getAgentsOwnedByUserList({ ownerId }: { ownerId: string }) {
