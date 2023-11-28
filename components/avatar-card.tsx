@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { AgentDetail } from '@/schema/user'
 import { useRef, useState } from 'react'
+import { DeleteAgentDialog } from './delete-agent-dialog'
 import { useUpdateAgent } from './queries'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -61,9 +62,11 @@ export function AvatarCard({
               Rename
             </Button>
           )}
-          <Button variant="outline" disabled={isEditing}>
-            Delete
-          </Button>
+          <DeleteAgentDialog agent={agent}>
+            <Button variant="outline" disabled={isEditing}>
+              Delete
+            </Button>
+          </DeleteAgentDialog>
         </div>
       </div>
     </Deck.Card>

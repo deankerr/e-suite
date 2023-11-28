@@ -7,7 +7,14 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { getAgent, getAllAgents, getAllEngines, getEngine, updateAgent } from './actions'
+import {
+  deleteAgent,
+  getAgent,
+  getAllAgents,
+  getAllEngines,
+  getEngine,
+  updateAgent,
+} from './actions'
 
 //* Agents
 export const agentQueries = {
@@ -49,6 +56,20 @@ export function useUpdateAgent(id = '') {
       queryClient.setQueryData(agentQueries.detail(id).queryKey, context?.previousAgent)
     },
     // Always refetch after error or success:
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
+    },
+  })
+}
+
+export function useDeleteAgent(id = '') {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: [{ entity: 'agents', id, action: 'delete' }],
+    mutationFn: () => deleteAgent({ id }),
+    onError: (err) => {
+      toast.error(err.message)
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
     },

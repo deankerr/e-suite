@@ -2,6 +2,7 @@
 
 import { getEngineById, getEnginesList } from '@/api/data'
 import {
+  deleteAgentOwnedByUser,
   getAgentOwnedByUserById,
   getAgentsOwnedByUserList,
   updateAgentOwnedByUser,
@@ -25,6 +26,11 @@ export const updateAgent = actionValidator(
   z.object({ id: z.string(), data: agentUpdateInputData }),
   async ({ user, data }) =>
     await updateAgentOwnedByUser({ ownerId: user.id, id: data.id, data: data.data }),
+)
+
+export const deleteAgent = actionValidator(
+  z.object({ id: z.string() }),
+  async ({ user, data }) => await deleteAgentOwnedByUser({ ownerId: user.id, id: data.id }),
 )
 
 //* Engines

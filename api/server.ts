@@ -59,6 +59,22 @@ async function createSessionUser(session: Session) {
   return user
 }
 
+export async function addTestAgents() {
+  const user = await getSession()
+  if (user) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        agents: {
+          createMany: {
+            data: createDemoAgents(),
+          },
+        },
+      },
+    })
+  }
+}
+
 function createDemoAgents() {
   return [
     {

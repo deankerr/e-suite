@@ -19,11 +19,11 @@ export default function AgentSlugPage({ params }: { params: { slug: string } }) 
       <Deck className="w-full max-w-md">
         <AvatarCard agent={agent.data} />
 
-        <Deck.EditableCard hidebutton={true}>
+        <Deck.EditableCard>
           <EngineDataCard agent={agent.data} />
         </Deck.EditableCard>
 
-        <Deck.EditableCard hidebutton={true}>
+        <Deck.EditableCard>
           <InferenceParametersCard agent={agent.data} />
         </Deck.EditableCard>
       </Deck>

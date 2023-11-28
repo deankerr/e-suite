@@ -5,6 +5,7 @@ import type { Agent } from '@/schema/user'
 import { useParams, useRouter } from 'next/navigation'
 import { NodeApi, NodeRendererProps, Tree } from 'react-arborist'
 import { useGetAgentList } from './queries'
+import { Button } from './ui/button'
 import { Loading } from './ui/loading'
 
 type Node = NodeApi & {}
@@ -36,6 +37,7 @@ export function NavTree({ className }: React.ComponentProps<'div'>) {
           </Tree>
         </div>
       )}
+      <Button variant="outline">New</Button>
     </div>
   )
 }

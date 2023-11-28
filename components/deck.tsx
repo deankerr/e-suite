@@ -1,6 +1,5 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { createContext, useContext, useState } from 'react'
 
@@ -34,7 +33,7 @@ Deck.Card = function Card({ className, children }: React.ComponentProps<'div'>) 
 Deck.EditableCard = function EditableCard({
   className,
   children,
-}: { hidebutton?: boolean } & React.ComponentProps<'div'>) {
+}: {} & React.ComponentProps<'div'>) {
   const context = useDeckContext()
 
   return <Deck.Card className={cn('relative', className)}>{children}</Deck.Card>

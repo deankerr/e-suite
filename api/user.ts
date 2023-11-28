@@ -78,3 +78,12 @@ export async function updateAgentOwnedByUser({
     })
   }
 }
+
+export async function deleteAgentOwnedByUser({ ownerId, id }: { ownerId: string; id: string }) {
+  await prisma.agent.delete({
+    where: {
+      ownerId,
+      id,
+    },
+  })
+}
