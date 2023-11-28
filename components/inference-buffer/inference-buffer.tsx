@@ -23,7 +23,7 @@ export function InferenceBuffer({
 
   const avatar = (role: Message['role']) => {
     if (role === 'user') return userAvatar
-    if (role === 'assistant') return '/' + agent.image
+    if (role === 'assistant') return agent.image
   }
 
   return (

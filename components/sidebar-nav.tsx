@@ -4,7 +4,9 @@ import { cn } from '@/lib/utils'
 import { AvatarIcon, PlusCircledIcon } from '@radix-ui/react-icons'
 import Link from 'next/Link'
 import { usePathname } from 'next/navigation'
+import { CreateAgentDialog } from './create-agent-dialog'
 import { useGetAgentList } from './queries'
+import { Button } from './ui/button'
 
 export function SidebarNav({ className }: React.ComponentProps<'div'>) {
   const agents = useGetAgentList()
@@ -20,9 +22,11 @@ export function SidebarNav({ className }: React.ComponentProps<'div'>) {
           {agent.name}
         </NavLink>
       ))}
-      <NavAction variant="main">
-        <PlusCircledIcon className="h-5 w-5" /> New Agent
-      </NavAction>
+      <CreateAgentDialog>
+        <Button className="mt-4 w-fit gap-2 self-center bg-transparent">
+          <PlusCircledIcon className="h-5 w-5" /> New Agent
+        </Button>
+      </CreateAgentDialog>
     </div>
   )
 }

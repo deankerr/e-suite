@@ -1,5 +1,7 @@
 import { prisma, Prisma } from '@/lib/prisma'
+import { getRandomAgentAvatar } from '@/lib/utils'
 import { AgentUpdateInputData, schemaAgentParametersRecord } from '@/schema/user'
+import { shuffle } from 'remeda'
 
 //* Agents
 const withEngineProvider = Prisma.validator<Prisma.AgentDefaultArgs>()({
@@ -77,6 +79,29 @@ export async function updateAgentOwnedByUser({
       data,
     })
   }
+}
+
+export async function createAgentOwnedByUser({ ownerId, name }: { ownerId: string; name: string }) {
+  const engine = await prisma.engine.findFirstOrThrow({})
+
+  const agent = await prisma.agent.create({
+    data: {
+      name,
+      image: getRandomAgentAvatar(),
+      owner: {
+        connect: {
+          id: ownerId,
+        },
+      },
+      engine: {
+        connect: {
+          id: engine.id,
+        },
+      },
+    },
+  })
+
+  return agent.id
 }
 
 export async function deleteAgentOwnedByUser({ ownerId, id }: { ownerId: string; id: string }) {

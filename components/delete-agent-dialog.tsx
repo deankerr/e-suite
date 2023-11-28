@@ -46,7 +46,7 @@ export function DeleteAgentDialog({
         </DialogHeader>
 
         <Avatar className="mx-auto h-24 w-24 rounded-lg">
-          <AvatarImage src={'/' + agent.image} alt="avatar" />
+          <AvatarImage src={agent.image} alt="avatar" />
           <AvatarFallback className="rounded-lg">?</AvatarFallback>
         </Avatar>
 

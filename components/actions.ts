@@ -2,12 +2,13 @@
 
 import { getEngineById, getEnginesList } from '@/api/data'
 import {
+  createAgentOwnedByUser,
   deleteAgentOwnedByUser,
   getAgentOwnedByUserById,
   getAgentsOwnedByUserList,
   updateAgentOwnedByUser,
 } from '@/api/user'
-import { actionValidator } from '@/lib/action'
+import { actionValidator } from '@/lib/action-validator'
 import { agentUpdateInputData } from '@/schema/user'
 import z from 'zod'
 
@@ -26,6 +27,11 @@ export const updateAgent = actionValidator(
   z.object({ id: z.string(), data: agentUpdateInputData }),
   async ({ user, data }) =>
     await updateAgentOwnedByUser({ ownerId: user.id, id: data.id, data: data.data }),
+)
+
+export const createAgent = actionValidator(
+  z.object({ name: z.string().min(1) }),
+  async ({ user, data }) => await createAgentOwnedByUser({ ownerId: user.id, name: data.name }),
 )
 
 export const deleteAgent = actionValidator(

@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx'
+import { shuffle } from 'remeda'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -35,4 +36,58 @@ export function dollarsToNanoUSD(dollars: number) {
 
 export function nanoUSDToDollars(nano: number) {
   return (nano * 4000) / 1_000_000_000
+}
+
+export function getRandomName() {
+  const names = [
+    'Emma Davidson',
+    'Doris Starr',
+    'Earl Rodgers',
+    'Lynette Raynor',
+    'Katie Rich',
+    'Bonita Joseph',
+    'Moses Joyce',
+    'Davion Kaplan',
+    'Rafael Desai ',
+    'Harriet Norman',
+    'Lexi Monroe',
+    'Brock Graves',
+    'Eric Chung',
+    'Yvonne Lawrence',
+    'Orlaith McKenna',
+    'Rogelio Puckett',
+    'Jacquelyn Glass',
+    'Harriet Blanchard',
+  ]
+
+  return shuffle(names)[0]!
+}
+
+export function getRandomAgentAvatar() {
+  const agentImages = [
+    '/charon1.jpg',
+    '/charon2.jpg',
+    '/charon3.jpg',
+    '/charon4.jpg',
+    '/charon5.jpg',
+    '/charon6.jpg',
+    '/charon7.jpg',
+    '/charon8.jpg',
+    '/charon9.jpg',
+    '/float1.jpg',
+    '/float2.jpg',
+    '/float3.jpg',
+    '/float4.jpg',
+    '/float5.jpg',
+    '/pinata1.jpg',
+    '/pinata2.jpg',
+    '/pinata3.jpg',
+    '/pinata4.jpg',
+    '/pinata5.jpg',
+    '/pinata6.jpg',
+    '/pinata7.jpg',
+    '/pinata8.jpg',
+  ] as const
+
+  return '/agent-avatars/' + shuffle(agentImages)[0]!
 }

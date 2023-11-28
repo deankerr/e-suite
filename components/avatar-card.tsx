@@ -21,7 +21,7 @@ export function AvatarCard({
   return (
     <Deck.Card className={cn('flex justify-between p-6', className)}>
       <Avatar className="h-24 w-24 rounded-lg">
-        <AvatarImage src={'/' + agent.image} alt="avatar" />
+        <AvatarImage src={agent.image} alt="avatar" />
         <AvatarFallback className="rounded-lg">?</AvatarFallback>
       </Avatar>
 

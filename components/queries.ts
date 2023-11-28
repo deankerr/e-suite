@@ -6,8 +6,10 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
+  createAgent,
   deleteAgent,
   getAgent,
   getAllAgents,
@@ -56,6 +58,22 @@ export function useUpdateAgent(id = '') {
       queryClient.setQueryData(agentQueries.detail(id).queryKey, context?.previousAgent)
     },
     // Always refetch after error or success:
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
+    },
+  })
+}
+
+export function useCreateAgent() {
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationKey: [{ entity: 'agents', action: 'create' }],
+    mutationFn: (name: string) => createAgent({ name }),
+    onError: (err) => {
+      toast.error(err.message)
+    },
+    onSuccess: (id) => router.push(`/agent/${id}`),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
     },
