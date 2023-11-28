@@ -12,7 +12,7 @@ export function SidebarNav({ className }: React.ComponentProps<'div'>) {
   const agents = useGetAgentList()
 
   return (
-    <div className={cn('flex w-full flex-col border p-3', className)}>
+    <div className={cn('flex w-full flex-col p-3', className)}>
       <NavLink href="/">
         <AvatarIcon className="h-5 w-5" />
         Agents
@@ -23,7 +23,7 @@ export function SidebarNav({ className }: React.ComponentProps<'div'>) {
         </NavLink>
       ))}
       <CreateAgentDialog>
-        <Button className="mt-4 w-fit gap-2 self-center bg-transparent">
+        <Button className="mt-4 w-fit gap-2 self-center dark:bg-primary/90 dark:text-primary-foreground/90 dark:hover:bg-primary">
           <PlusCircledIcon className="h-5 w-5" /> New Agent
         </Button>
       </CreateAgentDialog>
@@ -32,10 +32,10 @@ export function SidebarNav({ className }: React.ComponentProps<'div'>) {
 }
 
 const navAll =
-  'flex cursor-pointer items-center py-2 justify-start gap-1.5 rounded-md px-2 hover:bg-stone-700 hover:text-foreground'
+  'flex cursor-pointer items-center py-2 justify-start gap-1.5 rounded-md hover:bg-stone-300 dark:hover:bg-stone-700 hover:text-foreground'
 const navVariants = {
-  main: 'font-medium text-foreground/90',
-  entity: 'mx-3 py-1 pl-6 text-foreground/80 font-medium',
+  main: 'font-medium text-foreground/90 px-3',
+  entity: 'mx-3 px-3 py-1 text-foreground/80',
 } as const
 
 function NavLink({
@@ -53,7 +53,7 @@ function NavLink({
       className={cn(
         navAll,
         navVariants[variant],
-        isActive && 'bg-stone-700 text-foreground',
+        isActive && 'bg-stone-300 font-medium text-foreground dark:bg-stone-700',
         className,
       )}
       {...props}
@@ -61,12 +61,4 @@ function NavLink({
       {children}
     </Link>
   )
-}
-
-export function NavAction({
-  variant = 'main',
-  className,
-  children,
-}: { variant?: keyof typeof navVariants } & React.ComponentProps<'div'>) {
-  return <div className={cn(navAll, navVariants[variant], className)}>{children}</div>
 }
