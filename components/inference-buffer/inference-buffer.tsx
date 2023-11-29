@@ -16,7 +16,7 @@ export function InferenceBuffer({
 }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
   const chatId = agent ? agent.id + '-tmpchatId' : ''
   const chat = useAgentChat(chatId, agent)
-  const isWaiting = chat.isLoading && !chat.streamingId
+  const isWaiting = chat.isLoading && !chat.streamingMessageId
 
   const { user } = useKindeBrowserClient()
   const userAvatar = (user && user.picture) ?? ''
@@ -38,14 +38,14 @@ export function InferenceBuffer({
             variant={m.role}
             avatar={avatar(m.role)}
             content={m.content}
-            loading={chat.streamingId === m.id}
+            loading={chat.streamingMessageId === m.id}
             key={m.id}
           />
         ))}
         {chat.messages.length === 0 && (
-          <div className="w-full p-6 text-center text-foreground/80">There are no messages.</div>
+          <div className="w-full p-6 text-center text-foreground/90">There are no messages.</div>
         )}
-        {/* {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />} */}
+        {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
       </div>
       <div className="sticky bottom-0 self-end p-4">
         <MessageBar className="mx-auto" chat={chat} />

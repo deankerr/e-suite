@@ -16,8 +16,8 @@ export function MessageBarMenu({ chat, children }: MessageBarMenuProps) {
       <Menu.Trigger>{children ?? 'Open Menu'}</Menu.Trigger>
       <Menu.Positioner>
         <Menu.Content className="rounded-md border-2 bg-background p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-          <Menu.Item id="clear" asChild>
-            <MenuButton onClick={() => chat.setMessages([])}>Clear</MenuButton>
+          <Menu.Item id="reset" asChild>
+            <MenuButton onClick={() => chat.resetMessages()}>Reset</MenuButton>
           </Menu.Item>
 
           <Menu.Separator />

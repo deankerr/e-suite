@@ -6,39 +6,19 @@ import { toast } from 'sonner'
 
 const endpoint = '/api/chat'
 
-export function useAgentChat(chatId: string, agent?: AgentDetail) {
-  const initialMessages = agent
-    ? [
-        {
-          id: nanoid(5),
-          role: `system` as const,
-          content: `You are an AI assistant named ${agent.name}.`,
-        },
-      ]
-    : []
-
-  const body: Record<string, unknown> = agent
-    ? {
-        model: agent.engine.providerModelId,
-        engineId: agent.engineId,
-      }
-    : {}
-
-  // if (agent && engine) {
-  //   const parameters = agent.parameters[agent.engineId]
-  //   if (parameters && parameters.fieldsEnabled) {
-  //     for (const key of parameters.fieldsEnabled) {
-  //       const param = parameters[key as keyof typeof parameters]
-  //       if (param) body[key] = param
-  //     }
-  //   }
-  // }
+export function useAgentChat(chatId: string, agent: AgentDetail) {
+  const body: Record<string, unknown> = {
+    ...agent.parameters[agent.engineId],
+    model: agent.engine.providerModelId,
+    engineId: agent.engineId,
+    steam: true,
+  }
 
   const chat = useChat({
     id: chatId,
     api: endpoint,
     body,
-    initialMessages,
+    initialMessages: createInitialMessages(agent.name),
     onResponse: (response) => {
       console.log('[response]', response)
     },
@@ -51,16 +31,29 @@ export function useAgentChat(chatId: string, agent?: AgentDetail) {
     },
   })
 
-  const streamingId =
+  const streamingMessageId =
     chat.isLoading && chat.messages.at(-1)?.role === 'assistant'
       ? chat.messages.at(-1)?.id
       : undefined
 
   const submitUserMessage = (content: string) => {
+    console.log(body)
     chat.append({ role: 'user', content })
   }
 
-  return { ...chat, submitUserMessage, streamingId }
+  const resetMessages = () => chat.setMessages(createInitialMessages(agent.name))
+
+  return { ...chat, submitUserMessage, resetMessages, streamingMessageId }
 }
 
 export type AgentChatHelpers = ReturnType<typeof useAgentChat>
+
+function createInitialMessages(name: string) {
+  return [
+    {
+      id: nanoid(7),
+      role: `system` as const,
+      content: `You are an AI assistant named ${name}.`,
+    },
+  ]
+}
