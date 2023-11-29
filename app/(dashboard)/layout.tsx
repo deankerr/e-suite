@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { UserMenuButton } from '@/components/user-menu-button'
 import { getSession } from '@/lib/server'
-import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components'
+import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components'
 import Image from 'next/image'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -44,9 +44,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <ThemeToggle />
           </>
         )}
-        <LoginLink>Log In</LoginLink>
-        <RegisterLink>Sign Up</RegisterLink>
-        <LogoutLink>Log Out</LogoutLink>
       </AppSidebar>
       {children}
     </AppShell>
