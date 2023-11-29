@@ -3,7 +3,6 @@ import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
-import { sampleConvo } from './sample-data'
 
 const endpoint = '/api/chat'
 
@@ -15,7 +14,6 @@ export function useAgentChat(chatId: string, agent?: AgentDetail) {
           role: `system` as const,
           content: `You are an AI assistant named ${agent.name}.`,
         },
-        ...sampleConvo,
       ]
     : []
 

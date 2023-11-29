@@ -35,7 +35,7 @@ type Props = {
   avatar?: string
 }
 
-export const MessageBubbleNext = forwardRef<HTMLDivElement, Props>(function MessageBubble(
+export const MessageBubble = forwardRef<HTMLDivElement, Props>(function MessageBubble(
   { content, variant, loading, avatar },
   ref,
 ) {
@@ -67,7 +67,7 @@ export const MessageBubbleNext = forwardRef<HTMLDivElement, Props>(function Mess
 
       <div
         className={cn(
-          'prose prose-stone w-fit overflow-hidden rounded-lg bg-muted p-4 text-sm dark:prose-invert',
+          'prose prose-stone w-fit overflow-hidden rounded-lg bg-muted p-3 text-sm dark:prose-invert',
           variants.content(key),
           loading && '[&>_:last-child:not(pre)]:after:inline-loading-ball',
         )}
