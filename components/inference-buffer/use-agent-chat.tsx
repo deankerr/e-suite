@@ -11,7 +11,7 @@ export function useAgentChat(chatId: string, agent: AgentDetail) {
     ...agent.parameters[agent.engineId],
     model: agent.engine.providerModelId,
     engineId: agent.engineId,
-    steam: true,
+    stream: true,
   }
 
   const chat = useChat({
