@@ -1,8 +1,3 @@
-const url =
-  process.env.VERCEL_GIT_COMMIT_REF === 'staging'
-    ? process.env.VERCEL_BRANCH_URL
-    : process.env.VERCEL_URL
-
 async function getAuthToken() {
   try {
     const response = await fetch(`${process.env.KINDE_ISSUER_URL}/oauth2/token`, {
@@ -43,7 +38,7 @@ async function addLogoutUrlToKinde(token) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          urls: [`https://${url}`],
+          urls: [`https://${process.env.VERCEL_URL}`],
         }),
       },
     )
@@ -53,7 +48,7 @@ async function addLogoutUrlToKinde(token) {
     }
 
     const responseData = await response.json()
-    console.log(`SUCCESS: Logout URL added to Kinde: ${url}`, responseData)
+    console.log(`SUCCESS: Logout URL added to Kinde: ${process.env.VERCEL_URL}`, responseData)
   } catch (error) {
     console.error('Failed to add logout URL to Kinde', error)
     throw error
@@ -72,7 +67,7 @@ async function addCallbackUrlToKinde(token) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          urls: [`https://${url}/api/auth/kinde_callback`],
+          urls: [`https://${process.env.VERCEL_URL}/api/auth/kinde_callback`],
         }),
       },
     )
@@ -83,7 +78,7 @@ async function addCallbackUrlToKinde(token) {
 
     const responseData = await response.json()
     console.log(
-      `SUCCESS: Callback URL added to Kinde: ${url}/api/auth/kinde_callback`,
+      `SUCCESS: Callback URL added to Kinde: ${process.env.VERCEL_URL}/api/auth/kinde_callback`,
       responseData,
     )
   } catch (error) {
