@@ -14,7 +14,7 @@
     "db:push": "prisma db push && prisma generate",
     "db:seed": "prisma db seed",
     "db:gen": "prisma generate",
-    "studio": "prisma studio",
+    "studio": "dotenv -e .env.local -- prisma studio",
     "script:provider-models": "bun scripts/provider-models/run.ts"
   },
   "prisma": {
@@ -91,6 +91,7 @@
     "@types/react-dom": "^18.2.17",
     "@types/react-syntax-highlighter": "^15.5.10",
     "autoprefixer": "^10.4.16",
+    "dotenv-cli": "^7.3.0",
     "eslint": "^8.54.0",
     "eslint-config-next": "^14.0.3",
     "eslint-config-prettier": "^9.0.0",

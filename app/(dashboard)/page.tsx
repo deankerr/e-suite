@@ -3,8 +3,10 @@ import Image from 'next/image'
 
 export default async function AppLandingPage() {
   return (
-    <div className="relative grid h-full w-full place-content-center">
-      <Image src={sunStripe} alt="sun" fill className="z-0 opacity-10" priority />
+    <div className="flex h-full w-full items-center justify-center p-10">
+      <div className="relative h-5/6 w-5/6">
+        <Image src={sunStripe} alt="sun" fill className="z-0 opacity-50" priority />
+      </div>
     </div>
   )
 }
