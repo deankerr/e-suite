@@ -14,7 +14,7 @@ export function InferenceBuffer({
   className,
   ...divProps
 }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
-  const chatId = agent ? agent.id + '-tmpchatId' : ''
+  const chatId = agent.id + '-tmpchatId'
   const chat = useAgentChat(chatId, agent)
   const isWaiting = chat.isLoading && !chat.streamingMessageId
 

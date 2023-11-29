@@ -20,19 +20,12 @@ export function MessageBar({
     <div
       {...props}
       className={cn(
-        'flex w-full items-end rounded-3xl border-2 bg-background px-2 py-2 focus-within:ring-1 focus-within:ring-ring',
+        'flex w-full items-end rounded-3xl border bg-background px-2 py-2 focus-within:ring-1 focus-within:ring-ring',
         className,
       )}
     >
       <MessageBarMenu chat={chat}>
-        <Button
-          className="rounded-2xl border-2"
-          variant="outline"
-          type="button"
-          onClick={() => {
-            // chat.setMessages([...chat.messages, ...sampleConvo])
-          }}
-        >
+        <Button className="rounded-2xl border" variant="outline" type="button">
           <HeartIcon />
         </Button>
       </MessageBarMenu>
@@ -49,7 +42,7 @@ export function MessageBar({
         onChange={(e) => chat.setInput(e.target.value)}
       />
       <Button
-        className="rounded-2xl border-2"
+        className="rounded-2xl border"
         variant={chat.input !== '' ? 'default' : 'outline'}
         onClick={send}
       >
