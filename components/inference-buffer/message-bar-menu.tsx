@@ -7,13 +7,13 @@ import { AgentChatHelpers } from './use-agent-chat'
 
 type MessageBarMenuProps = {
   chat: AgentChatHelpers
-  children?: React.ReactNode
+  children: React.ReactNode
 }
 
 export function MessageBarMenu({ chat, children }: MessageBarMenuProps) {
   return (
     <Menu.Root>
-      <Menu.Trigger>{children ?? 'Open Menu'}</Menu.Trigger>
+      <Menu.Trigger asChild>{children}</Menu.Trigger>
       <Menu.Positioner>
         <Menu.Content className="rounded-md border-2 bg-background p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
           <Menu.Item id="reset" asChild>

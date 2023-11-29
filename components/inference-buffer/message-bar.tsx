@@ -34,7 +34,7 @@ export function MessageBar({
           }}
         >
           <HeartIcon />
-        </Button>{' '}
+        </Button>
       </MessageBarMenu>
       <TextareaAutosize
         className="w-full resize-none bg-transparent px-2 py-1.5 placeholder:text-muted-foreground focus-visible:outline-none"

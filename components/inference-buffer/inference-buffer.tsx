@@ -45,7 +45,9 @@ export function InferenceBuffer({
         {chat.messages.length === 0 && (
           <div className="w-full p-6 text-center text-foreground/90">There are no messages.</div>
         )}
-        {isWaiting && <MessageBubble variant="assistant" content="" loading={true} />}
+        {isWaiting && (
+          <MessageBubble variant="assistant" avatar={agent.image} content="" loading={true} />
+        )}
       </div>
       <div className="sticky bottom-0 self-end p-4">
         <MessageBar className="mx-auto" chat={chat} />
