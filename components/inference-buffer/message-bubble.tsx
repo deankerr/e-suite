@@ -1,7 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Markdown } from '@/components/util/markdown'
+// import { Markdown } from '@/components/util/markdown'
 import { cn } from '@/lib/utils'
+import dynamic from 'next/dynamic'
 import { forwardRef } from 'react'
+
+const Markdown = dynamic(() => import('@/components/util/markdown'), { ssr: false })
 
 const messageBubbleVariants = {
   container: {

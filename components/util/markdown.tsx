@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Table,
   TableBody,
@@ -12,7 +14,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { SyntaxHighlighter } from './syntax-highlighter'
 
-export function Markdown({ children }: { children: string | null | undefined }) {
+export default function Markdown({ children }: { children: string | null | undefined }) {
   if (!children) return <div></div>
 
   return (
