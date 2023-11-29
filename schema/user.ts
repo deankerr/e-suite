@@ -1,4 +1,4 @@
-import type { getAgentOwnedByUserById, getAgentsOwnedByUserList } from '@/api/user'
+import type { getAgentOwnedByUserById, getAgentsOwnedByUserList } from '@/db/user'
 import type { Agent as PrismaAgent } from '@prisma/client'
 import z from 'zod'
 
