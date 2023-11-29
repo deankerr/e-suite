@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { AvatarIcon, PlusCircledIcon } from '@radix-ui/react-icons'
-import Link from 'next/Link'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { CreateAgentDialog } from './create-agent-dialog'
 import { useGetAgentList } from './queries'
