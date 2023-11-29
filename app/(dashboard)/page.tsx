@@ -1,27 +1,16 @@
-import { addTestAgents } from '@/api/server'
-import { Button } from '@/components/ui/button'
-import { LoginLink, LogoutLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components'
+import sunStripe from '@/assets/icons/sun-stripe.svg'
+import Image from 'next/image'
 
-export default function AppLandingPage() {
-  const addAgents = async () => {
-    'use server'
-    await addTestAgents()
-  }
-
+export default async function AppLandingPage() {
   return (
-    <div>
-      Hello! App landing page
-      <form action={addAgents}>
-        <Button type="submit" variant="outline">
-          add test agents
-        </Button>
-      </form>
-      <br />
-      <LoginLink>Sign in</LoginLink>
-      <br />
-      <RegisterLink>Sign up</RegisterLink>
-      <br />
-      <LogoutLink>Log out</LogoutLink>
+    <div className="relative grid h-full w-full place-content-center">
+      <Image
+        src={sunStripe}
+        alt="sun"
+        layout="fill"
+        objectPosition="center"
+        className="z-0 opacity-10"
+      />
     </div>
   )
 }

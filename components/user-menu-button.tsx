@@ -24,8 +24,10 @@ export async function UserMenuButton({ className }: {} & React.ComponentProps<'d
             <AvatarFallback>e?</AvatarFallback>
           </Avatar>
         </PopoverTrigger>
-        <PopoverContent className="flex items-center justify-center">
-          <Button variant="outline">sign out</Button>
+        <PopoverContent className="flex w-40 items-center justify-center">
+          <Button variant="outline" asChild>
+            <Link href="/api/auth/logout">sign out</Link>
+          </Button>
         </PopoverContent>
       </Popover>
     </>
