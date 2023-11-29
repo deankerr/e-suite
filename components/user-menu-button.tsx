@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { getSession, Session } from '@/lib/server'
+import { getSession } from '@/lib/server'
 import Link from 'next/link'
 import { Button } from './ui/button'
 

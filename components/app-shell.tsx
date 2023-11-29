@@ -1,40 +1,45 @@
+import { getEnginesList } from '@/api/data'
 import { initializeUserSession } from '@/api/server'
 import { cn } from '@/lib/utils'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import { agentQueries } from './queries'
+import { agentQueries, engineQueries } from './queries'
 
 export async function AppShell({ className, children }: React.ComponentProps<'div'>) {
   const sessionUser = await initializeUserSession()
   const queryClient = new QueryClient()
 
   if (sessionUser) {
-    const { user, agents } = sessionUser
-    const engines = agents.map((agent) => agent.engine)
+    const { agents } = sessionUser
+    const engines = await getEnginesList()
 
     const getAgents = () => agents
     const getAgent = (id: string) => agents.find((agent) => agent.id === id)!
+    const getEngines = () => engines
     const getEngine = (id: string) => engines.find((engine) => engine.id === id)!
 
-    // await queryClient.prefetchQuery({
-    //   queryKey: ['user'],
-    //   queryFn: getUser,
-    // })
+    await queryClient.prefetchQuery({
+      queryKey: agentQueries.list.queryKey,
+      queryFn: getAgents,
+    })
 
-    // await queryClient.prefetchQuery({
-    //   queryKey: ['workbench'],
-    //   queryFn: getWorkbench,
-    // })
-    // await queryClient.prefetchQuery({
-    //   queryKey: agentsQueryKeys.all,
-    //   queryFn: getAgents,
-    // })
+    for (const agent of agents) {
+      await queryClient.prefetchQuery({
+        queryKey: agentQueries.detail(agent.id).queryKey,
+        queryFn: () => getAgent(agent.id),
+      })
+    }
 
-    // for (const engine of engines) {
-    //   await queryClient.prefetchQuery({
-    //     queryKey: ['agent', engine.id],
-    //     queryFn: () => getEngine(engine.id),
-    //   })
-    // }
+    await queryClient.prefetchQuery({
+      queryKey: engineQueries.list.queryKey,
+      queryFn: () => getEngines(),
+    })
+
+    for (const engine of engines) {
+      await queryClient.prefetchQuery({
+        queryKey: engineQueries.detail(engine.id).queryKey,
+        queryFn: () => getEngine(engine.id),
+      })
+    }
   }
 
   return (

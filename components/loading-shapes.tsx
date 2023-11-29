@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 export function LoadingShapes({ className, children }: React.ComponentProps<'div'>) {
   return (
-    <div className={cn('grid place-content-center', className)}>
+    <div className={cn('grid w-full place-content-center', className)}>
       <Image
         src={shapes1}
         className="duration-[5000ms] animate-pulse opacity-10 brightness-[.2]"

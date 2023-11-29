@@ -5,14 +5,15 @@ import { Deck } from '@/components/deck'
 import { EngineDataCard } from '@/components/engine-data-card'
 import { InferenceBuffer } from '@/components/inference-buffer/inference-buffer'
 import { InferenceParametersCard } from '@/components/inference-parameters-card'
+import { LoadingShapes } from '@/components/loading-shapes'
 import { useGetAgentDetail } from '@/components/queries'
-import { PrePrint } from '@/components/util/pre-print'
 
 export default function AgentSlugPage({ params }: { params: { slug: string } }) {
   const agentSlug = params.slug
   const agent = useGetAgentDetail(agentSlug)
 
-  if (!agent.data) return <p>No agent?</p>
+  if (agent.isPending) return <LoadingShapes />
+  if (agent.error) return <div>{agent.error.message}</div>
 
   return (
     <>

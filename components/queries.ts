@@ -95,7 +95,7 @@ export function useDeleteAgent(id = '') {
 }
 
 //* Engines
-const engineQueries = {
+export const engineQueries = {
   list: queryOptions({ queryKey: [{ entity: 'engines' }], queryFn: () => getAllEngines() }),
   detail: (id: string) =>
     queryOptions({
