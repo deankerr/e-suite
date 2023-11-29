@@ -38,7 +38,7 @@ async function addLogoutUrlToKinde(token) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          urls: [`https://${process.env.VERCEL_URL}`],
+          urls: [`https://${process.env.VERCEL_URL}`, `https://${process.env.VERCEL_BRANCH_URL}/`],
         }),
       },
     )
@@ -67,7 +67,10 @@ async function addCallbackUrlToKinde(token) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          urls: [`https://${process.env.VERCEL_URL}/api/auth/kinde_callback`],
+          urls: [
+            `https://${process.env.VERCEL_URL}/api/auth/kinde_callback`,
+            `https://${process.env.VERCEL_BRANCH_URL}/api/auth/kinde_callback`,
+          ],
         }),
       },
     )
