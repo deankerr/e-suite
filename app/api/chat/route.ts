@@ -1,7 +1,7 @@
+import { getEngine } from '@/data/engines'
 import { adapters } from '@/lib/api/adapters'
 import { authenticateGuest, createErrorResponse } from '@/lib/api/api'
 import { eChatRequestSchema, PlatformKeys } from '@/lib/api/schemas'
-import { prisma } from '@/lib/prisma'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
@@ -14,8 +14,8 @@ export async function POST(request: Request) {
     const chatRequest = eChatRequestSchema.parse(await request.json())
     console.log(chatRequest)
 
-    const engine = await prisma.engine.findFirstOrThrow({ where: { id: chatRequest.engineId } })
-    const adapter = adapters[engine.providerId as PlatformKeys]
+    const engine = await getEngine(chatRequest.engineId)
+    const adapter = adapters[engine.vendorId as PlatformKeys]
     if (!('chat' in adapter)) throw new Error('Invalid engine: ' + chatRequest.engineId)
     return adapter.chat(chatRequest)
   } catch (err) {
