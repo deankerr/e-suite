@@ -1,13 +1,7 @@
 'use server'
 
-import { getEngineById, getEnginesList } from '@/db/data'
-import {
-  createAgentOwnedByUser,
-  deleteAgentOwnedByUser,
-  getAgentOwnedByUserById,
-  getAgentsOwnedByUserList,
-  updateAgentOwnedByUser,
-} from '@/db/user'
+import * as dataEngines from '@/data/engines'
+import * as dataUserAgent from '@/data/user-agents'
 import { actionValidator } from '@/lib/action-validator'
 import { agentUpdateInputData } from '@/schema-zod/zod-user'
 import z from 'zod'
@@ -15,34 +9,33 @@ import z from 'zod'
 //* Agents
 export const getAllAgents = actionValidator(
   z.void(),
-  async ({ user }) => await getAgentsOwnedByUserList({ ownerId: user.id }),
+  async ({ user }) => await dataUserAgent.getUserAgents(),
 )
 
 export const getAgent = actionValidator(
   z.object({ id: z.string() }),
-  async ({ user, data }) => await getAgentOwnedByUserById({ ownerId: user.id, id: data.id }),
+  async ({ user, data }) => await dataUserAgent.getUserAgent(data.id),
 )
 
 export const updateAgent = actionValidator(
   z.object({ id: z.string(), data: agentUpdateInputData }),
-  async ({ user, data }) =>
-    await updateAgentOwnedByUser({ ownerId: user.id, id: data.id, data: data.data }),
+  async ({ user, data }) => await dataUserAgent.updateUserAgent({ ...data.data, id: data.id }),
 )
 
 export const createAgent = actionValidator(
   z.object({ name: z.string().min(1) }),
-  async ({ user, data }) => await createAgentOwnedByUser({ ownerId: user.id, name: data.name }),
+  async ({ user, data }) => await dataUserAgent.createUserAgent({ name: data.name }),
 )
 
 export const deleteAgent = actionValidator(
   z.object({ id: z.string() }),
-  async ({ user, data }) => await deleteAgentOwnedByUser({ ownerId: user.id, id: data.id }),
+  async ({ user, data }) => await dataUserAgent.deleteUserAgent({ id: data.id }),
 )
 
 //* Engines
-export const getAllEngines = actionValidator(z.void(), async () => await getEnginesList())
+export const getAllEngines = actionValidator(z.void(), async () => await dataEngines.getEngines())
 
 export const getEngine = actionValidator(
   z.object({ id: z.string() }),
-  async ({ data }) => await getEngineById({ id: data.id }),
+  async ({ data }) => await dataEngines.getEngine(data.id),
 )

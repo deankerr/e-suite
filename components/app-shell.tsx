@@ -1,43 +1,44 @@
-import { getEnginesList } from '@/db/data'
-import { initializeUserSession } from '@/db/user'
+import { getUserSession } from '@/data/auth'
+import { getEngines } from '@/data/engines'
+import { getUserAgents } from '@/data/user-agents'
 import { cn } from '@/lib/utils'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { agentQueries, engineQueries } from './queries'
 
 export async function AppShell({ className, children }: React.ComponentProps<'div'>) {
-  const sessionUser = await initializeUserSession()
   const queryClient = new QueryClient()
+  const sessionUser = await getUserSession()
 
   if (sessionUser) {
-    const { agents } = sessionUser
-    const engines = await getEnginesList()
+    const agents = await getUserAgents()
+    const engines = await getEngines()
 
-    const getAgents = () => agents
-    const getAgent = (id: string) => agents.find((agent) => agent.id === id)!
-    const getEngines = () => engines
-    const getEngine = (id: string) => engines.find((engine) => engine.id === id)!
+    const preGetAgents = () => agents
+    const preGetAgent = (id: string) => agents.find((agent) => agent.id === id)!
+    const preGetEngines = () => engines
+    const preGetEngine = (id: string) => engines.find((engine) => engine.id === id)!
 
     await queryClient.prefetchQuery({
       queryKey: agentQueries.list.queryKey,
-      queryFn: getAgents,
+      queryFn: preGetAgents,
     })
 
     for (const agent of agents) {
       await queryClient.prefetchQuery({
         queryKey: agentQueries.detail(agent.id).queryKey,
-        queryFn: () => getAgent(agent.id),
+        queryFn: () => preGetAgent(agent.id),
       })
     }
 
     await queryClient.prefetchQuery({
       queryKey: engineQueries.list.queryKey,
-      queryFn: () => getEngines(),
+      queryFn: () => preGetEngines(),
     })
 
     for (const engine of engines) {
       await queryClient.prefetchQuery({
         queryKey: engineQueries.detail(engine.id).queryKey,
-        queryFn: () => getEngine(engine.id),
+        queryFn: () => preGetEngine(engine.id),
       })
     }
   }
