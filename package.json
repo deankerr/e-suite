@@ -15,7 +15,11 @@
     "db:seed": "prisma db seed",
     "db:gen": "prisma generate",
     "studio": "dotenv -e .env.local -- prisma studio",
-    "script:provider-models": "bun scripts/provider-models/run.ts"
+    "script:provider-models": "bun scripts/provider-models/run.ts",
+    "turso:generate": "drizzle-kit generate:sqlite --out ./drizzle/migrations --breakpoints --schema=./drizzle/schema.ts",
+    "turso:migrate": "tsx drizzle/migrate",
+    "turso:studio": "drizzle-kit studio --port 3333",
+    "turso:seed": "tsx drizzle/seed"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
@@ -24,6 +28,7 @@
     "@ark-ui/react": "^1.1.0",
     "@hookform/resolvers": "^3.3.2",
     "@kinde-oss/kinde-auth-nextjs": "^2.0.10",
+    "@libsql/client": "0.4.0-pre.5",
     "@prisma/client": "^5.6.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -57,6 +62,8 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "dayjs": "^1.11.10",
+    "drizzle-orm": "^0.29.1",
+    "eslint-plugin-drizzle": "^0.2.1",
     "nanoid": "^5.0.3",
     "next": "^14.0.3",
     "next-themes": "^0.2.1",
@@ -91,7 +98,9 @@
     "@types/react-dom": "^18.2.17",
     "@types/react-syntax-highlighter": "^15.5.10",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
+    "drizzle-kit": "^0.20.6",
     "eslint": "^8.54.0",
     "eslint-config-next": "^14.0.3",
     "eslint-config-prettier": "^9.0.0",
@@ -102,6 +111,7 @@
     "prettier-plugin-tailwindcss": "^0.5.7",
     "prisma": "^5.6.0",
     "tailwindcss": "^3.3.5",
+    "tsx": "^4.6.1",
     "typescript": "^5.3.2"
   }
 }

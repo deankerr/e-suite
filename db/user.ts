@@ -1,6 +1,6 @@
 import { prisma, Prisma } from '@/lib/prisma'
 import { getRandomAgentAvatar } from '@/lib/utils'
-import { AgentUpdateInputData, schemaAgentParametersRecord } from '@/schema/user'
+import { AgentUpdateInputData, schemaAgentParametersRecord } from '@/schema-zod/zod-user'
 import { shuffle } from 'remeda'
 
 //* Agents

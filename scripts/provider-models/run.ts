@@ -1,7 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { prisma } from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { DrizzleNewEngine } from '@/drizzle/schema'
 import { processOpenAi } from './openai'
 import { processOpenRouter } from './openrouter'
 import { processTogetherAi } from './together'
@@ -30,16 +29,16 @@ const modelMainTypes = [
   'embedding',
 ] as const
 
-export type EngineCreate = Prisma.EngineCreateManyInput
+export type EngineCreate = DrizzleNewEngine
 async function createDbEngines(...records: EngineCreate[][]) {
   for (const engines of records) {
     console.log('creating engines')
-    await prisma.engine.createMany({ data: engines })
+    // await prisma.engine.createMany({ data: engines })
   }
 }
 
 export async function fetchAndAddProviderModels() {
-  await prisma.engine.deleteMany({})
+  // await prisma.engine.deleteMany({})
 
   console.log('get available models')
   fs.mkdirSync(dir, { recursive: true })

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { AgentDetail } from '@/schema/user'
+import { AgentDetail } from '@/schema-zod/zod-user'
 import { CheckIcon, Cross2Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { Deck } from './deck'

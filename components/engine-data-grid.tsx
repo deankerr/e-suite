@@ -1,5 +1,5 @@
 import { cn, nanoUSDToDollars } from '@/lib/utils'
-import { Engine } from '@/schema/data'
+import { Engine } from '@/schema-zod/zod-data'
 import { Loading } from './ui/loading'
 
 export function EngineDataGrid({

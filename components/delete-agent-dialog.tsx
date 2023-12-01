@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { AgentDetail } from '@/schema/user'
+import { AgentDetail } from '@/schema-zod/zod-user'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useDeleteAgent } from './queries'

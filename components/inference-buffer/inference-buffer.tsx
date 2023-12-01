@@ -2,7 +2,7 @@
 
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { Agent, AgentDetail } from '@/schema/user'
+import { Agent, AgentDetail } from '@/schema-zod/zod-user'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { Message } from 'ai'
 import { MessageBar } from './message-bar'

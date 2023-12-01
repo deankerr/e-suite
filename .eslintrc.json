@@ -1,3 +1,8 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:@tanstack/eslint-plugin-query/recommended"]
+  "plugins": ["drizzle"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
+    "plugin:drizzle/recommended"
+  ]
 }

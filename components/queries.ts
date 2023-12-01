@@ -1,4 +1,4 @@
-import { AgentUpdateInputData } from '@/schema/user'
+import { AgentUpdateInputData } from '@/schema-zod/zod-user'
 import {
   queryOptions,
   useMutation,

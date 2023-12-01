@@ -9,7 +9,7 @@ import {
   updateAgentOwnedByUser,
 } from '@/db/user'
 import { actionValidator } from '@/lib/action-validator'
-import { agentUpdateInputData } from '@/schema/user'
+import { agentUpdateInputData } from '@/schema-zod/zod-user'
 import z from 'zod'
 
 //* Agents

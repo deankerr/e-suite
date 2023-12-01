@@ -1,4 +1,4 @@
-import { Agent, AgentDetail } from '@/schema/user'
+import { Agent, AgentDetail } from '@/schema-zod/zod-user'
 import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'

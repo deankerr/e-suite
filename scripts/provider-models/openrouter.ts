@@ -37,9 +37,9 @@ export async function processOpenRouter() {
     const [creatorSlug, modelSlug] = entry.id.split('/')
 
     const isInstruct = entry.id.includes('instruct') || entry.name.includes('Instruct')
-    const type = isInstruct ? 'instruct' : 'chat'
-    const creator = entry.name.split(':')[0] ?? creatorSlug ?? ''
-    const parameterSizeMil = getParamSize(entry.name)
+    const category = isInstruct ? 'instruct' : 'chat'
+    const creatorName = entry.name.split(':')[0] ?? creatorSlug ?? ''
+    const parameterSize = getParamSize(entry.name)
     const outputTokenLimit =
       entry.top_provider.max_completion_tokens !== entry.context_length
         ? entry.top_provider.max_completion_tokens
@@ -48,23 +48,24 @@ export async function processOpenRouter() {
     const record: EngineCreate = {
       id: 'openrouter@' + modelSlug,
       model: modelSlug ?? entry.id,
-      type,
+      category,
 
-      providerId: 'openrouter',
-      providerModelId: entry.id,
+      vendorId: 'openrouter',
+      vendorModelId: entry.id,
 
       displayName: entry.name,
-      creator,
+      creatorName,
 
-      costInputNanoUSD: dollarsToNanoUSD(Number(entry.pricing.prompt) * 1000),
-      costOutputNanoUSD: dollarsToNanoUSD(Number(entry.pricing.completion) * 1000),
+      costInputNanoUsd: dollarsToNanoUSD(Number(entry.pricing.prompt) * 1000),
+      costOutputNanoUsd: dollarsToNanoUSD(Number(entry.pricing.completion) * 1000),
 
-      parameterSizeMil,
+      parameterSize,
       contextLength: entry.context_length,
 
       tokenizer: entry.architecture.tokenizer,
       instructType: entry.architecture.instruct_type,
       outputTokenLimit,
+      isAvailable: true,
     }
 
     return record

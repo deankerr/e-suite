@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { AgentDetail, AgentParametersRecord } from '@/schema/user'
+import { AgentDetail, AgentParametersRecord } from '@/schema-zod/zod-user'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import {
   CheckIcon,

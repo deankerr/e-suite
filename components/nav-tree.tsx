@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import type { Agent } from '@/schema/user'
+import type { Agent } from '@/schema-zod/zod-user'
 import { useParams, useRouter } from 'next/navigation'
 import { NodeApi, NodeRendererProps, Tree } from 'react-arborist'
 import { useGetAgentList } from './queries'
