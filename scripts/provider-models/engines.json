@@ -123,7 +123,7 @@
 
   {
     "id": "openai@gpt-3.5-turbo-16k-0613",
-    "model": "openai/gpt-3.5-turbo-16k-0613\"",
+    "model": "openai/gpt-3.5-turbo-16k-0613",
     "category": "chat",
     "vendorId": "openai",
     "vendorModelId": "gpt-3.5-turbo-16k-0613",
@@ -152,7 +152,8 @@
     "url": "https://openai.com",
     "contextLength": 8192,
     "tokenizer": "GPT",
-    "isAvailable": true
+    "isAvailable": true,
+    "isRestricted": true
   },
 
   {
@@ -169,7 +170,8 @@
     "url": "https://openai.com",
     "contextLength": 8192,
     "tokenizer": "GPT",
-    "isAvailable": true
+    "isAvailable": true,
+    "isRestricted": true
   },
 
   {
@@ -186,6 +188,7 @@
     "url": "https://openai.com",
     "contextLength": 8192,
     "tokenizer": "GPT",
+    "isRestricted": true,
     "isAvailable": true
   },
 
@@ -353,6 +356,7 @@
     "costOutputNanoUsd": 15000,
     "contextLength": 8191,
     "tokenizer": "GPT",
+    "isRestricted": true,
     "instructType": null
   },
   {
@@ -367,6 +371,7 @@
     "costOutputNanoUsd": 15000,
     "contextLength": 8191,
     "tokenizer": "GPT",
+    "isRestricted": true,
     "instructType": null
   },
   {
@@ -381,6 +386,7 @@
     "costOutputNanoUsd": 30000,
     "contextLength": 32767,
     "tokenizer": "GPT",
+    "isRestricted": true,
     "instructType": null
   },
   {
@@ -395,6 +401,7 @@
     "costOutputNanoUsd": 30000,
     "contextLength": 32767,
     "tokenizer": "GPT",
+    "isRestricted": true,
     "instructType": null
   },
   {
@@ -773,6 +780,7 @@
     "costOutputNanoUsd": 8170,
     "contextLength": 100000,
     "tokenizer": "Claude",
+    "isRestricted": true,
     "instructType": "claude"
   },
   {

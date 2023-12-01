@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises'
 import { authenticateGuest } from '@/lib/api/api'
-import { env, raise } from '@/lib/utils'
+import { _deprecated_env, raise } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -37,7 +37,7 @@ async function elevenlabs(params: TtsParams) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'audio/mpeg',
-      'xi-api-key': env('ELEVENLABS_API_KEY'),
+      'xi-api-key': _deprecated_env('ELEVENLABS_API_KEY'),
     },
     body: JSON.stringify(body),
   })

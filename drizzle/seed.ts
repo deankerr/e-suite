@@ -5,24 +5,24 @@ import { engines, vendors } from './schema'
 const db = createLocalClient()
 
 async function seed() {
-  const storedVendors = await db
-    .insert(vendors)
-    .values([
-      { id: 'openai', displayName: 'OpenAI', url: 'https://openai.com' },
-      { id: 'openrouter', displayName: 'OpenRouter', url: 'https://openrouter.ai/' },
-      { id: 'togetherai', displayName: 'Together.ai', url: 'https://together.ai/' },
-      { id: 'replicate', displayName: 'Replicate', url: 'https://replicate.com/' },
-      { id: 'fal', displayName: 'Fal', url: 'https://www.fal.ai/' },
-    ])
-    .returning()
-    .all()
+  // const storedVendors = await db
+  //   .insert(vendors)
+  //   .values([
+  //     { id: 'openai', displayName: 'OpenAI', url: 'https://openai.com' },
+  //     { id: 'openrouter', displayName: 'OpenRouter', url: 'https://openrouter.ai/' },
+  //     { id: 'togetherai', displayName: 'Together.ai', url: 'https://together.ai/' },
+  //     { id: 'replicate', displayName: 'Replicate', url: 'https://replicate.com/' },
+  //     { id: 'fal', displayName: 'Fal', url: 'https://www.fal.ai/' },
+  //   ])
+  //   .returning()
+  //   .all()
 
-  console.log('Inserted', storedVendors.length, 'vendors')
+  // console.log('Inserted', storedVendors.length, 'vendors')
 
   const engineData = engineDataJson.map((e) => ({
     ...e,
     isAvailable: true,
-    stopTokens: e.stopTokens ? JSON.stringify(e.stopTokens) : undefined,
+    isRestricted: e.isRestricted ?? false,
   }))
 
   const storedEngines = await db.insert(engines).values(engineData).returning().all()

@@ -1,6 +1,6 @@
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { AppError } from './error'
+import { _deprecated_AppError } from './error'
 import { getSession, Session } from './server'
 
 //* produced function with added session/input validation
@@ -14,7 +14,7 @@ export function actionValidator<Z extends z.ZodTypeAny, R>(
     try {
       //* login/session check
       const user = await getSession()
-      if (!user) throw new AppError('Not logged in.')
+      if (!user) throw new _deprecated_AppError('Not logged in.')
 
       //* validate input
       const parsedInput = inputSchema.parse(rawInput)
@@ -24,13 +24,13 @@ export function actionValidator<Z extends z.ZodTypeAny, R>(
       return result
     } catch (err) {
       console.error(err)
-      if (err instanceof AppError) {
+      if (err instanceof _deprecated_AppError) {
         throw err
       } else if (err instanceof ZodError) {
-        throw new AppError(fromZodError(err).message)
+        throw new _deprecated_AppError(fromZodError(err).message)
       } else {
         if (process.env.NODE_ENV === 'development') throw err
-        else throw new AppError('An unknown error occurred.')
+        else throw new _deprecated_AppError('An unknown error occurred.')
       }
     }
   }

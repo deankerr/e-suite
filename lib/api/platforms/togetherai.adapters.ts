@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { convertMessagesToPromptFormat, createErrorResponse, handleChatError } from '@/lib/api/api'
 import { EChatRequestSchema } from '@/lib/api/schemas'
-import { env, raise } from '@/lib/utils'
+import { _deprecated_env, raise } from '@/lib/utils'
 import createClient from 'openapi-fetch'
 import { z } from 'zod'
 import { schemas } from '../schemas'
@@ -10,7 +10,7 @@ import type { paths } from './togetherai.api'
 const { GET, POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
   headers: {
-    Authorization: `Bearer ${env('TOGETHERAI_API_KEY')}`,
+    Authorization: `Bearer ${_deprecated_env('TOGETHERAI_API_KEY')}`,
   },
 })
 

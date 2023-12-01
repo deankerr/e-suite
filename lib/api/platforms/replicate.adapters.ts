@@ -1,9 +1,9 @@
 import { createErrorResponse } from '@/lib/api/api'
-import { env, raise } from '@/lib/utils'
+import { _deprecated_env, raise } from '@/lib/utils'
 import Replicate from 'replicate'
 import { z } from 'zod'
 
-const api = new Replicate({ auth: env('REPLICATE_API_KEY') })
+const api = new Replicate({ auth: _deprecated_env('REPLICATE_API_KEY') })
 
 export const replicate = {
   async image(input: object) {

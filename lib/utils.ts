@@ -10,7 +10,13 @@ export function raise(message: string): never {
   throw new Error(message)
 }
 
-export function env(key: string, fallback?: string) {
+export function invariant<T>(condition: T, message: string): asserts condition is NonNullable<T> {
+  if (!condition) {
+    throw new Error(`Assertion failed: ${message}`)
+  }
+}
+
+export function _deprecated_env(key: string, fallback?: string) {
   return process.env[key] ?? fallback ?? raise(`${key} not provided`)
 }
 

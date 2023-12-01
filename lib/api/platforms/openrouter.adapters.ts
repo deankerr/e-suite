@@ -1,15 +1,15 @@
 import { EChatRequestSchema } from '@/lib/api/schemas'
-import { env, raise } from '@/lib/utils'
+import { _deprecated_env, raise } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import { handleChatError } from '../api'
 import { schemas } from '../schemas'
 
 const api = new OpenAI({
-  apiKey: env('OPENROUTER_API_KEY'),
+  apiKey: _deprecated_env('OPENROUTER_API_KEY'),
   baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
-    'HTTP-Referer': env('SITE_URL', 'https://esuite.devel'),
+    'HTTP-Referer': _deprecated_env('SITE_URL', 'https://esuite.devel'),
   },
 })
 

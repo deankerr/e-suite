@@ -1,6 +1,6 @@
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { env } from '../utils'
+import { _deprecated_env } from '../utils'
 import { Messages } from './schemas'
 
 export function createErrorResponse(message: string, status = 400) {
@@ -21,12 +21,12 @@ export function authenticateGuest(token: string | null) {
 
 export function getGuestAuthKeys() {
   return [
-    env('GUEST_AUTH_KEY_1'),
-    env('GUEST_AUTH_KEY_2'),
-    env('GUEST_AUTH_KEY_3'),
-    env('GUEST_AUTH_KEY_4'),
-    env('GUEST_AUTH_KEY_5'),
-    env('GUEST_AUTH_KEY_6'),
+    _deprecated_env('GUEST_AUTH_KEY_1'),
+    _deprecated_env('GUEST_AUTH_KEY_2'),
+    _deprecated_env('GUEST_AUTH_KEY_3'),
+    _deprecated_env('GUEST_AUTH_KEY_4'),
+    _deprecated_env('GUEST_AUTH_KEY_5'),
+    _deprecated_env('GUEST_AUTH_KEY_6'),
   ]
 }
 

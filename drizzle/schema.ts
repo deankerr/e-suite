@@ -1,6 +1,8 @@
+import type { InferenceParametersRecord } from '@/schema/dto'
 import { createId } from '@paralleldrive/cuid2'
-import { InferSelectModel, relations, sql } from 'drizzle-orm'
+import { relations } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { dateTimeStamp } from './customTypes'
 
 export type DrizzleEngine = typeof engines.$inferSelect
 export type DrizzleNewEngine = typeof engines.$inferInsert
@@ -16,33 +18,37 @@ export type DrizzleNewUser = typeof users.$inferInsert
 
 export const engines = sqliteTable('engines', {
   id: text('id').primaryKey().notNull(),
-  category: text('category').notNull(),
+  category: text('category').notNull(), //? enum
   model: text('model').notNull(),
   displayName: text('displayName').notNull(),
+  creatorName: text('creator').notNull(),
+  isAvailable: integer('isAvailable', { mode: 'boolean' }).notNull(),
+  isRestricted: integer('isAvailable', { mode: 'boolean' }).notNull(),
+  costInputNanoUsd: integer('costInputNanoUsd').notNull(),
+  costOutputNanoUsd: integer('costOutputNanoUsd').notNull(),
+  createdAt: dateTimeStamp('createdAt')
+    .notNull()
+    .$default(() => new Date()),
+  updatedAt: dateTimeStamp('updatedAt')
+    .notNull()
+    .$default(() => new Date()),
+
+  vendorId: text('vendorId').notNull(),
+  vendorModelId: text('providerModelId').notNull(),
+
   description: text('description'),
   url: text('url'),
   license: text('license'),
   contextLength: integer('contextLength'),
   promptFormat: text('promptFormat'),
-  createdAt: text('createdAt')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: text('updatedAt')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  isAvailable: integer('isAvailable', { mode: 'boolean' }).notNull(),
   comment: text('comment'),
-  costInputNanoUsd: integer('costInputNanoUsd').notNull(),
-  costOutputNanoUsd: integer('costOutputNanoUsd').notNull(),
-  creatorName: text('creator').notNull(),
   instructType: text('instructType'),
   outputTokenLimit: integer('outputTokenLimit'),
   tokenizer: text('tokenizer'),
-  stopTokens: text('stopTokens'),
+  stopTokens: text('stopTokens', { mode: 'json' })
+    .$type<string[]>()
+    .$default(() => []),
   parameterSize: integer('parameterSize'),
-
-  vendorId: text('vendorId').notNull(),
-  vendorModelId: text('providerModelId').notNull(),
 })
 
 export const enginesRelations = relations(engines, ({ one, many }) => ({
@@ -61,20 +67,26 @@ export const vendorsRelations = relations(vendors, ({ many }) => ({
 }))
 
 export const agents = sqliteTable('agents', {
-  id: text('id').primaryKey().notNull(),
+  id: text('id')
+    .$defaultFn(() => createId())
+    .primaryKey()
+    .notNull(),
   ownerId: text('ownerId').notNull(),
 
   name: text('name').notNull(),
   image: text('image').notNull(),
   engineId: text('engineId').notNull(),
-  engineParameters: text('engineParameters').notNull(),
+  engineParameters: text('engineParameters', { mode: 'json' })
+    .$type<InferenceParametersRecord>()
+    .notNull()
+    .$default(() => ({})),
 
-  createdAt: text('createdAt')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: text('updatedAt')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  createdAt: dateTimeStamp('createdAt')
+    .notNull()
+    .$default(() => new Date()),
+  updatedAt: dateTimeStamp('updatedAt')
+    .notNull()
+    .$default(() => new Date()),
 })
 
 export const agentsRelations = relations(agents, ({ one }) => ({
@@ -83,21 +95,18 @@ export const agentsRelations = relations(agents, ({ one }) => ({
 }))
 
 export const users = sqliteTable('users', {
-  id: text('id')
-    .primaryKey()
-    .notNull()
-    .$defaultFn(() => createId()),
+  id: text('id').primaryKey().notNull(),
   firstName: text('firstName'),
   lastName: text('lastName'),
   email: text('email'),
   image: text('image'),
 
-  createdAt: text('createdAt')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: text('updatedAt')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  createdAt: dateTimeStamp('createdAt')
+    .notNull()
+    .$default(() => new Date()),
+  updatedAt: dateTimeStamp('updatedAt')
+    .notNull()
+    .$default(() => new Date()),
 })
 
 export const userRelations = relations(users, ({ many }) => ({
