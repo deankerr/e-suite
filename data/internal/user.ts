@@ -1,3 +1,4 @@
+import 'server-only'
 import * as schema from '@/drizzle/schema'
 import { db } from '@/lib/drizzle'
 import { eq } from 'drizzle-orm'
@@ -10,7 +11,7 @@ export async function initializeUserData(userSession: UserSession) {
 
   if (user) return
 
-  const newUser = await db.insert(schema.users).values({
+  await db.insert(schema.users).values({
     id: userSession.id,
     email: userSession.email,
     firstName: userSession.firstName,

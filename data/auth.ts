@@ -26,6 +26,8 @@ export async function getUserSession() {
     permissions: kindePermissions.permissions,
   }
 
+  initializeUserData(userSession)
+
   return userSession
 }
 

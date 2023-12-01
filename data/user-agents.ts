@@ -3,11 +3,18 @@ import * as schema from '@/drizzle/schema'
 import { db } from '@/lib/drizzle'
 import { AppCodeError } from '@/lib/error'
 import { getRandomAgentAvatar, invariant } from '@/lib/utils'
-import type { Agent, CreateAgent, DeleteAgent, Engine, UpdateAgent, Vendor } from '@/schema/dto'
+import {
+  Agent,
+  CreateAgent,
+  createAgentSchema,
+  DeleteAgent,
+  deleteAgentSchema,
+  UpdateAgent,
+  updateAgentSchema,
+} from '@/schema/dto'
 import { and, eq } from 'drizzle-orm'
 import { getUserSession } from './auth'
 import { agentEntityToDto } from './internal/map'
-import { insertAgentSchema, InsertAgentValues, updateAgentSchema } from './internal/schema'
 
 export async function getUserAgents(): Promise<Agent[]> {
   const user = await getUserSession()
@@ -43,9 +50,9 @@ export async function getUserAgent(id: string): Promise<Agent> {
 }
 
 //^ returns non DTO
-export async function createUserAgent(rawValues: CreateAgent): Promise<string> {
+export async function createUserAgent(input: CreateAgent): Promise<string> {
   const user = await getUserSession()
-  const values = insertAgentSchema.parse(rawValues)
+  const values = createAgentSchema.parse(input)
 
   const engine = await db.query.engines.findFirst()
   invariant(engine, 'Engine not found.')
@@ -76,7 +83,7 @@ export async function updateUserAgent(input: UpdateAgent): Promise<void> {
 
 export async function deleteUserAgent(input: DeleteAgent): Promise<void> {
   const user = await getUserSession()
-  const { id } = input
+  const { id } = deleteAgentSchema.parse(input)
 
   await db
     .delete(schema.agents)

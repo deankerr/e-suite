@@ -1,7 +1,5 @@
 import z from 'zod'
 
-//* PUBLIC
-
 export type Vendor = z.infer<typeof vendorSchema>
 export type Engine = z.infer<typeof engineSchema>
 export type InferenceParameters = z.infer<typeof inferenceParametersSchema>
@@ -63,31 +61,30 @@ export const inferenceParametersSchema = z
 
 export const inferenceParametersRecordSchema = z.record(inferenceParametersSchema)
 
-export const agentSchema = z.object({
-  id: z.string(),
+const string32 = z
+  .string()
+  .transform((n) => n.trim())
+  .refine((n) => n.length > 0)
+  .transform((n) => (n.length > 32 ? n.slice(0, 32) : n))
 
+export const agentSchema = z.object({
+  id: z.string().min(1),
   createdAt: z.date(),
   updatedAt: z.date(),
-
-  name: z.string(),
-  image: z.string(),
-
-  engineId: z.string(),
   engine: engineSchema,
+
+  name: string32,
+  image: z.string(),
+  engineId: z.string().min(1),
   engineParameters: inferenceParametersRecordSchema,
 })
 
-export const createAgentSchema = z.object({
-  name: z.string(),
-})
+export const createAgentSchema = agentSchema.pick({ name: true })
 
-export const updateAgentSchema = z.object({
-  id: z.string(),
-  name: z.string().optional(),
-  engineId: z.string().optional(),
-  engineParameters: inferenceParametersRecordSchema.optional(),
-})
+export const updateAgentSchema = agentSchema
+  .pick({ id: true })
+  .merge(
+    agentSchema.pick({ name: true, image: true, engineId: true, engineParameters: true }).partial(),
+  )
 
-export const deleteAgentSchema = z.object({
-  id: z.string(),
-})
+export const deleteAgentSchema = agentSchema.pick({ id: true })

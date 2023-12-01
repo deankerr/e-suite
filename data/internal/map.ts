@@ -1,6 +1,6 @@
+import 'server-only'
 import { Agent, agentSchema } from '@/schema/dto'
-import { AgentEntity } from './schema'
 
-export function agentEntityToDto(agent: AgentEntity): Agent {
+export function agentEntityToDto(agent: unknown): Agent {
   return agentSchema.parse(agent)
 }
