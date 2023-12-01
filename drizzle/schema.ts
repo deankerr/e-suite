@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2'
-import { relations, sql } from 'drizzle-orm'
+import { InferSelectModel, relations, sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export type DrizzleEngine = typeof engines.$inferSelect

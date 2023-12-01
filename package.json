@@ -16,11 +16,11 @@
     "db:gen": "prisma generate",
     "studio": "dotenv -e .env.local -- prisma studio",
     "script:provider-models": "bun scripts/provider-models/run.ts",
-    "turso:generate": "drizzle-kit generate:sqlite --out ./drizzle/migrations --breakpoints --schema=./drizzle/schema.ts",
-    "turso:migrate": "tsx drizzle/migrate",
-    "turso:studio": "drizzle-kit studio --port 3333",
-    "turso:seed": "tsx drizzle/seed",
-    "turso:push": "drizzle-kit push:sqlite"
+    "turso:generate": "dotenv -e .env.local -- drizzle-kit generate:sqlite",
+    "turso:migrate": "dotenv -e .env.local -- tsx drizzle/migrate",
+    "turso:studio": "dotenv -e .env.local -- drizzle-kit studio --port 3333",
+    "turso:seed": "dotenv -e .env.local -- tsx drizzle/seed",
+    "turso:push": "dotenv -e .env.local -- drizzle-kit push:sqlite"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
@@ -86,6 +86,7 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "use-immer": "^0.9.0",
+    "znv": "^0.4.0",
     "zod": "^3.22.4",
     "zod-validation-error": "^2.1.0"
   },

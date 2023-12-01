@@ -1,17 +1,8 @@
 import engineDataJson from '@/scripts/provider-models/engines.json'
-import { createClient } from '@libsql/client'
-import dotenv from 'dotenv'
-import { drizzle } from 'drizzle-orm/libsql'
+import { createLocalClient } from './localClient'
 import { engines, vendors } from './schema'
 
-dotenv.config({ path: '.env.local' })
-
-const client = createClient({
-  url: process.env.TURSO_DB_URL as string,
-  authToken: process.env.TURSO_DB_AUTH_TOKEN as string,
-})
-
-const db = drizzle(client)
+const db = createLocalClient()
 
 async function seed() {
   const storedVendors = await db
