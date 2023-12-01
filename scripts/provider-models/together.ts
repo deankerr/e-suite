@@ -74,10 +74,10 @@ export async function processTogetherAi(readFile: string) {
       : getParamSize(entry.name)
     const contextLength = entry.context_length
 
-    const record: EngineCreate = {
+    const record = {
       id: 'togetherai@' + model,
       model,
-      type: isInstruct ? 'instruct' : entry.display_type ?? 'chat',
+      category: isInstruct ? 'instruct' : entry.display_type ?? 'chat',
 
       providerId: 'togetherai',
       providerModelId: entry.name,

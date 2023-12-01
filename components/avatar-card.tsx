@@ -1,7 +1,7 @@
 import { Deck } from '@/components/deck'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
-import { AgentDetailPrisma } from '@/schema-zod/zod-user'
+import { Agent } from '@/schema/dto'
 import { useRef, useState } from 'react'
 import { DeleteAgentDialog } from './delete-agent-dialog'
 import { useUpdateAgent } from './queries'
@@ -9,10 +9,7 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Loading } from './ui/loading'
 
-export function AvatarCard({
-  agent,
-  className,
-}: { agent: AgentDetailPrisma } & React.ComponentProps<'div'>) {
+export function AvatarCard({ agent, className }: { agent: Agent } & React.ComponentProps<'div'>) {
   const updateAgent = useUpdateAgent(agent.id)
   const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)
@@ -46,7 +43,7 @@ export function AvatarCard({
                   inputRef.current.value !== '' &&
                   inputRef.current.value !== agent.name
                 ) {
-                  updateAgent.mutate({ name: inputRef.current.value })
+                  updateAgent.mutate({ id: agent.id, name: inputRef.current.value })
                 }
                 setIsEditing(false)
               }}

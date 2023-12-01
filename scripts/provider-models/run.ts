@@ -47,7 +47,7 @@ export async function fetchAndAddProviderModels() {
   const e2 = await processOpenRouter()
   const e3 = await processTogetherAi(path.join(dir, 'togetherai.response.json'))
 
-  await createDbEngines(e1, e2, e3)
+  // await createDbEngines(e1, e2, e3)
 }
 
 // await fetchAndAddProviderModels()

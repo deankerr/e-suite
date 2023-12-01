@@ -46,7 +46,7 @@ export function processOpenAi() {
   return openaiStaticModelData
 }
 
-export const openaiStaticModelData: EngineCreate[] = [
+export const openaiStaticModelData = [
   {
     id: 'openai@gpt-3.5-turbo',
     model: 'openai/gpt-3.5-turbo',

@@ -45,7 +45,7 @@ export async function processOpenRouter() {
         ? entry.top_provider.max_completion_tokens
         : undefined
 
-    const record: EngineCreate = {
+    const record = {
       id: 'openrouter@' + modelSlug,
       model: modelSlug ?? entry.id,
       category,

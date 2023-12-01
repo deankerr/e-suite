@@ -3,7 +3,7 @@
 import * as dataEngines from '@/data/engines'
 import * as dataUserAgent from '@/data/user-agents'
 import { actionValidator } from '@/lib/action-validator'
-import { agentUpdateInputData } from '@/schema-zod/zod-user'
+import { updateAgentSchema } from '@/schema/dto'
 import z from 'zod'
 
 //* Agents
@@ -18,8 +18,8 @@ export const getAgent = actionValidator(
 )
 
 export const updateAgent = actionValidator(
-  z.object({ id: z.string(), data: agentUpdateInputData }),
-  async ({ user, data }) => await dataUserAgent.updateUserAgent({ ...data.data, id: data.id }),
+  updateAgentSchema,
+  async ({ user, data }) => await dataUserAgent.updateUserAgent(data),
 )
 
 export const createAgent = actionValidator(

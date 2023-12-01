@@ -1,4 +1,4 @@
-import { AgentUpdateInputData } from '@/schema-zod/zod-user'
+import { UpdateAgent } from '@/schema/dto'
 import {
   queryOptions,
   useMutation,
@@ -41,8 +41,8 @@ export function useUpdateAgent(id = '') {
   const queryClient = useQueryClient()
   return useMutation({
     mutationKey: [{ entity: 'agents', id }],
-    mutationFn: (data: AgentUpdateInputData) => updateAgent({ id, data }),
-    onMutate: async (updateData: AgentUpdateInputData) => {
+    mutationFn: (data: Omit<UpdateAgent, 'id'>) => updateAgent({ ...data, id }),
+    onMutate: async (updateData: UpdateAgent) => {
       await queryClient.cancelQueries({ queryKey: [{ entity: 'agents' }] })
       const previousAgent = queryClient.getQueryData(agentQueries.detail(id).queryKey)
 

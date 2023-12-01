@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { AgentDetail } from '@/schema-zod/zod-user'
+import { Agent, Engine } from '@/schema/dto'
 import { CheckIcon, Cross2Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { Deck } from './deck'
@@ -9,7 +9,7 @@ import { useGetEngineList, useUpdateAgent } from './queries'
 import { Button } from './ui/button'
 import { Loading } from './ui/loading'
 
-export function EngineDataCard({ agent }: { agent: AgentDetail } & React.ComponentProps<'div'>) {
+export function EngineDataCard({ agent }: { agent: Agent } & React.ComponentProps<'div'>) {
   const updateAgent = useUpdateAgent(agent.id)
   const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)
@@ -33,7 +33,7 @@ export function EngineDataCard({ agent }: { agent: AgentDetail } & React.Compone
               size="icon"
               onClick={() => {
                 if (selectedEngine.id !== agent.engine.id && !updateAgent.isPending) {
-                  updateAgent.mutate({ engineId: selectedEngine.id })
+                  updateAgent.mutate({ id: agent.id, engineId: selectedEngine.id })
                 }
                 setIsEditing(false)
               }}

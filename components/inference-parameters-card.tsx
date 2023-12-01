@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { AgentDetail, AgentParametersRecord } from '@/schema-zod/zod-user'
+import { Agent, InferenceParametersRecord } from '@/schema/dto'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import {
   CheckIcon,
@@ -20,7 +20,7 @@ import { Textarea } from './ui/textarea'
 export function InferenceParametersCard({
   agent,
   className,
-}: { agent: AgentDetail } & React.ComponentProps<'div'>) {
+}: { agent: Agent } & React.ComponentProps<'div'>) {
   const updateAgent = useUpdateAgent(agent.id)
   const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)
@@ -58,8 +58,8 @@ export function InferenceParametersCard({
                   const record = {
                     ...agent.engineParameters,
                     [agent.engineId]: parameters,
-                  } as AgentParametersRecord
-                  updateAgent.mutate({ parameters: record })
+                  } as InferenceParametersRecord
+                  updateAgent.mutate({ id: agent.id, engineParameters: record })
                 }
                 setIsEditing(false)
               }}
