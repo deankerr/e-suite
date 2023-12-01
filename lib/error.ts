@@ -1,9 +1,3 @@
-export class _deprecated_AppError extends Error {
-  constructor(message: string) {
-    super(message)
-  }
-}
-
 export class AppCodeError extends Error {
   public readonly code: AppErrorCode
   public readonly debug: any
@@ -15,8 +9,10 @@ export class AppCodeError extends Error {
 }
 
 const appErrorCodes = {
+  internal: 'internal',
   unauthorized: 'unauthorized',
   not_found: 'not_found',
+  invalid_input: 'invalid_input',
 } as const
 
 export type AppErrorCode = keyof typeof appErrorCodes

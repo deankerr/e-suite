@@ -28,3 +28,8 @@ export async function getUserSession() {
 
   return userSession
 }
+
+export async function getIsAuthenticated() {
+  const { isAuthenticated } = getKindeServerSession()
+  return await isAuthenticated()
+}

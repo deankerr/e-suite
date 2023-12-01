@@ -6,12 +6,12 @@ import { SidebarNav } from '@/components/sidebar-nav'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { UserMenuButton } from '@/components/user-menu-button'
-import { getSession } from '@/lib/server'
+import { getIsAuthenticated } from '@/data/auth'
 import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components'
 import Image from 'next/image'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession()
+  const session = await getIsAuthenticated()
   return (
     <AppShell>
       <AppSidebar>

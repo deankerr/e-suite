@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { getSession } from '@/lib/server'
+import { getUserSession } from '@/data/auth'
 import Link from 'next/link'
 import { Button } from './ui/button'
 
 export async function UserMenuButton({ className }: {} & React.ComponentProps<'div'>) {
-  const session = await getSession()
+  const session = await getUserSession()
   if (!session)
     return (
       <Button asChild>
