@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { AgentDetail } from '@/schema-zod/zod-user'
+import { AgentDetailPrisma } from '@/schema-zod/zod-user'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useDeleteAgent } from './queries'
@@ -21,7 +21,7 @@ export function DeleteAgentDialog({
   agent,
 }: {
   children: React.ReactNode
-  agent: AgentDetail
+  agent: AgentDetailPrisma
 }) {
   const [open, setOpen] = useState(false)
 

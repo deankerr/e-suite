@@ -25,8 +25,8 @@ export function InferenceParametersCard({
   const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)
 
-  const definitions = getEngineParametersAvailable(agent.engine.providerId)
-  const storedParameters = agent.parameters[agent.engineId] ?? {}
+  const definitions = getEngineParametersAvailable(agent.engine.vendorId)
+  const storedParameters = agent.engineParameters[agent.engineId] ?? {}
 
   const [currentParameters, setCurrentParameters] = useState({ ...storedParameters })
   const [currentChecked, setCurrentChecked] = useState(
@@ -56,7 +56,7 @@ export function InferenceParametersCard({
                     currentChecked[def.key] ? currentParameters[def.key] : undefined,
                   ])
                   const record = {
-                    ...agent.parameters,
+                    ...agent.engineParameters,
                     [agent.engineId]: parameters,
                   } as AgentParametersRecord
                   updateAgent.mutate({ parameters: record })

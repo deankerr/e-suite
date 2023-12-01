@@ -58,7 +58,7 @@ export function EngineDataCard({ agent }: { agent: AgentDetail } & React.Compone
         <EngineSelectMenu
           engines={engines.data ?? [selectedEngine]}
           value={currentEngineData}
-          onValueChange={setSelectedEngine}
+          onValueChange={(value) => setSelectedEngine(value)}
           className="w-full"
           editable={isEditing}
         />

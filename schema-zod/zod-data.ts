@@ -1,8 +1,4 @@
-import { Prisma, Engine as PrismaEngine } from '@prisma/client'
+import type { getEngineById } from '@/db/data'
 import z from 'zod'
 
-const engineWithProvider = Prisma.validator<Prisma.EngineDefaultArgs>()({
-  include: { provider: true },
-})
-
-export type Engine = Prisma.EngineGetPayload<typeof engineWithProvider>
+export type Engine = NonNullable<Awaited<ReturnType<typeof getEngineById>>>

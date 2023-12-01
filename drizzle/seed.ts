@@ -1,7 +1,10 @@
 import engineDataJson from '@/scripts/provider-models/engines.json'
 import { createClient } from '@libsql/client'
+import dotenv from 'dotenv'
 import { drizzle } from 'drizzle-orm/libsql'
 import { engines, vendors } from './schema'
+
+dotenv.config({ path: '.env.local' })
 
 const client = createClient({
   url: process.env.TURSO_DB_URL as string,

@@ -8,8 +8,8 @@ const endpoint = '/api/chat'
 
 export function useAgentChat(chatId: string, agent: AgentDetail) {
   const body: Record<string, unknown> = {
-    ...agent.parameters[agent.engineId],
-    model: agent.engine.providerModelId,
+    ...agent.engineParameters[agent.engineId],
+    model: agent.engine.vendorModelId,
     engineId: agent.engineId,
     stream: true,
   }

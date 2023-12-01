@@ -1,7 +1,7 @@
 import { Deck } from '@/components/deck'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
-import { AgentDetail } from '@/schema-zod/zod-user'
+import { AgentDetailPrisma } from '@/schema-zod/zod-user'
 import { useRef, useState } from 'react'
 import { DeleteAgentDialog } from './delete-agent-dialog'
 import { useUpdateAgent } from './queries'
@@ -12,7 +12,7 @@ import { Loading } from './ui/loading'
 export function AvatarCard({
   agent,
   className,
-}: { agent: AgentDetail } & React.ComponentProps<'div'>) {
+}: { agent: AgentDetailPrisma } & React.ComponentProps<'div'>) {
   const updateAgent = useUpdateAgent(agent.id)
   const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)

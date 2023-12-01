@@ -19,7 +19,8 @@
     "turso:generate": "drizzle-kit generate:sqlite --out ./drizzle/migrations --breakpoints --schema=./drizzle/schema.ts",
     "turso:migrate": "tsx drizzle/migrate",
     "turso:studio": "drizzle-kit studio --port 3333",
-    "turso:seed": "tsx drizzle/seed"
+    "turso:seed": "tsx drizzle/seed",
+    "turso:push": "drizzle-kit push:sqlite"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
@@ -29,6 +30,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@kinde-oss/kinde-auth-nextjs": "^2.0.10",
     "@libsql/client": "0.4.0-pre.5",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.6.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",

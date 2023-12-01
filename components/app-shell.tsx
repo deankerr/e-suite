@@ -1,5 +1,5 @@
 import { getEnginesList } from '@/db/data'
-import { initializeUserSession } from '@/db/server'
+import { initializeUserSession } from '@/db/user'
 import { cn } from '@/lib/utils'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { agentQueries, engineQueries } from './queries'

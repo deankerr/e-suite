@@ -1,3 +1,4 @@
+import { createId } from '@paralleldrive/cuid2'
 import { relations, sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
@@ -6,6 +7,12 @@ export type DrizzleNewEngine = typeof engines.$inferInsert
 
 export type DrizzleVendor = typeof vendors.$inferSelect
 export type DrizzleNewVendor = typeof vendors.$inferInsert
+
+export type DrizzleAgent = typeof agents.$inferSelect
+export type DrizzleNewAgent = typeof agents.$inferInsert
+
+export type DrizzleUser = typeof users.$inferSelect
+export type DrizzleNewUser = typeof users.$inferInsert
 
 export const engines = sqliteTable('engines', {
   id: text('id').primaryKey().notNull(),
@@ -38,8 +45,9 @@ export const engines = sqliteTable('engines', {
   vendorModelId: text('providerModelId').notNull(),
 })
 
-export const enginesRelations = relations(engines, ({ one }) => ({
+export const enginesRelations = relations(engines, ({ one, many }) => ({
   vendor: one(vendors, { fields: [engines.vendorId], references: [vendors.id] }),
+  engines: many(agents),
 }))
 
 export const vendors = sqliteTable('vendors', {
@@ -52,7 +60,7 @@ export const vendorsRelations = relations(vendors, ({ many }) => ({
   engines: many(engines),
 }))
 
-export const agent = sqliteTable('agent', {
+export const agents = sqliteTable('agents', {
   id: text('id').primaryKey().notNull(),
   ownerId: text('ownerId').notNull(),
 
@@ -69,8 +77,16 @@ export const agent = sqliteTable('agent', {
     .notNull(),
 })
 
-export const user = sqliteTable('user', {
-  id: text('id').primaryKey().notNull(),
+export const agentsRelations = relations(agents, ({ one }) => ({
+  owner: one(users, { fields: [agents.ownerId], references: [users.id] }),
+  engine: one(engines, { fields: [agents.engineId], references: [engines.id] }),
+}))
+
+export const users = sqliteTable('users', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => createId()),
   firstName: text('firstName'),
   lastName: text('lastName'),
   email: text('email'),
@@ -83,3 +99,7 @@ export const user = sqliteTable('user', {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
+
+export const userRelations = relations(users, ({ many }) => ({
+  agents: many(agents),
+}))

@@ -10,11 +10,11 @@ export const client = createClient({
   authToken: process.env.TURSO_DB_AUTH_TOKEN as string,
 })
 
-export const db = drizzle(client)
+export const migrateDb = drizzle(client)
 
 async function main() {
   try {
-    await migrate(db, {
+    await migrate(migrateDb, {
       migrationsFolder: 'drizzle/migrations',
     })
     console.log('Tables migrated!')

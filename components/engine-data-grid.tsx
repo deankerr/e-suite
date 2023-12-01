@@ -9,13 +9,13 @@ export function EngineDataGrid({
   if (!engine) return <Loading />
 
   const data = [
-    ['via', engine.provider?.displayName],
-    ['creator', engine.creator],
-    ['category', engine.type],
+    ['via', engine.vendor?.displayName],
+    ['creator', engine.creatorName],
+    ['category', engine.category],
     ['context length', engine.contextLength],
     ['license', engine.license || '[unknown]'],
-    ['price (input)', '$' + nanoUSDToDollars(Number(engine.costInputNanoUSD)).toString()],
-    ['price (output)', '$' + nanoUSDToDollars(Number(engine.costOutputNanoUSD)).toString()],
+    ['price (input)', '$' + nanoUSDToDollars(Number(engine.costInputNanoUsd)).toString()],
+    ['price (output)', '$' + nanoUSDToDollars(Number(engine.costOutputNanoUsd)).toString()],
   ] // availability, sources, datasheet, moderation
 
   return (

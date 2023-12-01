@@ -1,21 +1,66 @@
-import { prisma, Prisma } from '@/lib/prisma'
+import 'server-only'
+import * as schema from '@/drizzle/schema'
+import { db } from '@/lib/drizzle'
+import { getSession, Session } from '@/lib/server'
 import { getRandomAgentAvatar } from '@/lib/utils'
 import { AgentUpdateInputData, schemaAgentParametersRecord } from '@/schema-zod/zod-user'
-import { shuffle } from 'remeda'
+import { createId } from '@paralleldrive/cuid2'
+import { and, eq } from 'drizzle-orm'
 
-//* Agents
-const withEngineProvider = Prisma.validator<Prisma.AgentDefaultArgs>()({
-  include: {
-    engine: {
-      include: {
-        provider: true,
+export async function initializeUserSession() {
+  const session = await getSession()
+  if (!session) return null
+
+  const existingUser = await db.query.users.findFirst({
+    where: eq(schema.users.id, session.id),
+    with: {
+      agents: {
+        with: {
+          engine: {
+            with: {
+              vendor: true,
+            },
+          },
+        },
       },
     },
-  },
-})
-export type AgentWithEngineProvider = Prisma.AgentGetPayload<typeof withEngineProvider>
+  })
 
-function validateAgentParameters(parameters: Prisma.JsonValue) {
+  const user = existingUser ?? (await createSessionUser(session))
+
+  return {
+    user: session,
+    agents: user.agents,
+  }
+}
+
+async function getExistingUser(session: Session) {
+  const existingUser = await db.query.users.findFirst({
+    where: eq(schema.users.id, session.id),
+    with: {
+      agents: {
+        with: {
+          engine: {
+            with: {
+              vendor: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  return existingUser
+}
+
+async function createSessionUser(session: Session) {
+  const { role, ...newUser } = session
+  const user = await db.insert(schema.users).values(newUser).returning().all()
+  console.log('new user', user)
+  return { ...user, agents: [] }
+}
+
+function validateAgentParameters(parameters: unknown) {
   const parsed = schemaAgentParametersRecord.safeParse(parameters)
   if (parsed.success) {
     return parsed.data
@@ -25,22 +70,26 @@ function validateAgentParameters(parameters: Prisma.JsonValue) {
 }
 
 export async function getAgentOwnedByUserById({ ownerId, id }: { ownerId: string; id: string }) {
-  const agent = await prisma.agent.findUniqueOrThrow({
-    where: {
-      ownerId,
-      id,
+  const agent = await db.query.agents.findFirst({
+    where: and(eq(schema.agents.ownerId, ownerId), eq(schema.agents.id, id)),
+    with: {
+      engine: {
+        with: {
+          vendor: true,
+        },
+      },
     },
-    include: withEngineProvider.include,
   })
-  const parsed = { ...agent, parameters: validateAgentParameters(agent.parameters) }
+
+  if (!agent) throw new Error('no agent handle me')
+
+  const parsed = { ...agent, engineParameters: validateAgentParameters(agent.engineParameters) }
   return parsed
 }
 
 export async function getAgentsOwnedByUserList({ ownerId }: { ownerId: string }) {
-  return await prisma.agent.findMany({
-    where: {
-      ownerId,
-    },
+  return await db.query.agents.findMany({
+    where: eq(schema.agents.ownerId, ownerId),
   })
 }
 
@@ -56,59 +105,45 @@ export async function updateAgentOwnedByUser({
   const { engineId, ...inputData } = data
 
   if (engineId) {
-    await prisma.agent.update({
-      where: {
-        ownerId,
-        id,
-      },
-      data: {
+    await db
+      .update(schema.agents)
+      .set({
         ...inputData,
-        engine: {
-          connect: {
-            id: data.engineId,
-          },
-        },
-      },
-    })
+        engineId: data.engineId,
+      })
+      .where(and(eq(schema.agents.ownerId, ownerId), eq(schema.agents.id, id)))
+      .run()
   } else {
-    await prisma.agent.update({
-      where: {
-        ownerId,
-        id,
-      },
-      data,
-    })
+    await db
+      .update(schema.agents)
+      .set(inputData)
+      .where(and(eq(schema.agents.ownerId, ownerId), eq(schema.agents.id, id)))
+      .run()
   }
 }
 
 export async function createAgentOwnedByUser({ ownerId, name }: { ownerId: string; name: string }) {
-  const engine = await prisma.engine.findFirstOrThrow({})
+  const engine = await db.query.engines.findFirst()
+  if (!engine) throw new Error('no engine handle me')
 
-  const agent = await prisma.agent.create({
-    data: {
+  const agent = await db
+    .insert(schema.agents)
+    .values({
+      id: createId(), //? use default function
+      ownerId,
       name,
       image: getRandomAgentAvatar(),
-      owner: {
-        connect: {
-          id: ownerId,
-        },
-      },
-      engine: {
-        connect: {
-          id: engine.id,
-        },
-      },
-    },
-  })
+      engineId: engine.id,
+      engineParameters: JSON.stringify({}),
+    })
+    .returning({ id: schema.agents.id })
 
-  return agent.id
+  return agent[0]?.id!
 }
 
 export async function deleteAgentOwnedByUser({ ownerId, id }: { ownerId: string; id: string }) {
-  await prisma.agent.delete({
-    where: {
-      ownerId,
-      id,
-    },
-  })
+  await db
+    .delete(schema.agents)
+    .where(and(eq(schema.agents.ownerId, ownerId), eq(schema.agents.id, id)))
+    .run()
 }

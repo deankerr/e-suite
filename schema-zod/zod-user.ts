@@ -1,9 +1,16 @@
-import type { getAgentOwnedByUserById, getAgentsOwnedByUserList } from '@/db/user'
-import type { Agent as PrismaAgent } from '@prisma/client'
+import type {
+  getAgentOwnedByUserById as getAgentOwnedByUserByIdDrizzle,
+  getAgentsOwnedByUserList,
+} from '@/db/user'
+import type {
+  getAgentOwnedByUserById as getAgentOwnedByUserByIdPrisma,
+  getAgentsOwnedByUserList as getAgentsOwnedByUserListPrisma,
+} from '@/db/user-prisma'
 import z from 'zod'
 
-export type Agent = Awaited<ReturnType<typeof getAgentsOwnedByUserList>>[number]
-export type AgentDetail = Awaited<ReturnType<typeof getAgentOwnedByUserById>>
+export type Agent = Awaited<ReturnType<typeof getAgentsOwnedByUserListPrisma>>[number]
+export type AgentDetailPrisma = Awaited<ReturnType<typeof getAgentOwnedByUserByIdPrisma>>
+export type AgentDetail = Awaited<ReturnType<typeof getAgentOwnedByUserByIdDrizzle>>
 
 export const schemaAgentParameters = z
   .object({
@@ -27,7 +34,7 @@ export const agentUpdateInputData = z
     name: z.string(),
     image: z.string(),
     engineId: z.string(),
-    parameters: schemaAgentParametersRecord,
+    engineParameters: schemaAgentParametersRecord,
   })
   .partial()
 export type AgentUpdateInputData = z.infer<typeof agentUpdateInputData>
