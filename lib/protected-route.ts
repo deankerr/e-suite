@@ -1,5 +1,5 @@
 import { getUserSession, UserSession } from '@/data/auth'
-import { AppError, AppErrorCode } from '@/lib/error'
+import { AppError } from '@/lib/error'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
@@ -21,8 +21,12 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
     try {
       const user = await getUserSession()
       const parsedInput = inputSchema.parse(await request.json())
+
+      if (isStreamingRequest(parsedInput)) return await handler(parsedInput, user)
+
       const result = await handler(parsedInput, user)
-      return outputSchema.parse(result)
+      const parsedOutput = outputSchema.parse(result)
+      return Response.json(parsedOutput)
     } catch (err) {
       console.error(err)
       if (err instanceof AppError) {
@@ -41,4 +45,8 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
       })
     }
   }
+}
+
+function isStreamingRequest(input: unknown) {
+  return z.object({ stream: z.literal(true) }).safeParse(input).success
 }

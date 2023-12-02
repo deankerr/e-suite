@@ -1,3 +1,4 @@
+import 'server-only'
 import { ENV } from '@/lib/env'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'

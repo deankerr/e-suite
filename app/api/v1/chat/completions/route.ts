@@ -7,6 +7,9 @@ import { messageSchema, roleSchema } from '@/schema/message'
 import { vendorIdSchema } from '@/schema/vendor'
 import z from 'zod'
 
+export type ChatRouteRequest = z.infer<typeof chatRouteRequestSchema>
+export type ChatRouteResponse = z.infer<typeof chatRouteResponseSchema>
+
 //* Request
 const chatRouteRequestSchema = z
   .object({
@@ -38,7 +41,7 @@ const usageSchema = z.object({
   total_tokens: z.number(),
 })
 
-export const chatCompletionApiResponseSchema = z.object({
+export const chatRouteResponseSchema = z.object({
   id: z.string(),
   object: z.string(),
   created: z.number(),
@@ -56,5 +59,5 @@ export const POST = createProtectedRoute({
     if (input.vendorId === 'togetherai') return await togetheraiPlugin.chat(input)
     throw new AppError('invalid_client_request', 'Invalid vendor id', { vendorId: input.vendorId })
   },
-  outputSchema: z.any(), // StreamingTextResponse / chat completion?
+  outputSchema: z.any(),
 })

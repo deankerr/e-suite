@@ -1,7 +1,8 @@
+import 'server-only'
 import { ENV } from '@/lib/env'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
-import { openaiCreateChatSchema } from './openai.schema'
+import { openaiCreateChatSchema, openaiModerationRequestSchema } from './openai.schema'
 
 const api = new OpenAI({
   apiKey: ENV.OPENAI_API_KEY,
@@ -26,6 +27,12 @@ export const openaiPlugin = {
 
     if (textOnly) return new Response(response.choices[0]?.message.content)
     return Response.json(response)
+  },
+
+  moderation: async (input: unknown) => {
+    const body = openaiModerationRequestSchema.parse(input)
+    const response = await api.moderations.create(body)
+    return response
   },
 }
 

@@ -1,7 +1,8 @@
+import 'server-only'
+import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
 import { Message, messageSchema } from '@/schema/message'
-import { ChatCompletionApiResponseSchema } from '@/schema/v1/chat'
 import { nanoid } from 'nanoid/non-secure'
 import createClient from 'openapi-fetch'
 import z from 'zod'
@@ -56,7 +57,7 @@ function createChatApiResponseBody(output: unknown) {
     )
 
   if (textOnly) return new Response(messageData.text)
-  const response: ChatCompletionApiResponseSchema = {
+  const response: ChatRouteResponse = {
     id: 'tog-' + nanoid(5),
     object: 'chat.completion',
     created: Date.now(),
