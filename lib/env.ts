@@ -4,6 +4,7 @@ const schema = {
   // app
   APP_NAME: z.string(),
   APP_SITE_URL: z.string(),
+  APP_API_AUTH_TOKENS: z.string().array(),
 
   // database
   LIBSQL_DATABASE_URL: z.string(),

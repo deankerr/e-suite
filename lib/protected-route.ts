@@ -1,11 +1,17 @@
-import { getUserSession, UserSession } from '@/data/auth'
+import { authenticateApiRequest, UserSession } from '@/data/auth'
 import { AppError } from '@/lib/error'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
+type ApiAuth =
+  | {
+      token: true
+    }
+  | { user: UserSession }
+
 export type ProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.ZodTypeAny> = (
-  input: z.infer<ZReq>,
-  user: UserSession,
+  request: Request,
+  session: ApiAuth,
 ) => Promise<z.infer<ZRes>>
 
 export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.ZodTypeAny>({
@@ -14,17 +20,17 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
   outputSchema,
 }: {
   inputSchema: ZReq
-  handler: (input: z.infer<ZReq>, user: UserSession) => Promise<z.infer<ZRes>>
+  handler: (input: z.infer<ZReq>, session: ApiAuth) => Promise<z.infer<ZRes>>
   outputSchema: ZRes
 }): ProtectedRoute<ZReq, ZRes> {
   return async function protectedRoute(request) {
     try {
-      const user = await getUserSession()
+      const session = await authenticateApiRequest(request.headers)
       const parsedInput = inputSchema.parse(await request.json())
 
-      if (isStreamingRequest(parsedInput)) return await handler(parsedInput, user)
+      if (isStreamingRequest(parsedInput)) return await handler(parsedInput, session)
 
-      const result = await handler(parsedInput, user)
+      const result = await handler(parsedInput, session)
       const parsedOutput = outputSchema.parse(result)
       return Response.json(parsedOutput)
     } catch (err) {

@@ -1,7 +1,7 @@
 import 'server-only'
+import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
-import { initializeUserData } from './internal/user'
 
 export type UserSession = Awaited<ReturnType<typeof getUserSession>>
 
@@ -26,12 +26,24 @@ export async function getUserSession() {
     permissions: kindePermissions.permissions,
   }
 
-  initializeUserData(userSession)
-
   return userSession
 }
 
 export async function getIsAuthenticated() {
   const { isAuthenticated } = getKindeServerSession()
   return await isAuthenticated()
+}
+
+export function authenticateBearerToken(token: string) {
+  for (const key of ENV.APP_API_AUTH_TOKENS) {
+    if (token === key) return { token: true } as const
+  }
+  throw new AppError('unauthorized', 'Unauthorized')
+}
+
+export async function authenticateApiRequest(headers: Headers) {
+  const value = headers.get('Authorization')
+  const token = value ? authenticateBearerToken(value) : null
+  if (token) return token
+  return { user: await getUserSession() }
 }
