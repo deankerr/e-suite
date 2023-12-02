@@ -2,7 +2,11 @@ import 'server-only'
 import { ENV } from '@/lib/env'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
-import { openaiCreateChatSchema, openaiModerationRequestSchema } from './openai.schema'
+import {
+  openaiCreateChatSchema,
+  openaiImageGenerationRequestSchema,
+  openaiModerationRequestSchema,
+} from './openai.schema'
 
 const api = new OpenAI({
   apiKey: ENV.OPENAI_API_KEY,
@@ -32,6 +36,12 @@ export const openaiPlugin = {
   moderation: async (input: unknown) => {
     const body = openaiModerationRequestSchema.parse(input)
     const response = await api.moderations.create(body)
+    return response
+  },
+
+  imageGeneration: async (input: unknown) => {
+    const body = openaiImageGenerationRequestSchema.parse(input)
+    const response = await api.images.generate(body)
     return response
   },
 }

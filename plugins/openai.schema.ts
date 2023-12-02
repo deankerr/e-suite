@@ -58,3 +58,45 @@ export const openaiModerationResponseSchema = z.object({
   model: z.string(),
   results: z.array(resultSchema),
 })
+
+export const openaiImageGenerationRequestSchema = z.object({
+  prompt: z.string(),
+  model: z.string().optional(),
+  n: z.number().nullish(),
+  quality: z.enum(['standard', 'hd']).optional(),
+  response_format: z.enum(['url', 'b64_json']).nullish(),
+  size: z.enum(['256x256', '512x512', '1024x1024', '1792x1024', '1024x1792']).nullish(),
+  style: z.enum(['vivid', 'natural']).nullish(),
+})
+
+export const openaiImageObjectUrlSchema = z.object({
+  url: z.string(),
+  revised_prompt: z.string().optional(),
+})
+
+export const openaiImageObjectB64JsonSchema = z.object({
+  b64_json: z.string(),
+  revised_prompt: z.string().optional(),
+})
+
+export const openaiImageGenerationResponseSchema = z.object({
+  created: z.number(),
+  data: z.array(
+    z.object({
+      url: z.string().optional(),
+      b64_json: z.string().optional(),
+      revised_prompt: z.string().optional(),
+    }),
+  ),
+})
+
+// export const openaiImageGenerationResponseSchema = z
+//   .discriminatedUnion('format', [
+//     z.object({ format: z.literal('url'), url: z.string() }),
+//     z.object({ format: z.literal('b64_json'), b64_json: z.string() }),
+//   ])
+//   .and(
+//     z.object({
+//       created: z.number(),
+//     }),
+//   )
