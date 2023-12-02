@@ -1,4 +1,3 @@
-import { authenticateGuest } from '@/lib/api/api'
 // import { adapters } from '@/lib/platform/platforms'
 
 import { NextRequest, NextResponse } from 'next/server'

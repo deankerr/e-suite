@@ -32,3 +32,10 @@ export const openrouterPlugin = {
     return Response.json(response)
   },
 }
+
+export async function getAvailableModels() {
+  console.log('fetching openrouter model list')
+  const response = await fetch('https://openrouter.ai/api/v1/models')
+  const json = await response.json()
+  return json.data
+}

@@ -1,4 +1,3 @@
-import { createErrorResponse } from '@/lib/api/api'
 import { _deprecated_env, raise } from '@/lib/utils'
 import Replicate from 'replicate'
 import { z } from 'zod'
@@ -16,7 +15,7 @@ export const replicate = {
     } catch (error) {
       if (error instanceof Error) {
         const { message } = error
-        return createErrorResponse(message)
+        // return createErrorResponse(message)
       } else {
         throw error
       }

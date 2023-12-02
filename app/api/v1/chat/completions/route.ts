@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       const { message, name, details } = fromZodError(err)
       console.error(fromZodError(err))
       return getErrorResponse.badRequest({
-        code: 'invalid_input',
+        code: 'invalid_client_request',
         name,
         message,
         debug: details,

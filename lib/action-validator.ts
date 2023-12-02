@@ -26,7 +26,7 @@ export function actionValidator<Z extends z.ZodTypeAny, R>(
       if (err instanceof AppError) {
         throw err
       } else if (err instanceof ZodError) {
-        throw new AppError('invalid_input', fromZodError(err).message)
+        throw new AppError('invalid_client_request', fromZodError(err).message)
       } else {
         if (process.env.NODE_ENV === 'development') throw err
         else throw new AppError('internal', 'An unknown error occurred.')

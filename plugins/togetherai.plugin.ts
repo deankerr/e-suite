@@ -25,7 +25,10 @@ export const togetheraiPlugin = {
 
     if (data) return createChatApiResponseBody(data)
     if (error) throw error
-    throw new AppError('unknown_vender_response', 'Failed to parse the response from Together.ai')
+    throw new AppError(
+      'invalid_vendor_response',
+      'Failed to parse the response data from Together.ai',
+    )
   },
 }
 
@@ -46,7 +49,10 @@ function createChatApiResponseBody(output: unknown) {
   const data = togetheraiChatResponseSchema.parse(output)
   const messageData = data.output.choices[0]
   if (!messageData)
-    throw new AppError('unknown_vender_response', 'Failed to parse the response from Together.ai')
+    throw new AppError(
+      'invalid_vendor_response',
+      'Failed to parse the response data from Together.ai',
+    )
 
   if (textOnly) return new Response(messageData.text)
   const response: ChatCompletionApiResponseSchema = {
@@ -75,31 +81,24 @@ function createChatApiResponseBody(output: unknown) {
   return Response.json(response)
 }
 
-const sampleData = {
-  status: 'finished',
-  prompt: ['The capital of France is '],
-  model: 'togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1',
-  model_owner: '',
-  tags: {},
-  num_returns: 1,
-  args: {
-    model: 'togethercomputer/RedPajama-INCITE-Instruct-7B-v0.1',
-    prompt: 'The capital of France is ',
-    temperature: 0.8,
-    top_p: 0.7,
-    top_k: 50,
-    max_tokens: 1,
-  },
-  subjobs: [],
-  output: {
-    choices: [
-      {
-        finish_reason: 'length',
-        index: 0,
-        text: ' Paris',
-      },
-    ],
-    raw_compute_time: 0.06382315792143345,
-    result_type: 'language-model-inference',
-  },
+export async function getAvailableModels() {
+  console.log('fetching togetherai model list')
+  const { data, error } = await GET('/models/info', {})
+  console.log('data', data)
+  if (error) console.error('openapi-fetch error', error)
+  return data
 }
+
+// async function image(input: object) {
+//   // api spec is missing image parameters
+//   const { data, error } = await POST('/inference', { body: input })
+//   if (data) {
+//     const response = schemas.togetherai.image.output.parse(data)
+//     const base64 =
+//       response.output.choices[0]?.image_base64 ?? raise('response missing expected data')
+//     return { response, item: { base64 } }
+//   } else {
+//     console.error(error)
+//     throw new Error('Unknown togetherai error')
+//   }
+// }

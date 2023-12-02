@@ -1,13 +1,9 @@
-import { authenticateGuest } from '@/lib/api/api'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { z } from 'zod'
 
 export async function POST(request: NextRequest) {
   console.log('moderation')
-
-  const auth = authenticateGuest(request.headers.get('Authorization'))
-  if (!auth.ok) return auth.response
 
   const params = requestSchema.parse(await request.json())
 
