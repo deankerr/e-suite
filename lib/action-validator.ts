@@ -1,7 +1,7 @@
 import { getUserSession, UserSession } from '@/data/auth'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { AppCodeError } from './error'
+import { AppError } from './error'
 
 //* produced function with added session/input validation
 type ProtectedAction<Z extends z.ZodTypeAny, R extends any> = (rawInput: z.infer<Z>) => Promise<R>
@@ -23,13 +23,13 @@ export function actionValidator<Z extends z.ZodTypeAny, R>(
       return result
     } catch (err) {
       console.error(err)
-      if (err instanceof AppCodeError) {
+      if (err instanceof AppError) {
         throw err
       } else if (err instanceof ZodError) {
-        throw new AppCodeError('invalid_input', fromZodError(err).message)
+        throw new AppError('invalid_input', fromZodError(err).message)
       } else {
         if (process.env.NODE_ENV === 'development') throw err
-        else throw new AppCodeError('internal', 'An unknown error occurred.')
+        else throw new AppError('internal', 'An unknown error occurred.')
       }
     }
   }

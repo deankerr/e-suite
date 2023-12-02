@@ -1,17 +1,21 @@
 import { Agent } from '@/schema/dto'
+import { stringToJsonSchema } from '@/schema/stringToJson'
 import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
+import z from 'zod'
 
-const endpoint = '/api/chat'
+// const endpoint = '/api/chat'
+const endpoint = '/api/v1/chat/completions'
 
 export function useAgentChat(chatId: string, agent: Agent) {
   const body: Record<string, unknown> = {
     ...agent.engineParameters[agent.engineId],
     model: agent.engine.vendorModelId,
     engineId: agent.engineId,
-    stream: true,
+    vendorId: agent.engine.vendorId,
+    stream: false,
   }
 
   const chat = useChat({
@@ -26,8 +30,14 @@ export function useAgentChat(chatId: string, agent: Agent) {
       console.log('[finish]', message)
     },
     onError: (error) => {
-      console.error('[error]', error)
-      toast.error(error.message)
+      const appError = parseAppErrorJson(error)
+      if (appError) {
+        toast.error(appError.message)
+        console.error(appError)
+      } else {
+        toast.error(error.message)
+        console.error(error)
+      }
     },
   })
 
@@ -56,4 +66,21 @@ function createInitialMessages(name: string) {
       content: `You are an AI assistant named ${name}.`,
     },
   ]
+}
+
+export function parseAppErrorJson(err: Error) {
+  try {
+    const isJson = stringToJsonSchema.parse(err.message)
+    const appErr = z
+      .object({
+        code: z.string(),
+        message: z.string(),
+        debug: z.any(),
+        name: z.string().optional(),
+      })
+      .parse(isJson)
+    return appErr
+  } catch (err) {
+    return undefined
+  }
 }

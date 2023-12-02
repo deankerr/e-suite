@@ -1,7 +1,7 @@
 import 'server-only'
 import * as schema from '@/drizzle/schema'
 import { db } from '@/lib/drizzle'
-import { AppCodeError } from '@/lib/error'
+import { AppError } from '@/lib/error'
 import { getRandomAgentAvatar, invariant } from '@/lib/utils'
 import {
   Agent,
@@ -45,7 +45,7 @@ export async function getUserAgent(id: string): Promise<Agent> {
     },
   })
 
-  if (!agent) throw new AppCodeError('not_found', 'Agent not found.')
+  if (!agent) throw new AppError('not_found', 'Agent not found.')
   return agentEntityToDto(agent)
 }
 

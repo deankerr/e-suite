@@ -1,4 +1,4 @@
-import { getUserSession } from '@/data/auth'
+import { getIsAuthenticated, getUserSession } from '@/data/auth'
 import { getEngines } from '@/data/engines'
 import { getUserAgents } from '@/data/user-agents'
 import { cn } from '@/lib/utils'
@@ -7,9 +7,10 @@ import { agentQueries, engineQueries } from './queries'
 
 export async function AppShell({ className, children }: React.ComponentProps<'div'>) {
   const queryClient = new QueryClient()
-  const sessionUser = await getUserSession()
 
-  if (sessionUser) {
+  const isAuthed = await getIsAuthenticated()
+  if (isAuthed) {
+    const sessionUser = await getUserSession()
     const agents = await getUserAgents()
     const engines = await getEngines()
 

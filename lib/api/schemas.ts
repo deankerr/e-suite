@@ -1,3 +1,4 @@
+import { messageSchema } from '@/schema/message'
 import z from 'zod'
 import { openai } from './platforms/openai.schema'
 import { openrouter } from './platforms/openrouter.schema'
@@ -26,7 +27,7 @@ export type Messages = z.infer<typeof messages>
 export const eChatRequestSchema = z
   .object({
     engineId: z.string(),
-    messages: messages.optional(),
+    messages: messageSchema.array().min(1),
     prompt: z.string().optional(),
   })
   .passthrough()

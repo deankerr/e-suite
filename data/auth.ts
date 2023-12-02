@@ -1,5 +1,5 @@
 import 'server-only'
-import { AppCodeError } from '@/lib/error'
+import { AppError } from '@/lib/error'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 import { initializeUserData } from './internal/user'
 
@@ -12,7 +12,7 @@ export async function getUserSession() {
   const kindePermissions = await getPermissions()
 
   if (!kindeUser || !kindePermissions)
-    throw new AppCodeError('unauthorized', 'You are not logged in.', {
+    throw new AppError('unauthorized', 'You are not logged in.', {
       kindeUser,
       kindePermissions,
     })
