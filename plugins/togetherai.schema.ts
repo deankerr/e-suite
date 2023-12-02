@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const togetheraiCreateChatSchema = z.object({
   model: z.string(),
-  prompt: z.string(),
+  // prompt: z.string(),
   max_tokens: z.number().default(1024), //! workaround default
   stop_token: z
     .string()
@@ -29,15 +29,15 @@ const argsSchema = z.object({
 
 const choicesSchema = z.array(
   z.object({
-    finish_reason: z.string(),
-    index: z.number(),
+    finish_reason: z.string().optional(),
+    index: z.number().optional(),
     text: z.string(),
   }),
 )
 
 const outputSchema = z.object({
   choices: choicesSchema,
-  raw_compute_time: z.number(),
+  raw_compute_time: z.number().optional(),
   result_type: z.string(),
 })
 
@@ -45,11 +45,11 @@ export const togetheraiChatResponseSchema = z.object({
   status: z.string(),
   prompt: z.array(z.string()),
   model: z.string(),
-  model_owner: z.string(),
-  tags: z.record(z.any()),
+  model_owner: z.string().optional(),
+  tags: z.record(z.any()).optional(),
   num_returns: z.number(),
-  args: argsSchema,
-  subjobs: z.array(z.any()),
+  args: argsSchema.partial(),
+  subjobs: z.array(z.any()).optional(),
   output: outputSchema,
 })
 

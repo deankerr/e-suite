@@ -15,7 +15,7 @@ export function useAgentChat(chatId: string, agent: Agent) {
     model: agent.engine.vendorModelId,
     engineId: agent.engineId,
     vendorId: agent.engine.vendorId,
-    stream: false,
+    stream: true,
   }
 
   const chat = useChat({

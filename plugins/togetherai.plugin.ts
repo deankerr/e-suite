@@ -46,6 +46,7 @@ function convertMessagesToPromptFormat(messages: Message[]) {
 const textOnly = true
 
 function createChatApiResponseBody(output: unknown) {
+  console.log('output', JSON.stringify(output, null, 2))
   const data = togetheraiChatResponseSchema.parse(output)
   const messageData = data.output.choices[0]
   if (!messageData)
@@ -68,7 +69,7 @@ function createChatApiResponseBody(output: unknown) {
           role: 'assistant',
           content: messageData.text,
         },
-        finish_reason: messageData.finish_reason,
+        finish_reason: messageData.finish_reason ?? '',
       },
     ],
     usage: {
