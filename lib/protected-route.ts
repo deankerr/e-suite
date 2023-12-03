@@ -12,7 +12,7 @@ type ApiAuth =
 export type ProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.ZodTypeAny> = (
   request: Request,
   session: ApiAuth,
-) => Promise<z.infer<ZRes>>
+) => Promise<unknown>
 
 export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.ZodTypeAny>({
   inputSchema,
@@ -20,7 +20,7 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
   outputSchema,
 }: {
   inputSchema: ZReq
-  handler: (input: z.infer<ZReq>, session: ApiAuth) => Promise<z.infer<ZRes>>
+  handler: (input: z.infer<ZReq>, session: ApiAuth) => Promise<unknown>
   outputSchema: ZRes
 }): ProtectedRoute<ZReq, ZRes> {
   return async function protectedRoute(request) {
@@ -28,11 +28,7 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
       const session = await authenticateApiRequest(request.headers)
       const parsedInput = inputSchema.parse(await request.json())
 
-      if (isStreamingRequest(parsedInput)) return await handler(parsedInput, session)
-
-      const result = await handler(parsedInput, session)
-      const parsedOutput = outputSchema.parse(result)
-      return Response.json(parsedOutput)
+      return await handler(parsedInput, session)
     } catch (err) {
       console.error(err)
       if (err instanceof AppError) {
@@ -51,8 +47,4 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
       })
     }
   }
-}
-
-function isStreamingRequest(input: unknown) {
-  return z.object({ stream: z.literal(true) }).safeParse(input).success
 }

@@ -4,7 +4,6 @@
 */
 import fs from 'node:fs'
 import path from 'node:path'
-import { getAvailableModels } from '@/lib/api/platforms/togetherai.adapters'
 import z from 'zod'
 import { EngineCreate, getParamSize, writeModelResultJsonFile } from './run'
 

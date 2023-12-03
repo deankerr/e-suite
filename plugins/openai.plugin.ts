@@ -36,13 +36,13 @@ export const openaiPlugin = {
   moderation: async (input: unknown) => {
     const body = openaiModerationRequestSchema.parse(input)
     const response = await api.moderations.create(body)
-    return response
+    return Response.json(response)
   },
 
   imageGeneration: async (input: unknown) => {
     const body = openaiImageGenerationRequestSchema.parse(input)
     const response = await api.images.generate(body)
-    return response
+    return Response.json(response)
   },
 }
 
