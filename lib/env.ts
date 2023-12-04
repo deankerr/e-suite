@@ -1,4 +1,5 @@
-import z from 'zod'
+import z, { ZodError } from 'zod'
+import { fromZodError } from 'zod-validation-error'
 import { AppError } from './error'
 
 const schema = {
@@ -46,19 +47,43 @@ function parseEnv<T extends object>(schema: T): Env {
       const key = k as keyof Env
 
       if (spec === 'string') {
-        parsed[key] = z.string().parse(envVar)
+        const val = z.string().safeParse(envVar)
+        if (!val.success) {
+          throw new AppError('internal', 'Invalid configuration', {
+            env: key,
+            required: 'string',
+            received: typeof envVar,
+          })
+        }
+        parsed[key] = val.data
       }
 
       if (spec === 'list') {
-        const json = JSON.parse(z.string().parse(envVar))
-        const array = z.string().array().parse(json)
-        parsed[key] = Object.freeze(array)
+        const arrayParser = z.string().transform((val) => {
+          return z.string().array().parse(JSON.parse(val))
+        })
+        const val = arrayParser.safeParse(envVar)
+        if (!val.success) {
+          throw new AppError('internal', 'Invalid configuration', {
+            env: key,
+            required: 'list',
+            received: typeof envVar,
+          })
+        }
+        parsed[key] = Object.freeze(val.data)
       }
     }
 
     return Object.freeze(parsed)
   } catch (err) {
-    throw new AppError('internal', 'Invalid configuration', err)
+    if (err instanceof AppError) throw err
+
+    if (err instanceof ZodError) {
+      const zErr = fromZodError(err)
+      throw new AppError('internal', 'Invalid configuration', zErr)
+    }
+
+    throw new AppError('internal', 'An unknown error occurred.', err)
   }
 }
 
