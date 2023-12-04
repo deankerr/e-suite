@@ -104,8 +104,8 @@ export function objFormat(obj: unknown) {
 }
 export function logObjFormat(obj: unknown, label?: string) {
   console.log('')
-  label && console.log(label)
   console.log('=== === === ===')
+  label && console.log(label)
   console.log(objFormat(obj))
   console.log('=== === === ===')
   console.log('')

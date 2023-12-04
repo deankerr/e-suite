@@ -105,23 +105,20 @@ export const userRelations = relations(users, ({ many }) => ({
   agents: many(agents),
 }))
 
-// type api/chat api/image/generations error
-// part?phase? in / res / out
-// type3 data, error
-
-// userId
-// times
-// related logs / log group (eg. input/result/output of inference)
-// session blob
-// log blob
-// headers/cookies
-// uri
-
 //* Logs
-export const logs = sqliteTable('logs', {
+export const apiLogs = sqliteTable('api_logs', {
   id: text('id')
     .$defaultFn(() => createId())
     .primaryKey()
     .notNull(),
-  type: text('type', { enum: ['api/chat', 'api/moderations', 'api/image/generations', 'api'] }),
+  route: text('route').notNull(),
+  tag: text('tag').notNull(),
+  requestId: text('request_id').notNull(),
+  createdAt: dateTimeStamp('created_at')
+    .$default(() => new Date())
+    .notNull(),
+  authId: text('auth_id'),
+  vendorId: text('vendor_id'),
+  errorCode: text('error_code'),
+  data: text('data', { mode: 'json' }).notNull(),
 })
