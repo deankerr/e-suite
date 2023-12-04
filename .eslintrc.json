@@ -4,5 +4,8 @@
     "next/core-web-vitals",
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "plugin:drizzle/recommended"
-  ]
+  ],
+  "rules": {
+    "drizzle/enforce-delete-with-where": ["error", { "drizzleObjectName": ["db"] }]
+  }
 }

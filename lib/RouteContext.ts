@@ -1,3 +1,4 @@
+import { createApiLog } from '@/data/logs'
 import { createId } from '@paralleldrive/cuid2'
 import { logObjFormat } from './utils'
 
@@ -12,7 +13,7 @@ type RouteLogPhase =
 type RouteLogErrorCode = 'unknown' | 'unauthorized' | 'validation'
 
 export class RouteContext {
-  private reqId = createId()
+  private requestId = createId()
   private route: string
 
   constructor(route: string) {
@@ -29,24 +30,23 @@ export class RouteContext {
     vendorId?: string
     errorCode?: RouteLogErrorCode
   }) {
-    let serialized
+    let serialized: any = 'NO DATA'
     try {
-      if (!data) serialized = 'NO DATA'
+      if (typeof data === 'string') serialized = data
       else serialized = JSON.stringify(data)
     } catch (err) {
-      console.error('RouteLogger failed to parse data payload')
-      console.error(data)
-      serialized = 'BAD DATA'
+      console.error('RouteLogger failed to parse data payload %o', data)
     }
 
     const logItem = {
       ...items,
-      reqId: this.reqId,
+      requestId: this.requestId,
       route: this.route,
       timestamp: new Date(),
       data: serialized,
     }
 
+    createApiLog(logItem)
     logObjFormat(logItem, items.tag)
   }
 }

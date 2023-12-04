@@ -44,6 +44,8 @@ export const togetheraiPlugin = {
 
       //* json response
       const { response, message } = parseChatResponse(data)
+      ctx.log({ tag: 'vendor-response', data: response, vendorId: 'togetherai' })
+
       const res: ChatRouteResponse = {
         _raw: data,
         id: 'tog-' + nanoid(5),
@@ -68,7 +70,7 @@ export const togetheraiPlugin = {
         },
       }
 
-      ctx.log({ tag: 'vendor-response', data: res, vendorId: 'togetherai' })
+      ctx.log({ tag: 'response-body', data: res, vendorId: 'togetherai' })
       return Response.json(res)
     }
 

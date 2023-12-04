@@ -49,6 +49,11 @@ export const openaiPlugin = {
   },
 }
 
+export async function getAvailableModels() {
+  const { data } = await api.models.list()
+  return data
+}
+
 /* 
 async function chatModerated(chatRequest: EChatRequestSchema) {
   try {
@@ -75,10 +80,7 @@ async function chatModerated(chatRequest: EChatRequestSchema) {
 
 
 
-export async function getAvailableModels() {
-  const { data } = await api.models.list()
-  return data
-}
+
 
 
 */

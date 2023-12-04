@@ -1,4 +1,4 @@
-import { openai } from '@/lib/api/platforms/openai.adapters'
+import { getAvailableModels } from '@/plugins/openai.plugin'
 import z from 'zod'
 import { EngineCreate } from './run'
 
