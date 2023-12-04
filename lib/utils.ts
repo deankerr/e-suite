@@ -99,6 +99,14 @@ export function getRandomAgentAvatar() {
   return '/agent-avatars/' + shuffle(agentImages)[0]!
 }
 
-export function oblog(obj: object) {
-  return format(obj)
+export function objFormat(obj: unknown) {
+  return format('%o', obj)
+}
+export function logObjFormat(obj: unknown, label?: string) {
+  console.log('')
+  label && console.log(label)
+  console.log('=== === === ===')
+  console.log(objFormat(obj))
+  console.log('=== === === ===')
+  console.log('')
 }

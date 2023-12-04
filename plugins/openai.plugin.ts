@@ -1,5 +1,6 @@
 import 'server-only'
 import { ENV } from '@/lib/env'
+import { RouteContext } from '@/lib/RouteContext'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import {
@@ -13,8 +14,9 @@ const api = new OpenAI({
 })
 
 export const openaiPlugin = {
-  chat: async (input: unknown) => {
+  chat: async (input: unknown, ctx: RouteContext) => {
     const body = openaiCreateChatSchema.parse(input)
+    ctx.log({ tag: 'vendor-request', data: body, vendorId: 'openai' })
 
     //* streaming response
     if (body.stream) {
@@ -22,6 +24,7 @@ export const openaiPlugin = {
         body as OpenAI.ChatCompletionCreateParamsStreaming,
       )
       const stream = OpenAIStream(response)
+      ctx.log({ tag: 'vendor-response', data: 'STREAMING', vendorId: 'openai' })
       return new StreamingTextResponse(stream)
     }
 
@@ -29,7 +32,7 @@ export const openaiPlugin = {
     const response = await api.chat.completions.create(
       body as OpenAI.ChatCompletionCreateParamsNonStreaming,
     )
-
+    ctx.log({ tag: 'vendor-response', data: response, vendorId: 'openai' })
     return Response.json(response)
   },
 

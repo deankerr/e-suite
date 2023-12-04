@@ -4,18 +4,7 @@ import { relations } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { dateTimeStamp } from './customTypes'
 
-export type DrizzleEngine = typeof engines.$inferSelect
-export type DrizzleNewEngine = typeof engines.$inferInsert
-
-export type DrizzleVendor = typeof vendors.$inferSelect
-export type DrizzleNewVendor = typeof vendors.$inferInsert
-
-export type DrizzleAgent = typeof agents.$inferSelect
-export type DrizzleNewAgent = typeof agents.$inferInsert
-
-export type DrizzleUser = typeof users.$inferSelect
-export type DrizzleNewUser = typeof users.$inferInsert
-
+//* Engines
 export const engines = sqliteTable('engines', {
   id: text('id').primaryKey().notNull(),
   category: text('category').notNull(), //? enum
@@ -56,6 +45,7 @@ export const enginesRelations = relations(engines, ({ one, many }) => ({
   engines: many(agents),
 }))
 
+//* Vendors
 export const vendors = sqliteTable('vendors', {
   id: text('id').primaryKey().notNull(),
   displayName: text('displayName').notNull(),
@@ -66,6 +56,7 @@ export const vendorsRelations = relations(vendors, ({ many }) => ({
   engines: many(engines),
 }))
 
+//* Agents
 export const agents = sqliteTable('agents', {
   id: text('id')
     .$defaultFn(() => createId())
@@ -94,6 +85,7 @@ export const agentsRelations = relations(agents, ({ one }) => ({
   engine: one(engines, { fields: [agents.engineId], references: [engines.id] }),
 }))
 
+//* Users
 export const users = sqliteTable('users', {
   id: text('id').primaryKey().notNull(),
   firstName: text('firstName'),
@@ -112,3 +104,24 @@ export const users = sqliteTable('users', {
 export const userRelations = relations(users, ({ many }) => ({
   agents: many(agents),
 }))
+
+// type api/chat api/image/generations error
+// part?phase? in / res / out
+// type3 data, error
+
+// userId
+// times
+// related logs / log group (eg. input/result/output of inference)
+// session blob
+// log blob
+// headers/cookies
+// uri
+
+//* Logs
+export const logs = sqliteTable('logs', {
+  id: text('id')
+    .$defaultFn(() => createId())
+    .primaryKey()
+    .notNull(),
+  type: text('type', { enum: ['api/chat', 'api/moderations', 'api/image/generations', 'api'] }),
+})

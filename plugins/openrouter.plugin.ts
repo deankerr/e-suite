@@ -1,5 +1,6 @@
 import 'server-only'
 import { ENV } from '@/lib/env'
+import { RouteContext } from '@/lib/RouteContext'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import { openrouterCreateChatSchema } from './openrouter.schema'
@@ -13,15 +14,17 @@ const api = new OpenAI({
 })
 
 export const openrouterPlugin = {
-  chat: async (input: unknown) => {
+  chat: async (input: unknown, ctx: RouteContext) => {
     const body = openrouterCreateChatSchema.parse(input)
-
+    ctx.log({ tag: 'vendor-request', data: body, vendorId: 'openrouter' })
     //* streaming response
     if (body.stream) {
       const response = await api.chat.completions.create(
         body as OpenAI.ChatCompletionCreateParamsStreaming,
       )
       const stream = OpenAIStream(response)
+      ctx.log({ tag: 'vendor-response', data: 'STREAMING', vendorId: 'openrouter' })
+
       return new StreamingTextResponse(stream)
     }
 
@@ -30,6 +33,7 @@ export const openrouterPlugin = {
       body as OpenAI.ChatCompletionCreateParamsNonStreaming,
     )
 
+    ctx.log({ tag: 'vendor-response', data: response, vendorId: 'openrouter' })
     return Response.json(response)
   },
 }

@@ -56,10 +56,10 @@ export const chatRouteResponseSchema = z.object({
 
 export const POST = createProtectedRoute({
   inputSchema: chatRouteRequestSchema,
-  handler: async (input, user) => {
-    if (input.vendorId === 'openai') return await openaiPlugin.chat(input)
-    if (input.vendorId === 'openrouter') return await openrouterPlugin.chat(input)
-    if (input.vendorId === 'togetherai') return await togetheraiPlugin.chat(input)
+  handler: async (input, ctx) => {
+    if (input.vendorId === 'openai') return await openaiPlugin.chat(input, ctx)
+    if (input.vendorId === 'openrouter') return await openrouterPlugin.chat(input, ctx)
+    if (input.vendorId === 'togetherai') return await togetheraiPlugin.chat(input, ctx)
     throw new AppError('invalid_client_request', 'Invalid vendor id', { vendorId: input.vendorId })
   },
   outputSchema: z.any(),

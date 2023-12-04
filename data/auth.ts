@@ -34,16 +34,19 @@ export async function getIsAuthenticated() {
   return await isAuthenticated()
 }
 
-export function authenticateBearerToken(token: string) {
-  for (const key of ENV.APP_API_AUTH_TOKENS) {
-    if (token === key) return { token: true } as const
+export async function authenticateApiSession(headers: Headers) {
+  const authKey = headers.get('Authorization')
+  if (authKey) {
+    for (const key of ENV.APP_API_AUTH_TOKENS) {
+      if (authKey === key) return { authId: authKey }
+    }
   }
-  throw new AppError('unauthorized', 'Unauthorized')
-}
 
-export async function authenticateApiRequest(headers: Headers) {
-  const value = headers.get('Authorization')
-  const token = value ? authenticateBearerToken(value) : null
-  if (token) return token
-  return { user: await getUserSession() }
+  const { getUser } = getKindeServerSession()
+  const user = await getUser()
+  if (user) {
+    return { authId: user.id }
+  }
+
+  throw new AppError('unauthorized', 'Unauthorized')
 }
