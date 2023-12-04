@@ -1,27 +1,21 @@
-import { _deprecated_env } from '@/lib/utils'
-import createClient from 'openapi-fetch'
-import { components, paths } from './fal.illusion-diffusion'
+import { ENV } from '@/lib/env'
+import * as fal from '@fal-ai/serverless-client'
 
-const client = createClient<paths>({
-  baseUrl: 'https://54285744-illusion-diffusion.gateway.alpha.fal.ai/',
-  headers: {
-    Authorization: `Key ${_deprecated_env('FALAI_API_KEY')}`,
-  },
+fal.config({
+  credentials: ENV.FALAI_API_KEY,
 })
 
-type Input = components['schemas']['IllusionDiffusionInput']
+export async function falTestRun() {
+  const images = await fal.run('110602490-lora', {
+    input: {
+      model_name: 'runwayml/stable-diffusion-v1-5',
+      prompt: 'a giant boar in the forest',
+      negative_prompt:
+        'cartoon, painting, illustration, (worst quality, low quality, normal quality:2), (epicnegative:0.9)',
+    },
+  })
 
-export const fal = {
-  async illusion(body: Input) {
-    const { data, error } = await client.POST('/', { body })
-
-    if (error) {
-      console.error(error, 'fal illusion')
-      throw new Error('fal illusion')
-    }
-
-    const response = data
-    const item = data.image.url
-    return { response, item }
-  },
+  if (Array.isArray(images)) {
+    for (const i of images) console.log(i)
+  } else console.log(images)
 }

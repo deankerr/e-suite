@@ -8,6 +8,9 @@ dependencies:
   '@ark-ui/react':
     specifier: ^1.1.0
     version: 1.1.0(@internationalized/date@3.5.0)(react-dom@18.2.0)(react@18.2.0)
+  '@fal-ai/serverless-client':
+    specifier: ^0.6.1
+    version: 0.6.1
   '@hookform/resolvers':
     specifier: ^3.3.2
     version: 3.3.2(react-hook-form@7.48.2)
@@ -1261,6 +1264,10 @@ packages:
   /@eslint/js@8.54.0:
     resolution: {integrity: sha512-ut5V+D+fOoWPgGGNj83GGjnntO39xDy6DWxO0wb7Jp3DcMX0TfIqdzHF85VTQkerdyGmuuMD9AKAo5KiNlf/AQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  /@fal-ai/serverless-client@0.6.1:
+    resolution: {integrity: sha512-MwVR/J9yfZIGUT004Qp1ns6JP55FO8Veg6XTK28jzYkvqYBtPuv0H5AaGlfig4JIiPWGLE9EgA+wZxeEB6ZTRA==}
+    dev: false
 
   /@fastify/busboy@2.1.0:
     resolution: {integrity: sha512-+KpH+QxZU7O4675t3mnkQKcZZg56u+K/Ct2K+N2AZYNVK8kyeo/bI18tI8aPm3tvNNRyTWfj6s5tnGNlcbQRsA==}

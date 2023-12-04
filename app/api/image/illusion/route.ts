@@ -1,3 +1,4 @@
+import { createProtectedRoute } from '@/lib/protected-route'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -15,6 +16,18 @@ import { z } from 'zod'
 
 //   return NextResponse.json(result)
 // }
+
+export const POST = createProtectedRoute({
+  inputSchema: z.any(),
+  handler: async () => {
+    return Response.json({
+      site: process.env.KINDE_SITE_URL,
+      out: process.env.KINDE_POST_LOGOUT_REDIRECT_URL,
+      in: process.env.KINDE_POST_LOGIN_REDIRECT_URL,
+    })
+  },
+  outputSchema: z.any(),
+})
 
 const requestSchema = z.object({
   image_url: z.string().url(),
