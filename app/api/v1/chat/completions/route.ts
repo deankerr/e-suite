@@ -43,7 +43,7 @@ const usageSchema = z.object({
   total_tokens: z.number(),
 })
 
-export const chatRouteResponseSchema = z.object({
+const chatRouteResponseSchema = z.object({
   _raw: z.any(),
   id: z.string(),
   object: z.string(),

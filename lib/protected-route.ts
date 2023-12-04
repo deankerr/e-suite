@@ -8,7 +8,7 @@ import { RouteContext } from './RouteContext'
 export type ProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.ZodTypeAny> = (
   request: NextRequest,
   ctx: RouteContext,
-) => Promise<unknown>
+) => Promise<Response>
 
 export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.ZodTypeAny>({
   inputSchema,
@@ -16,7 +16,7 @@ export function createProtectedRoute<ZReq extends z.ZodTypeAny, ZRes extends z.Z
   outputSchema,
 }: {
   inputSchema: ZReq
-  handler: (input: z.infer<ZReq>, ctx: RouteContext) => Promise<unknown>
+  handler: (input: z.infer<ZReq>, ctx: RouteContext) => Promise<Response>
   outputSchema: ZRes
 }): ProtectedRoute<ZReq, ZRes> {
   return async function protectedRoute(request) {
