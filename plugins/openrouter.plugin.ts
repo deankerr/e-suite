@@ -12,12 +12,11 @@ const api = new OpenAI({
   },
 })
 
-const textOnly = true
-
 export const openrouterPlugin = {
   chat: async (input: unknown) => {
     const body = openrouterCreateChatSchema.parse(input)
 
+    //* streaming response
     if (body.stream) {
       const response = await api.chat.completions.create(
         body as OpenAI.ChatCompletionCreateParamsStreaming,
@@ -26,10 +25,11 @@ export const openrouterPlugin = {
       return new StreamingTextResponse(stream)
     }
 
+    //* json response
     const response = await api.chat.completions.create(
       body as OpenAI.ChatCompletionCreateParamsNonStreaming,
     )
-    if (textOnly) return new Response(response.choices[0]?.message.content)
+
     return Response.json(response)
   },
 }

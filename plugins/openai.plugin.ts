@@ -11,12 +11,12 @@ import {
 const api = new OpenAI({
   apiKey: ENV.OPENAI_API_KEY,
 })
-const textOnly = true
 
 export const openaiPlugin = {
   chat: async (input: unknown) => {
     const body = openaiCreateChatSchema.parse(input)
 
+    //* streaming response
     if (body.stream) {
       const response = await api.chat.completions.create(
         body as OpenAI.ChatCompletionCreateParamsStreaming,
@@ -25,11 +25,11 @@ export const openaiPlugin = {
       return new StreamingTextResponse(stream)
     }
 
+    //* json response
     const response = await api.chat.completions.create(
       body as OpenAI.ChatCompletionCreateParamsNonStreaming,
     )
 
-    if (textOnly) return new Response(response.choices[0]?.message.content)
     return Response.json(response)
   },
 
@@ -70,21 +70,7 @@ async function chatModerated(chatRequest: EChatRequestSchema) {
   }
 }
 
-async function image(input: OpenAI.ImageGenerateParams) {
-  try {
-    const response = await api.images.generate(input)
-    const item = { url: response.data[0]?.url ?? raise('response missing expected url') }
-    console.log(item, 'image')
-    return { response, item }
-  } catch (error) {
-    if (error instanceof OpenAI.APIError) {
-      const { status, message } = error
-      return createErrorResponse(message, status)
-    } else {
-      throw error
-    }
-  }
-}
+
 
 export async function getAvailableModels() {
   const { data } = await api.models.list()

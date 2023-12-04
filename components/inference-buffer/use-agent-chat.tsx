@@ -1,6 +1,5 @@
 import { Agent } from '@/schema/dto'
 import { stringToJsonSchema } from '@/schema/stringToJson'
-import { Message } from 'ai'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'
@@ -16,6 +15,7 @@ export function useAgentChat(chatId: string, agent: Agent) {
     engineId: agent.engineId,
     vendorId: agent.engine.vendorId,
     stream: true,
+    stream_tokens: true,
   }
 
   const chat = useChat({

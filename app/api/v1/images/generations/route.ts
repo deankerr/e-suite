@@ -4,7 +4,6 @@ import {
   openaiImageGenerationRequestSchema,
   openaiImageGenerationResponseSchema,
 } from '@/plugins/openai.schema'
-import z from 'zod'
 
 const imageGenerationRequestSchema = openaiImageGenerationRequestSchema
 const imageGenerationResponseSchema = openaiImageGenerationResponseSchema
