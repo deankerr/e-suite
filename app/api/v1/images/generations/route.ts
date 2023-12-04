@@ -5,6 +5,8 @@ import {
   openaiImageGenerationResponseSchema,
 } from '@/plugins/openai.schema'
 
+export const runtime = 'edge'
+
 const imageGenerationRequestSchema = openaiImageGenerationRequestSchema
 const imageGenerationResponseSchema = openaiImageGenerationResponseSchema
 

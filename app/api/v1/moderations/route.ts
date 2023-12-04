@@ -5,6 +5,8 @@ import {
   openaiModerationResponseSchema,
 } from '@/plugins/openai.schema'
 
+export const runtime = 'edge'
+
 const moderationRouteRequestSchema = openaiModerationRequestSchema
 const moderationRouteResponseSchema = openaiModerationResponseSchema
 

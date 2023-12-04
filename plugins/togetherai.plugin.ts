@@ -2,7 +2,7 @@ import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
-import { invariant } from '@/lib/utils'
+import { invariant, oblog } from '@/lib/utils'
 import { Message, messageSchema } from '@/schema/message'
 import { nanoid } from 'nanoid/non-secure'
 import createClient from 'openapi-fetch'
@@ -24,22 +24,24 @@ export const togetheraiPlugin = {
       .parse(input)
     const prompt = convertMessagesToPromptFormat(messages)
 
-    //* streaming disabled
+    //^ streaming disabled
     const { data, error } = await POST('/inference', {
       body: { ...body, prompt, stream_tokens: false },
     })
 
     if (data) {
       //* streaming response
+      console.log(oblog(data))
       if (body.stream_tokens) {
         //* just return the completion text until streaming implemented
         const { message } = parseChatResponse(data)
-        return Response.json(message.text)
+        return new Response(message.text)
       }
 
       //* json response
       const { response, message } = parseChatResponse(data)
       const res: ChatRouteResponse = {
+        _raw: data,
         id: 'tog-' + nanoid(5),
         object: 'chat.completion',
         created: Date.now(),

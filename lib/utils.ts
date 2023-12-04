@@ -1,3 +1,4 @@
+import { format } from 'util'
 import { clsx, type ClassValue } from 'clsx'
 import { shuffle } from 'remeda'
 import { twMerge } from 'tailwind-merge'
@@ -96,4 +97,8 @@ export function getRandomAgentAvatar() {
   ] as const
 
   return '/agent-avatars/' + shuffle(agentImages)[0]!
+}
+
+export function oblog(obj: object) {
+  return format(obj)
 }

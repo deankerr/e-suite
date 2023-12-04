@@ -7,6 +7,8 @@ import { messageSchema, roleSchema } from '@/schema/message'
 import { vendorIdSchema } from '@/schema/vendor'
 import z from 'zod'
 
+export const runtime = 'edge'
+
 export type ChatRouteRequest = z.infer<typeof chatRouteRequestSchema>
 export type ChatRouteResponse = z.infer<typeof chatRouteResponseSchema>
 
@@ -42,6 +44,7 @@ const usageSchema = z.object({
 })
 
 export const chatRouteResponseSchema = z.object({
+  _raw: z.any(),
   id: z.string(),
   object: z.string(),
   created: z.number(),
