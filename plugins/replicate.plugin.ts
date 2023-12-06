@@ -1,31 +1,29 @@
-import { _deprecated_env, raise } from '@/lib/utils'
+import { ENV } from '@/lib/env'
+import { RouteContext } from '@/lib/route'
 import Replicate from 'replicate'
-import { z } from 'zod'
+import { replicateSchema } from './replicate.schema'
 
-const api = new Replicate({ auth: _deprecated_env('REPLICATE_API_KEY') })
+const api = new Replicate({ auth: ENV.REPLICATE_API_KEY, userAgent: ENV.APP_NAME })
 
-export const replicate = {
-  async image(input: object) {
-    try {
-      const { prompt, model } = imageRequestSchema.parse(input)
-      const data = await api.run(model as `${string}/${string}:${string}`, { input: { prompt } })
-      const response = imageResponseSchema.parse(data)
-      const item = { url: response[0] ?? raise('replicate response missing data') }
-      return { response, item }
-    } catch (error) {
-      if (error instanceof Error) {
-        const { message } = error
-        // return createErrorResponse(message)
-      } else {
-        throw error
+export const replicatePlugin = {
+  image: {
+    generations: async (ctx: RouteContext) => {
+      const { model, ...input } = replicateSchema.image.generations.request.parse(ctx.input)
+      ctx.log.add('vendorRequestBody', { model, input })
+
+      const result = await api.run(model as `${string}/${string}:${string}`, { input })
+      ctx.log.add('vendorResponseBody', result)
+
+      const parsed = replicateSchema.image.generations.response.parse(result)
+      const response = {
+        created: Date.now(),
+        data: parsed.map((item) => ({
+          url: item,
+        })),
       }
-    }
+
+      ctx.log.add('responseBody', response)
+      return Response.json(response)
+    },
   },
 }
-
-const imageRequestSchema = z.object({
-  prompt: z.string(),
-  model: z.string(),
-})
-
-const imageResponseSchema = z.string().url().array()
