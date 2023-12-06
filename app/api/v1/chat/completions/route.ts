@@ -1,5 +1,7 @@
+import { NewAppError } from '@/lib/app-error'
 import { AppError } from '@/lib/error'
 import { createProtectedRoute } from '@/lib/protected-route'
+import { route } from '@/lib/route'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
@@ -54,13 +56,13 @@ const chatRouteResponseSchema = z.object({
   usage: usageSchema,
 })
 
-export const POST = createProtectedRoute({
-  inputSchema: chatRouteRequestSchema,
-  handler: async (input, ctx) => {
-    if (input.vendorId === 'openai') return await openaiPlugin.chat(input, ctx)
-    if (input.vendorId === 'openrouter') return await openrouterPlugin.chat(input, ctx)
-    if (input.vendorId === 'togetherai') return await togetheraiPlugin.chat(input, ctx)
-    throw new AppError('invalid_client_request', 'Invalid vendor id', { vendorId: input.vendorId })
+export const POST = route({
+  access: 'authorized',
+  input: chatRouteRequestSchema,
+  handler: async (ctx) => {
+    if (ctx.input.vendorId === 'openai') return await openaiPlugin.chat(ctx)
+    if (ctx.input.vendorId === 'openrouter') return await openrouterPlugin.chat(ctx)
+    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.chat(ctx)
+    throw new NewAppError('vendor_method_not_supported')
   },
-  outputSchema: z.any(),
 })

@@ -1,3 +1,4 @@
+import 'server-only'
 import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
 import * as fal from '@fal-ai/serverless-client'

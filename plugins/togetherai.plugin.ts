@@ -2,8 +2,8 @@ import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
-import { RouteContext } from '@/lib/RouteContext'
-import { invariant, objFormat } from '@/lib/utils'
+import { RouteContext } from '@/lib/route'
+import { invariant } from '@/lib/utils'
 import { Message, messageSchema } from '@/schema/message'
 import { nanoid } from 'nanoid/non-secure'
 import createClient from 'openapi-fetch'
@@ -19,7 +19,7 @@ const { GET, POST } = createClient<paths>({
 })
 
 export const togetheraiPlugin = {
-  chat: async (input: unknown, ctx: RouteContext) => {
+  chat: async ({ input, log }: RouteContext) => {
     const { messages, ...rest } = togetheraiCreateChatSchema
       .merge(z.object({ messages: messageSchema.array() }))
       .parse(input)
@@ -27,7 +27,7 @@ export const togetheraiPlugin = {
 
     //^ streaming disabled
     const body = { ...rest, prompt, stream_tokens: false }
-    ctx.log({ tag: 'vendor-request', data: body, vendorId: 'togetherai' })
+    log.add('vendorRequestBody', body)
 
     const { data, error } = await POST('/inference', {
       body,
@@ -38,13 +38,13 @@ export const togetheraiPlugin = {
       if (rest.stream_tokens) {
         //* just return the completion text until streaming implemented
         const { message } = parseChatResponse(data)
-        ctx.log({ tag: 'vendor-response', data: message, vendorId: 'togetherai' })
+        log.add('vendorResponseBody', message.text)
         return new Response(message.text)
       }
 
       //* json response
       const { response, message } = parseChatResponse(data)
-      ctx.log({ tag: 'vendor-response', data: response, vendorId: 'togetherai' })
+      log.add('vendorResponseBody', response)
 
       const res: ChatRouteResponse = {
         _raw: data,
@@ -70,7 +70,7 @@ export const togetheraiPlugin = {
         },
       }
 
-      ctx.log({ tag: 'response-body', data: res, vendorId: 'togetherai' })
+      log.add('responseBody', res)
       return Response.json(res)
     }
 
