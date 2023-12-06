@@ -10,11 +10,7 @@ import { nanoid } from 'nanoid/non-secure'
 import createClient from 'openapi-fetch'
 import z from 'zod'
 import type { paths } from './togetherai.api'
-import {
-  togetheraiChatResponseSchema,
-  togetheraiCreateChatSchema,
-  togetheraiSchema,
-} from './togetherai.schema'
+import { togetheraiSchema } from './togetherai.schema'
 
 const { GET, POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
@@ -25,7 +21,7 @@ const { GET, POST } = createClient<paths>({
 
 export const togetheraiPlugin = {
   chat: async ({ input, log }: RouteContext) => {
-    const { messages, ...rest } = togetheraiCreateChatSchema
+    const { messages, ...rest } = togetheraiSchema.chat.completions.request
       .merge(z.object({ messages: messageSchema.array() }))
       .parse(input)
     const prompt = convertMessagesToPromptFormat(messages)
@@ -121,7 +117,7 @@ function convertMessagesToPromptFormat(messages: Message[]) {
 
 function parseChatResponse(data: unknown) {
   try {
-    const response = togetheraiChatResponseSchema.parse(data)
+    const response = togetheraiSchema.chat.completions.response.parse(data)
     const message = response.output.choices[0]
     invariant(message)
     return { response, message }

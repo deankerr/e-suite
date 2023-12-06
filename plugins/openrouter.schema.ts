@@ -1,8 +1,16 @@
 import z from 'zod'
-import { openaiCreateChatSchema } from './openai.schema'
+import { openaiSchema } from './openai.schema'
 
-export const openrouterCreateChatSchema = openaiCreateChatSchema.merge(
-  z.object({
-    transforms: z.string().array().optional(),
-  }),
-)
+export const openrouterSchema = {
+  chat: {
+    completions: {
+      request: openaiSchema.chat.completions.request
+        .merge(
+          z.object({
+            transforms: z.string().array().optional(),
+          }),
+        )
+        .describe('openrouter chat request'),
+    },
+  },
+}

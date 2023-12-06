@@ -15,15 +15,15 @@ type ImgRes = z.infer<typeof openaiImageGenerationResponseSchema>
 export const falPlugin = {
   imageGeneration: async ({ input, log }: RouteContext) => {
     console.log('fal image generation')
-    const { function_id } = falSchema.image.generation.getFunctionId.parse(input)
+    const { function_id } = falSchema.image.generations.getFunctionId.parse(input)
 
-    const body = falSchema.image.generation[function_id].parse(input)
+    const body = falSchema.image.generations[function_id].parse(input)
     log.add('vendorRequestBody', body)
 
     const response = await fal.run(function_id, { input: body })
     log.add('vendorResponseBody', response)
 
-    const res = falSchema.image.generation.response.parse(response)
+    const res = falSchema.image.generations.response.parse(response)
 
     const fmt: ImgRes = {
       created: Date.now(),

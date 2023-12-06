@@ -3,7 +3,7 @@ import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
-import { openrouterCreateChatSchema } from './openrouter.schema'
+import { openrouterSchema } from './openrouter.schema'
 
 const api = new OpenAI({
   apiKey: ENV.OPENROUTER_API_KEY,
@@ -15,7 +15,7 @@ const api = new OpenAI({
 
 export const openrouterPlugin = {
   chat: async ({ input, log }: RouteContext) => {
-    const body = openrouterCreateChatSchema.parse(input)
+    const body = openrouterSchema.chat.completions.request.parse(input)
     log.add('vendorRequestBody', body)
 
     //* streaming response

@@ -3,11 +3,7 @@ import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
-import {
-  openaiCreateChatSchema,
-  openaiImageGenerationRequestSchema,
-  openaiModerationRequestSchema,
-} from './openai.schema'
+import { openaiSchema } from './openai.schema'
 
 const api = new OpenAI({
   apiKey: ENV.OPENAI_API_KEY,
@@ -15,7 +11,7 @@ const api = new OpenAI({
 
 export const openaiPlugin = {
   chat: async ({ input, log }: RouteContext) => {
-    const body = openaiCreateChatSchema.parse(input)
+    const body = openaiSchema.chat.completions.request.parse(input)
     log.add('vendorRequestBody', body)
 
     //* streaming response
@@ -37,14 +33,14 @@ export const openaiPlugin = {
   },
 
   moderation: async ({ input }: { input: unknown }) => {
-    const body = openaiModerationRequestSchema.parse(input)
+    const body = openaiSchema.moderations.request.parse(input)
     const response = await api.moderations.create(body)
     return Response.json(response)
   },
 
   imageGeneration: async ({ input }: { input: unknown }) => {
     console.log('openai image generation')
-    const body = openaiImageGenerationRequestSchema.parse(input)
+    const body = openaiSchema.image.generations.request.parse(input)
     const response = await api.images.generate(body)
     return Response.json(response)
   },

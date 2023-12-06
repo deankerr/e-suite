@@ -70,7 +70,7 @@ const generationResponse = z
 
 export const falSchema = {
   image: {
-    generation: {
+    generations: {
       getFunctionId,
       '54285744-illusion-diffusion': illusionDiffusion,
       '110602490-lora': sdLoras,

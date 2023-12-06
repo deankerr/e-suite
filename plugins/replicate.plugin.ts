@@ -3,6 +3,7 @@ import { RouteContext } from '@/lib/route'
 import Replicate from 'replicate'
 import { replicateSchema } from './replicate.schema'
 
+//* https://github.com/replicate/replicate-javascript#readme
 const api = new Replicate({ auth: ENV.REPLICATE_API_KEY, userAgent: ENV.APP_NAME })
 
 export const replicatePlugin = {

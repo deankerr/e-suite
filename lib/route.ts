@@ -50,6 +50,7 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
       return await config.handler({ input: body, session: auth, log })
     } catch (err) {
       console.error(err)
+
       if (err instanceof NewAppError) {
         log.add('errorCode', err.code)
         return Response.json(err, { status: err.httpStatusCode })
@@ -57,6 +58,8 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
 
       if (err instanceof ZodError) {
         const zodError = fromZodError(err)
+        console.log('fromzod')
+        console.error(zodError)
         const validationError = new NewAppError('validation_client_request', { cause: zodError })
         log.add('errorCode', validationError.code)
         return Response.json(validationError, { status: validationError.httpStatusCode })
