@@ -54,21 +54,44 @@ export const togetheraiChatResponseSchema = z.object({
 })
 
 //* Image
-const imageResponseSchema = z.object({
-  status: z.string(),
-  prompt: z.string().array(),
-  model: z.string(),
-  model_owner: z.string(),
-  tags: z.object({}).passthrough(), // ?
-  num_returns: z.number(),
-  args: z.object({}).passthrough(), // ? request params
-  subjobs: z.unknown().array(), // ?
-  output: z.object({
-    choices: z.array(
-      z.object({
-        image_base64: z.string(),
-      }),
-    ),
-    result_type: z.string(),
-  }),
-})
+const imageRequest = z
+  .object({
+    prompt: z.string(),
+    model: z.string(),
+    negative_prompt: z.string().optional(),
+    seed: z.number().optional(),
+    results: z.number().optional(),
+    height: z.number().optional(),
+    width: z.number().optional(),
+  })
+  .describe('togetherai image generation request')
+
+const imageResponse = z
+  .object({
+    status: z.string(),
+    prompt: z.string().array(),
+    model: z.string(),
+    model_owner: z.string(),
+    num_returns: z.number(),
+    args: z.object({}).passthrough(),
+    output: z.object({
+      choices: z
+        .array(
+          z.object({
+            image_base64: z.string(),
+          }),
+        )
+        .min(1),
+      result_type: z.string(),
+    }),
+  })
+  .describe('togetherai image generation response')
+
+export const togetheraiSchema = {
+  image: {
+    generations: {
+      request: imageRequest,
+      response: imageResponse,
+    },
+  },
+}

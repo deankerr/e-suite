@@ -28,6 +28,11 @@ const newAppErrorCodes = {
     code: 'validation_vendor_response',
     httpStatusCode: 502,
   },
+
+  vendor_response_error: {
+    code: 'vendor_response_error',
+    httpStatusCode: 502,
+  },
 } as const
 
 type NewAppErrorCodes = keyof typeof newAppErrorCodes
@@ -35,6 +40,7 @@ type NewAppErrorCodes = keyof typeof newAppErrorCodes
 export class NewAppError extends Error {
   readonly code: NewAppErrorCodes
   readonly httpStatusCode: number
+  readonly context: Record<string, unknown> | undefined
 
   constructor(code: NewAppErrorCodes, options?: { description?: string; cause?: unknown }) {
     super(options?.description, { cause: options?.cause })
@@ -42,6 +48,7 @@ export class NewAppError extends Error {
 
     this.code = code
     this.httpStatusCode = newAppErrorCodes[code].httpStatusCode
+    this.context = options
 
     Error.captureStackTrace(this)
   }

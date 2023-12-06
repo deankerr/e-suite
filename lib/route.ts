@@ -49,12 +49,11 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
       console.log('start handler')
       return await config.handler({ input: body, session: auth, log })
     } catch (err) {
+      console.error(err)
       if (err instanceof NewAppError) {
         log.add('errorCode', err.code)
         return Response.json(err, { status: err.httpStatusCode })
       }
-
-      console.error(err)
 
       if (err instanceof ZodError) {
         const zodError = fromZodError(err)

@@ -1,5 +1,6 @@
 import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
+import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
 import { RouteContext } from '@/lib/route'
@@ -9,7 +10,11 @@ import { nanoid } from 'nanoid/non-secure'
 import createClient from 'openapi-fetch'
 import z from 'zod'
 import type { paths } from './togetherai.api'
-import { togetheraiChatResponseSchema, togetheraiCreateChatSchema } from './togetherai.schema'
+import {
+  togetheraiChatResponseSchema,
+  togetheraiCreateChatSchema,
+  togetheraiSchema,
+} from './togetherai.schema'
 
 const { GET, POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
@@ -74,11 +79,31 @@ export const togetheraiPlugin = {
       return Response.json(res)
     }
 
-    if (error) throw error
-    throw new AppError(
-      'invalid_vendor_response',
-      'Failed to parse the response data from Together.ai',
-    )
+    throw new NewAppError('vendor_response_error', { cause: error })
+  },
+
+  imageGeneration: async (ctx: RouteContext) => {
+    //* models: runwayml/stable-diffusion-v1-5 stabilityai/stable-diffusion-2-1 SG161222/Realistic_Vision_V3.0_VAE prompthero/openjourney wavymulder/Analog-Diffusion
+    const input = togetheraiSchema.image.generations.request.parse(ctx.input)
+    ctx.log.add('venderRequestBody', input)
+
+    //* openapi spec missing image parameters
+    const { data, error } = await POST('/inference', { body: input })
+    ctx.log.add('vendorResponseBody', data)
+
+    if (data) {
+      const result = togetheraiSchema.image.generations.response.parse(data)
+      const apiResponse = {
+        created: Date.now(),
+        data: result.output.choices.map((choice) => ({
+          b64_json: choice.image_base64,
+        })),
+      }
+      ctx.log.add('responseBody', apiResponse)
+      return Response.json(apiResponse)
+    } else {
+      throw new NewAppError('vendor_response_error', { cause: error })
+    }
   },
 }
 
@@ -116,17 +141,3 @@ export async function getAvailableModels() {
   if (error) console.error('openapi-fetch error', error)
   return data
 }
-
-// async function image(input: object) {
-//   // api spec is missing image parameters
-//   const { data, error } = await POST('/inference', { body: input })
-//   if (data) {
-//     const response = schemas.togetherai.image.output.parse(data)
-//     const base64 =
-//       response.output.choices[0]?.image_base64 ?? raise('response missing expected data')
-//     return { response, item: { base64 } }
-//   } else {
-//     console.error(error)
-//     throw new Error('Unknown togetherai error')
-//   }
-// }

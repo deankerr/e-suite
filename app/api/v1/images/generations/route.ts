@@ -6,6 +6,7 @@ import {
   openaiImageGenerationRequestSchema,
   openaiImageGenerationResponseSchema,
 } from '@/plugins/openai.schema'
+import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
 import { vendorIdSchema } from '@/schema/vendor'
 import z from 'zod'
 
@@ -20,9 +21,9 @@ export const POST = route({
   access: 'authorized',
   input: imageGenerationRequestSchema,
   handler: async (ctx) => {
-    console.log('ctx', ctx)
     if (ctx.input.vendorId === 'openai') return await openaiPlugin.imageGeneration(ctx)
     if (ctx.input.vendorId === 'fal') return await falPlugin.imageGeneration(ctx)
+    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.imageGeneration(ctx)
     throw new NewAppError('vendor_method_not_supported')
   },
 })
