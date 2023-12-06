@@ -84,4 +84,53 @@ export const togetheraiSchema = {
         .describe('togetherai image generation response'),
     },
   },
+
+  models: {
+    list: z
+      .object({
+        modelInstanceConfig: z.unknown(),
+        _id: z.string(),
+        name: z.string(),
+        display_name: z.string(),
+        display_type: z.string().optional(),
+        description: z.string(),
+        license: z.string(),
+        creator_organization: z.string(),
+        hardware_label: z.string().optional(),
+        pricing_tier: z.string().optional(),
+        access: z.string().optional(),
+        num_parameters: z.coerce.number().optional(),
+        release_date: z.string().optional(),
+        show_in_playground: z.coerce.boolean().optional(),
+        finetuning_supported: z.boolean().optional(),
+        isFeaturedModel: z.boolean().optional(),
+        external_pricing_url: z.string().optional(),
+        context_length: z.number().optional(),
+        config: z
+          .object({
+            stop: z.string().array().optional(),
+            prompt_format: z.string().optional(),
+            height: z.number().optional(),
+            width: z.number().optional(),
+            steps: z.number().optional(),
+            number_of_images: z.number().optional(),
+            seed: z.number().optional(),
+          })
+          .optional(),
+        max_tokens: z.number().optional(),
+        pricing: z.object({
+          hourly: z.number(),
+          input: z.number(),
+          output: z.number(),
+        }),
+        created_at: z.string().optional(),
+        update_at: z.string().optional(),
+        autopilot_pool: z.unknown().optional(),
+        instances: z.unknown().optional(),
+        link: z.string().optional(),
+        descriptionLink: z.string().optional(),
+        depth: z.unknown().optional(),
+      })
+      .array(),
+  },
 }

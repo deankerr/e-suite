@@ -55,6 +55,11 @@ export const openaiPlugin = {
       return Response.json(response)
     },
   },
+
+  models: async () => {
+    const { data } = await api.models.list()
+    return data
+  },
 }
 
 export async function getAvailableModels() {

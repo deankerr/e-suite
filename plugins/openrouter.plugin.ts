@@ -38,6 +38,11 @@ export const openrouterPlugin = {
       return Response.json(response)
     },
   },
+
+  models: async () => {
+    const { data } = await api.models.list()
+    return data
+  },
 }
 
 export async function getAvailableModels() {

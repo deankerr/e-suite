@@ -28,4 +28,8 @@ export const replicatePlugin = {
       return Response.json(response)
     },
   },
+
+  models: async () => {
+    const data = await api.collections.list()
+  },
 }
