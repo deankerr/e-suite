@@ -106,23 +106,6 @@ export const userRelations = relations(users, ({ many }) => ({
 }))
 
 //* Logs
-export const apiLogs = sqliteTable('api_logs', {
-  id: text('id')
-    .$defaultFn(() => createId())
-    .primaryKey()
-    .notNull(),
-  route: text('route').notNull(),
-  tag: text('tag').notNull(),
-  requestId: text('request_id').notNull(),
-  createdAt: dateTimeStamp('created_at')
-    .$default(() => new Date())
-    .notNull(),
-  authId: text('auth_id'),
-  vendorId: text('vendor_id'),
-  errorCode: text('error_code'),
-  data: text('data', { mode: 'json' }).notNull(),
-})
-
 export const apiLog = sqliteTable('api_log', {
   host: text('host'),
   path: text('path'),
