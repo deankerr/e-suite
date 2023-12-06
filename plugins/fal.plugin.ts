@@ -2,30 +2,26 @@ import 'server-only'
 import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
 import * as fal from '@fal-ai/serverless-client'
-import z from 'zod'
 import { falSchema } from './fal.schema'
-import { openaiImageGenerationResponseSchema } from './openai.schema'
 
 fal.config({
   credentials: ENV.FALAI_API_KEY,
 })
 
-type ImgRes = z.infer<typeof openaiImageGenerationResponseSchema>
-
 export const falPlugin = {
   imageGeneration: async ({ input, log }: RouteContext) => {
     console.log('fal image generation')
-    const { function_id } = falSchema.image.generations.getFunctionId.parse(input)
+    const { function_id } = falSchema.images.generations.getFunctionId.parse(input)
 
-    const body = falSchema.image.generations[function_id].parse(input)
+    const body = falSchema.images.generations[function_id].parse(input)
     log.add('vendorRequestBody', body)
 
     const response = await fal.run(function_id, { input: body })
     log.add('vendorResponseBody', response)
 
-    const res = falSchema.image.generations.response.parse(response)
+    const res = falSchema.images.generations.response.parse(response)
 
-    const fmt: ImgRes = {
+    const fmt = {
       created: Date.now(),
       data: res.images.map((img) => ({ url: img.url })),
     }

@@ -48,7 +48,7 @@ export const togetheraiSchema = {
   },
 
   //* Image
-  image: {
+  images: {
     generations: {
       request: z
         .object({

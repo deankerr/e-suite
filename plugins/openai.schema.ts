@@ -1,24 +1,6 @@
 import { messageSchema } from '@/schema/message'
 import z from 'zod'
 
-export const openaiCreateChatSchema = z.object({
-  model: z.string(),
-  messages: messageSchema.array(),
-  stream: z.boolean().optional(),
-
-  frequency_penalty: z.number().min(-2).max(2).step(0.01).optional(),
-  max_tokens: z.number().min(1).step(1).optional(), //? max per model?
-  presence_penalty: z.number().min(-2).max(2).step(0.01).optional(),
-  stop: z.string().array().min(0).max(4).optional(),
-  temperature: z.number().min(0).max(2).step(0.01).optional(),
-  top_p: z.number().min(0).max(2).step(0.01).optional(),
-})
-
-export const openaiModerationRequestSchema = z.object({
-  input: z.string().or(z.string().array()),
-  model: z.optional(z.enum(['text-moderation-stable', 'text-moderation-latest'])),
-})
-
 const categoriesSchema = z.object({
   sexual: z.boolean(),
   hate: z.boolean(),
@@ -51,43 +33,6 @@ const resultSchema = z.object({
   flagged: z.boolean(),
   categories: categoriesSchema,
   category_scores: categoryScoresSchema,
-})
-
-export const openaiModerationResponseSchema = z.object({
-  id: z.string(),
-  model: z.string(),
-  results: z.array(resultSchema),
-})
-
-export const openaiImageGenerationRequestSchema = z.object({
-  prompt: z.string(),
-  model: z.string().optional(),
-  n: z.number().nullish(),
-  quality: z.enum(['standard', 'hd']).optional(),
-  response_format: z.enum(['url', 'b64_json']).nullish(),
-  size: z.enum(['256x256', '512x512', '1024x1024', '1792x1024', '1024x1792']).nullish(),
-  style: z.enum(['vivid', 'natural']).nullish(),
-})
-
-export const openaiImageObjectUrlSchema = z.object({
-  url: z.string(),
-  revised_prompt: z.string().optional(),
-})
-
-export const openaiImageObjectB64JsonSchema = z.object({
-  b64_json: z.string(),
-  revised_prompt: z.string().optional(),
-})
-
-export const openaiImageGenerationResponseSchema = z.object({
-  created: z.number(),
-  data: z.array(
-    z.object({
-      url: z.string().optional(),
-      b64_json: z.string().optional(),
-      revised_prompt: z.string().optional(),
-    }),
-  ),
 })
 
 export const openaiSchema = {

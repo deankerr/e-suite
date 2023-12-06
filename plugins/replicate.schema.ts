@@ -21,7 +21,7 @@ const imageGenerationRequest = z.object({
 })
 
 export const replicateSchema = {
-  image: {
+  images: {
     generations: {
       request: imageGenerationRequest,
       response: z.string().url().array().min(1),

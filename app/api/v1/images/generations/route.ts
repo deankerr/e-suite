@@ -2,10 +2,7 @@ import { NewAppError } from '@/lib/app-error'
 import { route } from '@/lib/route'
 import { falPlugin } from '@/plugins/fal.plugin'
 import { openaiPlugin } from '@/plugins/openai.plugin'
-import {
-  openaiImageGenerationRequestSchema,
-  openaiImageGenerationResponseSchema,
-} from '@/plugins/openai.schema'
+import { openaiSchema } from '@/plugins/openai.schema'
 import { replicatePlugin } from '@/plugins/replicate.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
 import { vendorIdSchema } from '@/schema/vendor'
@@ -13,10 +10,10 @@ import z from 'zod'
 
 export const runtime = 'edge'
 
-const imageGenerationRequestSchema = openaiImageGenerationRequestSchema
+const imageGenerationRequestSchema = openaiSchema.image.generations.request
   .merge(z.object({ vendorId: vendorIdSchema }))
   .passthrough()
-const imageGenerationResponseSchema = openaiImageGenerationResponseSchema
+  .describe('/images/generations input')
 
 export const POST = route({
   access: 'authorized',

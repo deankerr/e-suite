@@ -69,7 +69,7 @@ const generationResponse = z
   .passthrough()
 
 export const falSchema = {
-  image: {
+  images: {
     generations: {
       getFunctionId,
       '54285744-illusion-diffusion': illusionDiffusion,

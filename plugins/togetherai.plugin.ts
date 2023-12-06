@@ -80,7 +80,7 @@ export const togetheraiPlugin = {
 
   imageGeneration: async (ctx: RouteContext) => {
     //* models: runwayml/stable-diffusion-v1-5 stabilityai/stable-diffusion-2-1 SG161222/Realistic_Vision_V3.0_VAE prompthero/openjourney wavymulder/Analog-Diffusion
-    const input = togetheraiSchema.image.generations.request.parse(ctx.input)
+    const input = togetheraiSchema.images.generations.request.parse(ctx.input)
     ctx.log.add('venderRequestBody', input)
 
     //* openapi spec missing image parameters
@@ -88,7 +88,7 @@ export const togetheraiPlugin = {
     ctx.log.add('vendorResponseBody', data)
 
     if (data) {
-      const result = togetheraiSchema.image.generations.response.parse(data)
+      const result = togetheraiSchema.images.generations.response.parse(data)
       const apiResponse = {
         created: Date.now(),
         data: result.output.choices.map((choice) => ({

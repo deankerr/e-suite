@@ -9,13 +9,13 @@ const api = new Replicate({ auth: ENV.REPLICATE_API_KEY, userAgent: ENV.APP_NAME
 export const replicatePlugin = {
   image: {
     generations: async (ctx: RouteContext) => {
-      const { model, ...input } = replicateSchema.image.generations.request.parse(ctx.input)
+      const { model, ...input } = replicateSchema.images.generations.request.parse(ctx.input)
       ctx.log.add('vendorRequestBody', { model, input })
 
       const result = await api.run(model as `${string}/${string}:${string}`, { input })
       ctx.log.add('vendorResponseBody', result)
 
-      const parsed = replicateSchema.image.generations.response.parse(result)
+      const parsed = replicateSchema.images.generations.response.parse(result)
       const response = {
         created: Date.now(),
         data: parsed.map((item) => ({
