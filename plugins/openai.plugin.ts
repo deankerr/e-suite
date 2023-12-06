@@ -1,6 +1,8 @@
 import 'server-only'
+import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
+import type { Message } from '@/schema/message'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import { openaiSchema } from './openai.schema'
@@ -14,6 +16,11 @@ export const openaiPlugin = {
     completions: async ({ input, log }: RouteContext) => {
       const body = openaiSchema.chat.completions.request.parse(input)
       log.add('vendorRequestBody', body)
+
+      const flagged = await getModerations(body.messages)
+      if (flagged.length > 0) {
+        throw new NewAppError('vendor_content_rejection', { cause: flagged })
+      }
 
       //* streaming response
       if (body.stream) {
@@ -55,33 +62,20 @@ export async function getAvailableModels() {
   return data
 }
 
-/* 
-async function chatModerated(chatRequest: EChatRequestSchema) {
-  try {
-    console.log('request moderation')
-    const body = schemas.openai.chat.input.parse(chatRequest)
-    const messages = body.messages.map((m) => `${m.content}`)
-    const response = await api.moderations.create({ input: messages })
-    const flagged = body.messages.filter((_, i) => response.results[i]?.flagged)
+async function getModerations(messages: Message[]) {
+  const messageStrings = messages.map(({ name, content }) => (name ? `${name} ` : '') + content)
+  const input = openaiSchema.moderations.request.parse({ input: messageStrings })
+  const { results } = await api.moderations.create(input)
 
-    if (flagged.length === 0) {
-      console.log('allow')
-      return chat(chatRequest)
-    } else {
-      console.warn(flagged, 'reject')
-      const message = `OpenAI Moderation rejected: ${flagged
-        .map((m) => `"${m.content}"`)
-        .join(', ')}`
-      return createErrorResponse(message, 403)
-    }
-  } catch (err) {
-    return handleChatError(err)
-  }
+  const flagged = results.reduce<{ content: string; reasons: string[] }[]>(
+    (acc, { flagged, categories }, i) => {
+      if (!flagged) return acc
+      const keys = Object.keys(categories) as Array<keyof typeof categories>
+      const reasons = keys.filter((key) => categories[key])
+      return [...acc, { content: messageStrings[i] ?? '', reasons }]
+    },
+    [],
+  )
+
+  return flagged
 }
-
-
-
-
-
-
-*/

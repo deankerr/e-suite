@@ -64,8 +64,6 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
 
       if (err instanceof ZodError) {
         const zodError = fromZodError(err)
-        console.log('fromzod')
-        console.error(zodError)
         const validationError = new NewAppError('validation_client_request', { cause: zodError })
         log.add('errorCode', validationError.code)
         return Response.json(validationError, { status: validationError.httpStatusCode })

@@ -2,8 +2,15 @@ import z from 'zod'
 
 export const roleSchema = z.enum(['user', 'assistant', 'system', 'tool', 'function'])
 export type Role = z.infer<typeof roleSchema>
+export type Message = z.infer<typeof messageSchema>
 
-export const messageSchema = z.discriminatedUnion('role', [
+export const messageSchema = z.object({
+  role: roleSchema,
+  name: z.string().optional(),
+  content: z.string(),
+})
+
+const messageSchemaOTT = z.discriminatedUnion('role', [
   z.object({
     role: z.literal('system'),
     content: z.string().nullable(),
@@ -55,4 +62,3 @@ export const messageSchema = z.discriminatedUnion('role', [
     name: z.string(),
   }),
 ])
-export type Message = z.infer<typeof messageSchema>

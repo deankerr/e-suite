@@ -38,6 +38,10 @@ const newAppErrorCodes = {
     code: 'vendor_response_error',
     httpStatusCode: 502,
   },
+
+  vendor_content_rejection: {
+    httpStatusCode: 400,
+  },
 } as const
 
 type NewAppErrorCodes = keyof typeof newAppErrorCodes

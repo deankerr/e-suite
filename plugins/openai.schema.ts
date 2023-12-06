@@ -97,7 +97,7 @@ export const openaiSchema = {
   moderations: {
     request: z
       .object({
-        input: z.string().or(z.string().array()),
+        input: z.string().array().or(z.string()),
         model: z.optional(z.enum(['text-moderation-stable', 'text-moderation-latest'])),
       })
       .describe('openai moderations request'),
