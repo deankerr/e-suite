@@ -9,6 +9,11 @@ const newAppErrorCodes = {
     httpStatusCode: 401,
   },
 
+  vendor_method_not_supported: {
+    code: 'vendor_method_not_supported',
+    httpStatusCode: 400,
+  },
+
   validation_client_request: {
     code: 'validation_client_request',
     httpStatusCode: 400,

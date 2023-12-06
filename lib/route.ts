@@ -6,8 +6,6 @@ import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { NewAppError } from './app-error'
 
-type TempRouteCtx = {}
-
 type PluginValidator = (input: any) => object | Error
 
 type PluginModeRoute = {
@@ -21,13 +19,10 @@ type PluginModeRoute = {
 
 type RouteAccessLevel = 'public' | 'authorized' | 'admin'
 
-type RouteLogData = {
-  authId?: string
-  headers?: Record<string, string>
-  requestBody: unknown
-  vendorRequestBody: unknown
-  vendorResponseBody: unknown
-  responseBody: unknown
+export type RouteContext = {
+  input: unknown
+  session: AuthorizedApiSession
+  log: ReturnType<typeof createRouteLogger>
 }
 
 export function route<ZInput extends z.ZodTypeAny>(config: {
@@ -51,8 +46,8 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
       log.add('requestBody', requestJson)
       log.send()
       const body = config.input.describe('route input validation').parse(requestJson)
-
-      return await config.handler(body)
+      console.log('start handler')
+      return await config.handler({ input: body, session: auth, log })
     } catch (err) {
       if (err instanceof NewAppError) {
         log.add('errorCode', err.code)

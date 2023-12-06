@@ -1,5 +1,5 @@
 import { ENV } from '@/lib/env'
-import { RouteContext } from '@/lib/RouteContext'
+import { RouteContext } from '@/lib/route'
 import * as fal from '@fal-ai/serverless-client'
 import z from 'zod'
 import { falSchema } from './fal.schema'
@@ -12,18 +12,15 @@ fal.config({
 type ImgRes = z.infer<typeof openaiImageGenerationResponseSchema>
 
 export const falPlugin = {
-  imageGeneration: async (input: unknown, ctx: RouteContext) => {
-    console.log('fal imggen')
+  imageGeneration: async ({ input, log }: RouteContext) => {
+    console.log('fal image generation')
     const { function_id } = falSchema.image.generation.getFunctionId.parse(input)
-    console.log('function_id', function_id)
 
     const body = falSchema.image.generation[function_id].parse(input)
-    ctx.log({ tag: 'vendor-request', data: body, vendorId: 'fal' })
+    log.add('vendorRequestBody', body)
 
-    console.log('body', body)
-    console.log('send')
     const response = await fal.run(function_id, { input: body })
-    ctx.log({ tag: 'vendor-response', data: body, vendorId: 'fal' })
+    log.add('vendorResponseBody', response)
 
     const res = falSchema.image.generation.response.parse(response)
 
@@ -32,7 +29,8 @@ export const falPlugin = {
       data: res.images.map((img) => ({ url: img.url })),
     }
 
-    ctx.log({ tag: 'response-body', data: body, vendorId: 'fal' })
+    log.add('responseBody', fmt)
+
     return Response.json(fmt)
   },
 }

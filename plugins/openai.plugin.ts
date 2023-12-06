@@ -42,7 +42,8 @@ export const openaiPlugin = {
     return Response.json(response)
   },
 
-  imageGeneration: async (input: unknown) => {
+  imageGeneration: async ({ input }: { input: unknown }) => {
+    console.log('openai image generation')
     const body = openaiImageGenerationRequestSchema.parse(input)
     const response = await api.images.generate(body)
     return Response.json(response)
