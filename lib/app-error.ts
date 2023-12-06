@@ -9,6 +9,11 @@ const newAppErrorCodes = {
     httpStatusCode: 401,
   },
 
+  request_json_malformed: {
+    code: 'request_json_malformed',
+    httpStatusCode: 400,
+  },
+
   vendor_method_not_supported: {
     code: 'vendor_method_not_supported',
     httpStatusCode: 400,

@@ -1,5 +1,6 @@
 import { authenticateApiRequest, AuthorizedApiSession } from '@/data/auth'
 import { addApiLog } from '@/data/logs'
+import { stringToJsonSchema } from '@/schema/stringToJson'
 import { createId } from '@paralleldrive/cuid2'
 import { NextRequest } from 'next/server'
 import z, { ZodError } from 'zod'
@@ -42,10 +43,15 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
       log.add('authId', auth.session.id)
       log.add('session', auth.session)
 
-      const requestJson = await request.json()
-      log.add('requestBody', requestJson)
+      const { json, text } = await getRequestJson(request)
+      if (!json) {
+        log.add('requestText', text)
+        throw new NewAppError('request_json_malformed', { cause: text })
+      }
+
+      log.add('requestBody', json)
       log.send()
-      const body = config.input.describe('route input validation').parse(requestJson)
+      const body = config.input.parse(json)
       console.log('start handler')
       return await config.handler({ input: body, session: auth, log })
     } catch (err) {
@@ -71,6 +77,15 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
     } finally {
       log.send()
     }
+  }
+}
+
+async function getRequestJson(request: NextRequest) {
+  const text = await request.text()
+  const json = stringToJsonSchema.safeParse(text)
+  return {
+    text,
+    json: json.success ? json.data : null,
   }
 }
 
