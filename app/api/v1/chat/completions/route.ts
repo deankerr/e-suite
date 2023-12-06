@@ -58,9 +58,9 @@ export const POST = route({
   access: 'authorized',
   input: chatRouteRequestSchema,
   handler: async (ctx) => {
-    if (ctx.input.vendorId === 'openai') return await openaiPlugin.chat(ctx)
-    if (ctx.input.vendorId === 'openrouter') return await openrouterPlugin.chat(ctx)
-    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.chat(ctx)
+    if (ctx.input.vendorId === 'openai') return await openaiPlugin.chat.completions(ctx)
+    if (ctx.input.vendorId === 'openrouter') return await openrouterPlugin.chat.completions(ctx)
+    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.chat.completions(ctx)
     throw new NewAppError('vendor_method_not_supported')
   },
 })

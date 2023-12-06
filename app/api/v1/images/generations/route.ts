@@ -19,10 +19,10 @@ export const POST = route({
   access: 'authorized',
   input: imageGenerationRequestSchema,
   handler: async (ctx) => {
-    if (ctx.input.vendorId === 'openai') return await openaiPlugin.imageGeneration(ctx)
-    if (ctx.input.vendorId === 'fal') return await falPlugin.imageGeneration(ctx)
-    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.imageGeneration(ctx)
-    if (ctx.input.vendorId === 'replicate') return await replicatePlugin.image.generations(ctx)
+    if (ctx.input.vendorId === 'openai') return await openaiPlugin.images.generations(ctx)
+    if (ctx.input.vendorId === 'fal') return await falPlugin.images.generations(ctx)
+    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.images.generations(ctx)
+    if (ctx.input.vendorId === 'replicate') return await replicatePlugin.images.generations(ctx)
     throw new NewAppError('vendor_method_not_supported')
   },
 })

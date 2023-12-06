@@ -20,86 +20,90 @@ const { GET, POST } = createClient<paths>({
 })
 
 export const togetheraiPlugin = {
-  chat: async ({ input, log }: RouteContext) => {
-    const { messages, ...rest } = togetheraiSchema.chat.completions.request
-      .merge(z.object({ messages: messageSchema.array() }))
-      .parse(input)
-    const prompt = convertMessagesToPromptFormat(messages)
+  chat: {
+    completions: async ({ input, log }: RouteContext) => {
+      const { messages, ...rest } = togetheraiSchema.chat.completions.request
+        .merge(z.object({ messages: messageSchema.array() }))
+        .parse(input)
+      const prompt = convertMessagesToPromptFormat(messages)
 
-    //^ streaming disabled
-    const body = { ...rest, prompt, stream_tokens: false }
-    log.add('vendorRequestBody', body)
+      //^ streaming disabled
+      const body = { ...rest, prompt, stream_tokens: false }
+      log.add('vendorRequestBody', body)
 
-    const { data, error } = await POST('/inference', {
-      body,
-    })
+      const { data, error } = await POST('/inference', {
+        body,
+      })
 
-    if (data) {
-      //* streaming response
-      if (rest.stream_tokens) {
-        //* just return the completion text until streaming implemented
-        const { message } = parseChatResponse(data)
-        log.add('vendorResponseBody', message.text)
-        return new Response(message.text)
-      }
+      if (data) {
+        //* streaming response
+        if (rest.stream_tokens) {
+          //* just return the completion text until streaming implemented
+          const { message } = parseChatResponse(data)
+          log.add('vendorResponseBody', message.text)
+          return new Response(message.text)
+        }
 
-      //* json response
-      const { response, message } = parseChatResponse(data)
-      log.add('vendorResponseBody', response)
+        //* json response
+        const { response, message } = parseChatResponse(data)
+        log.add('vendorResponseBody', response)
 
-      const res: ChatRouteResponse = {
-        _raw: data,
-        id: 'tog-' + nanoid(5),
-        object: 'chat.completion',
-        created: Date.now(),
-        model: response.model,
-        system_fingerprint: '',
-        choices: [
-          {
-            index: 0,
-            message: {
-              role: 'assistant',
-              content: message.text,
+        const res: ChatRouteResponse = {
+          _raw: data,
+          id: 'tog-' + nanoid(5),
+          object: 'chat.completion',
+          created: Date.now(),
+          model: response.model,
+          system_fingerprint: '',
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: 'assistant',
+                content: message.text,
+              },
+              finish_reason: message.finish_reason ?? '',
             },
-            finish_reason: message.finish_reason ?? '',
+          ],
+          usage: {
+            prompt_tokens: 0,
+            completion_tokens: 0,
+            total_tokens: 0,
           },
-        ],
-        usage: {
-          prompt_tokens: 0,
-          completion_tokens: 0,
-          total_tokens: 0,
-        },
+        }
+
+        log.add('responseBody', res)
+        return Response.json(res)
       }
 
-      log.add('responseBody', res)
-      return Response.json(res)
-    }
-
-    throw new NewAppError('vendor_response_error', { cause: error })
+      throw new NewAppError('vendor_response_error', { cause: error })
+    },
   },
 
-  imageGeneration: async (ctx: RouteContext) => {
-    //* models: runwayml/stable-diffusion-v1-5 stabilityai/stable-diffusion-2-1 SG161222/Realistic_Vision_V3.0_VAE prompthero/openjourney wavymulder/Analog-Diffusion
-    const input = togetheraiSchema.images.generations.request.parse(ctx.input)
-    ctx.log.add('venderRequestBody', input)
+  images: {
+    generations: async (ctx: RouteContext) => {
+      //* models: runwayml/stable-diffusion-v1-5 stabilityai/stable-diffusion-2-1 SG161222/Realistic_Vision_V3.0_VAE prompthero/openjourney wavymulder/Analog-Diffusion
+      const input = togetheraiSchema.images.generations.request.parse(ctx.input)
+      ctx.log.add('venderRequestBody', input)
 
-    //* openapi spec missing image parameters
-    const { data, error } = await POST('/inference', { body: input })
-    ctx.log.add('vendorResponseBody', data)
+      //* openapi spec missing image parameters
+      const { data, error } = await POST('/inference', { body: input })
+      ctx.log.add('vendorResponseBody', data)
 
-    if (data) {
-      const result = togetheraiSchema.images.generations.response.parse(data)
-      const apiResponse = {
-        created: Date.now(),
-        data: result.output.choices.map((choice) => ({
-          b64_json: choice.image_base64,
-        })),
+      if (data) {
+        const result = togetheraiSchema.images.generations.response.parse(data)
+        const apiResponse = {
+          created: Date.now(),
+          data: result.output.choices.map((choice) => ({
+            b64_json: choice.image_base64,
+          })),
+        }
+        ctx.log.add('responseBody', apiResponse)
+        return Response.json(apiResponse)
+      } else {
+        throw new NewAppError('vendor_response_error', { cause: error })
       }
-      ctx.log.add('responseBody', apiResponse)
-      return Response.json(apiResponse)
-    } else {
-      throw new NewAppError('vendor_response_error', { cause: error })
-    }
+    },
   },
 }
 

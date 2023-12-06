@@ -14,27 +14,29 @@ const api = new OpenAI({
 })
 
 export const openrouterPlugin = {
-  chat: async ({ input, log }: RouteContext) => {
-    const body = openrouterSchema.chat.completions.request.parse(input)
-    log.add('vendorRequestBody', body)
+  chat: {
+    completions: async ({ input, log }: RouteContext) => {
+      const body = openrouterSchema.chat.completions.request.parse(input)
+      log.add('vendorRequestBody', body)
 
-    //* streaming response
-    if (body.stream) {
+      //* streaming response
+      if (body.stream) {
+        const response = await api.chat.completions.create(
+          body as OpenAI.ChatCompletionCreateParamsStreaming,
+        )
+        const stream = OpenAIStream(response)
+        log.add('vendorResponseBody', 'is_streaming')
+        return new StreamingTextResponse(stream)
+      }
+
+      //* json response
       const response = await api.chat.completions.create(
-        body as OpenAI.ChatCompletionCreateParamsStreaming,
+        body as OpenAI.ChatCompletionCreateParamsNonStreaming,
       )
-      const stream = OpenAIStream(response)
-      log.add('vendorResponseBody', 'is_streaming')
-      return new StreamingTextResponse(stream)
-    }
 
-    //* json response
-    const response = await api.chat.completions.create(
-      body as OpenAI.ChatCompletionCreateParamsNonStreaming,
-    )
-
-    log.add('vendorResponseBody', response)
-    return Response.json(response)
+      log.add('vendorResponseBody', response)
+      return Response.json(response)
+    },
   },
 }
 

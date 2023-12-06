@@ -10,7 +10,7 @@ export const POST = route({
   access: 'authorized',
   input: moderationRouteRequestSchema,
   handler: async (ctx) => {
-    const response = await openaiPlugin.moderation(ctx)
+    const response = await openaiPlugin.moderations(ctx)
     return response
   },
 })

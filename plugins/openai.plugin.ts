@@ -10,39 +10,43 @@ const api = new OpenAI({
 })
 
 export const openaiPlugin = {
-  chat: async ({ input, log }: RouteContext) => {
-    const body = openaiSchema.chat.completions.request.parse(input)
-    log.add('vendorRequestBody', body)
+  chat: {
+    completions: async ({ input, log }: RouteContext) => {
+      const body = openaiSchema.chat.completions.request.parse(input)
+      log.add('vendorRequestBody', body)
 
-    //* streaming response
-    if (body.stream) {
+      //* streaming response
+      if (body.stream) {
+        const response = await api.chat.completions.create(
+          body as OpenAI.ChatCompletionCreateParamsStreaming,
+        )
+        const stream = OpenAIStream(response)
+        log.add('vendorResponseBody', 'is_streaming')
+        return new StreamingTextResponse(stream)
+      }
+
+      //* json response
       const response = await api.chat.completions.create(
-        body as OpenAI.ChatCompletionCreateParamsStreaming,
+        body as OpenAI.ChatCompletionCreateParamsNonStreaming,
       )
-      const stream = OpenAIStream(response)
-      log.add('vendorResponseBody', 'is_streaming')
-      return new StreamingTextResponse(stream)
-    }
-
-    //* json response
-    const response = await api.chat.completions.create(
-      body as OpenAI.ChatCompletionCreateParamsNonStreaming,
-    )
-    log.add('vendorResponseBody', response)
-    return Response.json(response)
+      log.add('vendorResponseBody', response)
+      return Response.json(response)
+    },
   },
 
-  moderation: async ({ input }: { input: unknown }) => {
+  moderations: async ({ input }: { input: unknown }) => {
     const body = openaiSchema.moderations.request.parse(input)
     const response = await api.moderations.create(body)
     return Response.json(response)
   },
 
-  imageGeneration: async ({ input }: { input: unknown }) => {
-    console.log('openai image generation')
-    const body = openaiSchema.image.generations.request.parse(input)
-    const response = await api.images.generate(body)
-    return Response.json(response)
+  images: {
+    generations: async ({ input }: { input: unknown }) => {
+      console.log('openai image generation')
+      const body = openaiSchema.image.generations.request.parse(input)
+      const response = await api.images.generate(body)
+      return Response.json(response)
+    },
   },
 }
 

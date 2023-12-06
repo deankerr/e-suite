@@ -9,26 +9,28 @@ fal.config({
 })
 
 export const falPlugin = {
-  imageGeneration: async ({ input, log }: RouteContext) => {
-    console.log('fal image generation')
-    const { function_id } = falSchema.images.generations.getFunctionId.parse(input)
+  images: {
+    generations: async ({ input, log }: RouteContext) => {
+      console.log('fal image generation')
+      const { function_id } = falSchema.images.generations.getFunctionId.parse(input)
 
-    const body = falSchema.images.generations[function_id].parse(input)
-    log.add('vendorRequestBody', body)
+      const body = falSchema.images.generations[function_id].parse(input)
+      log.add('vendorRequestBody', body)
 
-    const response = await fal.run(function_id, { input: body })
-    log.add('vendorResponseBody', response)
+      const response = await fal.run(function_id, { input: body })
+      log.add('vendorResponseBody', response)
 
-    const res = falSchema.images.generations.response.parse(response)
+      const res = falSchema.images.generations.response.parse(response)
 
-    const fmt = {
-      created: Date.now(),
-      data: res.images.map((img) => ({ url: img.url })),
-    }
+      const fmt = {
+        created: Date.now(),
+        data: res.images.map((img) => ({ url: img.url })),
+      }
 
-    log.add('responseBody', fmt)
+      log.add('responseBody', fmt)
 
-    return Response.json(fmt)
+      return Response.json(fmt)
+    },
   },
 }
 
