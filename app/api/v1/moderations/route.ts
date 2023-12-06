@@ -1,4 +1,4 @@
-import { createProtectedRoute } from '@/lib/protected-route'
+import { route } from '@/lib/route'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import {
   openaiModerationRequestSchema,
@@ -10,11 +10,11 @@ export const runtime = 'edge'
 const moderationRouteRequestSchema = openaiModerationRequestSchema
 const moderationRouteResponseSchema = openaiModerationResponseSchema
 
-export const POST = createProtectedRoute({
-  inputSchema: moderationRouteRequestSchema,
-  handler: async (input) => {
-    const response = await openaiPlugin.moderation(input)
+export const POST = route({
+  access: 'authorized',
+  input: moderationRouteRequestSchema,
+  handler: async (ctx) => {
+    const response = await openaiPlugin.moderation(ctx)
     return response
   },
-  outputSchema: moderationRouteResponseSchema,
 })

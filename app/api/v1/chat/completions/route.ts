@@ -1,6 +1,4 @@
 import { NewAppError } from '@/lib/app-error'
-import { AppError } from '@/lib/error'
-import { createProtectedRoute } from '@/lib/protected-route'
 import { route } from '@/lib/route'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'

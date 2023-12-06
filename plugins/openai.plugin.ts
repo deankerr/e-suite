@@ -36,7 +36,7 @@ export const openaiPlugin = {
     return Response.json(response)
   },
 
-  moderation: async (input: unknown) => {
+  moderation: async ({ input }: { input: unknown }) => {
     const body = openaiModerationRequestSchema.parse(input)
     const response = await api.moderations.create(body)
     return Response.json(response)

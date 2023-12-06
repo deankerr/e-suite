@@ -1,6 +1,4 @@
 import { NewAppError } from '@/lib/app-error'
-import { AppError } from '@/lib/error'
-import { createProtectedRoute } from '@/lib/protected-route'
 import { route } from '@/lib/route'
 import { falPlugin } from '@/plugins/fal.plugin'
 import { openaiPlugin } from '@/plugins/openai.plugin'
@@ -17,16 +15,6 @@ const imageGenerationRequestSchema = openaiImageGenerationRequestSchema
   .merge(z.object({ vendorId: vendorIdSchema }))
   .passthrough()
 const imageGenerationResponseSchema = openaiImageGenerationResponseSchema
-
-// export const POST = createProtectedRoute({
-//   inputSchema: imageGenerationRequestSchema,
-//   handler: async (input, ctx) => {
-//     if (input.vendorId === 'openai') return await openaiPlugin.imageGeneration(input)
-//     if (input.vendorId === 'fal') return await falPlugin.imageGeneration(input, ctx)
-//     throw new AppError('invalid_client_request', 'Invalid vendor id', { vendorId: input.vendorId })
-//   },
-//   outputSchema: imageGenerationResponseSchema,
-// })
 
 export const POST = route({
   access: 'authorized',
