@@ -122,3 +122,21 @@ export const apiLogs = sqliteTable('api_logs', {
   errorCode: text('error_code'),
   data: text('data', { mode: 'json' }).notNull(),
 })
+
+export const apiLog = sqliteTable('api_log', {
+  host: text('host'),
+  path: text('path'),
+  authId: text('auth_id'),
+  vendorId: text('vendor_id'),
+  errorCode: text('error_code'),
+  data: text('data', { mode: 'json' }),
+
+  createdAt: dateTimeStamp('created_at')
+    .$default(() => new Date())
+    .notNull(),
+  requestId: text('request_id').notNull(),
+  id: text('id')
+    .$defaultFn(() => createId())
+    .primaryKey()
+    .notNull(),
+})

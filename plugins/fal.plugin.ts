@@ -21,6 +21,7 @@ export const falPlugin = {
     ctx.log({ tag: 'vendor-request', data: body, vendorId: 'fal' })
 
     console.log('body', body)
+    console.log('send')
     const response = await fal.run(function_id, { input: body })
     ctx.log({ tag: 'vendor-response', data: body, vendorId: 'fal' })
 

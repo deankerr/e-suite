@@ -30,20 +30,12 @@ export class RouteContext {
     vendorId?: string
     errorCode?: RouteLogErrorCode
   }) {
-    let serialized: any = 'NO DATA'
-    try {
-      if (typeof data === 'string') serialized = data
-      else serialized = JSON.stringify(data)
-    } catch (err) {
-      console.error('RouteLogger failed to parse data payload %o', data)
-    }
-
     const logItem = {
       ...items,
       requestId: this.requestId,
       route: this.route,
       timestamp: new Date(),
-      data: serialized,
+      data: data ?? 'NO DATA',
     }
 
     createApiLog(logItem)
