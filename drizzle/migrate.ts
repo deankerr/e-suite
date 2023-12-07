@@ -1,5 +1,5 @@
 import { migrate } from 'drizzle-orm/libsql/migrator'
-import { createLocalClient } from './localClient'
+import { createLocalClient } from './local-client'
 
 async function main() {
   try {

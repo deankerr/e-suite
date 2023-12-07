@@ -1,6 +1,6 @@
 'use server'
 
-import { addVendorModelListData } from '@/data/admin/vendor'
+import { addVendorModelListData } from '@/data/admin/resource.dal'
 import * as schema from '@/drizzle/database.schema'
 import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
@@ -73,5 +73,16 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
     console.log('done')
   } else {
     console.log('nothing to do')
+  }
+})
+
+export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
+  console.log('fetch', data)
+  const response = await fetch(data)
+  const text = await response.text()
+  if (text) {
+    console.log('success')
+  } else {
+    console.log('failure?')
   }
 })

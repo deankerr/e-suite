@@ -2,7 +2,7 @@ import type { InferenceParametersRecord } from '@/schema/dto'
 import { createId } from '@paralleldrive/cuid2'
 import { relations } from 'drizzle-orm'
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { dateTimeStamp } from './customTypes'
+import { dateTimeStamp } from './custom-types'
 
 //* Engines
 export const engines = sqliteTable('engines', {
@@ -161,6 +161,9 @@ export const models = sqliteTable('models', {
   tags: text('tags', { mode: 'json' }) //* hot, old, etc.
     .$type<string[]>()
     .$default(() => []),
+  hfDatasheet: text('hf_datasheet', { mode: 'json' })
+    .$default(() => {})
+    .notNull(),
 })
 
 //* specific vendor+model inference endpoint details
@@ -178,9 +181,6 @@ export const resources = sqliteTable('resources', {
   tokenOutputLimit: integer('token_output_limit'),
 
   vendorModelData: text('vendor_model_data', { mode: 'json' })
-    .$default(() => {})
-    .notNull(),
-  hfDatasheet: text('hf_datasheet', { mode: 'json' })
     .$default(() => {})
     .notNull(),
 })

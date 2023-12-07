@@ -1,4 +1,4 @@
-import { getVendorModelListData } from '@/data/admin/vendor'
+import { getVendorModelListData } from '@/data/admin/resource.dal'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { PrePrint } from '../util/pre-print'
