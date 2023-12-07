@@ -4,7 +4,7 @@ import { huggingfacePlugin } from '@/plugins/huggingface.plugin'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
-import { messageSchema, roleSchema } from '@/schema/message'
+import { roleSchema } from '@/schema/message'
 import { vendorIdSchema } from '@/schema/vendor'
 import z from 'zod'
 
