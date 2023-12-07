@@ -1,9 +1,10 @@
 'use server'
 
 import { addVendorModelListData } from '@/data/admin/vendor'
-import * as schema from '@/drizzle/schema'
+import * as schema from '@/drizzle/database.schema'
 import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
+import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
 import { VendorId } from '@/schema/vendor'
@@ -14,6 +15,7 @@ import z from 'zod'
 const modelLists = {
   openrouter: openrouterPlugin.models.list,
   togetherai: togetheraiPlugin.models.list,
+  openai: openaiPlugin.models.list,
 }
 const oneDay = 86400000
 
@@ -32,6 +34,7 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
   const current = {
     openrouter: await getCurrentFor('openrouter'),
     togetherai: await getCurrentFor('togetherai'),
+    openai: await getCurrentFor('openai'),
   }
 
   const fetchLists: Array<Promise<unknown>> = []
@@ -44,6 +47,10 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
     fetchLists.push(togetheraiPlugin.models.list())
     console.log('Fetch togetherai')
   }
+  if (Date.now() - (current.openai[0]?.retrievedAt.valueOf() ?? 0) > oneDay) {
+    fetchLists.push(openaiPlugin.models.list())
+    console.log('Fetch openai')
+  }
 
   const data = await Promise.allSettled(fetchLists)
 
@@ -55,6 +62,10 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
   if (data[1]?.status === 'fulfilled') {
     values.push({ vendorId: 'togetherai', data: data[1].value })
   } else if (data[1]?.status === 'rejected') console.error('Failed to fetch togetherai')
+
+  if (data[2]?.status === 'fulfilled') {
+    values.push({ vendorId: 'openai', data: data[2].value })
+  } else if (data[2]?.status === 'rejected') console.error('Failed to fetch togetherai')
 
   if (values.length > 0) {
     await addVendorModelListData(values)

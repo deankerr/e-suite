@@ -1,7 +1,7 @@
 import type { InferenceParametersRecord } from '@/schema/dto'
 import { createId } from '@paralleldrive/cuid2'
 import { relations } from 'drizzle-orm'
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { dateTimeStamp } from './customTypes'
 
 //* Engines
@@ -105,7 +105,7 @@ export const userRelations = relations(users, ({ many }) => ({
   agents: many(agents),
 }))
 
-//* Logs
+//* logs
 export const apiLog = sqliteTable('api_log', {
   host: text('host'),
   path: text('path'),
@@ -134,5 +134,53 @@ export const vendorModelListData = sqliteTable('vendor_model_list_data', {
   id: text('id')
     .$defaultFn(() => createId())
     .primaryKey()
+    .notNull(),
+})
+
+//* common knowledge definitions of LLM models
+export const models = sqliteTable('models', {
+  id: text('id').primaryKey().notNull(), //* openai/gpt-3.5-turbo
+  category: text('category').notNull(), //* chat/text-generation/image etc
+  name: text('name').notNull(), //* OpenAI: GPT-3.5 Turbo
+  creatorName: text('creator_name').notNull(), //* OpenAI
+
+  isRestricted: integer('is_restricted', { mode: 'boolean' }).notNull(), //* resources also share this property?
+
+  contextLength: integer('context_length'),
+  architecture: text('architecture'), //* gpt / llama2 / mistral etc.
+  instructType: text('instruct_type'), //* chatml, llama, vicuna etc.
+  stopTokens: text('stop_tokens', { mode: 'json' })
+    .$type<string[]>()
+    .$default(() => []),
+
+  parameterSize: text('parameter_size'),
+  url: text('url'), //* datasheet/org website
+  summary: text('summary'),
+  description: text('description'),
+  license: text('license'),
+  tags: text('tags', { mode: 'json' }) //* hot, old, etc.
+    .$type<string[]>()
+    .$default(() => []),
+})
+
+//* specific vendor+model inference endpoint details
+export const resources = sqliteTable('resources', {
+  id: text('id').primaryKey().notNull(), //* openrouter@openai/gpt-3.5-turbo
+  modelId: text('model_id').notNull(), //* reference to our known models //? notNull? can refer to self
+  vendorId: text('vendor_id').notNull(),
+
+  isRestricted: integer('is_restricted', { mode: 'boolean' }).notNull(), //* models also share this property?
+  isAvailable: integer('is_available', { mode: 'boolean' }).notNull(), //* eg. model removed from upstream
+
+  endpointModel: text('endpoint_model').notNull(),
+  inputCost1KTokens: real('input_cost_1k_tokens').notNull(),
+  outputCost1KTokens: real('output_cost_1k_tokens').notNull(),
+  tokenOutputLimit: integer('token_output_limit'),
+
+  vendorModelData: text('vendor_model_data', { mode: 'json' })
+    .$default(() => {})
+    .notNull(),
+  hfDatasheet: text('hf_datasheet', { mode: 'json' })
+    .$default(() => {})
     .notNull(),
 })

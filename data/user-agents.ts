@@ -1,5 +1,5 @@
 import 'server-only'
-import * as schema from '@/drizzle/schema'
+import * as schema from '@/drizzle/database.schema'
 import { db } from '@/lib/drizzle'
 import { AppError } from '@/lib/error'
 import { getRandomAgentAvatar, invariant } from '@/lib/utils'

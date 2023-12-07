@@ -1,5 +1,5 @@
 import 'server-only'
-import * as schema from '@/drizzle/schema'
+import * as schema from '@/drizzle/database.schema'
 import { db } from '@/lib/drizzle'
 
 export async function addApiLog({

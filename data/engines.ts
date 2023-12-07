@@ -1,6 +1,6 @@
 import { _throws_getUserSession } from './auth'
 import 'server-only'
-import * as schema from '@/drizzle/schema'
+import * as schema from '@/drizzle/database.schema'
 import { db } from '@/lib/drizzle'
 import { invariant } from '@/lib/utils'
 import { Engine } from '@/schema/dto'
