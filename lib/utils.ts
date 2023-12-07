@@ -1,4 +1,7 @@
+import avatarList from '@/config/avatars.json'
+import namesList from '@/config/names.json'
 import { clsx, type ClassValue } from 'clsx'
+import { customAlphabet } from 'nanoid/non-secure'
 import { shuffle } from 'remeda'
 import { twMerge } from 'tailwind-merge'
 
@@ -44,56 +47,14 @@ export function nanoUSDToDollars(nano: number) {
   return (nano * 4000) / 1_000_000_000
 }
 
-export function getRandomName() {
-  const names = [
-    'Emma Davidson',
-    'Doris Starr',
-    'Earl Rodgers',
-    'Lynette Raynor',
-    'Katie Rich',
-    'Bonita Joseph',
-    'Moses Joyce',
-    'Davion Kaplan',
-    'Rafael Desai ',
-    'Harriet Norman',
-    'Lexi Monroe',
-    'Brock Graves',
-    'Eric Chung',
-    'Yvonne Lawrence',
-    'Orlaith McKenna',
-    'Rogelio Puckett',
-    'Jacquelyn Glass',
-    'Harriet Blanchard',
-  ]
+const rndAlpha = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+const rndNum = customAlphabet('0123456789')
+const rndId = () => shuffle([rndAlpha(1), rndNum(1), rndNum(1)]).join('')
 
-  return shuffle(names)[0]!
+export function getRandomName() {
+  return shuffle(namesList)[0]! + '-' + rndId()
 }
 
 export function getRandomAgentAvatar() {
-  const agentImages = [
-    'charon1.jpg',
-    'charon2.jpg',
-    'charon3.jpg',
-    'charon4.jpg',
-    'charon5.jpg',
-    'charon6.jpg',
-    'charon7.jpg',
-    'charon8.jpg',
-    'charon9.jpg',
-    'float1.jpg',
-    'float2.jpg',
-    'float3.jpg',
-    'float4.jpg',
-    'float5.jpg',
-    'pinata1.jpg',
-    'pinata2.jpg',
-    'pinata3.jpg',
-    'pinata4.jpg',
-    'pinata5.jpg',
-    'pinata6.jpg',
-    'pinata7.jpg',
-    'pinata8.jpg',
-  ] as const
-
-  return '/agent-avatars/' + shuffle(agentImages)[0]!
+  return '/agent-avatars/' + shuffle(avatarList)[0]!
 }
