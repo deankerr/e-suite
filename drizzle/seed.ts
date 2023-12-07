@@ -1,10 +1,10 @@
-import engineDataJson from '@/scripts/provider-models/engines.json'
 import { createLocalClient } from './localClient'
-import { engines, vendors } from './schema'
+import { engines, vendorModelListData, vendors } from './schema'
 
 const db = createLocalClient()
 
 async function seed() {
+  await db.insert(vendorModelListData).values({ vendorId: 'test', data: { a: 'a' } })
   // const storedVendors = await db
   //   .insert(vendors)
   //   .values([
@@ -19,15 +19,15 @@ async function seed() {
 
   // console.log('Inserted', storedVendors.length, 'vendors')
 
-  const engineData = engineDataJson.map((e) => ({
-    ...e,
-    isAvailable: true,
-    isRestricted: e.isRestricted ?? false,
-  }))
+  // const engineData = engineDataJson.map((e) => ({
+  //   ...e,
+  //   isAvailable: true,
+  //   isRestricted: e.isRestricted ?? false,
+  // }))
 
-  const storedEngines = await db.insert(engines).values(engineData).returning().all()
+  // const storedEngines = await db.insert(engines).values(engineData).returning().all()
 
-  console.log('Inserted', storedEngines.length, 'engines')
+  // console.log('Inserted', storedEngines.length, 'engines')
 
   process.exit(0)
 }

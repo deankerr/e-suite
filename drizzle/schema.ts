@@ -123,3 +123,16 @@ export const apiLog = sqliteTable('api_log', {
     .primaryKey()
     .notNull(),
 })
+
+//* vendor model list (unprocessed)
+export const vendorModelListData = sqliteTable('vendor_model_list_data', {
+  vendorId: text('vendor_id').notNull(),
+  retrievedAt: dateTimeStamp('retrieved_at')
+    .$default(() => new Date())
+    .notNull(),
+  data: text('data', { mode: 'json' }),
+  id: text('id')
+    .$defaultFn(() => createId())
+    .primaryKey()
+    .notNull(),
+})

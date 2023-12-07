@@ -105,6 +105,14 @@ export const togetheraiPlugin = {
       }
     },
   },
+
+  models: {
+    list: async () => {
+      const { data, error } = await GET('/models/info', {})
+      if (!data) throw new Error('openapi-fetch error', error)
+      return data
+    },
+  },
 }
 
 function convertMessagesToPromptFormat(messages: Message[]) {

@@ -13,11 +13,11 @@ import {
   updateAgentSchema,
 } from '@/schema/dto'
 import { and, eq } from 'drizzle-orm'
-import { getUserSession } from './auth'
+import { _throws_getUserSession } from './auth'
 import { agentEntityToDto } from './internal/map'
 
 export async function getUserAgents(): Promise<Agent[]> {
-  const user = await getUserSession()
+  const user = await _throws_getUserSession()
   const agents = await db.query.agents.findMany({
     where: eq(schema.agents.ownerId, user.id),
     with: {
@@ -33,7 +33,7 @@ export async function getUserAgents(): Promise<Agent[]> {
 }
 
 export async function getUserAgent(id: string): Promise<Agent> {
-  const user = await getUserSession()
+  const user = await _throws_getUserSession()
   const agent = await db.query.agents.findFirst({
     where: and(eq(schema.agents.ownerId, user.id), eq(schema.agents.id, id)),
     with: {
@@ -51,7 +51,7 @@ export async function getUserAgent(id: string): Promise<Agent> {
 
 //^ returns non DTO
 export async function createUserAgent(input: CreateAgent): Promise<string> {
-  const user = await getUserSession()
+  const user = await _throws_getUserSession()
   const values = createAgentSchema.parse(input)
 
   const engine = await db.query.engines.findFirst()
@@ -72,7 +72,7 @@ export async function createUserAgent(input: CreateAgent): Promise<string> {
 }
 
 export async function updateUserAgent(input: UpdateAgent): Promise<void> {
-  const user = await getUserSession()
+  const user = await _throws_getUserSession()
   const { id, ...values } = updateAgentSchema.parse(input)
 
   await db
@@ -82,7 +82,7 @@ export async function updateUserAgent(input: UpdateAgent): Promise<void> {
 }
 
 export async function deleteUserAgent(input: DeleteAgent): Promise<void> {
-  const user = await getUserSession()
+  const user = await _throws_getUserSession()
   const { id } = deleteAgentSchema.parse(input)
 
   await db

@@ -39,9 +39,11 @@ export const openrouterPlugin = {
     },
   },
 
-  models: async () => {
-    const { data } = await api.models.list()
-    return data
+  models: {
+    list: async () => {
+      const { data } = await api.models.list()
+      return data
+    },
   },
 }
 

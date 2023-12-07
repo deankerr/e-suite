@@ -3,9 +3,9 @@ import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 
-export type UserSession = Awaited<ReturnType<typeof getUserSession>>
+export type UserSession = Awaited<ReturnType<typeof _throws_getUserSession>>
 
-export async function getUserSession() {
+export async function _throws_getUserSession() {
   const { getUser, getPermissions } = getKindeServerSession()
 
   const kindeUser = await getUser()
@@ -51,7 +51,7 @@ export async function authenticateApiSession(headers: Headers) {
   throw new AppError('unauthorized', 'Unauthorized')
 }
 
-async function getServerSession() {
+export async function getServerSession() {
   const { getUser, getPermissions } = getKindeServerSession()
 
   const kindeUser = await getUser()
@@ -66,6 +66,7 @@ async function getServerSession() {
     lastName: kindeUser.family_name,
     image: kindeUser.picture,
     permissions: kindePermissions.permissions,
+    isAdmin: kindePermissions.permissions.includes('admin'),
   }
 
   return userSession

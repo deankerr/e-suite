@@ -1,4 +1,3 @@
-import { format } from 'util'
 import { clsx, type ClassValue } from 'clsx'
 import { shuffle } from 'remeda'
 import { twMerge } from 'tailwind-merge'
@@ -97,16 +96,4 @@ export function getRandomAgentAvatar() {
   ] as const
 
   return '/agent-avatars/' + shuffle(agentImages)[0]!
-}
-
-export function objFormat(obj: unknown) {
-  return format('%o', obj)
-}
-export function logObjFormat(obj: unknown, label?: string) {
-  console.log('')
-  console.log('=== === === ===')
-  label && console.log(label)
-  console.log(objFormat(obj))
-  console.log('=== === === ===')
-  console.log('')
 }

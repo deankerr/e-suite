@@ -1,4 +1,4 @@
-import { getUserSession, UserSession } from '@/data/auth'
+import { _throws_getUserSession, UserSession } from '@/data/auth'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { AppError } from './error'
@@ -12,8 +12,9 @@ export function actionValidator<Z extends z.ZodTypeAny, R>(
 ): ProtectedAction<Z, R> {
   return async function validateRequest(rawInput) {
     try {
+      console.log('action validator')
       //* login/session check
-      const user = await getUserSession()
+      const user = await _throws_getUserSession()
 
       //* validate input
       const parsedInput = inputSchema.parse(rawInput)

@@ -6,12 +6,14 @@ import { SidebarNav } from '@/components/sidebar-nav'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { UserMenuButton } from '@/components/user-menu-button'
-import { getIsAuthenticated } from '@/data/auth'
+import { getIsAuthenticated, getServerSession } from '@/data/auth'
 import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/components'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await getIsAuthenticated()
+  const session = await getServerSession()
+
   return (
     <AppShell>
       <AppSidebar>
@@ -44,6 +46,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <ThemeToggle />
           </>
         )}
+
+        {session?.isAdmin ? (
+          <Button variant="link" asChild>
+            <Link href="/admin">Admin</Link>
+          </Button>
+        ) : null}
       </AppSidebar>
       {children}
     </AppShell>

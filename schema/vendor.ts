@@ -1,4 +1,3 @@
-import OpenAI from 'openai'
 import z from 'zod'
 
 export const vendorIds = ['openai', 'openrouter', 'togetherai', 'fal', 'replicate'] as const

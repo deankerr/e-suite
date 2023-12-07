@@ -1,4 +1,4 @@
-import { getIsAuthenticated, getUserSession } from '@/data/auth'
+import { _throws_getUserSession, getIsAuthenticated } from '@/data/auth'
 import { getEngines } from '@/data/engines'
 import { getUserAgents } from '@/data/user-agents'
 import { cn } from '@/lib/utils'
@@ -10,7 +10,7 @@ export async function AppShell({ className, children }: React.ComponentProps<'di
 
   const isAuthed = await getIsAuthenticated()
   if (isAuthed) {
-    const sessionUser = await getUserSession()
+    const sessionUser = await _throws_getUserSession()
     const agents = await getUserAgents()
     const engines = await getEngines()
 
