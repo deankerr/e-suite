@@ -1,5 +1,6 @@
 import { NewAppError } from '@/lib/app-error'
 import { route } from '@/lib/route'
+import { huggingfacePlugin } from '@/plugins/huggingface.plugin'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
@@ -16,9 +17,9 @@ export type ChatRouteResponse = z.infer<typeof chatRouteResponseSchema>
 const chatRouteRequestSchema = z
   .object({
     vendorId: vendorIdSchema,
-    engineId: z.string().min(1), // temp
+    // engineId: z.string().min(1), // temp
     model: z.string().min(1), // to be sent to vendor api
-    messages: messageSchema.array().min(1),
+    // messages: messageSchema.array().min(1),
   })
   .passthrough()
 
@@ -61,6 +62,7 @@ export const POST = route({
     if (ctx.input.vendorId === 'openai') return await openaiPlugin.chat.completions(ctx)
     if (ctx.input.vendorId === 'openrouter') return await openrouterPlugin.chat.completions(ctx)
     if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.chat.completions(ctx)
+    if (ctx.input.vendorId === 'huggingface') return await huggingfacePlugin.chat.completions(ctx)
     throw new NewAppError('vendor_method_not_supported')
   },
 })

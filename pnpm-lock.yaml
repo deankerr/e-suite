@@ -17,6 +17,12 @@ dependencies:
   '@hookform/resolvers':
     specifier: ^3.3.2
     version: 3.3.2(react-hook-form@7.48.2)
+  '@huggingface/hub':
+    specifier: ^0.12.2
+    version: 0.12.2
+  '@huggingface/inference':
+    specifier: ^2.6.4
+    version: 2.6.4
   '@kinde-oss/kinde-auth-nextjs':
     specifier: ^2.0.10
     version: 2.0.10(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
@@ -1325,6 +1331,18 @@ packages:
       react-hook-form: ^7.0.0
     dependencies:
       react-hook-form: 7.48.2(react@18.2.0)
+    dev: false
+
+  /@huggingface/hub@0.12.2:
+    resolution: {integrity: sha512-F1ROM2EHiXmS8eRNnksmOodm7b1okkaI2Uim14R5a2ZJP4yewDLNFH9Q1TJfJIje2HKwOk1iNYLMaXfsZqYvqQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      hash-wasm: 4.11.0
+    dev: false
+
+  /@huggingface/inference@2.6.4:
+    resolution: {integrity: sha512-Xna7arltBSBoKaH3diGi3sYvkExgJMd/pF4T6vl2YbmDccbr1G/X5EPZ2048p+YgrJYG1jTYFCtY6Dr3HvJaow==}
+    engines: {node: '>=18'}
     dev: false
 
   /@humanwhocodes/config-array@0.11.13:
@@ -5637,6 +5655,10 @@ packages:
     dependencies:
       has-symbols: 1.0.3
     dev: true
+
+  /hash-wasm@4.11.0:
+    resolution: {integrity: sha512-HVusNXlVqHe0fzIzdQOGolnFN6mX/fqcrSAOcTBXdvzrXVHwTz11vXeKRmkR5gTuwVpvHZEIyKoePDvuAR+XwQ==}
+    dev: false
 
   /hasown@2.0.0:
     resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
