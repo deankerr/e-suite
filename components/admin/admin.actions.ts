@@ -51,6 +51,7 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
   if (data[0]?.status === 'fulfilled') {
     values.push({ vendorId: 'openrouter', data: data[0].value })
   } else if (data[0]?.status === 'rejected') console.error('Failed to fetch openrouter')
+
   if (data[1]?.status === 'fulfilled') {
     values.push({ vendorId: 'togetherai', data: data[1].value })
   } else if (data[1]?.status === 'rejected') console.error('Failed to fetch togetherai')

@@ -1,5 +1,6 @@
 import { getVendorModelListData } from '@/data/admin/vendor'
 import { cn } from '@/lib/utils'
+import { formatDistanceToNow } from 'date-fns'
 import { PrePrint } from '../util/pre-print'
 import { fetchVendorModelLists } from './admin.actions'
 import { VendorModelDataControlsCard } from './VendorModelData.ControlsCard'
@@ -23,7 +24,10 @@ export async function VendorModelDataCardGroup({ className }: VendorModelListsCa
           data.map((d) => (
             <PrePrint
               key={d.id}
-              title={`${d.vendorId} - ${Array.isArray(d.data) ? d.data.length : '?'}`}
+              title={d.vendorId}
+              description={`${
+                Array.isArray(d.data) ? d.data.length : '?'
+              } items, retrieved ${formatDistanceToNow(d.retrievedAt, { addSuffix: true })}`}
               className="max-w-md"
             >
               {d.data as React.ReactNode}
