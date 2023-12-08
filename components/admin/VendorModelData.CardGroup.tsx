@@ -2,7 +2,7 @@ import { getVendorModelListData } from '@/data/admin/resource.dal'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { PrePrint } from '../util/pre-print'
-import { fetchVendorModelLists } from './admin.actions'
+import { buildResourceRecords, fetchVendorModelLists } from './admin.actions'
 import { VendorModelDataControlsCard } from './VendorModelData.ControlsCard'
 
 type VendorModelListsCardProps = {
@@ -41,7 +41,10 @@ export async function VendorModelDataCardGroup({ className }: VendorModelListsCa
   return (
     <div className={cn('space-y-3 rounded-md border p-4', className)}>
       <h2 className="p-2 font-medium">VendorModelData</h2>
-      <VendorModelDataControlsCard action={fetchVendorModelLists} />
+      <VendorModelDataControlsCard
+        fetchRemoteAction={fetchVendorModelLists}
+        buildResourcesAction={buildResourceRecords}
+      />
 
       <div className="flex w-full flex-wrap gap-3">
         {data.length === 0 ? (

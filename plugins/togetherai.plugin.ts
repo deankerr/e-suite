@@ -1,10 +1,11 @@
 import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
+import type { InsertModel, InsertResource } from '@/data/admin/resource.dal'
 import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
 import { RouteContext } from '@/lib/route'
-import { invariant } from '@/lib/utils'
+import { invariant, nanoUSDToDollars } from '@/lib/utils'
 import { Message, messageSchema } from '@/schema/message'
 import { nanoid } from 'nanoid/non-secure'
 import createClient from 'openapi-fetch'
@@ -111,6 +112,46 @@ export const togetheraiPlugin = {
       const { data, error } = await GET('/models/info', {})
       if (!data) throw new Error('openapi-fetch error', error)
       return data
+    },
+
+    processList: (listData: unknown) => {
+      const parse = togetheraiSchema.models.list.safeParse(listData)
+      if (!parse.success) {
+        console.warn('Failed to parse list data: %o', parse.error)
+        return
+      }
+
+      const results: InsertResource[] = []
+
+      for (const item of parse.data) {
+        const model: Partial<InsertModel> = {
+          id: item.name.toLowerCase(),
+          category: item.display_type,
+          name: item.display_name,
+          creatorName: item.creator_organization,
+          isRestricted: false,
+          contextLength: item.context_length,
+          parameterSize: String(item.num_parameters),
+          url: item.link,
+          description: item.description,
+          license: item.license,
+        }
+
+        const resource: InsertResource = {
+          id: 'togetherai@' + item.name.toLowerCase(),
+          modelId: item.name.toLowerCase(),
+          vendorId: 'togetherai',
+          isRestricted: false,
+          isAvailable: true,
+          endpointModel: item.name,
+          inputCost1KTokens: nanoUSDToDollars(item.pricing.input),
+          outputCost1KTokens: nanoUSDToDollars(item.pricing.output),
+          vendorModelData: model,
+        }
+        results.push(resource)
+      }
+
+      return results
     },
   },
 }

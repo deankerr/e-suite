@@ -6,26 +6,39 @@ import { Button } from '../ui/button'
 import { Loading } from '../ui/loading'
 
 type VendorModelListsCardControlsProps = {
-  action: () => Promise<void>
+  fetchRemoteAction: () => Promise<void>
+  buildResourcesAction: () => Promise<void>
 } & React.ComponentProps<'div'>
 
 export function VendorModelDataControlsCard({
   className,
   /* @ts-ignore this is allowed for server actions */
-  action,
+  fetchRemoteAction,
+  buildResourcesAction,
 }: VendorModelListsCardControlsProps) {
   const [isPending, startTransition] = useTransition()
+  const [isPending2, startTransition2] = useTransition()
 
   return (
     <div className={cn('px-2', className)}>
       <Button
         onClick={() =>
           startTransition(async () => {
-            await action()
+            await fetchRemoteAction()
           })
         }
       >
         {isPending ? <Loading size="sm" /> : 'Fetch Remote'}
+      </Button>
+
+      <Button
+        onClick={() =>
+          startTransition2(async () => {
+            await buildResourcesAction()
+          })
+        }
+      >
+        {isPending2 ? <Loading size="sm" /> : 'Build Resources'}
       </Button>
     </div>
   )
