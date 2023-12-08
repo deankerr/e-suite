@@ -1,4 +1,5 @@
 import { getVendorModelListData } from '@/data/admin/resource.dal'
+import { db } from '@/lib/drizzle'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { PrePrint } from '../util/pre-print'
@@ -45,7 +46,6 @@ export async function VendorModelDataCardGroup({ className }: VendorModelListsCa
         fetchRemoteAction={fetchVendorModelLists}
         buildResourcesAction={buildResourceRecords}
       />
-
       <div className="flex w-full flex-wrap gap-3">
         {data.length === 0 ? (
           <PrePrint title="No Data">There is no data to display.</PrePrint>

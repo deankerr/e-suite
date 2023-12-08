@@ -20,8 +20,9 @@ export function VendorModelDataControlsCard({
   const [isPending2, startTransition2] = useTransition()
 
   return (
-    <div className={cn('px-2', className)}>
+    <div className={cn('space-x-4 px-2', className)}>
       <Button
+        variant="outline"
         onClick={() =>
           startTransition(async () => {
             await fetchRemoteAction()
@@ -32,6 +33,7 @@ export function VendorModelDataControlsCard({
       </Button>
 
       <Button
+        variant="outline"
         onClick={() =>
           startTransition2(async () => {
             await buildResourcesAction()

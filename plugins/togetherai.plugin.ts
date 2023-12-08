@@ -13,6 +13,8 @@ import z from 'zod'
 import type { paths } from './togetherai.api'
 import { togetheraiSchema } from './togetherai.schema'
 
+const vendorId = 'togetherai' as const
+
 const { GET, POST } = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
   headers: {
@@ -116,14 +118,14 @@ export const togetheraiPlugin = {
 
     processList: (listData: unknown) => {
       const parse = togetheraiSchema.models.list.safeParse(listData)
-      if (!parse.success) {
-        console.warn('Failed to parse list data: %o', parse.error)
-        return
-      }
+      if (!parse.success) return console.warn('%s failed to parse list: %o', vendorId, parse.error)
+      console.log('openrouter: %d items', parse.data.length)
 
       const results: InsertResource[] = []
 
       for (const item of parse.data) {
+        console.log('%s: %s', vendorId, item.name)
+
         const model: Partial<InsertModel> = {
           id: item.name.toLowerCase(),
           category: item.display_type,
@@ -139,13 +141,13 @@ export const togetheraiPlugin = {
 
         const resource: InsertResource = {
           id: 'togetherai@' + item.name.toLowerCase(),
-          modelId: item.name.toLowerCase(),
+          modelAliasId: item.name.toLowerCase(),
           vendorId: 'togetherai',
           isRestricted: false,
           isAvailable: true,
-          endpointModel: item.name,
-          inputCost1KTokens: nanoUSDToDollars(item.pricing.input),
-          outputCost1KTokens: nanoUSDToDollars(item.pricing.output),
+          endpointModelId: item.name,
+          inputCost1KTokens: nanoUSDToDollars(item.pricing.input) || -1, //* are not free
+          outputCost1KTokens: nanoUSDToDollars(item.pricing.output) || -1, //* price not provided
           vendorModelData: model,
         }
         results.push(resource)

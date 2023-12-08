@@ -25,6 +25,7 @@
     "@huggingface/inference": "^2.6.4",
     "@kinde-oss/kinde-auth-nextjs": "^2.0.10",
     "@libsql/client": "0.4.0-pre.5",
+    "@mobily/ts-belt": "^3.13.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -82,7 +83,6 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "use-immer": "^0.9.0",
-    "znv": "^0.4.0",
     "zod": "^3.22.4",
     "zod-validation-error": "^2.1.0"
   },

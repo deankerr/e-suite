@@ -58,3 +58,8 @@ export function getRandomName() {
 export function getRandomAgentAvatar() {
   return '/agent-avatars/' + shuffle(avatarList)[0]!
 }
+
+export function truncateFloat(value: string | number, precision = 12) {
+  const n = typeof value === 'string' ? parseFloat(value) : value
+  return Number(n.toFixed(12))
+}

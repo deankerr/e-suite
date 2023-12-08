@@ -2,9 +2,12 @@ import 'server-only'
 import { InsertModel, InsertResource } from '@/data/admin/resource.dal'
 import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
+import { truncateFloat } from '@/lib/utils'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
 import { openrouterSchema } from './openrouter.schema'
+
+const vendorId = 'openrouter' as const
 
 const api = new OpenAI({
   apiKey: ENV.OPENROUTER_API_KEY,
@@ -47,19 +50,19 @@ export const openrouterPlugin = {
     },
     processList: (listData: unknown) => {
       const parse = openrouterSchema.models.list.safeParse(listData)
-      if (!parse.success) {
-        console.warn('Failed to parse list data: %o', parse.error)
-        return
-      }
-      console.log('openrouter start input', parse.data.length)
+      if (!parse.success) return console.warn('%s failed to parse list: %o', vendorId, parse.error)
+      console.log('openrouter: %d items', parse.data.length)
+
       const results: InsertResource[] = []
 
       const getIsRestricted = (id: string) =>
-        id.startsWith('openai/gpt-4') && id !== 'openai/gpt-4-1106-preview'
+        id.startsWith('openai/gpt-4') &&
+        !['openai/gpt-4-1106-preview', 'openai/gpt-4-vision-preview'].includes(id)
 
       for (const item of parse.data) {
-        console.log('proc id', item.name)
-        if (item.id === 'openrouter/auto') continue
+        if (item.id === 'openrouter/auto') continue //* not a model
+        console.log('%s: %s', vendorId, item.name)
+
         const model: Partial<InsertModel> = {
           id: item.name.toLowerCase(),
           category: 'chat',
@@ -72,13 +75,13 @@ export const openrouterPlugin = {
 
         const resource: InsertResource = {
           id: 'openrouter@' + item.id,
-          modelId: item.id,
+          modelAliasId: item.id,
           vendorId: 'openrouter',
           isRestricted: getIsRestricted(item.id),
           isAvailable: true,
-          endpointModel: item.id,
-          inputCost1KTokens: Number(item.pricing.prompt) * 1000,
-          outputCost1KTokens: Number(item.pricing.completion) * 1000,
+          endpointModelId: item.id,
+          inputCost1KTokens: truncateFloat(Number(item.pricing.prompt) * 1000),
+          outputCost1KTokens: truncateFloat(Number(item.pricing.completion) * 1000),
           tokenOutputLimit: item.top_provider.max_completion_tokens,
           vendorModelData: model,
         }

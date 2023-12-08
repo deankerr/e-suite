@@ -1,8 +1,8 @@
 import type { InferenceParametersRecord } from '@/schema/dto'
 import { createId } from '@paralleldrive/cuid2'
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { dateTimeStamp } from './custom-types'
+import { date, dateTimeStamp } from './custom-types'
 
 //* Engines
 export const engines = sqliteTable('engines', {
@@ -169,18 +169,22 @@ export const models = sqliteTable('models', {
 //* specific vendor+model inference endpoint details
 export const resources = sqliteTable('resources', {
   id: text('id').primaryKey().notNull(), //* openrouter@openai/gpt-3.5-turbo
-  modelId: text('model_id').notNull(), //* reference to our known models //? notNull? can refer to self
+  modelAliasId: text('model_alias_id').notNull(), //* reference to our known models //? notNull? can refer to self
   vendorId: text('vendor_id').notNull(),
+  endpointModelId: text('endpoint_model_id').notNull(), //* model id as defined by vendor
 
   isRestricted: integer('is_restricted', { mode: 'boolean' }).notNull(), //* models also share this property?
   isAvailable: integer('is_available', { mode: 'boolean' }).notNull(), //* eg. model removed from upstream
 
-  endpointModel: text('endpoint_model').notNull(),
   inputCost1KTokens: real('input_cost_1k_tokens').notNull(),
   outputCost1KTokens: real('output_cost_1k_tokens').notNull(),
   tokenOutputLimit: integer('token_output_limit'),
 
   vendorModelData: text('vendor_model_data', { mode: 'json' })
     .$default(() => {})
+    .notNull(),
+
+  created: date('created')
+    .$default(() => new Date())
     .notNull(),
 })
