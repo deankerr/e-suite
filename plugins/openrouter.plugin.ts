@@ -53,7 +53,7 @@ export const openrouterPlugin = {
       if (!parse.success) return console.warn('%s failed to parse list: %o', vendorId, parse.error)
       console.log('openrouter: %d items', parse.data.length)
 
-      const results: InsertResource[] = []
+      const results = []
 
       const getIsRestricted = (id: string) =>
         id.startsWith('openai/gpt-4') &&
@@ -63,7 +63,7 @@ export const openrouterPlugin = {
         if (item.id === 'openrouter/auto') continue //* not a model
         console.log('%s: %s', vendorId, item.name)
 
-        const model: Partial<InsertModel> = {
+        const model = {
           id: item.name.toLowerCase(),
           category: 'chat',
           name: item.name,
@@ -71,9 +71,9 @@ export const openrouterPlugin = {
           contextLength: item.context_length,
           architecture: item.architecture.tokenizer,
           instructType: item.architecture.instruct_type,
-        }
+        } satisfies Partial<InsertModel>
 
-        const resource: InsertResource = {
+        const resource = {
           id: 'openrouter@' + item.id,
           modelAliasId: item.id,
           vendorId: 'openrouter',
@@ -84,7 +84,7 @@ export const openrouterPlugin = {
           outputCost1KTokens: truncateFloat(Number(item.pricing.completion) * 1000),
           tokenOutputLimit: item.top_provider.max_completion_tokens,
           vendorModelData: model,
-        }
+        } satisfies InsertResource
         results.push(resource)
       }
 

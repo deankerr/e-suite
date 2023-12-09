@@ -162,7 +162,14 @@ export const models = sqliteTable('models', {
     .$type<string[]>()
     .$default(() => []),
   hfDatasheet: text('hf_datasheet', { mode: 'json' })
-    .$default(() => {})
+    .$default(() => ({}))
+    .notNull(),
+
+  created: date('created')
+    .$default(() => new Date())
+    .notNull(),
+  updated: date('updated')
+    .$default(() => new Date())
     .notNull(),
 })
 
@@ -185,6 +192,9 @@ export const resources = sqliteTable('resources', {
     .notNull(),
 
   created: date('created')
+    .$default(() => new Date())
+    .notNull(),
+  updated: date('updated')
     .$default(() => new Date())
     .notNull(),
 })

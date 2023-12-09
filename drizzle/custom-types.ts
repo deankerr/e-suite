@@ -19,7 +19,7 @@ export const dateTimeStamp = customType<{
 export const date = customType<{
   data: Date
   driverData: string
-  default: false
+  default: true
 }>({
   dataType() {
     return 'date'

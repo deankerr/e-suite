@@ -9,7 +9,6 @@
     "lint": "next lint",
     "postbuild": "node ./scripts/add-urls-to-kinde.js",
     "ts": "tsc --noEmit",
-    "script:provider-models": "bun scripts/provider-models/run.ts",
     "turso:generate": "drizzle-kit generate:sqlite",
     "turso:migrate": "tsx drizzle/migrate",
     "turso:studio": "drizzle-kit studio --port 3333",

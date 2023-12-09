@@ -1,9 +1,24 @@
 'use server'
 
-import { addResources, addVendorModelListData, InsertResource } from '@/data/admin/resource.dal'
+import {
+  addModels,
+  addResources,
+  addVendorModelListData,
+  deleteAllModels as dalDeleteAllModels,
+  deleteAllResources as dalDeleteAllResources,
+  getAllModels,
+  getAllResources,
+  getLatestModelListDataForVendorId,
+  getResourcesByVendorId,
+  InsertModel,
+  InsertResource,
+  SelectModel,
+  SelectResource,
+} from '@/data/admin/resource.dal'
 import * as schema from '@/drizzle/database.schema'
 import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
+import { invariant } from '@/lib/utils'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
@@ -13,26 +28,16 @@ import { desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import z from 'zod'
 
-const modelLists = {
-  openrouter: openrouterPlugin.models.list,
-  togetherai: togetheraiPlugin.models.list,
-  openai: openaiPlugin.models.list,
-}
-const oneDay = 86400000
-
 const refreshIntervalHours = 24
 
 const remoteResources: { vendorId: VendorId; handler: () => Promise<any> }[] = [
   { vendorId: 'openrouter', handler: openrouterPlugin.models.list },
   { vendorId: 'togetherai', handler: togetheraiPlugin.models.list },
-  { vendorId: 'openai', handler: openaiPlugin.models.list },
 ]
 
 export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) => {
   // TODO admin check
-  console.log('👯‍♀️ Fetching vendor model lists')
-
-  const handler: Promise<any>[] = []
+  console.log('💃 Fetching vendor model lists')
 
   for (const remote of remoteResources) {
     const [item] = await db
@@ -47,43 +52,27 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
       differenceInHours(new Date(), item.retrievedAt) > refreshIntervalHours
     ) {
       console.log('refresh', remote.vendorId, 'resources')
-      handler.push(
-        remote
-          .handler()
-          .then(
-            async (value) =>
-              await addVendorModelListData([{ vendorId: remote.vendorId, data: value }]),
-          ),
-      )
+      const data = await remote.handler()
+      await addVendorModelListData([{ vendorId: remote.vendorId, data }])
     }
   }
 
-  if (handler.length === 0) {
-    console.log('nothing to do')
-    return
-  }
-
-  await Promise.allSettled(handler)
   revalidatePath('/admin')
   console.log('done')
 })
 
 export const buildResourceRecords = actionValidator(z.void(), async () => {
-  console.log('👯‍♀️ Building resource records')
-  for (const { vendorId } of remoteResources) {
-    if (vendorId === 'openai') continue
+  console.log('💃 Building resource records')
+  const builtResources: InsertResource[] = []
 
-    const modelListData = await db.query.vendorModelListData.findFirst({
-      where: eq(schema.vendorModelListData.vendorId, vendorId),
-      orderBy: [desc(schema.vendorModelListData.retrievedAt)],
-    })
+  for (const { vendorId } of remoteResources) {
+    const modelListData = await getLatestModelListDataForVendorId(vendorId)
 
     if (!modelListData) {
       console.warn('no model availability data for', vendorId)
       continue
     }
 
-    console.log('build', vendorId, modelListData.id)
     const processed =
       vendorId === 'openrouter'
         ? openrouterPlugin.models.processList(modelListData.data)
@@ -91,8 +80,86 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
         ? togetheraiPlugin.models.processList(modelListData.data)
         : null
 
-    if (processed) await addResources(processed)
+    if (processed) builtResources.push(...processed)
   }
+
+  //* check for changes
+  const currentResources = await getAllResources()
+  const newResources: InsertResource[] = []
+
+  for (const r of builtResources) {
+    const existing = currentResources.find((c) => c.id === r.id)
+    if (existing) {
+      //* compare
+      if (!isResourceEqual(r, existing)) {
+        console.log('### update:', r.id)
+        console.log('existing %o', existing)
+        console.log('new %o', r)
+        //TODO handle
+      }
+    } else {
+      //* is new
+      newResources.push(r)
+    }
+  }
+
+  if (newResources.length) {
+    console.log(
+      'adding %d new resources %o',
+      newResources.length,
+      newResources.map((r) => r.modelAliasId),
+    )
+    await addResources(newResources)
+    revalidatePath('/admin')
+  } else {
+    console.log('no new resources')
+  }
+})
+
+export const buildModels = actionValidator(z.void(), async () => {
+  console.log('💃 Building model records')
+
+  const newModels: InsertModel[] = []
+  const resources = await getAllResources()
+  //* get unique model aliases
+  const aliases = new Set(resources.map((r) => r.modelAliasId))
+
+  for (const alias of aliases) {
+    const openrouterResource = resources.find(
+      (r) => r.modelAliasId === alias && r.vendorId === 'openrouter',
+    )
+    const togetheraiResource = resources.find(
+      (r) => r.modelAliasId === alias && r.vendorId === 'togetherai',
+    )
+
+    const model: Partial<InsertModel> = {
+      ...(openrouterResource?.vendorModelData as object),
+      ...(togetheraiResource?.vendorModelData as object),
+    }
+
+    if (openrouterResource) model.id = openrouterResource.modelAliasId
+
+    newModels.push(createModelRecord(model))
+  }
+
+  for (const m of newModels) {
+    console.log('# new model:', m.id)
+    console.log(m)
+    console.log()
+  }
+
+  await addModels(newModels)
+  revalidatePath('/admin')
+})
+
+export const deleteAllResources = actionValidator(z.void(), async () => {
+  await dalDeleteAllResources()
+  revalidatePath('/admin')
+})
+
+export const deleteAllModels = actionValidator(z.void(), async () => {
+  await dalDeleteAllModels()
+  revalidatePath('/admin')
 })
 
 export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
@@ -105,3 +172,28 @@ export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
     console.log('failure?')
   }
 })
+
+function isResourceEqual(r1: Partial<SelectResource>, r2: SelectResource) {
+  if (
+    r1.inputCost1KTokens !== r2.inputCost1KTokens ||
+    r1.outputCost1KTokens !== r2.outputCost1KTokens ||
+    r1.tokenOutputLimit !== r2.tokenOutputLimit
+  ) {
+    return false
+  }
+  return true
+}
+
+function createModelRecord(modelData: Partial<InsertModel>): InsertModel {
+  const m = {
+    ...modelData,
+  }
+
+  if (!m.id) m.id = 'unknown'
+  if (!m.category) m.category = 'unknown'
+  if (!m.name) m.name = 'unknown'
+  if (!m.creatorName) m.creatorName = 'unknown'
+  if (!m.isRestricted) m.isRestricted = false
+
+  return m as InsertModel
+}

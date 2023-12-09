@@ -121,25 +121,25 @@ export const togetheraiPlugin = {
       if (!parse.success) return console.warn('%s failed to parse list: %o', vendorId, parse.error)
       console.log('openrouter: %d items', parse.data.length)
 
-      const results: InsertResource[] = []
+      const results = []
 
       for (const item of parse.data) {
         console.log('%s: %s', vendorId, item.name)
 
-        const model: Partial<InsertModel> = {
+        const model = {
           id: item.name.toLowerCase(),
           category: item.display_type,
           name: item.display_name,
           creatorName: item.creator_organization,
           isRestricted: false,
           contextLength: item.context_length,
-          parameterSize: String(item.num_parameters),
+          parameterSize: item.num_parameters ? String(item.num_parameters) : undefined,
           url: item.link,
           description: item.description,
           license: item.license,
-        }
+        } satisfies Partial<InsertModel>
 
-        const resource: InsertResource = {
+        const resource = {
           id: 'togetherai@' + item.name.toLowerCase(),
           modelAliasId: item.name.toLowerCase(),
           vendorId: 'togetherai',
@@ -149,7 +149,8 @@ export const togetheraiPlugin = {
           inputCost1KTokens: nanoUSDToDollars(item.pricing.input) || -1, //* are not free
           outputCost1KTokens: nanoUSDToDollars(item.pricing.output) || -1, //* price not provided
           vendorModelData: model,
-        }
+          tokenOutputLimit: null,
+        } satisfies InsertResource
         results.push(resource)
       }
 
