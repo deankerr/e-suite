@@ -1,18 +1,9 @@
-import {
-  getAllModels,
-  getAllResources,
-  getLatestModelListDataForVendorId,
-} from '@/data/admin/resource.dal'
+import { createAdminDAO } from '@/data/admin'
+import { getLatestModelListDataForVendorId } from '@/data/admin/vendor-model-data'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { PrePrint } from '../util/pre-print'
-import {
-  buildModels,
-  buildResourceRecords,
-  deleteAllModels,
-  deleteAllResources,
-  fetchVendorModelLists,
-} from './admin.actions'
+import { buildModels, buildResourceRecords, fetchVendorModelLists } from './admin.actions'
 import { VendorModelDataControlsCard } from './VendorModelData.ControlsCard'
 
 type VendorModelListsCardProps = {
@@ -23,18 +14,18 @@ const actionControls = [
   { label: 'Fetch Remote', action: fetchVendorModelLists },
   { label: 'Build Resources', action: buildResourceRecords },
   { label: 'Build Models', action: buildModels },
-  { label: 'Delete Resources', action: deleteAllResources },
-  { label: 'Delete Models', action: deleteAllModels },
 ]
 
 export async function VendorModelDataCardGroup({ className }: VendorModelListsCardProps) {
+  const adminDao = await createAdminDAO()
+
   const data = [
     await getLatestModelListDataForVendorId('openrouter'),
     await getLatestModelListDataForVendorId('togetherai'),
   ]
 
-  const resources = await getAllResources()
-  const models = await getAllModels()
+  const resources = await adminDao.resources.getAll()
+  const models = await adminDao.models.getAll()
 
   return (
     <div className={cn('space-y-3 rounded-md border p-4', className)}>

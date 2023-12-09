@@ -9,3 +9,4 @@ const client = createClient({
 })
 
 export const db = drizzle(client, { schema })
+export const t = schema

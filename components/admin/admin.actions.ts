@@ -1,18 +1,12 @@
 'use server'
 
 import modelAliases from '@/config/model-aliases.json'
+import { createAdminDAO } from '@/data/admin'
 import {
-  addModels,
-  addResources,
   addVendorModelListData,
-  deleteAllModels as dalDeleteAllModels,
-  deleteAllResources as dalDeleteAllResources,
-  getAllResources,
   getLatestModelListDataForVendorId,
-  InsertModel,
-  InsertResource,
-  SelectResource,
-} from '@/data/admin/resource.dal'
+} from '@/data/admin/vendor-model-data'
+import { InsertModels, InsertResources, SelectResources } from '@/data/types'
 import * as schema from '@/drizzle/database.schema'
 import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
@@ -60,8 +54,9 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
 })
 
 export const buildResourceRecords = actionValidator(z.void(), async () => {
+  const adminDao = await createAdminDAO()
   console.log('💃 Building resource records')
-  const builtResources: InsertResource[] = []
+  const builtResources: InsertResources[] = []
 
   //* process local lists
   const local = openaiPlugin.models.list()
@@ -93,8 +88,8 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
   }
 
   //* check for changes
-  const currentResources = await getAllResources()
-  const newResources: InsertResource[] = []
+  const currentResources = await adminDao.resources.getAll()
+  const newResources: InsertResources[] = []
 
   for (const r of builtResources) {
     const existing = currentResources.find((c) => c.id === r.id)
@@ -127,7 +122,7 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
       newResources.map((r) => r.modelAliasId),
     )
 
-    await addResources(newResources)
+    await adminDao.resources.create(newResources)
     revalidatePath('/admin')
   } else {
     console.log('no new resources')
@@ -135,10 +130,11 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
 })
 
 export const buildModels = actionValidator(z.void(), async () => {
+  const adminDao = await createAdminDAO()
   console.log('💃 Building model records')
 
-  const newModels: InsertModel[] = []
-  const resources = await getAllResources()
+  const newModels: InsertModels[] = []
+  const resources = await adminDao.resources.getAll()
   //* get unique model aliases
   const aliases = new Set(resources.map((r) => r.modelAliasId))
 
@@ -151,7 +147,7 @@ export const buildModels = actionValidator(z.void(), async () => {
     )
 
     //* prefer together's values if available, but openrouter's id
-    const modelValues: Partial<InsertModel> = {
+    const modelValues: Partial<InsertModels> = {
       ...(openrouterResource?.vendorModelData as object),
       ...(togetheraiResource?.vendorModelData as object),
     }
@@ -168,11 +164,11 @@ export const buildModels = actionValidator(z.void(), async () => {
     console.log()
   }
 
-  await addModels(newModels)
+  await adminDao.models.create(newModels)
   revalidatePath('/admin')
 })
 
-function createModel(model: Partial<InsertModel>): InsertModel | null {
+function createModel(model: Partial<InsertModels>): InsertModels | null {
   const validate = createInsertSchema(schema.models, {
     id: z.string().min(1),
     category: (schema) =>
@@ -215,16 +211,6 @@ function createModel(model: Partial<InsertModel>): InsertModel | null {
   return parse.data
 }
 
-export const deleteAllResources = actionValidator(z.void(), async () => {
-  await dalDeleteAllResources()
-  revalidatePath('/admin')
-})
-
-export const deleteAllModels = actionValidator(z.void(), async () => {
-  await dalDeleteAllModels()
-  revalidatePath('/admin')
-})
-
 export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
   console.log('fetch', data)
   const response = await fetch(data)
@@ -237,7 +223,7 @@ export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
 })
 
 //* helpers
-function isResourceEqual(r1: Partial<SelectResource>, r2: SelectResource) {
+function isResourceEqual(r1: Partial<SelectResources>, r2: SelectResources) {
   if (
     r1.inputCost1KTokens !== r2.inputCost1KTokens ||
     r1.outputCost1KTokens !== r2.outputCost1KTokens ||

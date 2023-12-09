@@ -1,6 +1,6 @@
 import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
-import type { InsertModel, InsertResource } from '@/data/admin/resource.dal'
+import type { InsertModel, InsertResource } from '@/data/admin/vendor-model-data'
 import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'

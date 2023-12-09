@@ -1,5 +1,4 @@
 import 'server-only'
-import { InsertResource } from '@/data/admin/resource.dal'
 import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'

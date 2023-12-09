@@ -4,9 +4,12 @@ const newAppErrorCodes = {
     httpStatusCode: 500,
   },
 
-  unauthorized: {
-    code: 'unauthorized',
+  unauthenticated: {
     httpStatusCode: 401,
+  },
+
+  unauthorized: {
+    httpStatusCode: 403,
   },
 
   request_json_malformed: {

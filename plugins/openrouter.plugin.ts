@@ -1,5 +1,5 @@
 import 'server-only'
-import { InsertModel, InsertResource } from '@/data/admin/resource.dal'
+import { InsertModels, InsertResources } from '@/data/types'
 import { ENV } from '@/lib/env'
 import { RouteContext } from '@/lib/route'
 import { truncateFloat } from '@/lib/utils'
@@ -70,7 +70,7 @@ export const openrouterPlugin = {
           contextLength: item.context_length,
           architecture: item.architecture.tokenizer,
           instructType: item.architecture.instruct_type,
-        } satisfies Partial<InsertModel>
+        } satisfies Partial<InsertModels>
 
         const resource = {
           id: 'openrouter@' + item.id,
@@ -83,7 +83,7 @@ export const openrouterPlugin = {
           outputCost1KTokens: truncateFloat(Number(item.pricing.completion) * 1000),
           tokenOutputLimit: item.top_provider.max_completion_tokens,
           vendorModelData: model,
-        } satisfies InsertResource
+        } satisfies InsertResources
         results.push(resource)
       }
 
