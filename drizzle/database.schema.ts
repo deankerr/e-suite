@@ -144,8 +144,6 @@ export const models = sqliteTable('models', {
   name: text('name').notNull(), //* OpenAI: GPT-3.5 Turbo
   creatorName: text('creator_name').notNull(), //* OpenAI
 
-  isRestricted: integer('is_restricted', { mode: 'boolean' }).notNull(), //* resources also share this property?
-
   contextLength: integer('context_length'),
   architecture: text('architecture'), //* gpt / llama2 / mistral etc.
   instructType: text('instruct_type'), //* chatml, llama, vicuna etc.
@@ -188,7 +186,7 @@ export const resources = sqliteTable('resources', {
   tokenOutputLimit: integer('token_output_limit'),
 
   vendorModelData: text('vendor_model_data', { mode: 'json' })
-    .$default(() => {})
+    .$default(() => ({}))
     .notNull(),
 
   created: date('created')

@@ -6,6 +6,7 @@ import { RouteContext } from '@/lib/route'
 import type { Message } from '@/schema/message'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
+import models from './openai.models.json'
 import { openaiSchema } from './openai.schema'
 
 const api = new OpenAI({
@@ -58,9 +59,8 @@ export const openaiPlugin = {
   },
 
   models: {
-    list: async () => {
-      const { data } = await api.models.list()
-      return data
+    list: () => {
+      return models
     },
   },
 }

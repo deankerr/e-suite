@@ -131,7 +131,6 @@ export const togetheraiPlugin = {
           category: item.display_type,
           name: item.display_name,
           creatorName: item.creator_organization,
-          isRestricted: false,
           contextLength: item.context_length,
           parameterSize: item.num_parameters ? String(item.num_parameters) : undefined,
           url: item.link,

@@ -1,30 +1,28 @@
 'use server'
 
+import modelAliases from '@/config/model-aliases.json'
 import {
   addModels,
   addResources,
   addVendorModelListData,
   deleteAllModels as dalDeleteAllModels,
   deleteAllResources as dalDeleteAllResources,
-  getAllModels,
   getAllResources,
   getLatestModelListDataForVendorId,
-  getResourcesByVendorId,
   InsertModel,
   InsertResource,
-  SelectModel,
   SelectResource,
 } from '@/data/admin/resource.dal'
 import * as schema from '@/drizzle/database.schema'
 import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
-import { invariant } from '@/lib/utils'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
 import { VendorId } from '@/schema/vendor'
 import { differenceInHours } from 'date-fns'
 import { desc, eq } from 'drizzle-orm'
+import { createInsertSchema } from 'drizzle-zod'
 import { revalidatePath } from 'next/cache'
 import z from 'zod'
 
@@ -65,6 +63,17 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
   console.log('💃 Building resource records')
   const builtResources: InsertResource[] = []
 
+  //* process local lists
+  const local = openaiPlugin.models.list()
+  for (const model of local) {
+    builtResources.push({
+      ...model,
+      isRestricted: getIsRestricted(model.id),
+      isAvailable: true,
+    })
+  }
+
+  //* process remote lists
   for (const { vendorId } of remoteResources) {
     const modelListData = await getLatestModelListDataForVendorId(vendorId)
 
@@ -99,6 +108,14 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
       }
     } else {
       //* is new
+      //* add tweaks
+      r.isRestricted = getIsRestricted(r.modelAliasId)
+
+      const endpointModelId = r.endpointModelId.toLowerCase() as keyof typeof modelAliases
+      if (endpointModelId in modelAliases) {
+        r.modelAliasId = modelAliases[endpointModelId]
+      }
+
       newResources.push(r)
     }
   }
@@ -109,6 +126,7 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
       newResources.length,
       newResources.map((r) => r.modelAliasId),
     )
+
     await addResources(newResources)
     revalidatePath('/admin')
   } else {
@@ -132,14 +150,16 @@ export const buildModels = actionValidator(z.void(), async () => {
       (r) => r.modelAliasId === alias && r.vendorId === 'togetherai',
     )
 
-    const model: Partial<InsertModel> = {
+    //* prefer together's values if available, but openrouter's id
+    const modelValues: Partial<InsertModel> = {
       ...(openrouterResource?.vendorModelData as object),
       ...(togetheraiResource?.vendorModelData as object),
     }
+    if (openrouterResource) modelValues.id = openrouterResource.modelAliasId
 
-    if (openrouterResource) model.id = openrouterResource.modelAliasId
-
-    newModels.push(createModelRecord(model))
+    const model = createModel(modelValues)
+    if (!model?.creatorName) console.log(model)
+    if (model) newModels.push(model)
   }
 
   for (const m of newModels) {
@@ -151,6 +171,49 @@ export const buildModels = actionValidator(z.void(), async () => {
   await addModels(newModels)
   revalidatePath('/admin')
 })
+
+function createModel(model: Partial<InsertModel>): InsertModel | null {
+  const validate = createInsertSchema(schema.models, {
+    id: z.string().min(1),
+    category: (schema) =>
+      schema.category.refine((val) => {
+        if (val === '') return 'unknown'
+        return val
+      }),
+    name: z.string().min(1),
+    creatorName: z
+      .string()
+      .nullish()
+      .transform((val) => {
+        if (!val || typeof val !== 'string') {
+          //* hope that the first word is the creator
+          const firstWord = model.name?.match(/^\w+[^\W]/)
+          return firstWord ? firstWord[0] : 'unknown'
+        }
+        return val
+      })
+      .transform((val) => {
+        if (val.startsWith('Nous')) return 'Nous Research'
+        if (val === 'Yi') return '01.AI'
+        return val
+      }),
+    url: z
+      .string()
+      .nullish()
+      .transform((val) => (val === '' ? null : val)),
+    license: (schema) => schema.license.transform((val) => (val === '' ? null : val)),
+    stopTokens: z.string().array(),
+    tags: z.string().array(),
+  })
+
+  const parse = validate.safeParse(model)
+  if (!parse.success) {
+    console.log('failed to parse model', model.id)
+    console.log(parse.error.errors)
+    return null
+  }
+  return parse.data
+}
 
 export const deleteAllResources = actionValidator(z.void(), async () => {
   await dalDeleteAllResources()
@@ -173,6 +236,7 @@ export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
   }
 })
 
+//* helpers
 function isResourceEqual(r1: Partial<SelectResource>, r2: SelectResource) {
   if (
     r1.inputCost1KTokens !== r2.inputCost1KTokens ||
@@ -184,16 +248,9 @@ function isResourceEqual(r1: Partial<SelectResource>, r2: SelectResource) {
   return true
 }
 
-function createModelRecord(modelData: Partial<InsertModel>): InsertModel {
-  const m = {
-    ...modelData,
-  }
-
-  if (!m.id) m.id = 'unknown'
-  if (!m.category) m.category = 'unknown'
-  if (!m.name) m.name = 'unknown'
-  if (!m.creatorName) m.creatorName = 'unknown'
-  if (!m.isRestricted) m.isRestricted = false
-
-  return m as InsertModel
+function getIsRestricted(id: string) {
+  return (
+    id.startsWith('openai/gpt-4') &&
+    !['openai/gpt-4-1106-preview', 'openai/gpt-4-vision-preview'].includes(id)
+  )
 }
