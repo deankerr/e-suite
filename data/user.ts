@@ -1,3 +1,4 @@
+import 'server-only'
 import { NewAppError } from '@/lib/app-error'
 import { getServerSession } from './auth'
 import * as agents from './internal/agents.entity'

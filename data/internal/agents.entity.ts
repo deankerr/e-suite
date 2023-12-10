@@ -1,5 +1,6 @@
 import 'server-only'
 import { db, t } from '@/lib/drizzle'
+import { getRandomAgentAvatar } from '@/lib/utils'
 import { inferenceParametersRecordSchema } from '@/schema/dto'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
@@ -41,7 +42,9 @@ export async function get(id: string) {
 //* user restricted
 const insertSchema = createInsertSchema(t.agents, {
   id: (schema) => schema.id.transform((_) => undefined),
-  ownerId: (schema) => schema.ownerId.transform((_) => undefined),
+  image: (schema) => schema.image.optional(),
+  resourceId: (schema) => schema.resourceId.catch('openai@gpt-3.5-turbo'),
+  ownerId: (schema) => schema.ownerId.transform((_) => undefined).optional(),
   created: (schema) => schema.created.transform((_) => undefined),
   updated: (schema) => schema.updated.transform((_) => undefined),
   resourceParameters: inferenceParametersRecordSchema,
@@ -52,20 +55,36 @@ export async function createOwnedBy(
   { values }: { values: typeof t.agents.$inferInsert | object },
 ) {
   const parsed = insertSchema.parse(values)
-  await db.insert(t.agents).values({ ...parsed, ownerId })
+  await db.insert(t.agents).values({
+    ...parsed,
+    ownerId,
+    image: getRandomAgentAvatar(),
+  })
 }
 
 export async function getOwnedBy(ownerId: string, { id }: { id: string }) {
   return await db.query.agents.findFirst({
     where: and(eq(t.agents.id, id), eq(t.agents.ownerId, ownerId)),
-    with: withResourceVendor,
+    with: {
+      resource: {
+        with: {
+          vendor: true,
+        },
+      },
+    },
   })
 }
 
 export async function getAllOwnedBy(ownerId: string) {
   return await db.query.agents.findMany({
     where: eq(t.agents.ownerId, ownerId),
-    with: withResourceVendor,
+    with: {
+      resource: {
+        with: {
+          vendor: true,
+        },
+      },
+    },
   })
 }
 

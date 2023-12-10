@@ -1,21 +1,21 @@
 import { cn, nanoUSDToDollars } from '@/lib/utils'
-import { Engine } from '@/schema/dto'
 import { Loading } from './ui/loading'
+import { Resource } from '@/data/types'
 
 export function EngineDataGrid({
   engine,
   className,
-}: { engine?: Engine } & React.ComponentProps<'div'>) {
+}: { engine?: Resource & any } & React.ComponentProps<'div'>) {
   if (!engine) return <Loading />
 
   const data = [
     ['via', engine.vendor?.displayName],
-    ['creator', engine.creatorName],
-    ['category', engine.category],
-    ['context length', engine.contextLength],
-    ['license', engine.license || '[unknown]'],
-    ['price (input)', '$' + nanoUSDToDollars(Number(engine.costInputNanoUsd)).toString()],
-    ['price (output)', '$' + nanoUSDToDollars(Number(engine.costOutputNanoUsd)).toString()],
+    ['creator', engine?.creatorName],
+    ['category', engine?.category],
+    ['context length', engine?.contextLength],
+    ['license', engine?.license || '[unknown]'],
+    ['price (input)', '$' + nanoUSDToDollars(Number(engine?.costInputNanoUsd)).toString()],
+    ['price (output)', '$' + nanoUSDToDollars(Number(engine?.costOutputNanoUsd)).toString()],
   ] // availability, sources, datasheet, moderation
 
   return (

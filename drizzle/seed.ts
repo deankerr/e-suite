@@ -1,10 +1,10 @@
-import { engines, vendorModelListData, vendors } from './database.schema'
+import {  vendorModelListData, vendors } from './database.schema'
 import { createLocalClient } from './local-client'
 
 const db = createLocalClient()
 
 async function seed() {
-  await db.insert(vendorModelListData).values({ vendorId: 'test', data: { a: 'a' } })
+  // await db.insert(vendorModelListData).values({ vendorId: 'test', data: { a: 'a' } })
   // const storedVendors = await db
   //   .insert(vendors)
   //   .values([

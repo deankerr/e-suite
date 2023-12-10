@@ -1,7 +1,7 @@
 import { Deck } from '@/components/deck'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Agent } from '@/data/types'
 import { cn } from '@/lib/utils'
-import { Agent } from '@/schema/dto'
 import { useRef, useState } from 'react'
 import { DeleteAgentDialog } from './delete-agent-dialog'
 import { useUpdateAgent } from './queries'

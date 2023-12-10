@@ -2,6 +2,7 @@ import { createAdminDao } from '@/data/admin'
 import type { AdminDao, UserDao } from '@/data/types'
 import { createUserDao } from '@/data/user'
 import z, { ZodError } from 'zod'
+import { fromZodError } from 'zod-validation-error'
 import { NewAppError } from './app-error'
 
 type ActionUserContext<Z extends z.ZodTypeAny> = {
@@ -29,7 +30,6 @@ export function action<Z extends z.ZodTypeAny, R extends any>(config: {
       }
 
       if (config.user) {
-        console.log('arf')
         return await config.user({
           userDao: await createUserDao(),
           input: config.input.parse(actionInput),
@@ -37,11 +37,17 @@ export function action<Z extends z.ZodTypeAny, R extends any>(config: {
       }
 
       throw new NewAppError('unknown', { description: 'server action missing handler' })
-    } catch (error) {
-      if (error instanceof ZodError) {
-        throw new Error('Invalid input')
+    } catch (err) {
+      console.error(err)
+
+      if (err instanceof ZodError) {
+        const zodError = fromZodError(err)
+        const validationError = new NewAppError('validation_client_request', { cause: zodError })
+        throw validationError
       }
-      throw error
+
+      const unknownError = new NewAppError('unknown', { cause: err })
+      throw unknownError
     }
   }
 }

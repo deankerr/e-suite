@@ -2,12 +2,12 @@
 
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { Agent } from '@/schema/dto'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { Message } from 'ai'
 import { MessageBar } from './message-bar'
 import { MessageBubble } from './message-bubble'
 import { useAgentChat } from './use-agent-chat'
+import { Agent } from '@/data/types'
 
 export function InferenceBuffer({
   agent,

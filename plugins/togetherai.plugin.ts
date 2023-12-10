@@ -1,6 +1,6 @@
 import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
-import type { InsertModel, InsertResource } from '@/data/admin/vendor-model-data'
+import { t } from '@/lib/drizzle'
 import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
 import { AppError } from '@/lib/error'
@@ -136,7 +136,7 @@ export const togetheraiPlugin = {
           url: item.link,
           description: item.description,
           license: item.license,
-        } satisfies Partial<InsertModel>
+        } satisfies Partial<typeof t.models.$inferInsert>
 
         const resource = {
           id: 'togetherai@' + item.name.toLowerCase(),
@@ -149,7 +149,7 @@ export const togetheraiPlugin = {
           outputCost1KTokens: nanoUSDToDollars(item.pricing.output) || -1, //* price not provided
           vendorModelData: model,
           tokenOutputLimit: null,
-        } satisfies InsertResource
+        } satisfies typeof t.resources.$inferInsert
         results.push(resource)
       }
 

@@ -1,5 +1,6 @@
+import { Agent } from '@/data/types'
 import { cn } from '@/lib/utils'
-import { Agent, InferenceParametersRecord } from '@/schema/dto'
+import { InferenceParametersRecord } from '@/schema/dto'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import {
   CheckIcon,
@@ -25,8 +26,8 @@ export function InferenceParametersCard({
   const isPending = updateAgent.isPending
   const [isEditing, setIsEditing] = useState(false)
 
-  const definitions = getEngineParametersAvailable(agent.engine.vendorId)
-  const storedParameters = agent.engineParameters[agent.engineId] ?? {}
+  const definitions = getEngineParametersAvailable(agent?.resource?.vendorId ?? 'openai')
+  const storedParameters = agent.resourceParameters[agent.resourceId] ?? {}
 
   const [currentParameters, setCurrentParameters] = useState({ ...storedParameters })
   const [currentChecked, setCurrentChecked] = useState(
@@ -56,10 +57,10 @@ export function InferenceParametersCard({
                     currentChecked[def.key] ? currentParameters[def.key] : undefined,
                   ])
                   const record = {
-                    ...agent.engineParameters,
-                    [agent.engineId]: parameters,
+                    ...agent.resourceParameters,
+                    [agent.resourceId]: parameters,
                   } as InferenceParametersRecord
-                  updateAgent.mutate({ id: agent.id, engineParameters: record })
+                  updateAgent.mutate({ id: agent.id, resourceParameters: record })
                 }
                 setIsEditing(false)
               }}

@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Agent } from '@/schema/dto'
+import { Agent } from '@/data/types'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useDeleteAgent } from './queries'

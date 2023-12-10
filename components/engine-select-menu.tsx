@@ -13,8 +13,8 @@ import {
   PopoverContentProps,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Resource } from '@/data/types'
 import { cn, raise } from '@/lib/utils'
-import { Engine } from '@/schema/dto'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 
@@ -25,9 +25,9 @@ export function EngineSelectMenu({
   className,
   editable = true,
 }: {
-  engines: Engine[]
-  value?: Engine
-  onValueChange: (value: Engine) => void
+  engines: Resource[]
+  value?: Resource
+  onValueChange: (value: Resource) => void
   className?: React.ComponentProps<typeof Button>['className']
   editable?: boolean
 }) {
@@ -46,7 +46,7 @@ export function EngineSelectMenu({
             className,
           )}
         >
-          {value ? value.displayName : 'Select a model...'}
+          {value ? value.id : 'Select a model...'}
           <CaretSortIcon
             className={cn('ml-2 h-4 w-4 shrink-0', editable ? 'opacity-50' : 'opacity-0')}
           />
@@ -58,29 +58,30 @@ export function EngineSelectMenu({
           <CommandEmpty>No item found.</CommandEmpty>
           <CommandList>
             {engines.map((engine) => {
-              return (
-                <CommandItem
-                  key={engine.id}
-                  value={engine.id}
-                  onSelect={(newValue) => {
-                    if (newValue !== value?.id) {
-                      const newEngine =
-                        engines.find((e) => e.id === newValue) ??
-                        raise('Invalid model select state')
-                      onValueChange(newEngine)
-                    }
-                    setOpen(false)
-                  }}
-                >
-                  {engine.displayName}
-                  <CheckIcon
-                    className={cn(
-                      'ml-auto h-4 w-4',
-                      value?.id === engine.id ? 'opacity-100' : 'opacity-0',
-                    )}
-                  />
-                </CommandItem>
-              )
+              if (engine)
+                return (
+                  <CommandItem
+                    key={engine.id}
+                    value={engine.id}
+                    onSelect={(newValue) => {
+                      if (newValue !== value?.id) {
+                        const newEngine =
+                          engines.find((e) => e.id === newValue) ??
+                          raise('Invalid model select state')
+                        onValueChange(newEngine)
+                      }
+                      setOpen(false)
+                    }}
+                  >
+                    {engine.id}
+                    <CheckIcon
+                      className={cn(
+                        'ml-auto h-4 w-4',
+                        value?.id === engine.id ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
+                  </CommandItem>
+                )
             })}
           </CommandList>
         </Command>

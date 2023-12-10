@@ -1,4 +1,4 @@
-import { Agent } from '@/schema/dto'
+import { Agent } from '@/data/types'
 import { stringToJsonSchema } from '@/schema/stringToJson'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
@@ -10,10 +10,10 @@ const endpoint = '/api/v1/chat/completions'
 
 export function useAgentChat(chatId: string, agent: Agent) {
   const body: Record<string, unknown> = {
-    ...agent.engineParameters[agent.engineId],
-    model: agent.engine.vendorModelId,
-    engineId: agent.engineId,
-    vendorId: agent.engine.vendorId,
+    ...agent.resourceParameters[agent.resourceId],
+    model: agent.resource.endpointModelId,
+    resourceId: agent.resourceId,
+    vendorId: agent.resource.vendorId,
     stream: true,
     stream_tokens: true,
   }
