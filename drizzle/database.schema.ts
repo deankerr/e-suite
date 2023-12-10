@@ -4,57 +4,41 @@ import { relations, sql } from 'drizzle-orm'
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { date, dateTimeStamp } from './custom-types'
 
-//* Engines
-export const engines = sqliteTable('engines', {
-  id: text('id').primaryKey().notNull(),
-  category: text('category').notNull(), //? enum
-  model: text('model').notNull(),
-  displayName: text('displayName').notNull(),
-  creatorName: text('creator').notNull(),
-  isAvailable: integer('isAvailable', { mode: 'boolean' }).notNull(),
-  isRestricted: integer('isAvailable', { mode: 'boolean' }).notNull(),
-  costInputNanoUsd: integer('costInputNanoUsd').notNull(),
-  costOutputNanoUsd: integer('costOutputNanoUsd').notNull(),
-  createdAt: dateTimeStamp('createdAt')
-    .notNull()
-    .$default(() => new Date()),
-  updatedAt: dateTimeStamp('updatedAt')
-    .notNull()
-    .$default(() => new Date()),
+// //* Engines
+// export const engines = sqliteTable('engines', {
+//   id: text('id').primaryKey().notNull(),
+//   category: text('category').notNull(), //? enum
+//   model: text('model').notNull(),
+//   displayName: text('displayName').notNull(),
+//   creatorName: text('creator').notNull(),
+//   isAvailable: integer('isAvailable', { mode: 'boolean' }).notNull(),
+//   isRestricted: integer('isAvailable', { mode: 'boolean' }).notNull(),
+//   costInputNanoUsd: integer('costInputNanoUsd').notNull(),
+//   costOutputNanoUsd: integer('costOutputNanoUsd').notNull(),
+//   createdAt: dateTimeStamp('createdAt')
+//     .notNull()
+//     .$default(() => new Date()),
+//   updatedAt: dateTimeStamp('updatedAt')
+//     .notNull()
+//     .$default(() => new Date()),
 
-  vendorId: text('vendorId').notNull(),
-  vendorModelId: text('providerModelId').notNull(),
+//   vendorId: text('vendorId').notNull(),
+//   vendorModelId: text('providerModelId').notNull(),
 
-  description: text('description'),
-  url: text('url'),
-  license: text('license'),
-  contextLength: integer('contextLength'),
-  promptFormat: text('promptFormat'),
-  comment: text('comment'),
-  instructType: text('instructType'),
-  outputTokenLimit: integer('outputTokenLimit'),
-  tokenizer: text('tokenizer'),
-  stopTokens: text('stopTokens', { mode: 'json' })
-    .$type<string[]>()
-    .$default(() => []),
-  parameterSize: integer('parameterSize'),
-})
-
-export const enginesRelations = relations(engines, ({ one, many }) => ({
-  vendor: one(vendors, { fields: [engines.vendorId], references: [vendors.id] }),
-  engines: many(agents),
-}))
-
-//* Vendors
-export const vendors = sqliteTable('vendors', {
-  id: text('id').primaryKey().notNull(),
-  displayName: text('displayName').notNull(),
-  url: text('url').notNull(),
-})
-
-export const vendorsRelations = relations(vendors, ({ many }) => ({
-  engines: many(engines),
-}))
+//   description: text('description'),
+//   url: text('url'),
+//   license: text('license'),
+//   contextLength: integer('contextLength'),
+//   promptFormat: text('promptFormat'),
+//   comment: text('comment'),
+//   instructType: text('instructType'),
+//   outputTokenLimit: integer('outputTokenLimit'),
+//   tokenizer: text('tokenizer'),
+//   stopTokens: text('stopTokens', { mode: 'json' })
+//     .$type<string[]>()
+//     .$default(() => []),
+//   parameterSize: integer('parameterSize'),
+// })
 
 //* Agents
 export const agents = sqliteTable('agents', {
@@ -62,41 +46,41 @@ export const agents = sqliteTable('agents', {
     .$defaultFn(() => createId())
     .primaryKey()
     .notNull(),
-  ownerId: text('ownerId').notNull(),
+  ownerId: text('owner_id').notNull(),
 
   name: text('name').notNull(),
   image: text('image').notNull(),
-  engineId: text('engineId').notNull(),
-  engineParameters: text('engineParameters', { mode: 'json' })
+  resourceId: text('resource_id').notNull(),
+  resourceParameters: text('resource_parameters', { mode: 'json' })
     .$type<InferenceParametersRecord>()
     .notNull()
     .$default(() => ({})),
 
-  createdAt: dateTimeStamp('createdAt')
+  created: date('created')
     .notNull()
     .$default(() => new Date()),
-  updatedAt: dateTimeStamp('updatedAt')
+  updated: date('updated')
     .notNull()
     .$default(() => new Date()),
 })
 
 export const agentsRelations = relations(agents, ({ one }) => ({
   owner: one(users, { fields: [agents.ownerId], references: [users.id] }),
-  engine: one(engines, { fields: [agents.engineId], references: [engines.id] }),
+  resource: one(resources, { fields: [agents.resourceId], references: [resources.id] }),
 }))
 
 //* Users
 export const users = sqliteTable('users', {
   id: text('id').primaryKey().notNull(),
-  firstName: text('firstName'),
-  lastName: text('lastName'),
+  firstName: text('first_name'),
+  lastName: text('last_name'),
   email: text('email'),
   image: text('image'),
 
-  createdAt: dateTimeStamp('createdAt')
+  created: date('created')
     .notNull()
     .$default(() => new Date()),
-  updatedAt: dateTimeStamp('updatedAt')
+  updated: date('updated')
     .notNull()
     .$default(() => new Date()),
 })
@@ -114,7 +98,7 @@ export const apiLog = sqliteTable('api_log', {
   errorCode: text('error_code'),
   data: text('data', { mode: 'json' }),
 
-  createdAt: dateTimeStamp('created_at')
+  created: date('created')
     .$default(() => new Date())
     .notNull(),
   requestId: text('request_id').notNull(),
@@ -196,3 +180,19 @@ export const resources = sqliteTable('resources', {
     .$default(() => new Date())
     .notNull(),
 })
+
+//* Vendors
+export const vendors = sqliteTable('vendors', {
+  id: text('id').primaryKey().notNull(),
+  displayName: text('displayName').notNull(),
+  url: text('url').notNull(),
+})
+
+export const resourcesRelations = relations(resources, ({ one, many }) => ({
+  vendor: one(vendors, { fields: [resources.vendorId], references: [vendors.id] }),
+  resources: many(agents),
+}))
+
+export const vendorsRelations = relations(vendors, ({ many }) => ({
+  resources: many(resources),
+}))
