@@ -1,5 +1,5 @@
 import { roleSchema, vendorIdSchema } from '@/data/schemas'
-import { NewAppError } from '@/lib/app-error'
+import { AppError } from '@/lib/error'
 import { route } from '@/lib/route'
 import { huggingfacePlugin } from '@/plugins/huggingface.plugin'
 import { openaiPlugin } from '@/plugins/openai.plugin'
@@ -62,6 +62,6 @@ export const POST = route({
     if (ctx.input.vendorId === 'openrouter') return await openrouterPlugin.chat.completions(ctx)
     if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.chat.completions(ctx)
     if (ctx.input.vendorId === 'huggingface') return await huggingfacePlugin.chat.completions(ctx)
-    throw new NewAppError('vendor_method_not_supported')
+    throw new AppError('vendor_method_not_supported')
   },
 })

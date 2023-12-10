@@ -1,6 +1,6 @@
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { NewAppError } from './app-error'
+import { AppError } from './error'
 
 const schema = {
   // app
@@ -50,7 +50,7 @@ function parseEnv<T extends object>(schema: T): Env {
       if (spec === 'string') {
         const val = z.string().safeParse(envVar)
         if (!val.success) {
-          throw new NewAppError('invalid_configuration', {
+          throw new AppError('invalid_configuration', {
             cause: {
               env: key,
               required: 'string',
@@ -67,7 +67,7 @@ function parseEnv<T extends object>(schema: T): Env {
         })
         const val = arrayParser.safeParse(envVar)
         if (!val.success) {
-          throw new NewAppError('invalid_configuration', {
+          throw new AppError('invalid_configuration', {
             cause: {
               env: key,
               required: 'list',
@@ -81,14 +81,14 @@ function parseEnv<T extends object>(schema: T): Env {
 
     return Object.freeze(parsed)
   } catch (err) {
-    if (err instanceof NewAppError) throw err
+    if (err instanceof AppError) throw err
 
     if (err instanceof ZodError) {
       const zErr = fromZodError(err)
-      throw new NewAppError('invalid_configuration', { cause: zErr })
+      throw new AppError('invalid_configuration', { cause: zErr })
     }
 
-    throw new NewAppError('invalid_configuration', { cause: err })
+    throw new AppError('invalid_configuration', { cause: err })
   }
 }
 

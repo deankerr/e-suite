@@ -3,7 +3,7 @@ import type { AdminDao, UserDao } from '@/data/types'
 import { createUserDao } from '@/data/user'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { NewAppError } from './app-error'
+import { AppError } from './error'
 
 type ActionUserContext<Z extends z.ZodTypeAny> = {
   userDao: UserDao
@@ -36,17 +36,17 @@ export function action<Z extends z.ZodTypeAny, R extends any>(config: {
         })
       }
 
-      throw new NewAppError('unknown', { description: 'server action missing handler' })
+      throw new AppError('unknown', { description: 'server action missing handler' })
     } catch (err) {
       console.error(err)
 
       if (err instanceof ZodError) {
         const zodError = fromZodError(err)
-        const validationError = new NewAppError('validation_client_request', { cause: zodError })
+        const validationError = new AppError('validation_client_request', { cause: zodError })
         throw validationError
       }
 
-      const unknownError = new NewAppError('unknown', { cause: err })
+      const unknownError = new AppError('unknown', { cause: err })
       throw unknownError
     }
   }

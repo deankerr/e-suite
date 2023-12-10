@@ -1,7 +1,7 @@
 import 'server-only'
 import type { Message } from '@/data/schemas'
-import { NewAppError } from '@/lib/app-error'
 import { ENV } from '@/lib/env'
+import { AppError } from '@/lib/error'
 import { RouteContext } from '@/lib/route'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import OpenAI from 'openai'
@@ -20,7 +20,7 @@ export const openaiPlugin = {
 
       const flagged = await getModerations(body.messages)
       if (flagged.length > 0) {
-        throw new NewAppError('vendor_content_rejection', { cause: flagged })
+        throw new AppError('vendor_content_rejection', { cause: flagged })
       }
 
       //* streaming response

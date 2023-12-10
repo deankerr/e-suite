@@ -4,7 +4,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { NextRequest } from 'next/server'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { NewAppError } from './app-error'
+import { AppError } from './error'
 import { stringToJsonSchema } from './zod'
 
 type PluginValidator = (input: any) => object | Error
@@ -39,14 +39,14 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
     const log = createRouteLogger(request)
     try {
       const auth = await authenticateApiRequest(request.headers)
-      if (!auth.isAuthenticated) throw new NewAppError('unauthorized')
+      if (!auth.isAuthenticated) throw new AppError('unauthorized')
       log.add('authId', auth.session.id)
       log.add('session', auth.session)
 
       const { json, text } = await getRequestJson(request)
       if (!json) {
         log.add('requestText', text)
-        throw new NewAppError('request_json_malformed', { cause: text })
+        throw new AppError('request_json_malformed', { cause: text })
       }
 
       log.add('requestBody', json)
@@ -57,19 +57,19 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
     } catch (err) {
       console.error(err)
 
-      if (err instanceof NewAppError) {
+      if (err instanceof AppError) {
         log.add('errorCode', err.code)
         return Response.json(err, { status: err.httpStatusCode })
       }
 
       if (err instanceof ZodError) {
         const zodError = fromZodError(err)
-        const validationError = new NewAppError('validation_client_request', { cause: zodError })
+        const validationError = new AppError('validation_client_request', { cause: zodError })
         log.add('errorCode', validationError.code)
         return Response.json(validationError, { status: validationError.httpStatusCode })
       }
 
-      const unknownError = new NewAppError('unknown', { cause: err })
+      const unknownError = new AppError('unknown', { cause: err })
       log.add('errorCode', unknownError.code)
       return Response.json(unknownError, { status: unknownError.httpStatusCode })
     } finally {

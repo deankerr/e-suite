@@ -1,5 +1,5 @@
 import { vendorIdSchema } from '@/data/schemas'
-import { NewAppError } from '@/lib/app-error'
+import { AppError } from '@/lib/error'
 import { route } from '@/lib/route'
 import { falPlugin } from '@/plugins/fal.plugin'
 import { openaiPlugin } from '@/plugins/openai.plugin'
@@ -23,6 +23,6 @@ export const POST = route({
     if (ctx.input.vendorId === 'fal') return await falPlugin.images.generations(ctx)
     if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.images.generations(ctx)
     if (ctx.input.vendorId === 'replicate') return await replicatePlugin.images.generations(ctx)
-    throw new NewAppError('vendor_method_not_supported')
+    throw new AppError('vendor_method_not_supported')
   },
 })

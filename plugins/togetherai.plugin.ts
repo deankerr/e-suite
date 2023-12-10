@@ -1,9 +1,9 @@
 import 'server-only'
 import { ChatRouteResponse } from '@/app/api/v1/chat/completions/route'
 import { Message, messageSchema } from '@/data/schemas'
-import { NewAppError } from '@/lib/app-error'
 import { t } from '@/lib/drizzle'
 import { ENV } from '@/lib/env'
+import { AppError } from '@/lib/error'
 import { RouteContext } from '@/lib/route'
 import { invariant, nanoUSDToDollars } from '@/lib/utils'
 import { nanoid } from 'nanoid/non-secure'
@@ -78,7 +78,7 @@ export const togetheraiPlugin = {
         return Response.json(res)
       }
 
-      throw new NewAppError('vendor_response_error', { cause: error })
+      throw new AppError('vendor_response_error', { cause: error })
     },
   },
 
@@ -103,7 +103,7 @@ export const togetheraiPlugin = {
         ctx.log.add('responseBody', apiResponse)
         return Response.json(apiResponse)
       } else {
-        throw new NewAppError('vendor_response_error', { cause: error })
+        throw new AppError('vendor_response_error', { cause: error })
       }
     },
   },
@@ -176,7 +176,7 @@ function parseChatResponse(data: unknown) {
     invariant(message)
     return { response, message }
   } catch (err) {
-    throw new NewAppError('validation_vendor_response', { description: 'together.ai', cause: data })
+    throw new AppError('validation_vendor_response', { description: 'together.ai', cause: data })
   }
 }
 

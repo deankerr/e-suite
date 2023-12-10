@@ -1,13 +1,13 @@
 import 'server-only'
-import { NewAppError } from '@/lib/app-error'
+import { AppError } from '@/lib/error'
 import { getServerSession } from './auth'
 import * as model from './internal/model.entity'
 import * as resource from './internal/resource.entity'
 
 export const createAdminDao = async () => {
   const session = await getServerSession()
-  if (!session) throw new NewAppError('unauthenticated')
-  if (!session.isAdmin) throw new NewAppError('unauthorized')
+  if (!session) throw new AppError('unauthenticated')
+  if (!session.isAdmin) throw new AppError('unauthorized')
 
   const dao = {
     resources: {
