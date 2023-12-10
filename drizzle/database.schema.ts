@@ -1,4 +1,4 @@
-import type { InferenceParametersRecord } from '@/schema/dto'
+import type { InferenceParametersRecord } from '@/data/schemas'
 import { createId } from '@paralleldrive/cuid2'
 import { relations, sql } from 'drizzle-orm'
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'

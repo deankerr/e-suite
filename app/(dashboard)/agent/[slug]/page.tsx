@@ -8,8 +8,6 @@ import { InferenceParametersCard } from '@/components/inference-parameters-card'
 import { LoadingShapes } from '@/components/loading-shapes'
 import { useGetAgentDetail } from '@/components/queries'
 
-// TODO remove !s
-
 export default function AgentSlugPage({ params }: { params: { slug: string } }) {
   const agentSlug = params.slug
   const agent = useGetAgentDetail(agentSlug)

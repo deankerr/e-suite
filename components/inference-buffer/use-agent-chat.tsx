@@ -1,5 +1,5 @@
 import { Agent } from '@/data/types'
-import { stringToJsonSchema } from '@/schema/stringToJson'
+import { stringToJsonSchema } from '@/lib/zod'
 import { useChat } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
 import { toast } from 'sonner'

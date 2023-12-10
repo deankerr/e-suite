@@ -1,6 +1,6 @@
+import { InferenceParametersRecord } from '@/data/schemas'
 import { Agent } from '@/data/types'
 import { cn } from '@/lib/utils'
-import { InferenceParametersRecord } from '@/schema/dto'
 import { Checkbox, NumberInput } from '@ark-ui/react'
 import {
   CheckIcon,

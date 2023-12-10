@@ -1,11 +1,11 @@
 import { authenticateApiRequest, AuthorizedApiSession } from '@/data/auth'
 import { addApiLog } from '@/data/logs'
-import { stringToJsonSchema } from '@/schema/stringToJson'
 import { createId } from '@paralleldrive/cuid2'
 import { NextRequest } from 'next/server'
 import z, { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { NewAppError } from './app-error'
+import { stringToJsonSchema } from './zod'
 
 type PluginValidator = (input: any) => object | Error
 

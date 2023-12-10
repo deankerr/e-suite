@@ -1,10 +1,10 @@
 import 'server-only'
 import { db, t } from '@/lib/drizzle'
 import { getRandomAgentAvatar } from '@/lib/utils'
-import { inferenceParametersRecordSchema } from '@/schema/dto'
 import { and, eq } from 'drizzle-orm'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import z from 'zod'
+import { inferenceParametersRecordSchema } from '../schemas'
 
 const schema = createSelectSchema(t.agents, {
   name: (s) => s.name.min(1).max(1),
