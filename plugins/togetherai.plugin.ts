@@ -4,7 +4,6 @@ import { Message, messageSchema } from '@/data/schemas'
 import { NewAppError } from '@/lib/app-error'
 import { t } from '@/lib/drizzle'
 import { ENV } from '@/lib/env'
-import { AppError } from '@/lib/error'
 import { RouteContext } from '@/lib/route'
 import { invariant, nanoUSDToDollars } from '@/lib/utils'
 import { nanoid } from 'nanoid/non-secure'
@@ -177,11 +176,7 @@ function parseChatResponse(data: unknown) {
     invariant(message)
     return { response, message }
   } catch (err) {
-    throw new AppError(
-      'invalid_vendor_response',
-      'Failed to parse the response data from Together.ai',
-      data,
-    )
+    throw new NewAppError('validation_vendor_response', { description: 'together.ai', cause: data })
   }
 }
 

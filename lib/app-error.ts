@@ -4,6 +4,10 @@ const newAppErrorCodes = {
     httpStatusCode: 500,
   },
 
+  invalid_configuration: {
+    httpStatusCode: 500,
+  },
+
   unauthenticated: {
     httpStatusCode: 401,
   },

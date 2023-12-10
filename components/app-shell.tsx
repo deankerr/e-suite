@@ -1,4 +1,4 @@
-import { _throws_getUserSession, getIsAuthenticated } from '@/data/auth'
+import { getIsAuthenticated } from '@/data/auth'
 import { cn } from '@/lib/utils'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
