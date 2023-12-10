@@ -1,13 +1,13 @@
 'use server'
 
 import modelAliases from '@/config/model-aliases.json'
-import { createAdminDao } from '@/data/admin'
 import {
   addVendorModelListData,
   getLatestModelListDataForVendorId,
 } from '@/data/admin/vendor-model-data'
 import { InsertModels, InsertResources, SelectResources } from '@/data/types'
 import * as schema from '@/drizzle/database.schema'
+import { action } from '@/lib/action'
 import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
 import { openaiPlugin } from '@/plugins/openai.plugin'
@@ -27,145 +27,153 @@ const remoteResources: { vendorId: VendorId; handler: () => Promise<any> }[] = [
   { vendorId: 'togetherai', handler: togetheraiPlugin.models.list },
 ]
 
-export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) => {
-  // TODO admin check
-  console.log('💃 Fetching vendor model lists')
+export const fetchVendorModelLists = action({
+  input: z.void(),
+  admin: async () => {
+    console.log('💃 Fetching vendor model lists')
 
-  for (const remote of remoteResources) {
-    const [item] = await db
-      .select()
-      .from(schema.vendorModelListData)
-      .where(eq(schema.vendorModelListData.vendorId, remote.vendorId))
-      .orderBy(desc(schema.vendorModelListData.retrievedAt))
-      .limit(1)
+    for (const remote of remoteResources) {
+      const [item] = await db
+        .select()
+        .from(schema.vendorModelListData)
+        .where(eq(schema.vendorModelListData.vendorId, remote.vendorId))
+        .orderBy(desc(schema.vendorModelListData.retrievedAt))
+        .limit(1)
 
-    if (
-      !item?.retrievedAt ||
-      differenceInHours(new Date(), item.retrievedAt) > refreshIntervalHours
-    ) {
-      console.log('refresh', remote.vendorId, 'resources')
-      const data = await remote.handler()
-      await addVendorModelListData([{ vendorId: remote.vendorId, data }])
-    }
-  }
-
-  revalidatePath('/admin')
-  console.log('done')
-})
-
-export const buildResourceRecords = actionValidator(z.void(), async () => {
-  const adminDao = await createAdminDao()
-  console.log('💃 Building resource records')
-  const builtResources: InsertResources[] = []
-
-  //* process local lists
-  const local = openaiPlugin.models.list()
-  for (const model of local) {
-    builtResources.push({
-      ...model,
-      isRestricted: getIsRestricted(model.id),
-      isAvailable: true,
-    })
-  }
-
-  //* process remote lists
-  for (const { vendorId } of remoteResources) {
-    const modelListData = await getLatestModelListDataForVendorId(vendorId)
-
-    if (!modelListData) {
-      console.warn('no model availability data for', vendorId)
-      continue
-    }
-
-    const processed =
-      vendorId === 'openrouter'
-        ? openrouterPlugin.models.processList(modelListData.data)
-        : vendorId === 'togetherai'
-        ? togetheraiPlugin.models.processList(modelListData.data)
-        : null
-
-    if (processed) builtResources.push(...processed)
-  }
-
-  //* check for changes
-  const currentResources = await adminDao.resources.getAll()
-  const newResources: InsertResources[] = []
-
-  for (const r of builtResources) {
-    const existing = currentResources.find((c) => c.id === r.id)
-    if (existing) {
-      //* compare
-      if (!isResourceEqual(r, existing)) {
-        console.log('### update:', r.id)
-        console.log('existing %o', existing)
-        console.log('new %o', r)
-        //TODO handle
+      if (
+        !item?.retrievedAt ||
+        differenceInHours(new Date(), item.retrievedAt) > refreshIntervalHours
+      ) {
+        console.log('refresh', remote.vendorId, 'resources')
+        const data = await remote.handler()
+        await addVendorModelListData([{ vendorId: remote.vendorId, data }])
       }
-    } else {
-      //* is new
-      //* add tweaks
-      r.isRestricted = getIsRestricted(r.modelAliasId)
-
-      const endpointModelId = r.endpointModelId.toLowerCase() as keyof typeof modelAliases
-      if (endpointModelId in modelAliases) {
-        r.modelAliasId = modelAliases[endpointModelId]
-      }
-
-      newResources.push(r)
     }
-  }
 
-  if (newResources.length) {
-    console.log(
-      'adding %d new resources %o',
-      newResources.length,
-      newResources.map((r) => r.modelAliasId),
-    )
-
-    await adminDao.resources.create(newResources)
     revalidatePath('/admin')
-  } else {
-    console.log('no new resources')
-  }
+    console.log('done')
+  },
 })
 
-export const buildModels = actionValidator(z.void(), async () => {
-  const adminDao = await createAdminDao()
-  console.log('💃 Building model records')
+export const buildResourceRecords = action({
+  input: z.void(),
+  admin: async ({ adminDao }) => {
+    console.log('💃 Building resource records')
+    const builtResources: InsertResources[] = []
 
-  const newModels: InsertModels[] = []
-  const resources = await adminDao.resources.getAll()
-  //* get unique model aliases
-  const aliases = new Set(resources.map((r) => r.modelAliasId))
-
-  for (const alias of aliases) {
-    const openrouterResource = resources.find(
-      (r) => r.modelAliasId === alias && r.vendorId === 'openrouter',
-    )
-    const togetheraiResource = resources.find(
-      (r) => r.modelAliasId === alias && r.vendorId === 'togetherai',
-    )
-
-    //* prefer together's values if available, but openrouter's id
-    const modelValues: Partial<InsertModels> = {
-      ...(openrouterResource?.vendorModelData as object),
-      ...(togetheraiResource?.vendorModelData as object),
+    //* process local lists
+    const local = openaiPlugin.models.list()
+    for (const model of local) {
+      builtResources.push({
+        ...model,
+        isRestricted: getIsRestricted(model.id),
+        isAvailable: true,
+      })
     }
-    if (openrouterResource) modelValues.id = openrouterResource.modelAliasId
 
-    const model = createModel(modelValues)
-    if (!model?.creatorName) console.log(model)
-    if (model) newModels.push(model)
-  }
+    //* process remote lists
+    for (const { vendorId } of remoteResources) {
+      const modelListData = await getLatestModelListDataForVendorId(vendorId)
 
-  for (const m of newModels) {
-    console.log('# new model:', m.id)
-    console.log(m)
-    console.log()
-  }
+      if (!modelListData) {
+        console.warn('no model availability data for', vendorId)
+        continue
+      }
 
-  await adminDao.models.create(newModels)
-  revalidatePath('/admin')
+      const processed =
+        vendorId === 'openrouter'
+          ? openrouterPlugin.models.processList(modelListData.data)
+          : vendorId === 'togetherai'
+          ? togetheraiPlugin.models.processList(modelListData.data)
+          : null
+
+      if (processed) builtResources.push(...processed)
+    }
+
+    //* check for changes
+    const currentResources = await adminDao.resources.getAll()
+    const newResources: InsertResources[] = []
+
+    for (const r of builtResources) {
+      const existing = currentResources.find((c) => c.id === r.id)
+      if (existing) {
+        //* compare
+        if (!isResourceEqual(r, existing)) {
+          console.log('### update:', r.id)
+          console.log('existing %o', existing)
+          console.log('new %o', r)
+          //TODO handle
+        }
+      } else {
+        //* is new
+        //* add tweaks
+        r.isRestricted = getIsRestricted(r.modelAliasId)
+
+        const endpointModelId = r.endpointModelId.toLowerCase() as keyof typeof modelAliases
+        if (endpointModelId in modelAliases) {
+          r.modelAliasId = modelAliases[endpointModelId]
+        }
+
+        newResources.push(r)
+      }
+    }
+
+    if (newResources.length) {
+      console.log(
+        'adding %d new resources %o',
+        newResources.length,
+        newResources.map((r) => r.modelAliasId),
+      )
+
+      await adminDao.resources.create(newResources)
+      revalidatePath('/admin')
+    } else {
+      console.log('no new resources')
+    }
+  },
+})
+
+export const buildModels = action({
+  input: z.void(),
+  admin: async ({ adminDao }) => {
+    console.log('💃 Building model records')
+
+    const newModels: InsertModels[] = []
+    const resources = await adminDao.resources.getAll()
+    //* get unique model aliases
+    const aliases = new Set(resources.map((r) => r.modelAliasId))
+
+    for (const alias of aliases) {
+      const openrouterResource = resources.find(
+        (r) => r.modelAliasId === alias && r.vendorId === 'openrouter',
+      )
+      const togetheraiResource = resources.find(
+        (r) => r.modelAliasId === alias && r.vendorId === 'togetherai',
+      )
+
+      //* prefer together's values if available, but openrouter's id
+      const modelValues: Partial<InsertModels> = {
+        ...(openrouterResource?.vendorModelData as object),
+        ...(togetheraiResource?.vendorModelData as object),
+      }
+      if (openrouterResource) modelValues.id = openrouterResource.modelAliasId
+
+      const model = createModel(modelValues)
+      if (!model?.creatorName) console.log(model)
+      if (model) newModels.push(model)
+    }
+
+    const currentModels = await adminDao.models.getAll()
+    const diff = newModels.filter((m) => currentModels.find((curr) => curr.id === m.id))
+    for (const m of diff) {
+      console.log('# new model:', m.id)
+      console.log(m)
+      console.log()
+    }
+
+    // await adminDao.models.create(newModels)
+    revalidatePath('/admin')
+  },
 })
 
 function createModel(model: Partial<InsertModels>): InsertModels | null {
