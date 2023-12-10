@@ -1,4 +1,4 @@
-import { UpdateAgent } from '@/schema/dto'
+import { AgentUpdate } from '@/data/types'
 import {
   queryOptions,
   useMutation,
@@ -13,8 +13,8 @@ import {
   deleteAgent,
   getAgent,
   getAllAgents,
-  getAllEngines,
-  getEngine,
+  getAllResources,
+  getResource,
   updateAgent,
 } from './actions'
 
@@ -41,8 +41,8 @@ export function useUpdateAgent(id = '') {
   const queryClient = useQueryClient()
   return useMutation({
     mutationKey: [{ entity: 'agents', id }],
-    mutationFn: (data: Omit<UpdateAgent, 'id'>) => updateAgent({ ...data, id }),
-    onMutate: async (updateData: UpdateAgent) => {
+    mutationFn: (data: AgentUpdate) => updateAgent({ ...data, id }),
+    onMutate: async (updateData: AgentUpdate) => {
       await queryClient.cancelQueries({ queryKey: [{ entity: 'agents' }] })
       const previousAgent = queryClient.getQueryData(agentQueries.detail(id).queryKey)
 
@@ -96,11 +96,11 @@ export function useDeleteAgent(id = '') {
 
 //* Engines
 export const engineQueries = {
-  list: queryOptions({ queryKey: [{ entity: 'engines' }], queryFn: () => getAllEngines() }),
+  list: queryOptions({ queryKey: [{ entity: 'engines' }], queryFn: () => getAllResources() }),
   detail: (id: string) =>
     queryOptions({
       queryKey: [{ entity: 'engines', id }],
-      queryFn: () => getEngine({ id }),
+      queryFn: () => getResource({ id }),
       enabled: !!id,
     }),
 }

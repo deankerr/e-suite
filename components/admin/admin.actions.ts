@@ -1,7 +1,7 @@
 'use server'
 
 import modelAliases from '@/config/model-aliases.json'
-import { createAdminDAO } from '@/data/admin'
+import { createAdminDao } from '@/data/admin'
 import {
   addVendorModelListData,
   getLatestModelListDataForVendorId,
@@ -54,7 +54,7 @@ export const fetchVendorModelLists = actionValidator(z.void(), async ({ user }) 
 })
 
 export const buildResourceRecords = actionValidator(z.void(), async () => {
-  const adminDao = await createAdminDAO()
+  const adminDao = await createAdminDao()
   console.log('💃 Building resource records')
   const builtResources: InsertResources[] = []
 
@@ -130,7 +130,7 @@ export const buildResourceRecords = actionValidator(z.void(), async () => {
 })
 
 export const buildModels = actionValidator(z.void(), async () => {
-  const adminDao = await createAdminDAO()
+  const adminDao = await createAdminDao()
   console.log('💃 Building model records')
 
   const newModels: InsertModels[] = []

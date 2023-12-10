@@ -1,4 +1,4 @@
-import { createAdminDAO } from '@/data/admin'
+import { createAdminDao } from '@/data/admin'
 import { getLatestModelListDataForVendorId } from '@/data/admin/vendor-model-data'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
@@ -17,7 +17,7 @@ const actionControls = [
 ]
 
 export async function VendorModelDataCardGroup({ className }: VendorModelListsCardProps) {
-  const adminDao = await createAdminDAO()
+  const adminDao = await createAdminDao()
 
   const data = [
     await getLatestModelListDataForVendorId('openrouter'),

@@ -3,7 +3,7 @@ import { getServerSession } from './auth'
 import * as model from './internal/model.entity'
 import * as resource from './internal/resource.entity'
 
-export const createAdminDAO = async () => {
+export const createAdminDao = async () => {
   const session = await getServerSession()
   if (!session) throw new NewAppError('unauthenticated')
   if (!session.isAdmin) throw new NewAppError('unauthorized')

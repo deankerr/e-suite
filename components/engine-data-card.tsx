@@ -1,5 +1,4 @@
-import { cn } from '@/lib/utils'
-import { Agent, Engine } from '@/schema/dto'
+import { Agent } from '@/data/types'
 import { CheckIcon, Cross2Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import { Deck } from './deck'
@@ -15,10 +14,10 @@ export function EngineDataCard({ agent }: { agent: Agent } & React.ComponentProp
   const [isEditing, setIsEditing] = useState(false)
 
   const engines = useGetEngineList()
-  const [selectedEngine, setSelectedEngine] = useState(agent.engine)
+  const [selectedEngine, setSelectedEngine] = useState(agent.resource)
 
   const currentEngineData =
-    isEditing || isPending ? selectedEngine : engines.data?.find((e) => e.id === agent.engineId)
+    isEditing || isPending ? selectedEngine : engines.data?.find((e) => e.id === agent.resourceId)
 
   return (
     <>
@@ -32,8 +31,8 @@ export function EngineDataCard({ agent }: { agent: Agent } & React.ComponentProp
               variant="default"
               size="icon"
               onClick={() => {
-                if (selectedEngine.id !== agent.engine.id && !updateAgent.isPending) {
-                  updateAgent.mutate({ id: agent.id, engineId: selectedEngine.id })
+                if (selectedEngine.id !== agent.resource.id && !updateAgent.isPending) {
+                  updateAgent.mutate({ id: agent.id, resourceId: selectedEngine.id })
                 }
                 setIsEditing(false)
               }}

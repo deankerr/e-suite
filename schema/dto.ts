@@ -1,13 +1,9 @@
 import z from 'zod'
 
 export type Vendor = z.infer<typeof vendorSchema>
-export type Engine = z.infer<typeof engineSchema>
+
 export type InferenceParameters = z.infer<typeof inferenceParametersSchema>
 export type InferenceParametersRecord = z.infer<typeof inferenceParametersRecordSchema>
-export type Agent = z.infer<typeof agentSchema>
-export type CreateAgent = z.infer<typeof createAgentSchema>
-export type UpdateAgent = z.infer<typeof updateAgentSchema>
-export type DeleteAgent = z.infer<typeof deleteAgentSchema>
 
 export const vendorSchema = z.object({
   id: z.string(),
@@ -15,35 +11,35 @@ export const vendorSchema = z.object({
   url: z.string(),
 })
 
-const engineSchema = z.object({
-  id: z.string(),
-  category: z.string(), //? enum
-  model: z.string(),
-  isAvailable: z.boolean(),
-  isRestricted: z.boolean(),
-  displayName: z.string(),
-  creatorName: z.string(),
-  costInputNanoUsd: z.number(),
-  costOutputNanoUsd: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+// const engineSchema = z.object({
+//   id: z.string(),
+//   category: z.string(), //? enum
+//   model: z.string(),
+//   isAvailable: z.boolean(),
+//   isRestricted: z.boolean(),
+//   displayName: z.string(),
+//   creatorName: z.string(),
+//   costInputNanoUsd: z.number(),
+//   costOutputNanoUsd: z.number(),
+//   createdAt: z.date(),
+//   updatedAt: z.date(),
 
-  vendorId: z.string(),
-  vendor: vendorSchema,
-  vendorModelId: z.string(),
+//   vendorId: z.string(),
+//   vendor: vendorSchema,
+//   vendorModelId: z.string(),
 
-  description: z.string().nullable(),
-  url: z.string().nullable(),
-  license: z.string().nullable(),
-  contextLength: z.number().nullable(),
-  promptFormat: z.string().nullable(),
-  comment: z.string().nullable(),
-  instructType: z.string().nullable(),
-  outputTokenLimit: z.number().nullable(),
-  tokenizer: z.string().nullable(),
-  stopTokens: z.string().array().nullable(),
-  parameterSize: z.number().nullable(),
-})
+//   description: z.string().nullable(),
+//   url: z.string().nullable(),
+//   license: z.string().nullable(),
+//   contextLength: z.number().nullable(),
+//   promptFormat: z.string().nullable(),
+//   comment: z.string().nullable(),
+//   instructType: z.string().nullable(),
+//   outputTokenLimit: z.number().nullable(),
+//   tokenizer: z.string().nullable(),
+//   stopTokens: z.string().array().nullable(),
+//   parameterSize: z.number().nullable(),
+// })
 
 export const inferenceParametersSchema = z
   .object({
@@ -67,24 +63,24 @@ const string32 = z
   .refine((n) => n.length > 0)
   .transform((n) => (n.length > 32 ? n.slice(0, 32) : n))
 
-export const agentSchema = z.object({
-  id: z.string().min(1),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  engine: engineSchema,
+// export const agentSchema = z.object({
+//   id: z.string().min(1),
+//   createdAt: z.date(),
+//   updatedAt: z.date(),
+//   engine: engineSchema,
 
-  name: string32,
-  image: z.string(),
-  engineId: z.string().min(1),
-  engineParameters: inferenceParametersRecordSchema,
-})
+//   name: string32,
+//   image: z.string(),
+//   engineId: z.string().min(1),
+//   engineParameters: inferenceParametersRecordSchema,
+// })
 
-export const createAgentSchema = agentSchema.pick({ name: true })
+// export const createAgentSchema = agentSchema.pick({ name: true })
 
-export const updateAgentSchema = agentSchema
-  .pick({ id: true })
-  .merge(
-    agentSchema.pick({ name: true, image: true, engineId: true, engineParameters: true }).partial(),
-  )
+// export const updateAgentSchema = agentSchema
+//   .pick({ id: true })
+//   .merge(
+//     agentSchema.pick({ name: true, image: true, engineId: true, engineParameters: true }).partial(),
+//   )
 
-export const deleteAgentSchema = agentSchema.pick({ id: true })
+// export const deleteAgentSchema = agentSchema.pick({ id: true })

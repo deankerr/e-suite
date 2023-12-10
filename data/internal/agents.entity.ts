@@ -1,8 +1,19 @@
 import 'server-only'
 import { db, t } from '@/lib/drizzle'
+import { inferenceParametersRecordSchema } from '@/schema/dto'
 import { and, eq } from 'drizzle-orm'
-import { createInsertSchema } from 'drizzle-zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import z from 'zod'
+
+const schema = createSelectSchema(t.agents, {
+  name: (s) => s.name.min(1).max(1),
+  image: (s) => s.image.max(128),
+  resourceParameters: inferenceParametersRecordSchema,
+})
+
+const id = z.object({ id: z.string() })
+
+export const updateAgent = schema.partial().and(id)
 
 const withResourceVendor = {
   resource: {
@@ -33,20 +44,12 @@ const insertSchema = createInsertSchema(t.agents, {
   ownerId: (schema) => schema.ownerId.transform((_) => undefined),
   created: (schema) => schema.created.transform((_) => undefined),
   updated: (schema) => schema.updated.transform((_) => undefined),
-  resourceParameters: z.record(z.any()),
+  resourceParameters: inferenceParametersRecordSchema,
 })
-
-const updateSchema = createInsertSchema(t.agents, {
-  id: (schema) => schema.id.transform((_) => undefined),
-  ownerId: (schema) => schema.ownerId.transform((_) => undefined),
-  created: (schema) => schema.created.transform((_) => undefined),
-  updated: (schema) => schema.updated.transform((_) => new Date()),
-  resourceParameters: z.record(z.any()),
-}).partial()
 
 export async function createOwnedBy(
   ownerId: string,
-  { values }: { values: typeof t.agents.$inferInsert },
+  { values }: { values: typeof t.agents.$inferInsert | object },
 ) {
   const parsed = insertSchema.parse(values)
   await db.insert(t.agents).values({ ...parsed, ownerId })
@@ -69,14 +72,12 @@ export async function getAllOwnedBy(ownerId: string) {
 export async function updateOwnedBy(
   ownerId: string,
   {
-    id,
     values,
   }: {
-    id: string
     values: Partial<typeof t.agents.$inferInsert>
   },
 ) {
-  const parsed = updateSchema.parse(values)
+  const { id, ...parsed } = updateAgent.parse(values)
   await db
     .update(t.agents)
     .set(parsed)

@@ -4,7 +4,7 @@ import * as agents from './internal/agents.entity'
 import * as model from './internal/model.entity'
 import * as resource from './internal/resource.entity'
 
-export const createUserDAO = async () => {
+export const createUserDao = async () => {
   const session = await getServerSession()
   if (!session) throw new NewAppError('unauthenticated')
 
