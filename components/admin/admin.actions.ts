@@ -5,15 +5,14 @@ import {
   addVendorModelListData,
   getLatestModelListDataForVendorId,
 } from '@/data/admin/vendor-model-data'
+import { VendorId } from '@/data/schemas'
 import { InsertModels, InsertResources, SelectResources } from '@/data/types'
 import * as schema from '@/drizzle/database.schema'
 import { action } from '@/lib/action'
-import { actionValidator } from '@/lib/action-validator'
 import { db } from '@/lib/drizzle'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openrouterPlugin } from '@/plugins/openrouter.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
-import { VendorId } from '@/schema/vendor'
 import { differenceInHours } from 'date-fns'
 import { desc, eq } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
@@ -218,17 +217,6 @@ function createModel(model: Partial<InsertModels>): InsertModels | null {
   }
   return parse.data
 }
-
-export const getHfDatasheet = actionValidator(z.string(), async ({ data }) => {
-  console.log('fetch', data)
-  const response = await fetch(data)
-  const text = await response.text()
-  if (text) {
-    console.log('success')
-  } else {
-    console.log('failure?')
-  }
-})
 
 //* helpers
 function isResourceEqual(r1: Partial<SelectResources>, r2: SelectResources) {

@@ -1,8 +1,8 @@
 import 'server-only'
 import * as schema from '@/drizzle/database.schema'
 import { db } from '@/lib/drizzle'
-import { VendorId } from '@/schema/vendor'
 import { desc, eq, type InferInsertModel } from 'drizzle-orm'
+import { VendorId } from '../schemas'
 
 export async function getVendorModelListData() {
   return await db.query.vendorModelListData.findMany({

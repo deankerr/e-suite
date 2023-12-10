@@ -17,9 +17,23 @@ export const inferenceParametersSchema = z
   .partial()
 export const inferenceParametersRecordSchema = z.record(inferenceParametersSchema)
 
-export type Vendor = z.infer<typeof vendorSchema>
-export const vendorSchema = z.object({
-  id: z.string(),
-  displayName: z.string(),
-  url: z.string(),
+export const vendorIds = [
+  'openai',
+  'openrouter',
+  'togetherai',
+  'fal',
+  'replicate',
+  'huggingface',
+] as const
+export const vendorIdSchema = z.enum(vendorIds)
+export type VendorId = z.infer<typeof vendorIdSchema>
+
+export const roleSchema = z.enum(['user', 'assistant', 'system', 'tool', 'function'])
+export type Role = z.infer<typeof roleSchema>
+export type Message = z.infer<typeof messageSchema>
+
+export const messageSchema = z.object({
+  role: roleSchema,
+  name: z.string().optional(),
+  content: z.string(),
 })

@@ -1,4 +1,4 @@
-import { messageSchema } from '@/schema/message'
+import { messageSchema } from '@/data/schemas'
 import z from 'zod'
 
 const categoriesSchema = z.object({
