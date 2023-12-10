@@ -105,7 +105,7 @@
     "openapi-typescript": "^6.7.2",
     "postcss": "^8.4.32",
     "postcss-simple-vars": "^7.0.1",
-    "prettier": "3.0.3",
+    "prettier": "3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.9",
     "tailwindcss": "^3.3.6",
     "tsx": "^4.6.2",

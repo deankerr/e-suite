@@ -83,8 +83,8 @@ export const buildResourceRecords = action({
         vendorId === 'openrouter'
           ? openrouterPlugin.models.processList(modelListData.data)
           : vendorId === 'togetherai'
-          ? togetheraiPlugin.models.processList(modelListData.data)
-          : null
+            ? togetheraiPlugin.models.processList(modelListData.data)
+            : null
 
       if (processed) builtResources.push(...processed)
     }

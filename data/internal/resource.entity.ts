@@ -11,9 +11,12 @@ export async function update(id: string, values: Partial<typeof t.resources.$inf
 }
 
 export async function get(id: string) {
-  return await db.query.resources.findFirst({ where: eq(t.resources.id, id), with: {vendor: true} })
+  return await db.query.resources.findFirst({
+    where: eq(t.resources.id, id),
+    with: { vendor: true },
+  })
 }
 
 export async function getAll() {
-  return (await db.query.resources.findMany({with: {vendor: true}}))
+  return await db.query.resources.findMany({ with: { vendor: true } })
 }

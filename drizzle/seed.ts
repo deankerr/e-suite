@@ -1,4 +1,4 @@
-import {  vendorModelListData, vendors } from './database.schema'
+import { vendorModelListData, vendors } from './database.schema'
 import { createLocalClient } from './local-client'
 
 const db = createLocalClient()
