@@ -1,44 +1,8 @@
 import type { InferenceParametersRecord } from '@/data/schemas'
 import { createId } from '@paralleldrive/cuid2'
-import { relations, sql } from 'drizzle-orm'
+import { relations } from 'drizzle-orm'
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { date, dateTimeStamp } from './custom-types'
-
-// //* Engines
-// export const engines = sqliteTable('engines', {
-//   id: text('id').primaryKey().notNull(),
-//   category: text('category').notNull(), //? enum
-//   model: text('model').notNull(),
-//   displayName: text('displayName').notNull(),
-//   creatorName: text('creator').notNull(),
-//   isAvailable: integer('isAvailable', { mode: 'boolean' }).notNull(),
-//   isRestricted: integer('isAvailable', { mode: 'boolean' }).notNull(),
-//   costInputNanoUsd: integer('costInputNanoUsd').notNull(),
-//   costOutputNanoUsd: integer('costOutputNanoUsd').notNull(),
-//   createdAt: dateTimeStamp('createdAt')
-//     .notNull()
-//     .$default(() => new Date()),
-//   updatedAt: dateTimeStamp('updatedAt')
-//     .notNull()
-//     .$default(() => new Date()),
-
-//   vendorId: text('vendorId').notNull(),
-//   vendorModelId: text('providerModelId').notNull(),
-
-//   description: text('description'),
-//   url: text('url'),
-//   license: text('license'),
-//   contextLength: integer('contextLength'),
-//   promptFormat: text('promptFormat'),
-//   comment: text('comment'),
-//   instructType: text('instructType'),
-//   outputTokenLimit: integer('outputTokenLimit'),
-//   tokenizer: text('tokenizer'),
-//   stopTokens: text('stopTokens', { mode: 'json' })
-//     .$type<string[]>()
-//     .$default(() => []),
-//   parameterSize: integer('parameterSize'),
-// })
 
 //* Agents
 export const agents = sqliteTable('agents', {

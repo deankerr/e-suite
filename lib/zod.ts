@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const string32 = z
+export const zString32 = z
   .string()
   .transform((n) => n.trim())
   .refine((n) => n.length > 0)
