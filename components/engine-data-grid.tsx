@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+//! temp
 import { Resource } from '@/data/types'
 import { cn, nanoUSDToDollars } from '@/lib/utils'
 import { Loading } from './ui/loading'

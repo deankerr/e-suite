@@ -58,8 +58,8 @@ export function useUpdateAgent(id = '') {
       queryClient.setQueryData(agentQueries.detail(id).queryKey, context?.previousAgent)
     },
     // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
     },
   })
 }
@@ -73,9 +73,9 @@ export function useCreateAgent() {
     onError: (err) => {
       toast.error(err.message)
     },
-    onSuccess: (id) => router.push(`/agent/${id}`),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
+    // onSuccess: (id) => router.push(`/agent/${id}`),
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
     },
   })
 }
@@ -88,8 +88,8 @@ export function useDeleteAgent(id = '') {
     onError: (err) => {
       toast.error(err.message)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: [{ entity: 'agents' }] })
     },
   })
 }

@@ -4,7 +4,7 @@ import { getServerSession } from '@/data/auth'
 import Link from 'next/link'
 import { Button } from './ui/button'
 
-export async function UserMenuButton({ className }: {} & React.ComponentProps<'div'>) {
+export async function UserMenuButton({ className }: React.ComponentProps<'div'>) {
   const session = await getServerSession()
   if (!session)
     return (

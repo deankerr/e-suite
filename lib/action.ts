@@ -15,7 +15,7 @@ type ActionAdminContext<Z extends z.ZodTypeAny> = {
   input: z.infer<Z>
 }
 
-export function action<Z extends z.ZodTypeAny, R extends any>(config: {
+export function action<Z extends z.ZodTypeAny, R>(config: {
   input: Z
   user?: (context: ActionUserContext<Z>) => Promise<R>
   admin?: (context: ActionAdminContext<Z>) => Promise<R>
@@ -25,6 +25,7 @@ export function action<Z extends z.ZodTypeAny, R extends any>(config: {
       if (config.admin) {
         return await config.admin({
           adminDao: await createAdminDao(),
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           input: config.input.parse(actionInput),
         })
       }
@@ -32,6 +33,7 @@ export function action<Z extends z.ZodTypeAny, R extends any>(config: {
       if (config.user) {
         return await config.user({
           userDao: await createUserDao(),
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           input: config.input.parse(actionInput),
         })
       }

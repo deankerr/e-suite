@@ -48,7 +48,7 @@ export function useAgentChat(chatId: string, agent: Agent) {
 
   const submitUserMessage = (content: string) => {
     console.log(body)
-    chat.append({ role: 'user', content })
+    void chat.append({ role: 'user', content })
   }
 
   const resetMessages = () => chat.setMessages(createInitialMessages(agent.name))

@@ -33,6 +33,7 @@ type VariantProp = 'default' | 'user' | 'assistant'
 
 type Props = {
   content: string
+  // eslint-disable-next-line @typescript-eslint/ban-types
   variant: VariantProp | (string & {})
   loading?: boolean
   avatar?: string

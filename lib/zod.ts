@@ -19,7 +19,7 @@ export const stringToJsonSchema = z
   .string()
   .transform((str, ctx): z.infer<typeof jsonParseSchema> => {
     try {
-      return JSON.parse(str)
+      return JSON.parse(str) as Json
     } catch (e) {
       ctx.addIssue({ code: 'custom', message: 'Invalid JSON' })
       return z.NEVER

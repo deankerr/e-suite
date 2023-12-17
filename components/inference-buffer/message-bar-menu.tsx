@@ -75,7 +75,7 @@ export function MessageBarMenu({ chat, children }: MessageBarMenuProps) {
   )
 }
 
-type MenuButtonProps = {} & React.ComponentProps<typeof Button>
+type MenuButtonProps = React.ComponentProps<typeof Button>
 
 export function MenuButton({ className, children, ...props }: MenuButtonProps) {
   return (

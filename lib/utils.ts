@@ -61,5 +61,5 @@ export function getRandomAgentAvatar() {
 
 export function truncateFloat(value: string | number, precision = 12) {
   const n = typeof value === 'string' ? parseFloat(value) : value
-  return Number(n.toFixed(12))
+  return Number(n.toFixed(precision))
 }

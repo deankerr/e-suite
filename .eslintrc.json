@@ -1,11 +1,42 @@
 {
-  "plugins": ["drizzle"],
+  "plugins": ["drizzle", "@typescript-eslint"],
   "extends": [
     "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "plugin:drizzle/recommended"
   ],
+  "overrides": [
+    {
+      "files": ["**/*.ts?(x)"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "warnOnUnsupportedTypeScriptVersion": true,
+        "project": true,
+        "tsconfigRootDir": "__dirname"
+      }
+    }
+  ],
   "rules": {
-    "drizzle/enforce-delete-with-where": ["error", { "drizzleObjectName": ["db"] }]
+    "drizzle/enforce-delete-with-where": ["error", { "drizzleObjectName": ["db"] }],
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unsafe-member-access": "warn",
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unsafe-return": "warn",
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "{}": false
+        },
+        "extendDefaults": true
+      }
+    ],
+    "@typescript-eslint/require-await": "warn"
   }
 }

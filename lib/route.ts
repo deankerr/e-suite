@@ -7,17 +7,6 @@ import { fromZodError } from 'zod-validation-error'
 import { AppError } from './error'
 import { stringToJsonSchema } from './zod'
 
-type PluginValidator = (input: any) => object | Error
-
-type PluginModeRoute = {
-  mode: 'chat' | 'moderation' | 'image'
-  handler: (input: any) => any
-  validate: {
-    input: PluginValidator
-    output: PluginValidator
-  }
-}
-
 type RouteAccessLevel = 'public' | 'authorized' | 'admin'
 
 export type RouteContext = {
@@ -51,7 +40,7 @@ export function route<ZInput extends z.ZodTypeAny>(config: {
 
       log.add('requestBody', json)
       log.send()
-      const body = config.input.parse(json)
+      const body = config.input.parse(json) as unknown
       console.log('start handler')
       return await config.handler({ input: body, session: auth, log })
     } catch (err) {
@@ -108,7 +97,7 @@ function createRouteLogger(request: NextRequest) {
   const send = () => {
     const payload = Object.fromEntries(logData.entries()) as Record<string, string | undefined>
     logData.clear()
-    addApiLog({ requestId, payload })
+    void addApiLog({ requestId, payload })
   }
 
   const add = (key: string, value: unknown) => logData.set(key, value)
@@ -117,7 +106,7 @@ function createRouteLogger(request: NextRequest) {
 }
 
 function getHeaders(request: NextRequest) {
-  const headers = {} as any
+  const headers = {} as Record<string, string>
   for (const [key, value] of request.headers.entries()) {
     if (key === 'cookies') continue
     headers[key] = value
