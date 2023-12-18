@@ -1,4 +1,4 @@
-import logo from '/assets/icons/sun-stripe2.svg'
+import logo from '/assets/icons/logo-sunset.svg'
 import Image from 'next/image'
 
 type LogoProps = {

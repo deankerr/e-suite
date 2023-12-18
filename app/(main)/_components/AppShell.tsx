@@ -12,19 +12,26 @@ import {
   TextInput,
 } from 'flowbite-react'
 import { AppSidebar } from './AppSidebar'
+import { Logo } from './Logo'
 
 type AppShellProps = {
   props?: any
 }
 export const AppShell = ({ props }: AppShellProps) => {
   return (
-    <div className="flex h-full divide-x">
+    <div className="flex h-full">
       <AppSidebar />
-      <div className="grow space-y-4">
+      <div className="hidden grow space-y-4">
         <Alert color="info">Alert!</Alert>
 
         <div className="flex flex-wrap gap-2">
-          <Button>Default</Button>
+          <Button
+            processingLabel="Processing"
+            // processingSpinner={<Spinner color="pink" aria-label="Pink spinner example" />}
+            isProcessing={true}
+          >
+            Default
+          </Button>
           <Button color="blue">Blue</Button>
           <Button color="gray">Gray</Button>
           <Button color="dark">Dark</Button>
@@ -34,6 +41,8 @@ export const AppShell = ({ props }: AppShellProps) => {
           <Button color="warning">Warning</Button>
           <Button color="purple">Purple</Button>
         </div>
+
+        <Logo />
 
         <div className="flex flex-wrap gap-2">
           <Button gradientMonochrome="info">Info</Button>
