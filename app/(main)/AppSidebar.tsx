@@ -3,7 +3,15 @@
 import { cn } from '@/lib/utils'
 import { Button, DarkThemeToggle, Sidebar, type CustomFlowbiteTheme } from 'flowbite-react'
 import { useState } from 'react'
-import { LuLogIn, LuLogOut, LuPanelLeftClose, LuPanelLeftOpen, LuRocket } from 'react-icons/lu'
+import {
+  LuBoxes,
+  LuCherry,
+  LuLogIn,
+  LuLogOut,
+  LuPanelLeftClose,
+  LuPanelLeftOpen,
+  LuRocket,
+} from 'react-icons/lu'
 import { RxCodesandboxLogo, RxComponent1, RxHome } from 'react-icons/rx'
 
 const theme: CustomFlowbiteTheme['sidebar'] = {
@@ -29,8 +37,11 @@ export const AppSidebar = () => {
 
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="#" icon={RxHome} className="font-medium">
+          <Sidebar.Item href="/" icon={RxHome} className="font-medium">
             Dashboard
+          </Sidebar.Item>
+          <Sidebar.Item href="/explore" icon={LuBoxes} className="font-medium">
+            Explore
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={RxComponent1} className="font-medium">
             Models
@@ -41,6 +52,9 @@ export const AppSidebar = () => {
             <Sidebar.Item href="#">Angelica</Sidebar.Item>
             <Sidebar.Item href="#">Create new</Sidebar.Item>
           </Sidebar.Collapse>
+          <Sidebar.Item href="/ui-demo" icon={LuCherry} className="font-medium">
+            UI Demo
+          </Sidebar.Item>
         </Sidebar.ItemGroup>
         <Sidebar.ItemGroup className="">
           <Sidebar.Item href="#" icon={LuLogIn} className="font-medium">

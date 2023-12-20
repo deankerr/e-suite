@@ -1,5 +1,5 @@
-import { AppShell } from './AppShell'
+import { SectionPageDemo } from './SectionPageDemo'
 
 export default function Page() {
-  return <AppShell />
+  return <SectionPageDemo />
 }
