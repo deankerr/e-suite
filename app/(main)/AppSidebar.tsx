@@ -1,5 +1,7 @@
 'use client'
 
+import { OffcanvasSidebar } from '@/components/ui/OffcanvasSidebar'
+import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import {
@@ -15,7 +17,8 @@ import {
 export const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false)
   return (
-    <div>Under Construction!</div>
+    // <OffcanvasSidebar />
+    <Sidebar />
     // <Sidebar aria-label="Sidebar" theme={theme} collapsed={collapsed}>
     //   <Sidebar.Logo
     //     href="/"
