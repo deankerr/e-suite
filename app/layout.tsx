@@ -1,3 +1,4 @@
+import PrelineScript from '@/components/util/PrelineScript'
 import './globals.css'
 import { ClientProviders } from '@/components/util/client-providers'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Toaster richColors />
           <TailwindBreakpointIndicator />
+          <PrelineScript />
         </ClientProviders>
         {process.env.NODE_ENV !== 'development' && <Analytics />}
       </body>
