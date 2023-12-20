@@ -1,15 +1,18 @@
+import { cn } from '@/lib/utils'
 import {
   BotIcon,
+  CherryIcon,
   ComponentIcon,
   HomeIcon,
   LogInIcon,
-  MessageSquareCodeIcon,
+  MessageSquareTextIcon,
+  PanelLeftCloseIcon,
   SunIcon,
   UserPlus,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useSelectedLayoutSegment } from 'next/navigation'
 import { Logo } from '../Logo'
-import { IconButton } from './Button'
 
 type SidebarProps = {
   props?: any
@@ -17,70 +20,97 @@ type SidebarProps = {
 
 export const Sidebar = ({ props }: SidebarProps) => {
   return (
-    <div id="es-sidebar" className="flex h-full w-64 flex-col overflow-y-auto">
+    <div id="es-sidebar" className="text-n-300 flex h-full w-72 shrink-0 flex-col overflow-y-auto">
       {/* Brand */}
       <div className="px-6">
-        <Link href="/" className="text-xl font-semibold">
-          <Logo className="text-zinc-50" />
+        <Link href="/" className="">
+          <Logo className="text-n-100" />
         </Link>
       </div>
       {/* Nav */}
-      <nav className="flex w-full flex-col flex-wrap p-6">
-        <ul className="space-y-1.5">
-          <SidebarItem href="/">
-            <HomeIcon />
+      <nav className="flex w-full flex-col flex-wrap py-6">
+        <ul className="space-y-0.5 px-6">
+          <SidebarItem href="/" icon={<HomeIcon />}>
             Dashboard
           </SidebarItem>
-
-          <SidebarItem href="/">
-            <MessageSquareCodeIcon />
+          <SidebarItem href="#" icon={<MessageSquareTextIcon />}>
             Chats
           </SidebarItem>
-
-          <SidebarItem href="/">
-            <ComponentIcon />
+          <SidebarItem href="#" icon={<ComponentIcon />}>
             Models
           </SidebarItem>
-
-          <SidebarItem href="/">
-            <BotIcon />
+          <SidebarItem href="#" icon={<BotIcon />}>
             Agents
           </SidebarItem>
+          <SidebarItem href="/ui-demo" icon={<CherryIcon />}>
+            UI Demo
+          </SidebarItem>
+        </ul>
 
-          <hr className="border-gray-600" />
+        <div className="w-full px-3 py-4">
+          <hr className="border-n-800" />
+        </div>
 
-          <SidebarItem href="/">
-            <LogInIcon />
+        <ul className="space-y-0.5 px-6">
+          <SidebarItem href="#" icon={<LogInIcon />}>
             Log In
           </SidebarItem>
-
-          <SidebarItem href="/">
-            <UserPlus />
+          <SidebarItem href="#" icon={<UserPlus />}>
             Sign Up
           </SidebarItem>
         </ul>
       </nav>
+
       {/* spacer */}
       <div className="grow" />
+
       {/* end buttons */}
       <div className="flex flex-wrap justify-center gap-2">
         <IconButton>
           <SunIcon />
+        </IconButton>
+        <IconButton>
+          <PanelLeftCloseIcon />
         </IconButton>
       </div>
     </div>
   )
 }
 
-const SidebarItem = ({ children, href }: React.ComponentProps<typeof Link>) => {
+type SidebarItemProps = {
+  icon?: React.ReactNode
+  href: string
+  children?: React.ReactNode
+  className?: string
+}
+
+const SidebarItem = ({ children, href, className, icon }: SidebarItemProps) => {
+  const segment = useSelectedLayoutSegment()
+  const isActive = '/' + (segment ?? '') === href
   return (
     <li>
       <Link
-        className="flex w-full items-center gap-x-3.5 rounded-lg px-2.5 py-2 text-sm font-medium text-zinc-400 hover:bg-gray-800"
+        className={cn(
+          'hover:text-n-100 flex w-full items-center gap-x-5 rounded-lg px-2.5 py-3 text-sm font-medium transition-colors duration-300',
+          isActive && 'bg-n-800 text-n-100',
+          className,
+        )}
         href={href}
       >
+        {icon}
         {children}
       </Link>
     </li>
+  )
+}
+
+const IconButton = ({ children }: React.ComponentProps<'button'>) => {
+  return (
+    <button
+      type="button"
+      className="bg-n-950 text-n-300 hover:bg-n-900 hover:text-n-100 flex h-[2.875rem] w-[2.875rem] flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-semibold transition-colors duration-300 disabled:pointer-events-none disabled:opacity-50"
+    >
+      {children}
+    </button>
   )
 }

@@ -4,9 +4,9 @@ import Image from 'next/image'
 
 export const Logo = ({ className }: { className?: React.ComponentProps<'div'>['className'] }) => {
   return (
-    <div className={cn('flex items-center', className)}>
-      <Image src={logo} alt="e/suite logo" className="w-12" priority />
-      <h1 className="pl-2 pr-2.5 text-xl font-semibold tracking-tight">e/suite</h1>
+    <div className={cn('mr-5 flex items-center justify-center gap-2', className)}>
+      <Image src={logo} alt="e/suite logo" className="size-12" priority />
+      <h1 className="text-3xl font-semibold tracking-tighter">e/suite</h1>
     </div>
   )
 }

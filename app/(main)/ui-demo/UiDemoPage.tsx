@@ -7,8 +7,49 @@ type UiDemoProps = {
 
 export const UiDemoPage = ({ props }: UiDemoProps) => {
   return (
-    <Page className="flex flex-col gap-4">
-      UI Demo
+    <Page className="flex flex-col gap-4 p-6">
+      <div>
+        {/* palette test */}
+        <div className="flex">
+          {[
+            '#fafaf9',
+            '#f5f5f4',
+            '#e7e5e4',
+            '#d6d3d1',
+            '#a8a29e',
+            '#78716c',
+            '#57534e',
+            '#44403c',
+            '#292524',
+            '#1c1917',
+            '#0c0a09',
+          ].map((clr) => (
+            <div key={clr} className="h-10 w-20" style={{ backgroundColor: clr }}>
+              {clr}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex">
+          {[
+            '#fff7ed',
+            '#ffedd5',
+            '#fed7aa',
+            '#fdba74',
+            '#fb923c',
+            '#f97315',
+            '#ea590c',
+            '#c2410c',
+            '#9a3412',
+            '#7c2d12',
+            '#431407',
+          ].map((clr) => (
+            <div key={clr} className="h-10 w-20" style={{ backgroundColor: clr }}>
+              {clr}
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="flex gap-4">
         <div className="flex -space-x-2">
           <img

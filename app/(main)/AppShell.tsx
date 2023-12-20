@@ -6,8 +6,8 @@ type AppShellProps = {
 
 export const AppShell = ({ children }: AppShellProps) => {
   return (
-    <div className="flex h-full bg-gray-900">
-      <AppSidebar />
+    <div className="bg-shell flex h-full">
+      <AppSidebar className="py-6" />
       <div className="flex w-full p-5 pl-0">{children}</div>
     </div>
   )
