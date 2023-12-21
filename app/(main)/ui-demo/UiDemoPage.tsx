@@ -75,7 +75,7 @@ export const UiDemoPage = ({ props }: UiDemoProps) => {
           <div className="hs-dropdown relative inline-flex [--placement:top-left]">
             <button
               id="hs-avatar-group-dropdown"
-              className="hs-dropdown-toggle inline-flex h-[2.875rem] w-[2.875rem] items-center justify-center rounded-full border-2 border-white bg-gray-200 bg-white align-middle text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-300 focus:bg-blue-100 focus:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-gray-800 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-blue-100 dark:focus:text-blue-600 dark:focus:ring-offset-gray-800"
+              className="hs-dropdown-toggle inline-flex h-[2.875rem] w-[2.875rem] items-center justify-center rounded-full border-2 border-white bg-white align-middle text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-300 focus:bg-blue-100 focus:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white dark:border-gray-800 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-blue-100 dark:focus:text-blue-600 dark:focus:ring-offset-gray-800"
             >
               <span className="font-medium leading-none">9+</span>
             </button>

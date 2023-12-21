@@ -6,47 +6,58 @@ type PageSectionProps = {
 }
 
 const PageRoot = ({ children, className }: PageSectionProps) => {
+  return <div className={cn('flex grow', className)}>{children}</div>
+}
+
+const Main = ({ children, className }: PageSectionProps) => {
   return (
     <div
-      className={cn('flex grow rounded-2xl bg-gray-50 text-zinc-50 dark:bg-gray-800', className)}
+      className={cn(
+        'bg-n-50 text-n-900 dark:bg-n-800 dark:text-n-100 flex grow flex-col first:rounded-l-xl last:rounded-r-xl',
+        className,
+      )}
     >
       {children}
     </div>
   )
 }
 
-const Main = ({ children, className }: PageSectionProps) => {
-  return <div className={cn(' grow', className)}>{children}</div>
-}
-
 const MainHeader = ({ children, className }: PageSectionProps) => {
   return (
-    <div
-      className={cn('flex h-20  w-full items-center border-b-2 border-gray-700 px-8', className)}
-    >
+    <div className={cn('flex h-20 w-full flex-none items-center border-b px-8', className)}>
       {children}
     </div>
   )
 }
 
 const MainContent = ({ children, className }: PageSectionProps) => {
-  return <div className={cn('w-full space-y-4 p-8 ', className)}>{children}</div>
+  return <div className={cn('w-full grow space-y-4 p-8 shadow-inner', className)}>{children}</div>
 }
 
 const Aside = ({ children, className }: PageSectionProps) => {
-  return <div className={cn('w-80 shrink-0 border-l-2 border-gray-700', className)}>{children}</div>
+  return (
+    <div
+      className={cn(
+        'border-n-200 bg-n-100 dark:bg-n-700 dark:text-n-100 relative inset-0 flex w-80 shrink-0 flex-col rounded-r-xl border-l-2',
+        className,
+      )}
+      style={{ boxShadow: 'inset 1em 3em 4em rgba(0, 0, 0, .05)' }}
+    >
+      {children}
+    </div>
+  )
 }
 
 const AsideHeader = ({ children, className }: PageSectionProps) => {
   return (
-    <div className={cn('flex h-20 items-center border-b-2 border-gray-700 px-8', className)}>
+    <div className={cn('flex h-20 flex-none items-center border-b-2 px-8', className)}>
       {children}
     </div>
   )
 }
 
 const AsideContent = ({ children, className }: PageSectionProps) => {
-  return <div className={cn('p-8', className)}>{children}</div>
+  return <div className={cn('grow p-8', className)}>{children}</div>
 }
 
 const H1 = ({ children, className }: PageSectionProps) => {
