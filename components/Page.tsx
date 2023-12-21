@@ -13,7 +13,7 @@ const Main = ({ children, className }: PageSectionProps) => {
   return (
     <div
       className={cn(
-        'bg-n-50 text-n-900 dark:bg-n-800 dark:text-n-100 dark:border-n-700 flex grow flex-col first:rounded-l-xl last:rounded-r-xl',
+        'flex grow flex-col bg-n-50 text-n-900 first:rounded-l-xl last:rounded-r-xl dark:border-n-700 dark:bg-n-800 dark:text-n-100',
         className,
       )}
     >
@@ -26,7 +26,7 @@ const MainHeader = ({ children, className }: PageSectionProps) => {
   return (
     <div
       className={cn(
-        'dark:border-n-700 flex h-20 w-full flex-none items-center border-b px-8',
+        'flex h-20 w-full flex-none items-center border-b px-8 dark:border-n-700',
         className,
       )}
     >
@@ -36,17 +36,39 @@ const MainHeader = ({ children, className }: PageSectionProps) => {
 }
 
 const MainContent = ({ children, className }: PageSectionProps) => {
-  return <div className={cn('w-full grow space-y-4 p-8 shadow-inner', className)}>{children}</div>
+  return (
+    <div
+      className={cn(
+        'w-full grow space-y-4 overflow-y-auto overflow-x-clip p-8 shadow-inner',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+const MainFooter = ({ children, className }: PageSectionProps) => {
+  return (
+    <div
+      className={cn(
+        'flex h-20 w-full flex-none items-center border-t px-8 dark:border-n-700',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 const Aside = ({ children, className }: PageSectionProps) => {
   return (
     <div
       className={cn(
-        'border-n-200 bg-n-100 dark:bg-n-800 dark:text-n-100 dark:border-n-700 relative inset-0 flex w-80 shrink-0 flex-col rounded-r-xl border-l',
+        'relative inset-0 flex w-80 shrink-0 flex-col rounded-r-xl border-l border-n-200 bg-n-100 dark:border-n-700 dark:bg-n-800 dark:text-n-100',
         className,
       )}
-      style={{ boxShadow: 'inset 1em 3em 4em rgba(0, 0, 0, .05)' }}
+      style={{ boxShadow: 'inset 0 3em 6em rgba(0, 0, 0, .05)' }}
     >
       {children}
     </div>
@@ -56,7 +78,10 @@ const Aside = ({ children, className }: PageSectionProps) => {
 const AsideHeader = ({ children, className }: PageSectionProps) => {
   return (
     <div
-      className={cn('dark:border-n-700 flex h-20 flex-none items-center border-b px-8', className)}
+      className={cn(
+        'flex h-20 flex-none items-center overflow-y-auto overflow-x-clip border-b px-8 dark:border-n-700',
+        className,
+      )}
     >
       {children}
     </div>
@@ -79,6 +104,7 @@ export const Page = Object.assign(PageRoot, {
   Main,
   MainHeader,
   MainContent,
+  MainFooter,
   Aside,
   AsideHeader,
   AsideContent,

@@ -34,8 +34,8 @@ export const Sidebar = ({ props }: SidebarProps) => {
           <SidebarItem href="/" icon={<HomeIcon />}>
             Dashboard
           </SidebarItem>
-          <SidebarItem href="#" icon={<MessageSquareTextIcon />}>
-            Chats
+          <SidebarItem href="/chat" icon={<MessageSquareTextIcon />}>
+            Chat
           </SidebarItem>
           <SidebarItem href="#" icon={<ComponentIcon />}>
             Models
