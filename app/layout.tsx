@@ -1,6 +1,6 @@
 import PrelineScript from '@/components/util/PrelineScript'
 import './globals.css'
-import { ClientProviders } from '@/components/util/client-providers'
+import { ClientProviders } from '@/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'

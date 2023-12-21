@@ -13,6 +13,7 @@ import {
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { Logo } from '../Logo'
+import { ThemeToggleButton } from './ThemeToggleButton'
 
 type SidebarProps = {
   props?: any
@@ -66,9 +67,7 @@ export const Sidebar = ({ props }: SidebarProps) => {
 
       {/* end buttons */}
       <div className="flex flex-wrap justify-center gap-2">
-        <IconButton>
-          <SunIcon />
-        </IconButton>
+        <ThemeToggleButton />
         <IconButton>
           <PanelLeftCloseIcon />
         </IconButton>

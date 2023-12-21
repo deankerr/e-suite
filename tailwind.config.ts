@@ -10,6 +10,7 @@ const config: Config = {
     './node_modules/preline/preline.js',
   ],
   plugins: [require('@tailwindcss/forms'), require('preline/plugin')],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
