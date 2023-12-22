@@ -1,13 +1,11 @@
-import PrelineScript from '@/components/util/PrelineScript'
+import '@radix-ui/themes/styles.css'
 import './globals.css'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/tailwind-breakpoint-indicator'
+import { Theme, ThemePanel } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'e/suite',
@@ -17,12 +15,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
-      <body className={`${inter.className} h-full`}>
+      <body className="h-full">
         <ClientProviders>
-          {children}
-          <Toaster richColors />
-          <TailwindBreakpointIndicator />
-          <PrelineScript />
+          <Theme accentColor="orange" className="h-full">
+            {children}
+            <Toaster richColors />
+            <TailwindBreakpointIndicator />
+            {/* <PrelineScript /> */}
+            <ThemePanel defaultOpen={false} />
+          </Theme>
         </ClientProviders>
         {process.env.NODE_ENV !== 'development' && <Analytics />}
       </body>

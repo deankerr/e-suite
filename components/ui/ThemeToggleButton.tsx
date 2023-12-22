@@ -19,11 +19,12 @@ export const ThemeToggleButton = ({ className }: ThemeToggleButtonProps) => {
       }}
       className={cn('bg-n-950 text-n-300 hover:bg-n-900 hover:text-n-100', className)}
     >
-      {current === 'dark' ? (
-        <MoonIcon className="size-6 flex-shrink-0" />
+      <MoonIcon className="size-6 flex-shrink-0" suppressHydrationWarning />
+      {/* {current === 'dark' ? (
+        <MoonIcon className="size-6 flex-shrink-0" suppressHydrationWarning />
       ) : (
-        <SunIcon className="size-6 flex-shrink-0" />
-      )}
+        <SunIcon className="size-6 flex-shrink-0" suppressHydrationWarning />
+      )} */}
     </IconButton>
   )
 }

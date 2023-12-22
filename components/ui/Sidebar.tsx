@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import {
   BotIcon,
@@ -21,7 +23,10 @@ type SidebarProps = {
 
 export const Sidebar = ({ props }: SidebarProps) => {
   return (
-    <div id="es-sidebar" className="flex h-full w-72 shrink-0 flex-col overflow-y-auto text-n-300">
+    <div
+      id="es-sidebar"
+      className="text-n-300 bg-indigo-1 flex h-full w-72 shrink-0 flex-col overflow-y-auto py-6"
+    >
       {/* Brand */}
       <div className="px-6">
         <Link href="/" className="">
@@ -43,8 +48,11 @@ export const Sidebar = ({ props }: SidebarProps) => {
           <SidebarItem href="#" icon={<BotIcon />}>
             Agents
           </SidebarItem>
-          <SidebarItem href="/ui-demo" icon={<CherryIcon />}>
-            UI Demo
+          <SidebarItem href="/demo/ui-radix" icon={<CherryIcon />}>
+            UI Radix Demo
+          </SidebarItem>
+          <SidebarItem href="/demo/ui-preline" icon={<CherryIcon />}>
+            UI Preline Demo
           </SidebarItem>
         </ul>
 
@@ -90,7 +98,7 @@ const SidebarItem = ({ children, href, className, icon }: SidebarItemProps) => {
     <li>
       <Link
         className={cn(
-          'flex w-full items-center gap-x-5 rounded-lg px-2.5 py-3 text-sm font-medium transition-colors duration-300 hover:text-n-100',
+          'hover:text-n-100 flex w-full items-center gap-x-5 rounded-lg px-2.5 py-3 text-sm font-medium transition-colors duration-300',
           isActive && 'bg-n-800 text-n-100',
           className,
         )}
@@ -107,7 +115,7 @@ const IconButton = ({ children }: React.ComponentProps<'button'>) => {
   return (
     <button
       type="button"
-      className="flex h-[2.875rem] w-[2.875rem] flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent bg-n-950 text-sm font-semibold text-n-300 transition-colors duration-300 hover:bg-n-900 hover:text-n-100 disabled:pointer-events-none disabled:opacity-50"
+      className="bg-n-950 text-n-300 hover:bg-n-900 hover:text-n-100 flex h-[2.875rem] w-[2.875rem] flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-semibold transition-colors duration-300 disabled:pointer-events-none disabled:opacity-50"
     >
       {children}
     </button>

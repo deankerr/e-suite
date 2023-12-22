@@ -39,7 +39,7 @@ const MainContent = ({ children, className }: PageSectionProps) => {
   return (
     <div
       className={cn(
-        'w-full grow space-y-4 overflow-y-auto overflow-x-clip p-8 shadow-inner',
+        'w-full grow space-y-4 overflow-x-auto overflow-y-auto p-8 shadow-inner',
         className,
       )}
     >
