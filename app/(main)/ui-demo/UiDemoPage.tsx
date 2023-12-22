@@ -5,6 +5,46 @@ type UiDemoProps = {
   props?: any
 }
 
+const tints1 = [
+  '#FFB8BE',
+  '#FFAAA8',
+  '#FF8E80',
+  '#FF7F5C',
+  '#FF7433',
+  '#F97315',
+  '#D64400',
+  '#A32300',
+  '#6B0C00',
+  '#380100',
+  '#190002',
+]
+
+const tints2 = [
+  '#FAEBF1',
+  '#F7D9E0',
+  '#F2ABB1',
+  '#F1877E',
+  '#F1744B',
+  '#F97315',
+  '#C73D0F',
+  '#941B10',
+  '#5D0E15',
+  '#2F0913',
+  '#14050B',
+]
+
+const paletteblock = (clr: string[]) => {
+  return (
+    <div className="flex">
+      {clr.map((c) => (
+        <div key={c} className="h-10 w-20" style={{ backgroundColor: c }}>
+          {c}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export const UiDemoPage = ({ props }: UiDemoProps) => {
   return (
     <Page className="flex flex-col gap-4 p-6">
@@ -49,6 +89,9 @@ export const UiDemoPage = ({ props }: UiDemoProps) => {
             </div>
           ))}
         </div>
+
+        {paletteblock(tints1)}
+        {paletteblock(tints2)}
       </div>
       <div className="flex gap-4">
         <div className="flex -space-x-2">
@@ -81,7 +124,7 @@ export const UiDemoPage = ({ props }: UiDemoProps) => {
             </button>
 
             <div
-              className="hs-dropdown-menu hs-dropdown-open:opacity-100 z-10 mb-2 hidden w-48 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[margin,opacity] duration-300 dark:divide-gray-700 dark:border dark:border-gray-700 dark:bg-gray-800"
+              className="hs-dropdown-menu z-10 mb-2 hidden w-48 rounded-lg bg-white p-2 opacity-0 shadow-md transition-[margin,opacity] duration-300 hs-dropdown-open:opacity-100 dark:divide-gray-700 dark:border dark:border-gray-700 dark:bg-gray-800"
               aria-labelledby="hs-avatar-group-dropdown"
             >
               <a
@@ -303,33 +346,33 @@ export const UiDemoPage = ({ props }: UiDemoProps) => {
             <nav className="flex space-x-2" aria-label="Tabs" role="tablist">
               <button
                 type="button"
-                className="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 active inline-flex items-center gap-x-2 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm text-gray-500 hover:text-blue-600 focus:text-blue-600 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:text-gray-400 dark:hover:text-blue-500"
+                className="active inline-flex items-center gap-x-2 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm text-gray-500 hover:text-blue-600 focus:text-blue-600 focus:outline-none disabled:pointer-events-none disabled:opacity-50 hs-tab-active:border-blue-600 hs-tab-active:font-semibold hs-tab-active:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
                 id="tabs-with-badges-item-1"
                 data-hs-tab="#tabs-with-badges-1"
                 aria-controls="tabs-with-badges-1"
                 role="tab"
               >
                 Tab 1{' '}
-                <span className="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                <span className="ms-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-800 hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:bg-gray-700 dark:text-gray-300 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white">
                   99+
                 </span>
               </button>
               <button
                 type="button"
-                className="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 inline-flex items-center gap-x-2 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm text-gray-500 hover:text-blue-600 focus:text-blue-600 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:text-gray-400 dark:hover:text-blue-500"
+                className="inline-flex items-center gap-x-2 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm text-gray-500 hover:text-blue-600 focus:text-blue-600 focus:outline-none disabled:pointer-events-none disabled:opacity-50 hs-tab-active:border-blue-600 hs-tab-active:font-semibold hs-tab-active:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
                 id="tabs-with-badges-item-2"
                 data-hs-tab="#tabs-with-badges-2"
                 aria-controls="tabs-with-badges-2"
                 role="tab"
               >
                 Tab 2{' '}
-                <span className="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ms-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                <span className="ms-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-800 hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:bg-gray-700 dark:text-gray-300 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white">
                   99+
                 </span>
               </button>
               <button
                 type="button"
-                className="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 inline-flex items-center gap-x-2 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm text-gray-500 hover:text-blue-600 focus:text-blue-600 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:text-gray-400 dark:hover:text-blue-500"
+                className="inline-flex items-center gap-x-2 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-sm text-gray-500 hover:text-blue-600 focus:text-blue-600 focus:outline-none disabled:pointer-events-none disabled:opacity-50 hs-tab-active:border-blue-600 hs-tab-active:font-semibold hs-tab-active:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500"
                 id="tabs-with-badges-item-3"
                 data-hs-tab="#tabs-with-badges-3"
                 aria-controls="tabs-with-badges-3"

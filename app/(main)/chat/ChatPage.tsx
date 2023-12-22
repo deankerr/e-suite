@@ -12,7 +12,7 @@ export const ChatPage = () => {
 
         <Page.MainContent>
           <div className="mx-auto w-fit space-y-8">
-            <ChatBubble className="bg-n-200 dark:bg-n-700">
+            <ChatBubble role="user">
               <p className="">
                 Non et et reprehenderit nostrud. Excepteur culpa duis elit irure cupidatat sint.
               </p>
@@ -49,7 +49,7 @@ export const ChatPage = () => {
               </p>
             </ChatBubble>
 
-            <ChatBubble className="dark:bg-n-700">
+            <ChatBubble role="user">
               <p className="">
                 Cillum occaecat in exercitation velit exercitation eiusmod mollit sunt incididunt.
               </p>
@@ -99,9 +99,10 @@ export const ChatPage = () => {
             </ChatBubble>
           </div>
         </Page.MainContent>
-        {/* <Page.MainFooter>
+
+        <Page.MainFooter>
           <ChatInput />
-        </Page.MainFooter> */}
+        </Page.MainFooter>
       </Page.Main>
 
       <Page.Aside>

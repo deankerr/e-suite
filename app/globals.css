@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --prima: 0 50% 50%;
+  }
+
+  .dark {
+    --prima: 180 50% 50%;
+  }
+}

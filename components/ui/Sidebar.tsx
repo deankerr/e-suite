@@ -21,7 +21,7 @@ type SidebarProps = {
 
 export const Sidebar = ({ props }: SidebarProps) => {
   return (
-    <div id="es-sidebar" className="text-n-300 flex h-full w-72 shrink-0 flex-col overflow-y-auto">
+    <div id="es-sidebar" className="flex h-full w-72 shrink-0 flex-col overflow-y-auto text-n-300">
       {/* Brand */}
       <div className="px-6">
         <Link href="/" className="">
@@ -90,7 +90,7 @@ const SidebarItem = ({ children, href, className, icon }: SidebarItemProps) => {
     <li>
       <Link
         className={cn(
-          'hover:text-n-100 flex w-full items-center gap-x-5 rounded-lg px-2.5 py-3 text-sm font-medium transition-colors duration-300',
+          'flex w-full items-center gap-x-5 rounded-lg px-2.5 py-3 text-sm font-medium transition-colors duration-300 hover:text-n-100',
           isActive && 'bg-n-800 text-n-100',
           className,
         )}
@@ -107,7 +107,7 @@ const IconButton = ({ children }: React.ComponentProps<'button'>) => {
   return (
     <button
       type="button"
-      className="bg-n-950 text-n-300 hover:bg-n-900 hover:text-n-100 flex h-[2.875rem] w-[2.875rem] flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-sm font-semibold transition-colors duration-300 disabled:pointer-events-none disabled:opacity-50"
+      className="flex h-[2.875rem] w-[2.875rem] flex-shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent bg-n-950 text-sm font-semibold text-n-300 transition-colors duration-300 hover:bg-n-900 hover:text-n-100 disabled:pointer-events-none disabled:opacity-50"
     >
       {children}
     </button>
