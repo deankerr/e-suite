@@ -1,6 +1,6 @@
-import { AppShell } from './AppShell'
+import { App } from './App'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   // AppLayout
-  return <AppShell>{children}</AppShell>
+  return <App>{children}</App>
 }

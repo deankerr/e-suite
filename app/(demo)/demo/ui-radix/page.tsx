@@ -11,11 +11,10 @@ import {
   Text,
 } from '@radix-ui/themes'
 
-export default function Page() {
+export default function RadixDemoPage() {
   // Page
 
   return (
-    // <Box className="h-full w-full">
     <Flex className="h-full w-full">
       <Box width="8" className="bg-red-100">
         Sidebar
@@ -27,6 +26,5 @@ export default function Page() {
         </Box>
       </Box>
     </Flex>
-    // </Box>
   )
 }
