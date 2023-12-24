@@ -1,4 +1,3 @@
-import { IconButton as PButton } from '@/components/ui/Button'
 import {
   Avatar,
   Box,
@@ -21,9 +20,9 @@ export default function Page() {
       <Box width="8" className="bg-red-100">
         Sidebar
       </Box>
-      <Box className="w-full bg-amber-800">
+      <Box className="bg-amber-800 w-full">
         Content
-        <Box height="1" className="max-w-xs bg-sky-500">
+        <Box height="1" className="bg-sky-500 max-w-xs">
           Box2
         </Box>
       </Box>

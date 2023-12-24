@@ -45,7 +45,6 @@
     "openai": "^4.24.0",
     "openapi-fetch": "^0.8.2",
     "openapi3-ts": "^4.2.0",
-    "preline": "^2.0.2",
     "react": "^18.2.0",
     "react-arborist": "3.3.0-rc.1",
     "react-dom": "18.2.0",
