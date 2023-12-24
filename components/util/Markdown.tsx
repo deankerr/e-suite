@@ -7,7 +7,7 @@ export default function Markdown({
   className,
   children,
 }: {
-  className?: React.ComponentProps<'div'>['className']
+  className?: TailwindClass
   children: string | null | undefined
 }) {
   if (!children) return <div></div>

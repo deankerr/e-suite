@@ -59,6 +59,7 @@ export const sampleMessages = [
 ] as const
 
 export const sampleInput = [
+  'Name one fruit that starts with each letter of the alphabet, and also alphabetize that list',
   'List of every towel.',
   'List of every European country and capital.',
   'Give me a table of common HTTP error codes and meanings.',

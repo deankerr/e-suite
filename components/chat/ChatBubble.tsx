@@ -15,12 +15,12 @@ export const ChatBubble = ({ message }: ChatBubbleProps) => {
         <Avatar
           src="https://source.boringavatars.com/beam/120/${nanoid(5)}?square"
           variant="solid"
-          size="5"
-          fallback="A"
+          size="4"
+          fallback="?"
         />
       </Box>
-      <Card>
-        <Markdown className="prose prose-sm prose-gray dark:prose-invert">
+      <Card className="w-[65ch]">
+        <Markdown className="prose prose-sm prose-gray w-full dark:prose-invert">
           {message.content}
         </Markdown>
       </Card>

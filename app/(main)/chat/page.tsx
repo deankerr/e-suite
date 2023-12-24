@@ -1,7 +1,7 @@
-import { ChatPage } from './ChatPage'
+import { Chat } from '@/components/chat/Chat'
 
-export default function Page() {
-  // ExplorePage
+export default function ChatPage() {
+  // Page
 
-  return <ChatPage />
+  return <Chat />
 }
