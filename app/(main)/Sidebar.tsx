@@ -2,7 +2,7 @@
 
 import { navConfig } from '@/config/nav'
 import { cn } from '@/lib/utils'
-import { Box, Flex, Heading, Separator, Text } from '@radix-ui/themes'
+import { Box, Button, Flex, Heading, Separator, Text } from '@radix-ui/themes'
 import logo from '/assets/icons/logo-sunset.svg'
 import type { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
@@ -15,7 +15,7 @@ export const Sidebar = () => {
   return (
     <Box className="w-64 flex-none border-r border-gray-5">
       {/* Logo */}
-      <Flex justify="start" align="center" px="4" py="4" mr="4" gap="2" asChild>
+      <Flex justify="start" align="center" px="4" py="4" ml="1" gap="2" asChild>
         <Link href="/">
           <Image src={logo} alt="e/suite logo" className="-mb-0.5 -mr-0.5 size-9" priority />
           <Heading size="7" as="h1">
@@ -56,11 +56,14 @@ const NavLink = ({ href, icon: Icon, label, isActive }: NavLinkProps) => {
   return (
     <Link href={href}>
       <Flex
-        gap="3"
+        gap="2"
         px="3"
-        py="2"
+        py="1"
         align="center"
-        className={cn('rounded transition-colors', isActive ? 'bg-panel-solid' : 'hover:bg-gray-4')}
+        className={cn(
+          'rounded transition-colors',
+          isActive ? 'bg-gray-5 text-gray-12' : 'text-gray-11 hover:bg-gray-3 hover:text-gray-12',
+        )}
       >
         <Icon size={18} strokeWidth={1.25} />
         <Text>{label}</Text>
