@@ -23,7 +23,7 @@ const nodes1 = [
   { href: '/', icon: <HomeIcon size={18} strokeWidth={1.25} />, label: 'Dashboard' },
   { href: '/chat', icon: <MessageSquareTextIcon size={18} strokeWidth={1.25} />, label: 'Chat' },
   { href: '#', icon: <ComponentIcon size={18} strokeWidth={1.25} />, label: 'Models' },
-  { href: '#', icon: <BotIcon size={18} strokeWidth={1.25} />, label: 'Agents' },
+  { href: '/agents', icon: <BotIcon size={18} strokeWidth={1.25} />, label: 'Agents' },
 ]
 
 const nodes2 = [
