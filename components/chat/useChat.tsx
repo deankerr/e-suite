@@ -1,4 +1,5 @@
-import { Agent } from '@/data/types'
+'use client'
+
 import { stringToJsonSchema } from '@/lib/zod'
 import { useChat as useChatAi } from 'ai/react'
 import { nanoid } from 'nanoid/non-secure'
@@ -8,30 +9,18 @@ import { sampleMessages } from './sample-data'
 
 const endpoint = '/api/v1/chat/completions'
 
-const tempAgent = {
-  resource: {
-    endpointModelId: 'gpt123',
-  },
-  resourceId: 'chatgpt123',
-  vendorId: 'ai123',
-  name: 'Bob',
-}
+type UseChatConfig = {
+  chatId: string
+  name?: string
+  model: string
+} & Record<string, unknown>
 
-export function useChat(chatId = 'abcde', agent = tempAgent) {
-  const body: Record<string, unknown> = {
-    // ...agent.resourceParameters[agent.resourceId],
-    model: agent.resource.endpointModelId,
-    resourceId: agent.resourceId,
-    // vendorId: agent.resource.vendorId,
-    stream: true,
-    stream_tokens: true,
-  }
-
+export function useChat({ chatId, name = 'Turbo', ...body }: UseChatConfig) {
   const chat = useChatAi({
     id: chatId,
     api: endpoint,
     body,
-    initialMessages: [...sampleMessages],
+    initialMessages: createInitialMessages(name),
     onResponse: (response) => {
       console.log('[response]', response)
     },
@@ -60,7 +49,7 @@ export function useChat(chatId = 'abcde', agent = tempAgent) {
     void chat.append({ role: 'user', content })
   }
 
-  const resetMessages = () => chat.setMessages(createInitialMessages(agent.name))
+  const resetMessages = () => chat.setMessages(createInitialMessages(name))
 
   return { ...chat, submitUserMessage, resetMessages, streamingMessageId }
 }

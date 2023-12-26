@@ -15,7 +15,7 @@ export type ChatRouteResponse = z.infer<typeof chatRouteResponseSchema>
 //* Request
 const chatRouteRequestSchema = z
   .object({
-    vendorId: vendorIdSchema,
+    // vendorId: vendorIdSchema,
     // engineId: z.string().min(1), // temp
     model: z.string().min(1), // to be sent to vendor api
     // messages: messageSchema.array().min(1),
@@ -58,10 +58,12 @@ export const POST = route({
   access: 'authorized',
   input: chatRouteRequestSchema,
   handler: async (ctx) => {
-    if (ctx.input.vendorId === 'openai') return await openaiPlugin.chat.completions(ctx)
-    if (ctx.input.vendorId === 'openrouter') return await openrouterPlugin.chat.completions(ctx)
-    if (ctx.input.vendorId === 'togetherai') return await togetheraiPlugin.chat.completions(ctx)
-    if (ctx.input.vendorId === 'huggingface') return await huggingfacePlugin.chat.completions(ctx)
+    const [vendorId = '', model = ''] = ctx.input.model.split('@')
+    ctx.input.model = model
+    if (vendorId === 'openai') return await openaiPlugin.chat.completions(ctx)
+    if (vendorId === 'openrouter') return await openrouterPlugin.chat.completions(ctx)
+    if (vendorId === 'togetherai') return await togetheraiPlugin.chat.completions(ctx)
+    if (vendorId === 'huggingface') return await huggingfacePlugin.chat.completions(ctx)
     throw new AppError('vendor_method_not_supported')
   },
 })

@@ -1,20 +1,28 @@
 'use client'
 
+import { Model } from '@/data/types'
+import { cn } from '@/lib/utils'
 import { Box, Button, Text, TextField } from '@radix-ui/themes'
 import { Command } from 'cmdk'
 import { SearchIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 
 type Props = {
-  items: { id: string; name: string }[]
+  items: Model[]
+  value?: Model
 } & React.ComponentPropsWithoutRef<typeof Command>
 
 export const ModelFilterableList = forwardRef<HTMLDivElement, Props>(
-  ({ items = [], ...props }, ref) => {
+  ({ items = [], value = '', onValueChange = () => {}, className, ...props }, ref) => {
     const [searchValue, setSearchValue] = useState('')
 
     return (
-      <Command label="Models Search List" className="overflow-y-hidden" ref={ref} {...props}>
+      <Command
+        label="Models Search List"
+        className={cn('overflow-y-hidden', className)}
+        ref={ref}
+        {...props}
+      >
         <TextField.Root>
           <TextField.Slot>
             <SearchIcon size="16" strokeWidth="1" />
@@ -31,9 +39,8 @@ export const ModelFilterableList = forwardRef<HTMLDivElement, Props>(
 
           {items.map((item) => (
             <Command.Item key={item.id}>
-              {/* <Text size="2">{item.name}</Text> */}
-              <Button variant="ghost" color="gray">
-                {item.name}
+              <Button variant="ghost" color="gray" onClick={() => onValueChange(item.id)}>
+                {item.name} [{item.id}]
               </Button>
             </Command.Item>
           ))}
