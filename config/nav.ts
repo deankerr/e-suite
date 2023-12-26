@@ -18,7 +18,7 @@ export const navConfig = [
     { href: '/', icon: HomeIcon, label: 'Dashboard' },
     { href: '/explore', icon: Globe2Icon, label: 'Explore' },
     { href: '/chat', icon: MessageSquareTextIcon, label: 'Chat' },
-    { href: '#', icon: ComponentIcon, label: 'Models' },
+    { href: '/models', icon: ComponentIcon, label: 'Models' },
     { href: '/agents', icon: CodesandboxIcon, label: 'Agents' },
   ],
   [

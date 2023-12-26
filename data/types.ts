@@ -22,5 +22,6 @@ export type DaoLevel = {
 export type Agent = typeof t.agents.$inferSelect & { resource: Resource }
 export type AgentUpdate = z.infer<typeof updateAgent>
 
+export type Model = typeof t.models.$inferSelect
 export type Resource = typeof t.resources.$inferSelect & { vendor: Vendor }
 export type Vendor = typeof t.vendors.$inferSelect
