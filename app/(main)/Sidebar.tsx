@@ -8,6 +8,7 @@ import type { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
+import { Fragment } from 'react'
 
 export const Sidebar = () => {
   const segment = useSelectedLayoutSegment()
@@ -26,9 +27,9 @@ export const Sidebar = () => {
 
       {/* Nav */}
       <Flex direction="column" gap="1" px="2">
-        {navConfig.map((navGroup) => (
-          <>
-            <Separator my="2" size="4" />
+        {navConfig.map((navGroup, i) => (
+          <Fragment key={`nav-group-${i}`}>
+            <Separator key={`separator-${i}`} my="2" size="4" />
             {navGroup.map((n, i) => (
               <NavLink
                 key={`${n.href}-${n.label}-${i}`}
@@ -38,7 +39,7 @@ export const Sidebar = () => {
                 isActive={'/' + (segment ?? '') === n.href}
               />
             ))}
-          </>
+          </Fragment>
         ))}
       </Flex>
     </Box>

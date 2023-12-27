@@ -16,7 +16,7 @@ export const Frame = ({ children, className, title, titlebar, ...props }: FrameP
       {...props}
     >
       <Flex p="2" justify="between" align="center" gap="2">
-        <Heading size="5" as="h2">
+        <Heading size="3" as="h2">
           {title}
         </Heading>
         {titlebar}
