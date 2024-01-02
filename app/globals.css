@@ -1,10 +1,15 @@
-/* @layer tw_base, radix_ui, tw_components_utils; */
+@import 'tailwindcss/base';
 @import '@radix-ui/themes/styles.css';
-/* @layer tw_base {
-  @tailwind base;
-} */
 
-/* @layer tw_components_utils {
-  @tailwind components;
-  @tailwind utilities;
-} */
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .sidebar-grid:has(.sidebar-toggle[data-state='on']) {
+    grid-template-columns: 240px auto;
+  }
+
+  .sidebar-grid:has(.sidebar:hover) {
+    grid-template-columns: 240px auto;
+  }
+}

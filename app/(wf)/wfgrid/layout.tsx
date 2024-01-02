@@ -1,14 +1,14 @@
-import { Button, Card, Heading, IconButton, Slider, Switch } from '@radix-ui/themes'
-import { SidebarIcon } from 'lucide-react'
+import { Button, Card, Heading, Slider, Switch } from '@radix-ui/themes'
+import { SidebarToggleDemo } from './SidebarToggle'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   // AppLayout
 
   return (
-    <div className="grid h-dvh grid-cols-[calc(240px_*_var(--scaling))_auto] grid-rows-[auto_var(--space-6)] duration-300 has-[first-child:hover]:grid-cols-[64px_auto]">
+    <div className="sidebar-grid grid h-dvh grid-cols-[calc(64px_*_var(--scaling))_auto] grid-rows-[auto_var(--space-6)] transition-all">
       {/* sidebar */}
-      <div className="border-r border-gray-5">
-        <div className="grid h-[var(--space-8)] place-content-center border-b border-gray-2">
+      <div className="sidebar border-gray-5 border-r">
+        <div className="border-gray-2 grid h-[var(--space-8)] place-content-center border-b">
           <Heading size="6" className="text-accent">
             e/drop
           </Heading>
@@ -19,11 +19,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* content grid */}
       <div className="grid grid-rows-[var(--space-8)_auto]">
         {/* header */}
-        <div className="border-b border-gray-5">
-          header
-          <IconButton className="bg-white">
-            <SidebarIcon />
-          </IconButton>
+        <div className="border-gray-5 flex gap-2 border-b">
+          <SidebarToggleDemo />
+          Header
         </div>
         {/* content */}
         <div className="">
@@ -39,7 +37,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* footer */}
-      <div className="col-span-2 flex items-center border-t border-gray-5">Footer</div>
+      <div className="border-gray-5 col-span-2 flex items-center border-t">Footer</div>
     </div>
   )
 }

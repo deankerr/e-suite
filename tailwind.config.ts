@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-// import radixThemePlugin from 'radix-ui-themes-with-tailwind'
+import radixThemePlugin from 'radix-ui-themes-with-tailwind'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -9,11 +9,11 @@ const config: Config = {
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
-    // radixThemePlugin({
-    //   useTailwindColorNames: false,
-    //   useTailwindRadiusNames: false,
-    //   mapMissingTailwindColors: false,
-    // }),
+    radixThemePlugin({
+      useTailwindColorNames: false,
+      useTailwindRadiusNames: false,
+      mapMissingTailwindColors: false,
+    }),
   ],
   theme: {
     screens: {
