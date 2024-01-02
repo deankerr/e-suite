@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
-      <body className="h-full">
+    <html lang="en" suppressHydrationWarning>
+      <body>
         <ClientProviders>
-          <Theme accentColor="orange" className="h-full">
+          <Theme accentColor="orange" appearance="dark">
             {children}
             <Toaster richColors />
             <TailwindBreakpointIndicator />

@@ -4,7 +4,7 @@ export function TailwindBreakpointIndicator() {
   if (process.env.NODE_ENV !== 'development') return null
 
   const content =
-    "after:content-['xs'] sm:after:content-['sm'] md:after:content-['md'] xl:after:content-['xl'] 2xl:after:content-['2xl']"
+    "after:content-['xs'] sm:after:content-['sm'] md:after:content-['md'] lg:after:content-['lg'] xl:after:content-['xl'] 2xl:after:content-['2xl']"
 
   return (
     <div

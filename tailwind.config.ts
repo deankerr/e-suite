@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-// import { radixThemePreset } from 'radix-themes-tw'
 import radixThemePlugin from 'radix-ui-themes-with-tailwind'
 import type { Config } from 'tailwindcss'
 
