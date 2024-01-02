@@ -5,7 +5,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   // AppLayout
 
   return (
-    <div className="sidebar-grid grid h-dvh grid-cols-[calc(64px_*_var(--scaling))_auto] grid-rows-[auto_var(--space-6)] transition-all">
+    <div className="sidebar-grid grid h-dvh grid-cols-[theme(spacing.16)_auto] grid-rows-[auto_var(--space-6)] transition-all">
       {/* sidebar */}
       <div className="sidebar border-gray-5 border-r">
         <div className="border-gray-2 grid h-[var(--space-8)] place-content-center border-b">
@@ -22,6 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="border-gray-5 flex gap-2 border-b">
           <SidebarToggleDemo />
           Header
+          <div className="bg-red-4 w-rx-9">a</div>
         </div>
         {/* content */}
         <div className="">
