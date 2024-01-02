@@ -1,4 +1,4 @@
-import '@radix-ui/themes/styles.css'
+// import '@radix-ui/themes/styles.css'
 import './globals.css'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'

@@ -1,7 +1,7 @@
-import { Frame } from '@/components/Frame'
+import { PageFrame } from '@/components/PageFrame'
 
 export default function ModelsPage() {
   // ModelsPage
 
-  return <Frame title="Models"></Frame>
+  return 'ModelPage'
 }

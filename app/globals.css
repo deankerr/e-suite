@@ -1,3 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* @layer tw_base, radix_ui, tw_components_utils; */
+@import '@radix-ui/themes/styles.css';
+/* @layer tw_base {
+  @tailwind base;
+} */
+
+/* @layer tw_components_utils {
+  @tailwind components;
+  @tailwind utilities;
+} */

@@ -1,5 +1,3 @@
-'use client'
-
 import { Model } from '@/data/types'
 import { Button, Popover, Text } from '@radix-ui/themes'
 import { ModelFilterableList } from './ModelFilterableList'
