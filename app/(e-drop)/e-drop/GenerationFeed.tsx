@@ -10,10 +10,10 @@ type GenerationFeedProps = {
 
 export const GenerationFeed = ({ props }: GenerationFeedProps) => {
   return (
-    <ScrollArea className="dark:bg-ghrid-dark dark:content-area-inset-shadow">
-      <div className="flex flex-col items-center gap-8 py-6">
+    <ScrollArea className="dark:bg-grid-dark dark:content-area-inset-shadow">
+      <div className="flex flex-col items-center gap-8 px-4 py-6">
         {generationSampleUrls.flatMap((url) => (
-          <Card className="w-full max-w-3xl" variant="surface">
+          <Card className="w-full max-w-3xl">
             <div className="grid grid-cols-2 gap-4 p-6 md:grid-cols-3">
               {url.map((urlValue) => (
                 <Image
