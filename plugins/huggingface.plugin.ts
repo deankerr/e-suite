@@ -4,6 +4,7 @@ import { Credentials, listModels } from '@huggingface/hub'
 import { HfInference, Options, textGeneration } from '@huggingface/inference'
 import { huggingfaceSchema } from './huggingface.schema'
 
+console.log('ENV.HUGGING_FACE_API_KEY', ENV.HUGGING_FACE_API_KEY)
 const credentials: Credentials = { accessToken: ENV.HUGGING_FACE_API_KEY }
 
 const hf = new HfInference(ENV.HUGGING_FACE_API_KEY, { dont_load_model: true })
