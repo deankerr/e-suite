@@ -15,8 +15,8 @@ const schema = {
   // database
   LIBSQL_DATABASE_URL: 'string',
   LIBSQL_DATABASE_AUTH_TOKEN: 'string',
-  POSTGRES_POOLED_DATABASE_URL: 'string',
-  POSTGRES_DIRECT_DATABASE_URL: 'string',
+  // POSTGRES_POOLED_DATABASE_URL: 'string',
+  // POSTGRES_DIRECT_DATABASE_URL: 'string',
 
   // auth
   KINDE_CLIENT_ID: 'string',
