@@ -6,8 +6,8 @@ type LeftBarProps = {
 
 export const LeftBar = ({ props }: LeftBarProps) => {
   return (
-    <div className="border-r border-gray-6">
-      <div className="flex flex-col gap-6 p-4">
+    <div className="left-sidebar border-r border-gray-6 [&_div]:hover:flex">
+      <div className="hidden flex-col gap-6 p-4">
         <Card size="2">
           Session Info
           <div className="text-sm">Data should go here e/dropper</div>

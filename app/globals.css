@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 @layer components {
-  .sidebar-grid:has(.sidebar-toggle[data-state='on']) {
-    grid-template-columns: 240px auto;
+  .right-sidebar:has(.sidebar-toggle[data-state='on']) {
+    right: 0;
   }
 
   .sidebar-grid:has(.sidebar:hover) {

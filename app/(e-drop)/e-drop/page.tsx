@@ -7,13 +7,11 @@ export default function HomePage() {
   // HomePage
 
   return (
-    <div className="grid grid-cols-[theme(spacing.72)_auto_theme(spacing.72)] overflow-hidden">
-      <LeftBar />
-      <div className="grid grid-rows-[auto_1fr] overflow-hidden">
-        <GenerationFeed />
-        <CommandBar />
-      </div>
+    <div className="dark:bg-grid-dark flex justify-center overflow-hidden">
+      {/* <LeftBar /> */}
+      <GenerationFeed />
       <RightBar />
+      <CommandBar />
     </div>
   )
 }

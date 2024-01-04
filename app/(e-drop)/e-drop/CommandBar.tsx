@@ -6,8 +6,8 @@ type CommandBarProps = {
 
 export const CommandBar = ({ props }: CommandBarProps) => {
   return (
-    <div className="border-t border-gray-6 p-1">
-      <div className="flex h-24 items-end gap-2">
+    <div className="fixed bottom-4 mx-auto w-full max-w-2xl rounded border border-gray-6 bg-background p-4 transition-all md:mr-80">
+      <div className="flex h-20 items-end gap-2">
         <TextArea
           placeholder="Positive prompt"
           size="1"

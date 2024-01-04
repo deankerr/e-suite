@@ -1,5 +1,6 @@
 'use client'
 
+import { SidebarToggleDemo } from '@/components/ui/SidebarToggle'
 import * as Label from '@radix-ui/react-label'
 import {
   Avatar,
@@ -21,7 +22,8 @@ type RightBarProps = {
 
 export const RightBar = ({ props }: RightBarProps) => {
   return (
-    <div className="overflow-hidden border-l border-gray-6 pt-2">
+    <div className="right-sidebar fixed -right-[20rem] top-16 h-full w-80 overflow-hidden border-l border-gray-6 bg-background pt-2 transition-all duration-300 md:right-0">
+      <SidebarToggleDemo />
       <div className="flex flex-col justify-center gap-5 py-2">
         <div className="space-y-4">
           {/* asChild combobox? */}
