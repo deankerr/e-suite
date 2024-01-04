@@ -8,7 +8,7 @@ import { replicatePlugin } from '@/plugins/replicate.plugin'
 import { togetheraiPlugin } from '@/plugins/togetherai.plugin'
 import z from 'zod'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 const imageGenerationRequestSchema = openaiSchema.image.generations.request
   .merge(z.object({ vendorId: vendorIdSchema }))

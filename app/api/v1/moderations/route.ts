@@ -2,7 +2,7 @@ import { route } from '@/lib/route'
 import { openaiPlugin } from '@/plugins/openai.plugin'
 import { openaiSchema } from '@/plugins/openai.schema'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 const moderationRouteRequestSchema = openaiSchema.moderations.request.describe('/moderations input')
 
