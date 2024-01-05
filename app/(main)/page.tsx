@@ -11,7 +11,7 @@ export default function HomePage() {
       {/* <LeftBar /> */}
       <GenerationFeed />
       <RightBar />
-      {/* <CommandBar /> */}
+      <CommandBar />
     </div>
   )
 }

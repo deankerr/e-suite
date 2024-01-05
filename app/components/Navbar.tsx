@@ -1,4 +1,4 @@
-import { SidebarToggleDemo } from '@/components/ui/SidebarToggle'
+import { SidebarToggleButton } from '@/components/ui/SidebarToggle'
 import { Heading } from '@radix-ui/themes'
 import logo from '/assets/icons/logo-sunset.svg'
 import Image from 'next/image'
@@ -20,7 +20,8 @@ export const Navbar = ({ props }: NavbarProps) => {
           e/drop
         </Heading>
       </Link>
-      <SidebarToggleDemo className="right-sidebar-toggle" />
+
+      <SidebarToggleButton className="right-sidebar-toggle" />
     </div>
   )
 }
