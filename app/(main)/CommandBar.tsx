@@ -6,18 +6,10 @@ type CommandBarProps = {
 
 export const CommandBar = ({ props }: CommandBarProps) => {
   return (
-    <div className="fixed bottom-4 mx-auto w-full max-w-2xl rounded border border-gray-6 bg-background p-4 transition-all md:mr-80">
-      <div className="flex h-20 items-end gap-2">
-        <TextArea
-          placeholder="Positive prompt"
-          size="1"
-          className="h-full w-72 grow [&_textarea]:text-sm"
-        />
-        <TextArea
-          placeholder="Negative prompt"
-          size="1"
-          className="h-full w-72 grow [&_textarea]:text-sm"
-        />
+    <div className="fixed bottom-4 mx-auto w-full max-w-2xl rounded border border-gray-8 bg-background p-2 transition-all md:mr-80">
+      <div className="flex items-end gap-2">
+        <TextArea placeholder="Positive prompt" size="3" className="h-full w-72 grow" />
+        <TextArea placeholder="Negative prompt" size="3" className="h-full w-72 grow" />
         <Button variant="surface" size="4">
           Go!
         </Button>

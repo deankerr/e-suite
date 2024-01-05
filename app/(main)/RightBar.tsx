@@ -22,8 +22,7 @@ type RightBarProps = {
 
 export const RightBar = ({ props }: RightBarProps) => {
   return (
-    <div className="right-sidebar fixed -right-[20rem] top-16 h-full w-80 overflow-hidden border-l border-gray-6 bg-background pt-2 transition-all duration-300 md:right-0">
-      <SidebarToggleDemo />
+    <div className="right-sidebar relative -right-80 h-full w-80 place-self-end overflow-y-auto overflow-x-hidden border-l border-gray-6 bg-background pt-2 transition-all duration-300 md:right-3">
       <div className="flex flex-col justify-center gap-5 py-2">
         <div className="space-y-4">
           {/* asChild combobox? */}

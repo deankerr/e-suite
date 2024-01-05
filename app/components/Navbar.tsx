@@ -10,13 +10,17 @@ type NavbarProps = {
 
 export const Navbar = ({ props }: NavbarProps) => {
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-gray-6 px-8">
+    <div
+      id="navbar"
+      className="flex items-center justify-between gap-2 border-b border-gray-6 px-2 md:px-6"
+    >
       <Link href="/" className="flex items-center gap-2">
-        <Image src={logo} alt="e/drop logo" className="-mb-0.5 -mr-0.5 size-8" priority />
-        <Heading size="7" as="h1" className="text-accent">
+        <Image src={logo} alt="e/drop logo" className="-mb-0.5 -mr-0.5 size-6 md:size-8" priority />
+        <Heading as="h1" className="text-accent">
           e/drop
         </Heading>
       </Link>
+      <SidebarToggleDemo className="right-sidebar-toggle" />
     </div>
   )
 }

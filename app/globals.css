@@ -5,12 +5,8 @@
 @tailwind utilities;
 
 @layer components {
-  .right-sidebar:has(.sidebar-toggle[data-state='on']) {
+  .right-sidebar:has(.right-sidebar-toggle[data-state='on']) {
     right: 0;
-  }
-
-  .sidebar-grid:has(.sidebar:hover) {
-    grid-template-columns: 240px auto;
   }
 
   .bg-grid-light {
@@ -32,11 +28,10 @@
   }
 
   .bg-grid-dark {
-    opacity: 0.7;
-    background-image: linear-gradient(#2a2a28 2px, transparent 2px),
-      linear-gradient(90deg, #2a2a28 2px, transparent 2px),
-      linear-gradient(#2a2a28 1px, transparent 1px),
-      linear-gradient(90deg, #2a2a28 1px, transparent 1px);
+    background-image: linear-gradient(#191918 2px, transparent 2px),
+      linear-gradient(90deg, #191918 2px, transparent 2px),
+      linear-gradient(#191918 1px, transparent 1px),
+      linear-gradient(90deg, #191918 1px, transparent 1px);
     background-size:
       50px 50px,
       50px 50px,

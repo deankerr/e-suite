@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
             <Toaster richColors />
             <TailwindBreakpointIndicator />
-            <ThemePanel defaultOpen={false} />
+            {/* <ThemePanel defaultOpen={false} /> */}
           </Theme>
         </ClientProviders>
         {process.env.NODE_ENV !== 'development' && <Analytics />}
