@@ -16,6 +16,16 @@ const nextConfig = {
     KINDE_POST_LOGOUT_REDIRECT_URL: process.env.KINDE_POST_LOGOUT_REDIRECT_URL ?? `https://${url}`,
     KINDE_POST_LOGIN_REDIRECT_URL: process.env.KINDE_POST_LOGIN_REDIRECT_URL ?? `https://${url}`,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'artful-husky-972.convex.cloud',
+        port: '',
+        pathname: '/api/storage/**',
+      },
+    ],
+  },
 }
 
 module.exports = withBundleAnalyzer(nextConfig)

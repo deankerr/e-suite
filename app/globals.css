@@ -5,16 +5,12 @@
 @tailwind utilities;
 
 @layer components {
-  :root:has(.right-sidebar-toggle[data-state='off']) {
-    .right-sidebar {
-      right: 0;
-    }
+  :root:has(.right-sidebar-toggle[data-state='off']) .right-sidebar {
+    right: 0;
   }
 
-  :root:has(.right-sidebar-toggle[data-state='on']) {
-    .right-sidebar {
-      right: calc(-1 * theme(spacing.80));
-    }
+  :root:has(.right-sidebar-toggle[data-state='on']) .right-sidebar {
+    right: calc(-1 * theme(spacing.80));
   }
 
   .bg-grid-light {
