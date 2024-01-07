@@ -5,6 +5,14 @@
 @tailwind utilities;
 
 @layer components {
+  :root:has(.left-sidebar-toggle[data-state='off']) .left-sidebar {
+    left: 0;
+  }
+
+  :root:has(.left-sidebar-toggle[data-state='on']) .left-sidebar {
+    left: calc(-1 * theme(spacing.80));
+  }
+
   :root:has(.right-sidebar-toggle[data-state='off']) .right-sidebar {
     right: 0;
   }

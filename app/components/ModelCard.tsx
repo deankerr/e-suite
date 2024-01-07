@@ -1,4 +1,4 @@
-import { Badge, Card, Heading, Inset, Link, Text } from '@radix-ui/themes'
+import { Badge, Card, Heading, Inset, Text } from '@radix-ui/themes'
 import Image from 'next/image'
 import NextLink from 'next/link'
 import 'lucide-react'

@@ -57,7 +57,6 @@ export const getModels = action(async (ctx) => {
   const data = await response.json()
 
   await ctx.runMutation(api.providers.addSinkinModels, data)
-  // return parsed.models
 })
 
 // const parsed = z
