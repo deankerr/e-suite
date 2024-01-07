@@ -1,4 +1,5 @@
 import { v } from 'convex/values'
+import z from 'zod'
 import { api } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
@@ -35,7 +36,7 @@ export const send = mutation({
       results: [],
     })
 
-    await ctx.scheduler.runAfter(0, api.sendSinkIn.send, { id, prompt })
+    await ctx.scheduler.runAfter(0, api.image.sinkin.send, { id, prompt })
   },
 })
 
@@ -44,4 +45,34 @@ export const update = mutation({
   handler: async (ctx, { id, patch }) => {
     await ctx.db.patch(id, patch)
   },
+})
+
+export const listModels = query(async (ctx) => {
+  const data = await ctx.db.query('models_sinkin').first()
+  console.log('data', data)
+  const parsed = z
+    .object({
+      // error_code: z.number(),
+      models: z
+        .object({
+          civitai_model_id: z.number().optional(),
+          cover_img: z.string(),
+          id: z.string(),
+          link: z.string(),
+          name: z.string(),
+          tags: z.string().array().optional(),
+        })
+        .array(),
+      // loras: z
+      //   .object({
+      //     cover_img: z.string(),
+      //     id: z.string(),
+      //     link: z.string(),
+      //     name: z.string(),
+      //   })
+      //   .array(),
+    })
+    .parse(data)
+
+  return parsed.models
 })

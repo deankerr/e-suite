@@ -8,8 +8,8 @@ export default function HomePage() {
 
   return (
     <div className="dark:bg-grid-dark relative grid overflow-hidden [&_div]:col-start-1 [&_div]:row-start-1">
-      {/* <LeftBar /> */}
       <GenerationFeed />
+      <LeftBar />
       <RightBar />
       <CommandBar />
     </div>

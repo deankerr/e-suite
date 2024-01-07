@@ -21,8 +21,19 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'artful-husky-972.convex.cloud',
-        port: '',
         pathname: '/api/storage/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.civitai.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'replicate.delivery',
       },
     ],
   },

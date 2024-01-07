@@ -1,9 +1,9 @@
 'use node'
 
 import z from 'zod'
-import { api } from './_generated/api'
-import type { Id } from './_generated/dataModel'
-import { action } from './_generated/server'
+import { api } from '../_generated/api'
+import type { Id } from '../_generated/dataModel'
+import { action } from '../_generated/server'
 
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
   try {
@@ -45,3 +45,41 @@ export const send = action(async (ctx, { id, prompt, negative_prompt, size, mode
     console.error(err)
   }
 })
+
+export const getModels = action(async (ctx) => {
+  const body = new FormData()
+  body.set('access_token', process.env.SINKIN_API_KEY as string)
+
+  const response = await fetch('https://sinkin.ai/api/models', {
+    method: 'POST',
+    body,
+  })
+  const data = await response.json()
+
+  await ctx.runMutation(api.providers.addSinkinModels, data)
+  // return parsed.models
+})
+
+// const parsed = z
+//   .object({x`
+//     error_code: z.number(),
+//     models: z
+//       .object({
+//         civitai_model_id: z.number(),
+//         cover_img: z.string(),
+//         id: z.string(),
+//         link: z.string(),
+//         name: z.string(),
+//         tags: z.string().array(),
+//       })
+//       .array(),
+//     loras: z
+//       .object({
+//         cover_img: z.string(),
+//         id: z.string(),
+//         link: z.string(),
+//         name: z.string(),
+//       })
+//       .array(),
+//   })
+//   .parse(data)

@@ -15,8 +15,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as generations from "../generations.js";
+import type * as image_sinkin from "../image/sinkin.js";
+import type * as providers from "../providers.js";
 import type * as sendOpenAI from "../sendOpenAI.js";
-import type * as sendSinkIn from "../sendSinkIn.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,8 +29,9 @@ import type * as sendSinkIn from "../sendSinkIn.js";
  */
 declare const fullApi: ApiFromModules<{
   generations: typeof generations;
+  "image/sinkin": typeof image_sinkin;
+  providers: typeof providers;
   sendOpenAI: typeof sendOpenAI;
-  sendSinkIn: typeof sendSinkIn;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
