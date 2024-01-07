@@ -11,9 +11,9 @@ type GenerationFeedProps = {
 export const GenerationFeed = ({ props }: GenerationFeedProps) => {
   const generations = useQuery(api.generations.list)
   return (
-    <div className="content-area-inset-shadow flex flex-col items-center gap-8 overflow-y-auto px-4 py-6 pb-20">
-      {generations?.map((data: Record<string, string[]>, i) => (
-        <GenerationCard key={i} imageUrls={data.results} />
+    <div className="content-area-inset-shadow flex flex-col items-center gap-8 overflow-y-auto px-4 py-6 pb-32">
+      {generations?.map((data: Record<string, any>, i) => (
+        <GenerationCard key={i} imageUrls={data.results} model={data.model} prompt={data.prompt} />
       ))}
     </div>
   )

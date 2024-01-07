@@ -3,9 +3,11 @@ import Image from 'next/image'
 
 type GenerationCardProps = {
   imageUrls?: string[]
+  prompt?: string
+  model?: string
 }
 
-export const GenerationCard = ({ imageUrls }: GenerationCardProps) => {
+export const GenerationCard = ({ imageUrls, prompt, model }: GenerationCardProps) => {
   return (
     <Card>
       <div className="flex gap-6 px-4 py-2">
@@ -26,6 +28,8 @@ export const GenerationCard = ({ imageUrls }: GenerationCardProps) => {
           </div>
         ))}
       </div>
+      <pre>model: {model}</pre>
+      <pre>prompt: {prompt}</pre>
     </Card>
   )
 }

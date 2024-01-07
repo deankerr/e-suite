@@ -22,10 +22,10 @@ export const list = query(async (ctx) => {
 
 export const send = mutation({
   args: {
+    model: v.string(),
     prompt: v.string(),
     negative_prompt: v.string(),
     size: v.string(),
-    model: v.string(),
   },
   handler: async (ctx, { prompt, negative_prompt, size, model }) => {
     const id = await ctx.db.insert('generations', {
@@ -36,7 +36,9 @@ export const send = mutation({
       results: [],
     })
 
-    await ctx.scheduler.runAfter(0, api.image.sinkin.send, { id, prompt })
+    if (model === 'dall-e-3' || model === 'dall-e-2')
+      await ctx.scheduler.runAfter(0, api.image.openai.create, { id, model, prompt })
+    else await ctx.scheduler.runAfter(0, api.image.sinkin.send, { id, model, prompt })
   },
 })
 

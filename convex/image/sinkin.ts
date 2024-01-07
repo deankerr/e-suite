@@ -11,7 +11,7 @@ export const send = action(async (ctx, { id, prompt, negative_prompt, size, mode
     body.set('access_token', process.env.SINKIN_API_KEY as string)
     body.set('prompt', prompt as string)
     body.set('negative_prompt', negative_prompt as string)
-    body.set('model_id', '4zdwGOB')
+    body.set('model_id', model as string)
 
     const response = await fetch('https://sinkin.ai/m/inference', {
       method: 'POST',
@@ -56,6 +56,7 @@ export const getModels = action(async (ctx) => {
   })
   const data = await response.json()
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   await ctx.runMutation(api.providers.addSinkinModels, data)
 })
 
