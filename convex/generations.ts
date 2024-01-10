@@ -5,7 +5,7 @@ import type { Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
 
 export const list = query(async (ctx) => {
-  const items = await ctx.db.query('generations').collect()
+  const items = await ctx.db.query('xgenerations').collect()
   for (const item of items) {
     if (item.results) {
       const urls: string[] = []
@@ -28,7 +28,7 @@ export const send = mutation({
     size: v.string(),
   },
   handler: async (ctx, { prompt, negative_prompt, size, model }) => {
-    const id = await ctx.db.insert('generations', {
+    const id = await ctx.db.insert('xgenerations', {
       prompt,
       negative_prompt,
       size,
@@ -43,7 +43,7 @@ export const send = mutation({
 })
 
 export const update = mutation({
-  args: { id: v.id('generations'), patch: v.object({ results: v.array(v.string()) }) },
+  args: { id: v.id('xgenerations'), patch: v.object({ results: v.array(v.string()) }) },
   handler: async (ctx, { id, patch }) => {
     await ctx.db.patch(id, patch)
   },
@@ -51,7 +51,6 @@ export const update = mutation({
 
 export const listModels = query(async (ctx) => {
   const data = await ctx.db.query('models_sinkin').first()
-  console.log('data', data)
   const parsed = z
     .object({
       // error_code: z.number(),

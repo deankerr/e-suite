@@ -7,7 +7,7 @@ import { action } from '../_generated/server'
 
 export const create = action({
   args: {
-    id: v.id('generations'),
+    id: v.id('xgenerations'),
     model: v.string(),
     prompt: v.string(),
   },
@@ -36,6 +36,6 @@ export const create = action({
     const image = await imageResponse.blob()
     const storageId = await ctx.storage.store(image)
 
-    await ctx.runMutation(api.generations.update, { id, patch: { results: [storageId] } })
+    // await ctx.runMutation(api.xgenerations.update, { id, patch: { results: [storageId] } })
   },
 })

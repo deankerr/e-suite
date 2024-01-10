@@ -1,9 +1,9 @@
 'use node'
 
 import z from 'zod'
-import { api } from '../_generated/api'
+import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
-import { action } from '../_generated/server'
+import { action, internalAction } from '../_generated/server'
 
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
   try {
@@ -38,7 +38,7 @@ export const send = action(async (ctx, { id, prompt, negative_prompt, size, mode
       }),
     )
     await ctx.runMutation(api.generations.update, {
-      id: id as Id<'generations'>,
+      id: id as Id<'xgenerations'>,
       patch: { results: imageIds },
     })
   } catch (err) {
@@ -55,11 +55,23 @@ export const getModels = action(async (ctx) => {
     body,
   })
   const data = await response.json()
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  await ctx.runMutation(api.providers.addSinkinModels, data)
 })
 
+export const updateModelsData = internalAction(async (ctx) => {
+  console.log('fetching sinkin model data')
+  const body = new FormData()
+  body.set('access_token', process.env.SINKIN_API_KEY as string)
+
+  const response = await fetch('https://sinkin.ai/api/models', {
+    method: 'POST',
+    body,
+  })
+  if (!response.ok) throw new Error(response.statusText)
+
+  const data = await response.json()
+  await ctx.runMutation(internal.providers.updateProviderModelsData, { name: 'sinkin', data })
+  console.log('done')
+})
 // const parsed = z
 //   .object({x`
 //     error_code: z.number(),
