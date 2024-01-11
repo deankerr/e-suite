@@ -1,7 +1,7 @@
 import z from 'zod'
 import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
-import { action, internalAction, internalMutation } from '../_generated/server'
+import { action, internalAction, internalMutation, internalQuery } from '../_generated/server'
 
 //todo refactor
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
@@ -45,33 +45,12 @@ export const send = action(async (ctx, { id, prompt, negative_prompt, size, mode
   }
 })
 
-//todo rm
-export const getModels = action(async (ctx) => {
-  const body = new FormData()
-  body.set('access_token', process.env.SINKIN_API_KEY as string)
-
-  const response = await fetch('https://sinkin.ai/api/models', {
-    method: 'POST',
-    body,
-  })
-  const data = await response.json()
+export const listModelCacheLatest = internalQuery(async (ctx): Promise<SinkinModelListCache> => {
+  return await ctx.db.query('sinkin_model_list_cache').order('desc').first()
 })
 
-//todo rm
-export const updateModelsData = internalAction(async (ctx) => {
-  console.log('fetching sinkin model data')
-  const body = new FormData()
-  body.set('access_token', process.env.SINKIN_API_KEY as string)
-
-  const response = await fetch('https://sinkin.ai/api/models', {
-    method: 'POST',
-    body,
-  })
-  if (!response.ok) throw new Error(response.statusText)
-
-  const data = await response.json()
-  await ctx.runMutation(internal.providers.updateProviderModelsData, { name: 'sinkin', data })
-  console.log('done')
+export const listModelCacheAll = internalQuery(async (ctx) => {
+  return await ctx.db.query('sinkin_model_list_cache').collect()
 })
 
 export const fetchAvailableModels = internalAction(async (ctx) => {
@@ -82,19 +61,29 @@ export const fetchAvailableModels = internalAction(async (ctx) => {
   console.log('[sinkin] model list')
   for (const model of data.models) {
     console.log(`[sinkin] model: ${model.id} ${model.name} civit_id:${model.civitai_model_id}`)
-    const result = await ctx.runAction(internal.image.civitai.fetchModelDataForId, {
-      civit_id: model.civitai_model_id,
-    })
-    if (!result) console.error('[sinkin] failed to fetch civit data')
+    try {
+      await ctx.runAction(internal.image.civitai.fetchModelDataForId, {
+        civit_id: model.civitai_model_id,
+      })
+    } catch (err) {
+      console.error(err)
+      console.log(model)
+    }
   }
 
   console.log(`[sinkin] lora list`)
   for (const lora of data.loras) {
-    //! brittle
-    const civit_id = lora.link.replace('https://civitai.com/models/', '').split('/')[0]
+    const civit_id = getIdFromUrl(lora.link)
     console.log(`[sinkin] lora: ${lora.id} ${lora.name} civit_id:${civit_id}`)
-    const result = await ctx.runAction(internal.image.civitai.fetchModelDataForId, { civit_id })
-    if (!result) console.error('[sinkin] failed to fetch civit data')
+    if (!civit_id) console.error('[sinkin] invalid civit_id')
+    else {
+      try {
+        await ctx.runAction(internal.image.civitai.fetchModelDataForId, { civit_id })
+      } catch (err) {
+        console.error(err)
+        console.log(lora)
+      }
+    }
   }
 
   console.log(`[sinkin] done`)
@@ -119,6 +108,12 @@ const apiGetModels = async () => {
   return apiGetModelsResponseSchema.parse(json)
 }
 
+const getIdFromUrl = (url: string) => {
+  const match = url.match(/\/(\d+)/)
+  const id = (match && match[1]) ?? null
+  return id
+}
+
 const apiGetModelsResponseSchema = z.object({
   error_code: z.number(),
   models: z
@@ -141,3 +136,4 @@ const apiGetModelsResponseSchema = z.object({
     .array(),
   message: z.string().optional(),
 })
+export type SinkinModelListCache = z.infer<typeof apiGetModelsResponseSchema>

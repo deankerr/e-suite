@@ -9,6 +9,8 @@ const imageModelBases = v.union(
 )
 const imageModelTypes = v.union(v.literal('checkpoint'), v.literal('lora'), v.literal('unknown'))
 
+const nsfwRating = v.union(v.literal('safe'), v.literal('low'), v.literal('high'), v.literal('x'))
+
 export default defineSchema(
   {
     generations: defineTable({
@@ -48,12 +50,10 @@ export default defineSchema(
       description: v.string(),
       base: imageModelBases,
       type: imageModelTypes,
-      nsfw: v.boolean(),
+      nsfw: nsfwRating,
       images: v.array(
         v.object({
-          model_version_name: v.string(),
-          type: v.string(),
-          nsfw: v.string(),
+          nsfw: nsfwRating,
           url: v.string(),
           width: v.number(),
           height: v.number(),
@@ -62,18 +62,8 @@ export default defineSchema(
         }),
       ),
       tags: v.array(v.string()),
-
       civit_id: v.union(v.string(), v.null()),
-      civit_data: v.union(
-        v.object({
-          cache: v.any(),
-          cache_time: v.string(),
-        }),
-        v.null(),
-      ),
-
-      providers: v.array(v.object({ id: v.id('image_providers'), ref: v.string() })),
-
+      sinkin_id: v.union(v.string(), v.null()),
       hidden: v.boolean(),
     }),
 

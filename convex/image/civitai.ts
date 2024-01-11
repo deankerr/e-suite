@@ -11,8 +11,6 @@ export const create = internalMutation(async (ctx, data) => {
 export const fetchModelDataForId = internalAction(
   async (ctx, { civit_id }: { civit_id: string }): Promise<Id<'civitai_model_cache'> | null> => {
     const data = await fetchModel(civit_id)
-    if (!data) return null
-    console.log(`[civitai] ${data.id} ${data.name}`)
     const result = await ctx.runMutation(internal.image.civitai.create, data)
     return result
   },
@@ -20,13 +18,17 @@ export const fetchModelDataForId = internalAction(
 
 const fetchModel = async (civit_id: string) => {
   console.log(`[civitai] /api/v1/models/${civit_id}`)
-  const response = await fetch(`https://civitai.com/api/v1/models/${civit_id}`)
-  if (!response.ok) {
-    console.error('[civitai] request failed:', response.statusText)
-    return null
+  try {
+    const response = await fetch(`https://civitai.com/api/v1/models/${civit_id}`)
+    if (!response.ok) throw new Error(response.statusText)
+
+    const json = await response.json()
+    return civitaiModelSchema.parse(json)
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(`[civitai] request failed: ${err.message}`)
+    } else throw err
   }
-  const json = await response.json()
-  return civitaiModelSchema.parse(json)
 }
 
 const civitaiModelSchema = z.object({
