@@ -39,7 +39,7 @@ export const registerModelsByCivitIds = internalAction({
 
     const currentModels = await ctx.runQuery(internal.image_models.getByCivitIds, { civit_ids })
     console.log(`[image_models] existing: ${currentModels.length}`)
-
+    if (!currentModels) return null
     for (const civit_id of civit_ids) {
       const currentModel = currentModels.find((m) => m.civit_id === civit_id)
       if (currentModel) {
@@ -115,6 +115,7 @@ const fetchCivitModelData = async (civit_id: string) => {
   return json as unknown
 }
 
+//! latest version in image/civitai
 const civitaiModelSchema = z.object({
   id: z.number().transform((v) => v.toString()),
   name: z.string(),
@@ -156,7 +157,7 @@ const civitaiModelSchema = z.object({
         ratingCount: z.number(),
         rating: z.number(),
       }),
-      files: z.any(),
+      files: z.array(z.any()),
       images: z.array(
         z.object({
           url: z.string(),
@@ -165,7 +166,7 @@ const civitaiModelSchema = z.object({
           height: z.number(),
           hash: z.string(),
           type: z.string(),
-          metadata: z.record(z.any()).transform((v) => JSON.stringify(v)),
+          metadata: z.record(z.string()),
           meta: z
             .record(z.any())
             .transform((v) => JSON.stringify(v))

@@ -26,7 +26,9 @@ export const create = action({
       prompt,
       size: '1024x1024',
     })
-    const dallEImageUrl = response.data[0]['url']!
+    const result = response.data[0]
+    if (!result) throw new Error('no result')
+    const dallEImageUrl = result.url!
 
     const imageResponse = await fetch(dallEImageUrl)
     if (!imageResponse.ok) {
