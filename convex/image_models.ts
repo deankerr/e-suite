@@ -6,6 +6,10 @@ type ImageModel = Omit<Doc<'image_models'>, '_id' | '_creationTime'>
 
 export const list = query(async (ctx) => await ctx.db.query('image_models').collect())
 
+export const listWithCacheData = query(async (ctx) => {
+  const modelList = await list(ctx, {})
+})
+
 export const create = internalMutation(async (ctx, model: ImageModel) => {
   return await ctx.db.insert('image_models', model)
 })
