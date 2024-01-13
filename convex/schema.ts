@@ -94,8 +94,10 @@ export default defineSchema(
 
     civitaiModelData: defineTable({
       civitaiId: v.string(),
-      modelData: v.any(),
-    }),
+      updatedAt: v.number(),
+      json: v.union(v.string(), v.null()),
+      error: v.optional(v.string()),
+    }).index('by_civitaiId', ['civitaiId']),
   },
   {
     strictTableNameTypes: false, // allow tables without schema
