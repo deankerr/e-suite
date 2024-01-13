@@ -1,9 +1,11 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { Doc } from './_generated/dataModel'
+import { sinkinImageProviderData } from './image/sinkin'
 
-export type ImageModel = Omit<Doc<'imageModels'>, '_id' | '_creationTime'>
-export type ImageModelProvider = Omit<Doc<'imageModelProviders'>, '_id' | '_creationTime'>
+export type ImageModel = Doc<'imageModels'>
+export type ImageModelProvider = Doc<'imageModelProviders'>
+export type CivitaiModelData = Doc<'civitaiModelData'>
 export type ProviderKey = (typeof imageProviderKeysList)[number]
 
 const imageModelBases = v.union(
@@ -78,7 +80,7 @@ export default defineSchema(
       civitaiId: v.union(v.string(), v.null()),
       civitaiModelDataId: v.union(v.id('civitaiModelData'), v.null()),
 
-      sinkinProviderId: v.optional(v.string()),
+      sinkinProviderId: v.optional(v.id('imageModelProviders')),
       sinkinApiModelId: v.optional(v.string()),
 
       hidden: v.boolean(),
@@ -87,7 +89,7 @@ export default defineSchema(
     imageModelProviders: defineTable({
       key: imageProviderKeys,
       providerModelId: v.string(),
-      providerModelData: v.any(),
+      providerModelData: sinkinImageProviderData,
       imageModelId: v.union(v.id('imageModels'), v.null()),
       hidden: v.boolean(),
     }).index('by_providerKey', ['key']),

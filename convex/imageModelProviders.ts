@@ -1,11 +1,8 @@
-import { api, internal } from './_generated/api'
-import { Doc, Id } from './_generated/dataModel'
-import { internalAction, internalMutation, internalQuery, query } from './_generated/server'
+import { WithoutSystemFields } from 'convex/server'
+import { internalMutation, internalQuery, query } from './_generated/server'
 import type { ImageModelProvider } from './schema'
 
-export const list = internalQuery(
-  async (ctx) => await ctx.db.query('imageModelProviders').collect(),
-)
+export const list = query(async (ctx) => await ctx.db.query('imageModelProviders').collect())
 
 export const listByProvider = internalQuery(
   async (ctx, { key }: { key: ImageModelProvider['key'] }) =>
@@ -16,6 +13,6 @@ export const listByProvider = internalQuery(
 )
 
 export const create = internalMutation(
-  async (ctx, { doc }: { doc: ImageModelProvider }) =>
+  async (ctx, { doc }: { doc: WithoutSystemFields<ImageModelProvider> }) =>
     await ctx.db.insert('imageModelProviders', doc),
 )

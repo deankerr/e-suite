@@ -70,6 +70,7 @@ const apiGetModel = async (civit_id: string) => {
   }
 }
 
+export type CivitaiModelDataJson = z.infer<typeof civitaiModelSchema>
 const civitaiModelSchema = z.object({
   id: z.coerce.string(),
   name: z.string(),

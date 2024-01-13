@@ -1,3 +1,4 @@
+import { WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
 import { api, internal } from './_generated/api'
 import { Doc, Id } from './_generated/dataModel'
@@ -6,6 +7,20 @@ import { ImageModel, ProviderKey } from './schema'
 import { raise } from './util'
 
 export const list = query(async (ctx) => await ctx.db.query('imageModels').collect())
+
+export const listWithProviders = query(async (ctx) => {
+  const models = await list(ctx, {})
+  const modelsWithProviders = models.map(async (model) => {
+    return {
+      ...model,
+      civitai: model.civitaiModelDataId ? await ctx.db.get(model.civitaiModelDataId) : undefined,
+      sinkin: model.sinkinProviderId ? await ctx.db.get(model.sinkinProviderId) : undefined,
+    }
+  })
+  const data = await Promise.all(modelsWithProviders)
+
+  return data
+})
 
 export const listByCivitaiId = internalQuery(
   async (ctx) => await ctx.db.query('imageModels').withIndex('by_civitaiId').collect(),
@@ -22,15 +37,17 @@ export const getByCivitaiId = query({
       .first(),
 })
 
-export const create = internalMutation(async (ctx, { doc }: { doc: ImageModel }) => {
-  const id = await ctx.db.insert('imageModels', { ...doc })
-  if (doc.civitaiId)
-    await ctx.scheduler.runAfter(0, internal.imageModels.addCivitaiData, {
-      id,
-      civitaiId: doc.civitaiId,
-    })
-  return id
-})
+export const create = internalMutation(
+  async (ctx, { doc }: { doc: WithoutSystemFields<ImageModel> }) => {
+    const id = await ctx.db.insert('imageModels', { ...doc })
+    if (doc.civitaiId)
+      await ctx.scheduler.runAfter(0, internal.imageModels.addCivitaiData, {
+        id,
+        civitaiId: doc.civitaiId,
+      })
+    return id
+  },
+)
 
 export const updateProvider = internalMutation(
   async (

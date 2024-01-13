@@ -1,3 +1,5 @@
+import { WithoutSystemFields } from 'convex/server'
+import { Infer, v } from 'convex/values'
 import z from 'zod'
 import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
@@ -52,7 +54,7 @@ export const registerAvailableModels = internalAction(async (ctx) => {
     ...apiModelData.models.map((model) => ({ ...model, type: 'checkpoint' as const })),
     ...apiModelData.loras.map((lora) => ({
       ...lora,
-      civitai_model_id: getIdFromUrl(lora.link),
+      civitai_model_id: getIdFromUrl(lora.link) ?? undefined,
       type: 'lora' as const,
     })),
   ]
@@ -70,7 +72,7 @@ export const registerAvailableModels = internalAction(async (ctx) => {
       continue
     }
 
-    const modelProvider: ImageModelProvider = {
+    const modelProvider: WithoutSystemFields<ImageModelProvider> = {
       key: 'sinkin',
       providerModelId: modelData.id,
       providerModelData: modelData,
@@ -111,7 +113,7 @@ export const registerAvailableModels = internalAction(async (ctx) => {
       })
     } else if (civitaiId) {
       //* create new imageModel from provider
-      const newImageModel: ImageModel = {
+      const newImageModel: WithoutSystemFields<ImageModel> = {
         name: modelData.name,
         description: '',
         base: modelData.name.includes('XL') ? 'sdxl' : 'sd1.5',
@@ -167,7 +169,10 @@ const apiGetModelsResponseSchema = z.object({
   error_code: z.number(),
   models: z
     .object({
-      civitai_model_id: z.number().optional(),
+      civitai_model_id: z
+        .number()
+        .transform((id) => String(id))
+        .optional(),
       cover_img: z.string(),
       id: z.string(),
       link: z.string(),
@@ -185,4 +190,16 @@ const apiGetModelsResponseSchema = z.object({
     .array(),
   message: z.string().optional(),
 })
+
 export type SinkinModelListCache = z.infer<typeof apiGetModelsResponseSchema>
+export const sinkinApiGetModelsResponseSchema = apiGetModelsResponseSchema
+
+export const sinkinImageProviderData = v.object({
+  civitai_model_id: v.optional(v.string()),
+  cover_img: v.string(),
+  id: v.string(),
+  link: v.string(),
+  name: v.string(),
+  type: v.union(v.literal('checkpoint'), v.literal('lora')),
+  tags: v.optional(v.array(v.string())),
+})
