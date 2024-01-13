@@ -1,7 +1,11 @@
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
-import { internalAction, internalMutation } from '../_generated/server'
+import { internalAction, internalMutation, internalQuery } from '../_generated/server'
+
+export const get = internalQuery(async (ctx, { id }: { id: Id<'civit'>[] }) => {
+  await ctx.db.get(id[0]!)
+})
 
 export const create = internalMutation(async (ctx, data) => {
   return await ctx.db.insert('civitai_model_cache', data)

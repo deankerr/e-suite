@@ -2,6 +2,7 @@ import z from 'zod'
 import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
 import { action, internalAction, internalMutation, internalQuery } from '../_generated/server'
+import type { ImageModelProvider } from '../schema'
 
 //todo refactor
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
@@ -87,6 +88,107 @@ export const fetchAvailableModels = internalAction(async (ctx) => {
   }
 
   console.log(`[sinkin] done`)
+})
+
+export const registerAvailableModels = internalAction(async (ctx) => {
+  const apiModelData = await apiGetModels()
+
+  //* query imageModelProviders for existing entries
+  const sinkinModelProviders = await ctx.runQuery(internal.imageModelProviders.listByProvider, {
+    key: 'sinkin',
+  })
+
+  //TODO loras
+  for (const modelData of apiModelData.models) {
+    if (
+      sinkinModelProviders.find((p) => p.key === 'sinkin' && p.providerModelId === modelData.id)
+    ) {
+      console.log(`existing record for "${modelData.name}" (${modelData.id})`)
+      continue
+    }
+
+    const modelProvider: ImageModelProvider = {
+      key: 'sinkin',
+      providerModelId: modelData.id,
+      providerModelData: modelData,
+      imageModelId: null,
+      hidden: false,
+    }
+
+    //* create provider
+    const imageModelProviderId = await ctx.runMutation(internal.imageModelProviders.create, {
+      doc: modelProvider,
+    })
+
+    //* create or update imageModel
+    //! some items without civitaiId will be duplicated
+    const imageModel = await ctx.runQuery(api.imageModels.getByCivitaiId, {
+      civitaiId: modelData.civitai_model_id,
+    })
+    if (imageModel) {
+      const providers = { ...imageModel.providers, sinkin: imageModelProviderId }
+      //* add provider to existing model
+      await ctx.runMutation(internal.imageModels.updateProviders, {
+        _id: imageModel._id,
+        providers,
+      })
+    } else {
+      //* create new imageModel from provider
+      await ctx.runMutation(internal.imageModels.create, {
+        doc: {
+          name: modelData.name,
+          description: '',
+          base: 'unknown',
+          type: 'checkpoint',
+          nsfw: 'unclassified',
+          images: [],
+          tags: ['_new'],
+          civitaiId: modelData.civitai_model_id,
+          civitaiModelDataId: null,
+
+          //TODO array
+          providers: {
+            openai: null,
+            sinkin: imageModelProviderId,
+          },
+
+          hidden: false, //? start hidden
+        },
+      })
+
+      //* schedule civitai lookup
+      //TODO
+    }
+  }
+
+  // //* normalize api model data
+  // const modelDataList: ImageModelProvider[] = [
+  //   ...apiModelData.models.map<ImageModelProvider>((data) => ({
+  //     key: 'sinkin',
+  //     providerModelId: data.id,
+  //     providerModelData: data,
+  //     imageModelId: null,
+  //     hidden: false,
+  //   })),
+
+  //   ...apiModelData.loras.map<ImageModelProvider>((data) => ({
+  //     key: 'sinkin',
+  //     providerModelId: data.id,
+  //     providerModelData: data,
+  //     imageModelId: null,
+  //     hidden: false,
+  //   })),
+  // ]
+
+  //? query imageModels for existing entries
+  // const imageModels = await ctx.runQuery(api.imageModels.list, {})
+  //* filter out models other providers
+  // const imageModelsSinkin = imageModels.filter((m) => m.providers.sinkin !== null)
+
+  //* create imageModels for new items
+  // for (const newModelData of )
+
+  //* trigger civitai model data pulls
 })
 
 export const createModelListCache = internalMutation(async (ctx, data) => {
