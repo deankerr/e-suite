@@ -2,7 +2,7 @@ import z from 'zod'
 import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
 import { action, internalAction, internalMutation, internalQuery } from '../_generated/server'
-import type { ImageModelProvider } from '../schema'
+import type { ImageModel, ImageModelProvider } from '../schema'
 
 //todo refactor
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
@@ -46,64 +46,27 @@ export const send = action(async (ctx, { id, prompt, negative_prompt, size, mode
   }
 })
 
-export const listModelCacheLatest = internalQuery(async (ctx): Promise<SinkinModelListCache> => {
-  return await ctx.db.query('sinkin_model_list_cache').order('desc').first()
-})
-
-export const listModelCacheAll = internalQuery(async (ctx) => {
-  return await ctx.db.query('sinkin_model_list_cache').collect()
-})
-
-export const fetchAvailableModels = internalAction(async (ctx) => {
-  console.log(`[sinkin] fetchAvailableModels`)
-  const data = await apiGetModels()
-  await ctx.runMutation(internal.image.sinkin.createModelListCache, data)
-
-  console.log('[sinkin] model list')
-  for (const model of data.models) {
-    console.log(`[sinkin] model: ${model.id} ${model.name} civit_id:${model.civitai_model_id}`)
-    try {
-      await ctx.runAction(internal.image.civitai.fetchModelDataForId, {
-        civit_id: model.civitai_model_id,
-      })
-    } catch (err) {
-      console.error(err)
-      console.log(model)
-    }
-  }
-
-  console.log(`[sinkin] lora list`)
-  for (const lora of data.loras) {
-    const civit_id = getIdFromUrl(lora.link)
-    console.log(`[sinkin] lora: ${lora.id} ${lora.name} civit_id:${civit_id}`)
-    if (!civit_id) console.error('[sinkin] invalid civit_id')
-    else {
-      try {
-        await ctx.runAction(internal.image.civitai.fetchModelDataForId, { civit_id })
-      } catch (err) {
-        console.error(err)
-        console.log(lora)
-      }
-    }
-  }
-
-  console.log(`[sinkin] done`)
-})
-
 export const registerAvailableModels = internalAction(async (ctx) => {
   const apiModelData = await apiGetModels()
+  const modelDataList = [
+    ...apiModelData.models.map((model) => ({ ...model, type: 'checkpoint' as const })),
+    ...apiModelData.loras.map((lora) => ({
+      ...lora,
+      civitai_model_id: getIdFromUrl(lora.link),
+      type: 'lora' as const,
+    })),
+  ]
 
   //* query imageModelProviders for existing entries
   const sinkinModelProviders = await ctx.runQuery(internal.imageModelProviders.listByProvider, {
     key: 'sinkin',
   })
 
-  //TODO loras
-  for (const modelData of apiModelData.models) {
+  for (const modelData of modelDataList) {
     if (
       sinkinModelProviders.find((p) => p.key === 'sinkin' && p.providerModelId === modelData.id)
     ) {
-      console.log(`existing record for "${modelData.name}" (${modelData.id})`)
+      console.log(`existing record for "${modelData.name}" (apiModelId: ${modelData.id})`)
       continue
     }
 
@@ -120,79 +83,63 @@ export const registerAvailableModels = internalAction(async (ctx) => {
       doc: modelProvider,
     })
 
-    //* create or update imageModel
-    //! some items without civitaiId will be duplicated
-    const imageModel = await ctx.runQuery(api.imageModels.getByCivitaiId, {
-      civitaiId: modelData.civitai_model_id,
-    })
+    //* search for existing imageModel by civitaiId
+    const civitaiId = modelData.civitai_model_id?.toString() ?? null
+    const imageModel = civitaiId
+      ? await ctx.runQuery(api.imageModels.getByCivitaiId, {
+          civitaiId,
+        })
+      : null
+
     if (imageModel) {
-      const providers = { ...imageModel.providers, sinkin: imageModelProviderId }
+      console.log(
+        `linking imageModelProvider ${modelData.name} [${imageModelProviderId}] to imageModel ${imageModel.name} [${imageModel._id}]`,
+      )
+      if (imageModel.sinkinProviderId || imageModel.sinkinApiModelId) {
+        console.error(
+          `sinkin provider already added to imageModel ${imageModel.name} [${imageModel._id}]`,
+        )
+        continue
+      }
       //* add provider to existing model
-      await ctx.runMutation(internal.imageModels.updateProviders, {
-        _id: imageModel._id,
-        providers,
-      })
-    } else {
-      //* create new imageModel from provider
-      await ctx.runMutation(internal.imageModels.create, {
+      await ctx.runMutation(internal.imageModels.update, {
         doc: {
-          name: modelData.name,
-          description: '',
-          base: 'unknown',
-          type: 'checkpoint',
-          nsfw: 'unclassified',
-          images: [],
-          tags: ['_new'],
-          civitaiId: modelData.civitai_model_id,
-          civitaiModelDataId: null,
-
-          //TODO array
-          providers: {
-            openai: null,
-            sinkin: imageModelProviderId,
-          },
-
-          hidden: false, //? start hidden
+          ...imageModel,
+          sinkinProviderId: imageModelProviderId,
+          sinkinApiModelId: modelData.id,
         },
       })
+    } else if (civitaiId) {
+      //* create new imageModel from provider
+      const newImageModel: ImageModel = {
+        name: modelData.name,
+        description: '',
+        base: modelData.name.includes('XL') ? 'sdxl' : 'sd1.5',
+        type: modelData.type,
+        nsfw: 'unclassified',
+        images: [],
+        tags: ['_new'],
 
-      //* schedule civitai lookup
-      //TODO
+        civitaiId,
+        civitaiModelDataId: null,
+
+        sinkinProviderId: imageModelProviderId,
+        sinkinApiModelId: modelData.id,
+
+        hidden: false, //? start hidden
+      }
+
+      await ctx.runMutation(internal.imageModels.create, {
+        doc: newImageModel,
+      })
+
+      console.log('new imageModel:', newImageModel)
+    } else {
+      console.warn(
+        `imageModelProvider ${modelData.name} [${imageModelProviderId}] is not linked to any imageModel`,
+      )
     }
   }
-
-  // //* normalize api model data
-  // const modelDataList: ImageModelProvider[] = [
-  //   ...apiModelData.models.map<ImageModelProvider>((data) => ({
-  //     key: 'sinkin',
-  //     providerModelId: data.id,
-  //     providerModelData: data,
-  //     imageModelId: null,
-  //     hidden: false,
-  //   })),
-
-  //   ...apiModelData.loras.map<ImageModelProvider>((data) => ({
-  //     key: 'sinkin',
-  //     providerModelId: data.id,
-  //     providerModelData: data,
-  //     imageModelId: null,
-  //     hidden: false,
-  //   })),
-  // ]
-
-  //? query imageModels for existing entries
-  // const imageModels = await ctx.runQuery(api.imageModels.list, {})
-  //* filter out models other providers
-  // const imageModelsSinkin = imageModels.filter((m) => m.providers.sinkin !== null)
-
-  //* create imageModels for new items
-  // for (const newModelData of )
-
-  //* trigger civitai model data pulls
-})
-
-export const createModelListCache = internalMutation(async (ctx, data) => {
-  return await ctx.db.insert('sinkin_model_list_cache', data)
 })
 
 const apiGetModels = async () => {
@@ -220,7 +167,7 @@ const apiGetModelsResponseSchema = z.object({
   error_code: z.number(),
   models: z
     .object({
-      civitai_model_id: z.coerce.string(),
+      civitai_model_id: z.number().optional(),
       cover_img: z.string(),
       id: z.string(),
       link: z.string(),

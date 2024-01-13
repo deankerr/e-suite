@@ -78,10 +78,8 @@ export default defineSchema(
       civitaiId: v.union(v.string(), v.null()),
       civitaiModelDataId: v.union(v.id('civitaiModelData'), v.null()),
 
-      providers: v.object({
-        openai: v.union(v.id('imageModelProviders'), v.null()), //TODO make this array
-        sinkin: v.union(v.id('imageModelProviders'), v.null()),
-      }),
+      sinkinProviderId: v.optional(v.string()),
+      sinkinApiModelId: v.optional(v.string()),
 
       hidden: v.boolean(),
     }).index('by_civitaiId', ['civitaiId']),

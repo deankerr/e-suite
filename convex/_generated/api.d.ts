@@ -21,6 +21,7 @@ import type * as image_sinkin from "../image/sinkin.js";
 import type * as imageModelProviders from "../imageModelProviders.js";
 import type * as imageModels from "../imageModels.js";
 import type * as providers from "../providers.js";
+import type * as util from "../util.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   imageModelProviders: typeof imageModelProviders;
   imageModels: typeof imageModels;
   providers: typeof providers;
+  util: typeof util;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
