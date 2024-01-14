@@ -71,8 +71,7 @@ export const fromUrl = internalMutation({
     const sourceUrl = new URL(url).toString()
     const image = await ctx.db
       .query('images')
-      .filter((q) => q.eq(q.field('sourceUrl'), sourceUrl))
-      .unique()
+      .withIndex('by_sourceUrl', (q) => q.eq("sourceUrl", sourceUrl)).unique()
     if (image) return image._id
 
     //* create imageStore record

@@ -1,6 +1,8 @@
-import { v } from 'convex/values'
+import { v, Validator } from 'convex/values'
 
-export const vEnum = <T extends ReadonlyArray<string>>(values: T) =>
+export const vEnum = <T extends ReadonlyArray<string>>(
+  values: T,
+): Validator<T[number], false, never> =>
   //@ts-expect-error this should be allowed
   v.union(...values.map((e) => v.literal(e)))
 

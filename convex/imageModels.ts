@@ -13,7 +13,7 @@ export const imageModelFields = {
   base: vEnum(modelBases),
   type: vEnum(modelTypes),
   nsfw: vEnum(nsfwRatings),
-  images: v.array(v.id('images')),
+  imageIds: v.array(v.id('images')),
   tags: v.array(v.string()),
 
   civitaiId: v.union(v.string(), v.null()),
@@ -25,10 +25,10 @@ export const imageModelFields = {
   hidden: v.boolean(),
 }
 
-export const list = query(async (ctx) => {
-  const models = await ctx.db.query('imageModels').collect()
+export const list = query(async (ctx, { dodo }: { dodo: string }) => {
+  const models = await ctx.db.query('imageModels').take(5)
   const withImagesUrls = await Promise.all(
-    models.map(async (m) => ({ ...m, images: await images.getIds(ctx, { ids: m.images }) })),
+    models.map(async (m) => ({ ...m, images: await images.getIds(ctx, { ids: m.imageIds }) })),
   )
   return withImagesUrls
 })
@@ -38,7 +38,7 @@ export const listByCivitaiId = internalQuery(
 )
 
 export const listWithProvider = query(async (ctx) => {
-  const models = await list(ctx, {})
+  const models = await list(ctx, { dodo: 'lwprov' })
   const withProviders = await Promise.all(
     models.map(async (m) => ({
       ...m,

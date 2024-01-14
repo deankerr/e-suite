@@ -65,7 +65,7 @@ export const processImage = internalAction({
       url,
       width,
       height,
-      nsfw: 'unknown',
+      nsfw: 'unknown' as const,
     }
 
     await ctx.runMutation(internal.files.images.updateStorage, { id, source })
