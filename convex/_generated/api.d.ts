@@ -14,6 +14,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as fileTable from "../fileTable.js";
+import type * as files from "../files.js";
 import type * as generations from "../generations.js";
 import type * as imageModelProviders from "../imageModelProviders.js";
 import type * as imageModels from "../imageModels.js";
@@ -31,6 +33,8 @@ import type * as util from "../util.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  fileTable: typeof fileTable;
+  files: typeof files;
   generations: typeof generations;
   imageModelProviders: typeof imageModelProviders;
   imageModels: typeof imageModels;
