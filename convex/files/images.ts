@@ -1,6 +1,6 @@
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import { internal } from '../_generated/api'
-import { internalMutation, query } from '../_generated/server'
+import { internalMutation, internalQuery, query } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
 
@@ -13,6 +13,7 @@ export const imagesFields = {
       width: v.number(),
       height: v.number(),
       nsfw: vEnum(nsfwRatings),
+      url: v.union(v.string(), v.null()),
     }),
   ),
 }
@@ -21,7 +22,28 @@ export const get = query({
   args: {
     id: v.id('images'),
   },
-  handler: async (ctx, { id }) => ctx.db.get(id),
+  handler: async (ctx, { id }) => {
+    const image = await ctx.db.get(id)
+    if (!image) throw new ConvexError({ message: 'invalid image id', id })
+
+    const source = image?.source
+      ? { ...image.source, url: await ctx.storage.getUrl(image.source.storageId) }
+      : undefined
+
+    return {
+      ...image,
+      source,
+    }
+  },
+})
+
+export const getIds = internalQuery({
+  args: {
+    ids: v.array(v.id('images')),
+  },
+  handler: async (ctx, { ids }) => {
+    return await Promise.all(ids.map(async (id) => await get(ctx, { id })))
+  },
 })
 
 export const list = query(async (ctx) => {
@@ -63,12 +85,7 @@ export const fromUrl = internalMutation({
 export const updateStorage = internalMutation({
   args: {
     id: v.id('images'),
-    source: v.object({
-      storageId: v.id('_storage'),
-      width: v.number(),
-      height: v.number(),
-      nsfw: v.string(),
-    }),
+    source: imagesFields.source,
   },
   handler: async (ctx, { id, source }) => {
     await ctx.db.patch(id, { source })

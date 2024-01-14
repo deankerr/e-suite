@@ -3,6 +3,7 @@ import { v } from 'convex/values'
 import { Doc } from './_generated/dataModel'
 import { internalMutation, internalQuery, query } from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
+import * as images from './files/images'
 import { ImageModel } from './types'
 import { raise, vEnum } from './util'
 
@@ -24,7 +25,13 @@ export const imageModelFields = {
   hidden: v.boolean(),
 }
 
-export const list = query(async (ctx) => await ctx.db.query('imageModels').collect())
+export const list = query(async (ctx) => {
+  const models = await ctx.db.query('imageModels').collect()
+  const withImagesUrls = await Promise.all(
+    models.map(async (m) => ({ ...m, images: await images.getIds(ctx, { ids: m.images }) })),
+  )
+  return withImagesUrls
+})
 
 export const listByCivitaiId = internalQuery(
   async (ctx) => await ctx.db.query('imageModels').withIndex('by_civitaiId').collect(),

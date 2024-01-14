@@ -1,16 +1,18 @@
 import { Badge, Card, Heading, Inset, Text } from '@radix-ui/themes'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import NextLink from 'next/link'
 import 'lucide-react'
+import { Image } from '@/convex/types'
 
 type ModelCardProps = {
   name: string
-  imageUrl: string
-  civitaiUrl?: string
+  images: Image[]
+  civitaiId: string | null
   tags?: string[]
 }
 
-export const ModelCard = ({ name, imageUrl, civitaiUrl, tags }: ModelCardProps) => {
+export const ModelCard = ({ name, images, civitaiId, tags }: ModelCardProps) => {
+  const url = images[0]?.source?.url
   return (
     <Card className="h-48">
       <div className="flex h-full">
@@ -18,8 +20,8 @@ export const ModelCard = ({ name, imageUrl, civitaiUrl, tags }: ModelCardProps) 
           <Heading size="3" className="text-balance">
             {name}
           </Heading>
-          {civitaiUrl && (
-            <NextLink href={civitaiUrl}>
+          {civitaiId && (
+            <NextLink href={`https://civitai.com/models/${civitaiId}`}>
               <Badge className="cursor-pointer">civit.ai</Badge>
             </NextLink>
           )}
@@ -28,7 +30,11 @@ export const ModelCard = ({ name, imageUrl, civitaiUrl, tags }: ModelCardProps) 
           </div>
         </div>
         <Inset side="right" clip="border-box" className="relative w-5/12 shrink-0">
-          <Image src={imageUrl} fill alt="model card image" style={{ objectFit: 'cover' }} />
+          {url ? (
+            <NextImage src={url} fill alt="model card image" style={{ objectFit: 'cover' }} />
+          ) : (
+            `!url: ${url}`
+          )}
         </Inset>
       </div>
     </Card>

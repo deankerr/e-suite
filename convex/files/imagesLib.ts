@@ -57,8 +57,12 @@ export const processImage = internalAction({
       })
     }
 
+    const storageId = await ctx.storage.store(blob)
+    const url = await ctx.storage.getUrl(storageId)
+
     const source = {
-      storageId: await ctx.storage.store(blob),
+      storageId,
+      url,
       width,
       height,
       nsfw: 'unknown',
