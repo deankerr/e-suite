@@ -1,9 +1,8 @@
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
-import { action, internalMutation, mutation, query } from '../_generated/server'
+import { internalMutation, mutation, query } from '../_generated/server'
+import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
-
-const nsfw = ['unknown', 'safe', 'low', 'high', 'x'] as const
 
 export const imagesFields = {
   sourceUrl: v.string(),
@@ -12,7 +11,7 @@ export const imagesFields = {
       storageId: v.id('_storage'),
       width: v.number(),
       height: v.number(),
-      nsfw: vEnum(nsfw),
+      nsfw: vEnum(nsfwRatings),
     }),
   ),
 }

@@ -1,0 +1,3 @@
+export const nsfwRatings = ['unknown', 'safe', 'low', 'high', 'x'] as const
+export const modelBases = ['sd1.5', 'sdxl', 'dalle', 'unknown'] as const
+export const modelTypes = ['checkpoint', 'lora'] as const

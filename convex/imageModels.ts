@@ -1,22 +1,17 @@
 import { WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
 import { Doc, Id } from './_generated/dataModel'
-import { internalMutation, internalQuery, query } from './_generated/server'
+import { internalAction, internalMutation, internalQuery, query } from './_generated/server'
+import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { ImageModel } from './types'
-import { raise } from './util'
+import { raise, vEnum } from './util'
 
 export const imageModelFields = {
   name: v.string(),
   description: v.string(),
-  base: v.union(v.literal('dalle'), v.literal('sd1.5'), v.literal('sdxl'), v.literal('unknown')),
-  type: v.union(v.literal('checkpoint'), v.literal('lora'), v.literal('unknown')),
-  nsfw: v.union(
-    v.literal('unclassified'),
-    v.literal('safe'),
-    v.literal('low'),
-    v.literal('high'),
-    v.literal('x'),
-  ),
+  base: vEnum(modelBases),
+  type: vEnum(modelTypes),
+  nsfw: vEnum(nsfwRatings),
   images: v.array(v.string()),
   tags: v.array(v.string()),
 
