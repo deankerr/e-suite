@@ -1,6 +1,21 @@
 import { v } from 'convex/values'
-import { api, internal } from '../_generated/api'
+import { internal } from '../_generated/api'
 import { action, internalMutation, mutation, query } from '../_generated/server'
+import { vEnum } from '../util'
+
+const nsfw = ['unknown', 'safe', 'low', 'high', 'x'] as const
+
+export const imagesFields = {
+  sourceUrl: v.string(),
+  source: v.optional(
+    v.object({
+      storageId: v.id('_storage'),
+      width: v.number(),
+      height: v.number(),
+      nsfw: vEnum(nsfw),
+    }),
+  ),
+}
 
 export const get = query({
   args: {
@@ -30,21 +45,20 @@ export const fromUrl = mutation({
     url: v.string(),
   },
   handler: async (ctx, { url }) => {
-    //todo normalize url
+    const sourceUrl = new URL(url).toString()
     const image = await ctx.db
       .query('images')
-      .filter((q) => q.eq(q.field('sourceUrl'), url))
+      .filter((q) => q.eq(q.field('sourceUrl'), sourceUrl))
       .unique()
     if (image) return image._id
 
     //* create imageStore record
-    const newImageId = await ctx.db.insert('images', { sourceUrl: url })
+    const newImageId = await ctx.db.insert('images', { sourceUrl })
     await ctx.scheduler.runAfter(0, internal.files.imagesLib.processImage, { id: newImageId })
     return newImageId
   },
 })
 
-//todo refactor with schema
 export const updateStorage = internalMutation({
   args: {
     id: v.id('images'),

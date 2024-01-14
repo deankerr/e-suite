@@ -1,7 +1,8 @@
 import { v } from 'convex/values'
 
-//@ts-expect-error this should be allowed
-export const vEnum = <T extends string>(values: T[]) => v.union(...values.map((e) => v.literal(e)))
+export const vEnum = <T extends ReadonlyArray<string>>(values: T) =>
+  //@ts-expect-error this should be allowed
+  v.union(...values.map((e) => v.literal(e)))
 
 export const raise = (message: string): never => {
   throw new Error(message)

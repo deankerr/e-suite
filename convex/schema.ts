@@ -1,10 +1,13 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
+import { imagesFields } from './files/images'
 import { imageModelProviderFields } from './imageModelProviders'
 import { imageModelFields } from './imageModels'
 
 export default defineSchema(
   {
+    images: defineTable(imagesFields),
+
     generations: defineTable({
       model_id: v.string(),
       provider_id: v.string(),

@@ -13,7 +13,7 @@ export default function ImagesPage() {
     <div className="dark:bg-grid-dark relative grid overflow-auto [&_div]:col-start-1 [&_div]:row-start-1">
       <div className="mx-auto max-w-[98vw] space-y-8 rounded p-2">
         {images?.map((image) =>
-          image?.source ? (
+          image?.source?.url ? (
             <Image
               key={image._id}
               src={image.source.url}
