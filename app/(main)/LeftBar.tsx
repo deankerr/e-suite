@@ -10,12 +10,12 @@ type LeftBarProps = {
 }
 
 export const LeftBar = ({ props }: LeftBarProps) => {
-  const models = useQuery(api.generations.listModels)
+  // const models = useQuery(api.generations.listModels)
   return (
     <div className="left-sidebar relative -left-96 z-20 h-full w-96 overflow-hidden border-r border-gray-6 bg-background shadow-[30px_0px_60px_-12px_rgba(0,0,0,0.9)] transition-all duration-300 has-[:hover]:left-0 md:left-0">
       <ScrollArea>
         <div className="flex flex-col justify-center gap-5 px-4 py-6">
-          {models?.map((model) => (
+          {/* {models?.map((model) => (
             <ModelCard
               key={model.id}
               imageUrl={model.cover_img}
@@ -23,7 +23,7 @@ export const LeftBar = ({ props }: LeftBarProps) => {
               name={model.name}
               tags={model.tags}
             />
-          ))}
+          ))} */}
         </div>
       </ScrollArea>
     </div>

@@ -1,10 +1,10 @@
-import { WithoutSystemFields } from 'convex/server'
-import { Infer, v } from 'convex/values'
+import { v } from 'convex/values'
 import z from 'zod'
 import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
-import { action, internalAction, internalMutation, internalQuery } from '../_generated/server'
-import type { ImageModel, ImageModelProvider } from '../schema'
+import { action, internalAction } from '../_generated/server'
+import type { ImageModel, ImageModelProvider } from '../types'
+import { WithoutSystemFields } from 'convex/server'
 
 //todo refactor
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
@@ -88,7 +88,7 @@ export const registerAvailableModels = internalAction(async (ctx) => {
     //* search for existing imageModel by civitaiId
     const civitaiId = modelData.civitai_model_id?.toString() ?? null
     const imageModel = civitaiId
-      ? await ctx.runQuery(api.imageModels.getByCivitaiId, {
+      ? await ctx.runQuery(internal.imageModels.getByCivitaiId, {
           civitaiId,
         })
       : null
@@ -113,7 +113,7 @@ export const registerAvailableModels = internalAction(async (ctx) => {
       })
     } else if (civitaiId) {
       //* create new imageModel from provider
-      const newImageModel: WithoutSystemFields<ImageModel> = {
+      const newImageModel:WithoutSystemFields< ImageModel> = {
         name: modelData.name,
         description: '',
         base: modelData.name.includes('XL') ? 'sdxl' : 'sd1.5',
@@ -191,7 +191,6 @@ const apiGetModelsResponseSchema = z.object({
   message: z.string().optional(),
 })
 
-export type SinkinModelListCache = z.infer<typeof apiGetModelsResponseSchema>
 export const sinkinApiGetModelsResponseSchema = apiGetModelsResponseSchema
 
 export const sinkinImageProviderData = v.object({

@@ -37,8 +37,8 @@ export const send = mutation({
     })
 
     if (model === 'dall-e-3' || model === 'dall-e-2')
-      await ctx.scheduler.runAfter(0, api.image.openai.create, { id, model, prompt })
-    else await ctx.scheduler.runAfter(0, api.image.sinkin.send, { id, model, prompt })
+      await ctx.scheduler.runAfter(0, api.providers.openai.create, { id, model, prompt })
+    else await ctx.scheduler.runAfter(0, api.providers.sinkin.send, { id, model, prompt })
   },
 })
 

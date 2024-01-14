@@ -15,12 +15,11 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as generations from "../generations.js";
-import type * as image_civitai from "../image/civitai.js";
-import type * as image_openai from "../image/openai.js";
-import type * as image_sinkin from "../image/sinkin.js";
 import type * as imageModelProviders from "../imageModelProviders.js";
 import type * as imageModels from "../imageModels.js";
-import type * as providers from "../providers.js";
+import type * as providers_openai from "../providers/openai.js";
+import type * as providers_sinkin from "../providers/sinkin.js";
+import type * as types from "../types.js";
 import type * as util from "../util.js";
 
 /**
@@ -33,12 +32,11 @@ import type * as util from "../util.js";
  */
 declare const fullApi: ApiFromModules<{
   generations: typeof generations;
-  "image/civitai": typeof image_civitai;
-  "image/openai": typeof image_openai;
-  "image/sinkin": typeof image_sinkin;
   imageModelProviders: typeof imageModelProviders;
   imageModels: typeof imageModels;
-  providers: typeof providers;
+  "providers/openai": typeof providers_openai;
+  "providers/sinkin": typeof providers_sinkin;
+  types: typeof types;
   util: typeof util;
 }>;
 export declare const api: FilterApi<

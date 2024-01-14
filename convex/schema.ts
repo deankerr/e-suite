@@ -1,36 +1,19 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
-import { Doc } from './_generated/dataModel'
-import { sinkinImageProviderData } from './image/sinkin'
-
-export type ImageModel = Doc<'imageModels'>
-export type ImageModelProvider = Doc<'imageModelProviders'>
-export type CivitaiModelData = Doc<'civitaiModelData'>
-export type ProviderKey = (typeof imageProviderKeysList)[number]
-
-const imageModelBases = v.union(
-  v.literal('dall-e'),
-  v.literal('sd1.5'),
-  v.literal('sdxl'),
-  v.literal('unknown'),
-)
-const imageModelTypes = v.union(v.literal('checkpoint'), v.literal('lora'), v.literal('unknown'))
-const nsfwRating = v.union(
-  v.literal('unclassified'),
-  v.literal('safe'),
-  v.literal('low'),
-  v.literal('high'),
-  v.literal('x'),
-)
-const imageProviderKeysList = ['openai', 'sinkin'] as const
-const imageProviderKeys = v.union(v.literal('openai'), v.literal('sinkin'))
+import { imageModelProviderFields } from './imageModelProviders'
+import { imageModelFields } from './imageModels'
 
 export default defineSchema(
   {
     generations: defineTable({
       model_id: v.string(),
       provider_id: v.string(),
-      base: imageModelBases,
+      base: v.union(
+        v.literal('dalle'),
+        v.literal('sd1.5'),
+        v.literal('sdxl'),
+        v.literal('unknown'),
+      ),
 
       num_images: v.number(),
       width: v.number(),
@@ -59,47 +42,9 @@ export default defineSchema(
       hidden: v.boolean(),
     }),
 
-    imageModels: defineTable({
-      name: v.string(),
-      description: v.string(),
-      base: imageModelBases,
-      type: imageModelTypes,
-      nsfw: nsfwRating,
-      images: v.array(
-        v.object({
-          nsfw: nsfwRating,
-          url: v.string(),
-          width: v.number(),
-          height: v.number(),
-          hash: v.string(),
-          file_id: v.union(v.id('_storage'), v.null()),
-        }),
-      ),
-      tags: v.array(v.string()),
-
-      civitaiId: v.union(v.string(), v.null()),
-      civitaiModelDataId: v.union(v.id('civitaiModelData'), v.null()),
-
-      sinkinProviderId: v.optional(v.id('imageModelProviders')),
-      sinkinApiModelId: v.optional(v.string()),
-
-      hidden: v.boolean(),
-    }).index('by_civitaiId', ['civitaiId']),
-
-    imageModelProviders: defineTable({
-      key: imageProviderKeys,
-      providerModelId: v.string(),
-      providerModelData: sinkinImageProviderData,
-      imageModelId: v.union(v.id('imageModels'), v.null()),
-      hidden: v.boolean(),
-    }).index('by_providerKey', ['key']),
-
-    civitaiModelData: defineTable({
-      civitaiId: v.string(),
-      updatedAt: v.number(),
-      json: v.union(v.string(), v.null()),
-      error: v.optional(v.string()),
-    }).index('by_civitaiId', ['civitaiId']),
+    imageModels: defineTable(imageModelFields).index('by_civitaiId', ['civitaiId']),
+    imageModelProviders: defineTable(imageModelProviderFields).index('by_providerKey', ['key']),
+    // civitaiModelData: defineTable(civitaiModelDataFields).index('by_civitaiId', ['civitaiId']),
   },
   {
     strictTableNameTypes: false, // allow tables without schema
