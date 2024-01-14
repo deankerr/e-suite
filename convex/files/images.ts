@@ -1,11 +1,12 @@
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
-import { internalMutation, mutation, query } from '../_generated/server'
+import { internalMutation, query } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
 
 export const imagesFields = {
   sourceUrl: v.string(),
+  sourceInfo: v.string(),
   source: v.optional(
     v.object({
       storageId: v.id('_storage'),
@@ -39,11 +40,12 @@ export const list = query(async (ctx) => {
   )
 })
 
-export const fromUrl = mutation({
+export const fromUrl = internalMutation({
   args: {
     url: v.string(),
+    sourceInfo: v.string(),
   },
-  handler: async (ctx, { url }) => {
+  handler: async (ctx, { url, sourceInfo }) => {
     const sourceUrl = new URL(url).toString()
     const image = await ctx.db
       .query('images')
@@ -52,7 +54,7 @@ export const fromUrl = mutation({
     if (image) return image._id
 
     //* create imageStore record
-    const newImageId = await ctx.db.insert('images', { sourceUrl })
+    const newImageId = await ctx.db.insert('images', { sourceUrl, sourceInfo })
     await ctx.scheduler.runAfter(0, internal.files.imagesLib.processImage, { id: newImageId })
     return newImageId
   },

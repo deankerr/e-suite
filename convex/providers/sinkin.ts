@@ -1,10 +1,25 @@
+import { WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 import { api, internal } from '../_generated/api'
 import type { Id } from '../_generated/dataModel'
 import { action, internalAction } from '../_generated/server'
 import type { ImageModel, ImageModelProvider } from '../types'
-import { WithoutSystemFields } from 'convex/server'
+
+export const tempAddSinkinImg = internalAction(async (ctx) => {
+  const models = await ctx.runQuery(api.imageModels.listWithProvider, {})
+  for (const m of models) {
+    if (!m.provider) continue
+    const { cover_img: url } = z
+      .object({ cover_img: z.string() })
+      .parse(m.provider.providerModelData)
+    const imageId = await ctx.runMutation(internal.files.images.fromUrl, {
+      url,
+      sourceInfo: 'provider:sinkin',
+    })
+    await ctx.runMutation(internal.imageModels.update, { doc: { _id: m._id, images: [imageId] } })
+  }
+})
 
 //todo refactor
 export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
@@ -113,13 +128,17 @@ export const registerAvailableModels = internalAction(async (ctx) => {
       })
     } else if (civitaiId) {
       //* create new imageModel from provider
-      const newImageModel:WithoutSystemFields< ImageModel> = {
+      const image = await ctx.runMutation(internal.files.images.fromUrl, {
+        url: modelData.cover_img,
+        sourceInfo: 'provider:sinkin',
+      })
+      const newImageModel: WithoutSystemFields<ImageModel> = {
         name: modelData.name,
         description: '',
         base: modelData.name.includes('XL') ? 'sdxl' : 'sd1.5',
         type: modelData.type,
         nsfw: 'unclassified',
-        images: [],
+        images: [image],
         tags: ['_new'],
 
         civitaiId,

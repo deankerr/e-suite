@@ -6,7 +6,7 @@ import { imageModelFields } from './imageModels'
 
 export default defineSchema(
   {
-    images: defineTable(imagesFields),
+    images: defineTable(imagesFields).index('by_sourceUrl', ['sourceUrl']),
 
     generations: defineTable({
       model_id: v.string(),

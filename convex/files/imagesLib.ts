@@ -21,7 +21,7 @@ export const processImage = internalAction({
     if (image.source) return id //* nothing to do
 
     //* fetch source image
-    const sourceUrl = new URL(image.sourceUrl)
+    const sourceUrl = new URL(image.sourceUrl).toString()
     const response = await fetch(sourceUrl)
     if (!response.ok)
       throw new ConvexError({ message: `${response.status} ${response.statusText}`, image })
@@ -30,7 +30,7 @@ export const processImage = internalAction({
     const contentType = response.headers.get('Content-Type')
     const blob = await response.blob()
     const metadata = imagesize(new Uint8Array(await blob.arrayBuffer()))
-    console.log("file uploaded:", {sourceUrl, contentType, size: kb(blob.size), metadata}, )
+    console.log('file uploaded:', { sourceUrl, contentType, size: kb(blob.size), metadata })
 
     if (blob.size > maxUploadBytes) {
       throw new ConvexError({

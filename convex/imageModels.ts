@@ -1,7 +1,7 @@
 import { WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
-import { Doc, Id } from './_generated/dataModel'
-import { internalAction, internalMutation, internalQuery, query } from './_generated/server'
+import { Doc } from './_generated/dataModel'
+import { internalMutation, internalQuery, query } from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { ImageModel } from './types'
 import { raise, vEnum } from './util'
@@ -12,7 +12,7 @@ export const imageModelFields = {
   base: vEnum(modelBases),
   type: vEnum(modelTypes),
   nsfw: vEnum(nsfwRatings),
-  images: v.array(v.string()),
+  images: v.array(v.id('images')),
   tags: v.array(v.string()),
 
   civitaiId: v.union(v.string(), v.null()),
@@ -29,6 +29,18 @@ export const list = query(async (ctx) => await ctx.db.query('imageModels').colle
 export const listByCivitaiId = internalQuery(
   async (ctx) => await ctx.db.query('imageModels').withIndex('by_civitaiId').collect(),
 )
+
+export const listWithProvider = query(async (ctx) => {
+  const models = await list(ctx, {})
+  const withProviders = await Promise.all(
+    models.map(async (m) => ({
+      ...m,
+      provider: m.sinkinProviderId ? await ctx.db.get(m.sinkinProviderId) : null,
+    })),
+  )
+
+  return withProviders
+})
 
 export const getByCivitaiId = internalQuery(
   async (ctx, { civitaiId }: { civitaiId: string }) =>
