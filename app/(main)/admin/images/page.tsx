@@ -2,18 +2,31 @@
 'use client'
 
 import { api } from '@/convex/_generated/api'
+import { Button, Card } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import Image from 'next/image'
 
 export default function ImagesPage() {
-  const urls = useQuery(api.fileTable.tempFilesUrls)
+  const images = useQuery(api.files.images.list)
 
   return (
     <div className="dark:bg-grid-dark relative grid overflow-auto [&_div]:col-start-1 [&_div]:row-start-1">
       <div className="mx-auto max-w-[98vw] space-y-8 rounded p-2">
-        {urls?.map((url) => (
-          <Image key={url} src={url ?? 'missingurl'} width="200" height="200" alt="ga" />
-        ))}
+        {images?.map((image) =>
+          image?.source ? (
+            <Image
+              key={image._id}
+              src={image.source.url}
+              width={image.source.width}
+              height={image.source.height}
+              alt="ga"
+            />
+          ) : (
+            <Card key={image._id} className="w-96 bg-gray-1 text-xs">
+              {JSON.stringify(image, null, 2)}
+            </Card>
+          ),
+        )}
       </div>
     </div>
   )
