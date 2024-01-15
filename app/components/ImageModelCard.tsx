@@ -5,12 +5,12 @@ import NextImage from 'next/image'
 import NextLink from 'next/link'
 
 type ImageModelCardProps = {
-  imageModel: ImageModel & { images: Image[] }
+  imageModel: ImageModel & { images?: Image[] }
 }
 
 export const ImageModelCard = ({ imageModel }: ImageModelCardProps) => {
   const { name, images, civitaiId, tags, base } = imageModel
-  const url = images[0]?.source?.url
+  const url = images ? images[0]?.source?.url : ''
   const baseBadge = baseModelBadges[base] ?? null
 
   return (

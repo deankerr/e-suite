@@ -28,7 +28,7 @@ const nsfwBadge: Record<string, BadgeColor> = {
 }
 
 export default function ImageModelsPage() {
-  const imageModels = useQuery(api.imageModels.list)
+  const imageModels = useQuery(api.imageModels.list, { take: 5, type: 'lora' })
   return (
     <div className="dark:bg-grid-dark relative grid overflow-auto [&_div]:col-start-1 [&_div]:row-start-1">
       <div className="mx-auto max-w-[98vw] space-y-8 rounded p-2">

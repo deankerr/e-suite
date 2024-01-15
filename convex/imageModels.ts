@@ -1,4 +1,4 @@
-import { WithoutSystemFields } from 'convex/server'
+import { paginationOptsValidator, WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
 import { Doc } from './_generated/dataModel'
 import { internalMutation, internalQuery, query } from './_generated/server'
@@ -25,12 +25,44 @@ export const imageModelFields = {
   hidden: v.boolean(),
 }
 
-export const list = query(async (ctx, { dodo }: { dodo: string }) => {
-  const models = await ctx.db.query('imageModels').take(5)
-  const withImagesUrls = await Promise.all(
-    models.map(async (m) => ({ ...m, images: await images.getIds(ctx, { ids: m.imageIds }) })),
-  )
-  return withImagesUrls
+export const list = query({
+  args: {
+    take: v.optional(v.number()),
+    type: v.optional(vEnum(modelTypes)),
+  },
+  handler: async (ctx, { take, type }) => {
+    const models = await ctx.db.query('imageModels').take(take ?? 10)
+
+    const withImagesUrls = await Promise.all(
+      models.map(async (m) => ({ ...m, images: await images.getIds(ctx, { ids: m.imageIds }) })),
+    )
+    return withImagesUrls
+  },
+})
+
+export const listPage = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+    type: v.optional(v.union(vEnum(modelTypes), v.literal('any'))),
+  },
+  handler: async (ctx, args) => {
+    console.log('type', args.type)
+    const results = await ctx.db
+      .query('imageModels')
+      .filter((q) => {
+        if (!args.type || args.type === 'any') return true
+        return q.eq(q.field('type'), args.type)
+      })
+      .paginate(args.paginationOpts)
+
+    const withImagesUrls = await Promise.all(
+      results.page.map(async (m) => ({
+        ...m,
+        images: await images.getIds(ctx, { ids: m.imageIds }),
+      })),
+    )
+    return { ...results, page: withImagesUrls }
+  },
 })
 
 export const listByCivitaiId = internalQuery(
@@ -38,7 +70,7 @@ export const listByCivitaiId = internalQuery(
 )
 
 export const listWithProvider = query(async (ctx) => {
-  const models = await list(ctx, { dodo: 'lwprov' })
+  const models = await list(ctx, {})
   const withProviders = await Promise.all(
     models.map(async (m) => ({
       ...m,
