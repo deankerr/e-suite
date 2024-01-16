@@ -1,63 +1,112 @@
-import type { Image, ImageModel } from '@/convex/types'
-import { Badge, Card, Heading, Inset, Text } from '@radix-ui/themes'
+import type { ImageModel, ModelType } from '@/convex/types'
+import { Badge, Card, colorProp, Heading, Inset, Skeleton, Text } from '@radix-ui/themes'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextImage from 'next/image'
 import NextLink from 'next/link'
 
 type ImageModelCardProps = {
-  imageModel: ImageModel & { images?: Image[] }
+  imageModel?: ImageModel | null | undefined
 }
 
-export const ImageModelCard = ({ imageModel }: ImageModelCardProps) => {
-  const { name, images, civitaiId, tags, base } = imageModel
-  const url = images ? images[0]?.source?.url : ''
-  const baseBadge = baseModelBadges[base] ?? null
+export const ImageModelCard = ({ imageModel: m }: ImageModelCardProps) => {
+  if (m === null) return <Card className="h-36">null</Card>
+
+  const url = m?.images ? m.images[0]?.source?.url : undefined
 
   return (
-    <Card className="h-40">
+    <Card className="h-36">
       <div className="flex h-full">
-        <Inset side="left" clip="border-box" className="relative w-6/12 shrink-0">
+        <Inset
+          side="left"
+          clip="border-box"
+          className="relative w-5/12 shrink-0 border-r border-gray-5"
+        >
           {url ? (
-            <NextImage src={url} fill alt="model card image" style={{ objectFit: 'cover' }} />
+            <NextImage
+              src={url}
+              sizes="(max-width: 1200px) 130px"
+              fill
+              alt="model card image"
+              style={{ objectFit: 'cover' }}
+              priority
+            />
           ) : (
-            `!url: ${url}`
+            <Skeleton className="h-full" />
           )}
         </Inset>
-        <div className="grow pl-6">
-          <Heading size="2" className="mr-2 inline-block text-balance">
-            {name}
+        <div className="relative grow pl-rx-3">
+          <Heading size="2" className="text-balance">
+            {m?.name ?? <Skeleton className="h-[var(--heading-line-height-2)]" />}
           </Heading>
 
-          {baseBadge}
+          <BaseModelBadge base={m?.base} />
+          <CivitaiIdLinkBadge civitaiId={m?.civitaiId} />
+          <ModelTypeBadge type={m?.type} />
 
-          {civitaiId && (
-            <Badge className="mr-2 cursor-pointer" color="blue" variant="soft">
-              <NextLink
-                href={`https://civitai.com/models/${civitaiId}`}
-                className="inline-flex w-full items-center justify-between"
-              >
-                <span className="pr-1 pt-[1px] text-blue-11">
-                  CIVIT
-                  <span className="text-gray-11">AI</span>
-                </span>
-                <ArrowUpRightSquare size={15} />
-              </NextLink>
-            </Badge>
-          )}
-
-          <div>
+          {/* <div>
             <Text className="text-sm">{tags?.join(', ')}</Text>
-          </div>
+          </div> */}
+          <Text className="absolute -bottom-2 left-2 font-code text-[8px] text-gold-5">
+            {m?._id}
+          </Text>
         </div>
       </div>
     </Card>
   )
 }
 
-const baseModelBadges = {
-  'sd1.5': <Badge color="purple">Stable Diffusion 1.5</Badge>,
-  sdxl: <Badge color="crimson">Stable Diffusion XL</Badge>,
-  dalle2: <Badge color="grass">DALL·E 2</Badge>,
-  dalle3: <Badge color="jade">DALL·E 3</Badge>,
-  unknown: <Badge color="red">Unknown</Badge>,
-} as const
+type BaseModelBadgeProps = {
+  base: ImageModel['base'] | undefined
+}
+const BaseModelBadge = ({ base }: BaseModelBadgeProps) => {
+  if (!base) return null
+
+  const baseColors: Record<ImageModel['base'], (typeof colorProp.values)[number]> = {
+    dalle2: 'grass',
+    dalle3: 'jade',
+    'sd1.5': 'purple',
+    sdxl: 'crimson',
+    unknown: 'red',
+  }
+
+  const baseName: Record<ImageModel['base'], string> = {
+    dalle2: 'DALL-E 2',
+    dalle3: 'DALL-E 3',
+    'sd1.5': 'StableDiffusion 1.5',
+    sdxl: 'StableDiffusion XL',
+    unknown: 'unknown',
+  }
+
+  return <Badge color={baseColors[base]}>{baseName[base]}</Badge>
+}
+
+type ModelTypeBadgeProps = {
+  type?: ModelType
+}
+const ModelTypeBadge = ({ type }: ModelTypeBadgeProps) => {
+  if (!type) return null
+
+  return <Badge>{type}</Badge>
+}
+
+type CivitaiIdLinkBadgeProps = {
+  civitaiId?: string | null
+}
+const CivitaiIdLinkBadge = ({ civitaiId }: CivitaiIdLinkBadgeProps) => {
+  if (!civitaiId) return null
+
+  return (
+    <Badge className="mr-2 cursor-pointer" color="blue" variant="soft">
+      <NextLink
+        href={`https://civitai.com/models/${civitaiId}`}
+        className="inline-flex w-full items-center justify-between"
+      >
+        <span className="pr-1 pt-[1px]">
+          CIVIT
+          <span className="text-blue-9">AI</span>
+        </span>
+        <ArrowUpRightSquare size={15} />
+      </NextLink>
+    </Badge>
+  )
+}

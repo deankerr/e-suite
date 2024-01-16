@@ -1,7 +1,7 @@
 import { serverDao } from '@/data/server'
 import { Flex } from '@radix-ui/themes'
 import { Suspense } from 'react'
-import { Spinner } from '../ui/Spinner'
+import { Spinner } from '../../app/components/ui/Spinner'
 import { ChatSession } from './ChatSession'
 
 type ChatFrameProps = {

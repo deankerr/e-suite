@@ -1,5 +1,4 @@
 import { serverDao } from '@/data/server'
-import { Spinner } from '../ui/Spinner'
 import { ChatSession } from './ChatSession'
 
 type ChatProps = {}

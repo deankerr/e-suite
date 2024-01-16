@@ -1,7 +1,7 @@
 import { paginationOptsValidator, WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
-import { Doc } from './_generated/dataModel'
-import { internalMutation, internalQuery, query } from './_generated/server'
+import { Doc, Id } from './_generated/dataModel'
+import { internalMutation, internalQuery, query, QueryCtx } from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import * as images from './files/images'
 import { ImageModel } from './types'
@@ -25,6 +25,37 @@ export const imageModelFields = {
   hidden: v.boolean(),
 }
 
+const getWithImages = async (ctx: QueryCtx, { id }: { id: Id<'imageModels'> }) => {
+  const imageModel = await ctx.db.get(id)
+  if (!imageModel) return imageModel
+  const images = await Promise.all(imageModel.imageIds.map(async (id) => await ctx.db.get(id)))
+  return {
+    ...imageModel,
+    images,
+  }
+}
+
+const withImages = async (
+  ctx: QueryCtx,
+  { imageModels }: { imageModels: Doc<'imageModels'>[] },
+) => {
+  return await Promise.all(
+    imageModels.map(async (imageModel) => {
+      return {
+        ...imageModel,
+        images: await Promise.all(imageModel.imageIds.map(async (id) => await ctx.db.get(id))),
+      }
+    }),
+  )
+}
+
+export const get = query({
+  args: {
+    id: v.id('imageModels'),
+  },
+  handler: async (ctx, { id }) => await getWithImages(ctx, { id }),
+})
+
 export const list = query({
   args: {
     take: v.optional(v.number()),
@@ -33,10 +64,7 @@ export const list = query({
   handler: async (ctx, { take, type }) => {
     const models = await ctx.db.query('imageModels').take(take ?? 10)
 
-    const withImagesUrls = await Promise.all(
-      models.map(async (m) => ({ ...m, images: await images.getIds(ctx, { ids: m.imageIds }) })),
-    )
-    return withImagesUrls
+    return await withImages(ctx, { imageModels: models })
   },
 })
 
@@ -46,7 +74,6 @@ export const listPage = query({
     type: v.optional(v.union(vEnum(modelTypes), v.literal('any'))),
   },
   handler: async (ctx, args) => {
-    console.log('type', args.type)
     const results = await ctx.db
       .query('imageModels')
       .filter((q) => {

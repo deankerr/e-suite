@@ -1,6 +1,6 @@
 import './globals.css'
-import { ClientProviders } from '@/components/util/ClientProviders'
-import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
+import { ClientProviders } from '@/app/components/util/ClientProviders'
+import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreakpointIndicator'
 import { Theme, ThemePanel } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'

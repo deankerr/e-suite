@@ -21,7 +21,7 @@ export const LeftBar = ({ props }: LeftBarProps) => {
     isLoading,
   } = usePaginatedQuery(api.imageModels.listPage, { type }, { initialNumItems: 5 })
   return (
-    <div className="left-sidebar relative -left-96 z-20 h-full w-96 overflow-hidden border-r border-gray-6 bg-background shadow-[30px_0px_60px_-12px_rgba(0,0,0,0.9)] transition-all duration-300 has-[:hover]:left-0 md:left-0">
+    <div className="left-sidebar relative -left-96 z-20 hidden h-full w-96 overflow-hidden border-r border-gray-6 bg-background shadow-[30px_0px_60px_-12px_rgba(0,0,0,0.9)] transition-all duration-300 has-[:hover]:left-0 md:left-0">
       <div className="text-xs">
         status: {status} | isLoading: {String(isLoading)} | type: {type}
       </div>

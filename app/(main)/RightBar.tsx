@@ -1,5 +1,7 @@
 'use client'
 
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
 import * as Label from '@radix-ui/react-label'
 import {
   Avatar,
@@ -10,48 +12,27 @@ import {
   IconButton,
   Select,
   Separator,
+  Skeleton,
   Slider,
   Text,
   TextField,
 } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
+import { ImageModelCard } from '../components/ImageModelCard'
 
 type RightBarProps = {
   props?: any
 }
 
 export const RightBar = ({ props }: RightBarProps) => {
+  const imageModels = useQuery(api.imageModels.list, { take: 1, type: 'checkpoint' })
+  const imageModel = imageModels ? imageModels[0] : undefined
+
   return (
     <div className="right-sidebar relative right-0 z-20 h-full w-96 place-self-end overflow-y-auto overflow-x-hidden border-l border-gray-6 bg-background shadow-[-30px_0px_60px_-12px_rgba(0,0,0,0.9)] transition-all duration-300">
       <div className="flex flex-col justify-center gap-5 py-6">
-        <div className="space-y-4">
-          {/* asChild combobox? */}
-          <Card className="mx-auto w-60">
-            <Flex gap="3" align="center">
-              <Avatar size="3" src="" radius="full" fallback="SD" />
-              <Box>
-                <Text as="div" size="2" weight="bold">
-                  Stable Diffusion 1.5
-                </Text>
-                <Text as="div" size="2" color="gray">
-                  Together.ai
-                </Text>
-              </Box>
-            </Flex>
-          </Card>
-
-          <Card className="mx-auto w-60">
-            <Flex gap="3" align="center">
-              <Avatar size="3" src="" radius="full" fallback="SD" />
-              <Box>
-                <Text as="div" size="2" weight="bold">
-                  Realistic Visions 6.0
-                </Text>
-                <Text as="div" size="2" color="gray">
-                  Together.ai
-                </Text>
-              </Box>
-            </Flex>
-          </Card>
+        <div className="space-y-4 px-4">
+          <ImageModelCard imageModel={imageModel} />
         </div>
 
         <Separator size="4" className="mx-2" />

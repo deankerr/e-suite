@@ -51,5 +51,6 @@ export default defineSchema(
   },
   {
     strictTableNameTypes: false, // allow tables without schema
+    schemaValidation: false,
   },
 )
