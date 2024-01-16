@@ -1,30 +1,26 @@
 import { ImageModel } from '@/convex/types'
 import * as Label from '@radix-ui/react-label'
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  IconButton,
-  ScrollArea,
-  Select,
-  Separator,
-  Skeleton,
-  Slider,
-  Text,
-  TextArea,
-  TextField,
-} from '@radix-ui/themes'
+import { Button, Heading, ScrollArea, Select, Slider, TextArea, TextField } from '@radix-ui/themes'
+import { useState } from 'react'
 
 type GenerationParamsProps = {
   imageModel?: ImageModel
 }
 
 export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
-  if (!imageModel) return null
   const controlCn = 'flex flex-col gap-1'
+  const labelCn = 'text-xs font-medium'
+
+  const [prompt, setPrompt] = useState('')
+  const [negativePrompt, setNegativePrompt] = useState('')
+  const [dimensions, setDimensions] = useState('portrait')
+  const [numImages, setNumImages] = useState(4)
+  const [scheduler, setScheduler] = useState<string>(sinkinSchedulers[0][0])
+  const [seed, setSeed] = useState('')
+  const [steps, setSteps] = useState<[number]>([30])
+  const [guidance, setGuidance] = useState<[number]>([7.5])
+
+  if (!imageModel) return null
   return (
     <>
       <div className="hidden font-code text-[8px] text-gold-8">
@@ -39,26 +35,35 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
 
       <Heading size="2">Parameters</Heading>
       <ScrollArea>
-        <form onSubmit={(e) => {}} className="flex flex-col gap-3 px-3 py-1">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+          className="flex flex-col gap-3 px-3 py-1"
+        >
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="prompt">
+            <Label.Root className={labelCn} htmlFor="prompt">
               Prompt
             </Label.Root>
-            <TextArea name="prompt" />
+            <TextArea name="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
           </div>
 
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="negative_prompt">
+            <Label.Root className={labelCn} htmlFor="negative_prompt">
               Negative prompt
             </Label.Root>
-            <TextArea name="negative_prompt" />
+            <TextArea
+              name="negative_prompt"
+              value={negativePrompt}
+              onChange={(e) => setNegativePrompt(e.target.value)}
+            />
           </div>
 
           <div className="flex flex-col">
-            <Label.Root className="text-sm" htmlFor="dimensions">
+            <Label.Root className={labelCn} htmlFor="dimensions">
               Dimensions
             </Label.Root>
-            <Select.Root defaultValue="portrait" name="dimensions">
+            <Select.Root name="dimensions" value={dimensions} onValueChange={setDimensions}>
               <Select.Trigger />
               <Select.Content>
                 <Select.Item value="portrait">Portrait (512px x 768px)</Select.Item>
@@ -69,27 +74,32 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
           </div>
 
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="num_images">
+            <Label.Root className={labelCn} htmlFor="num_images">
               Batch size
             </Label.Root>
-            <TextField.Input value={4} name="num_images" disabled />
+            <TextField.Input value={numImages} name="num_images" disabled />
           </div>
 
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="seed">
+            <Label.Root className={labelCn} htmlFor="seed">
               Seed
             </Label.Root>
-            <TextField.Input size="2" placeholder="123456" name="seed" />
+            <TextField.Input
+              size="2"
+              name="seed"
+              value={seed}
+              onChange={(e) => setSeed(e.target.value)}
+            />
           </div>
 
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="sampler">
-              Sampler
+            <Label.Root className={labelCn} htmlFor="scheduler">
+              Scheduler
             </Label.Root>
-            <Select.Root name="sampler">
+            <Select.Root name="scheduler" value={scheduler} onValueChange={setScheduler}>
               <Select.Trigger />
               <Select.Content>
-                {sinkinSamplers.map(([value]) => (
+                {sinkinSchedulers.map(([value]) => (
                   <Select.Item key={value} value={value}>
                     {value}
                   </Select.Item>
@@ -99,17 +109,30 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
           </div>
 
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="steps">
+            <Label.Root className={labelCn} htmlFor="steps">
               Steps
             </Label.Root>
-            <Slider min={1} max={50} defaultValue={[30]} name="steps" className="" />
+            <Slider
+              min={1}
+              max={50}
+              name="steps"
+              value={steps}
+              onValueChange={([v]) => setSteps([v!])}
+            />
           </div>
 
           <div className={controlCn}>
-            <Label.Root className="text-sm" htmlFor="scale">
+            <Label.Root className={labelCn} htmlFor="scale">
               Guidance scale
             </Label.Root>
-            <Slider min={1} max={20} step={0.5} defaultValue={[7.5]} name="scale" className="" />
+            <Slider
+              min={1}
+              max={20}
+              step={0.5}
+              name="scale"
+              value={guidance}
+              onValueChange={([v]) => setGuidance([v!])}
+            />
           </div>
         </form>
       </ScrollArea>
@@ -117,7 +140,7 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
   )
 }
 
-const sinkinSamplers = [
+const sinkinSchedulers = [
   ['DPMSolverMultistep'],
   ['K_EULER_ANCESTRAL'],
   ['DDIM'],
