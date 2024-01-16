@@ -1,20 +1,27 @@
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel, ModelType } from '@/convex/types'
+import { cn } from '@/lib/utils'
 import { Badge, Card, colorProp, Heading, Inset, Skeleton, Text } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextImage from 'next/image'
 import NextLink from 'next/link'
 
 type ImageModelCardProps = {
+  id?: Id<'imageModels'>
   imageModel?: ImageModel | null | undefined
-}
+} & React.ComponentProps<typeof Card>
 
-export const ImageModelCard = ({ imageModel: m }: ImageModelCardProps) => {
-  if (m === null) return <Card className="h-36">null</Card>
+export const ImageModelCard = ({ className, id, imageModel, ...props }: ImageModelCardProps) => {
+  const gm = useQuery(api.imageModels.get, id ? { id } : 'skip')
+  const m = imageModel ?? gm
+  if (m === null) return <Card className="h-36 flex-none">null</Card>
 
   const url = m?.images ? m.images[0]?.source?.url : undefined
 
   return (
-    <Card className="h-36">
+    <Card className={cn('h-36 flex-none', className)} {...props}>
       <div className="flex h-full">
         <Inset
           side="left"
@@ -46,7 +53,7 @@ export const ImageModelCard = ({ imageModel: m }: ImageModelCardProps) => {
           {/* <div>
             <Text className="text-sm">{tags?.join(', ')}</Text>
           </div> */}
-          <Text className="absolute -bottom-2 left-2 font-code text-[8px] text-gold-5">
+          <Text className="absolute -bottom-2 left-3 font-code text-[8px] text-gold-5">
             {m?._id}
           </Text>
         </div>

@@ -68,27 +68,22 @@ export const list = query({
   },
 })
 
-export const listPage = query({
+export const page = query({
   args: {
     paginationOpts: paginationOptsValidator,
-    type: v.optional(v.union(vEnum(modelTypes), v.literal('any'))),
+    type: v.optional(vEnum(modelTypes)),
   },
   handler: async (ctx, args) => {
-    const results = await ctx.db
+    const pageResult = await ctx.db
       .query('imageModels')
       .filter((q) => {
-        if (!args.type || args.type === 'any') return true
+        if (!args.type) return true
         return q.eq(q.field('type'), args.type)
       })
       .paginate(args.paginationOpts)
 
-    const withImagesUrls = await Promise.all(
-      results.page.map(async (m) => ({
-        ...m,
-        images: await images.getIds(ctx, { ids: m.imageIds }),
-      })),
-    )
-    return { ...results, page: withImagesUrls }
+    const modelsWithImages = await withImages(ctx, { imageModels: pageResult.page })
+    return { ...pageResult, page: modelsWithImages }
   },
 })
 

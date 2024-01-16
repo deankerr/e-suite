@@ -1,36 +1,73 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/ImageModelCard'
 import { api } from '@/convex/_generated/api'
-import { ScrollArea } from '@radix-ui/themes'
-import { usePaginatedQuery, useQuery } from 'convex/react'
-import { useRef, useState } from 'react'
-import { Select } from '../components/ui/Select'
+import { Id } from '@/convex/_generated/dataModel'
+import { ImageModel } from '@/convex/types'
+import { Button, Card, ScrollArea, Separator } from '@radix-ui/themes'
+import { usePaginatedQuery } from 'convex/react'
+import { useState } from 'react'
+import { ImageModelCard } from '../components/ImageModelCard'
+import { Sidebar } from '../components/Sidebar'
 
 type LeftBarProps = {
   props?: any
 }
 
+// has-[:hover]:left-0 md:left-0
 export const LeftBar = ({ props }: LeftBarProps) => {
-  // const models = useQuery(api.imageModels.list, { take: 5 })
-  const [type, setType] = useState<'any' | 'checkpoint' | 'lora' | undefined>('any')
-  const {
-    results: models,
-    status,
-    loadMore,
-    isLoading,
-  } = usePaginatedQuery(api.imageModels.listPage, { type }, { initialNumItems: 5 })
   return (
-    <div className="left-sidebar relative -left-96 z-20 hidden h-full w-96 overflow-hidden border-r border-gray-6 bg-background shadow-[30px_0px_60px_-12px_rgba(0,0,0,0.9)] transition-all duration-300 has-[:hover]:left-0 md:left-0">
-      <div className="text-xs">
-        status: {status} | isLoading: {String(isLoading)} | type: {type}
-      </div>
-      <Select values={[['any'], ['checkpoint'], ['lora']] as const} onValueChange={setType} />
-      <ScrollArea>
-        <div className="flex flex-col justify-center gap-5 px-4 py-6">
-          {models?.map((model) => <ImageModelCard key={model._id} imageModel={model} />)}
+    <Sidebar side="left" className="overflow-clip px-4">
+      <SelectImageModel />
+    </Sidebar>
+  )
+}
+
+type SelectImageModelProps = {
+  props?: any
+}
+
+export const SelectImageModel = ({ props }: SelectImageModelProps) => {
+  const [selectedModelId, setSelectedModelId] = useState<Id<'imageModels'>>()
+  const [selectedModel, setSelectedModel] = useState<ImageModel>()
+
+  const { results, status, loadMore, isLoading } = usePaginatedQuery(
+    api.imageModels.page,
+    {},
+    { initialNumItems: 10 },
+  )
+
+  return (
+    <>
+      <div className="text-[10px]">selectedModelId: {selectedModelId}</div>
+
+      {selectedModel ? (
+        <ImageModelCard imageModel={selectedModel} />
+      ) : (
+        <Card className="h-36 flex-none">select a model :)</Card>
+      )}
+
+      <Separator className="w-full" />
+
+      <ScrollArea className="h-full bg-gray-1">
+        <div className="font-code text-[8px]">
+          status: {status} | isLoading: {String(isLoading)}
+        </div>
+
+        <div className="space-y-4">
+          {results.map((m) => (
+            <ImageModelCard
+              key={m._id}
+              imageModel={m}
+              className="cursor-pointer"
+              onClick={() => {
+                setSelectedModelId(m._id)
+                setSelectedModel(m)
+              }}
+            />
+          ))}
+          <Button onClick={() => loadMore(10)}>Load more</Button>
         </div>
       </ScrollArea>
-    </div>
+    </>
   )
 }
