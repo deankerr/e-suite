@@ -2,7 +2,17 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel, ModelType } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { Badge, Card, colorProp, Heading, Inset, Skeleton, Text } from '@radix-ui/themes'
+import {
+  Badge,
+  Button,
+  Card,
+  colorProp,
+  Heading,
+  IconButton,
+  Inset,
+  Skeleton,
+  Text,
+} from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextImage from 'next/image'
@@ -11,17 +21,24 @@ import NextLink from 'next/link'
 type ImageModelCardProps = {
   id?: Id<'imageModels'>
   imageModel?: ImageModel | null | undefined
+  buttonSash?: React.ReactNode
 } & React.ComponentProps<typeof Card>
 
-export const ImageModelCard = ({ className, id, imageModel, ...props }: ImageModelCardProps) => {
-  const gm = useQuery(api.imageModels.get, id ? { id } : 'skip')
-  const m = imageModel ?? gm
+export const ImageModelCard = ({
+  className,
+  id,
+  imageModel,
+  buttonSash,
+  ...props
+}: ImageModelCardProps) => {
+  const modelById = useQuery(api.imageModels.get, id ? { id } : 'skip')
+  const m = imageModel ?? modelById
   if (m === null) return <Card className="h-36 flex-none">null</Card>
 
   const url = m?.images ? m.images[0]?.source?.url : undefined
 
   return (
-    <Card className={cn('h-36 flex-none', className)} {...props}>
+    <Card className={cn('relative h-36 flex-none', className)} {...props}>
       <div className="flex h-full">
         <Inset
           side="left"
@@ -41,6 +58,7 @@ export const ImageModelCard = ({ className, id, imageModel, ...props }: ImageMod
             <Skeleton className="h-full" />
           )}
         </Inset>
+
         <div className="relative grow pl-rx-3">
           <Heading size="2" className="text-balance">
             {m?.name ?? <Skeleton className="h-[var(--heading-line-height-2)]" />}
@@ -50,22 +68,22 @@ export const ImageModelCard = ({ className, id, imageModel, ...props }: ImageMod
           <CivitaiIdLinkBadge civitaiId={m?.civitaiId} />
           <ModelTypeBadge type={m?.type} />
 
-          {/* <div>
-            <Text className="text-sm">{tags?.join(', ')}</Text>
-          </div> */}
-          <Text className="absolute -bottom-2 left-3 font-code text-[8px] text-gold-5">
+          <div className="absolute -bottom-2 -ml-rx-4 w-full text-center font-code text-[8px] text-gold-5">
             {m?._id}
-          </Text>
+          </div>
         </div>
       </div>
+
+      {buttonSash && (
+        <Button className="absolute inset-0 h-full cursor-pointer" variant="ghost" color="gold">
+          <div className="ml-auto flex h-full items-center bg-accent-2A">{buttonSash}</div>
+        </Button>
+      )}
     </Card>
   )
 }
 
-type BaseModelBadgeProps = {
-  base: ImageModel['base'] | undefined
-}
-const BaseModelBadge = ({ base }: BaseModelBadgeProps) => {
+const BaseModelBadge = ({ base }: { base?: ImageModel['base'] }) => {
   if (!base) return null
 
   const baseColors: Record<ImageModel['base'], (typeof colorProp.values)[number]> = {
@@ -87,19 +105,12 @@ const BaseModelBadge = ({ base }: BaseModelBadgeProps) => {
   return <Badge color={baseColors[base]}>{baseName[base]}</Badge>
 }
 
-type ModelTypeBadgeProps = {
-  type?: ModelType
-}
-const ModelTypeBadge = ({ type }: ModelTypeBadgeProps) => {
+const ModelTypeBadge = ({ type }: { type?: ModelType }) => {
   if (!type) return null
-
   return <Badge>{type}</Badge>
 }
 
-type CivitaiIdLinkBadgeProps = {
-  civitaiId?: string | null
-}
-const CivitaiIdLinkBadge = ({ civitaiId }: CivitaiIdLinkBadgeProps) => {
+const CivitaiIdLinkBadge = ({ civitaiId }: { civitaiId?: string | null }) => {
   if (!civitaiId) return null
 
   return (

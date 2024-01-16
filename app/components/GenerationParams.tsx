@@ -14,8 +14,6 @@ import {
   Text,
   TextField,
 } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
-import { ImageModelCard } from '../components/ImageModelCard'
 
 type GenerationParamsProps = {
   imageModel?: ImageModel
@@ -24,8 +22,8 @@ type GenerationParamsProps = {
 export const GenerationParams = ({ imageModel }: GenerationParamsProps) => {
   return (
     <>
-      <div className="space-y-4 px-4">
-        <ImageModelCard imageModel={imageModel} />
+      <div className="font-code text-[8px] text-gold-8">
+        {'<GenerationParams>'} imageModel._id:{imageModel?._id}
       </div>
 
       <Separator size="4" className="mx-2" />
