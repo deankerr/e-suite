@@ -21,9 +21,7 @@ export const Sidebar = ({ children, className, side }: SidebarProps) => {
         variant[side],
       )}
     >
-      <ScrollArea className="h-full" type="hover" scrollbars="vertical">
-        <div className={cn('flex h-full flex-col justify-center p-3', className)}>{children}</div>
-      </ScrollArea>
+      <div className={cn('flex h-full flex-col p-3', className)}>{children}</div>
     </div>
   )
 }
