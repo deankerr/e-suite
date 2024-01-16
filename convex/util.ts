@@ -1,10 +1,11 @@
 import { v, Validator } from 'convex/values'
 
-export const vEnum = <T extends ReadonlyArray<string>>(
+export const vEnum = <const T extends ReadonlyArray<string>>(
   values: T,
-): Validator<T[number], false, never> =>
+): Validator<T[number], false, never> => {
   //@ts-expect-error this should be allowed
-  v.union(...values.map((e) => v.literal(e)))
+  return v.union(...values.map((e) => v.literal(e)))
+}
 
 export const raise = (message: string): never => {
   throw new Error(message)
