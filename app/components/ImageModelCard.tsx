@@ -22,6 +22,7 @@ type ImageModelCardProps = {
   id?: Id<'imageModels'>
   imageModel?: ImageModel | null | undefined
   buttonSash?: React.ReactNode
+  showImage?: boolean
 } & React.ComponentProps<typeof Card>
 
 export const ImageModelCard = ({
@@ -29,6 +30,7 @@ export const ImageModelCard = ({
   id,
   imageModel,
   buttonSash,
+  showImage = true,
   ...props
 }: ImageModelCardProps) => {
   const modelById = useQuery(api.imageModels.get, id ? { id } : 'skip')
@@ -38,12 +40,12 @@ export const ImageModelCard = ({
   const url = m?.images ? m.images[0]?.source?.url : undefined
 
   return (
-    <Card className={cn('relative h-36 flex-none', className)} {...props}>
+    <Card className={cn('relative flex-none', showImage ? 'h-36' : 'h-24', className)} {...props}>
       <div className="flex h-full">
         <Inset
           side="left"
           clip="border-box"
-          className="relative w-5/12 shrink-0 border-r border-gray-5"
+          className={cn('relative w-5/12 shrink-0 border-r border-gray-5', !showImage && 'hidden')}
         >
           {url ? (
             <NextImage
@@ -59,7 +61,7 @@ export const ImageModelCard = ({
           )}
         </Inset>
 
-        <div className="relative grow pl-rx-3">
+        <div className={cn('relative grow', showImage && 'pl-rx-3')}>
           <Heading size="2" className="text-balance">
             {m?.name ?? <Skeleton className="h-[var(--heading-line-height-2)]" />}
           </Heading>

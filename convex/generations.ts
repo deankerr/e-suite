@@ -1,7 +1,8 @@
-import { defineTable, paginationOptsValidator } from 'convex/server'
+import { defineTable, DocumentByName, paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
-import { internalMutation, mutation, query } from './_generated/server'
+import { Doc, Id, TableNames } from './_generated/dataModel'
+import { internalMutation, mutation, MutationCtx, query, QueryCtx } from './_generated/server'
 import { generationStatus } from './constants'
 import { vEnum } from './util'
 
@@ -51,7 +52,6 @@ export const pageWithImages = query({
       result.page.map(async (generation) => {
         return {
           ...generation,
-          //todo try rm
           images: await Promise.all(generation.imageIds.map(async (id) => await ctx.db.get(id))),
         }
       }),
@@ -63,6 +63,46 @@ export const pageWithImages = query({
     }
   },
 })
+
+export const page = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    const result = await ctx.db.query('generations').paginate(paginationOpts)
+
+    const pageAndRelations = await Promise.all(
+      result.page.map(async (generation) => ({
+        generation,
+        images: await Promise.all(generation.imageIds.map(async (id) => await ctx.db.get(id))),
+        imageModel: await ctx.db.get(generation.imageModelId),
+        imageModelProvider: await ctx.db.get(generation.imageModelProviderId),
+      })),
+    )
+
+    return { ...result, page: pageAndRelations }
+  },
+})
+
+// const resolveDocument = async <T extends TableNames, I extends Id<T> | Id<T>[]>(
+//   ctx: QueryCtx | MutationCtx,
+//   docIds: I,
+// ): Promise<I extends Id<T>[] ? (Doc<T> | null)[] : Doc<T> | null> => {
+//   if (Array.isArray(docIds))
+//     return await Promise.all(docIds.map(async (id) => await ctx.db.get(id)))
+//   return await ctx.db.get(docIds)
+// }
+
+// const resolveDocuments = async <T extends TableNames, I extends Id<T>[], R extends Doc<T>[]>(
+//   ctx: QueryCtx | MutationCtx,
+//   docIds: I,
+// ): Promise<Awaited<R>> => {
+//   return await Promise.all(docIds.map(async (id) => await ctx.db.get(id)))
+// }
+
+// const dresolve = async <T extends TableNames, R extends >(ctx: QueryCtx | MutationCtx, docs: Doc<T>[]) => {
+
+// }
 
 export const get = query({
   args: { id: v.id('generations') },

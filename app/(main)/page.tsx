@@ -7,11 +7,11 @@ export default function HomePage() {
   // HomePage
 
   return (
-    <div className="dark:bg-grid-dark relative grid overflow-hidden [&_div]:col-start-1 [&_div]:row-start-1">
+    <main className="dark:bg-grid-dark relative grid overflow-hidden [&>*]:col-start-1 [&>*]:row-start-1">
       <GenerationFeed />
       {/* <LeftBar /> */}
       <RightBar />
       {/* <CommandBar /> */}
-    </div>
+    </main>
   )
 }

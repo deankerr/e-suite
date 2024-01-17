@@ -61,7 +61,13 @@ export const list = query({
     type: v.optional(vEnum(modelTypes)),
   },
   handler: async (ctx, { take, type }) => {
-    const models = await ctx.db.query('imageModels').take(take ?? 10)
+    const models = await ctx.db
+      .query('imageModels')
+      .filter((q) => {
+        if (!type) return true
+        return q.eq(q.field('type'), type)
+      })
+      .take(take ?? 100)
 
     return await withImages(ctx, { imageModels: models })
   },

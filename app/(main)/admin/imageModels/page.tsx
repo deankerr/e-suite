@@ -1,11 +1,12 @@
 'use client'
 
+import { ImageModelCard } from '@/app/components/ImageModelCard'
 import { Select } from '@/app/components/ui/Select'
 import { api } from '@/convex/_generated/api'
 import { ImageModel } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { Badge, Card, colorProp, Heading, TextArea } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
+import { Badge, Button, Card, colorProp, Heading, TextArea } from '@radix-ui/themes'
+import { usePaginatedQuery, useQuery } from 'convex/react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import z from 'zod'
@@ -28,25 +29,27 @@ const nsfwBadge: Record<string, BadgeColor> = {
 }
 
 export default function ImageModelsPage() {
-  const imageModels = useQuery(api.imageModels.list, { take: 5, type: 'lora' })
+  // const {
+  //   results: imageModels,
+  //   status,
+  //   isLoading,
+  //   loadMore,
+  // } = usePaginatedQuery(api.imageModels.page, { type: 'checkpoint' }, { initialNumItems: 12 })
+  const imageModels = useQuery(api.imageModels.list, { type: 'checkpoint' })
   return (
-    <div className="dark:bg-grid-dark relative grid overflow-auto [&_div]:col-start-1 [&_div]:row-start-1">
-      <div className="mx-auto max-w-[98vw] space-y-8 rounded p-2">
+    <div className="dark:bg-grid-dark relative grid overflow-auto [&_>_div]:col-start-1 [&_>_div]:row-start-1">
+      <div className="grid grid-cols-2 gap-6 self-start justify-self-center p-6 lg:grid-cols-4">
         {imageModels?.map((model) => {
-          // const [civitaiMain, versions] = parseCivitaiData(model.civitai)
-          return (
-            <div key={model._id} className="border-4 border-accent-8 p-6">
-              <div className="flex gap-4">
-                <ImageModelConfigCard model={model} />
-                {/* <ImageProviderDataCard imageProvider={model.sinkin} /> */}
-                {/* {civitaiMain} */}
-              </div>
-              {/* <div className="flex max-w-[99vw] gap-4 overflow-x-auto bg-gray-1A py-2">
-                {...versions}
-              </div> */}
-            </div>
-          )
+          return <ImageModelCard key={model._id} imageModel={model} className="w-80" />
         })}
+
+        {/* {isLoading ? (
+          <Button disabled>Loading</Button>
+        ) : status === 'CanLoadMore' ? (
+          <Button onClick={() => loadMore(12)}>load more</Button>
+        ) : (
+          <Button disabled>exhausted</Button>
+        )} */}
       </div>
     </div>
   )
