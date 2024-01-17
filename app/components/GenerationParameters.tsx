@@ -1,6 +1,8 @@
+import { api } from '@/convex/_generated/api'
 import { ImageModel } from '@/convex/types'
 import * as Label from '@radix-ui/react-label'
 import { Button, Heading, ScrollArea, Select, Slider, TextArea, TextField } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { useState } from 'react'
 
 type GenerationParamsProps = {
@@ -13,12 +15,37 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
 
   const [prompt, setPrompt] = useState('')
   const [negativePrompt, setNegativePrompt] = useState('')
-  const [dimensions, setDimensions] = useState('portrait')
+  const [dimensions, setDimensions] = useState('512x768')
   const [numImages, setNumImages] = useState(4)
   const [scheduler, setScheduler] = useState<string>(sinkinSchedulers[0][0])
   const [seed, setSeed] = useState('')
   const [steps, setSteps] = useState<[number]>([30])
   const [guidance, setGuidance] = useState<[number]>([7.5])
+
+  const create = useMutation(api.generations.create)
+
+  const handleClick = async () => {
+    if (!imageModel) return console.error('no imageModel set')
+    const [width, height] = dimensions.split('x')
+    try {
+      const result = await create({
+        imageModelId: imageModel._id,
+        imageModelProviderId: imageModel.sinkinProviderId!,
+        prompt,
+        negativePrompt,
+        width: Number(width),
+        height: Number(height),
+        n: numImages,
+        scheduler,
+        guidance: Number(guidance[0]),
+        steps: Number(steps[0]),
+        lcm: false,
+      })
+      console.log('result', result)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   if (!imageModel) return null
   return (
@@ -28,19 +55,14 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
       </div>
 
       <div className="flex p-4">
-        <Button variant="soft" className="w-full">
+        <Button variant="soft" className="w-full" onClick={() => void handleClick()}>
           Generate
         </Button>
       </div>
 
       <Heading size="2">Parameters</Heading>
       <ScrollArea>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-          }}
-          className="flex flex-col gap-3 px-3 py-1"
-        >
+        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3 px-3 py-1">
           <div className={controlCn}>
             <Label.Root className={labelCn} htmlFor="prompt">
               Prompt
@@ -66,9 +88,9 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
             <Select.Root name="dimensions" value={dimensions} onValueChange={setDimensions}>
               <Select.Trigger />
               <Select.Content>
-                <Select.Item value="portrait">Portrait (512px x 768px)</Select.Item>
-                <Select.Item value="square">Square (512px x 512px)</Select.Item>
-                <Select.Item value="landscape">Landscape (768px x 512px)</Select.Item>
+                <Select.Item value="512x768">Portrait (512px x 768px)</Select.Item>
+                <Select.Item value="512x512">Square (512px x 512px)</Select.Item>
+                <Select.Item value="768x512">Landscape (768px x 512px)</Select.Item>
               </Select.Content>
             </Select.Root>
           </div>

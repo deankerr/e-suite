@@ -11,6 +11,13 @@ export const imageModelProviderFields = {
   hidden: v.boolean(),
 }
 
+export const get = internalQuery({
+  args: { id: v.id('imageModelProviders') },
+  handler: async (ctx, { id }) => {
+    return await ctx.db.get(id)
+  },
+})
+
 export const list = query(async (ctx) => await ctx.db.query('imageModelProviders').collect())
 
 export const listByProvider = internalQuery(

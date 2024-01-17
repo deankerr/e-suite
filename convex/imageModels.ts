@@ -3,7 +3,6 @@ import { v } from 'convex/values'
 import { Doc, Id } from './_generated/dataModel'
 import { internalMutation, internalQuery, query, QueryCtx } from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
-import * as images from './files/images'
 import { ImageModel } from './types'
 import { raise, vEnum } from './util'
 

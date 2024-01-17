@@ -1,19 +1,31 @@
 import { WithoutSystemFields } from 'convex/server'
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import z from 'zod'
-import { api, internal } from '../_generated/api'
-import type { Id } from '../_generated/dataModel'
-import { action, internalAction } from '../_generated/server'
+import { internal } from '../_generated/api'
+import { internalAction } from '../_generated/server'
 import type { ImageModel, ImageModelProvider } from '../types'
 
-//todo refactor
-export const send = action(async (ctx, { id, prompt, negative_prompt, size, model }) => {
-  try {
+export const run = internalAction({
+  args: {
+    id: v.id('generations'),
+  },
+  handler: async (ctx, { id }) => {
+    const { job, provider } = await ctx.runMutation(internal.generations.runJobId, { id })
+
     const body = new URLSearchParams()
     body.set('access_token', process.env.SINKIN_API_KEY as string)
-    body.set('prompt', prompt as string)
-    body.set('negative_prompt', negative_prompt as string)
-    body.set('model_id', model as string)
+    body.set('model_id', provider.providerModelId)
+    body.set('prompt', job.prompt)
+    body.set('width', String(job.width))
+    body.set('height', String(job.height))
+    body.set('num_images', String(job.n))
+
+    job.negativePrompt && body.set('negative_prompt', job.negativePrompt)
+    job.seed && body.set('seed', String(job.seed))
+    job.scheduler && body.set('scheduler', job.scheduler)
+    job.steps && body.set('steps', String(job.steps))
+    job.guidance && body.set('scale', String(job.guidance))
+    job.lcm && body.set('lcm', String(job.lcm))
 
     const response = await fetch('https://sinkin.ai/m/inference', {
       method: 'POST',
@@ -21,32 +33,58 @@ export const send = action(async (ctx, { id, prompt, negative_prompt, size, mode
     })
     const data = await response.json()
 
-    const parsed = z
-      .object({
-        images: z.string().array(),
+    const { result, error } = parseApiInferenceResponse(data)
+    if (error) {
+      await ctx.runMutation(internal.generations.update, {
+        id,
+        status: 'error',
+        message: error.message,
+        data: error,
       })
-      .parse(data)
+      throw new ConvexError({ message: error.message, error })
+    }
 
-    const imageIds: Id<'_storage'>[] = await Promise.all(
-      parsed.images.map(async (url) => {
-        const response = await fetch(url)
-        if (!response.ok) {
-          throw new Error(`failed to download: ${response.statusText}`)
-        }
-
-        const buffer = await response.arrayBuffer()
-        const blob = new Blob([buffer], { type: 'image/png' })
-        return await ctx.storage.store(blob)
-      }),
+    //* success, create images
+    const { images, ...res } = result
+    const imageIds = await Promise.all(
+      images.map(
+        async (url) =>
+          await ctx.runMutation(internal.files.images.fromUrl, {
+            url,
+            sourceInfo: 'generations:sinkin',
+          }),
+      ),
     )
-    await ctx.runMutation(api.generations.update, {
-      id: id as Id<'xgenerations'>,
-      patch: { results: imageIds },
+
+    await ctx.runMutation(internal.generations.update, {
+      id,
+      imageIds,
+      status: 'complete',
+      data: res,
     })
-  } catch (err) {
-    console.error(err)
-  }
+  },
 })
+
+const parseApiInferenceResponse = (data: unknown) => {
+  //* check error code
+  const { error_code } = z.object({ error_code: z.number() }).parse(data)
+
+  if (error_code > 0) {
+    //* error, get message
+    const { message } = z.object({ message: z.string() }).parse(data)
+    return { error: { error_code, message } }
+  }
+
+  const parsed = z
+    .object({
+      inf_id: z.string(),
+      credit_cost: z.number(),
+      images: z.array(z.string()),
+    })
+    .parse(data)
+
+  return { result: parsed }
+}
 
 export const registerAvailableModels = internalAction(async (ctx) => {
   const apiModelData = await apiGetModels()
