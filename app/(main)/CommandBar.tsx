@@ -10,7 +10,7 @@ type CommandBarProps = {
 }
 
 export const CommandBar = ({ props }: CommandBarProps) => {
-  const sendGeneration = useMutation(api.generations.send)
+  // const sendGeneration = useMutation(api.generations.send)
 
   const [positivePrompt, setPositivePrompt] = useState('')
   const [negativePrompt, setNegativePrompt] = useState('')
@@ -23,12 +23,12 @@ export const CommandBar = ({ props }: CommandBarProps) => {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={async (e) => {
           e.preventDefault()
-          await sendGeneration({
-            prompt: positivePrompt,
-            negative_prompt: negativePrompt,
-            size: '',
-            model,
-          })
+          // await sendGeneration({
+          //   prompt: positivePrompt,
+          //   negative_prompt: negativePrompt,
+          //   size: '',
+          //   model,
+          // })
           setPositivePrompt('')
           setNegativePrompt('')
         }}

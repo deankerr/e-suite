@@ -1,4 +1,4 @@
-import { defineTable } from 'convex/server'
+import { defineTable, paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalMutation, mutation, query } from './_generated/server'
@@ -38,6 +38,30 @@ export const generationsInternalFields = {
 export const generationsTable = defineTable({
   ...generationsParameterFields,
   ...generationsInternalFields,
+})
+
+export const pageWithImages = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    const result = await ctx.db.query('generations').paginate(paginationOpts)
+
+    const generationsWithImages = await Promise.all(
+      result.page.map(async (generation) => {
+        return {
+          ...generation,
+          //todo try rm
+          images: await Promise.all(generation.imageIds.map(async (id) => await ctx.db.get(id))),
+        }
+      }),
+    )
+
+    return {
+      ...result,
+      page: generationsWithImages,
+    }
+  },
 })
 
 export const get = query({

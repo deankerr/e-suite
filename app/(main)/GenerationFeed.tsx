@@ -1,7 +1,7 @@
 'use client'
 
 import { api } from '@/convex/_generated/api'
-import { useQuery } from 'convex/react'
+import { usePaginatedQuery, useQuery } from 'convex/react'
 import { GenerationCard } from '../components/GenerationCard'
 
 type GenerationFeedProps = {
@@ -9,12 +9,18 @@ type GenerationFeedProps = {
 }
 
 export const GenerationFeed = ({ props }: GenerationFeedProps) => {
-  // const generations = useQuery(api.generations.list)
+  const { results } = usePaginatedQuery(api.generations.pageWithImages, {}, { initialNumItems: 5 })
+
   return (
     <div className="content-area-inset-shadow flex flex-col items-center gap-8 overflow-y-auto px-4 py-6 pb-32">
-      {/* {generations?.map((data: Record<string, any>, i) => (
-        <GenerationCard key={i} imageUrls={data.results} model={data.model} prompt={data.prompt} />
-      ))} */}
+      {results?.map((gen) => (
+        <GenerationCard
+          key={gen._id}
+          imageUrls={gen.images.map((img) => img?.source?.url ?? 'nourl')}
+          model={gen.imageModelId}
+          prompt={gen.prompt}
+        />
+      ))}
     </div>
   )
 }
