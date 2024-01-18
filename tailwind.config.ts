@@ -15,6 +15,7 @@ const config: Config = {
       useTailwindRadiusNames: false,
       mapMissingTailwindColors: false,
     }),
+    // css reset
     plugin(({ addBase }) => {
       addBase({
         '*': { boxSizing: 'border-box', position: 'relative', minWidth: '0' },
@@ -24,6 +25,16 @@ const config: Config = {
         h3: { textWrap: 'balance' },
         h4: { textWrap: 'balance' },
         p: { textWrap: 'pretty' },
+      })
+    }),
+    // main grid stacked pile layout
+    plugin(({ addComponents }) => {
+      addComponents({
+        '.grid-pile': {
+          display: 'grid',
+          'place-content': 'center',
+          '&>*': { gridArea: '1 / 1' },
+        },
       })
     }),
   ],

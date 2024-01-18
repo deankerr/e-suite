@@ -10,22 +10,19 @@ type NavbarProps = {
 
 export const Navbar = ({ props }: NavbarProps) => {
   return (
-    <div
-      id="navbar"
-      className="sOFFhadow-[0px_30px_60px_-12px_rgba(0,0,0,0.9)] z-10 flex items-center justify-between gap-2 border-b border-gray-6 px-2"
-    >
-      <SidebarToggleButton className="left-sidebar-toggle" />
+    <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-4 py-2">
+      {/* <SidebarToggleButton className="left-sidebar-toggle" /> */}
 
       <Link href="/" className="flex items-center gap-2">
-        <Image src={logo} alt="e/drop logo" className="-mb-0.5 -mr-0.5 size-6 md:size-8" priority />
-        <Heading as="h1" className="text-accent">
-          e/drop
-        </Heading>
+        <Image src={logo} alt="e/drop logo" className="-mr-0.5 size-5" priority />
+        {/* <Heading className="text-accent" size="4">
+          top
+        </Heading> */}
       </Link>
 
-      <div className="grow" />
+      {/* <div className="grow" /> */}
 
-      <SidebarToggleButton className="right-sidebar-toggle" />
-    </div>
+      {/* <SidebarToggleButton className="right-sidebar-toggle" /> */}
+    </nav>
   )
 }

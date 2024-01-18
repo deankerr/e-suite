@@ -4,9 +4,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   // AppLayout
 
   return (
-    <div className="grid h-dvh grid-rows-[theme(spacing.10)_auto] overflow-hidden md:grid-rows-[theme(spacing.14)_auto]">
+    <div className="dark:bg-grid-dark grid-pile h-dvh overflow-hidden">
       <Navbar />
       {children}
     </div>
   )
 }
+
+// [&>*]:col-start-1 [&>*]:row-start-2

@@ -12,7 +12,7 @@ export const GenerationFeed = ({ props }: GenerationFeedProps) => {
   const { results } = usePaginatedQuery(api.generations.page, {}, { initialNumItems: 5 })
 
   return (
-    <div className="cOFFontent-area-inset-shadow flex flex-col items-center gap-8 overflow-y-auto px-4 py-6 pb-32">
+    <div className="flex flex-col items-center gap-8 overflow-y-auto px-4 pb-6 pt-14">
       {results?.map((gen) => <GenerationCard key={gen.generation._id} {...gen} />)}
     </div>
   )
