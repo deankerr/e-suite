@@ -10,10 +10,14 @@ type GenerationFeedProps = {
 
 export const GenerationFeed = ({ props }: GenerationFeedProps) => {
   const { results } = usePaginatedQuery(api.generations.page, {}, { initialNumItems: 5 })
-
+  // flex flex-col items-center
   return (
-    <div className="flex flex-col items-center gap-8 overflow-y-auto px-4 pb-6 pt-14">
-      {results?.map((gen) => <GenerationCard key={gen.generation._id} {...gen} />)}
+    <div className="gap-8 space-y-8 overflow-y-auto px-4 pb-6 pt-14">
+      {results?.map((gen) => (
+        <>
+          <GenerationCard key={gen.generation._id} {...gen} />
+        </>
+      ))}
     </div>
   )
 }

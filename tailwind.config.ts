@@ -32,7 +32,6 @@ const config: Config = {
       addComponents({
         '.grid-pile': {
           display: 'grid',
-          'place-content': 'center',
           '&>*': { gridArea: '1 / 1' },
         },
       })

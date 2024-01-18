@@ -10,7 +10,7 @@ type NavbarProps = {
 
 export const Navbar = ({ props }: NavbarProps) => {
   return (
-    <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-4 py-2">
+    <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-2 py-2">
       {/* <SidebarToggleButton className="left-sidebar-toggle" /> */}
 
       <Link href="/" className="flex items-center gap-2">
