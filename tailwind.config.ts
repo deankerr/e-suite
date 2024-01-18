@@ -2,6 +2,7 @@
 
 import radixThemePlugin from 'radix-ui-themes-with-tailwind'
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 
 const config: Config = {
   darkMode: 'class',
@@ -14,8 +15,24 @@ const config: Config = {
       useTailwindRadiusNames: false,
       mapMissingTailwindColors: false,
     }),
+    plugin(({ addBase }) => {
+      addBase({
+        '*': { boxSizing: 'border-box', position: 'relative', minWidth: '0' },
+        body: { minHeight: '100dvh' },
+        h1: { textWrap: 'balance' },
+        h2: { textWrap: 'balance' },
+        h3: { textWrap: 'balance' },
+        h4: { textWrap: 'balance' },
+        p: { textWrap: 'pretty' },
+      })
+    }),
   ],
   theme: {
+    extend: {
+      borderColor: {
+        DEFAULT: 'var(--gray-5)',
+      },
+    },
     screens: {
       xs: '520px',
       sm: '768px',

@@ -45,7 +45,7 @@ export const GenerationCard = ({
         key={images[n]?._id ?? `placeholder-${n}`}
         className={cn(
           'grid place-content-center overflow-hidden rounded border border-gold-5',
-          // frameSizes[orientation],
+          frameSizes[orientation],
         )}
       >
         <Inset>
@@ -66,16 +66,18 @@ export const GenerationCard = ({
   })
 
   return (
-    <Card className="w-full max-w-6xl">
+    <Card className="w-full max-w-7xl">
       <div className="relative flex">
         {/* <div className="absolute left-1 top-1 text-xs text-gold-5">{generation._id}</div> */}
         <div className="grow">
-          <Inset side="top" className="h-10 rounded-none border-b border-gray-6 bg-gray-1">
-            <div className=""></div>
+          <Inset side="top" className="border-grOFFay-6 bg-grOFFay-1 h-10 rounded-none border-b">
+            <div className="">
+              <Heading>{generation.prompt}</Heading>
+            </div>
           </Inset>
           <div
             className={cn(
-              'grid gap-2 px-4 py-4',
+              'grid justify-items-center gap-2 px-4 py-4',
               orientation === 'portrait' ? 'grid-cols-4' : 'grid-cols-2',
             )}
           >

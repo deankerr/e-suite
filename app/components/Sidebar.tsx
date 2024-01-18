@@ -2,9 +2,9 @@ import { cn } from '@/lib/utils'
 import { ScrollArea } from '@radix-ui/themes'
 
 const variant = {
-  left: 'left-sidebar left-0 border-r shadow-[30px_0px_60px_-12px_rgba(0,0,0,0.9)]',
+  left: 'left-sidebar left-0 border-r sOFFhadow-[30px_0px_60px_-12px_rgba(0,0,0,0.9)]',
   right:
-    'right-sidebar right-0 place-self-end border-l shadow-[-30px_0px_60px_-12px_rgba(0,0,0,0.9)]',
+    'right-sidebar right-0 place-self-end border-l sOFFhadow-[-30px_0px_60px_-12px_rgba(0,0,0,0.9)]',
 } as const
 
 type SidebarProps = {

@@ -12,7 +12,7 @@ export const Navbar = ({ props }: NavbarProps) => {
   return (
     <div
       id="navbar"
-      className="z-10 flex items-center justify-between gap-2 border-b border-gray-6 px-2 shadow-[0px_30px_60px_-12px_rgba(0,0,0,0.9)]"
+      className="sOFFhadow-[0px_30px_60px_-12px_rgba(0,0,0,0.9)] z-10 flex items-center justify-between gap-2 border-b border-gray-6 px-2"
     >
       <SidebarToggleButton className="left-sidebar-toggle" />
 
