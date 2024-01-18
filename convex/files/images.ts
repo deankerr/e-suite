@@ -1,6 +1,8 @@
+import { defineTable } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from '../_generated/api'
-import { internalMutation, internalQuery, query } from '../_generated/server'
+import { Id } from '../_generated/dataModel'
+import { internalAction, internalMutation, internalQuery, query } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
 
@@ -13,80 +15,123 @@ export const imagesFields = {
       width: v.number(),
       height: v.number(),
       nsfw: vEnum(nsfwRatings),
-      url: v.union(v.string(), v.null()),
+      url: v.string(),
     }),
   ),
 }
 
-export const get = query({
+const imagesCreateFields = {
+  sourceUrl: v.string(),
+  sourceInfo: v.string(),
+  generationsId: v.id('generations'),
+  width: v.number(),
+  height: v.number(),
+}
+
+const newimagesFields = {
+  ...imagesCreateFields,
+
+  storageId: v.id('_storage'),
+  url: v.string(),
+  nsfw: vEnum(nsfwRatings),
+}
+
+export const imagesTable = defineTable(newimagesFields).index('by_sourceUrl', ['sourceUrl'])
+
+export const create = internalMutation({
   args: {
-    id: v.id('images'),
+    ...newimagesFields,
   },
-  handler: async (ctx, { id }) => {
-    const image = await ctx.db.get(id)
-    if (!image) throw new ConvexError({ message: 'invalid image id', id })
-
-    const source = image?.source
-      ? { ...image.source, url: await ctx.storage.getUrl(image.source.storageId) }
-      : undefined
-
-    return {
-      ...image,
-      source,
-    }
+  handler: async (ctx, args) => {
+    const id = await ctx.db.insert('images', args)
+    return id
   },
 })
 
-export const getIds = internalQuery({
+const storeGeneration = internalAction({
   args: {
-    ids: v.array(v.id('images')),
+    ...imagesCreateFields,
   },
-  handler: async (ctx, { ids }) => {
-    return await Promise.all(ids.map(async (id) => await get(ctx, { id })))
+  handler: async (ctx, generation) => {
+    const sourceUrl = new URL(generation.sourceUrl).toString()
+    const response = await fetch(sourceUrl)
+    const blob = await response.blob()
+    const storageId = await ctx.storage.store(blob)
+    const url = await ctx.storage.getUrl(storageId)
+    if (!url) throw new ConvexError({ message: 'unable to get storage url', storageId, sourceUrl })
+
+    return await ctx.runMutation(internal.files.images.create, {
+      ...generation,
+      sourceUrl,
+      storageId,
+      url,
+      nsfw: 'unknown',
+    })
   },
 })
 
-export const list = query(async (ctx) => {
-  const images = await ctx.db.query('images').collect()
-  return await Promise.all(
-    images.map(async (img) => {
-      const source = img?.source
-        ? { ...img.source, url: await ctx.storage.getUrl(img.source.storageId) }
-        : undefined
-
-      return {
-        ...img,
-        source,
-      }
-    }),
-  )
-})
-
-export const fromUrl = internalMutation({
+const storeGenerations = internalAction({
   args: {
-    url: v.string(),
-    sourceInfo: v.string(),
+    generations: v.array(v.object(imagesCreateFields)),
   },
-  handler: async (ctx, { url, sourceInfo }) => {
-    const sourceUrl = new URL(url).toString()
-    const image = await ctx.db
-      .query('images')
-      .withIndex('by_sourceUrl', (q) => q.eq("sourceUrl", sourceUrl)).unique()
-    if (image) return image._id
+  handler: async (ctx, { generations }) => {
+    const fetches = await Promise.all(
+      generations.map(async (generation) => {
+        try {
+          const sourceUrl = new URL(generation.sourceUrl).toString()
+          const response = await fetch(sourceUrl)
+          const blob = await response.blob()
+          const storageId = await ctx.storage.store(blob)
+          const url = await ctx.storage.getUrl(storageId)
+          if (!url)
+            throw new ConvexError({ message: 'unable to get storage url', storageId, sourceUrl })
 
-    //* create imageStore record
-    const newImageId = await ctx.db.insert('images', { sourceUrl, sourceInfo })
-    await ctx.scheduler.runAfter(0, internal.files.imagesLib.processImage, { id: newImageId })
-    return newImageId
+          return await ctx.runMutation(internal.files.images.create, {
+            ...generation,
+            sourceUrl,
+            storageId,
+            url,
+            nsfw: 'unknown',
+          })
+        } catch (err) {
+          console.error(err)
+          return { error: err }
+        }
+      }),
+    )
+
+    return fetches
   },
 })
 
-export const updateStorage = internalMutation({
-  args: {
-    id: v.id('images'),
-    source: imagesFields.source,
-  },
-  handler: async (ctx, { id, source }) => {
-    await ctx.db.patch(id, { source })
-  },
-})
+//TODO remove
+// export const fromUrl = internalMutation({
+//   args: {
+//     sourceUrl: v.string(),
+//     sourceInfo: v.string(),
+//   },
+//   handler: async (ctx, { sourceUrl, sourceInfo }) => {
+//     // const sourceUrl = new URL(url).toString()
+//     // const image = await ctx.db
+//     //   .query('images')
+//     //   .withIndex('by_sourceUrl', (q) => q.eq('sourceUrl', sourceUrl))
+//     //   .unique()
+//     // if (image) return image._id
+
+//     // //* create imageStore record
+//     // const newImageId = await ctx.db.insert('images', { sourceUrl, sourceInfo })
+//     // await ctx.scheduler.runAfter(0, internal.files.imagesLib.processImage, { id: newImageId })
+//     // return newImageId
+//     return 'dfsf' as Id<'images'>
+//   },
+// })
+
+// export const updateStorage = internalMutation({
+//   args: {
+//     id: v.id('images'),
+//     source: imagesFields.source,
+//   },
+//   handler: async (ctx, { id, source }) => {
+//     await ctx.db.patch(id, { source })
+//   },
+// })

@@ -37,7 +37,7 @@ export const ImageModelCard = ({
   const m = imageModel ?? modelById
   if (m === null) return <Card className="h-36 flex-none">null</Card>
 
-  const url = m?.images ? m.images[0]?.source?.url : undefined
+  const url = m?.images ? m.images[0]?.url : undefined
 
   return (
     <Card className={cn('relative flex-none', showImage ? 'h-36' : 'h-24', className)} {...props}>

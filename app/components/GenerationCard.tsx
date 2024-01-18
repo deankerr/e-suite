@@ -60,7 +60,7 @@ export const GenerationCard = ({
               <ImageFrame
                 key={n}
                 className={cn(frameSizes[orientation], 'bg-red-4')}
-                url={images[n]?.source?.url}
+                url={images[n]?.url}
                 width={sizes[orientation][0]}
                 height={sizes[orientation][1]}
               />

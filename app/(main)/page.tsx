@@ -9,7 +9,7 @@ export default function HomePage() {
     <>
       <GenerationFeed />
       {/* <LeftBar /> */}
-      {/* <RightBar /> */}
+      <RightBar />
       {/* <CommandBar /> */}
     </>
   )

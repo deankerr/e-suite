@@ -9,7 +9,7 @@ type GenerationFeedProps = {
 }
 
 export const GenerationFeed = ({ props }: GenerationFeedProps) => {
-  const { results } = usePaginatedQuery(api.generations.page, {}, { initialNumItems: 5 })
+  const { results } = usePaginatedQuery(api.generations.page, {}, { initialNumItems: 20 })
   // flex flex-col items-center
   return (
     <div className="gap-8 space-y-8 overflow-y-auto px-4 pb-6 pt-14">

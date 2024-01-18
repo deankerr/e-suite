@@ -47,14 +47,55 @@ export const run = internalAction({
     //* success, create images
     const { images, ...res } = result
     const imageIds = await Promise.all(
-      images.map(
-        async (url) =>
-          await ctx.runMutation(internal.files.images.fromUrl, {
-            url,
-            sourceInfo: 'generations:sinkin',
-          }),
-      ),
+      images.map(async (image) => {
+        const sourceUrl = new URL(image).toString()
+        const response = await fetch(sourceUrl)
+        const blob = await response.blob()
+        const storageId = await ctx.storage.store(blob)
+        const url = (await ctx.storage.getUrl(storageId)) as string
+
+        const fileId = await ctx.runMutation(internal.files.images.create, {
+          sourceUrl,
+          sourceInfo: 'generations:sinkin',
+          generationsId: id,
+          storageId,
+          url,
+          width: job.width,
+          height: job.height,
+          nsfw: 'unknown',
+        })
+
+        return fileId
+      }),
     )
+    // for (const image of images) {
+    //   const sourceUrl = new URL(image).toString()
+    //   const response = await fetch(sourceUrl)
+    //   const blob = await response.blob()
+    //   const storageId = await ctx.storage.store(blob)
+    //   const url = (await ctx.storage.getUrl(storageId)) as string
+    //   const fileId = await ctx.runMutation(internal.files.images.create, {
+    //     sourceUrl,
+    //     sourceInfo: 'generations:sinkin',
+    //     generationsId: id,
+    //     storageId,
+    //     url,
+    //     width: job.width,
+    //     height: job.height,
+    //     nsfw: 'unknown',
+    //   })
+    // }
+
+    // const results = await ctx.runAction(internal.images)
+    // const imageIds = await Promise.all(
+    //   images.map(
+    //     async (url) =>
+    //       await ctx.runMutation(internal.files.images.fromUrl, {
+    //         url,
+    //         sourceInfo: 'generations:sinkin',
+    //       }),
+    //   ),
+    // )
 
     await ctx.runMutation(internal.generations.update, {
       id,
@@ -86,105 +127,105 @@ const parseApiInferenceResponse = (data: unknown) => {
   return { result: parsed }
 }
 
-export const registerAvailableModels = internalAction(async (ctx) => {
-  const apiModelData = await apiGetModels()
-  const modelDataList = [
-    ...apiModelData.models.map((model) => ({ ...model, type: 'checkpoint' as const })),
-    ...apiModelData.loras.map((lora) => ({
-      ...lora,
-      civitai_model_id: getIdFromUrl(lora.link) ?? undefined,
-      type: 'lora' as const,
-    })),
-  ]
+// export const registerAvailableModels = internalAction(async (ctx) => {
+//   const apiModelData = await apiGetModels()
+//   const modelDataList = [
+//     ...apiModelData.models.map((model) => ({ ...model, type: 'checkpoint' as const })),
+//     ...apiModelData.loras.map((lora) => ({
+//       ...lora,
+//       civitai_model_id: getIdFromUrl(lora.link) ?? undefined,
+//       type: 'lora' as const,
+//     })),
+//   ]
 
-  //* query imageModelProviders for existing entries
-  const sinkinModelProviders = await ctx.runQuery(internal.imageModelProviders.listByProvider, {
-    key: 'sinkin',
-  })
+//   //* query imageModelProviders for existing entries
+//   const sinkinModelProviders = await ctx.runQuery(internal.imageModelProviders.listByProvider, {
+//     key: 'sinkin',
+//   })
 
-  for (const modelData of modelDataList) {
-    if (
-      sinkinModelProviders.find((p) => p.key === 'sinkin' && p.providerModelId === modelData.id)
-    ) {
-      console.log(`existing record for "${modelData.name}" (apiModelId: ${modelData.id})`)
-      continue
-    }
+//   for (const modelData of modelDataList) {
+//     if (
+//       sinkinModelProviders.find((p) => p.key === 'sinkin' && p.providerModelId === modelData.id)
+//     ) {
+//       console.log(`existing record for "${modelData.name}" (apiModelId: ${modelData.id})`)
+//       continue
+//     }
 
-    const modelProvider: WithoutSystemFields<ImageModelProvider> = {
-      key: 'sinkin',
-      providerModelId: modelData.id,
-      providerModelData: modelData,
-      imageModelId: null,
-      hidden: false,
-    }
+//     const modelProvider: WithoutSystemFields<ImageModelProvider> = {
+//       key: 'sinkin',
+//       providerModelId: modelData.id,
+//       providerModelData: modelData,
+//       imageModelId: null,
+//       hidden: false,
+//     }
 
-    //* create provider
-    const imageModelProviderId = await ctx.runMutation(internal.imageModelProviders.create, {
-      doc: modelProvider,
-    })
+//     //* create provider
+//     const imageModelProviderId = await ctx.runMutation(internal.imageModelProviders.create, {
+//       doc: modelProvider,
+//     })
 
-    //* search for existing imageModel by civitaiId
-    const civitaiId = modelData.civitai_model_id?.toString() ?? null
-    const imageModel = civitaiId
-      ? await ctx.runQuery(internal.imageModels.getByCivitaiId, {
-          civitaiId,
-        })
-      : null
+//     //* search for existing imageModel by civitaiId
+//     const civitaiId = modelData.civitai_model_id?.toString() ?? null
+//     const imageModel = civitaiId
+//       ? await ctx.runQuery(internal.imageModels.getByCivitaiId, {
+//           civitaiId,
+//         })
+//       : null
 
-    if (imageModel) {
-      console.log(
-        `linking imageModelProvider ${modelData.name} [${imageModelProviderId}] to imageModel ${imageModel.name} [${imageModel._id}]`,
-      )
-      if (imageModel.sinkinProviderId || imageModel.sinkinApiModelId) {
-        console.error(
-          `sinkin provider already added to imageModel ${imageModel.name} [${imageModel._id}]`,
-        )
-        continue
-      }
-      //* add provider to existing model
-      await ctx.runMutation(internal.imageModels.update, {
-        doc: {
-          ...imageModel,
-          sinkinProviderId: imageModelProviderId,
-          sinkinApiModelId: modelData.id,
-        },
-      })
-    } else if (civitaiId) {
-      //* create new imageModel from provider
-      const imageId = await ctx.runMutation(internal.files.images.fromUrl, {
-        url: modelData.cover_img,
-        sourceInfo: 'provider:sinkin',
-      })
-      const newImageModel: WithoutSystemFields<ImageModel> = {
-        name: modelData.name,
-        description: '',
-        base: modelData.name.includes('XL') ? 'sdxl' : 'sd1.5',
-        type: modelData.type,
-        nsfw: 'unknown',
-        imageIds: [imageId],
-        tags: ['_new'],
+//     if (imageModel) {
+//       console.log(
+//         `linking imageModelProvider ${modelData.name} [${imageModelProviderId}] to imageModel ${imageModel.name} [${imageModel._id}]`,
+//       )
+//       if (imageModel.sinkinProviderId || imageModel.sinkinApiModelId) {
+//         console.error(
+//           `sinkin provider already added to imageModel ${imageModel.name} [${imageModel._id}]`,
+//         )
+//         continue
+//       }
+//       //* add provider to existing model
+//       await ctx.runMutation(internal.imageModels.update, {
+//         doc: {
+//           ...imageModel,
+//           sinkinProviderId: imageModelProviderId,
+//           sinkinApiModelId: modelData.id,
+//         },
+//       })
+//     } else if (civitaiId) {
+//       //* create new imageModel from provider
+//       const imageId = await ctx.runMutation(internal.files.images.fromUrl, {
+//         sourceUrl: modelData.cover_img,
+//         sourceInfo: 'provider:sinkin',
+//       })
+//       const newImageModel: WithoutSystemFields<ImageModel> = {
+//         name: modelData.name,
+//         description: '',
+//         base: modelData.name.includes('XL') ? 'sdxl' : 'sd1.5',
+//         type: modelData.type,
+//         nsfw: 'unknown',
+//         imageIds: [imageId],
+//         tags: ['_new'],
 
-        civitaiId,
-        civitaiModelDataId: null,
+//         civitaiId,
+//         civitaiModelDataId: null,
 
-        sinkinProviderId: imageModelProviderId,
-        sinkinApiModelId: modelData.id,
+//         sinkinProviderId: imageModelProviderId,
+//         sinkinApiModelId: modelData.id,
 
-        hidden: false, //? start hidden
-      }
+//         hidden: false, //? start hidden
+//       }
 
-      await ctx.runMutation(internal.imageModels.create, {
-        doc: newImageModel,
-      })
+//       await ctx.runMutation(internal.imageModels.create, {
+//         doc: newImageModel,
+//       })
 
-      console.log('new imageModel:', newImageModel)
-    } else {
-      console.warn(
-        `imageModelProvider ${modelData.name} [${imageModelProviderId}] is not linked to any imageModel`,
-      )
-    }
-  }
-})
+//       console.log('new imageModel:', newImageModel)
+//     } else {
+//       console.warn(
+//         `imageModelProvider ${modelData.name} [${imageModelProviderId}] is not linked to any imageModel`,
+//       )
+//     }
+//   }
+// })
 
 const apiGetModels = async () => {
   console.log(`[sinkin] /api/models`)

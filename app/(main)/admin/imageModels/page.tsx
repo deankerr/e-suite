@@ -39,9 +39,9 @@ export default function ImageModelsPage() {
   return (
     <div className="dark:bg-grid-dark relative grid overflow-auto [&_>_div]:col-start-1 [&_>_div]:row-start-1">
       <div className="grid grid-cols-2 gap-6 self-start justify-self-center p-6 lg:grid-cols-4">
-        {imageModels?.map((model) => {
+        {/* {imageModels?.map((model) => {
           return <ImageModelCard key={model._id} imageModel={model} className="w-80" />
-        })}
+        })} */}
 
         {/* {isLoading ? (
           <Button disabled>Loading</Button>
