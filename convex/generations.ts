@@ -3,7 +3,7 @@ import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalMutation, mutation, query } from './_generated/server'
 import { generationStatus } from './constants'
-import { vEnum } from './util'
+import { assert, error, vEnum } from './util'
 
 export const generationsParameterFields = {
   imageModelId: v.id('imageModels'),
@@ -67,24 +67,24 @@ export const get = query({
   },
 })
 
-export const runJobId = internalMutation({
+export const run = internalMutation({
   args: {
     id: v.id('generations'),
   },
   handler: async (ctx, { id }) => {
-    const job = await ctx.db.get(id)
-    if (!job) throw new ConvexError({ message: 'invalid generation', id, job })
-    if (job.status !== 'pending') throw new ConvexError({ message: 'invalid job status', job })
+    const generation = await ctx.db.get(id)
+    assert(generation, 'invalid generation id', { id })
+    assert(generation.status === 'pending', 'invalid generation status', { generation })
 
-    const provider = await ctx.db.get(job.imageModelProviderId)
-    if (!provider) throw new ConvexError({ message: 'invalid provider', job, provider })
+    const provider = await ctx.db.get(generation.imageModelProviderId)
+    assert(provider, 'invalid provider', { generation, provider })
 
-    await ctx.db.patch(job._id, {
+    await ctx.db.patch(generation._id, {
       status: 'acting',
       events: [{ status: 'acting', createdAt: Date.now() }],
     })
 
-    return { job, provider }
+    return { generation, provider }
   },
 })
 

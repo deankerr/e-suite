@@ -1,31 +1,29 @@
-import { WithoutSystemFields } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
-import type { ImageModel, ImageModelProvider } from '../types'
 
 export const run = internalAction({
   args: {
     id: v.id('generations'),
   },
   handler: async (ctx, { id }) => {
-    const { job, provider } = await ctx.runMutation(internal.generations.runJobId, { id })
+    const { generation, provider } = await ctx.runMutation(internal.generations.run, { id })
 
     const body = new URLSearchParams()
     body.set('access_token', process.env.SINKIN_API_KEY as string)
     body.set('model_id', provider.providerModelId)
-    body.set('prompt', job.prompt)
-    body.set('width', String(job.width))
-    body.set('height', String(job.height))
-    body.set('num_images', String(job.n))
+    body.set('prompt', generation.prompt)
+    body.set('width', String(generation.width))
+    body.set('height', String(generation.height))
+    body.set('num_images', String(generation.n))
 
-    job.negativePrompt && body.set('negative_prompt', job.negativePrompt)
-    job.seed && body.set('seed', String(job.seed))
-    job.scheduler && body.set('scheduler', job.scheduler)
-    job.steps && body.set('steps', String(job.steps))
-    job.guidance && body.set('scale', String(job.guidance))
-    job.lcm && body.set('lcm', String(job.lcm))
+    generation.negativePrompt && body.set('negative_prompt', generation.negativePrompt)
+    generation.seed && body.set('seed', String(generation.seed))
+    generation.scheduler && body.set('scheduler', generation.scheduler)
+    generation.steps && body.set('steps', String(generation.steps))
+    generation.guidance && body.set('scale', String(generation.guidance))
+    generation.lcm && body.set('lcm', String(generation.lcm))
 
     const response = await fetch('https://sinkin.ai/m/inference', {
       method: 'POST',
@@ -60,8 +58,8 @@ export const run = internalAction({
           generationsId: id,
           storageId,
           url,
-          width: job.width,
-          height: job.height,
+          width: generation.width,
+          height: generation.height,
           nsfw: 'unknown',
         })
 
