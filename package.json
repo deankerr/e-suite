@@ -9,7 +9,6 @@
     "lint": "next lint",
     "dev:convex": "pnpm dlx convex dev",
     "dev": "pnpm run /^dev:.*/",
-    "postbuild": "node ./scripts/add-urls-to-kinde.js",
     "ts": "tsc --noEmit",
     "turso:generate": "drizzle-kit generate:sqlite",
     "turso:migrate": "tsx drizzle/migrate",
