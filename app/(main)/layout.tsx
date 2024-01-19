@@ -10,5 +10,3 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
-
-// [&>*]:col-start-1 [&>*]:row-start-2

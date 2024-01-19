@@ -2,7 +2,18 @@ import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import type { Generation, Image, ImageModel, ImageModelProvider } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { Button, Card, Dialog, Em, Heading, IconButton, Inset, Separator } from '@radix-ui/themes'
+import {
+  Button,
+  Card,
+  Dialog,
+  Em,
+  Heading,
+  IconButton,
+  Inset,
+  Separator,
+  Strong,
+  Text,
+} from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import NextImage from 'next/image'
@@ -40,15 +51,13 @@ export const GenerationCard = ({
   return (
     <Card className="container mx-auto">
       <Inset>
-        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[auto_24%] md:grid-rows-[4rem_auto]">
+        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[auto_24%] md:grid-rows-[3rem_auto]">
           {/* header */}
-          <div className="flex items-center gap-3 border-b bg-gray-1 px-3 py-2 text-gray-12">
-            <IconButton variant="ghost" size="3">
-              <FileImageIcon className="size-6 text-accent-10" />
+          <div className="flex items-center gap-2 border-b bg-gray-1 px-2 py-2 text-gray-12">
+            <IconButton variant="ghost" size="2">
+              <FileImageIcon className="size-5" strokeWidth={1} />
             </IconButton>
-            <Heading size={{ initial: '4', md: '5' }} className="text-wrap">
-              {generation.prompt}
-            </Heading>
+            {generation.prompt}
           </div>
 
           {/* content */}

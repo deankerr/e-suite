@@ -40,10 +40,11 @@
   }
 
   .bg-grid-dark {
-    background-image: linear-gradient(#191918 2px, transparent 2px),
-      linear-gradient(90deg, #191918 2px, transparent 2px),
-      linear-gradient(#191918 1px, transparent 1px),
-      linear-gradient(90deg, #191918 1px, transparent 1px);
+    background-color: rgb(8, 8, 6);
+    background-image: linear-gradient(#111110 2px, transparent 2px),
+      linear-gradient(90deg, #111110 2px, transparent 2px),
+      linear-gradient(#111110 1px, transparent 1px),
+      linear-gradient(90deg, #111110 1px, transparent 1px);
     background-size:
       50px 50px,
       50px 50px,
@@ -55,59 +56,4 @@
       -1px -1px,
       -1px -1px;
   }
-
-  .content-area-inset-shadow {
-    box-shadow:
-      rgba(0, 0, 0, 0.25) 0px 30px 60px -12px inset,
-      rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
-  }
 }
-
-/* 
-
-const sandDark = {
-  sand1: '#111110',
-  sand2: '#191918',
-  sand3: '#222221',
-  sand4: '#2a2a28',
-  sand5: '#31312e',
-  sand6: '#3b3a37',
-  sand7: '#494844',
-  sand8: '#62605b',
-  sand9: '#6f6d66',
-  sand10: '#7c7b74',
-  sand11: '#b5b3ad',
-  sand12: '#eeeeec',
-}
-
-const sandA = {
-  sandA1: '#55550003',
-  sandA2: '#25250007',
-  sandA3: '#20100010',
-  sandA4: '#1f150019',
-  sandA5: '#1f180021',
-  sandA6: '#19130029',
-  sandA7: '#19140035',
-  sandA8: '#1915014a',
-  sandA9: '#0f0f0079',
-  sandA10: '#0c0c0083',
-  sandA11: '#080800a1',
-  sandA12: '#060500e3',
-}
-
-const sandDarkA = {
-  sandA1: '#00000000',
-  sandA2: '#f4f4f309',
-  sandA3: '#f6f6f513',
-  sandA4: '#fefef31b',
-  sandA5: '#fbfbeb23',
-  sandA6: '#fffaed2d',
-  sandA7: '#fffbed3c',
-  sandA8: '#fff9eb57',
-  sandA9: '#fffae965',
-  sandA10: '#fffdee73',
-  sandA11: '#fffcf4b0',
-  sandA12: '#fffffded',
-}
-
-*/
