@@ -6,6 +6,7 @@ import logo from '/assets/icons/logo-sunset.svg'
 import { useConvexAuth } from 'convex/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRegisterUser } from './useRegisterUser'
 
 type NavbarProps = {
   props?: any
@@ -13,6 +14,7 @@ type NavbarProps = {
 
 export const Navbar = ({ props }: NavbarProps) => {
   const { isLoading, isAuthenticated } = useConvexAuth()
+  const userId = useRegisterUser()
 
   return (
     <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-2 py-2 md:absolute">
