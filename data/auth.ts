@@ -1,28 +1,22 @@
 import 'server-only'
 import { ENV } from '@/lib/env'
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
-
-export async function getIsAuthenticated() {
-  const { isAuthenticated } = getKindeServerSession()
-  return await isAuthenticated()
-}
 
 export async function getServerSession() {
-  const { getUser, getPermissions } = getKindeServerSession()
+  // const { getUser, getPermissions } = getKindeServerSession()
 
-  const kindeUser = await getUser()
-  const kindePermissions = await getPermissions()
+  // const kindeUser = await getUser()
+  // const kindePermissions = await getPermissions()
 
-  if (!kindeUser || !kindePermissions) return null
+  // if (!kindeUser || !kindePermissions) return null
 
   const userSession = {
-    id: kindeUser.id,
-    email: kindeUser.email,
-    firstName: kindeUser.given_name,
-    lastName: kindeUser.family_name,
-    image: kindeUser.picture,
-    permissions: kindePermissions.permissions,
-    isAdmin: kindePermissions.permissions.includes('admin'),
+    id: 'remove me',
+    email: 'remove me',
+    firstName: 'remove me',
+    lastName: 'remove me',
+    image: 'remove me',
+    permissions: ['remove me'],
+    isAdmin: false,
   }
 
   return userSession
