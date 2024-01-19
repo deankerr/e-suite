@@ -18,15 +18,6 @@ const schema = {
   // POSTGRES_POOLED_DATABASE_URL: 'string',
   // POSTGRES_DIRECT_DATABASE_URL: 'string',
 
-  // auth
-  KINDE_CLIENT_ID: 'string',
-  KINDE_CLIENT_SECRET: 'string',
-  KINDE_ISSUER_URL: 'string',
-  KINDE_AUDIENCE: 'string',
-
-  // KINDE_SITE_URL, KINDE_POST_LOGOUT_REDIRECT_URL, KINDE_POST_LOGIN_REDIRECT_URL
-  // populated dynamically, won't always be present on process.env
-
   // ai vendor
   OPENAI_API_KEY: 'string',
   OPENROUTER_API_KEY: 'string',

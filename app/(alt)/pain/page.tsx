@@ -19,7 +19,7 @@ type MarqueeProps = {
   dir?: 'left' | 'right'
 }
 
-export const Marquee = ({ className, dir }: MarqueeProps) => {
+const Marquee = ({ className, dir }: MarqueeProps) => {
   return (
     <marquee
       scrollAmount="50"
@@ -31,4 +31,4 @@ export const Marquee = ({ className, dir }: MarqueeProps) => {
   )
 }
 
-const text = () => 'LOADING '.repeat(20)
+const text = () => 'LOADING '.repeat(30)
