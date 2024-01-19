@@ -47,9 +47,7 @@ export const run = internalAction({
     const imageIds = await Promise.all(
       images.map(async (image) => {
         const sourceUrl = new URL(image).toString()
-        const response = await fetch(sourceUrl)
-        const blob = await response.blob()
-        const storageId = await ctx.storage.store(blob)
+        const storageId = await ctx.runAction(internal.files.images.download, { url: sourceUrl })
         const url = (await ctx.storage.getUrl(storageId)) as string
 
         const fileId = await ctx.runMutation(internal.files.images.create, {
@@ -66,34 +64,6 @@ export const run = internalAction({
         return fileId
       }),
     )
-    // for (const image of images) {
-    //   const sourceUrl = new URL(image).toString()
-    //   const response = await fetch(sourceUrl)
-    //   const blob = await response.blob()
-    //   const storageId = await ctx.storage.store(blob)
-    //   const url = (await ctx.storage.getUrl(storageId)) as string
-    //   const fileId = await ctx.runMutation(internal.files.images.create, {
-    //     sourceUrl,
-    //     sourceInfo: 'generations:sinkin',
-    //     generationsId: id,
-    //     storageId,
-    //     url,
-    //     width: job.width,
-    //     height: job.height,
-    //     nsfw: 'unknown',
-    //   })
-    // }
-
-    // const results = await ctx.runAction(internal.images)
-    // const imageIds = await Promise.all(
-    //   images.map(
-    //     async (url) =>
-    //       await ctx.runMutation(internal.files.images.fromUrl, {
-    //         url,
-    //         sourceInfo: 'generations:sinkin',
-    //       }),
-    //   ),
-    // )
 
     await ctx.runMutation(internal.generations.update, {
       id,

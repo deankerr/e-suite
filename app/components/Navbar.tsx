@@ -22,7 +22,7 @@ export const Navbar = ({ props }: NavbarProps) => {
 
       {/* <div className="grow" /> */}
 
-      {/* <SidebarToggleButton className="right-sidebar-toggle" /> */}
+      <SidebarToggleButton className="right-sidebar-toggle" />
     </nav>
   )
 }

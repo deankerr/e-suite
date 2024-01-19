@@ -1,6 +1,5 @@
 import { defineSchema, defineTable } from 'convex/server'
-import { v } from 'convex/values'
-import { imagesFields, imagesTable } from './files/images'
+import { imagesTable } from './files/images'
 import { generationsTable } from './generations'
 import { imageModelProviderFields } from './imageModelProviders'
 import { imageModelFields } from './imageModels'

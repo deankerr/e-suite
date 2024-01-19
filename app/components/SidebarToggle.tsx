@@ -6,7 +6,7 @@ import { IconButton } from '@radix-ui/themes'
 import { SidebarCloseIcon, SidebarOpenIcon } from 'lucide-react'
 
 export const SidebarToggleButton = ({ className }: { className?: TailwindClass }) => (
-  <IconButton variant="soft" asChild>
+  <IconButton variant="ghost" asChild>
     <Toggle.Root
       aria-label="Toggle Sidebar"
       className={cn(
