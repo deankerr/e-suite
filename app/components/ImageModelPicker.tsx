@@ -47,7 +47,7 @@ export const ImageModelPicker = ({
       ) : (
         <Card className="h-36 flex-none cursor-pointer" onClick={() => onOpenChange(!open)}>
           <div className="grid h-full place-content-center">
-            <Text size="6" as="div" className="font-code text-accent-9">
+            <Text size="6" as="div" className="animate-pulse text-accent-8">
               Select Model
             </Text>
           </div>

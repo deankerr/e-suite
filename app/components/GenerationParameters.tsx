@@ -55,7 +55,7 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
       </div>
 
       <div className="flex p-4">
-        <Button variant="soft" className="w-full" onClick={() => void handleClick()}>
+        <Button variant="surface" className="w-full" onClick={() => void handleClick()}>
           Generate
         </Button>
       </div>

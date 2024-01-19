@@ -31,7 +31,6 @@ const config: Config = {
     plugin(({ addComponents }) => {
       addComponents({
         '.grid-pile': {
-          display: 'grid',
           '&>*': { gridArea: '1 / 1' },
         },
       })

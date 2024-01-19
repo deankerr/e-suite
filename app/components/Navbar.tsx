@@ -15,10 +15,10 @@ export const Navbar = ({ props }: NavbarProps) => {
   const { isLoading, isAuthenticated } = useConvexAuth()
 
   return (
-    <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-2 py-2">
+    <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-2 py-2 md:absolute">
       {/* <SidebarToggleButton className="left-sidebar-toggle" /> */}
       <Link href="/" className="flex items-center gap-2">
-        <Image src={logo} alt="e/drop logo" className="-mr-0.5 size-5" priority />
+        <Image src={logo} alt="e/drop logo" className="-mr-0.5 size-9" priority />
       </Link>
 
       {!isLoading && !isAuthenticated && <SignInButton mode="modal" />}

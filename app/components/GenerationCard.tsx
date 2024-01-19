@@ -51,7 +51,7 @@ export const GenerationCard = ({
   return (
     <Card className="container mx-auto">
       <Inset>
-        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[auto_24%] md:grid-rows-[3rem_auto]">
+        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[1fr_18rem] md:grid-rows-[3rem_auto]">
           {/* header */}
           <div className="flex items-center gap-2 border-b bg-gray-1 px-2 py-2 text-gray-12">
             <IconButton variant="ghost" size="2">
@@ -64,7 +64,7 @@ export const GenerationCard = ({
           <div
             className={cn(
               'mx-auto grid w-fit grid-cols-2 place-content-center place-items-center gap-2 px-2 py-2 md:px-4',
-              orientation === 'portrait' && 'md:grid-cols-4',
+              orientation === 'portrait' && 'lg:grid-cols-4',
             )}
           >
             {[...new Array(n)].map((_, n) => (
@@ -79,7 +79,7 @@ export const GenerationCard = ({
           </div>
 
           {/* sidebar header */}
-          <div className="flex items-center justify-evenly gap-4 border-b border-l bg-gray-1 px-4 py-2">
+          <div className="flex items-center justify-center gap-2 border-b border-l bg-gray-1 px-4 py-2">
             <Button size="2" variant="surface">
               Share
             </Button>
@@ -95,7 +95,8 @@ export const GenerationCard = ({
 
           {/* sidebar content */}
           <div className="space-y-5 border-l bg-gray-1 px-4 py-4 pt-6">
-            <ImageModelCard imageModel={imageModel} showImage={false} />
+            {/* //^ id = temp workaround for image */}
+            <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="h-30" />
 
             <div className="text-sm">
               <Heading size="1">Prompt</Heading>

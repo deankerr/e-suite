@@ -30,22 +30,21 @@ export const ImageModelCard = ({
   id,
   imageModel,
   buttonSash,
-  showImage = true,
   ...props
 }: ImageModelCardProps) => {
   const modelById = useQuery(api.imageModels.get, id ? { id } : 'skip')
-  const m = imageModel ?? modelById
+  const m = modelById ?? imageModel
   if (m === null) return <Card className="h-36 flex-none">null</Card>
 
   const url = m?.images ? m.images[0]?.url : undefined
 
   return (
-    <Card className={cn('relative flex-none', showImage ? 'h-36' : 'h-24', className)} {...props}>
+    <Card className={cn('relative h-36 flex-none', className)} {...props}>
       <div className="flex h-full">
         <Inset
           side="left"
           clip="border-box"
-          className={cn('relative w-5/12 shrink-0 border-r border-gray-5', !showImage && 'hidden')}
+          className={cn('relative w-5/12 shrink-0 border-r border-gray-5')}
         >
           {url ? (
             <NextImage
@@ -61,7 +60,7 @@ export const ImageModelCard = ({
           )}
         </Inset>
 
-        <div className={cn('relative grow', showImage && 'pl-rx-3')}>
+        <div className={cn('relative grow pl-rx-3')}>
           <Heading size="2" className="text-balance">
             {m?.name ?? <Skeleton className="h-[var(--heading-line-height-2)]" />}
           </Heading>
@@ -69,10 +68,6 @@ export const ImageModelCard = ({
           <BaseModelBadge base={m?.base} />
           <CivitaiIdLinkBadge civitaiId={m?.civitaiId} />
           <ModelTypeBadge type={m?.type} />
-
-          <div className="absolute -bottom-2 -ml-rx-4 w-full text-center font-code text-[8px] text-gold-5">
-            {m?._id}
-          </div>
         </div>
       </div>
 
@@ -81,6 +76,8 @@ export const ImageModelCard = ({
           <div className="ml-auto flex h-full items-center bg-accent-2A">{buttonSash}</div>
         </Button>
       )}
+
+      <div className="absolute bottom-0 right-1 font-code text-[8px] text-gold-5">{m?._id}</div>
     </Card>
   )
 }

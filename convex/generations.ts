@@ -45,7 +45,7 @@ export const page = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { paginationOpts }) => {
-    const result = await ctx.db.query('generations').paginate(paginationOpts)
+    const result = await ctx.db.query('generations').order('desc').paginate(paginationOpts)
 
     const pageAndRelations = await Promise.all(
       result.page.map(async (generation) => ({
