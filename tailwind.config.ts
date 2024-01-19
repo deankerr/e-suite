@@ -41,6 +41,11 @@ const config: Config = {
       borderColor: {
         DEFAULT: 'var(--gray-5)',
       },
+      fontFamily: {
+        dot: ['var(--font-dot)'],
+        biz: ['var(--font-biz)'],
+        ios: ['var(--font-ios)'],
+      },
     },
     screens: {
       xs: '520px',

@@ -4,6 +4,8 @@ import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreak
 import { Theme, ThemePanel } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
+import { BIZ_UDMincho, DotGothic16 } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
@@ -11,9 +13,30 @@ export const metadata: Metadata = {
   description: "it's the e/suite",
 }
 
+const dotGothic16 = DotGothic16({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-dot',
+})
+
+const bizUdMincho = BIZ_UDMincho({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-biz',
+})
+
+const iosevka = localFont({
+  src: '../assets/IosevkaFixedSlab-Regular.woff2',
+  variable: '--font-ios',
+})
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${dotGothic16.variable} ${bizUdMincho.variable} ${iosevka.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <ClientProviders>
           <Theme accentColor="orange" appearance="dark">
