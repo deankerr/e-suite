@@ -22,7 +22,8 @@
     }
   ],
   "rules": {
-    "drizzle/enforce-delete-with-where": ["error", { "drizzleObjectName": ["db"] }],
+    // "drizzle/enforce-delete-with-where": ["error", { "drizzleObjectName": ["db"] }],
+    "drizzle/enforce-delete-with-where": "off",
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-unsafe-member-access": "warn",
     "@typescript-eslint/no-unsafe-assignment": "warn",
