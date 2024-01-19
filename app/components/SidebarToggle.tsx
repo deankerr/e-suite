@@ -14,8 +14,8 @@ export const SidebarToggleButton = ({ className }: { className?: TailwindClass }
         className,
       )}
     >
-      <SidebarOpenIcon />
-      <SidebarCloseIcon />
+      <SidebarOpenIcon strokeWidth={1} />
+      <SidebarCloseIcon strokeWidth={1} />
     </Toggle.Root>
   </IconButton>
 )

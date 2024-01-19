@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.2",
+    "@clerk/nextjs": "^4.29.4",
     "@fal-ai/serverless-client": "^0.6.1",
     "@huggingface/hub": "^0.12.3",
     "@huggingface/inference": "^2.6.4",
