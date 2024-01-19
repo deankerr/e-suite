@@ -1,7 +1,9 @@
-import { Doc } from '@/convex/_generated/dataModel'
+import { api } from '@/convex/_generated/api'
+import { Doc, Id } from '@/convex/_generated/dataModel'
 import type { Generation, Image, ImageModel, ImageModelProvider } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { Button, Card, Em, Heading, IconButton, Inset, Separator } from '@radix-ui/themes'
+import { Button, Card, Dialog, Em, Heading, IconButton, Inset, Separator } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import { ImageModelCard } from './ImageModelCard'
@@ -38,7 +40,7 @@ export const GenerationCard = ({
   return (
     <Card className="container mx-auto">
       <Inset>
-        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[auto_24%] md:grid-rows-[4rem_36rem]">
+        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[auto_24%] md:grid-rows-[4rem_auto]">
           {/* header */}
           <div className="flex items-center gap-3 border-b bg-gray-1 px-3 py-2 text-gray-12">
             <IconButton variant="ghost" size="3">
@@ -75,23 +77,25 @@ export const GenerationCard = ({
             <Button size="2" variant="outline">
               Copy
             </Button>
-            <Button size="2" variant="surface" color="red">
-              Delete
-            </Button>
+            <DeleteDialog generationId={generation._id}>
+              <Button size="2" variant="surface" color="red">
+                Delete
+              </Button>
+            </DeleteDialog>
           </div>
 
           {/* sidebar content */}
           <div className="space-y-5 border-l bg-gray-1 px-4 py-4 pt-6">
             <ImageModelCard imageModel={imageModel} showImage={false} />
 
-            <div className="">
+            <div className="text-sm">
               <Heading size="1">Prompt</Heading>
               <div>{generation.prompt}</div>
             </div>
 
             <Separator size="4" />
 
-            <div className="">
+            <div className="text-sm">
               <Heading size="1">Negative prompt</Heading>
               <div>{generation.negativePrompt || <i>blank</i>}</div>
             </div>
@@ -146,5 +150,43 @@ const ImageFrame = ({ className, url, width, height }: ImageFrameProps) => {
     />
   ) : (
     <div className={cn('rounded border border-gold-5 bg-red-4', className)} />
+  )
+}
+
+type DeleteDialogProps = {
+  children: React.ReactNode
+  generationId: Id<'generations'>
+}
+
+const DeleteDialog = ({ children, generationId }: DeleteDialogProps) => {
+  const destroy = useMutation(api.generations.destroy)
+  const handleClick = async () => {
+    await destroy({ id: generationId })
+  }
+
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>{children}</Dialog.Trigger>
+
+      <Dialog.Content style={{ maxWidth: 450 }}>
+        <Dialog.Title>Destroy generation</Dialog.Title>
+        <Dialog.Description size="2" mb="4">
+          Hard delete generation and images
+        </Dialog.Description>
+
+        <div className="flex justify-end gap-3">
+          <Dialog.Close>
+            <Button color="gray" variant="soft">
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close>
+            <Button color="red" variant="solid" onClick={() => void handleClick()}>
+              Destroy
+            </Button>
+          </Dialog.Close>
+        </div>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

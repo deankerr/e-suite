@@ -3,7 +3,7 @@ import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalMutation, mutation, query } from './_generated/server'
 import { generationStatus } from './constants'
-import { assert, error, vEnum } from './util'
+import { assert, vEnum } from './util'
 
 export const generationsParameterFields = {
   imageModelId: v.id('imageModels'),
@@ -128,5 +128,30 @@ export const update = internalMutation({
     } else {
       await ctx.db.patch(id, statusFields)
     }
+  },
+})
+
+//* hard delete generation and associated images
+// TODO make internal
+export const destroy = mutation({
+  args: {
+    id: v.id('generations'),
+  },
+  handler: async (ctx, args) => {
+    const generation = await ctx.db.get(args.id)
+    assert(generation, 'invalid generation id', { id: args.id })
+
+    //* delete images/files
+    await Promise.all(
+      generation.imageIds.map(async (id) => {
+        const image = await ctx.db.get(id)
+        if (!image) return
+        await ctx.storage.delete(image.storageId)
+        await ctx.db.delete(id)
+      }),
+    )
+
+    //* delete generation
+    await ctx.db.delete(generation._id)
   },
 })
