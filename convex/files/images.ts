@@ -20,6 +20,7 @@ const imagesFields = {
   url: v.string(),
   nsfw: vEnum(nsfwRatings),
   blurDataUrl: v.optional(v.string()),
+  blurData: v.optional(v.any()),
 }
 
 export const imagesTable = defineTable(imagesFields).index('by_sourceUrl', ['sourceUrl'])
@@ -45,6 +46,16 @@ export const updateBlurDataUrl = internalMutation({
   },
   handler: async (ctx, { id, blurDataUrl }) => {
     await ctx.db.patch(id, { blurDataUrl })
+  },
+})
+
+export const updateBlurData = internalMutation({
+  args: {
+    id: v.id('images'),
+    blurData: v.any(),
+  },
+  handler: async (ctx, { id, blurData }) => {
+    await ctx.db.patch(id, { blurData })
   },
 })
 

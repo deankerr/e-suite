@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+import withPlaiceholder from '@plaiceholder/next'
 
 const nextConfig = {
   images: {
@@ -24,4 +21,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withBundleAnalyzer(nextConfig)
+export default withPlaiceholder(nextConfig)
