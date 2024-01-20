@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: 'artful-husky-972.convex.cloud',
         pathname: '/api/storage/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'artful-husky-972.convex.site',
+        pathname: '/image',
+      },
     ],
   },
   experimental: {

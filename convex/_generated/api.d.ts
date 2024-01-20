@@ -18,6 +18,7 @@ import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
 import type * as files_imagesLib from "../files/imagesLib.js";
 import type * as generations from "../generations.js";
+import type * as http from "../http.js";
 import type * as imageModelProviders from "../imageModelProviders.js";
 import type * as imageModels from "../imageModels.js";
 import type * as migrate from "../migrate.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   "files/images": typeof files_images;
   "files/imagesLib": typeof files_imagesLib;
   generations: typeof generations;
+  http: typeof http;
   imageModelProviders: typeof imageModelProviders;
   imageModels: typeof imageModels;
   migrate: typeof migrate;

@@ -68,15 +68,27 @@ export const GenerationCard = ({
             )}
           >
             {generation.status !== 'error' ? (
-              [...new Array(n)].map((_, n) => (
-                <ImageFrame
-                  key={n + generation._id}
-                  className={cn(frameSizes[orientation], 'bg-red-4')}
-                  url={images[n]?.url}
-                  width={sizes[orientation][0]}
-                  height={sizes[orientation][1]}
-                />
-              ))
+              [...new Array(n)].map((_, n) =>
+                // <ImageFrame
+                //   key={n + generation._id}
+                //   className={cn(frameSizes[orientation], 'bg-red-4')}
+                //   url={images[n]?.url}
+                //   width={sizes[orientation][0]}
+                //   height={sizes[orientation][1]}
+                // />
+
+                images[n] ? (
+                  <HttpImageFrame key={n} image={images[n]!} />
+                ) : (
+                  <div
+                    key={n}
+                    className={cn(
+                      'rounded border border-gold-5 bg-red-1A',
+                      frameSizes[orientation],
+                    )}
+                  />
+                ),
+              )
             ) : (
               <div className="col-span-full">
                 error: {generation.events.findLast((ev) => ev.status === 'error')?.message}
@@ -209,10 +221,18 @@ const DeleteDialog = ({ children, generationId }: DeleteDialogProps) => {
   )
 }
 
-type GenerationErrorCardProps = {
-  generation: Generation
-}
+const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_API_URL!
+const HttpImageFrame = ({ image, className }: { image: Image; className?: TailwindClass }) => {
+  const url = new URL(`${convexSiteUrl}/image`)
+  url.searchParams.set('storageId', image.storageId)
 
-export const GenerationErrorCard = ({ generation }: GenerationErrorCardProps) => {
-  return <div></div>
+  return (
+    <NextImage
+      src={url.toString()}
+      alt="http image"
+      width={image.width}
+      height={image.height}
+      className="box-content rounded border border-gold-5"
+    />
+  )
 }

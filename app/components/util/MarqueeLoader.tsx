@@ -20,7 +20,7 @@ type MarqueeProps = {
 const Marquee = ({ className, dir }: MarqueeProps) => {
   return (
     <marquee
-      scrollAmount="50"
+      scrollamount="50"
       direction={dir}
       className={cn('font-biz text-[10rem] text-accent-9', className)}
     >
