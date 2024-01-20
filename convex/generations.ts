@@ -1,9 +1,10 @@
+import { customMutation } from 'convex-helpers/server/customFunctions'
 import { defineTable, paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalMutation, mutation, query } from './_generated/server'
 import { generationStatus } from './constants'
-import { assert, vEnum } from './util'
+import { assert, error, vEnum } from './util'
 
 export const generationsParameterFields = {
   imageModelId: v.id('imageModels'),
@@ -29,6 +30,7 @@ export const generationsEventFields = {
 }
 
 export const generationsInternalFields = {
+  userId: v.id('users'),
   imageIds: v.array(v.id('images')),
   status: vEnum(generationStatus),
   events: v.array(v.object({ ...generationsEventFields, createdAt: v.number() })),
@@ -88,13 +90,34 @@ export const run = internalMutation({
   },
 })
 
-export const create = mutation({
+const userMutation = customMutation(mutation, {
+  args: {},
+  input: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity()
+    assert(identity, 'Not logged in')
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
+      .unique()
+
+    if (!user) {
+      //? can crate user here, but should have already been created by frontend (?)
+      throw error('Unregistered user')
+    }
+
+    return { ctx: { user }, args: {} }
+  },
+})
+
+export const create = userMutation({
   args: {
     ...generationsParameterFields,
   },
   handler: async (ctx, args) => {
     const id = await ctx.db.insert('generations', {
       ...args,
+      userId: ctx.user._id,
       imageIds: [],
       status: 'pending',
       events: [],
@@ -107,6 +130,26 @@ export const create = mutation({
     return id
   },
 })
+
+// export const create = mutation({
+//   args: {
+//     ...generationsParameterFields,
+//   },
+//   handler: async (ctx, args) => {
+//     const id = await ctx.db.insert('generations', {
+//       ...args,
+//       imageIds: [],
+//       status: 'pending',
+//       events: [],
+//       hidden: false,
+//     })
+
+//     //^ determine correct provider when we have more
+//     await ctx.scheduler.runAfter(0, internal.providers.sinkin.run, { id })
+
+//     return id
+//   },
+// })
 
 export const update = internalMutation({
   args: {

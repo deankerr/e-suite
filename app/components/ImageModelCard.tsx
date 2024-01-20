@@ -39,7 +39,7 @@ export const ImageModelCard = ({
   const url = m?.images ? m.images[0]?.url : undefined
 
   return (
-    <Card className={cn('relative h-36 flex-none', className)} {...props}>
+    <Card className={cn('relative h-36 max-w-80 flex-none', className)} {...props}>
       <div className="flex h-full">
         <Inset
           side="left"

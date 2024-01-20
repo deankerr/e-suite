@@ -10,7 +10,6 @@ export default function HomePage() {
       <GenerationFeed />
       {/* <LeftBar /> */}
       <RightBar />
-      {/* <CommandBar /> */}
     </>
   )
 }

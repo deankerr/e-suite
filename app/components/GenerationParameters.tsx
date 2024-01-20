@@ -3,7 +3,9 @@ import { ImageModel } from '@/convex/types'
 import * as Label from '@radix-ui/react-label'
 import { Button, Heading, ScrollArea, Select, Slider, TextArea, TextField } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
+import { ConvexError } from 'convex/values'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 type GenerationParamsProps = {
   imageModel?: ImageModel
@@ -44,6 +46,13 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
       console.log('result', result)
     } catch (err) {
       console.error(err)
+      if (err instanceof ConvexError) {
+        toast.error(`${err.name}: ${err.data.message}`)
+        return
+      }
+      if (err instanceof Error) {
+        toast.error(`${err.name} ${err.message}`)
+      }
     }
   }
 
