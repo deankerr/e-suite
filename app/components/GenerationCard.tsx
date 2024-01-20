@@ -67,15 +67,21 @@ export const GenerationCard = ({
               orientation === 'portrait' && 'lg:grid-cols-4',
             )}
           >
-            {[...new Array(n)].map((_, n) => (
-              <ImageFrame
-                key={n + generation._id}
-                className={cn(frameSizes[orientation], 'bg-red-4')}
-                url={images[n]?.url}
-                width={sizes[orientation][0]}
-                height={sizes[orientation][1]}
-              />
-            ))}
+            {generation.status !== 'error' ? (
+              [...new Array(n)].map((_, n) => (
+                <ImageFrame
+                  key={n + generation._id}
+                  className={cn(frameSizes[orientation], 'bg-red-4')}
+                  url={images[n]?.url}
+                  width={sizes[orientation][0]}
+                  height={sizes[orientation][1]}
+                />
+              ))
+            ) : (
+              <div className="col-span-full">
+                error: {generation.events.findLast((ev) => ev.status === 'error')?.message}
+              </div>
+            )}
           </div>
 
           {/* sidebar header */}
@@ -201,4 +207,12 @@ const DeleteDialog = ({ children, generationId }: DeleteDialogProps) => {
       </Dialog.Content>
     </Dialog.Root>
   )
+}
+
+type GenerationErrorCardProps = {
+  generation: Generation
+}
+
+export const GenerationErrorCard = ({ generation }: GenerationErrorCardProps) => {
+  return <div></div>
 }
