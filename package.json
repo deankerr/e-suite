@@ -16,18 +16,6 @@
     "turso:seed": "tsx drizzle/seed",
     "turso:push": "drizzle-kit push:sqlite"
   },
-  "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "linux",
-        "current"
-      ],
-      "cpu": [
-        "x64",
-        "arm64"
-      ]
-    }
-  },
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.2",
     "@clerk/nextjs": "^4.29.4",

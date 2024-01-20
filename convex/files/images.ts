@@ -20,7 +20,33 @@ const imagesFields = {
   url: v.string(),
   nsfw: vEnum(nsfwRatings),
   blurDataUrl: v.optional(v.string()),
-  blurData: v.optional(v.any()),
+  blurData: v.optional(
+    v.object({
+      base64: v.string(),
+      color: v.object({ b: v.number(), g: v.number(), hex: v.string(), r: v.number() }),
+      css: v.object({
+        backgroundImage: v.string(),
+        backgroundPosition: v.string(),
+        backgroundRepeat: v.string(),
+        backgroundSize: v.string(),
+      }),
+      metadata: v.object({
+        channels: v.number(),
+        density: v.number(),
+        hasAlpha: v.number(),
+        hasProfile: v.number(),
+        height: v.number(),
+        isProgressive: v.number(),
+        size: v.number(),
+        width: v.number(),
+        space: v.string(),
+        depth: v.string(),
+        format: v.string(),
+      }),
+      pixels: v.array(v.object({ b: v.number(), g: v.number(), r: v.number() })),
+      svg: v.array(v.any()),
+    }),
+  ),
 }
 
 export const imagesTable = defineTable(imagesFields).index('by_sourceUrl', ['sourceUrl'])
@@ -31,7 +57,7 @@ export const create = internalMutation({
   },
   handler: async (ctx, args) => {
     const id = await ctx.db.insert('images', args)
-    await ctx.scheduler.runAfter(0, internal.files.blurDataUrl.generate, {
+    await ctx.scheduler.runAfter(0, internal.files.plaiceholder.generate, {
       id,
       storageId: args.storageId,
     })
@@ -70,4 +96,15 @@ export const download = internalAction({
     const storageId = await ctx.storage.store(blob)
     return storageId
   },
+})
+
+export const allblur = internalMutation(async (ctx) => {
+  const images = await ctx.db.query('images').collect()
+  for (const img of images) {
+    if (img.blurData) continue
+    await ctx.scheduler.runAfter(0, internal.files.plaiceholder.generate, {
+      id: img._id,
+      storageId: img.storageId,
+    })
+  }
 })
