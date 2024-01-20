@@ -131,26 +131,6 @@ export const create = userMutation({
   },
 })
 
-// export const create = mutation({
-//   args: {
-//     ...generationsParameterFields,
-//   },
-//   handler: async (ctx, args) => {
-//     const id = await ctx.db.insert('generations', {
-//       ...args,
-//       imageIds: [],
-//       status: 'pending',
-//       events: [],
-//       hidden: false,
-//     })
-
-//     //^ determine correct provider when we have more
-//     await ctx.scheduler.runAfter(0, internal.providers.sinkin.run, { id })
-
-//     return id
-//   },
-// })
-
 export const update = internalMutation({
   args: {
     id: v.id('generations'),

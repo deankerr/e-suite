@@ -69,7 +69,7 @@ export const GenerationCard = ({
           >
             {[...new Array(n)].map((_, n) => (
               <ImageFrame
-                key={n}
+                key={n + generation._id}
                 className={cn(frameSizes[orientation], 'bg-red-4')}
                 url={images[n]?.url}
                 width={sizes[orientation][0]}
@@ -113,22 +113,24 @@ export const GenerationCard = ({
             <Separator size="4" />
 
             <table className="divide-y text-sm [&_td]:px-1">
-              <tr>
-                <td className="w-1/2 font-bold">Scheduler</td>
-                <td>{generation.scheduler}</td>
-              </tr>
-              <tr>
-                <td className="font-bold">Guidance</td>
-                <td>{generation.guidance}</td>
-              </tr>
-              <tr>
-                <td className="font-bold">LCM</td>
-                <td>{generation.lcm ? 'yes' : 'no'}</td>
-              </tr>
-              <tr>
-                <td className="font-bold">Seed</td>
-                <td>{generation.seed ?? 'random'}</td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td className="w-1/2 font-bold">Scheduler</td>
+                  <td>{generation.scheduler}</td>
+                </tr>
+                <tr>
+                  <td className="font-bold">Guidance</td>
+                  <td>{generation.guidance}</td>
+                </tr>
+                <tr>
+                  <td className="font-bold">LCM</td>
+                  <td>{generation.lcm ? 'yes' : 'no'}</td>
+                </tr>
+                <tr>
+                  <td className="font-bold">Seed</td>
+                  <td>{generation.seed ?? 'random'}</td>
+                </tr>
+              </tbody>
             </table>
 
             <div className="absolute bottom-0 right-1 text-right font-code text-[8px] text-gold-5">
@@ -181,7 +183,7 @@ const DeleteDialog = ({ children, generationId }: DeleteDialogProps) => {
       <Dialog.Content style={{ maxWidth: 450 }}>
         <Dialog.Title>Destroy generation</Dialog.Title>
         <Dialog.Description size="2" mb="4">
-          Hard delete generation and images
+          Delete generation and images
         </Dialog.Description>
 
         <div className="flex justify-end gap-3">
