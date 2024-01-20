@@ -1,6 +1,7 @@
 import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
-import { internalAction, internalMutation } from '../_generated/server'
+import { internal } from '../_generated/api'
+import { internalAction, internalMutation, internalQuery } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
 
@@ -18,6 +19,7 @@ const imagesFields = {
   storageId: v.id('_storage'),
   url: v.string(),
   nsfw: vEnum(nsfwRatings),
+  blurDataUrl: v.optional(v.string()),
 }
 
 export const imagesTable = defineTable(imagesFields).index('by_sourceUrl', ['sourceUrl'])
@@ -28,7 +30,21 @@ export const create = internalMutation({
   },
   handler: async (ctx, args) => {
     const id = await ctx.db.insert('images', args)
+    await ctx.scheduler.runAfter(0, internal.files.blurDataUrl.generate, {
+      id,
+      storageId: args.storageId,
+    })
     return id
+  },
+})
+
+export const updateBlurDataUrl = internalMutation({
+  args: {
+    id: v.id('images'),
+    blurDataUrl: v.string(),
+  },
+  handler: async (ctx, { id, blurDataUrl }) => {
+    await ctx.db.patch(id, { blurDataUrl })
   },
 })
 

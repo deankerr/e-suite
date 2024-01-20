@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as constants from "../constants.js";
+import type * as files_blurDataUrl from "../files/blurDataUrl.js";
 import type * as files_images from "../files/images.js";
 import type * as files_imagesLib from "../files/imagesLib.js";
 import type * as generations from "../generations.js";
@@ -38,6 +39,7 @@ import type * as util from "../util.js";
  */
 declare const fullApi: ApiFromModules<{
   constants: typeof constants;
+  "files/blurDataUrl": typeof files_blurDataUrl;
   "files/images": typeof files_images;
   "files/imagesLib": typeof files_imagesLib;
   generations: typeof generations;

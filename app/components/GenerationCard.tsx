@@ -230,8 +230,8 @@ const HttpImageFrame = ({ image, className }: { image: Image; className?: Tailwi
     <NextImage
       src={url.toString()}
       alt="http image"
-      width={image.width}
-      height={image.height}
+      width={image.width / 2}
+      height={image.height / 2}
       className="box-content rounded border border-gold-5"
     />
   )
