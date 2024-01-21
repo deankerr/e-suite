@@ -67,7 +67,12 @@ export const GenerationCard = ({ generation, images, imageModel, author }: Gener
             className={cn('mx-auto grid grid-cols-2 place-items-center gap-6 px-2 py-2 md:px-4')}
           >
             {frames.map((frame, i) => (
-              <ImageC key={frame.image?._id ?? i} {...frame} isLoading={isLoading} />
+              <ImageC
+                key={frame.image?._id ?? i}
+                {...frame}
+                alt={`generated image ${i}`}
+                isLoading={isLoading}
+              />
             ))}
 
             {status === 'error' && (

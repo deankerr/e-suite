@@ -44,7 +44,6 @@ const config: Config = {
       fontFamily: {
         dot: ['var(--font-dot)'],
         biz: ['var(--font-biz)'],
-        ios: ['var(--font-ios)'],
       },
       keyframes: {
         wiggle: {

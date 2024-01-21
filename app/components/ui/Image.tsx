@@ -11,10 +11,11 @@ type ImageCProps = {
   className?: TailwindClass
   image?: ImageDoc | null
   size: { width: number; height: number }
+  alt: string
   isLoading?: boolean
 }
 
-export const ImageC = ({ className, image, size, isLoading = false }: ImageCProps) => {
+export const ImageC = ({ className, image, size, alt, isLoading = false }: ImageCProps) => {
   //* error
   if (image === null) {
     return (
@@ -35,7 +36,7 @@ export const ImageC = ({ className, image, size, isLoading = false }: ImageCProp
         style={{ width: size.width, height: '100%' }}
       >
         <HourglassIcon className="size-8" />
-        <div className="motion-safe:animate-wipedown absolute inset-y-[90%] h-16 w-full bg-blue-4A blur-xl" />
+        <div className="absolute inset-y-[90%] h-16 w-full bg-blue-4A blur-xl motion-safe:animate-wipedown" />
       </div>
     )
   }
@@ -59,8 +60,9 @@ export const ImageC = ({ className, image, size, isLoading = false }: ImageCProp
   return (
     <NextImage
       src={url}
-      alt="http image"
-      {...size}
+      alt={alt}
+      width={image.width ?? size.width}
+      height={image.height ?? size.height}
       placeholder="blur"
       blurDataURL={image.blurDataURL}
       className={cn('box-content rounded border border-gold-5', className)}

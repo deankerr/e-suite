@@ -2,25 +2,15 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel, ModelType } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import {
-  Badge,
-  Button,
-  Card,
-  colorProp,
-  Heading,
-  IconButton,
-  Inset,
-  Skeleton,
-  Text,
-} from '@radix-ui/themes'
+import { Badge, Button, Card, colorProp, Heading, Inset, Skeleton } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
-import NextImage from 'next/image'
 import NextLink from 'next/link'
+import { ImageC } from './ui/Image'
 
 type ImageModelCardProps = {
   id?: Id<'imageModels'>
-  imageModel?: ImageModel | null | undefined
+  imageModel?: ImageModel | null
   buttonSash?: React.ReactNode
   showImage?: boolean
 } & React.ComponentProps<typeof Card>
@@ -34,10 +24,10 @@ export const ImageModelCard = ({
 }: ImageModelCardProps) => {
   const modelById = useQuery(api.imageModels.get, id ? { id } : 'skip')
   const m = modelById ?? imageModel
-  if (m === null) return <Card className="h-36 flex-none">null</Card>
+  if (!m) return null
 
-  const url = m?.images ? m.images[0]?.url : undefined
-
+  const image = m.images ? m.images[0] : null
+  const size = { width: 128, height: 256 }
   return (
     <Card className={cn('relative h-36 max-w-80 flex-none', className)} {...props}>
       <div className="flex h-full">
@@ -46,17 +36,13 @@ export const ImageModelCard = ({
           clip="border-box"
           className={cn('relative w-5/12 shrink-0 border-r border-gray-5')}
         >
-          {url ? (
-            <NextImage
-              src={url}
-              sizes="(max-width: 1200px) 130px"
-              fill
-              alt="model card image"
-              style={{ objectFit: 'cover' }}
-              priority
+          {image && (
+            <ImageC
+              image={image}
+              alt={`sample image for ${m.name}`}
+              size={size}
+              className="inset-0"
             />
-          ) : (
-            <Skeleton className="h-full" />
           )}
         </Inset>
 
