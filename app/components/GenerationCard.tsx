@@ -2,14 +2,24 @@ import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import type { Generation, Image as ImageDoc, ImageModelProvider } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { Button, Card, Dialog, Heading, IconButton, Inset, Separator } from '@radix-ui/themes'
+import {
+  Button,
+  Card,
+  Dialog,
+  Em,
+  Heading,
+  IconButton,
+  Inset,
+  Separator,
+  Strong,
+} from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import { ImageModelCard } from './ImageModelCard'
 import { ImageC } from './ui/Image'
 
 const imageSizes = {
-  square: { width: 256, height: 256 },
+  square: { width: 320, height: 320 },
   portrait: { width: 256, height: 384 },
   landscape: { width: 384, height: 256 },
 } as const
@@ -19,6 +29,7 @@ type GenerationCardProps = {
   images: (ImageDoc | null)[]
   imageModel: Doc<'imageModels'> | null
   imageModelProvider: ImageModelProvider | null
+  author?: Doc<'users'> | null
 }
 
 type ImageShape = 'square' | 'portrait' | 'landscape'
@@ -29,7 +40,7 @@ const getShape = (width: number, height: number): ImageShape => {
   return 'landscape'
 }
 
-export const GenerationCard = ({ generation, images, imageModel }: GenerationCardProps) => {
+export const GenerationCard = ({ generation, images, imageModel, author }: GenerationCardProps) => {
   const { width, height, n, status } = generation
 
   const shape = getShape(width, height)
@@ -38,6 +49,7 @@ export const GenerationCard = ({ generation, images, imageModel }: GenerationCar
   const frames = Array.from({ length: n }, (_, i) => ({ image: images[i], size }))
   const isLoading = status === 'pending' || status === 'acting'
 
+  const authorName = author ? author.info?.nickname ?? author.info?.givenName : null
   return (
     <Card className="container mx-auto">
       <Inset>
@@ -52,12 +64,10 @@ export const GenerationCard = ({ generation, images, imageModel }: GenerationCar
 
           {/* content */}
           <div
-            className={cn(
-              'mx-auto grid w-fit grid-cols-2 place-content-center place-items-center gap-6 px-2 py-2 md:px-4',
-            )}
+            className={cn('mx-auto grid grid-cols-2 place-items-center gap-6 px-2 py-2 md:px-4')}
           >
-            {frames.map((frame) => (
-              <ImageC key={frame.image?._id} {...frame} isLoading={isLoading} />
+            {frames.map((frame, i) => (
+              <ImageC key={frame.image?._id ?? i} {...frame} isLoading={isLoading} />
             ))}
 
             {status === 'error' && (
@@ -84,6 +94,13 @@ export const GenerationCard = ({ generation, images, imageModel }: GenerationCar
 
           {/* sidebar content */}
           <div className="space-y-5 border-l bg-gray-1 px-4 py-4 pt-6">
+            <div className="flex justify-center gap-2">
+              <Em>{`"created by"`}</Em>
+              {authorName ? <Strong>@{authorName}</Strong> : <Em>anonymous</Em>}
+            </div>
+
+            <Separator size="4" />
+
             {/* //^ id = temp workaround for image */}
             <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="h-30" />
 

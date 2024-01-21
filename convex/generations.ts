@@ -60,6 +60,7 @@ export const page = query({
         ),
         imageModel: await ctx.db.get(generation.imageModelId),
         imageModelProvider: await ctx.db.get(generation.imageModelProviderId),
+        author: await ctx.db.get(generation.userId), //todo don't send all the personal data
       })),
     )
 

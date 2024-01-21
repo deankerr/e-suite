@@ -5,7 +5,7 @@ import NextImage from 'next/image'
 
 const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_API_URL!
 
-const frameClass = 'box-content rounded animate-pulse grid place-content-center place-self-stretch'
+const frameClass = 'box-content rounded animate-pulse grid place-content-center max-w-full'
 
 type ImageCProps = {
   className?: TailwindClass
@@ -18,7 +18,10 @@ export const ImageC = ({ className, image, size, isLoading = false }: ImageCProp
   //* error
   if (image === null) {
     return (
-      <div className={cn(frameClass, 'bg-red-3A text-red-6A')}>
+      <div
+        className={cn(frameClass, 'bg-red-3A text-red-6A')}
+        style={{ width: size.width, height: '100%' }}
+      >
         <AlertOctagonIcon className="size-8" />
       </div>
     )
@@ -27,7 +30,10 @@ export const ImageC = ({ className, image, size, isLoading = false }: ImageCProp
   //* waiting
   if (!image && isLoading) {
     return (
-      <div className={cn(frameClass, 'overflow-hidden bg-blue-2A text-blue-5A')}>
+      <div
+        className={cn(frameClass, 'overflow-hidden bg-blue-2A text-blue-5A')}
+        style={{ width: size.width, height: '100%' }}
+      >
         <HourglassIcon className="size-8" />
         <div className="motion-safe:animate-wipedown absolute inset-y-[90%] h-16 w-full bg-blue-4A blur-xl" />
       </div>
@@ -37,7 +43,10 @@ export const ImageC = ({ className, image, size, isLoading = false }: ImageCProp
   //* file missing (?)
   if (!image) {
     return (
-      <div className={cn(frameClass, 'bg-yellow-3A text-yellow-6A')}>
+      <div
+        className={cn(frameClass, 'bg-yellow-3A text-yellow-6A')}
+        style={{ width: size.width, height: '100%' }}
+      >
         <FileQuestionIcon className="size-8" />
       </div>
     )
