@@ -1,110 +1,62 @@
 import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
+import { Id } from '../_generated/dataModel'
 import { internalAction, internalMutation, internalQuery } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
 
-const imagesCreateFields = {
-  sourceUrl: v.string(),
-  sourceInfo: v.string(),
+const imagesFields = {
+  storageId: v.id('_storage'),
   generationsId: v.optional(v.id('generations')),
+  sourceUrl: v.string(),
+  nsfw: vEnum(nsfwRatings),
+
   width: v.number(),
   height: v.number(),
+  blurDataURL: v.string(),
+  color: v.string(),
+  metadata: v.any(),
+
+  deleted: v.boolean(),
 }
 
-const imagesFields = {
-  ...imagesCreateFields,
+export const imagesTable = defineTable(imagesFields)
 
-  storageId: v.id('_storage'),
-  url: v.string(),
-  nsfw: vEnum(nsfwRatings),
-  blurDataUrl: v.optional(v.string()),
-  blurData: v.optional(
-    v.object({
-      base64: v.string(),
-      color: v.object({ b: v.number(), g: v.number(), hex: v.string(), r: v.number() }),
-      css: v.object({
-        backgroundImage: v.string(),
-        backgroundPosition: v.string(),
-        backgroundRepeat: v.string(),
-        backgroundSize: v.string(),
-      }),
-      metadata: v.object({
-        channels: v.number(),
-        density: v.number(),
-        hasAlpha: v.number(),
-        hasProfile: v.number(),
-        height: v.number(),
-        isProgressive: v.number(),
-        size: v.number(),
-        width: v.number(),
-        space: v.string(),
-        depth: v.string(),
-        format: v.string(),
-      }),
-      pixels: v.array(v.object({ b: v.number(), g: v.number(), r: v.number() })),
-      svg: v.array(v.any()),
-    }),
-  ),
-}
-
-export const imagesTable = defineTable(imagesFields).index('by_sourceUrl', ['sourceUrl'])
-
-export const create = internalMutation({
-  args: {
-    ...imagesFields,
-  },
-  handler: async (ctx, args) => {
-    const id = await ctx.db.insert('images', args)
-    await ctx.scheduler.runAfter(0, internal.files.plaiceholder.generate, {
-      id,
-      storageId: args.storageId,
-    })
-    return id
-  },
-})
-
-export const updateBlurDataUrl = internalMutation({
-  args: {
-    id: v.id('images'),
-    blurDataUrl: v.string(),
-  },
-  handler: async (ctx, { id, blurDataUrl }) => {
-    await ctx.db.patch(id, { blurDataUrl })
-  },
-})
-
-export const updateBlurData = internalMutation({
-  args: {
-    id: v.id('images'),
-    blurData: v.any(),
-  },
-  handler: async (ctx, { id, blurData }) => {
-    await ctx.db.patch(id, { blurData })
-  },
-})
-
-export const download = internalAction({
+export const pull = internalAction({
   args: {
     url: v.string(),
+    generationsId: v.optional(v.id('generations')),
+    nsfw: v.optional(vEnum(nsfwRatings)),
   },
-  handler: async (ctx, { url }) => {
+  handler: async (ctx, { url, generationsId, nsfw = 'unknown' }) => {
     const sourceUrl = new URL(url).toString()
     const response = await fetch(sourceUrl)
     const blob = await response.blob()
     const storageId = await ctx.storage.store(blob)
-    return storageId
+
+    const metadata = await ctx.runAction(internal.files.plaiceholder.process, { storageId })
+    const imageId: Id<'images'> = await ctx.runMutation(internal.files.images.create, {
+      ...metadata,
+      storageId,
+      sourceUrl,
+      nsfw,
+      generationsId,
+    })
+
+    return imageId
   },
 })
 
-export const allblur = internalMutation(async (ctx) => {
-  const images = await ctx.db.query('images').collect()
-  for (const img of images) {
-    if (img.blurData) continue
-    await ctx.scheduler.runAfter(0, internal.files.plaiceholder.generate, {
-      id: img._id,
-      storageId: img.storageId,
+export const create = internalMutation({
+  args: {
+    ...imagesFields,
+    deleted: v.optional(v.any()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert('images', {
+      ...args,
+      deleted: false,
     })
-  }
+  },
 })

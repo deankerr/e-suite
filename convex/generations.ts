@@ -2,6 +2,7 @@ import { customMutation } from 'convex-helpers/server/customFunctions'
 import { defineTable, paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
+import { Id } from './_generated/dataModel'
 import { internalMutation, mutation, query } from './_generated/server'
 import { generationStatus } from './constants'
 import { assert, error, vEnum } from './util'
@@ -31,7 +32,7 @@ export const generationsEventFields = {
 
 export const generationsInternalFields = {
   userId: v.id('users'),
-  imageIds: v.array(v.id('images')),
+  imageIds: v.array(v.union(v.id('images'), v.null())),
   status: vEnum(generationStatus),
   events: v.array(v.object({ ...generationsEventFields, createdAt: v.number() })),
   hidden: v.boolean(),
@@ -52,7 +53,11 @@ export const page = query({
     const pageAndRelations = await Promise.all(
       result.page.map(async (generation) => ({
         generation,
-        images: await Promise.all(generation.imageIds.map(async (id) => await ctx.db.get(id))),
+        images: await Promise.all(
+          generation.imageIds.map(async (id: Id<'images'> | null) =>
+            id ? await ctx.db.get(id) : null,
+          ),
+        ),
         imageModel: await ctx.db.get(generation.imageModelId),
         imageModelProvider: await ctx.db.get(generation.imageModelProviderId),
       })),
@@ -135,7 +140,7 @@ export const update = internalMutation({
   args: {
     id: v.id('generations'),
     ...generationsEventFields,
-    imageIds: v.optional(v.array(v.id('images'))),
+    imageIds: v.optional(v.array(v.union(v.id('images'), v.null()))),
   },
   handler: async (ctx, { id, imageIds, status, message, data }) => {
     const generation = await ctx.db.get(id)
@@ -167,6 +172,7 @@ export const destroy = mutation({
     //* delete images/files
     await Promise.all(
       generation.imageIds.map(async (id) => {
+        if (!id) return
         const image = await ctx.db.get(id)
         if (!image) return
         await ctx.storage.delete(image.storageId)

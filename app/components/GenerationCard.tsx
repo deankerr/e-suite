@@ -1,25 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
-import type { Generation, Image, ImageModel, ImageModelProvider } from '@/convex/types'
+import type { Generation, Image, ImageModelProvider } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import {
-  Button,
-  Card,
-  Dialog,
-  Em,
-  Heading,
-  IconButton,
-  Inset,
-  Separator,
-  Strong,
-  Text,
-} from '@radix-ui/themes'
+import { Button, Card, Dialog, Heading, IconButton, Inset, Separator } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import NextImage from 'next/image'
-import { createElement } from 'react'
 import { ImageModelCard } from './ImageModelCard'
 
 type GenerationCardProps = {
@@ -66,20 +52,12 @@ export const GenerationCard = ({
           {/* content */}
           <div
             className={cn(
-              'mx-auto grid w-fit grid-cols-4 place-content-center place-items-center gap-6 px-2 py-2 md:px-4',
+              'mx-auto grid w-fit grid-cols-2 place-content-center place-items-center gap-6 px-2 py-2 md:px-4',
               orientation === 'portrait' && 'lg:grid-cols-4',
             )}
           >
             {generation.status !== 'error' ? (
               [...new Array(n)].map((_, n) =>
-                // <ImageFrame
-                //   key={n + generation._id}
-                //   className={cn(frameSizes[orientation], 'bg-red-4')}
-                //   url={images[n]?.url}
-                //   width={sizes[orientation][0]}
-                //   height={sizes[orientation][1]}
-                // />
-
                 images[n] ? (
                   <HttpImageFrame
                     key={n}
@@ -232,64 +210,19 @@ const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_API_URL!
 const HttpImageFrame = ({ image, className }: { image: Image; className?: TailwindClass }) => {
   const url = new URL(`${convexSiteUrl}/image`)
   url.searchParams.set('storageId', image.storageId)
-  const SvgPl = image.blurData?.svg ? createElement('svg', {}, image.blurData?.svg) : null
+
   return (
-    <>
-      <NextImage
-        src={url.toString()}
-        alt="http image"
-        width={image.width / 2}
-        height={image.height / 2}
-        placeholder="blur"
-        blurDataURL={image.blurData?.base64}
-        className={cn('box-content rounded border border-gold-5', className)}
-      />
-      {/* <div className={cn(className, 'overflow-hidden')}>
-        <img
-          src={image.blurData?.base64}
-          width={image.width / 2}
-          height={image.height / 2}
-          title={getSize(image.blurData?.base64)}
-          className="box-content scale-105 rounded border border-gold-5 blur-2xl"
-        />
-        <div className="absolute left-0 top-0 text-lime-9">{getSize(image.blurData?.base64)}</div>
-      </div>
-      <div className={cn(className, 'overflow-hidden')}>
-        <div
-          className={cn(className, '')}
-          style={{ backgroundColor: image.blurData?.color.hex }}
-        ></div>
-      </div> */}
-    </>
+    <NextImage
+      src={url.toString()}
+      alt="http image"
+      width={image.width / 2}
+      height={image.height / 2}
+      placeholder="blur"
+      blurDataURL={getha()}
+      className={cn('box-content rounded border border-gold-5', className)}
+    />
   )
 }
 
-type SvgPProps = {
-  svg?: any[]
-}
-
-export const SvgP = ({ svg }: SvgPProps) => {
-  if (!svg) return null
-
-  return createElement(
-    svg[0],
-    {
-      ...svg[1],
-      style: {
-        ...svg[1].style,
-        transform: ['scale(1)', svg[1].style.transform].join(' '),
-        filter: 'blur(40px)',
-      },
-      className: '',
-    },
-    // @ts-expect-error nonono
-    svg[2].map((child) =>
-      createElement(child[0], {
-        key: [child[1].x, child[1].y].join(','),
-        ...child[1],
-      }),
-    ),
-  )
-}
-
-const getSize = (v: unknown) => String(JSON.stringify(v)?.length)
+const bbb = false
+const getha = () => (bbb ? 'skafjsdklfsj' : ' ')

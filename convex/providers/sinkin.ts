@@ -41,35 +41,39 @@ export const run = internalAction({
       })
       throw new ConvexError({ message: error.message, error })
     }
-
+    //todo fallback unresolved image
     //* success, create images
-    const { images, ...res } = result
-    const imageIds = await Promise.all(
-      images.map(async (image) => {
-        const sourceUrl = new URL(image).toString()
-        const storageId = await ctx.runAction(internal.files.images.download, { url: sourceUrl })
-        const url = (await ctx.storage.getUrl(storageId)) as string
-
-        const fileId = await ctx.runMutation(internal.files.images.create, {
-          sourceUrl,
-          sourceInfo: 'generations:sinkin',
-          generationsId: id,
-          storageId,
-          url,
-          width: generation.width,
-          height: generation.height,
-          nsfw: 'unknown',
-        })
-
-        return fileId
-      }),
+    const { images: urls, ...res } = result
+    const imageResults = await Promise.allSettled(
+      urls.map(
+        async (url) => await ctx.runAction(internal.files.images.pull, { url, generationsId: id }),
+      ),
     )
+
+    const errors: string[] = []
+    const imageIds = imageResults.map((result) => {
+      if (result.status === 'fulfilled') return result.value
+      console.error(result.reason)
+      if (result.reason instanceof Error) {
+        const { name, message } = result.reason
+        errors.push(`${name}: ${message}`)
+      } else {
+        errors.push('Unknown error creating image')
+      }
+      return null
+    })
+
+    //* all failed
+    if (errors.length === generation.n) {
+      await ctx.runMutation(internal.generations.update, { id, status: 'failed', data: errors })
+      return
+    }
 
     await ctx.runMutation(internal.generations.update, {
       id,
       imageIds,
       status: 'complete',
-      data: res,
+      data: { res, errors: errors.length ? errors : undefined },
     })
   },
 })
