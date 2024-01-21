@@ -46,6 +46,20 @@ const config: Config = {
         biz: ['var(--font-biz)'],
         ios: ['var(--font-ios)'],
       },
+      keyframes: {
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        wipeDown: {
+          from: { top: '-4rem', opacity: '1' },
+          to: { top: 'calc(100% + 4rem)', opacity: '1' },
+        },
+      },
+      animation: {
+        wiggle: 'wiggle 1s ease-in-out infinite',
+        wipedown: 'wipeDown 1.75s linear infinite',
+      },
     },
     screens: {
       xs: '520px',

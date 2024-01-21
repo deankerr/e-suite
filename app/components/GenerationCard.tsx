@@ -8,6 +8,12 @@ import { FileImageIcon } from 'lucide-react'
 import { ImageModelCard } from './ImageModelCard'
 import { ImageC } from './ui/Image'
 
+const imageSizes = {
+  square: { width: 256, height: 256 },
+  portrait: { width: 256, height: 384 },
+  landscape: { width: 384, height: 256 },
+} as const
+
 type GenerationCardProps = {
   generation: Generation
   images: (ImageDoc | null)[]
@@ -15,32 +21,27 @@ type GenerationCardProps = {
   imageModelProvider: ImageModelProvider | null
 }
 
-export const GenerationCard = ({
-  generation,
-  images,
-  imageModel,
-  imageModelProvider,
-}: GenerationCardProps) => {
-  const { width, height, n } = generation
-  const aspectRatio = width / height
-  const orientation = aspectRatio === 1 ? 'square' : aspectRatio < 1 ? 'portrait' : 'landscape'
+type ImageShape = 'square' | 'portrait' | 'landscape'
+const getShape = (width: number, height: number): ImageShape => {
+  const ratio = width / height
+  if (ratio === 1) return 'square' as const
+  if (ratio < 1) return 'portrait'
+  return 'landscape'
+}
 
-  const sizes = {
-    square: [256, 256],
-    portrait: [256, 384],
-    landscape: [384, 256],
-  } as const
+export const GenerationCard = ({ generation, images, imageModel }: GenerationCardProps) => {
+  const { width, height, n, status } = generation
 
-  const frameSizes = {
-    square: 'w-64 h-64',
-    portrait: 'w-[256px] h-[384px]',
-    landscape: 'w-96 h-64',
-  }
+  const shape = getShape(width, height)
+  const size = imageSizes[shape]
+
+  const frames = Array.from({ length: n }, (_, i) => ({ image: images[i], size }))
+  const isLoading = status === 'pending' || status === 'acting'
 
   return (
     <Card className="container mx-auto">
       <Inset>
-        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[1fr_18rem] md:grid-rows-[3rem_auto]">
+        <div className="grid h-full grid-flow-row md:grid-flow-col md:grid-cols-[1fr_20rem] md:grid-rows-[3rem_auto]">
           {/* header */}
           <div className="flex items-center gap-2 border-b bg-gray-1 px-2 py-2 text-gray-12">
             <IconButton variant="ghost" size="2">
@@ -53,25 +54,14 @@ export const GenerationCard = ({
           <div
             className={cn(
               'mx-auto grid w-fit grid-cols-2 place-content-center place-items-center gap-6 px-2 py-2 md:px-4',
-              orientation === 'portrait' && 'lg:grid-cols-4',
             )}
           >
-            {generation.status !== 'error' ? (
-              [...new Array(n)].map((_, n) =>
-                images[n] ? (
-                  <ImageC key={images[n]?._id ?? n} image={images[n]!} frame={{ width, height }} />
-                ) : (
-                  <div
-                    key={n}
-                    className={cn(
-                      'rounded border border-gold-5 bg-red-1A',
-                      frameSizes[orientation],
-                    )}
-                  />
-                ),
-              )
-            ) : (
-              <div className="col-span-full">
+            {frames.map((frame) => (
+              <ImageC key={frame.image?._id} {...frame} isLoading={isLoading} />
+            ))}
+
+            {status === 'error' && (
+              <div className="absolute grid place-content-center rounded text-2xl text-red-10">
                 error: {generation.events.findLast((ev) => ev.status === 'error')?.message}
               </div>
             )}

@@ -1,22 +1,44 @@
 import { Image as ImageDoc } from '@/convex/types'
 import { cn } from '@/lib/utils'
+import { AlertOctagonIcon, FileQuestionIcon, HourglassIcon } from 'lucide-react'
 import NextImage from 'next/image'
 
 const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_API_URL!
 
+const frameClass = 'box-content rounded animate-pulse grid place-content-center place-self-stretch'
+
 type ImageCProps = {
   className?: TailwindClass
-  image: ImageDoc | null
-  frame?: { width: number; height: number }
+  image?: ImageDoc | null
+  size: { width: number; height: number }
+  isLoading?: boolean
 }
 
-export const ImageC = ({ className, image, frame }: ImageCProps) => {
-  if (!image) {
-    const width = frame?.width ?? 256
-    const height = frame?.height ?? 256
+export const ImageC = ({ className, image, size, isLoading = false }: ImageCProps) => {
+  //* error
+  if (image === null) {
     return (
-      <div style={{ width, height }} className="bg-red-1A">
-        ?
+      <div className={cn(frameClass, 'bg-red-3A text-red-6A')}>
+        <AlertOctagonIcon className="size-8" />
+      </div>
+    )
+  }
+
+  //* waiting
+  if (!image && isLoading) {
+    return (
+      <div className={cn(frameClass, 'overflow-hidden bg-blue-2A text-blue-5A')}>
+        <HourglassIcon className="size-8" />
+        <div className="motion-safe:animate-wipedown absolute inset-y-[90%] h-16 w-full bg-blue-4A blur-xl" />
+      </div>
+    )
+  }
+
+  //* file missing (?)
+  if (!image) {
+    return (
+      <div className={cn(frameClass, 'bg-yellow-3A text-yellow-6A')}>
+        <FileQuestionIcon className="size-8" />
       </div>
     )
   }
@@ -29,8 +51,7 @@ export const ImageC = ({ className, image, frame }: ImageCProps) => {
     <NextImage
       src={url}
       alt="http image"
-      width={image.width / 2}
-      height={image.height / 2}
+      {...size}
       placeholder="blur"
       blurDataURL={image.blurDataURL}
       className={cn('box-content rounded border border-gold-5', className)}
