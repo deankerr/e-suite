@@ -1,7 +1,7 @@
 import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
-import { Id } from '../_generated/dataModel'
+import { Doc, Id } from '../_generated/dataModel'
 import { internalAction, internalMutation, internalQuery } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
@@ -59,4 +59,9 @@ export const create = internalMutation({
       deleted: false,
     })
   },
+})
+
+export const update = internalMutation(async (ctx, args: Partial<Doc<'images'>>) => {
+  if (!args._id) return
+  await ctx.db.patch(args._id, { ...args })
 })

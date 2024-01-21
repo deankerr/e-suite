@@ -1,16 +1,16 @@
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
-import type { Generation, Image, ImageModelProvider } from '@/convex/types'
+import type { Generation, Image as ImageDoc, ImageModelProvider } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Button, Card, Dialog, Heading, IconButton, Inset, Separator } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
-import NextImage from 'next/image'
 import { ImageModelCard } from './ImageModelCard'
+import { ImageC } from './ui/Image'
 
 type GenerationCardProps = {
   generation: Generation
-  images: (Image | null)[]
+  images: (ImageDoc | null)[]
   imageModel: Doc<'imageModels'> | null
   imageModelProvider: ImageModelProvider | null
 }
@@ -59,11 +59,7 @@ export const GenerationCard = ({
             {generation.status !== 'error' ? (
               [...new Array(n)].map((_, n) =>
                 images[n] ? (
-                  <HttpImageFrame
-                    key={n}
-                    image={images[n]!}
-                    className={cn(frameSizes[orientation], 'rounded border-2 border-gold-9')}
-                  />
+                  <ImageC key={images[n]?._id ?? n} image={images[n]!} frame={{ width, height }} />
                 ) : (
                   <div
                     key={n}
@@ -148,26 +144,6 @@ export const GenerationCard = ({
   )
 }
 
-type ImageFrameProps = {
-  width: number
-  height: number
-  url?: string | null
-} & React.ComponentProps<'div'>
-
-const ImageFrame = ({ className, url, width, height }: ImageFrameProps) => {
-  return url ? (
-    <NextImage
-      src={url}
-      alt={`generated image`}
-      width={width}
-      height={height}
-      className="box-content rounded border border-gold-5"
-    />
-  ) : (
-    <div className={cn('rounded border border-gold-5 bg-red-4', className)} />
-  )
-}
-
 type DeleteDialogProps = {
   children: React.ReactNode
   generationId: Id<'generations'>
@@ -205,24 +181,3 @@ const DeleteDialog = ({ children, generationId }: DeleteDialogProps) => {
     </Dialog.Root>
   )
 }
-
-const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_API_URL!
-const HttpImageFrame = ({ image, className }: { image: Image; className?: TailwindClass }) => {
-  const url = new URL(`${convexSiteUrl}/image`)
-  url.searchParams.set('storageId', image.storageId)
-
-  return (
-    <NextImage
-      src={url.toString()}
-      alt="http image"
-      width={image.width / 2}
-      height={image.height / 2}
-      placeholder="blur"
-      blurDataURL={getha()}
-      className={cn('box-content rounded border border-gold-5', className)}
-    />
-  )
-}
-
-const bbb = false
-const getha = () => (bbb ? 'skafjsdklfsj' : ' ')

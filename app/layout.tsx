@@ -1,11 +1,10 @@
 import './globals.css'
 import { ClientProviders } from '@/app/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreakpointIndicator'
-import { Theme, ThemePanel } from '@radix-ui/themes'
+import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { BIZ_UDMincho, DotGothic16 } from 'next/font/google'
-import localFont from 'next/font/local'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
@@ -25,16 +24,11 @@ const bizUdMincho = BIZ_UDMincho({
   variable: '--font-biz',
 })
 
-const iosevka = localFont({
-  src: '../assets/IosevkaFixedSlab-Regular.woff2',
-  variable: '--font-ios',
-})
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${dotGothic16.variable} ${bizUdMincho.variable} ${iosevka.variable}`}
+      className={`${dotGothic16.variable} ${bizUdMincho.variable}`}
       suppressHydrationWarning
     >
       <body>

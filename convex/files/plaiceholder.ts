@@ -21,12 +21,24 @@ export const process = internalAction({
       metadata: { width, height, ...metadata },
     } = await getPlaiceholder(buffer)
 
-    return {
-      color,
-      blurDataURL: base64,
-      width,
-      height,
-      metadata,
+    try {
+      return {
+        color,
+        blurDataURL: base64,
+        width,
+        height,
+        metadata: {
+          ...metadata,
+          exif: metadata.exif ? metadata.exif.buffer : undefined,
+          icc: undefined,
+          formatMagick: undefined,
+          iptc: metadata.iptc ? metadata.iptc.buffer : undefined,
+          xmp: metadata.xmp ? metadata.xmp.buffer : undefined,
+        },
+      }
+    } catch (err) {
+      console.log(metadata)
+      throw err
     }
   },
 })
