@@ -67,7 +67,7 @@ const Sidebar = ({
   return (
     <div
       className={cn(
-        'col-start-2 row-start-2 flex items-center border-l bg-gray-1 p-rx-1',
+        'col-start-2 row-start-2 flex items-center justify-start border-l bg-gray-1 p-rx-1',
         className,
       )}
     >
