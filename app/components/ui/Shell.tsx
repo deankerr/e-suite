@@ -6,7 +6,7 @@ const Root = ({ children }: { children?: React.ReactNode }) => {
   return (
     <Card className="container mx-auto">
       <Inset>
-        <div className="md:grid md:grid-cols-[auto_16rem] md:grid-rows-[3rem_minmax(30rem,auto)]">
+        <div className="md:grid md:grid-cols-[auto_20rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]">
           {children}
         </div>
       </Inset>
@@ -66,10 +66,7 @@ const Sidebar = ({
 }: { children?: React.ReactNode } & React.ComponentProps<'div'>) => {
   return (
     <div
-      className={cn(
-        'col-start-2 row-start-2 flex items-center justify-start border-l bg-gray-1 p-rx-1',
-        className,
-      )}
+      className={cn('col-start-2 row-start-2 flex flex-col border-l bg-gray-1 p-rx-1', className)}
     >
       {children}
     </div>

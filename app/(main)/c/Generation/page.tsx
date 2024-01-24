@@ -1,31 +1,18 @@
+'use client'
+
+import { Generation } from '@/app/components/Shell/Generation'
 import { Shell } from '@/app/components/ui/Shell'
+import { api } from '@/convex/_generated/api'
 import { Button } from '@radix-ui/themes'
+import { usePaginatedQuery } from 'convex/react'
 
 export default function Page() {
-  // Page
-
+  const { results } = usePaginatedQuery(api.generations.page, {}, { initialNumItems: 1 })
+  const g = results[0]
+  if (!g) return <div>no generations?</div>
   return (
-    <div className="grid place-content-center">
-      <Shell.Root>
-        <Shell.TitleBar>Shell Title</Shell.TitleBar>
-        <Shell.Controls>
-          <Button variant="outline" color="amber">
-            Yolo
-          </Button>
-          <Button variant="outline">Demo</Button>
-          <Button variant="outline" color="red">
-            Delete
-          </Button>
-        </Shell.Controls>
-
-        <Shell.Content>
-          Aute veniam qui dolore aliquip. Elit minim minim nulla incididunt nulla nulla cillum nulla
-          non. Irure id veniam nisi proident incididunt incididunt non ea ex elit irure. Voluptate
-          dolore do cillum magna ad elit reprehenderit id reprehenderit cupidatat.
-        </Shell.Content>
-
-        <Shell.Sidebar>Sidebar</Shell.Sidebar>
-      </Shell.Root>
+    <div className="grid items-center">
+      <Generation {...g} />
     </div>
   )
 }

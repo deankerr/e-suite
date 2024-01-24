@@ -27,26 +27,18 @@ export const ImageModelCard = ({
   if (!m) return null
 
   const image = m.images ? m.images[0] : null
-  const size = { width: 128, height: 256 }
   return (
-    <Card className={cn('relative h-36 max-w-80 flex-none', className)} {...props}>
+    <Card className={cn('h-36 max-w-80 flex-none', className)} {...props}>
       <div className="flex h-full">
         <Inset
           side="left"
           clip="border-box"
-          className={cn('relative w-5/12 shrink-0 border-r border-gray-5')}
+          className={cn('w-5/12 shrink-0 border-r border-gray-5')}
         >
-          {image && (
-            <ImageC
-              image={image}
-              alt={`sample image for ${m.name}`}
-              size={size}
-              className="inset-0"
-            />
-          )}
+          <ImageC image={image} alt={`sample image for ${m.name}`} className="inset-0" />
         </Inset>
 
-        <div className={cn('relative grow pl-rx-3')}>
+        <div className={cn('grow pl-rx-3')}>
           <Heading size="2" className="text-balance">
             {m?.name ?? <Skeleton className="h-[var(--heading-line-height-2)]" />}
           </Heading>
