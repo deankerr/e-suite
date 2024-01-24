@@ -1,28 +1,26 @@
 import { GenerationResult } from '@/convex/types'
-import { Button, Em, Heading, Strong } from '@radix-ui/themes'
+import { cn } from '@/lib/utils'
+import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
 import { ImageModelCard } from '../ImageModelCard'
 import { ImageC } from '../ui/ImageC'
-import { Shell } from '../ui/Shell'
+import { Shell } from './Shell'
 
 export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
   const { width, height, n } = generation
-
   const creator = author?.info.nickname
+  const layout =
+    width > height
+      ? 'md:grid-cols-[repeat(auto-fit,_minmax(390px,_1fr))]'
+      : 'md:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))]'
   return (
-    <Shell.Root>
+    <Shell.Root className="">
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
 
-      <Shell.Controls>
-        <Button variant="outline">Link</Button>
-        <Button variant="outline">Copy</Button>
-        <Button variant="outline" color="red">
-          Delete
-        </Button>
-      </Shell.Controls>
-
       <Shell.Content>
-        <div className="mx-auto grid grid-cols-4 gap-rx-1">
+        <div
+          className={cn('mx-auto grid h-full place-content-center items-center gap-rx-1', layout)}
+        >
           {Array.from({ length: n }, (_, i) => (
             <ImageC
               key={i}
@@ -35,22 +33,36 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
         </div>
       </Shell.Content>
 
-      <Shell.Sidebar className="divide-y px-rx-2">
+      <Shell.Controls>
+        <Button variant="outline">Link</Button>
+        <Button variant="outline">Copy</Button>
+        <Button variant="outline" color="red">
+          Delete
+        </Button>
+      </Shell.Controls>
+
+      <Shell.Sidebar className="px-rx-2">
         <div className="py-rx-4 text-center">
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
 
-        <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="" />
+        <Separator size="4" className="mb-rx-4" />
+
+        <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="mx-auto" />
 
         <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>
           <div>{generation.prompt}</div>
         </div>
 
+        <Separator size="4" />
+
         <div className="py-rx-4 text-sm">
           <Heading size="1">Negative prompt</Heading>
           <div>{generation.negativePrompt || <i>blank</i>}</div>
         </div>
+
+        <Separator size="4" />
 
         <div className="px-rx-1 py-rx-4">
           <table className="divide-y text-sm">
@@ -83,13 +95,4 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
       </Shell.Sidebar>
     </Shell.Root>
   )
-}
-
-const createImageFrames = (
-  images: GenerationResult['images'],
-  width: number,
-  height: number,
-  n: number,
-) => {
-  return Array.from({ length: n }, (_, i) => ({ image: images[i], width, height }))
 }

@@ -2,9 +2,13 @@ import { cn } from '@/lib/utils'
 import { Card, IconButton, Inset } from '@radix-ui/themes'
 import { LucideIcon, PanelTopIcon } from 'lucide-react'
 
-const Root = ({ children }: { children?: React.ReactNode }) => {
+const Root = ({
+  children,
+  className,
+  ...props
+}: { children?: React.ReactNode } & React.ComponentProps<typeof Card>) => {
   return (
-    <Card className="container mx-auto">
+    <Card className={cn('container mx-auto', className)} {...props}>
       <Inset>
         <div className="md:grid md:grid-cols-[auto_20rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]">
           {children}

@@ -1,4 +1,4 @@
-import { GenerationFeed } from './GenerationFeed'
+import { GenerationFeed } from '../components/GenerationFeed'
 import { LeftBar } from './LeftBar'
 import { RightBar } from './RightBar'
 
