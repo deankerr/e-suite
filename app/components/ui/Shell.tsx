@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils'
 import { Card, IconButton, Inset } from '@radix-ui/themes'
-import { FileImageIcon, LucideIcon, PanelTopIcon } from 'lucide-react'
+import { LucideIcon, PanelTopIcon } from 'lucide-react'
 
 const Root = ({ children }: { children?: React.ReactNode }) => {
   return (
     <Card className="container mx-auto">
       <Inset>
-        <div className="grid md:grid-cols-[auto_16rem] md:grid-rows-[3rem_minmax(30rem,auto)]">
+        <div className="md:grid md:grid-cols-[auto_16rem] md:grid-rows-[3rem_minmax(30rem,auto)]">
           {children}
         </div>
       </Inset>
@@ -20,16 +20,17 @@ const TitleBar = ({
   icon,
   ...props
 }: { children?: React.ReactNode; icon?: LucideIcon } & React.ComponentProps<'div'>) => {
-  const Icon = icon ?? FileImageIcon
+  const Icon = icon ?? PanelTopIcon
   return (
     <div
-      className={cn('col-start-1 row-start-1 flex items-center border-b bg-gray-1', className)}
+      className={cn(
+        'col-start-1 row-start-1 flex items-center border-b bg-gray-1 px-rx-1',
+        className,
+      )}
       {...props}
     >
-      <IconButton variant="outline" asChild>
-        <div>
-          <Icon className="size-6 stroke-1" />
-        </div>
+      <IconButton variant="ghost" className="m-0">
+        <Icon className="size-5 stroke-1" />
       </IconButton>
       {children}
     </div>

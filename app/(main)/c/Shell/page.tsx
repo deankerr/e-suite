@@ -7,11 +7,15 @@ export default function Page() {
   return (
     <div className="grid place-content-center">
       <Shell.Root>
-        <Shell.TitleBar>New Shell</Shell.TitleBar>
+        <Shell.TitleBar>Shell Title</Shell.TitleBar>
         <Shell.Controls>
-          <Button variant='outline' color='amber'>Demo</Button>
-          <Button variant='outline'>Demo</Button>
-          <Button variant='outline' color='red'>Demo</Button>
+          <Button variant="outline" color="amber">
+            Yolo
+          </Button>
+          <Button variant="outline">Demo</Button>
+          <Button variant="outline" color="red">
+            Delete
+          </Button>
         </Shell.Controls>
 
         <Shell.Content>
