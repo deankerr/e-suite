@@ -1,7 +1,7 @@
 'use client'
 
-import { SidebarToggleButton } from '@/app/components/SidebarToggle'
 import { SignInButton, UserButton } from '@clerk/nextjs'
+import { Card } from '@radix-ui/themes'
 import logo from '/assets/icons/logo-sunset.svg'
 import { useConvexAuth } from 'convex/react'
 import Image from 'next/image'
@@ -17,17 +17,15 @@ export const Navbar = ({ props }: NavbarProps) => {
   const userId = useRegisterUser()
 
   return (
-    <nav className="left-4 top-2 z-50 flex items-center justify-between gap-2 place-self-start rounded border border-accent-2 bg-accent-1 px-2 py-2 md:absolute">
-      {/* <SidebarToggleButton className="left-sidebar-toggle" /> */}
-      <Link href="/" className="flex items-center gap-2">
-        <Image src={logo} alt="e/drop logo" className="-mr-0.5 size-9" priority />
-      </Link>
+    <Card className="z-30 place-self-start opacity-60 hover:opacity-100" size="1">
+      <nav className="flex items-center justify-between gap-1">
+        <Link href="/" className="flex items-center gap-2">
+          <Image src={logo} alt="e/drop logo" className="-my-0.5 -mr-0.5 size-9" priority />
+        </Link>
 
-      {!isLoading && !isAuthenticated && <SignInButton mode="modal" />}
-
-      <UserButton afterSignOutUrl="/" />
-
-      <SidebarToggleButton className="right-sidebar-toggle" />
-    </nav>
+        {!isLoading && !isAuthenticated && <SignInButton mode="modal" />}
+        <UserButton afterSignOutUrl="/" />
+      </nav>
+    </Card>
   )
 }
