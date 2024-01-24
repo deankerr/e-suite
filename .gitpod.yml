@@ -5,9 +5,11 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: pnpm install
+  - name: Install
+    init: pnpm install
+    command: gp sync-done install
   - name: next dev
-    command: pnpm dev
+    command: gp sync-await install && pnpm dev
   - name: convex dev
-    command: pnpm dlx convex dev
+    command: gp sync-await install && pnpm dlx convex dev
     openMode: split-right
