@@ -6,7 +6,7 @@ import { Badge, Button, Card, colorProp, Heading, Inset, Skeleton } from '@radix
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
-import { ImageC } from './ui/Image'
+import { ImageC } from './ui/ImageC'
 
 type ImageModelCardProps = {
   id?: Id<'imageModels'>

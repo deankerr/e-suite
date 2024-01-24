@@ -16,7 +16,7 @@ import {
 import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import { ImageModelCard } from './ImageModelCard'
-import { ImageC } from './ui/Image'
+import { ImageC } from './ui/ImageC'
 
 const imageSizes = {
   square: { width: 320, height: 320 },
@@ -107,7 +107,7 @@ export const GenerationCard = ({ generation, images, imageModel, author }: Gener
             <Separator size="4" />
 
             {/* //^ id = temp workaround for image */}
-            <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="h-30" />
+            <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="h-32" />
 
             <div className="text-sm">
               <Heading size="1">Prompt</Heading>

@@ -3,9 +3,10 @@ import { cn } from '@/lib/utils'
 import { AlertOctagonIcon, FileQuestionIcon, HourglassIcon } from 'lucide-react'
 import NextImage from 'next/image'
 
-const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_API_URL!
+const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL!
 
-const frameClass = 'box-content rounded animate-pulse grid place-content-center max-w-full'
+const frameClass =
+  'box-content rounded animate-pulse grid place-content-center overflow-hidden max-w-full'
 
 type ImageCProps = {
   className?: TailwindClass
@@ -32,7 +33,7 @@ export const ImageC = ({ className, image, size, alt, isLoading = false }: Image
   if (!image && isLoading) {
     return (
       <div
-        className={cn(frameClass, 'overflow-hidden bg-blue-2A text-blue-5A')}
+        className={cn(frameClass, 'bg-blue-2A text-blue-5A')}
         style={{ width: size.width, height: '100%' }}
       >
         <HourglassIcon className="size-8" />
@@ -61,8 +62,8 @@ export const ImageC = ({ className, image, size, alt, isLoading = false }: Image
     <NextImage
       src={url}
       alt={alt}
-      width={image.width ?? size.width}
-      height={image.height ?? size.height}
+      width={image.width}
+      height={image.height}
       placeholder="blur"
       blurDataURL={image.blurDataURL}
       className={cn('box-content rounded border border-gold-5', className)}
