@@ -1,7 +1,7 @@
 import { ConvexError, v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
-import { internalAction } from '../_generated/server'
+import { action, internalAction, query } from '../_generated/server'
 
 export const run = internalAction({
   args: {
@@ -198,6 +198,8 @@ const parseApiInferenceResponse = (data: unknown) => {
 //     }
 //   }
 // })
+
+export const getModelsApi = action(async (ctx) => await apiGetModels())
 
 const apiGetModels = async () => {
   console.log(`[sinkin] /api/models`)

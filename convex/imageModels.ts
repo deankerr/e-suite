@@ -21,6 +21,11 @@ export const imageModelFields = {
   sinkinProviderId: v.optional(v.id('imageModelProviders')),
   sinkinApiModelId: v.optional(v.string()),
 
+  sinkin: v.optional(v.object({
+    refId: v.string(),
+    hidden: v.boolean()
+  })),
+
   hidden: v.boolean(),
 }
 

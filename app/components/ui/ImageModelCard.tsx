@@ -1,35 +1,46 @@
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { ImageModelResult } from '@/convex/types'
-import { Badge, Button, Card, Inset } from '@radix-ui/themes'
+import { Badge, Card, Inset } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
-import { ImageC } from './ImageC'
+import { ImageId } from './ImageId'
 
 type ImageModelCardProps = {
   imageModelId?: Id<'imageModels'>
+  imageModel?: ImageModelResult
 } & React.ComponentProps<typeof Card>
 
-export const ImageModelCard = ({ imageModelId, ...props }: ImageModelCardProps) => {
-  const imageModel = useQuery(api.imageModels.get, imageModelId ? { id: imageModelId } : 'skip')
+export const ImageModelCard = ({
+  imageModelId,
+  imageModel: setImageModel,
+  ...props
+}: ImageModelCardProps) => {
+  const query = useQuery(api.imageModels.get, imageModelId ? { id: imageModelId } : 'skip')
+  const imageModel = setImageModel ?? query
+  const img = imageModel?.images[0]
 
   return (
     <Card {...props}>
       <div className="grid grid-cols-[minmax(auto,40%)_1fr] gap-4">
         {imageModel && (
-          <Inset side="left">
-            <ImageC
-              image={imageModel.images[0]}
-              alt={`display image for model: ${imageModel.name}`}
-              className="max-h-none rounded-r-none border-none"
-            />
+          <Inset side="all" className="bg-blue-3 object-center">
+            {img && (
+              <ImageId
+                id={img.storageId}
+                alt=""
+                width={img.width}
+                height={img.height}
+                // className="min-h-full max-w-[110%]"
+              />
+            )}
           </Inset>
         )}
         <div>
           {imageModel && (
             <>
-              <div>{imageModel.name}</div>
+              <div className="text-sm">{imageModel.name}</div>
               <ImageModelBadges imageModel={imageModel} />
             </>
           )}

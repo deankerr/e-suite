@@ -19,7 +19,7 @@ export const Navbar = ({ props }: NavbarProps) => {
   const { isLoading, isAuthenticated } = useConvexAuth()
   const userId = useRegisterUser()
 
-  const [show, setShow] = useState<boolean | 'indeterminate'>(true)
+  const [show, setShow] = useState<boolean | 'indeterminate'>(false)
 
   return (
     <Card
