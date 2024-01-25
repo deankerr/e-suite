@@ -15,6 +15,7 @@ type ImageModelCardProps = {
   showImage?: boolean
 } & React.ComponentProps<typeof Card>
 
+//! old one
 export const ImageModelCard = ({
   className,
   id,

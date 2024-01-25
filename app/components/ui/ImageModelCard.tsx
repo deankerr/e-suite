@@ -9,34 +9,29 @@ import { ImageId } from './ImageId'
 
 type ImageModelCardProps = {
   imageModelId?: Id<'imageModels'>
-  imageModel?: ImageModelResult
+  from?: ImageModelResult
 } & React.ComponentProps<typeof Card>
 
-export const ImageModelCard = ({
-  imageModelId,
-  imageModel: setImageModel,
-  ...props
-}: ImageModelCardProps) => {
+export const ImageModelCard = ({ imageModelId, from, ...props }: ImageModelCardProps) => {
   const query = useQuery(api.imageModels.get, imageModelId ? { id: imageModelId } : 'skip')
-  const imageModel = setImageModel ?? query
-  const img = imageModel?.images[0]
+  const result = from ?? query
 
+  const imageModel = result?.imageModel
+  const image = result?.image
   return (
-    <Card {...props}>
-      <div className="grid grid-cols-[minmax(auto,40%)_1fr] gap-4">
-        {imageModel && (
-          <Inset side="all" className="bg-blue-3 object-center">
-            {img && (
-              <ImageId
-                id={img.storageId}
-                alt=""
-                width={img.width}
-                height={img.height}
-                // className="min-h-full max-w-[110%]"
-              />
-            )}
-          </Inset>
-        )}
+    <Card className="h-36 w-80" {...props}>
+      <div className="grid h-full grid-cols-[minmax(auto,40%)_1fr] gap-4">
+        <Inset side="all" className="bg-gray-2">
+          {image && (
+            <ImageId
+              id={image.storageId}
+              alt={`cover image from model: ${imageModel?.name}`}
+              width={image.width}
+              height={image.height}
+            />
+          )}
+        </Inset>
+
         <div>
           {imageModel && (
             <>
@@ -46,11 +41,14 @@ export const ImageModelCard = ({
           )}
         </div>
       </div>
+      {imageModel && (
+        <div className="w-full text-right font-code text-[8px] text-gold-5">{imageModel._id}</div>
+      )}
     </Card>
   )
 }
 
-const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult }) => {
+const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageModel'] }) => {
   const colors: Record<string, React.ComponentProps<typeof Badge>['color']> = {
     dalle2: 'grass',
     dalle3: 'jade',
@@ -60,7 +58,7 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult }) => {
     CIVITAI: 'blue',
   }
 
-  const baseName: Record<ImageModelResult['base'], string> = {
+  const baseName: Record<ImageModelResult['imageModel']['base'], string> = {
     dalle2: 'DALL-E 2',
     dalle3: 'DALL-E 3',
     'sd1.5': 'Stable Diffusion 1.5',
@@ -83,6 +81,16 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult }) => {
               <span className="text-blue-9">AI</span>
             </span>
             <ArrowUpRightSquare size={15} />
+          </NextLink>
+        </Badge>
+      )}
+      {imageModel.huggingFaceId && (
+        <Badge color="yellow" className="cursor-pointer">
+          <NextLink
+            href={`https://huggingface.co/${imageModel.huggingFaceId}`}
+            className="inline-flex w-full items-center justify-between"
+          >
+            <span className="">huggingface</span> <ArrowUpRightSquare size={15} />
           </NextLink>
         </Badge>
       )}

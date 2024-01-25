@@ -37,6 +37,15 @@
         "extendDefaults": true
       }
     ],
-    "@typescript-eslint/require-await": "warn"
+    "@typescript-eslint/require-await": "warn",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "arguments": false,
+          "attributes": false
+        }
+      }
+    ]
   }
 }

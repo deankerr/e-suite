@@ -2,10 +2,25 @@
 
 import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
 import { api } from '@/convex/_generated/api'
-import { Button, Card, Inset, ScrollArea, Table } from '@radix-ui/themes'
-import { useAction, useQuery } from 'convex/react'
-import { useState } from 'react'
+import { modelBases, modelTypes, nsfwRatings } from '@/convex/constants'
+import { ImageModelResult, ModelBase, ModelType, NsfwRatings } from '@/convex/types'
+import {
+  Button,
+  Card,
+  Checkbox,
+  Inset,
+  ScrollArea,
+  Table,
+  TextArea,
+  TextField,
+  TextFieldInput,
+} from '@radix-ui/themes'
+import { useAction, useMutation, useQuery } from 'convex/react'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { ImageId } from '../ui/ImageId'
+import { Select } from '../ui/Select'
 import { Shell } from './Shell'
 
 type ApiListView = {
@@ -15,8 +30,20 @@ type ApiListView = {
 type SinkinModelListing = typeof api.providers.sinkin.getModelsApi._returnType
 
 export const ApiListView = ({ props }: ApiListView) => {
+  const ims = useQuery(api.imageModels.list, { type: 'checkpoint' })
+
   const action = useAction(api.providers.sinkin.getModelsApi)
   const [result, setResult] = useState<SinkinModelListing | null>(null)
+
+  useEffect(() => {
+    if (!result) {
+      action()
+        .then((res) => setResult(res))
+        .catch((err) => console.error(err))
+    }
+  }, [result, action])
+
+  const create = useMutation(api.imageModels.create)
 
   return (
     <Shell.Root>
@@ -37,9 +64,22 @@ export const ApiListView = ({ props }: ApiListView) => {
         <ScrollArea>
           {result && (
             <div className="grid gap-2">
-              {result.models.map((model) => (
-                <FakeImageModel key={model.id} data={model} className="h-36 w-80" />
-              ))}
+              {result.models.map((model) => {
+                const currents = ims?.filter((im) => im.imageModel.sinkin?.refId === model.id)
+                const current = currents?.at(0)
+                return (
+                  <div key={model.id} className="flex gap-2">
+                    <FakeImageModel data={model} className="h-36 w-96" />
+                    <ImageModelEditCard
+                      sinkin={model}
+                      type={'checkpoint'}
+                      current={current}
+                      className="h-36"
+                    />
+                    {currents?.map((c) => <ImageModelCard key={c.imageModel._id} from={c} />)}
+                  </div>
+                )
+              })}
             </div>
           )}
         </ScrollArea>
@@ -54,23 +94,195 @@ const FakeImageModel = ({
 }: { data: SinkinModelListing['models'][number] } & React.ComponentProps<typeof Card>) => {
   return (
     <Card {...props}>
-      <div className="grid grid-cols-[minmax(auto,40%)_1fr] gap-4">
+      <div className="grid h-full grid-flow-col gap-1">
         {data && (
-          <Inset side="all" className="bg-blue-3 object-center">
-            <img src={data.cover_img} />
+          <Inset side="left" className="">
+            <img src={data.cover_img} className="max-w-24" />
           </Inset>
         )}
-        <div>
-          <div className="text-sm">{data.name}</div>
-          <div className="grid gap-1 divide-y text-xs text-gray-10">
-            <div className="font-code">{data.id}</div>
-            <div>civit: {data.civitai_model_id}</div>
-            <div>
-              <a href={data.link}>{data.link}</a>
+        <div className="grid grid-flow-col">
+          <div className="">
+            <div className="text-sm">{data.name}</div>
+            <div className="grid gap-1 divide-y text-xs text-gray-10">
+              <div className="font-code">{data.id}</div>
+              <div>civit: {data.civitai_model_id}</div>
+              <div>
+                <Link href={data.link}>{data.link}</Link>
+              </div>
             </div>
+          </div>
+          <div>
+            <TextArea
+              placeholder="sinkin tags"
+              size="1"
+              defaultValue={data.tags?.join(', ')}
+              className="h-full"
+            />
           </div>
         </div>
       </div>
+    </Card>
+  )
+}
+
+type SinkinApiModel = SinkinModelListing['models'][number]
+
+type ImageModelForm = {
+  name: string
+  base: ModelBase
+  type: ModelType
+  nsfw: NsfwRatings
+  civitaiId?: string
+  huggingFaceId?: string
+  tags: string
+  imageUrl: string
+}
+
+type ImageModelEditCardProps = {
+  sinkin: SinkinApiModel
+  type?: ModelType
+  current?: ImageModelResult
+} & React.ComponentProps<typeof Card>
+
+const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditCardProps) => {
+  const create = useMutation(api.imageModels.create)
+  const update = useMutation(api.imageModels.update)
+  const pull = useAction(api.files.images.pull)
+
+  const currentVals = current
+    ? {
+        ...current.imageModel,
+        tags: current.imageModel.tags.join(),
+        imageUrl: current.image?.sourceUrl,
+      }
+    : undefined
+
+  const { register, control, handleSubmit } = useForm<ImageModelForm>({
+    defaultValues: {
+      base: sinkin.name.includes('XL') ? 'sdxl' : 'sd1.5',
+      type: type,
+      nsfw: 'safe',
+      ...currentVals,
+    },
+  })
+
+  const onSubmit = handleSubmit(async ({ imageUrl, ...values }, ev) => {
+    const imageId = await pull({ url: imageUrl, nsfw: 'safe' })
+    if (!imageId) return console.error('failed to get imageId')
+
+    const fields = {
+      ...values,
+      imageId,
+      description: current?.imageModel.description ?? '',
+      tags: values.tags.split(','),
+      sinkin: { refId: sinkin.id },
+      huggingFaceId: values.huggingFaceId ? values.huggingFaceId : undefined,
+    }
+
+    const existing = current?.imageModel._id
+
+    if (existing) {
+      await update({ fields: {...fields, _id: existing} })
+      return console.log('done')
+    }
+    const id = await create({
+      fields,
+    })
+    console.log('id', id)
+  })
+
+  return (
+    <Card {...props}>
+      <form className="grid h-full grid-flow-col gap-2 text-xs" onSubmit={onSubmit}>
+        <div>
+          <TextArea placeholder="name" defaultValue={sinkin.name} size="1" {...register('name')} />
+          <div className="flex items-center gap-1 text-xs">
+            base:
+            <Controller
+              name="base"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  values={modelBases.map((b) => [b])}
+                  onValueChange={field.onChange}
+                  size="1"
+                  {...field}
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex items-center gap-1 text-xs">
+            type:
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  values={modelTypes.map((b) => [b])}
+                  size="1"
+                  onValueChange={field.onChange}
+                  {...field}
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex items-center gap-1 text-xs">
+            nsfw:
+            <Controller
+              name="nsfw"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  values={nsfwRatings.map((b) => [b])}
+                  size="1"
+                  onValueChange={field.onChange}
+                  {...field}
+                />
+              )}
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center gap-1 text-xs">
+            civitai:{' '}
+            <TextFieldInput
+              {...register('civitaiId')}
+              placeholder="none"
+              defaultValue={sinkin.civitai_model_id}
+              size="1"
+              className="w-16"
+            />
+          </div>
+
+          <div className="flex items-center gap-1 text-xs">
+            hf:{' '}
+            <TextFieldInput
+              {...register('huggingFaceId')}
+              placeholder="none"
+              defaultValue={
+                sinkin.link.includes('https://huggingface.co/')
+                  ? sinkin.link.replace('https://huggingface.co/', '')
+                  : undefined
+              }
+              size="1"
+            />
+          </div>
+
+          <TextArea placeholder="tags" size="1" {...register('tags')} />
+          <div className="flex items-center gap-1 text-xs">
+            image:
+            <TextFieldInput size="1" defaultValue={sinkin.cover_img} {...register('imageUrl')} />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <Button disabled={!!currentVals}>create</Button>
+          <Button disabled={!currentVals}>update</Button>
+        </div>
+      </form>
     </Card>
   )
 }

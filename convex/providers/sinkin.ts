@@ -1,6 +1,6 @@
 import { ConvexError, v } from 'convex/values'
 import z from 'zod'
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
 import { action, internalAction, query } from '../_generated/server'
 
 export const run = internalAction({
@@ -8,11 +8,11 @@ export const run = internalAction({
     id: v.id('generations'),
   },
   handler: async (ctx, { id }) => {
-    const { generation, provider } = await ctx.runMutation(internal.generations.run, { id })
+    const { generation, imageModel } = await ctx.runMutation(internal.generations.run, { id })
 
     const body = new URLSearchParams()
     body.set('access_token', process.env.SINKIN_API_KEY as string)
-    body.set('model_id', provider.providerModelId)
+    body.set('model_id', imageModel?.sinkin?.refId ?? '')
     body.set('prompt', generation.prompt)
     body.set('width', String(generation.width))
     body.set('height', String(generation.height))
@@ -46,7 +46,7 @@ export const run = internalAction({
     const { images: urls, ...res } = result
     const imageResults = await Promise.allSettled(
       urls.map(
-        async (url) => await ctx.runAction(internal.files.images.pull, { url, generationsId: id }),
+        async (url) => await ctx.runAction(api.files.images.pull, { url, generationsId: id }),
       ),
     )
 

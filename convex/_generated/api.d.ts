@@ -20,7 +20,6 @@ import type * as files_imagesLib from "../files/imagesLib.js";
 import type * as files_plaiceholder from "../files/plaiceholder.js";
 import type * as generations from "../generations.js";
 import type * as http from "../http.js";
-import type * as imageModelProviders from "../imageModelProviders.js";
 import type * as imageModels from "../imageModels.js";
 import type * as migrate from "../migrate.js";
 import type * as providers_openai from "../providers/openai.js";
@@ -44,7 +43,6 @@ declare const fullApi: ApiFromModules<{
   "files/plaiceholder": typeof files_plaiceholder;
   generations: typeof generations;
   http: typeof http;
-  imageModelProviders: typeof imageModelProviders;
   imageModels: typeof imageModels;
   migrate: typeof migrate;
   "providers/openai": typeof providers_openai;

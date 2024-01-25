@@ -9,7 +9,6 @@ import { assert, error, vEnum } from './util'
 
 export const generationsParameterFields = {
   imageModelId: v.id('imageModels'),
-  imageModelProviderId: v.id('imageModelProviders'),
 
   prompt: v.string(),
   width: v.number(),
@@ -59,7 +58,6 @@ export const page = query({
           ),
         ),
         imageModel: await ctx.db.get(generation.imageModelId),
-        imageModelProvider: await ctx.db.get(generation.imageModelProviderId),
         author: await ctx.db.get(generation.userId), //todo don't send all the personal data
       })),
     )
@@ -84,15 +82,12 @@ export const run = internalMutation({
     assert(generation, 'invalid generation id', { id })
     assert(generation.status === 'pending', 'invalid generation status', { generation })
 
-    const provider = await ctx.db.get(generation.imageModelProviderId)
-    assert(provider, 'invalid provider', { generation, provider })
-
     await ctx.db.patch(generation._id, {
       status: 'acting',
       events: [{ status: 'acting', createdAt: Date.now() }],
     })
 
-    return { generation, provider }
+    return { generation, imageModel: await ctx.db.get(generation.imageModelId) }
   },
 })
 

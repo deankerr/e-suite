@@ -1,20 +1,26 @@
-import { Select as RadixSelect } from '@radix-ui/themes'
+import { Select as RadixSelect, Responsive } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 
 type Props = {
   defaultValue?: string
   values?: Array<[string]> | Array<[string, string]>
   onValueChange?: (value: any) => unknown
-}
+  size?: Responsive<'1' | '2' | '3'>
+  name?: string
+} & React.ComponentProps<typeof RadixSelect.Root>
 
-export const Select = forwardRef<HTMLDivElement, Props>(function Select(
-  { defaultValue, values, onValueChange },
+export const Select = forwardRef<HTMLButtonElement, Props>(function Select(
+  { defaultValue, values, onValueChange, ...props },
   ref,
 ) {
   return (
-    <RadixSelect.Root defaultValue={defaultValue ?? getFirst(values)} onValueChange={onValueChange}>
-      <RadixSelect.Trigger />
-      <RadixSelect.Content ref={ref}>
+    <RadixSelect.Root
+      onValueChange={onValueChange}
+      defaultValue={defaultValue ?? getFirst(values)}
+      {...props}
+    >
+      <RadixSelect.Trigger ref={ref} />
+      <RadixSelect.Content>
         {values?.map(([value, label]) => (
           <RadixSelect.Item key={value} value={value}>
             {label ?? value}

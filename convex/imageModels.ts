@@ -1,43 +1,42 @@
-import { paginationOptsValidator, WithoutSystemFields } from 'convex/server'
+import { defineTable, paginationOptsValidator, WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
+import { internal } from './_generated/api'
 import { Doc, Id } from './_generated/dataModel'
-import { internalMutation, internalQuery, query, QueryCtx } from './_generated/server'
+import {
+  internalAction,
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+  QueryCtx,
+} from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { ImageModel } from './types'
 import { raise, vEnum } from './util'
 
-export const imageModelFields = {
+const imageModelFields = {
   name: v.string(),
   description: v.string(),
   base: vEnum(modelBases),
   type: vEnum(modelTypes),
   nsfw: vEnum(nsfwRatings),
-  imageIds: v.array(v.id('images')),
+  imageId: v.id('images'),
   tags: v.array(v.string()),
 
-  civitaiId: v.union(v.string(), v.null()),
-  civitaiModelDataId: v.union(v.id('civitaiModelData'), v.null()),
+  civitaiId: v.optional(v.string()),
+  huggingFaceId: v.optional(v.string()),
 
-  sinkinProviderId: v.optional(v.id('imageModelProviders')),
-  sinkinApiModelId: v.optional(v.string()),
+  sinkin: v.optional(
+    v.object({
+      refId: v.string(),
+      hidden: v.optional(v.boolean()),
+    }),
+  ),
 
-  sinkin: v.optional(v.object({
-    refId: v.string(),
-    hidden: v.boolean()
-  })),
-
-  hidden: v.boolean(),
+  hidden: v.optional(v.boolean()),
 }
 
-const getWithImages = async (ctx: QueryCtx, { id }: { id: Id<'imageModels'> }) => {
-  const imageModel = await ctx.db.get(id)
-  if (!imageModel) return imageModel
-  const images = await Promise.all(imageModel.imageIds.map(async (id) => await ctx.db.get(id)))
-  return {
-    ...imageModel,
-    images,
-  }
-}
+export const imageModelTable = defineTable(imageModelFields)
 
 const withImages = async (
   ctx: QueryCtx,
@@ -46,8 +45,8 @@ const withImages = async (
   return await Promise.all(
     imageModels.map(async (imageModel) => {
       return {
-        ...imageModel,
-        images: await Promise.all(imageModel.imageIds.map(async (id) => await ctx.db.get(id))),
+        imageModel,
+        image: await ctx.db.get(imageModel.imageId),
       }
     }),
   )
@@ -57,7 +56,17 @@ export const get = query({
   args: {
     id: v.id('imageModels'),
   },
-  handler: async (ctx, { id }) => await getWithImages(ctx, { id }),
+  handler: async (ctx, { id }) => {
+    const imageModel = await ctx.db.get(id)
+    if (imageModel) {
+      return {
+        imageModel,
+        image: await ctx.db.get(imageModel.imageId),
+      }
+    }
+
+    return null
+  },
 })
 
 export const list = query({
@@ -97,58 +106,16 @@ export const page = query({
   },
 })
 
-export const listByCivitaiId = internalQuery(
-  async (ctx) => await ctx.db.query('imageModels').withIndex('by_civitaiId').collect(),
-)
-
-export const listWithProvider = query(async (ctx) => {
-  const models = await list(ctx, {})
-  const withProviders = await Promise.all(
-    models.map(async (m) => ({
-      ...m,
-      provider: m.sinkinProviderId ? await ctx.db.get(m.sinkinProviderId) : null,
-    })),
-  )
-
-  return withProviders
-})
-
-export const getByCivitaiId = internalQuery(
-  async (ctx, { civitaiId }: { civitaiId: string }) =>
-    await ctx.db
-      .query('imageModels')
-      .withIndex('by_civitaiId', (q) => q.eq('civitaiId', civitaiId))
-      .first(),
-)
-
-export const create = internalMutation(
-  async (ctx, { doc }: { doc: WithoutSystemFields<ImageModel> }) => {
-    const id = await ctx.db.insert('imageModels', { ...doc })
-    // if (doc.civitaiId)
-    //   await ctx.scheduler.runAfter(0, internal.imageModels.addCivitaiData, {
-    //     id,
-    //     civitaiId: doc.civitaiId,
-    //   })
+export const create = mutation({
+  args: {
+    fields: v.object(imageModelFields),
+  },
+  handler: async (ctx, { fields }) => {
+    const id = await ctx.db.insert('imageModels', fields)
     return id
   },
-)
+})
 
-export const update = internalMutation(
-  async (ctx, { doc }: { doc: Partial<Doc<'imageModels'>> }) => {
-    await ctx.db.patch(doc._id ?? raise('imageModel update missing _id'), doc)
-  },
-)
-
-// export const addCivitaiData = internalAction(
-//   async (ctx, { id, civitaiId }: { id: Id<'imageModels'>; civitaiId: string }) => {
-//     const civitaiModelDataId = await ctx.runMutation(internal.providers.civitai.registerCivitaiId, {
-//       civitaiId,
-//     })
-//     await ctx.runMutation(internal.imageModels.update, {
-//       doc: {
-//         _id: id,
-//         civitaiModelDataId,
-//       },
-//     })
-//   },
-// )
+export const update = mutation(async (ctx, { fields }: { fields: Partial<Doc<'imageModels'>> }) => {
+  await ctx.db.patch(fields._id ?? raise('imageModel update missing _id'), fields)
+})
