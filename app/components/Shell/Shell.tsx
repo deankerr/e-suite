@@ -28,7 +28,7 @@ const TitleBar = ({
   return (
     <div
       className={cn(
-        'col-start-1 row-start-1 flex items-center border-b bg-gray-1 px-rx-1',
+        'col-start-1 row-start-1 flex items-center border-b bg-gray-1 px-rx-1 text-sm md:text-base',
         className,
       )}
       {...props}

@@ -11,15 +11,20 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const creator = author?.info.nickname
   const layout =
     width > height
-      ? 'md:grid-cols-[repeat(auto-fit,_minmax(390px,_1fr))]'
-      : 'md:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))]'
+      ? '' // landscape
+      : height > width
+        ? 'md:grid-cols-4' // portrait
+        : 'grid-cols-2' // square
   return (
     <Shell.Root className="">
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
 
       <Shell.Content>
         <div
-          className={cn('mx-auto grid h-full place-content-center items-center gap-rx-1', layout)}
+          className={cn(
+            'mx-auto grid h-full w-fit grid-cols-2 place-content-center items-center gap-rx-1',
+            layout,
+          )}
         >
           {Array.from({ length: n }, (_, i) => (
             <ImageC
@@ -45,8 +50,6 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
         <div className="py-rx-4 text-center">
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
-
-        <Separator size="4" className="mb-rx-4" />
 
         <ImageModelCard imageModel={imageModel} id={imageModel?._id} className="mx-auto" />
 

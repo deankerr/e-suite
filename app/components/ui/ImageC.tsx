@@ -68,7 +68,10 @@ export const ImageC = ({
       height={height ?? image.height}
       placeholder="blur"
       blurDataURL={image.blurDataURL}
-      className={cn('box-content rounded border border-gold-5', className)}
+      className={cn(
+        'box-content max-h-[40lvh] w-auto rounded border border-gold-5 md:max-h-[360px] md:max-w-[100%]',
+        className,
+      )}
     />
   )
 }
