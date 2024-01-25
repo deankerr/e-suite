@@ -2,10 +2,9 @@ import { GenerationResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
-
 import { ImageC } from '../ui/ImageC'
-import { Shell } from './Shell'
 import { ImageModelCard } from '../ui/ImageModelCard'
+import { Shell } from './Shell'
 
 export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
   const { width, height, n } = generation
@@ -52,7 +51,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
 
-        <ImageModelCard imageModelId={imageModel?._id} className="mx-auto" />
+        <ImageModelCard imageModelId={imageModel?._id} className="mx-auto w-72" />
 
         <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>

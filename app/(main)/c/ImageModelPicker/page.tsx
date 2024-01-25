@@ -1,4 +1,3 @@
-import { AdminSinkinApiView } from '@/app/components/Shell/AdminSinkinApiView'
 import { ImageModelPicker } from '@/app/components/Shell/ImageModelPicker'
 
 export default function Page() {

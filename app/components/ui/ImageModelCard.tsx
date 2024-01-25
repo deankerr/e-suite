@@ -1,6 +1,7 @@
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { ImageModelResult } from '@/convex/types'
+import { cn } from '@/lib/utils'
 import { Badge, Card, Inset } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
@@ -12,23 +13,30 @@ type ImageModelCardProps = {
   from?: ImageModelResult
 } & React.ComponentProps<typeof Card>
 
-export const ImageModelCard = ({ imageModelId, from, ...props }: ImageModelCardProps) => {
+export const ImageModelCard = ({
+  imageModelId,
+  from,
+  className,
+  ...props
+}: ImageModelCardProps) => {
   const query = useQuery(api.imageModels.get, imageModelId ? { id: imageModelId } : 'skip')
   const result = from ?? query
 
   const imageModel = result?.imageModel
   const image = result?.image
   return (
-    <Card className="h-36 w-80" {...props}>
+    <Card className={cn('h-36 w-80', className)} {...props}>
       <div className="grid h-full grid-cols-[minmax(auto,40%)_1fr] gap-4">
-        <Inset side="all" className="bg-gray-2">
-          {image && (
+        <Inset side="all" className="bg-accent-1A">
+          {image ? (
             <ImageId
               id={image.storageId}
               alt={`cover image from model: ${imageModel?.name}`}
               width={image.width}
               height={image.height}
             />
+          ) : (
+            '?'
           )}
         </Inset>
 
@@ -42,7 +50,10 @@ export const ImageModelCard = ({ imageModelId, from, ...props }: ImageModelCardP
         </div>
       </div>
       {imageModel && (
-        <div className="w-full text-right font-code text-[8px] text-gold-5">{imageModel._id}</div>
+        <div className="bottom-3 w-full text-right font-code text-[8px] text-gold-6">
+          <div>order: {imageModel.order}</div>
+          {imageModel._id}
+        </div>
       )}
     </Card>
   )

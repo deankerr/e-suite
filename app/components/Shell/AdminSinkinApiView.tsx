@@ -102,6 +102,7 @@ type ImageModelForm = {
   civitaiId?: string
   huggingFaceId?: string
   tags: string
+  order: number
   imageUrl: string
 }
 
@@ -129,6 +130,7 @@ const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditC
       base: sinkin.name.includes('XL') ? 'sdxl' : 'sd1.5',
       type: type,
       nsfw: 'safe',
+      order: 0,
       ...currentVals,
     },
   })
@@ -144,6 +146,7 @@ const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditC
       tags: values.tags.split(','),
       sinkin: { refId: sinkin.id },
       huggingFaceId: values.huggingFaceId ? values.huggingFaceId : undefined,
+      order: values.order ? Number(values.order) : 0,
     }
 
     const existing = current?.imageModel._id
@@ -222,6 +225,8 @@ const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditC
               size="1"
               className="w-16"
             />
+            order:
+            <TextFieldInput {...register('order')} placeholder="0" size="1" className="w-8" />
           </div>
 
           <div className="flex items-center gap-1 text-xs">

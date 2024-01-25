@@ -1,17 +1,8 @@
-import { defineTable, paginationOptsValidator, WithoutSystemFields } from 'convex/server'
+import { defineTable, paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { internal } from './_generated/api'
-import { Doc, Id } from './_generated/dataModel'
-import {
-  internalAction,
-  internalMutation,
-  internalQuery,
-  mutation,
-  query,
-  QueryCtx,
-} from './_generated/server'
+import { Doc } from './_generated/dataModel'
+import { internalMutation, mutation, query, QueryCtx } from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
-import { ImageModel } from './types'
 import { raise, vEnum } from './util'
 
 const imageModelFields = {
@@ -33,10 +24,11 @@ const imageModelFields = {
     }),
   ),
 
+  order: v.number(),
   hidden: v.optional(v.boolean()),
 }
 
-export const imageModelTable = defineTable(imageModelFields)
+export const imageModelTable = defineTable(imageModelFields).index('by_order', ['order'])
 
 const withImages = async (
   ctx: QueryCtx,
@@ -118,4 +110,21 @@ export const create = mutation({
 
 export const update = mutation(async (ctx, { fields }: { fields: Partial<Doc<'imageModels'>> }) => {
   await ctx.db.patch(fields._id ?? raise('imageModel update missing _id'), fields)
+})
+
+export const migOrder = internalMutation(async (ctx) => {
+  const ims = await ctx.db.query("imageModels").collect()
+
+  for (const im of ims) {
+    let cout = 0
+    
+    if (im.tags.includes('realistic')) cout += 5
+    if (im.tags.includes('_cartoon')) cout += 2
+    if (im.tags.includes('_hot')) cout += 5
+
+    const order = Math.min(Math.max(0, cout), 10)
+
+    await ctx.db.patch(im._id, {order})
+    console.log(im.name, order)
+  }
 })
