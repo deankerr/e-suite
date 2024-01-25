@@ -11,7 +11,7 @@ type ImageModelPickerProps = {
 }
 
 export const ImageModelPicker = ({ props }: ImageModelPickerProps) => {
-  const imageModels = useQuery(api.imageModels.list, { type: 'checkpoint' })
+  const results = useQuery(api.imageModels.list, { type: 'checkpoint' })
 
   return (
     <Shell.Root>
@@ -19,8 +19,8 @@ export const ImageModelPicker = ({ props }: ImageModelPickerProps) => {
       <Shell.Content className="col-span-2 max-h-[90vh]">
         <ScrollArea className="">
           <div className="flex flex-wrap justify-center gap-2">
-            {imageModels?.map((imageModel) => (
-              <ImageModelCard key={imageModel._id} imageModel={imageModel} className="h-36 w-80" />
+            {results?.map((result) => (
+              <ImageModelCard key={result.imageModel._id} from={result} className="h-36 w-80" />
             ))}
           </div>
         </ScrollArea>

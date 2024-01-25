@@ -1,9 +1,7 @@
 'use client'
 
 import { Generation } from '@/app/components/Shell/Generation'
-import { Shell } from '@/app/components/Shell/Shell'
 import { api } from '@/convex/_generated/api'
-import { Button } from '@radix-ui/themes'
 import { usePaginatedQuery } from 'convex/react'
 
 export default function Page() {

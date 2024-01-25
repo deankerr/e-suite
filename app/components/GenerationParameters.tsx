@@ -32,7 +32,6 @@ export const GenerationParameters = ({ imageModel }: GenerationParamsProps) => {
     try {
       const result = await create({
         imageModelId: imageModel._id,
-        imageModelProviderId: imageModel.sinkinProviderId!,
         prompt,
         negativePrompt,
         width: Number(width),

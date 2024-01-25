@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { ScrollArea } from '@radix-ui/themes'
 
 const variant = {
   left: 'left-sidebar left-0 border-r',

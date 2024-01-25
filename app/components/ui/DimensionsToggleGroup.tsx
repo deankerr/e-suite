@@ -1,4 +1,3 @@
-import { TextAlignCenterIcon, TextAlignLeftIcon, TextAlignRightIcon } from '@radix-ui/react-icons'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { Button } from '@radix-ui/themes'
 import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'

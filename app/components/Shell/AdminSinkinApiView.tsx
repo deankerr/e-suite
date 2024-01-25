@@ -4,32 +4,18 @@ import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { modelBases, modelTypes, nsfwRatings } from '@/convex/constants'
 import { ImageModelResult, ModelBase, ModelType, NsfwRatings } from '@/convex/types'
-import {
-  Button,
-  Card,
-  Checkbox,
-  Inset,
-  ScrollArea,
-  Table,
-  TextArea,
-  TextField,
-  TextFieldInput,
-} from '@radix-ui/themes'
+import { Button, Card, Inset, ScrollArea, TextArea, TextFieldInput } from '@radix-ui/themes'
 import { useAction, useMutation, useQuery } from 'convex/react'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ImageId } from '../ui/ImageId'
 import { Select } from '../ui/Select'
 import { Shell } from './Shell'
 
-type ApiListView = {
-  props?: any
-}
-
 type SinkinModelListing = typeof api.providers.sinkin.getModelsApi._returnType
+type SinkinApiModel = SinkinModelListing['models'][number]
 
-export const ApiListView = ({ props }: ApiListView) => {
+export const AdminSinkinApiView = () => {
   const ims = useQuery(api.imageModels.list, { type: 'checkpoint' })
 
   const action = useAction(api.providers.sinkin.getModelsApi)
@@ -42,8 +28,6 @@ export const ApiListView = ({ props }: ApiListView) => {
         .catch((err) => console.error(err))
     }
   }, [result, action])
-
-  const create = useMutation(api.imageModels.create)
 
   return (
     <Shell.Root>
@@ -69,13 +53,35 @@ export const ApiListView = ({ props }: ApiListView) => {
                 const current = currents?.at(0)
                 return (
                   <div key={model.id} className="flex gap-2">
-                    <FakeImageModel data={model} className="h-36 w-96" />
+                    <Card className="h-36 w-96">
+                      <div className="grid h-full grid-flow-col gap-1">
+                        <Inset side="left" className="">
+                          <img src={model.cover_img} className="max-w-24" />
+                        </Inset>
+                        <div className="divide-y text-xs text-gray-10">
+                          <div className="text-sm">{model.name}</div>
+                          <div className="font-code">{model.id}</div>
+                          <div>civit: {model.civitai_model_id}</div>
+                          <div>
+                            <Link href={model.link}>{model.link}</Link>
+                          </div>
+                        </div>
+                        <TextArea
+                          placeholder="sinkin tags"
+                          size="1"
+                          defaultValue={model.tags?.join(', ')}
+                          className="h-full"
+                        />
+                      </div>
+                    </Card>
+
                     <ImageModelEditCard
                       sinkin={model}
                       type={'checkpoint'}
                       current={current}
                       className="h-36"
                     />
+
                     {currents?.map((c) => <ImageModelCard key={c.imageModel._id} from={c} />)}
                   </div>
                 )
@@ -87,45 +93,6 @@ export const ApiListView = ({ props }: ApiListView) => {
     </Shell.Root>
   )
 }
-
-const FakeImageModel = ({
-  data,
-  ...props
-}: { data: SinkinModelListing['models'][number] } & React.ComponentProps<typeof Card>) => {
-  return (
-    <Card {...props}>
-      <div className="grid h-full grid-flow-col gap-1">
-        {data && (
-          <Inset side="left" className="">
-            <img src={data.cover_img} className="max-w-24" />
-          </Inset>
-        )}
-        <div className="grid grid-flow-col">
-          <div className="">
-            <div className="text-sm">{data.name}</div>
-            <div className="grid gap-1 divide-y text-xs text-gray-10">
-              <div className="font-code">{data.id}</div>
-              <div>civit: {data.civitai_model_id}</div>
-              <div>
-                <Link href={data.link}>{data.link}</Link>
-              </div>
-            </div>
-          </div>
-          <div>
-            <TextArea
-              placeholder="sinkin tags"
-              size="1"
-              defaultValue={data.tags?.join(', ')}
-              className="h-full"
-            />
-          </div>
-        </div>
-      </div>
-    </Card>
-  )
-}
-
-type SinkinApiModel = SinkinModelListing['models'][number]
 
 type ImageModelForm = {
   name: string
@@ -182,7 +149,7 @@ const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditC
     const existing = current?.imageModel._id
 
     if (existing) {
-      await update({ fields: {...fields, _id: existing} })
+      await update({ fields: { ...fields, _id: existing } })
       return console.log('done')
     }
     const id = await create({

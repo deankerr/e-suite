@@ -1,4 +1,3 @@
-import { ImageModelCard } from '@/app/components/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { ImageModel } from '@/convex/types'
 import { Button, Card, Heading, ScrollArea, Separator, Text } from '@radix-ui/themes'
@@ -38,12 +37,13 @@ export const ImageModelPicker = ({
 
       <Heading size="2">Model</Heading>
       {imageModel ? (
-        <ImageModelCard
-          className="cursor-pointer"
-          imageModel={imageModel}
-          buttonSash={<ChevronsUpDownIcon />}
-          onClick={() => onOpenChange(!open)}
-        />
+        // <ImageModelCard
+        //   className="cursor-pointer"
+        //   imageModel={imageModel}
+        //   buttonSash={<ChevronsUpDownIcon />}
+        //   onClick={() => onOpenChange(!open)}
+        // />
+        'update me'
       ) : (
         <Card className="h-36 flex-none cursor-pointer" onClick={() => onOpenChange(!open)}>
           <div className="grid h-full place-content-center">
@@ -62,14 +62,16 @@ export const ImageModelPicker = ({
           </div>
           <ScrollArea className="h-full" type="hover" scrollbars="vertical">
             <div className="space-y-4">
-              {results.map((m) => (
-                <ImageModelCard
-                  key={m._id}
-                  imageModel={m}
-                  buttonSash={<CheckSquareIcon />}
-                  onClick={() => select(m)}
-                />
-              ))}
+              {results.map(
+                (m) =>
+                  // <ImageModelCard
+                  //   key={m._id}
+                  //   imageModel={m}
+                  //   buttonSash={<CheckSquareIcon />}
+                  //   onClick={() => select(m)}
+                  // />
+                  'update me',
+              )}
               <Button onClick={() => loadMore(10)}>Load more</Button>
             </div>
           </ScrollArea>

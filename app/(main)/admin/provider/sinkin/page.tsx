@@ -1,7 +1,7 @@
-import { ApiListView } from '@/app/components/Shell/ApiListView'
+import { AdminSinkinApiView } from '@/app/components/Shell/AdminSinkinApiView'
 
 export default function SinkinPage() {
   // SinkinPage
 
-  return <ApiListView />
+  return <AdminSinkinApiView />
 }
