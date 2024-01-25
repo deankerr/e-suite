@@ -8,7 +8,10 @@ export function TailwindBreakpointIndicator() {
 
   return (
     <div
-      className={cn('fixed top-0 z-50 flex h-6 w-5 place-items-center text-xs text-gray', content)}
+      className={cn(
+        'fixed top-0 z-50 flex place-items-center bg-overlay text-xs text-gray',
+        content,
+      )}
     />
   )
 }
