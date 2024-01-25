@@ -13,3 +13,4 @@ export type ModelBase = (typeof modelBases)[number]
 export type ModelType = (typeof modelTypes)[number]
 
 export type GenerationResult = (typeof api.generations.page._returnType.page)[number]
+export type ImageModelResult = (typeof api.imageModels.page._returnType.page)[number]

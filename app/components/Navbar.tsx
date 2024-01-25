@@ -1,11 +1,11 @@
 'use client'
 
+import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
 import { Id } from '@/convex/_generated/dataModel'
 import { Button, Card, TextArea } from '@radix-ui/themes'
 import logo from '/assets/icons/logo-sunset.svg'
 import { useConvexAuth } from 'convex/react'
 import Image from 'next/image'
-import { ImageModelCard } from './ImageModelCard'
 import { DimensionsToggleGroup } from './ui/DimensionsToggleGroup'
 import { useRegisterUser } from './useRegisterUser'
 
@@ -31,13 +31,22 @@ export const Navbar = ({ props }: NavbarProps) => {
           <TextArea placeholder="what do you want to see?" className="" />
           <TextArea placeholder="what do you not want to see?" className="" />
 
-          <ImageModelCard
-            id={'k574mz0xgj33gmb0ms469jwrpn6hf2zz' as Id<'imageModels'>}
-            className=""
-          />
+          <Button
+            variant="outline"
+            className="h-32 gap-1.5 overflow-hidden pl-0 text-center"
+            size="1"
+          >
+            <ImageModelCard
+              className="h-[99%] text-white after:rounded-none"
+              // variant="ghost"
+              imageModelId={'k574mz0xgj33gmb0ms469jwrpn6hf2zz' as Id<'imageModels'>}
+            />
+            Select Model
+          </Button>
+
           <div className="flex flex-col justify-between gap-2">
             <DimensionsToggleGroup />
-            {/* <Separator size="4" /> */}
+
             <Button variant="surface">Generate</Button>
           </div>
         </div>
