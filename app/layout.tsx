@@ -4,7 +4,7 @@ import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreak
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
-import { BIZ_UDMincho, DotGothic16 } from 'next/font/google'
+import { BIZ_UDMincho, DotGothic16, IBM_Plex_Sans } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
@@ -24,11 +24,17 @@ const bizUdMincho = BIZ_UDMincho({
   variable: '--font-biz',
 })
 
+const ibmPlexSans = IBM_Plex_Sans({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-ibm-plex',
+})
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${dotGothic16.variable} ${bizUdMincho.variable}`}
+      className={`${dotGothic16.variable} ${bizUdMincho.variable} ${ibmPlexSans.variable}`}
       suppressHydrationWarning
     >
       <body>

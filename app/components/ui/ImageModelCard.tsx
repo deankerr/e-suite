@@ -6,7 +6,7 @@ import { Badge, Card, Inset } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
-import { ImageId } from './ImageId'
+import { Frame } from './Frame'
 
 type ImageModelCardProps = {
   imageModelId?: Id<'imageModels'>
@@ -28,33 +28,19 @@ export const ImageModelCard = ({
     <Card className={cn('h-36 w-80', className)} {...props}>
       <div className="grid h-full grid-cols-[minmax(auto,40%)_1fr] gap-4">
         <Inset side="all" className="bg-accent-1A">
-          {image ? (
-            <ImageId
-              id={image.storageId}
-              alt={`cover image from model: ${imageModel?.name}`}
-              width={image.width}
-              height={image.height}
-            />
-          ) : (
-            '?'
-          )}
+          <Frame image={image} alt={`cover image from model: ${imageModel?.name}`} />
         </Inset>
 
         <div>
-          {imageModel && (
-            <>
-              <div className="text-sm">{imageModel.name}</div>
-              <ImageModelBadges imageModel={imageModel} />
-            </>
-          )}
+          <div className="text-sm">{imageModel?.name}</div>
+          {imageModel && <ImageModelBadges imageModel={imageModel} />}
         </div>
       </div>
-      {imageModel && (
-        <div className="absolute bottom-0 right-1 w-fit text-right font-code text-[8px] text-gold-6">
-          <div>order: {imageModel.order}</div>
-          {imageModel._id}
-        </div>
-      )}
+
+      <div className="absolute bottom-0 right-1 w-fit text-right font-code text-[8px] text-gold-6">
+        <div>order: {imageModel?.order}</div>
+        {imageModel?._id}
+      </div>
     </Card>
   )
 }

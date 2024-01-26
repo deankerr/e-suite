@@ -53,7 +53,11 @@ export const GenerationBar = ({ show, className, ...props }: GenerationBarProps)
   )
 
   return (
-    <form className={cn('grid max-w-2xl gap-2 md:grid-cols-2')} onSubmit={submit} {...props}>
+    <form
+      className={cn('grid max-w-2xl gap-2 md:grid-cols-2', !show && 'hidden')}
+      onSubmit={submit}
+      {...props}
+    >
       <TextArea placeholder="what do you want to see?" className="" {...register('prompt')} />
       <TextArea
         placeholder="what do you not want to see?"

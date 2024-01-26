@@ -23,8 +23,7 @@ export const Navbar = ({ props }: NavbarProps) => {
   return (
     <Card
       className={cn(
-        'z-30 self-start justify-self-center bg-panel-solid opacity-100 hover:opacity-100',
-        !show && 'justify-self-start',
+        'z-30 self-start justify-self-start bg-panel-solid opacity-100 hover:opacity-100',
       )}
       size="1"
     >

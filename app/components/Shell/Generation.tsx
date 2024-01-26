@@ -3,19 +3,20 @@ import { cn } from '@/lib/utils'
 import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
 import { DeleteGenerationDialog } from '../ui/DeleteGenerationDialog'
-import { ImageC } from '../ui/ImageC'
+import { Frame } from '../ui/Frame'
 import { ImageModelCard } from '../ui/ImageModelCard'
 import { Shell } from './Shell'
 
 export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
-  const { width, height, n } = generation
+  const { width, height, n, status } = generation
   const creator = author?.info.nickname
-  const layout =
-    width > height
-      ? '' // landscape
-      : height > width
-        ? 'md:grid-cols-4' // portrait
-        : 'grid-cols-2' // square
+
+  const portraitLayout = height > width && 'md:grid-cols-4'
+  const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
+  const landscapeLayout = height < width && 'max-w-[calc(384px_*_2.5)]'
+
+  const isError = status === 'error' || status === 'failed'
+
   return (
     <Shell.Root className="">
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
@@ -23,17 +24,21 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
       <Shell.Content>
         <div
           className={cn(
-            'mx-auto grid h-full w-fit grid-cols-2 place-content-center items-center gap-rx-1',
-            layout,
+            'mx-auto grid h-full w-full grid-cols-2 place-content-center gap-rx-1',
+            portraitLayout,
+            squareLayout,
+            landscapeLayout,
           )}
         >
           {Array.from({ length: n }, (_, i) => (
-            <ImageC
+            <Frame
               key={i}
               image={images[i]}
-              width={width}
-              height={height}
+              frameWidth={width}
+              frameHeight={height}
               alt={`generation result ${i}`}
+              className="border border-bronze-6"
+              isError={isError}
             />
           ))}
         </div>
