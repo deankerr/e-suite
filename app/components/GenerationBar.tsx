@@ -29,9 +29,9 @@ const formSchema = z.object({
 })
 
 export const GenerationBar = ({ show, className, ...props }: GenerationBarProps) => {
-  const createGeneration = useMutation(api.generations.create)
-
   const list = useQuery(api.imageModels.list, { type: 'checkpoint', take: 16 })
+
+  const createGeneration = useMutation(api.generations.create)
   const [imageModel, setImageModel] = useState<ImageModelResult>()
 
   const { register, control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
@@ -109,3 +109,69 @@ export const GenerationBar = ({ show, className, ...props }: GenerationBarProps)
     </form>
   )
 }
+
+/* 
+  <div className={controlCn}>
+          <Label.Root className={labelCn} htmlFor="steps">
+            Steps
+          </Label.Root>
+          <Slider
+            min={1}
+            max={50}
+            name="steps"
+            value={steps}
+            onValueChange={([v]) => setSteps([v!])}
+          />
+        </div>
+
+        <div className={controlCn}>
+          <Label.Root className={labelCn} htmlFor="scale">
+            Guidance scale
+          </Label.Root>
+          <Slider
+            min={1}
+            max={20}
+            step={0.5}
+            name="scale"
+            value={guidance}
+            onValueChange={([v]) => setGuidance([v!])}
+          />
+        </div>
+
+        const sinkinSchedulers = [
+['DPMSolverMultistep'],
+['K_EULER_ANCESTRAL'],
+['DDIM'],
+['K_EULER'],
+['PNDM'],
+['KLMS'],
+] as const
+
+<div className="flex flex-col gap-3 px-4">
+      <Label.Root className="text-sm">LoRA</Label.Root>
+      <div className="flex justify-between gap-2">
+        <Button variant="outline" className="grow">
+          Good Personalities v0.3
+        </Button>
+        <IconButton variant="surface">0.7</IconButton>
+      </div>
+      <div className="flex justify-between gap-2">
+        <Button variant="outline" className="grow">
+          Party Balloons v4
+        </Button>
+        <IconButton variant="surface">0.5</IconButton>
+      </div>
+      <div className="flex justify-between gap-2">
+        <Button variant="outline" className="grow">
+          Hands Are Cheeses
+        </Button>
+        <IconButton variant="surface">0.3</IconButton>
+      </div>
+      <div className="flex justify-between gap-2">
+        <Button variant="outline" className="grow">
+          No Birds v1.4
+        </Button>
+        <IconButton variant="surface">0.5</IconButton>
+      </div>
+    </div>
+*/
