@@ -9,3 +9,4 @@ export const generationStatus = [
   'failed',
   'cancelled',
 ] as const
+export const dimensions = ['portrait', 'square', 'landscape'] as const

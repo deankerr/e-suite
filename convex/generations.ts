@@ -4,17 +4,13 @@ import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { internalMutation, mutation, query } from './_generated/server'
-import { generationStatus } from './constants'
+import { dimensions, generationStatus } from './constants'
 import { assert, error, vEnum } from './util'
+import { Dimension } from './types'
 
-export const generationsParameterFields = {
+const generationsParameterFields = {
   imageModelId: v.id('imageModels'),
-
   prompt: v.string(),
-  width: v.number(),
-  height: v.number(),
-  n: v.number(),
-
   negativePrompt: v.optional(v.string()),
   seed: v.optional(v.number()),
   scheduler: v.optional(v.string()),
@@ -23,13 +19,17 @@ export const generationsParameterFields = {
   lcm: v.optional(v.boolean()),
 }
 
-export const generationsEventFields = {
+const generationsEventFields = {
   status: vEnum(generationStatus),
   message: v.optional(v.string()),
   data: v.optional(v.any()),
 }
 
-export const generationsInternalFields = {
+const generationsInternalFields = {
+  width: v.number(),
+  height: v.number(),
+  n: v.number(),
+
   userId: v.id('users'),
   imageIds: v.array(v.union(v.id('images'), v.null())),
   status: vEnum(generationStatus),
@@ -111,13 +111,24 @@ const userMutation = customMutation(mutation, {
   },
 })
 
+const getDimSize = (dim: Dimension) => {
+  if (dim === 'portrait') return {width: 512, height: 768}
+  if (dim === 'square') return {width: 512, height: 512}
+  return {width: 768, height: 512}
+}
+
 export const create = userMutation({
   args: {
     ...generationsParameterFields,
+    dimensions: vEnum(dimensions)
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, {dimensions, ...args}) => {
+    const {width, height} = getDimSize(dimensions)
+
     const id = await ctx.db.insert('generations', {
       ...args,
+      width, height,
+      n: 4,
       userId: ctx.user._id,
       imageIds: [],
       status: 'pending',

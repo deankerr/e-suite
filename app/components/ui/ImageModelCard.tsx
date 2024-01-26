@@ -50,7 +50,7 @@ export const ImageModelCard = ({
         </div>
       </div>
       {imageModel && (
-        <div className="bottom-3 w-full text-right font-code text-[8px] text-gold-6">
+        <div className="absolute bottom-0 right-1 w-fit text-right font-code text-[8px] text-gold-6">
           <div>order: {imageModel.order}</div>
           {imageModel._id}
         </div>
@@ -86,6 +86,7 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageM
           <NextLink
             href={`https://civitai.com/models/${imageModel.civitaiId}`}
             className="inline-flex w-full items-center justify-between"
+            target="_blank"
           >
             <span className="pr-1 pt-[1px]">
               CIVIT
@@ -100,6 +101,7 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageM
           <NextLink
             href={`https://huggingface.co/${imageModel.huggingFaceId}`}
             className="inline-flex w-full items-center justify-between"
+            target="_blank"
           >
             <span className="">huggingface</span> <ArrowUpRightSquare size={15} />
           </NextLink>

@@ -2,7 +2,8 @@
 
 import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
 import { api } from '@/convex/_generated/api'
-import { ScrollArea } from '@radix-ui/themes'
+import { ImageModelResult } from '@/convex/types'
+import { Button, Dialog, ScrollArea } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { Shell } from './Shell'
 
@@ -26,5 +27,39 @@ export const ImageModelPicker = ({ props }: ImageModelPickerProps) => {
         </ScrollArea>
       </Shell.Content>
     </Shell.Root>
+  )
+}
+
+export const ImageModelPickerDialog = ({
+  list = [],
+  children,
+  onValueChange = () => {},
+  ...props
+}: {
+  list?: ImageModelResult[]
+  onValueChange?: (value: ImageModelResult) => unknown
+} & React.ComponentProps<typeof Dialog.Content>) => {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>{children}</Dialog.Trigger>
+
+      <Dialog.Content {...props}>
+        <Dialog.Title>Select Model</Dialog.Title>
+
+        <div className="mx-auto grid w-fit gap-4 md:grid-cols-2">
+          {list.map((im) => (
+            <Dialog.Close key={im.imageModel._id} onClick={() => onValueChange(im)}>
+              <ImageModelCard from={im} />
+            </Dialog.Close>
+          ))}
+        </div>
+
+        <div className="flex justify-end py-4">
+          <Dialog.Close>
+            <Button variant="soft">Close</Button>
+          </Dialog.Close>
+        </div>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

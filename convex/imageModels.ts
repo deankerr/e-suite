@@ -69,11 +69,9 @@ export const list = query({
   handler: async (ctx, { take, type }) => {
     const models = await ctx.db
       .query('imageModels')
-      .filter((q) => {
-        if (!type) return true
-        return q.eq(q.field('type'), type)
-      })
-      .take(take ?? 100)
+      .withIndex('by_order')
+      .order('desc')
+      .take(take ?? 10)
 
     return await withImages(ctx, { imageModels: models })
   },
@@ -110,21 +108,4 @@ export const create = mutation({
 
 export const update = mutation(async (ctx, { fields }: { fields: Partial<Doc<'imageModels'>> }) => {
   await ctx.db.patch(fields._id ?? raise('imageModel update missing _id'), fields)
-})
-
-export const migOrder = internalMutation(async (ctx) => {
-  const ims = await ctx.db.query("imageModels").collect()
-
-  for (const im of ims) {
-    let cout = 0
-    
-    if (im.tags.includes('realistic')) cout += 5
-    if (im.tags.includes('_cartoon')) cout += 2
-    if (im.tags.includes('_hot')) cout += 5
-
-    const order = Math.min(Math.max(0, cout), 10)
-
-    await ctx.db.patch(im._id, {order})
-    console.log(im.name, order)
-  }
 })

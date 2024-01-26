@@ -20,6 +20,7 @@
     "@anatine/zod-openapi": "^2.2.2",
     "@clerk/nextjs": "^4.29.4",
     "@fal-ai/serverless-client": "^0.6.1",
+    "@hookform/resolvers": "^3.3.4",
     "@huggingface/hub": "^0.12.3",
     "@huggingface/inference": "^2.6.4",
     "@libsql/client": "0.4.0-pre.5",
