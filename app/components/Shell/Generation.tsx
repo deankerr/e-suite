@@ -2,6 +2,7 @@ import { GenerationResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
+import { DeleteGenerationDialog } from '../ui/DeleteGenerationDialog'
 import { ImageC } from '../ui/ImageC'
 import { ImageModelCard } from '../ui/ImageModelCard'
 import { Shell } from './Shell'
@@ -41,9 +42,11 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
       <Shell.Controls>
         <Button variant="outline">Link</Button>
         <Button variant="outline">Copy</Button>
-        <Button variant="outline" color="red">
-          Delete
-        </Button>
+        <DeleteGenerationDialog id={generation._id}>
+          <Button variant="outline" color="red">
+            Delete
+          </Button>
+        </DeleteGenerationDialog>
       </Shell.Controls>
 
       <Shell.Sidebar className="px-rx-2">

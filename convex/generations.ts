@@ -5,8 +5,8 @@ import { internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { internalMutation, mutation, query } from './_generated/server'
 import { dimensions, generationStatus } from './constants'
-import { assert, error, vEnum } from './util'
 import { Dimension } from './types'
+import { assert, error, vEnum } from './util'
 
 const generationsParameterFields = {
   imageModelId: v.id('imageModels'),
@@ -112,22 +112,23 @@ const userMutation = customMutation(mutation, {
 })
 
 const getDimSize = (dim: Dimension) => {
-  if (dim === 'portrait') return {width: 512, height: 768}
-  if (dim === 'square') return {width: 512, height: 512}
-  return {width: 768, height: 512}
+  if (dim === 'portrait') return { width: 512, height: 768 }
+  if (dim === 'square') return { width: 512, height: 512 }
+  return { width: 768, height: 512 }
 }
 
 export const create = userMutation({
   args: {
     ...generationsParameterFields,
-    dimensions: vEnum(dimensions)
+    dimensions: vEnum(dimensions),
   },
-  handler: async (ctx, {dimensions, ...args}) => {
-    const {width, height} = getDimSize(dimensions)
+  handler: async (ctx, { dimensions, ...args }) => {
+    const { width, height } = getDimSize(dimensions)
 
     const id = await ctx.db.insert('generations', {
       ...args,
-      width, height,
+      width,
+      height,
       n: 4,
       userId: ctx.user._id,
       imageIds: [],
