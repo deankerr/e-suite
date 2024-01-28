@@ -10,3 +10,5 @@ export const generationStatus = [
   'cancelled',
 ] as const
 export const dimensions = ['portrait', 'square', 'landscape'] as const
+
+export const chatProviders = ['openai', 'openrouter', 'togetherai']
