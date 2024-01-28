@@ -30,6 +30,7 @@ export const register = mutation({
     if (!identity) {
       throw new Error('Called storeUser without authentication present')
     }
+
     const { tokenIdentifier, ...info } = identity
     // Check if we've already stored this identity before.
     const user = await ctx.db

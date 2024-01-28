@@ -3,6 +3,7 @@ import z from 'zod'
 import { internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
+import { clerkWebhookHandler } from './providers/clerk'
 
 const http = httpRouter()
 
@@ -81,6 +82,12 @@ http.route({
       },
     })
   }),
+})
+
+http.route({
+  path: '/internal/clerk/webhook/v1',
+  method: 'POST',
+  handler: clerkWebhookHandler,
 })
 
 export default http
