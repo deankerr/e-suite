@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as authTokens from "../authTokens.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
 import type * as files_imagesLib from "../files/imagesLib.js";
@@ -21,6 +22,7 @@ import type * as files_plaiceholder from "../files/plaiceholder.js";
 import type * as generations from "../generations.js";
 import type * as http from "../http.js";
 import type * as imageModels from "../imageModels.js";
+import type * as messages from "../messages.js";
 import type * as migrate from "../migrate.js";
 import type * as providers_openai from "../providers/openai.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
@@ -38,6 +40,7 @@ import type * as util from "../util.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  authTokens: typeof authTokens;
   constants: typeof constants;
   "files/images": typeof files_images;
   "files/imagesLib": typeof files_imagesLib;
@@ -45,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   generations: typeof generations;
   http: typeof http;
   imageModels: typeof imageModels;
+  messages: typeof messages;
   migrate: typeof migrate;
   "providers/openai": typeof providers_openai;
   "providers/sinkin": typeof providers_sinkin;
