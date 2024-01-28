@@ -7,8 +7,10 @@ import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, TextArea } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
+import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import * as z from 'zod'
 import { ImageModelPickerDialog } from './Shell/ImageModelPicker'
 import { DimensionsToggle } from './ui/DimensionsToggle'
@@ -47,7 +49,29 @@ export const GenerationBar = ({ show, className, ...props }: GenerationBarProps)
   const submit = handleSubmit(
     async (data) => {
       console.log('submit', data)
-      await createGeneration(data)
+      try {
+        await createGeneration(data)
+      } catch (err) {
+        console.error(err)
+        if (err instanceof ConvexError) {
+          const msg = err.data.message ?? err.message
+          toast.error(msg as string, {
+            position: 'top-center',
+          })
+          return
+        }
+
+        if (err instanceof Error) {
+          toast.error(err.message, {
+            position: 'top-center',
+          })
+          return
+        }
+
+        toast.error('An unknown error occured', {
+          position: 'top-center',
+        })
+      }
     },
     (errors) => console.log(errors),
   )
