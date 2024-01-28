@@ -8,7 +8,6 @@ const messagesFields = {
   ...chatMessageFields,
   threadId: v.id('threads'),
   jobId: v.optional(v.id('jobs')),
-  data: v.any(),
 }
 
 export const messagesTable = defineTable(messagesFields).index('by_threadId', ['threadId'])
@@ -18,4 +17,12 @@ export const create = internalMutation({
     ...messagesFields,
   },
   handler: async (ctx, args) => await ctx.db.insert('messages', args),
+})
+
+export const update = internalMutation({
+  args: {
+    id: v.id('messages'),
+    fields: v.object({ ...chatMessageFields, jobId: v.optional(v.id('jobs')) }),
+  },
+  handler: async (ctx, { id, fields }) => await ctx.db.patch(id, fields),
 })

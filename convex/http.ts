@@ -1,4 +1,6 @@
 import { httpRouter } from 'convex/server'
+import z from 'zod'
+import { internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 
@@ -18,6 +20,66 @@ http.route({
       })
     }
     return new Response(blob)
+  }),
+})
+
+const chatRequestSchema = z.object({
+  threadId: z.string().optional(),
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'assistant', 'system']),
+        name: z.string().optional(),
+        content: z.string(),
+      }),
+    )
+    .min(1),
+  temp_runChatProfileId: z.string().optional(),
+  webhook: z.string().url(),
+  authToken: z.string(),
+})
+
+http.route({
+  path: '/chat_va1',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const json = await request.json()
+    const chatReq = chatRequestSchema.parse(json)
+    const auth = await ctx.runQuery(internal.authTokens.validate, { token: chatReq.authToken })
+    if (!auth) return new Response('Unauthorized', { status: 401 })
+
+    const threadId = (chatReq.threadId ??
+      (await ctx.runMutation(internal.chat.threads.create, {
+        ownerInfo: auth.ownerInfo,
+        ownerAuthTokenId: auth._id,
+      }))) as Id<'threads'>
+    const chatMessageIds = await Promise.all(
+      chatReq.messages.map(
+        async (message) =>
+          await ctx.runMutation(internal.chat.messages.create, { threadId, ...message }),
+      ),
+    )
+    const resultMessageId = await ctx.runMutation(internal.chat.messages.create, {
+      threadId,
+      role: 'assistant',
+      content: '',
+    })
+
+    const jobId = await ctx.runMutation(internal.jobs.create, {
+      chat: {
+        chatMessageIds,
+        resultMessageId,
+        chatParameters: { model: 'temp' },
+        chatProvider: 'togetherai',
+      },
+    })
+
+    //TODO webhook
+    return new Response(JSON.stringify({ jobId, threadId }), {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
   }),
 })
 

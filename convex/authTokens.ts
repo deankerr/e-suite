@@ -28,7 +28,9 @@ export const validate = internalQuery({
     const match = await ctx.db
       .query('authTokens')
       .filter((q) => q.eq(q.field('token'), token))
-      .collect()
-    return !(match === null)
+      .unique()
+
+    if (match) console.log('authorized: ', match.ownerInfo, match.token)
+    return match
   },
 })

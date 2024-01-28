@@ -28,9 +28,7 @@ const sharedJobsFields = {
 }
 
 const chatJobFields = {
-  type: v.literal('chat'),
   resultMessageId: v.id('messages'),
-
   chatMessageIds: v.array(v.id('messages')),
   chatParameters: v.object(chatParametersFields),
   chatProvider: vEnum(chatProviders),
@@ -38,7 +36,7 @@ const chatJobFields = {
 
 export const jobsTable = defineTable(
   v.union(
-    v.object({ ...chatJobFields, ...sharedJobsFields }),
+    v.object({ type: v.literal('chat'), ...chatJobFields, ...sharedJobsFields }),
     v.object({
       type: v.literal('generation'),
       width: v.number(), // TODO
@@ -50,12 +48,12 @@ export const jobsTable = defineTable(
 
 export const create = internalMutation({
   args: {
-    chat: v.optional(v.object({ ...chatJobFields, ...sharedJobsFields })),
+    chat: v.optional(v.object({ ...chatJobFields })),
     generation: v.optional(v.null()),
   },
   handler: async (ctx, { chat, generation }) => {
     if (chat) {
-      return await ctx.db.insert('jobs', chat)
+      return await ctx.db.insert('jobs', { ...chat, type: 'chat', status: 'pending', events: [] })
       //TODO trigger workflow
     }
 

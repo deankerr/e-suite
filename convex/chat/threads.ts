@@ -1,4 +1,3 @@
-import { customMutation } from 'convex-helpers/server/customFunctions'
 import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { internalMutation } from '../_generated/server'
