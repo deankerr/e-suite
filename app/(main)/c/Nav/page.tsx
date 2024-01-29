@@ -13,9 +13,9 @@ export default function NavPage() {
       <div className="grid w-fit grid-flow-col gap-5 px-12">
         <Nav />
       </div>
-      <Slate className="grid h-96 w-96 place-content-center">
-        <button className="size-16 cursor-pointer p-2">
-          <NextImage src={sunLogoSvg} alt="e/suite sun logo" className="rounded-full" />
+      <Slate className="h-96 w-96 place-content-center p-16">
+        <button className=" after:sun-glow2 size-16 cursor-pointer p-2 after:rounded-full">
+          <NextImage src={sunLogoSvg} alt="e/suite sun logo" className="" />
         </button>
       </Slate>
     </div>
