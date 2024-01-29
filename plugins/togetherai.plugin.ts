@@ -14,7 +14,7 @@ import { togetheraiSchema } from './togetherai.schema'
 
 const vendorId = 'togetherai' as const
 
-const { GET, POST } = createClient<paths>({
+const api = createClient<paths>({
   baseUrl: 'https://api.together.xyz',
   headers: {
     Authorization: `Bearer ${ENV.TOGETHERAI_API_KEY}`,
@@ -33,7 +33,7 @@ export const togetheraiPlugin = {
       const body = { ...rest, prompt, stream_tokens: false }
       log.add('vendorRequestBody', body)
 
-      const { data, error } = await POST('/inference', {
+      const { data, error } = await api.POST('/inference', {
         body,
       })
 
@@ -89,7 +89,7 @@ export const togetheraiPlugin = {
       ctx.log.add('venderRequestBody', input)
 
       //* openapi spec missing image parameters
-      const { data, error } = await POST('/inference', { body: input })
+      const { data, error } = await api.POST('/inference', { body: input })
       ctx.log.add('vendorResponseBody', data)
 
       if (data) {
@@ -110,7 +110,7 @@ export const togetheraiPlugin = {
 
   models: {
     list: async () => {
-      const { data, error } = await GET('/models/info', {})
+      const { data, error } = await api.GET('/models/info', {})
       if (!data) throw new Error('openapi-fetch error', error)
       return data
     },
@@ -182,7 +182,7 @@ function parseChatResponse(data: unknown) {
 
 export async function getAvailableModels() {
   console.log('fetching togetherai model list')
-  const { data, error } = await GET('/models/info', {})
+  const { data, error } = await api.GET('/models/info', {})
   console.log('data', data)
   if (error) console.error('openapi-fetch error', error)
   return data

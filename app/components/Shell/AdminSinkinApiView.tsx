@@ -163,7 +163,7 @@ const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditC
 
   return (
     <Card {...props}>
-      <form className="grid h-full grid-flow-col gap-2 text-xs" onSubmit={onSubmit}>
+      <form className="grid h-full grid-flow-col gap-2 text-xs" onSubmit={void onSubmit}>
         <div>
           <TextArea placeholder="name" defaultValue={sinkin.name} size="1" {...register('name')} />
           <div className="flex items-center gap-1 text-xs">

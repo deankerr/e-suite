@@ -32,4 +32,4 @@ async function seed() {
   process.exit(0)
 }
 
-seed()
+// seed()
