@@ -1,10 +1,6 @@
-type SpinnerProps = {
-  props?: any
-}
-
-export const Spinner = ({ props }: SpinnerProps) => {
+export const Spinner = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (
-    <div role="status">
+    <div {...props} role="status" className={className}>
       <svg
         aria-hidden="true"
         className="h-8 w-8 animate-spin fill-accent-7 text-gray-5"

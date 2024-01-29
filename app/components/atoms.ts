@@ -1,3 +1,4 @@
 import { atom } from 'jotai'
 
-export const debugAuthStateUiAtom = atom(false)
+export const forceSignedOutUiAtom = atom(false)
+export const navUserPanelOpenAtom = atom(true)
