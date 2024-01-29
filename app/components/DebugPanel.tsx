@@ -1,11 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@radix-ui/themes'
-import { useAtom } from 'jotai'
-import {
-  getUiAtom, type UiAtomNames
-} from './atoms'
+import { ToggleButton } from './ui/ToggleButton'
 
 const sides = {
   tl: 'top-1 left-1',
@@ -18,28 +14,27 @@ type DebugPanelProps = {
   side?: keyof typeof sides
 }
 
+const debugButtonProps = {
+  trueProps: { variant: 'soft', color: 'blue' },
+  falseProps: { variant: 'surface', color: 'orange' },
+  size: '1',
+} as const
 
 export const DebugPanel = ({ side = 'br' }: DebugPanelProps) => {
-
   return (
     <div className={cn('fixed min-w-20', sides[side])}>
-      <ToggleButton name="generationsPanelOpen" />
-      <ToggleButton name="userPanelOpen" />
+      <ToggleButton name="generationsPanelOpen" {...debugButtonProps} />
+      <ToggleButton name="userPanelOpen" {...debugButtonProps} />
     </div>
   )
 }
 
-const getStateProps = (value: boolean) =>
-  value
-    ? ({ variant: 'soft', color: 'blue' } as const)
-    : ({ variant: 'surface', color: 'orange' } as const)
+// export const ToggleButton = ({ name }: { name: UiAtomNames }) => {
+//   const [value, toggle] = useAtom(getUiAtom( name ))
 
-export const ToggleButton = ({ name }: { name: UiAtomNames }) => {
-  const [value, toggle] = useAtom(getUiAtom( name ))
-
-  return (
-    <Button onClick={() => toggle()} size="1" {...getStateProps(value)}>
-      {name}
-    </Button>
-  )
-}
+//   return (
+//     <Button onClick={() => toggle()} size="1" {...getStateProps(value)}>
+//       {name}
+//     </Button>
+//   )
+// }

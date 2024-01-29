@@ -14,11 +14,22 @@ const createToggleAtom = (initialValue: boolean) => {
   return rwAtom
 }
 
-const cra = createToggleAtom
-
 const uiAtoms = {
-  generationsPanelOpen: cra(true),
-  userPanelOpen: cra(true),
+  generationsPanelOpen: createToggleAtom(true),
+  userPanelOpen: createToggleAtom(true),
 } as const
 
 export const getUiAtom = (name: keyof typeof uiAtoms) => uiAtoms[name]
+
+const toggleAtoms = new Map<string, ToggleAtom>()
+
+export const getToggleAtom = (name: string, initial = false) => {
+  if (name in uiAtoms) return uiAtoms[name as UiAtomNames]
+
+  const exAtom = toggleAtoms.get(name)
+  if (exAtom) return exAtom
+
+  const newAtom = createToggleAtom(initial)
+  toggleAtoms.set(name, newAtom)
+  return newAtom
+}
