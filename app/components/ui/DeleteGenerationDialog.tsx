@@ -32,7 +32,7 @@ export const DeleteGenerationDialog = ({
               Cancel
             </Button>
           </AlertDialog.Cancel>
-          <AlertDialog.Action onClick={void runDelete()}>
+          <AlertDialog.Action onClick={() => void runDelete()}>
             <Button variant="solid" color="red">
               Delete
             </Button>
