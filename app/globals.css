@@ -76,6 +76,28 @@
       -1px -1px;
   }
 
+  .sun-glow {
+    box-shadow:
+      inset 0px -9px 10px 10px rgba(255, 161, 46, 0.4),
+      0px 0px 105px 41px rgba(255, 161, 46, 0.9);
+
+    animation: sun-glow 5s linear infinite;
+  }
+
+  @keyframes sun-glow {
+    from {
+      filter: brightness(100%);
+    }
+
+    50% {
+      filter: brightness(20%);
+    }
+
+    to {
+      filter: brightness(100%);
+    }
+  }
+
   @keyframes noise-flicker {
     0% {
       transform: translate(0);

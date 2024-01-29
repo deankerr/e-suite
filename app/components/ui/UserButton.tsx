@@ -1,6 +1,7 @@
 'use client'
 
-import { UserButton as ClerkUserButton, SignInButton, SignUpButton } from '@clerk/nextjs'
+import { UserButton as ClerkUserButton, SignInButton } from '@clerk/nextjs'
+import { Button } from '@radix-ui/themes'
 import { useConvexAuth } from 'convex/react'
 
 type UserButtonProps = {
@@ -12,10 +13,15 @@ export const UserButton = ({ props }: UserButtonProps) => {
   if (isLoading) return null
 
   return isAuthenticated ? (
-    <ClerkUserButton afterSignOutUrl="/" />
+    <ClerkUserButton
+      afterSignOutUrl="/"
+      appearance={{ elements: { avatarBox: { width: '2.5rem', height: '2.5rem' } } }}
+    />
   ) : (
-    <>
-      <SignInButton mode="modal" /> <SignUpButton mode="modal" />
-    </>
+    <SignInButton mode="modal">
+      <Button variant="surface" color="gold">
+        Sign in
+      </Button>
+    </SignInButton>
   )
 }
