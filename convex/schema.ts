@@ -6,11 +6,13 @@ import { imagesTable } from './files/images'
 import { generationsTable } from './generations'
 import { imageModelTable } from './imageModels'
 import { jobsTable } from './jobs'
+import { clerkWebhookEventsTable } from './providers/clerk'
 import { usersTable } from './users'
 
 export default defineSchema(
   {
     authTokens: authTokensTable,
+    clerkWebhookEvents: clerkWebhookEventsTable,
     generations: generationsTable,
     images: imagesTable,
     imageModels: imageModelTable,

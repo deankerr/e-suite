@@ -9,7 +9,7 @@ import { Shell } from './Shell'
 
 export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
   const { width, height, n, status } = generation
-  const creator = author?.info.nickname
+  const creator = author?.username
 
   const portraitLayout = height > width && 'md:grid-cols-4'
   const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
