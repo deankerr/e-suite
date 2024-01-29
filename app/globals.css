@@ -76,19 +76,11 @@
       -1px -1px;
   }
 
-  .sun-glow {
-    box-shadow:
-      inset 0px -9px 10px 10px rgba(255, 161, 46, 0.4),
-      0px 0px 35px 25px rgba(255, 161, 46, 0.6);
-
-    animation: sun-glow 5s linear infinite;
-  }
-
   .sun-glow2 {
     box-shadow:
-      0px 6px 70px 20px hsla(30, 96%, 53%, 0.4),
-      0px 12px 60px 20px hsla(30, 96%, 53%, 0.4),
-      inset 0px 18px 20px 10px hsla(30, 96%, 53%, 0.4);
+      0px 6px 35px 10px hsla(30, 96%, 53%, 0.4),
+      0px 12px 35px 10px hsla(30, 96%, 53%, 0.4),
+      inset 0px 18px 15px 10px hsla(30, 96%, 53%, 0.4);
     top: 30%;
     left: 30%;
     width: 40%;

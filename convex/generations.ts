@@ -34,7 +34,7 @@ const generationsInternalFields = {
   imageIds: v.array(v.union(v.id('images'), v.null())),
   status: vEnum(generationStatus),
   events: v.array(v.object({ ...generationsEventFields, createdAt: v.number() })),
-  hidden: v.boolean(),
+  deleted: v.boolean(),
 }
 
 export const generationsTable = defineTable({
@@ -134,7 +134,7 @@ export const create = userMutation({
       imageIds: [],
       status: 'pending',
       events: [],
-      hidden: false,
+      deleted: false,
     })
 
     //^ determine correct provider when we have more
@@ -164,6 +164,30 @@ export const update = internalMutation({
     } else {
       await ctx.db.patch(id, statusFields)
     }
+  },
+})
+
+//* mark generation and associate images as deleted
+export const remove = mutation({
+  args: {
+    id: v.id('generations'),
+  },
+  handler: async (ctx, args) => {
+    const generation = await ctx.db.get(args.id)
+    assert(generation, 'invalid generation id', { id: args.id })
+
+    //* markdelete images/files
+    await Promise.all(
+      generation.imageIds.map(async (id) => {
+        if (!id) return
+        const image = await ctx.db.get(id)
+        if (!image) return
+        await ctx.db.patch(image._id, { deleted: true })
+      }),
+    )
+
+    //* markdelete generation
+    await ctx.db.patch(generation._id, { deleted: true })
   },
 })
 
@@ -223,7 +247,7 @@ export const createRandom = internalMutation({
       imageIds: [],
       status: 'pending',
       events: [],
-      hidden: false,
+      deleted: false,
     })
 
     //^ determine correct provider when we have more
@@ -231,4 +255,4 @@ export const createRandom = internalMutation({
   },
 })
 
-const randomInt = (max: number) => Math.floor(Math.random() * 3)
+const randomInt = (max: number) => Math.floor(Math.random() * max)
