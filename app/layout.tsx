@@ -3,6 +3,7 @@ import { ClientProviders } from '@/app/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreakpointIndicator'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
+import { Provider as JotaiProvider } from 'jotai'
 import type { Metadata } from 'next'
 import { BIZ_UDMincho, DotGothic16, IBM_Plex_Sans } from 'next/font/google'
 import { Toaster } from 'sonner'
@@ -40,13 +41,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body>
         <ClientProviders>
-          <Theme accentColor="orange" appearance="dark">
-            {children}
-            <Toaster richColors />
-            <TailwindBreakpointIndicator />
-            <DebugPanel />
-            {/* <ThemePanel defaultOpen={false} /> */}
-          </Theme>
+          <JotaiProvider>
+            <Theme accentColor="orange" appearance="dark">
+              {children}
+              <Toaster richColors />
+              <TailwindBreakpointIndicator />
+              <DebugPanel />
+              {/* <ThemePanel defaultOpen={false} /> */}
+            </Theme>
+          </JotaiProvider>
         </ClientProviders>
         {process.env.NODE_ENV !== 'development' && <Analytics />}
       </body>
