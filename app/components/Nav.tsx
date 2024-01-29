@@ -9,19 +9,22 @@ import NextImage from 'next/image'
 import { Slate } from './ui/Slate'
 
 type NavProps = {
-  tt?: boolean
+  setAuthenticated?: boolean
+  userOpen: boolean
 } & React.ComponentProps<'div'>
 
-export const Nav = ({ tt, className }: NavProps) => {
+export const Nav = ({ setAuthenticated, userOpen, className }: NavProps) => {
+  const { isAuthenticated, isLoading } = useConvexAuth()
   return (
     <Slate
       className={cn(
-        'h-s[130px] flex w-20 flex-col items-center justify-between bg-panel-solid transition-all *:border-none',
+        'grid h-16 w-20 justify-items-center bg-panel-solid transition-all duration-200',
         className,
+        userOpen && 'h-32',
       )}
     >
       <TheSun />
-      <UserSignInButton isAuthenticated={tt && true} />
+      <UserSignInButton userOpen={userOpen} isAuthenticated={isAuthenticated} />
     </Slate>
   )
 }
@@ -32,7 +35,7 @@ type TheSunProps = {
 
 export const TheSun = ({ props }: TheSunProps) => {
   return (
-    <button className="size-16 cursor-pointer border border-ruby-9 p-2">
+    <button className="size-16 cursor-pointer p-2">
       <NextImage src={sunLogoSvg} alt="e/suite sun logo" className="" />
     </button>
   )
@@ -40,13 +43,18 @@ export const TheSun = ({ props }: TheSunProps) => {
 
 export const UserSignInButton = ({
   isAuthenticated,
+  userOpen,
   className,
   ...props
-}: { isAuthenticated?: boolean } & React.ComponentProps<'div'>) => {
+}: { isAuthenticated?: boolean; userOpen: boolean } & React.ComponentProps<'div'>) => {
   return (
     <div
       {...props}
-      className={cn('grid size-14 place-content-center border border-lime-9', className)}
+      className={cn(
+        'top-0 grid size-14 place-content-center opacity-100 transition-all',
+        !userOpen && '-top-full opacity-0',
+        className,
+      )}
     >
       {isAuthenticated ? (
         <ClerkUserButton
@@ -63,5 +71,3 @@ export const UserSignInButton = ({
     </div>
   )
 }
-
-//[&>div]:-top-[3.7rem]

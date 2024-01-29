@@ -11,7 +11,7 @@ export const Slate = forwardRef<HTMLDivElement, Props>(function Card(
     <div
       ref={ref}
       {...divProps}
-      className={cn('overflow-hidden rounded border bg-panel-translucent p-rx-1', className)}
+      className={cn('overflow-hidden rounded border bg-panel-translucent', className)}
     >
       {children}
     </div>
