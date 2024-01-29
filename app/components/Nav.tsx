@@ -8,10 +8,7 @@ import { useConvexAuth } from 'convex/react'
 import { useAtom } from 'jotai'
 import NextImage from 'next/image'
 import {
-  createToggleAtom,
-  forceSignedOutUiAtom,
-  navGenerationPanelOpenAtom,
-  navUserPanelOpenAtom,
+ getUiAtom,
 } from './atoms'
 import { GenerationBar } from './GenerationBar'
 import { Slate } from './ui/Slate'
@@ -22,11 +19,11 @@ type NavProps = {} & React.ComponentProps<'div'>
 export const Nav = ({ className }: NavProps) => {
   const { isAuthenticated, isLoading } = useConvexAuth()
   const [userPanelOpen, setUserPanelOpen] = useAtom(
-    createToggleAtom({ name: 'userPanelOpen', initialValue: true }),
+    getUiAtom('userPanelOpen'),
   )
 
   const [generationsPanelOpen, setGenerationsPanelOpen] = useAtom(
-    createToggleAtom({ name: 'generationsPanelOpen', initialValue: true }),
+    getUiAtom('generationsPanelOpen')
   )
 
   return (

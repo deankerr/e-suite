@@ -1,25 +1,9 @@
 import { atom, WritableAtom } from 'jotai'
 
-export const navUserPanelOpenAtom = atom(true)
-export const navGenerationPanelOpenAtom = atom(true)
+export type ToggleAtom = WritableAtom<boolean, [toValue?: boolean | undefined], void>
+export type UiAtomNames = keyof typeof uiAtoms
 
-export const forceSignedOutUiAtom = atom(false)
-
-export const toggleAtoms = new Map<
-  string,
-  WritableAtom<boolean, [toValue?: boolean | undefined], void>
->()
-
-export const createToggleAtom = ({
-  name,
-  initialValue,
-}: {
-  name: string
-  initialValue: boolean
-}) => {
-  const existing = toggleAtoms.get(name)
-  if (existing) return existing
-
+const createToggleAtom = (initialValue: boolean) => {
   const valueAtom = atom(initialValue)
   const rwAtom = atom(
     (get) => get(valueAtom),
@@ -27,13 +11,14 @@ export const createToggleAtom = ({
       set(valueAtom, toValue ?? !get(valueAtom))
     },
   )
-
-  toggleAtoms.set(name, rwAtom)
   return rwAtom
 }
 
-export const getToggleAtom = ({ name }: { name: string }) => {
-  const atom = toggleAtoms.get(name)
-  if (!atom) throw new Error(`toggleAtom name does not exist: ${name}`)
-  return atom
-}
+const cra = createToggleAtom
+
+const uiAtoms = {
+  generationsPanelOpen: cra(true),
+  userPanelOpen: cra(true),
+} as const
+
+export const getUiAtom = (name: keyof typeof uiAtoms) => uiAtoms[name]
