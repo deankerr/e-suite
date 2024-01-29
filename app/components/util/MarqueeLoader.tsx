@@ -7,7 +7,7 @@ export const MarqueeLoader = () => {
     <div className="grid h-dvh">
       <Marquee />
       <Marquee className="font-dot" dir="right" />
-      <Marquee className="font-ios" />
+      <Marquee className="font-biz" />
     </div>
   )
 }

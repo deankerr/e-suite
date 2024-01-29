@@ -15,7 +15,9 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       appearance={{ baseTheme: dark }}
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          {children}
+        </ThemeProvider>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   )

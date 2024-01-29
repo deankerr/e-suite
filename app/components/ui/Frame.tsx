@@ -20,7 +20,9 @@ export const Frame = ({
   ...imageProps
 }: EImageProps) => {
   if (!image)
-    return <EmptyFrame width={frameWidth} height={frameHeight} isError={isError || image === null} />
+    return (
+      <EmptyFrame width={frameWidth} height={frameHeight} isError={isError || image === null} />
+    )
 
   const { width, height, blurDataURL } = image
 
@@ -52,7 +54,7 @@ const EmptyFrame = ({
   return (
     <div
       className={cn(
-        'motion-safe:noisey h-auto overflow-hidden grid place-content-center rounded border bg-blue-3 text-blue-5A motion-safe:animate-pulse',
+        'motion-safe:noisey grid h-auto place-content-center overflow-hidden rounded border bg-blue-3 text-blue-5A motion-safe:animate-pulse',
         aspect,
         isError && 'bg-red-3 text-red-5A',
         className,

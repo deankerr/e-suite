@@ -18,6 +18,7 @@ const nextConfig = {
   },
   experimental: {
     missingSuspenseWithCSRBailout: false,
+    swcPlugins: [['@swc-jotai/react-refresh', {}]],
   },
 }
 
