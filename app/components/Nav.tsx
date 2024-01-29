@@ -7,7 +7,12 @@ import sunLogoSvg from '/assets/icons/logo-sunset.svg'
 import { useConvexAuth } from 'convex/react'
 import { useAtom } from 'jotai'
 import NextImage from 'next/image'
-import { forceSignedOutUiAtom, navGenerationPanelOpenAtom, navUserPanelOpenAtom } from './atoms'
+import {
+  createToggleAtom,
+  forceSignedOutUiAtom,
+  navGenerationPanelOpenAtom,
+  navUserPanelOpenAtom,
+} from './atoms'
 import { GenerationBar } from './GenerationBar'
 import { Slate } from './ui/Slate'
 import { Spinner } from './ui/Spinner'
@@ -16,10 +21,13 @@ type NavProps = {} & React.ComponentProps<'div'>
 
 export const Nav = ({ className }: NavProps) => {
   const { isAuthenticated, isLoading } = useConvexAuth()
-  const [userPanelOpen, setUserPanelOpen] = useAtom(navUserPanelOpenAtom)
-  const [generationsPanelOpen, setGenerationsPanelOpen] = useAtom(navGenerationPanelOpenAtom)
+  const [userPanelOpen, setUserPanelOpen] = useAtom(
+    createToggleAtom({ name: 'userPanelOpen', initialValue: true }),
+  )
 
-  const [forceSignedOut] = useAtom(forceSignedOutUiAtom)
+  const [generationsPanelOpen, setGenerationsPanelOpen] = useAtom(
+    createToggleAtom({ name: 'generationsPanelOpen', initialValue: true }),
+  )
 
   return (
     <>
@@ -58,7 +66,7 @@ export const Nav = ({ className }: NavProps) => {
       <Card
         className={cn(
           'left-[5.5rem] z-20 self-start justify-self-start bg-panel-solid transition-all duration-1000',
-          // generationsPanelOpen ? '' : '-left-[100%]',
+          generationsPanelOpen ? '' : '-left-[100%]',
         )}
       >
         <GenerationBar show={generationsPanelOpen} />
