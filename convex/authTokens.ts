@@ -30,7 +30,6 @@ export const validate = internalQuery({
       .filter((q) => q.eq(q.field('token'), token))
       .unique()
 
-    if (match) console.log('authorized: ', match.ownerInfo, match.token)
     return match
   },
 })

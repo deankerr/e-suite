@@ -192,3 +192,43 @@ export const destroy = mutation({
     await ctx.db.delete(generation._id)
   },
 })
+
+export const createRandom = internalMutation({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (ctx, { prompt }) => {
+    const sizes = [
+      { width: 512, height: 512 },
+      { width: 768, height: 512 },
+      { width: 512, height: 768 },
+    ]
+
+    const { width, height } = sizes[randomInt(3)]!
+
+    const imagesModels = await ctx.db.query('imageModels').collect()
+    const pick = imagesModels[randomInt(imagesModels.length)]!
+    const user = (await ctx.db
+      .query('users')
+      .filter((q) => q.eq(q.field('admin'), true))
+      .first())!
+
+    const id = await ctx.db.insert('generations', {
+      imageModelId: pick._id,
+      prompt,
+      width,
+      height,
+      n: 4,
+      userId: user._id,
+      imageIds: [],
+      status: 'pending',
+      events: [],
+      hidden: false,
+    })
+
+    //^ determine correct provider when we have more
+    await ctx.scheduler.runAfter(0, internal.providers.sinkin.run, { id })
+  },
+})
+
+const randomInt = (max: number) => Math.floor(Math.random() * 3)

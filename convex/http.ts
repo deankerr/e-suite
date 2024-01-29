@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server'
 import z from 'zod'
-import { internal } from './_generated/api'
+import { api, internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
@@ -81,6 +81,27 @@ http.route({
         'content-type': 'application/json',
       },
     })
+  }),
+})
+
+const generateRequestSchema = z.object({
+  authToken: z.string().min(1),
+  prompt: z.string().min(1),
+  model: z.string().optional(),
+})
+
+http.route({
+  path: '/generate_va1',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const json = await request.json()
+    const genReq = generateRequestSchema.parse(json)
+    const auth = await ctx.runQuery(internal.authTokens.validate, { token: genReq.authToken })
+    if (!auth) return new Response('Unauthorized', { status: 401 })
+
+    await ctx.runMutation(internal.generations.createRandom, { prompt: genReq.prompt })
+
+    return new Response('', { status: 200 })
   }),
 })
 
