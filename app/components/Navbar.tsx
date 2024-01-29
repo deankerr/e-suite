@@ -15,21 +15,21 @@ type NavbarProps = {
 }
 
 export const Navbar = ({ props }: NavbarProps) => {
-  const { isLoading, isAuthenticated } = useConvexAuth()
-  const userId = useRegisterUser()
+  // const { isLoading, isAuthenticated } = useConvexAuth()
+  // const userId = useRegisterUser()
 
-  const [show, setShow] = useState<boolean | 'indeterminate'>(false)
+  const [show, setShow] = useState<boolean | 'indeterminate'>(true)
 
   return (
     <Card
       className={cn(
-        'z-30 self-start justify-self-start bg-panel-solid opacity-100 hover:opacity-100',
+        'z-30 self-start justify-self-start bg-panel-solid opacity-60 hover:opacity-100',
       )}
       size="1"
     >
       <Checkbox
         className="absolute inset-1 z-50"
-        value={String(show)}
+        checked={show}
         onCheckedChange={(v) => setShow(v)}
       />
       <div className="flex gap-2.5">
