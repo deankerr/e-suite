@@ -25,16 +25,7 @@ export const DebugPanel = ({ side = 'br' }: DebugPanelProps) => {
     <div className={cn('fixed min-w-20', sides[side])}>
       <ToggleButton name="generationsPanelOpen" {...debugButtonProps} />
       <ToggleButton name="userPanelOpen" {...debugButtonProps} />
+      <ToggleButton name="hideNav" {...debugButtonProps} />
     </div>
   )
 }
-
-// export const ToggleButton = ({ name }: { name: UiAtomNames }) => {
-//   const [value, toggle] = useAtom(getUiAtom( name ))
-
-//   return (
-//     <Button onClick={() => toggle()} size="1" {...getStateProps(value)}>
-//       {name}
-//     </Button>
-//   )
-// }

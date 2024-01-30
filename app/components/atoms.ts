@@ -3,6 +3,7 @@ import { atom, WritableAtom } from 'jotai'
 export type ToggleAtom = WritableAtom<boolean, [toValue?: boolean | undefined], void>
 export type UiAtomNames = keyof typeof uiAtoms
 
+//* Toggle Atoms
 const createToggleAtom = (initialValue: boolean) => {
   const valueAtom = atom(initialValue)
   const rwAtom = atom(
@@ -17,6 +18,7 @@ const createToggleAtom = (initialValue: boolean) => {
 const uiAtoms = {
   generationsPanelOpen: createToggleAtom(true),
   userPanelOpen: createToggleAtom(true),
+  hideNav: createToggleAtom(false),
 } as const
 
 export const getUiAtom = (name: keyof typeof uiAtoms) => uiAtoms[name]

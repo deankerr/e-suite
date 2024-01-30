@@ -2,7 +2,7 @@
 
 import { Nav } from '@/app/components/Nav'
 import { Slate } from '@/app/components/ui/Slate'
-import sunLogoSvg from '/assets/icons/logo-sunset.svg'
+import sunLogoSvg from '/assets/logo-sunset.svg'
 import NextImage from 'next/image'
 
 export default function NavPage() {
@@ -15,7 +15,6 @@ export default function NavPage() {
       </div>
       <Slate className="h-96 w-96 place-content-center p-16">
         <button className=" after:sun-glow2 size-16 cursor-pointer p-2 after:rounded-full">
-          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
           <NextImage src={sunLogoSvg} alt="e/suite sun logo" className="" />
         </button>
       </Slate>

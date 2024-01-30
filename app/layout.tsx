@@ -1,4 +1,3 @@
-import './globals.css'
 import { ClientProviders } from '@/app/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreakpointIndicator'
 import { Theme } from '@radix-ui/themes'
@@ -8,6 +7,7 @@ import type { Metadata } from 'next'
 import { BIZ_UDMincho, DotGothic16 } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { DebugPanel } from './components/DebugPanel'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'e/suite',
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${dotGothic16.variable} ${bizUdMincho.variable}`}
+      className={`${dotGothic16.variable} ${bizUdMincho.variable} overscroll-y-none`}
       suppressHydrationWarning
     >
       <body>

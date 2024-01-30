@@ -1,30 +1,25 @@
 'use client'
 
+import sunLogoSvg from '@/assets/logo-sunset.svg'
 import { cn } from '@/lib/utils'
 import { SignInButton as ClerkSignInButton, UserButton as ClerkUserButton } from '@clerk/nextjs'
 import { Button, Card } from '@radix-ui/themes'
 import { useConvexAuth } from 'convex/react'
 import { useAtom } from 'jotai'
 import NextImage from 'next/image'
+import { getUiAtom } from './atoms'
 import { GenerationBar } from './GenerationBar'
-import {
-  getUiAtom,
-} from './atoms'
 import { Slate } from './ui/Slate'
 import { Spinner } from './ui/Spinner'
-import sunLogoSvg from '/assets/logo-sunset.svg'
 
 type NavProps = {} & React.ComponentProps<'div'>
 
 export const Nav = ({ className }: NavProps) => {
   const { isAuthenticated, isLoading } = useConvexAuth()
-  const [userPanelOpen] = useAtom(
-    getUiAtom('userPanelOpen'),
-  )
 
-  const [generationsPanelOpen] = useAtom(
-    getUiAtom('generationsPanelOpen')
-  )
+  const [hideNav] = useAtom(getUiAtom('hideNav'))
+  const [userPanelOpen] = useAtom(getUiAtom('userPanelOpen'))
+  const [generationsPanelOpen] = useAtom(getUiAtom('generationsPanelOpen'))
 
   return (
     <>
@@ -33,6 +28,7 @@ export const Nav = ({ className }: NavProps) => {
           'inset-2 grid h-16 w-20 justify-items-center bg-panel-solid transition-all duration-300',
           className,
           userPanelOpen && 'h-32',
+          hideNav && 'hidden',
         )}
       >
         <TheSun />
@@ -64,6 +60,7 @@ export const Nav = ({ className }: NavProps) => {
         className={cn(
           'left-[5.5rem] z-20 self-start justify-self-start bg-panel-solid transition-all duration-1000',
           generationsPanelOpen ? '' : '-left-[100%]',
+          hideNav && 'hidden',
         )}
       >
         <GenerationBar show={generationsPanelOpen} />
@@ -71,7 +68,6 @@ export const Nav = ({ className }: NavProps) => {
     </>
   )
 }
-
 
 export const TheSun = () => {
   return (
