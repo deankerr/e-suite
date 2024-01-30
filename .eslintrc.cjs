@@ -13,6 +13,7 @@ module.exports = {
     warnOnUnsupportedTypeScriptVersion: true,
     project: ['./tsconfig.json', './convex/tsconfig.json'],
   },
+  ignorePatterns: ['unused'],
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
@@ -29,5 +30,6 @@ module.exports = {
       },
     ],
     '@typescript-eslint/require-await': 'warn',
+    '@next/next/no-img-element': 'off',
   },
 }

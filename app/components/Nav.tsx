@@ -3,26 +3,26 @@
 import { cn } from '@/lib/utils'
 import { SignInButton as ClerkSignInButton, UserButton as ClerkUserButton } from '@clerk/nextjs'
 import { Button, Card } from '@radix-ui/themes'
-import sunLogoSvg from '/assets/icons/logo-sunset.svg'
 import { useConvexAuth } from 'convex/react'
 import { useAtom } from 'jotai'
 import NextImage from 'next/image'
-import {
- getUiAtom,
-} from './atoms'
 import { GenerationBar } from './GenerationBar'
+import {
+  getUiAtom,
+} from './atoms'
 import { Slate } from './ui/Slate'
 import { Spinner } from './ui/Spinner'
+import sunLogoSvg from '/assets/logo-sunset.svg'
 
 type NavProps = {} & React.ComponentProps<'div'>
 
 export const Nav = ({ className }: NavProps) => {
   const { isAuthenticated, isLoading } = useConvexAuth()
-  const [userPanelOpen, setUserPanelOpen] = useAtom(
+  const [userPanelOpen] = useAtom(
     getUiAtom('userPanelOpen'),
   )
 
-  const [generationsPanelOpen, setGenerationsPanelOpen] = useAtom(
+  const [generationsPanelOpen] = useAtom(
     getUiAtom('generationsPanelOpen')
   )
 
@@ -72,11 +72,8 @@ export const Nav = ({ className }: NavProps) => {
   )
 }
 
-type TheSunProps = {
-  props?: any
-}
 
-export const TheSun = ({ props }: TheSunProps) => {
+export const TheSun = () => {
   return (
     <button className="after:sun-glow2 size-16 cursor-pointer p-2">
       <NextImage src={sunLogoSvg} alt="e/suite sun logo" className="rounded-full" />

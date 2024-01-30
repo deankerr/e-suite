@@ -54,6 +54,7 @@ export const GenerationBar = ({ show, className, ...props }: GenerationBarProps)
       } catch (err) {
         console.error(err)
         if (err instanceof ConvexError) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           const msg = err.data.message ?? err.message
           toast.error(msg as string, {
             position: 'top-center',
@@ -78,7 +79,11 @@ export const GenerationBar = ({ show, className, ...props }: GenerationBarProps)
 
   return (
     <form
-      className={cn('grid max-w-2xl gap-2 md:grid-cols-2', !show && 'pointer-events-none')}
+      className={cn(
+        'grid max-w-2xl gap-2 md:grid-cols-2',
+        !show && 'pointer-events-none',
+        className,
+      )}
       onSubmit={void submit}
       {...props}
     >

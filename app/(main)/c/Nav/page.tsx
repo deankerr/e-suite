@@ -15,6 +15,7 @@ export default function NavPage() {
       </div>
       <Slate className="h-96 w-96 place-content-center p-16">
         <button className=" after:sun-glow2 size-16 cursor-pointer p-2 after:rounded-full">
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
           <NextImage src={sunLogoSvg} alt="e/suite sun logo" className="" />
         </button>
       </Slate>

@@ -1,17 +1,14 @@
 'use client'
 
 import { api } from '@/convex/_generated/api'
-import { Button, Card, ScrollArea } from '@radix-ui/themes'
+import { Card, ScrollArea } from '@radix-ui/themes'
 import { usePaginatedQuery, type PaginationStatus } from 'convex/react'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Generation } from './Shell/Generation'
 
-type GenerationFeedProps = {
-  props?: any
-}
 
-export const GenerationFeed = ({ props }: GenerationFeedProps) => {
+export const GenerationFeed = () => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.generations.page,
     {},
@@ -23,7 +20,7 @@ export const GenerationFeed = ({ props }: GenerationFeedProps) => {
     if (inView && status === 'CanLoadMore') {
       loadMore(6)
     }
-  }, [inView])
+  }, [inView, loadMore, status])
 
   return (
     <ScrollArea>

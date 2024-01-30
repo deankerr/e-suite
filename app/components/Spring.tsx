@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Card } from '@radix-ui/themes'
 import { animated, useSpring } from '@react-spring/web'
 

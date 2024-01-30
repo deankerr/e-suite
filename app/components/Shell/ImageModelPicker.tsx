@@ -8,10 +8,10 @@ import { useQuery } from 'convex/react'
 import { Shell } from './Shell'
 
 type ImageModelPickerProps = {
-  props?: any
+  props?: unknown
 }
 
-export const ImageModelPicker = ({ props }: ImageModelPickerProps) => {
+export const ImageModelPicker = ({}: ImageModelPickerProps) => {
   const results = useQuery(api.imageModels.list, { type: 'checkpoint' })
 
   return (
