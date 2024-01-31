@@ -25,7 +25,7 @@ export const ImageModelCard = ({
   const imageModel = result?.imageModel
   const image = result?.image
   return (
-    <Card className={cn('h-36 w-80', className)} {...props}>
+    <Card className={cn('after:card-border-[amber-8] h-36 w-80', className)} {...props}>
       <div className="grid h-full grid-cols-[minmax(auto,40%)_1fr] gap-4">
         <Inset side="all" className="bg-accent-1A">
           <Frame image={image} alt={`cover image from model: ${imageModel?.name}`} />
