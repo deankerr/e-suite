@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ToggleButton } from './ui/ToggleButton'
+import { ToggleButton } from '../ui/ToggleButton'
 
 const sides = {
   tl: 'top-1 left-1',
