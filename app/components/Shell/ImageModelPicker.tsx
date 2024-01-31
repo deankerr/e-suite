@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
+import { ImageModelCard } from '@/app/components/card/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { ImageModelResult } from '@/convex/types'
 import { Button, Dialog, ScrollArea } from '@radix-ui/themes'
@@ -46,10 +46,10 @@ export const ImageModelPickerDialog = ({
       <Dialog.Content {...props}>
         <Dialog.Title>Select Model</Dialog.Title>
 
-        <div className="mx-auto grid w-fit gap-4 md:grid-cols-2">
+        <div className="grid-col mx-auto grid gap-4 md:grid-cols-[repeat(auto-fit,_20rem)]">
           {list.map((im) => (
             <Dialog.Close key={im.imageModel._id} onClick={() => onValueChange(im)}>
-              <ImageModelCard from={im} />
+              <ImageModelCard key={im.imageModel._id} from={im} />
             </Dialog.Close>
           ))}
         </div>

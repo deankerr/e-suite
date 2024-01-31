@@ -2,9 +2,10 @@ import { customMutation } from 'convex-helpers/server/customFunctions'
 import { defineTable, paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
-import { Id } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 import { internalMutation, mutation, query } from './_generated/server'
 import { dimensions, generationStatus } from './constants'
+import { get as getImageModel } from './imageModels'
 import { Dimension } from './types'
 import { assert, error, vEnum } from './util'
 
@@ -57,7 +58,9 @@ export const page = query({
             id ? await ctx.db.get(id) : null,
           ),
         ),
-        imageModel: await ctx.db.get(generation.imageModelId),
+        imageModel: await getImageModel(ctx, {
+          id: generation.imageModelId,
+        }),
         author: generation.userId ? await ctx.db.get(generation.userId) : null, //todo don't send all the personal data
       })),
     )

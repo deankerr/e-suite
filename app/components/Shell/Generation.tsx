@@ -1,10 +1,10 @@
+import { ImageModelCard } from '@/app/components/card/ImageModelCard'
 import { GenerationResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
 import { DeleteGenerationDialog } from '../ui/DeleteGenerationDialog'
 import { Frame } from '../ui/Frame'
-import { ImageModelCard } from '../ui/ImageModelCard'
 import { Shell } from './Shell'
 
 export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
@@ -18,7 +18,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const isError = status === 'error' || status === 'failed'
 
   return (
-    <Shell.Root className="">
+    <Shell.Root>
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
 
       <Shell.Content>
@@ -59,7 +59,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
 
-        <ImageModelCard imageModelId={imageModel?._id} className="mx-auto w-72" />
+        <ImageModelCard from={imageModel} className="mx-auto" />
 
         <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>

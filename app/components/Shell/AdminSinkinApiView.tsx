@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
+import { ImageModelCard } from '@/app/components/card/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { modelBases, modelTypes, nsfwRatings } from '@/convex/constants'
 import { ImageModelResult, ModelBase, ModelType, NsfwRatings } from '@/convex/types'

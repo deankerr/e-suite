@@ -1,49 +1,41 @@
-import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { ImageModelResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Badge, Card, Inset } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
-import { Frame } from './Frame'
+import { forwardRef } from 'react'
+import { Frame } from '../ui/Frame'
 
-type ImageModelCardProps = {
-  imageModelId?: Id<'imageModels'>
-  from?: ImageModelResult
-} & React.ComponentProps<typeof Card>
+type Props = {
+  from?: ImageModelResult | null
+}
 
-export const ImageModelCard = ({
-  imageModelId,
-  from,
-  className,
-  ...props
-}: ImageModelCardProps) => {
-  const query = useQuery(api.imageModels.get, imageModelId ? { id: imageModelId } : 'skip')
-  const result = from ?? query
+export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
+  function ImageModelSlate({ from, className, ...props }, forwardedRef) {
+    if (!from) return null
 
-  const imageModel = result?.imageModel
-  const image = result?.image
-  return (
-    <Card className={cn('after:card-border-[amber-8] h-36 w-80', className)} {...props}>
-      <div className="grid h-full grid-cols-[minmax(auto,40%)_1fr] gap-4">
-        <Inset side="all" className="bg-accent-1A">
+    const { imageModel, image } = from
+    return (
+      <Card {...props} className={cn('h-32 w-72', className)} ref={forwardedRef}>
+        <Inset side="x" className="absolute left-[65%] top-0 w-32">
           <Frame image={image} alt={`cover image from model: ${imageModel?.name}`} />
         </Inset>
 
-        <div>
-          <div className="text-sm">{imageModel?.name}</div>
-          {imageModel && <ImageModelBadges imageModel={imageModel} />}
-        </div>
-      </div>
+        <div className="flex h-full max-w-[65%] flex-col space-y-1 text-sm">
+          {imageModel?.name}
 
-      <div className="absolute bottom-0 right-1 w-fit text-right font-code text-[8px] text-gold-6">
-        <div>order: {imageModel?.order}</div>
-        {imageModel?._id}
-      </div>
-    </Card>
-  )
-}
+          <div className="flex flex-wrap gap-1 py-1">
+            {imageModel && <ImageModelBadges imageModel={imageModel} />}
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-3 w-fit font-code text-[8px] text-gold-6">
+          {imageModel?._id}
+        </div>
+      </Card>
+    )
+  },
+)
 
 const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageModel'] }) => {
   const colors: Record<string, React.ComponentProps<typeof Badge>['color']> = {
@@ -64,11 +56,13 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageM
   }
 
   return (
-    <div className="flex flex-wrap gap-1 py-1">
-      <Badge color={colors[imageModel.base]}>{baseName[imageModel.base]}</Badge>
-      <Badge>{imageModel.type}</Badge>
+    <>
+      <Badge className="h-fit" color={colors[imageModel.base]}>
+        {baseName[imageModel.base]}
+      </Badge>
+      <Badge className="h-fit">{imageModel.type}</Badge>
       {imageModel.civitaiId && (
-        <Badge className="cursor-pointer" color="blue" variant="soft">
+        <Badge className="h-fit cursor-pointer" color="blue" variant="soft">
           <NextLink
             href={`https://civitai.com/models/${imageModel.civitaiId}`}
             className="inline-flex w-full items-center justify-between"
@@ -83,7 +77,7 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageM
         </Badge>
       )}
       {imageModel.huggingFaceId && (
-        <Badge color="yellow" className="cursor-pointer">
+        <Badge color="yellow" className="h-fit cursor-pointer">
           <NextLink
             href={`https://huggingface.co/${imageModel.huggingFaceId}`}
             className="inline-flex w-full items-center justify-between"
@@ -93,6 +87,6 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageM
           </NextLink>
         </Badge>
       )}
-    </div>
+    </>
   )
 }

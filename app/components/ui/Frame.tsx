@@ -34,7 +34,7 @@ export const Frame = ({
       height={height}
       blurDataURL={blurDataURL}
       placeholder="blur"
-      className={cn('rounded', className)}
+      className={cn('', className)}
     />
   )
 }

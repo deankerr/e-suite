@@ -12,9 +12,9 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
+import { ImageModelCard } from './card/ImageModelCard'
 import { ImageModelPickerDialog } from './Shell/ImageModelPicker'
 import { DimensionsToggle } from './ui/DimensionsToggle'
-import { ImageModelCard } from './ui/ImageModelCard'
 
 type GenerationBarProps = {
   show?: boolean

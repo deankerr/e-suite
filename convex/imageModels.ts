@@ -30,7 +30,7 @@ const imageModelFields = {
 
 export const imageModelTable = defineTable(imageModelFields).index('by_order', ['order'])
 
-const withImages = async (
+export const withImages = async (
   ctx: QueryCtx,
   { imageModels }: { imageModels: Doc<'imageModels'>[] },
 ) => {

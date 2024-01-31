@@ -1,7 +1,7 @@
 'use client'
 
+import { ImageModelCard } from '@/app/components/card/ImageModelCard'
 import { Shell } from '@/app/components/Shell/Shell'
-import { ImageModelCard } from '@/app/components/ui/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { Button, ScrollArea } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
