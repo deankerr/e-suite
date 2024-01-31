@@ -26,6 +26,7 @@ export const DebugPanel = ({ side = 'br' }: DebugPanelProps) => {
       <ToggleButton name="generationsPanelOpen" {...debugButtonProps} />
       <ToggleButton name="userPanelOpen" {...debugButtonProps} />
       <ToggleButton name="hideNav" {...debugButtonProps} />
+      <ToggleButton name="genBarSize" {...debugButtonProps} />
     </div>
   )
 }

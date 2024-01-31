@@ -30,7 +30,7 @@ const formSchema = z.object({
   dimensions: z.enum(['portrait', 'square', 'landscape']),
 })
 
-export const GenerationBar = ({ show, className, ...props }: GenerationBarProps) => {
+export const GenerationBar = ({ show = true, className, ...props }: GenerationBarProps) => {
   const list = useQuery(api.imageModels.list, { type: 'checkpoint', take: 16 })
 
   const createGeneration = useMutation(api.generations.create)
@@ -100,11 +100,11 @@ export const GenerationBar = ({ show, className, ...props }: GenerationBarProps)
               setImageModel(value)
               field.onChange(value.imageModel._id)
             }}
-            className="md:max-w-3xl"
+            className="max-w-[80vw]"
           >
             <Button
               variant="outline"
-              className="h-36 gap-1.5 overflow-hidden pl-0 text-center"
+              className="h-28 w-72 gap-1.5 overflow-hidden pl-0 text-center"
               size="1"
               {...field}
             >

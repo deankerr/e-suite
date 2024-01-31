@@ -16,9 +16,10 @@ const createToggleAtom = (initialValue: boolean) => {
 }
 
 const uiAtoms = {
-  generationsPanelOpen: createToggleAtom(true),
+  generationsPanelOpen: createToggleAtom(false),
   userPanelOpen: createToggleAtom(true),
   hideNav: createToggleAtom(false),
+  genBarSize: createToggleAtom(true),
 } as const
 
 export const getUiAtom = (name: keyof typeof uiAtoms) => uiAtoms[name]

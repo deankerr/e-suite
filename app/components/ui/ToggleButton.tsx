@@ -1,9 +1,10 @@
 import { Button } from '@radix-ui/themes'
-import { useAtom } from 'jotai'
+import { useAtom, WritableAtom } from 'jotai'
 import { getToggleAtom } from '../atoms'
 
 type ToggleButtonProps = {
   name: string
+  atom?: WritableAtom<boolean, [toValue?: boolean | undefined], void>
   trueChildren?: React.ReactNode
   falseChildren?: React.ReactNode
   trueProps?: React.ComponentProps<typeof Button>
@@ -13,6 +14,7 @@ type ToggleButtonProps = {
 
 export const ToggleButton = ({
   name,
+  atom,
   trueChildren,
   falseChildren,
   trueProps,
@@ -20,7 +22,7 @@ export const ToggleButton = ({
   initialValue,
   ...props
 }: ToggleButtonProps) => {
-  const [value, toggle] = useAtom(getToggleAtom(name, initialValue))
+  const [value, toggle] = useAtom(atom ?? getToggleAtom(name, initialValue))
   const stateProps = value && trueProps ? trueProps : !value && falseProps ? falseProps : undefined
 
   const children = (value ? trueChildren : falseChildren) ?? name
