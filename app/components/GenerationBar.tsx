@@ -84,7 +84,7 @@ export const GenerationBar = ({ show = true, className, ...props }: GenerationBa
         !show && 'pointer-events-none',
         className,
       )}
-      onSubmit={void submit}
+      onSubmit={submit}
       {...props}
     >
       <TextArea placeholder="what do you want to see?" className="" {...register('prompt')} />
