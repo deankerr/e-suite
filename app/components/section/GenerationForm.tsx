@@ -112,11 +112,11 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
                 className="max-w-[90vw]"
               >
                 {field.value ? (
-                  <ImageModelCard from={imageModel} className="cursor-pointer" />
+                  <ImageModelCard from={imageModel} className="mx-auto cursor-pointer" />
                 ) : (
                   <Card
                     asChild
-                    className="grid h-32 w-72 cursor-pointer place-content-center text-sm"
+                    className="mx-auto grid h-32 w-72 cursor-pointer place-content-center text-sm"
                   >
                     <button>Select a model</button>
                   </Card>

@@ -12,16 +12,12 @@ type Props = {}
 export const UserButton = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function UserButton({ className, ...props }, forwardedRef) {
     const { isAuthenticated, isLoading } = useConvexAuth()
-    const userPanelOpen = true
+    // const userPanelOpen = true
 
     return (
       <div
         {...props}
-        className={cn(
-          'top-0 grid size-14 place-content-center opacity-100 transition-all duration-300',
-          !userPanelOpen && '-top-full opacity-0',
-          className,
-        )}
+        className={cn('grid size-14 place-content-center', className)}
         ref={forwardedRef}
       >
         {isLoading ? (
@@ -33,7 +29,7 @@ export const UserButton = forwardRef<HTMLDivElement, Props & React.ComponentProp
           />
         ) : (
           <ClerkSignInButton mode="modal">
-            <Button variant="surface" color="orange" className="-mx-2 -mt-0.5 cursor-pointer">
+            <Button variant="surface" size="3" className="-mx-2 -mt-0.5 cursor-pointer">
               Sign in
             </Button>
           </ClerkSignInButton>

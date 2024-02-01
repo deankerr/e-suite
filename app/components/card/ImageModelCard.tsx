@@ -16,7 +16,7 @@ export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.Component
 
     const { imageModel, image } = from
     return (
-      <Card {...props} className={cn('h-32 w-72', className)} ref={forwardedRef}>
+      <Card {...props} className={cn('h-32 w-full max-w-80', className)} ref={forwardedRef}>
         <Inset side="x" className="absolute left-[65%] top-0 w-32">
           <Frame image={image} alt={`cover image from model: ${imageModel?.name}`} />
         </Inset>
