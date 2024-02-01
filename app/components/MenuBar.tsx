@@ -14,7 +14,7 @@ export const MenuBar = ({}: MenuBarProps) => {
   const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }))
 
   // Set the drag hook and define component movement based on gesture data
-  const bind = useDrag(({ down, movement: [mx, my], offset: [ox, oy] }) => {
+  const bind = useDrag(({ down, offset: [ox, oy] }) => {
     void api.start({
       x: ox,
       y: oy,

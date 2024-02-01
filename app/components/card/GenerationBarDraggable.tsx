@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils'
 import { animated, useSpring } from '@react-spring/web'
 import { useDrag } from '@use-gesture/react'
 import { useAtom } from 'jotai'
-import { getUiAtom } from './atoms'
-import { GenerationBar } from './GenerationBar'
+import { getUiAtom } from '../atoms'
+import { GenerationForm } from '../section/GenerationForm'
 
 type GenerationBarDraggableProps = {
   props?: unknown
@@ -28,7 +28,7 @@ export const GenerationBarDraggable = ({}: GenerationBarDraggableProps) => {
     })
   })
 
-  const DragBar = animated(GenerationBar)
+  const DragBar = animated(GenerationForm)
 
   // const [genBarSize] = useAtom(getUiAtom('genBarSize'))
   return (

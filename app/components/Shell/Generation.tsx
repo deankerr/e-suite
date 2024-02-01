@@ -3,7 +3,7 @@ import { GenerationResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
-import { DeleteGenerationDialog } from '../ui/DeleteGenerationDialog'
+import { DeleteGenerationDialog } from '../card/DeleteGenerationDialog'
 import { Frame } from '../ui/Frame'
 import { Shell } from './Shell'
 

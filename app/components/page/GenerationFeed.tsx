@@ -5,7 +5,7 @@ import { Card, ScrollArea } from '@radix-ui/themes'
 import { usePaginatedQuery, type PaginationStatus } from 'convex/react'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { Generation } from './Shell/Generation'
+import { Generation } from '../Shell/Generation'
 
 export const GenerationFeed = ({
   className,

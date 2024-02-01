@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Button, Card, Heading } from '@radix-ui/themes'
+import { Card, Heading } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 import { GenerationForm } from '../section/GenerationForm'
 

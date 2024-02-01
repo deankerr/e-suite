@@ -6,11 +6,7 @@ import { api } from '@/convex/_generated/api'
 import { usePaginatedQuery } from 'convex/react'
 
 export default function ImageModelCardPage() {
-  const { results, status, loadMore } = usePaginatedQuery(
-    api.imageModels.page,
-    {},
-    { initialNumItems: 3 },
-  )
+  const { results } = usePaginatedQuery(api.imageModels.page, {}, { initialNumItems: 3 })
 
   return (
     <Slate className="grid h-[80vh] w-[80vw] grid-cols-2 gap-3 place-self-center p-6">
