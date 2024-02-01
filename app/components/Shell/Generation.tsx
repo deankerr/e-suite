@@ -11,7 +11,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const { width, height, n, status } = generation
   const creator = author?.username
 
-  const portraitLayout = height > width && 'md:grid-cols-4'
+  const portraitLayout = height > width && 'lg:grid-cols-4'
   const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
   const landscapeLayout = height < width && 'max-w-[calc(384px_*_2.5)]'
 
@@ -59,7 +59,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
 
-        <ImageModelCard from={imageModel} className="mx-auto" />
+        <Separator size="4" />
 
         <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>
@@ -73,7 +73,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
           <div>{generation.negativePrompt || <i>blank</i>}</div>
         </div>
 
-        <Separator size="4" />
+        <ImageModelCard from={imageModel} className="mx-auto" />
 
         <div className="px-rx-1 py-rx-4">
           <table className="divide-y text-sm">
