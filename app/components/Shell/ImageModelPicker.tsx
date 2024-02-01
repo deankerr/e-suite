@@ -46,7 +46,7 @@ export const ImageModelPickerDialog = ({
       <Dialog.Content {...props}>
         <Dialog.Title>Select Model</Dialog.Title>
 
-        <div className="grid-col mx-auto grid gap-4 md:grid-cols-[repeat(auto-fit,_20rem)]">
+        <div className="grid-col grid place-content-center gap-4 md:grid-cols-[repeat(auto-fit,_18rem)]">
           {list.map((im) => (
             <Dialog.Close key={im.imageModel._id} onClick={() => onValueChange(im)}>
               <ImageModelCard key={im.imageModel._id} from={im} />

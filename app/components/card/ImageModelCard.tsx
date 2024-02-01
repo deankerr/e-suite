@@ -10,7 +10,7 @@ type Props = {
   from?: ImageModelResult | null
 }
 
-export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
+export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.ComponentProps<typeof Card>>(
   function ImageModelSlate({ from, className, ...props }, forwardedRef) {
     if (!from) return null
 

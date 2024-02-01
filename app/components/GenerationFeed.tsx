@@ -7,7 +7,10 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Generation } from './Shell/Generation'
 
-export const GenerationFeed = () => {
+export const GenerationFeed = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof ScrollArea>) => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.generations.page,
     {},
@@ -22,7 +25,7 @@ export const GenerationFeed = () => {
   }, [inView, loadMore, status])
 
   return (
-    <ScrollArea>
+    <ScrollArea className={className} {...props}>
       <div className="space-y-rx-8 overflow-y-auto py-rx-8">
         {results?.map((gen) => <Generation key={gen.generation._id} {...gen} />)}
 

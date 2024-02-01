@@ -1,19 +1,19 @@
 'use client'
 
+import { ImageModelCard } from '@/app/components/card/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { ImageModelResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Label from '@radix-ui/react-label'
-import { Button, TextArea } from '@radix-ui/themes'
+import { Button, Card, TextArea } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { forwardRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
-import { ImageModelCard } from '../card/ImageModelCard'
 import { ImageModelPickerDialog } from '../Shell/ImageModelPicker'
 import { DimensionsToggle } from '../ui/DimensionsToggle'
 
@@ -111,18 +111,16 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
                 }}
                 className="max-w-[90vw]"
               >
-                <Button
-                  variant="outline"
-                  className="flex h-28 w-72 gap-1.5 overflow-hidden pl-0 text-center"
-                  size="1"
-                  {...field}
-                >
-                  <ImageModelCard
-                    className="h-[100%] text-white after:rounded-none"
-                    from={imageModel}
-                  />
-                  {field.value ? 'Change Model' : 'Select Model'}
-                </Button>
+                {field.value ? (
+                  <ImageModelCard from={imageModel} className="cursor-pointer" />
+                ) : (
+                  <Card
+                    asChild
+                    className="grid h-32 w-72 cursor-pointer place-content-center text-sm"
+                  >
+                    <button>Select a model</button>
+                  </Card>
+                )}
               </ImageModelPickerDialog>
             )}
           />
