@@ -14,7 +14,7 @@ import { forwardRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
-import { ImageModelPickerDialog } from '../Shell/ImageModelPicker'
+import { ImageModelPickerDialog } from '../card/ImageModelPickerDialog'
 import { DimensionsToggle } from '../ui/DimensionsToggle'
 
 const formSchema = z.object({
@@ -69,7 +69,7 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
             return
           }
 
-          toast.error('An unknown error occured', {
+          toast.error('An unknown error occurred', {
             position: 'top-center',
           })
         }
@@ -85,14 +85,18 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
           <Label.Root className={cn(labelCn)} htmlFor="prompt">
             Prompt
           </Label.Root>
-          <TextArea placeholder="what do you want to see?" {...register('prompt')} />
+          <TextArea size="3" placeholder="what do you want to see?" {...register('prompt')} />
         </div>
 
         <div>
           <Label.Root className={cn(labelCn)} htmlFor="negativePrompt">
             Negative prompt
           </Label.Root>
-          <TextArea placeholder="what do you not want to see?" {...register('negativePrompt')} />
+          <TextArea
+            size="3"
+            placeholder="what do you not want to see?"
+            {...register('negativePrompt')}
+          />
         </div>
 
         <div>
@@ -126,27 +130,27 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
           />
         </div>
 
-        <div className="flex flex-col justify-between gap-2">
-          <div className="">
-            <Label.Root className={cn(labelCn)} htmlFor="dimensions">
-              Image dimensions
-            </Label.Root>
-            <Controller
-              name="dimensions"
-              control={control}
-              render={({ field }) => (
-                <DimensionsToggle
-                  type="single"
-                  {...field}
-                  onValueChange={(v) => {
-                    if (v) field.onChange(v)
-                  }}
-                />
-              )}
-            />
-          </div>
-          <Button variant="surface">Generate</Button>
+        <div className="">
+          <Label.Root className={cn(labelCn)} htmlFor="dimensions">
+            Image dimensions
+          </Label.Root>
+          <Controller
+            name="dimensions"
+            control={control}
+            render={({ field }) => (
+              <DimensionsToggle
+                type="single"
+                {...field}
+                onValueChange={(v) => {
+                  if (v) field.onChange(v)
+                }}
+              />
+            )}
+          />
         </div>
+        <Button variant="surface" size="3">
+          Generate
+        </Button>
       </form>
     )
   },

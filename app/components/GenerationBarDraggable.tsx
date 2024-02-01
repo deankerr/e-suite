@@ -30,12 +30,11 @@ export const GenerationBarDraggable = ({}: GenerationBarDraggableProps) => {
 
   const DragBar = animated(GenerationBar)
 
-  const [genBarSize] = useAtom(getUiAtom('genBarSize'))
+  // const [genBarSize] = useAtom(getUiAtom('genBarSize'))
   return (
     <DragBar
       className={cn(
         'z-40 touch-manipulation self-center justify-self-start rounded border border-gray-7 bg-panel-solid px-4 py-4',
-        genBarSize && 'md:grid-cols-1',
       )}
       {...bind()}
       style={{ x, y }}

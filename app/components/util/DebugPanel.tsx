@@ -23,10 +23,7 @@ const debugButtonProps = {
 export const DebugPanel = ({ side = 'br' }: DebugPanelProps) => {
   return (
     <div className={cn('fixed min-w-20', sides[side])}>
-      <ToggleButton name="generationsPanelOpen" {...debugButtonProps} />
-      <ToggleButton name="userPanelOpen" {...debugButtonProps} />
-      <ToggleButton name="hideNav" {...debugButtonProps} />
-      <ToggleButton name="genBarSize" {...debugButtonProps} />
+      <ToggleButton name="generationDrawerOpen" {...debugButtonProps} />
     </div>
   )
 }

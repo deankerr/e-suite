@@ -17,7 +17,7 @@ export const UserButton = forwardRef<HTMLDivElement, Props & React.ComponentProp
     return (
       <div
         {...props}
-        className={cn('grid size-14 place-content-center', className)}
+        className={cn('grid size-16 place-content-center', className)}
         ref={forwardedRef}
       >
         {isLoading ? (
@@ -29,7 +29,7 @@ export const UserButton = forwardRef<HTMLDivElement, Props & React.ComponentProp
           />
         ) : (
           <ClerkSignInButton mode="modal">
-            <Button variant="surface" size="3" className="-mx-2 -mt-0.5 cursor-pointer">
+            <Button variant="surface" size="3" className="cursor-pointer">
               Sign in
             </Button>
           </ClerkSignInButton>

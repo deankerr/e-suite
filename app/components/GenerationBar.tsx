@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { ImageModelCard } from './card/ImageModelCard'
-import { ImageModelPickerDialog } from './Shell/ImageModelPicker'
+import { ImageModelPickerDialog } from './card/ImageModelPickerDialog'
 import { DimensionsToggle } from './ui/DimensionsToggle'
 
 type GenerationBarProps = {
