@@ -20,6 +20,10 @@ const generationsParameterFields = {
   lcm: v.optional(v.boolean()),
 }
 
+const generationsOptions = {
+  randomize: v.optional(v.boolean()),
+}
+
 const generationsEventFields = {
   status: vEnum(generationStatus),
   message: v.optional(v.string()),
@@ -124,8 +128,12 @@ export const create = userMutation({
   args: {
     ...generationsParameterFields,
     dimensions: vEnum(dimensions),
+    ...generationsOptions,
   },
   handler: async (ctx, { dimensions, ...args }) => {
+    if (args.randomize)
+      return await createRandom(ctx, { prompt: args.prompt, negativePrompt: args.negativePrompt })
+
     const { width, height } = getDimSize(dimensions)
 
     const id = await ctx.db.insert('generations', {
@@ -223,8 +231,9 @@ export const destroy = mutation({
 export const createRandom = internalMutation({
   args: {
     prompt: v.string(),
+    negativePrompt: v.optional(v.string()),
   },
-  handler: async (ctx, { prompt }) => {
+  handler: async (ctx, { prompt, negativePrompt }) => {
     const sizes = [
       { width: 512, height: 512 },
       { width: 768, height: 512 },
@@ -243,6 +252,7 @@ export const createRandom = internalMutation({
     const id = await ctx.db.insert('generations', {
       imageModelId: pick._id,
       prompt,
+      negativePrompt,
       width,
       height,
       n: 4,
@@ -255,6 +265,7 @@ export const createRandom = internalMutation({
 
     //^ determine correct provider when we have more
     await ctx.scheduler.runAfter(0, internal.providers.sinkin.run, { id })
+    return id
   },
 })
 

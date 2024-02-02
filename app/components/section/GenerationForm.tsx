@@ -7,7 +7,7 @@ import { ImageModelResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Label from '@radix-ui/react-label'
-import { Button, Card, TextArea } from '@radix-ui/themes'
+import { Button, Card, Checkbox, TextArea } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { forwardRef, useState } from 'react'
@@ -25,6 +25,9 @@ const formSchema = z.object({
     .min(1)
     .transform((v) => v as Id<'imageModels'>),
   dimensions: z.enum(['portrait', 'square', 'landscape']),
+  randomize: z
+    .union([z.literal('indeterminate'), z.boolean()])
+    .transform((v) => (v === 'indeterminate' ? false : v)),
 })
 
 type GenerationBarProps = {} & React.ComponentProps<'form'>
@@ -44,6 +47,7 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
         negativePrompt: '',
         dimensions: 'portrait',
         imageModelId: '',
+        randomize: false,
       },
     })
 
@@ -128,6 +132,19 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
               </ImageModelPickerDialog>
             )}
           />
+
+          <div className="flex items-center gap-2">
+            <Label.Root className={cn(labelCn, 'not-sr-only')} htmlFor="randomModel">
+              randomize
+            </Label.Root>
+            <Controller
+              name="randomize"
+              control={control}
+              render={({ field: { value, onChange, ...rest } }) => (
+                <Checkbox {...rest} checked={value} onCheckedChange={(v) => onChange(v)} />
+              )}
+            />
+          </div>
         </div>
 
         <div className="">
