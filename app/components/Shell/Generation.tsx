@@ -11,9 +11,9 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const { width, height, n, status } = generation
   const creator = author?.username
 
-  const portraitLayout = height > width && 'lg:grid-cols-4'
-  const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
-  const landscapeLayout = height < width && 'max-w-[calc(384px_*_2.5)]'
+  const portraitLayout = height > width && 'md:max-w-[34%] xl:max-w-[35%]'
+  // const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
+  // const landscapeLayout = height < width && 'max-w-[calc(384px_*_2.5)]'
 
   const isError = status === 'error' || status === 'failed'
 
@@ -22,14 +22,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
 
       <Shell.Content>
-        <div
-          className={cn(
-            'mx-auto grid h-full w-full grid-cols-2 place-content-center gap-rx-1',
-            portraitLayout,
-            squareLayout,
-            landscapeLayout,
-          )}
-        >
+        <div className={cn('flex flex-wrap justify-center')}>
           {Array.from({ length: n }, (_, i) => (
             <Frame
               key={i}
@@ -37,7 +30,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
               frameWidth={width}
               frameHeight={height}
               alt={`generation result ${i}`}
-              className="border border-bronze-6"
+              className={cn('max-w-[50%] border border-bronze-6', portraitLayout)}
               isError={isError}
             />
           ))}

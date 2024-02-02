@@ -26,7 +26,7 @@ export const GenerationFeed = ({
 
   return (
     <ScrollArea className={className} {...props}>
-      <div className="space-y-rx-8 overflow-y-auto py-4">
+      <div className="space-y-rx-8 overflow-y-auto px-4 py-4">
         {results?.map((gen) => <Generation key={gen.generation._id} {...gen} />)}
 
         <Loader status={status} loadRef={ref} />
