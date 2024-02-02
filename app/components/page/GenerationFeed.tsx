@@ -6,6 +6,7 @@ import { usePaginatedQuery, type PaginationStatus } from 'convex/react'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Generation } from '../Shell/Generation'
+import { Spinner } from '../ui/Spinner'
 
 export const GenerationFeed = ({
   className,
@@ -26,9 +27,8 @@ export const GenerationFeed = ({
 
   return (
     <ScrollArea className={className} {...props}>
-      <div className="space-y-rx-8 overflow-y-auto px-4 py-4">
+      <div className="space-y-rx-8 overflow-y-auto px-4 pb-28 pt-4">
         {results?.map((gen) => <Generation key={gen.generation._id} {...gen} />)}
-
         <Loader status={status} loadRef={ref} />
       </div>
     </ScrollArea>
@@ -42,10 +42,22 @@ const Loader = ({
   status: PaginationStatus
   loadRef: (node?: Element | null | undefined) => void
 }) => {
-  const messages: Record<PaginationStatus, string> = {
-    LoadingFirstPage: 'Get ready for some wacky images!',
-    LoadingMore: "Look out! More zany .webp's are on the way!",
-    CanLoadMore: "Look out! More zany .webp's are on the way!",
+  const messages: Record<PaginationStatus, React.ReactNode> = {
+    LoadingFirstPage: (
+      <div className="flex items-center gap-2">
+        {'Here come some wacky AI images!'} <Spinner />
+      </div>
+    ),
+    LoadingMore: (
+      <div className="flex items-center gap-2">
+        {"Look out! More zany .webp's are on the way!"} <Spinner />
+      </div>
+    ),
+    CanLoadMore: (
+      <div className="flex items-center gap-2">
+        {"Look out! More zany .webp's are on the way!"} <Spinner />
+      </div>
+    ),
     Exhausted:
       "Uh-oh, looks like there's no more kooky images left. Why don't you generate some more?",
   }

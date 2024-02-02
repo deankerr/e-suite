@@ -12,14 +12,9 @@ type Props = {}
 export const UserButton = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function UserButton({ className, ...props }, forwardedRef) {
     const { isAuthenticated, isLoading } = useConvexAuth()
-    // const userPanelOpen = true
 
     return (
-      <div
-        {...props}
-        className={cn('grid size-16 place-content-center', className)}
-        ref={forwardedRef}
-      >
+      <div {...props} className={cn('grid place-content-center', className)} ref={forwardedRef}>
         {isLoading ? (
           <Spinner className="opacity-50" />
         ) : isAuthenticated ? (
