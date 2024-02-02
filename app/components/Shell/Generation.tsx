@@ -11,9 +11,9 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const { width, height, n, status } = generation
   const creator = author?.username
 
-  const portraitLayout = height > width && 'max-w-[34%] xl:max-w-[35%]'
-  // const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
-  // const landscapeLayout = height < width && 'max-w-[calc(384px_*_2.5)]'
+  const portraitLayout = height > width && 'max-w-[28%]'
+  const squareLayout = height === width && 'max-w-[40%]'
+  const landscapeLayout = height < width && 'max-w-[45%]'
 
   const isError = status === 'error' || status === 'failed'
 
@@ -22,7 +22,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
 
       <Shell.Content>
-        <div className={cn('flex flex-wrap justify-center')}>
+        <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
           {Array.from({ length: n }, (_, i) => (
             <Frame
               key={i}
@@ -30,7 +30,12 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
               frameWidth={width}
               frameHeight={height}
               alt={`generation result ${i}`}
-              className={cn('max-w-[50%] border border-bronze-6', portraitLayout)}
+              className={cn(
+                'max-w-[50%] border border-bronze-6',
+                portraitLayout,
+                squareLayout,
+                landscapeLayout,
+              )}
               isError={isError}
             />
           ))}
@@ -51,23 +56,17 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
         <div className="py-rx-4 text-center">
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
-
         <Separator size="4" />
-
         <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>
           <div>{generation.prompt}</div>
         </div>
-
         <Separator size="4" />
-
         <div className="py-rx-4 text-sm">
           <Heading size="1">Negative prompt</Heading>
           <div>{generation.negativePrompt || <i>blank</i>}</div>
         </div>
-
         <ImageModelCard from={imageModel} className="mx-auto" />
-
         <div className="px-rx-1 py-rx-4">
           <table className="divide-y text-sm">
             <tbody>
@@ -90,7 +89,6 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
             </tbody>
           </table>
         </div>
-
         <div className="absolute bottom-0 right-1 text-right font-code text-[8px] text-gold-5">
           status: {generation.status}
           <br />
