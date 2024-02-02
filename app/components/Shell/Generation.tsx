@@ -11,7 +11,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const { width, height, n, status } = generation
   const creator = author?.username
 
-  const portraitLayout = height > width && 'md:max-w-[34%] xl:max-w-[35%]'
+  const portraitLayout = height > width && 'max-w-[34%] xl:max-w-[35%]'
   // const squareLayout = height === width && 'max-w-[calc(384px_*_2)]'
   // const landscapeLayout = height < width && 'max-w-[calc(384px_*_2.5)]'
 

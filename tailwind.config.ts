@@ -77,11 +77,11 @@ const config: Config = {
       },
     },
     screens: {
-      xs: '520px',
-      sm: '768px',
-      md: '1024px',
-      lg: '1280px',
-      xl: '1640px',
+      sm: '520px', // Phones (landscape)
+      md: '768px', // Tablets (portrait)
+      lg: '1024px', // Tablets (landscape)
+      xl: '1280px', // Laptops
+      '2xl': '1640px', // Desktops
     },
     spacing: {
       px: '1px',
