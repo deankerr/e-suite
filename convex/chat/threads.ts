@@ -1,17 +1,25 @@
 import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
-import { internalMutation } from '../_generated/server'
+import z from 'zod'
+import { userMutation } from '../methods'
 
 const threadsFields = {
-  ownerInfo: v.string(),
-  ownerAuthTokenId: v.optional(v.id('authTokens')),
+  ownerId: v.id('users'),
+  name: v.string(),
 }
 
 export const threadsTable = defineTable(threadsFields)
 
-export const create = internalMutation({
+export const create = userMutation({
   args: {
-    ...threadsFields,
+    name: z
+      .string()
+      .min(1)
+      .max(64)
+      .optional()
+      .transform((v) => (v ? v : 'Untitled thread')),
   },
-  handler: async (ctx, args) => await ctx.db.insert('threads', args),
+  handler: async (ctx, { name }) => {
+    await ctx.db.insert('threads', { ownerId: ctx.user._id, name })
+  },
 })

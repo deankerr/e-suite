@@ -1,14 +1,7 @@
-'use node'
+// const maxUploadBytes = 20 * 1024 * 1024
+// const allowedImageFormats = ['bmp', 'gif', 'heic', 'jpeg', 'jpg', 'png', 'tiff', 'webp'] as const
 
-import { ConvexError, v } from 'convex/values'
-import imagesize from 'image-size'
-import { api, internal } from '../_generated/api'
-import { internalAction } from '../_generated/server'
-
-const maxUploadBytes = 20 * 1024 * 1024
-const allowedImageFormats = ['bmp', 'gif', 'heic', 'jpeg', 'jpg', 'png', 'tiff', 'webp'] as const
-
-const kb = (bytes: number) => Math.floor(bytes / 1024) + 'kb'
+// const kb = (bytes: number) => Math.floor(bytes / 1024) + 'kb'
 
 // export const processImage = internalAction({
 //   args: {

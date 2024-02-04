@@ -40,49 +40,49 @@ const chatRequestSchema = z.object({
   authToken: z.string(),
 })
 
-http.route({
-  path: '/chat_va1',
-  method: 'POST',
-  handler: httpAction(async (ctx, request) => {
-    const json = await request.json()
-    const chatReq = chatRequestSchema.parse(json)
-    const auth = await ctx.runQuery(internal.authTokens.validate, { token: chatReq.authToken })
-    if (!auth) return new Response('Unauthorized', { status: 401 })
+// http.route({
+//   path: '/chat_va1',
+//   method: 'POST',
+//   handler: httpAction(async (ctx, request) => {
+//     const json = await request.json()
+//     const chatReq = chatRequestSchema.parse(json)
+//     const auth = await ctx.runQuery(internal.authTokens.validate, { token: chatReq.authToken })
+//     if (!auth) return new Response('Unauthorized', { status: 401 })
 
-    const threadId = (chatReq.threadId ??
-      (await ctx.runMutation(internal.chat.threads.create, {
-        ownerInfo: auth.ownerInfo,
-        ownerAuthTokenId: auth._id,
-      }))) as Id<'threads'>
-    const chatMessageIds = await Promise.all(
-      chatReq.messages.map(
-        async (message) =>
-          await ctx.runMutation(internal.chat.messages.create, { threadId, ...message }),
-      ),
-    )
-    const resultMessageId = await ctx.runMutation(internal.chat.messages.create, {
-      threadId,
-      role: 'assistant',
-      content: '',
-    })
+//     const threadId = (chatReq.threadId ??
+//       (await ctx.runMutation(internal.chat.threads.create, {
+//         ownerInfo: auth.ownerInfo,
+//         ownerAuthTokenId: auth._id,
+//       }))) as Id<'threads'>
+//     const chatMessageIds = await Promise.all(
+//       chatReq.messages.map(
+//         async (message) =>
+//           await ctx.runMutation(internal.chat.messages.create, { threadId, ...message }),
+//       ),
+//     )
+//     const resultMessageId = await ctx.runMutation(internal.chat.messages.create, {
+//       threadId,
+//       role: 'assistant',
+//       content: '',
+//     })
 
-    const jobId = await ctx.runMutation(internal.jobs.create, {
-      chat: {
-        chatMessageIds,
-        resultMessageId,
-        chatParameters: { model: 'temp' },
-        chatProvider: 'togetherai',
-      },
-    })
+//     const jobId = await ctx.runMutation(internal.jobs.create, {
+//       chat: {
+//         chatMessageIds,
+//         resultMessageId,
+//         chatParameters: { model: 'temp' },
+//         chatProvider: 'togetherai',
+//       },
+//     })
 
-    //TODO webhook
-    return new Response(JSON.stringify({ jobId, threadId }), {
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
-  }),
-})
+//     //TODO webhook
+//     return new Response(JSON.stringify({ jobId, threadId }), {
+//       headers: {
+//         'content-type': 'application/json',
+//       },
+//     })
+//   }),
+// })
 
 const generateRequestSchema = z.object({
   authToken: z.string().min(1),

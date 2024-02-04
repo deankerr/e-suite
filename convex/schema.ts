@@ -1,4 +1,5 @@
 import { defineSchema } from 'convex/server'
+import { agentsTable } from './agents/agents'
 import { authTokensTable } from './authTokens'
 import { messagesTable } from './chat/messages'
 import { threadsTable } from './chat/threads'
@@ -11,6 +12,7 @@ import { usersTable } from './users'
 
 export default defineSchema(
   {
+    agents: agentsTable,
     authTokens: authTokensTable,
     clerkWebhookEvents: clerkWebhookEventsTable,
     generations: generationsTable,
