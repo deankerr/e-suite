@@ -1,4 +1,5 @@
 import { defineEntSchema, getEntDefinitions } from 'convex-ents'
+import { apiKeysEnt } from './apiKeys'
 import { imagesEnt } from './files/images'
 import { generationsEnt } from './generations'
 import { imageModelEnt } from './imageModels'
@@ -9,6 +10,7 @@ import { usersEnt } from './users'
 
 const schema = defineEntSchema(
   {
+    apiKeys: apiKeysEnt.deletion('soft'),
     clerkWebhookEvents: clerkWebhookEventsEnt.deletion('soft'),
     generations: generationsEnt.deletion('soft'),
     images: imagesEnt.deletion('soft'),

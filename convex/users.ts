@@ -20,12 +20,13 @@ const usersInternalFields = {
 
 export const usersEnt = defineEnt({ ...usersFields, ...usersInternalFields })
   .edges('threads', { ref: 'ownerId' })
-  .field('token', v.string(), { index: true })
+  .edge('apiKey', { optional: true, ref: 'ownerId' })
+  .field('tokenIdentifier', v.string(), { index: true })
 
 export const create = internalMutation({
   args: {
     ...usersFields,
-    token: v.string(),
+    tokenIdentifier: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert('users', { ...args, admin: false, deleted: false })
@@ -50,7 +51,7 @@ export const authDeleted = internalMutation({
   handler: async (ctx, { token }) => {
     const user = await ctx.db
       .query('users')
-      .withIndex('token', (q) => q.eq('token', token))
+      .withIndex('tokenIdentifier', (q) => q.eq('tokenIdentifier', token))
       .unique()
     assert(user, 'Invalid user token')
     await ctx.db.patch(user._id, { deleted: true })

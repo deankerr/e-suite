@@ -29,6 +29,8 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
     const textModels = useQuery(api.text.models.list)
     const thread = useQuery(api.llm.threads.handle, threadId ? { id: threadId } : 'skip')
     const send = useMutation(api.llm.threads.send)
+    const createApiKey = useMutation(api.apiKeys.create)
+    const apiKeys = useQuery(api.apiKeys.get, {})
 
     const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -89,6 +91,8 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
 
         <Shell.Controls>
           <Button variant="outline">Action</Button>
+          {/* <Button variant="outline" onClick={() => createApiKey()}>CreateKey</Button> */}
+
           {/* <DeleteGenerationDialog id={generation._id}>
           <Button variant="outline" color="red">
             Delete
@@ -103,6 +107,9 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             thread: {thread?._id}
             {'\n'}
             msg: {thread?.messages.length}
+            {apiKeys?.map((k) => <div key={k.secret}>{k.secret}</div>)}
+            {'\n'}
+            l: {apiKeys?.length}
           </pre>
 
           <form onSubmit={submit}>

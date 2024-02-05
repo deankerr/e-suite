@@ -107,7 +107,7 @@ const userMutation = customMutation(mutation, {
 
     const user = await ctx.db
       .query('users')
-      .withIndex('token', (q) => q.eq('token', identity.tokenIdentifier))
+      .withIndex('tokenIdentifier', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
       .unique()
 
     if (!user) {

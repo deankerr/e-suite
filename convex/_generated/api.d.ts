@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as agents_agents from "../agents/agents.js";
+import type * as apiKeys from "../apiKeys.js";
 import type * as authTokens from "../authTokens.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
@@ -31,6 +32,7 @@ import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_openai from "../providers/openai.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
+import type * as rules from "../rules.js";
 import type * as text_models from "../text/models.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
@@ -46,6 +48,7 @@ import type * as util from "../util.js";
  */
 declare const fullApi: ApiFromModules<{
   "agents/agents": typeof agents_agents;
+  apiKeys: typeof apiKeys;
   authTokens: typeof authTokens;
   constants: typeof constants;
   "files/images": typeof files_images;
@@ -62,6 +65,7 @@ declare const fullApi: ApiFromModules<{
   "providers/openai": typeof providers_openai;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
+  rules: typeof rules;
   "text/models": typeof text_models;
   types: typeof types;
   users: typeof users;

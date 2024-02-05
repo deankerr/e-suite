@@ -107,7 +107,7 @@ export const processUserEvent = internalAction({
 const parseUserFieldsFromEvent = (body: string) => {
   const { data: payload } = clerkUserCreatedSchema.parse(JSON.parse(body))
 
-  const token = getToken(payload.id)
+  const tokenIdentifier = getToken(payload.id)
 
   const email = payload.email_addresses[0]
   assert(email, 'Unable to parse new user email')
@@ -116,7 +116,7 @@ const parseUserFieldsFromEvent = (body: string) => {
   const avatar = payload.image_url
 
   return {
-    token,
+    tokenIdentifier,
     username,
     avatar,
     personal: {
