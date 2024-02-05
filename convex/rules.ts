@@ -14,7 +14,7 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
 }
 
 export async function getViewerId(
-  ctx: Omit<QueryCtx, 'table' | 'viewerId' | 'viewer' | 'viewerX'>,
+  ctx: Omit<QueryCtx, 'table' | 'viewerId' | 'viewer' | 'viewerX' | 'viewerIdX'>,
 ): Promise<Id<'users'> | null> {
   const user = await ctx.auth.getUserIdentity()
   if (user === null) {

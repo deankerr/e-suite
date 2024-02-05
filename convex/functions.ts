@@ -10,6 +10,7 @@ import {
 } from './_generated/server'
 import { getEntDefinitionsWithRules, getViewerId } from './rules'
 import { entDefinitions } from './schema'
+import { error } from './util'
 
 export const query = customQuery(
   baseQuery,
@@ -48,6 +49,13 @@ async function queryCtx(baseCtx: QueryCtx) {
   const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   ;(ctx as any).viewerId = viewerId
+  const viewerIdX = () => {
+    if (viewerId === null) {
+      throw error('Expected authenticated viewer')
+    }
+    return viewerId
+  }
+
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
   ;(ctx as any).table = table
   // Example: add `viewer` and `viewerX` helpers to `ctx`:
@@ -61,7 +69,7 @@ async function queryCtx(baseCtx: QueryCtx) {
     return ent
   }
   ;(ctx as any).viewerX = viewerX
-  return { ...ctx, table, viewer, viewerX, viewerId }
+  return { ...ctx, table, viewer, viewerX, viewerId, viewerIdX }
 }
 
 async function mutationCtx(baseCtx: MutationCtx) {
@@ -73,6 +81,13 @@ async function mutationCtx(baseCtx: MutationCtx) {
   const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   ;(ctx as any).viewerId = viewerId
+  const viewerIdX = () => {
+    if (viewerId === null) {
+      throw error('Expected authenticated viewer')
+    }
+    return viewerId
+  }
+
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
   ;(ctx as any).table = table
   // Example: add `viewer` and `viewerX` helpers to `ctx`:
@@ -86,5 +101,5 @@ async function mutationCtx(baseCtx: MutationCtx) {
     return ent
   }
   ;(ctx as any).viewerX = viewerX
-  return { ...ctx, table, viewer, viewerX, viewerId }
+  return { ...ctx, table, viewer, viewerX, viewerId, viewerIdX }
 }

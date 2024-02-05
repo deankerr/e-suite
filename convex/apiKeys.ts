@@ -8,20 +8,20 @@ export const apiKeysEnt = defineEnt({
 }).edge('user', { field: 'ownerId' })
 
 export const get = query(async (ctx) => {
-  const keys = await ctx.table('apiKeys')
+  const ownerId = ctx.viewerIdX()
+  const keys = await ctx.table('apiKeys', 'ownerId', (q) => q.eq('ownerId', ownerId))
   return keys
 })
 
 export const create = mutation({
   args: {},
   handler: async (ctx) => {
-    const user = await ctx.viewerX()
-
+    const ownerId = ctx.viewerIdX()
     const nanoid = customAlphabet(
       'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
       32,
     )
     const key = nanoid()
-    return await ctx.table('apiKeys').insert({ secret: key, ownerId: user._id })
+    return await ctx.table('apiKeys').insert({ secret: key, ownerId })
   },
 })
