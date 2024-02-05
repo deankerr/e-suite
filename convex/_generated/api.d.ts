@@ -16,8 +16,6 @@ import type {
 } from "convex/server";
 import type * as agents_agents from "../agents/agents.js";
 import type * as authTokens from "../authTokens.js";
-import type * as chat_messages from "../chat/messages.js";
-import type * as chat_threads from "../chat/threads.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
 import type * as files_plaiceholder from "../files/plaiceholder.js";
@@ -25,6 +23,8 @@ import type * as generations from "../generations.js";
 import type * as http from "../http.js";
 import type * as imageModels from "../imageModels.js";
 import type * as jobs from "../jobs.js";
+import type * as llm_messages from "../llm/messages.js";
+import type * as llm_threads from "../llm/threads.js";
 import type * as methods from "../methods.js";
 import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_openai from "../providers/openai.js";
@@ -46,8 +46,6 @@ import type * as util from "../util.js";
 declare const fullApi: ApiFromModules<{
   "agents/agents": typeof agents_agents;
   authTokens: typeof authTokens;
-  "chat/messages": typeof chat_messages;
-  "chat/threads": typeof chat_threads;
   constants: typeof constants;
   "files/images": typeof files_images;
   "files/plaiceholder": typeof files_plaiceholder;
@@ -55,6 +53,8 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   imageModels: typeof imageModels;
   jobs: typeof jobs;
+  "llm/messages": typeof llm_messages;
+  "llm/threads": typeof llm_threads;
   methods: typeof methods;
   "providers/clerk": typeof providers_clerk;
   "providers/openai": typeof providers_openai;

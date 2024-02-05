@@ -1,8 +1,15 @@
-import { customCtx } from 'convex-helpers/server/customFunctions'
+import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomMutation, zCustomQuery } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 import { Id } from './_generated/dataModel'
-import { mutation, MutationCtx, query, QueryCtx } from './_generated/server'
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  MutationCtx,
+  query,
+  QueryCtx,
+} from './_generated/server'
 import { assert } from './util'
 
 // const image2Fields = {
@@ -42,6 +49,8 @@ const getLoggedInUser = async (ctx: QueryCtx | MutationCtx) => {
   return userEntity.parse(user)
 }
 
+export const zInternalMutation = zCustomMutation(internalMutation, NoOp)
+
 export const userQuery = zCustomQuery(
   query,
   customCtx(async (ctx) => {
@@ -50,8 +59,24 @@ export const userQuery = zCustomQuery(
   }),
 )
 
+export const userInternalQuery = zCustomQuery(
+  internalQuery,
+  customCtx(async (ctx) => {
+    const user = await getLoggedInUser(ctx)
+    return { user }
+  }),
+)
+
 export const userMutation = zCustomMutation(
   mutation,
+  customCtx(async (ctx) => {
+    const user = await getLoggedInUser(ctx)
+    return { user }
+  }),
+)
+
+export const userInternalMutation = zCustomMutation(
+  internalMutation,
   customCtx(async (ctx) => {
     const user = await getLoggedInUser(ctx)
     return { user }

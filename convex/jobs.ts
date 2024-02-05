@@ -1,8 +1,8 @@
 import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { internalMutation } from './_generated/server'
-import { chatParametersFields } from './chat/messages'
 import { chatProviders } from './constants'
+import { chatParametersFields } from './llm/messages'
 import { vEnum } from './util'
 
 const jobStatusNames = vEnum([
