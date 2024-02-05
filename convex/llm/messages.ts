@@ -5,13 +5,13 @@ import { internalQuery } from '../_generated/server'
 import { zInternalMutation } from '../methods'
 import { assert, vEnum } from '../util'
 
-export const chatMessageFields = {
+export const messageFields = {
   role: vEnum(['system', 'user', 'assistant']),
   name: v.optional(v.string()),
   content: v.string(),
 }
 
-export const chatParametersFields = {
+export const llmParametersFields = {
   model: v.string(),
   max_tokens: v.optional(v.number()),
   stop: v.optional(v.array(v.string())),
@@ -21,14 +21,14 @@ export const chatParametersFields = {
   repetition_penalty: v.optional(v.number()),
 }
 
-const messagesFields = {
-  ...chatMessageFields,
-  threadId: v.id('threads'),
-  jobId: v.optional(v.id('jobs')),
+export const messagesFields = {
+  ...messageFields,
+  llmParameters: v.optional(v.object(llmParametersFields)),
 }
 
-export const messagesEnt = defineEnt(messagesFields).index('by_threadId', ['threadId'])
+export const messagesEnt = defineEnt(messagesFields).edge('thread', { field: 'threadId' })
 
+// TODO refactor/remove below
 export const getMessagesByThreadId = internalQuery({
   args: {
     threadId: v.id('threads'),
@@ -36,7 +36,7 @@ export const getMessagesByThreadId = internalQuery({
   handler: async (ctx, { threadId }) => {
     return await ctx.db
       .query('messages')
-      .withIndex('by_threadId', (q) => q.eq('threadId', threadId))
+      .withIndex('threadId', (q) => q.eq('threadId', threadId))
       .collect()
   },
 })

@@ -1,20 +1,62 @@
 import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import z from 'zod'
-import { internalQuery } from '../_generated/server'
+import { internalQuery as baseInternalQuery } from '../_generated/server'
+import { internalMutation, mutation } from '../functions'
 import { userInternalMutation, userMutation, userQuery, zInternalQuery } from '../methods'
 import { assert } from '../util'
-import { createMessage, getMessagesByThreadId } from './messages'
+import { createMessage, getMessagesByThreadId, messagesFields } from './messages'
 
+//* Schema
 const threadsFields = {
   name: v.string(),
   firstMessageId: v.optional(v.id('messages')),
 }
 
-export const threadsEnt = defineEnt(threadsFields).edge('user', { field: 'ownerId' })
+export const threadsEnt = defineEnt(threadsFields)
+  .edge('user', { field: 'ownerId' })
+  .edges('messages', { ref: 'threadId' })
 
 //* Internal
-export const getThread = internalQuery({
+
+export const getOrCreate = internalMutation({
+  args: {
+    id: v.optional(v.id('threads')),
+  },
+  handler: async (ctx, { id }) => {
+    const existingThread = id ? await ctx.table('threads').get(id) : null
+    const thread = existingThread ?? (await ctx.table('threads').getX(await create(ctx, {})))
+    return { ...thread, messages: await thread.edgeX('messages') }
+  },
+})
+
+export const create = internalMutation({
+  args: {},
+  handler: async (ctx) =>
+    await ctx.table('threads').insert({ ownerId: ctx.viewerIdX(), name: 'Untitled thread' }),
+})
+
+//* External
+
+export const send = mutation({
+  args: {
+    threadId: v.optional(v.id('threads')),
+    messages: v.array(v.object(messagesFields)),
+  },
+  handler: async (ctx, { threadId, messages }) => {
+    const thread = await getOrCreate(ctx, { id: threadId })
+    for (const message of messages) {
+      const newMessageId = await ctx.table('messages').insert({ ...message, threadId: thread._id })
+      if (message.llmParameters && message.role === 'assistant') {
+        console.log('todo: schedule llm job', newMessageId)
+      }
+    }
+  },
+})
+
+// TODO refactor/remove below
+//* Internal
+export const getThread = baseInternalQuery({
   args: {
     id: v.id('threads'),
   },
@@ -46,7 +88,7 @@ export const tryGetThread = zInternalQuery({
   },
 })
 
-export const getInactiveThread = internalQuery({
+export const getInactiveThread = baseInternalQuery({
   args: {},
   handler: async (ctx) => {
     const inactiveThread = await ctx.db
@@ -101,7 +143,7 @@ export const handle = userQuery({
   },
 })
 
-export const send = userMutation({
+export const nsend = userMutation({
   args: {
     threadId: z.string().length(32).optional(),
     message: z.string(),

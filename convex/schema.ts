@@ -10,14 +10,14 @@ import { usersEnt } from './users'
 
 const schema = defineEntSchema(
   {
-    apiKeys: apiKeysEnt.deletion('soft'),
-    clerkWebhookEvents: clerkWebhookEventsEnt.deletion('soft'),
-    generations: generationsEnt.deletion('soft'),
-    images: imagesEnt.deletion('soft'),
-    imageModels: imageModelEnt.deletion('soft'),
-    messages: messagesEnt.deletion('soft'),
-    threads: threadsEnt.deletion('soft'),
-    users: usersEnt.deletion('soft'),
+    apiKeys: apiKeysEnt,
+    clerkWebhookEvents: clerkWebhookEventsEnt,
+    generations: generationsEnt,
+    images: imagesEnt,
+    imageModels: imageModelEnt,
+    messages: messagesEnt,
+    threads: threadsEnt,
+    users: usersEnt,
   },
   { schemaValidation: false },
 )

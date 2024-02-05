@@ -16,7 +16,6 @@ import type {
 } from "convex/server";
 import type * as agents_agents from "../agents/agents.js";
 import type * as apiKeys from "../apiKeys.js";
-import type * as authTokens from "../authTokens.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
 import type * as files_plaiceholder from "../files/plaiceholder.js";
@@ -49,7 +48,6 @@ import type * as util from "../util.js";
 declare const fullApi: ApiFromModules<{
   "agents/agents": typeof agents_agents;
   apiKeys: typeof apiKeys;
-  authTokens: typeof authTokens;
   constants: typeof constants;
   "files/images": typeof files_images;
   "files/plaiceholder": typeof files_plaiceholder;

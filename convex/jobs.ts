@@ -2,7 +2,7 @@ import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import { internalMutation } from './_generated/server'
 import { chatProviders } from './constants'
-import { chatParametersFields } from './llm/messages'
+import { llmParametersFields } from './llm/messages'
 import { vEnum } from './util'
 
 const jobStatusNames = vEnum([
@@ -30,7 +30,7 @@ const sharedJobsFields = {
 const chatJobFields = {
   resultMessageId: v.id('messages'),
   chatMessageIds: v.array(v.id('messages')),
-  chatParameters: v.object(chatParametersFields),
+  chatParameters: v.object(llmParametersFields),
   chatProvider: vEnum(chatProviders),
 }
 
