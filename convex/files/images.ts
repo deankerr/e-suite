@@ -1,14 +1,8 @@
-import { defineTable } from 'convex/server'
+import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { Doc, Id } from '../_generated/dataModel'
-import {
-  action,
-  internalAction,
-  internalMutation,
-  internalQuery,
-  mutation,
-} from '../_generated/server'
+import { action, internalMutation, internalQuery } from '../_generated/server'
 import { nsfwRatings } from '../constants'
 import { vEnum } from '../util'
 
@@ -27,7 +21,7 @@ const imagesFields = {
   deleted: v.boolean(),
 }
 
-export const imagesTable = defineTable(imagesFields).index('by_sourceUrl', ['sourceUrl'])
+export const imagesEnt = defineEnt(imagesFields).index('by_sourceUrl', ['sourceUrl'])
 
 export const getBySourceUrl = internalQuery({
   args: {

@@ -1,10 +1,9 @@
-import { defineTable } from 'convex/server'
+import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import { internalMutation, mutation } from './_generated/server'
 import { assert } from './util'
 
 const usersFields = {
-  token: v.string(),
   username: v.string(),
   avatar: v.string(),
   personal: v.object({
@@ -19,14 +18,14 @@ const usersInternalFields = {
   deleted: v.boolean(),
 }
 
-export const usersTable = defineTable({ ...usersFields, ...usersInternalFields }).index(
-  'by_token',
-  ['token'],
-)
+export const usersEnt = defineEnt({ ...usersFields, ...usersInternalFields })
+  .edges('threads', { ref: 'ownerId' })
+  .field('token', v.string(), { index: true })
 
 export const create = internalMutation({
   args: {
     ...usersFields,
+    token: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert('users', { ...args, admin: false, deleted: false })
@@ -51,7 +50,7 @@ export const authDeleted = internalMutation({
   handler: async (ctx, { token }) => {
     const user = await ctx.db
       .query('users')
-      .withIndex('by_token', (q) => q.eq('token', token))
+      .withIndex('token', (q) => q.eq('token', token))
       .unique()
     assert(user, 'Invalid user token')
     await ctx.db.patch(user._id, { deleted: true })

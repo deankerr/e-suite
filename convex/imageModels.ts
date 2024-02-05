@@ -1,7 +1,8 @@
-import { defineTable, paginationOptsValidator } from 'convex/server'
+import { defineEnt } from 'convex-ents'
+import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { Doc } from './_generated/dataModel'
-import { internalMutation, mutation, query, QueryCtx } from './_generated/server'
+import { mutation, query, QueryCtx } from './_generated/server'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { raise, vEnum } from './util'
 
@@ -28,7 +29,7 @@ const imageModelFields = {
   hidden: v.optional(v.boolean()),
 }
 
-export const imageModelTable = defineTable(imageModelFields).index('by_order', ['order'])
+export const imageModelEnt = defineEnt(imageModelFields).index('by_order', ['order'])
 
 export const withImages = async (
   ctx: QueryCtx,

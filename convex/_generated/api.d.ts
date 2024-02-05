@@ -19,6 +19,7 @@ import type * as authTokens from "../authTokens.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
 import type * as files_plaiceholder from "../files/plaiceholder.js";
+import type * as functions from "../functions.js";
 import type * as generations from "../generations.js";
 import type * as http from "../http.js";
 import type * as imageModels from "../imageModels.js";
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   constants: typeof constants;
   "files/images": typeof files_images;
   "files/plaiceholder": typeof files_plaiceholder;
+  functions: typeof functions;
   generations: typeof generations;
   http: typeof http;
   imageModels: typeof imageModels;

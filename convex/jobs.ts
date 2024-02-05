@@ -34,31 +34,31 @@ const chatJobFields = {
   chatProvider: vEnum(chatProviders),
 }
 
-export const jobsTable = defineTable(
-  v.union(
-    v.object({ type: v.literal('chat'), ...chatJobFields, ...sharedJobsFields }),
-    v.object({
-      type: v.literal('generation'),
-      width: v.number(), // TODO
-      height: v.number(),
-      n: v.number(),
-    }),
-  ),
-)
+// export const jobsTable = defineTable(
+//   v.union(
+//     v.object({ type: v.literal('chat'), ...chatJobFields, ...sharedJobsFields }),
+//     v.object({
+//       type: v.literal('generation'),
+//       width: v.number(), // TODO
+//       height: v.number(),
+//       n: v.number(),
+//     }),
+//   ),
+// )
 
-export const create = internalMutation({
-  args: {
-    chat: v.optional(v.object({ ...chatJobFields })),
-    generation: v.optional(v.null()),
-  },
-  handler: async (ctx, { chat, generation }) => {
-    if (chat) {
-      return await ctx.db.insert('jobs', { ...chat, type: 'chat', status: 'pending', events: [] })
-      //TODO trigger workflow
-    }
+// export const create = internalMutation({
+//   args: {
+//     chat: v.optional(v.object({ ...chatJobFields })),
+//     generation: v.optional(v.null()),
+//   },
+//   handler: async (ctx, { chat, generation }) => {
+//     if (chat) {
+//       return await ctx.db.insert('jobs', { ...chat, type: 'chat', status: 'pending', events: [] })
+//       //TODO trigger workflow
+//     }
 
-    if (generation) {
-      throw new Error('not implemented')
-    }
-  },
-})
+//     if (generation) {
+//       throw new Error('not implemented')
+//     }
+//   },
+// })

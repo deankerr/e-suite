@@ -1,4 +1,4 @@
-import { defineTable } from 'convex/server'
+import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internalQuery } from '../_generated/server'
@@ -27,7 +27,7 @@ const messagesFields = {
   jobId: v.optional(v.id('jobs')),
 }
 
-export const messagesTable = defineTable(messagesFields).index('by_threadId', ['threadId'])
+export const messagesEnt = defineEnt(messagesFields).index('by_threadId', ['threadId'])
 
 export const getMessagesByThreadId = internalQuery({
   args: {

@@ -1,5 +1,5 @@
 import { WebhookEvent } from '@clerk/nextjs/server'
-import { defineTable } from 'convex/server'
+import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import { Webhook } from 'svix'
 import z from 'zod'
@@ -16,7 +16,7 @@ const clerkWebhookEventsFields = {
   type: v.string(),
 }
 
-export const clerkWebhookEventsTable = defineTable(clerkWebhookEventsFields)
+export const clerkWebhookEventsEnt = defineEnt(clerkWebhookEventsFields)
 
 export const clerkWebhookHandler = httpAction(async (ctx, request) => {
   const clerkWebhookSecret = process.env.CLERK_WEBHOOK_SECRET

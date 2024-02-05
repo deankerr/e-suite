@@ -45,6 +45,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "convex": "^1.8.0",
+    "convex-ents": "^0.4.2",
     "convex-helpers": "^0.1.15",
     "date-fns": "^2.30.0",
     "drizzle-orm": "^0.29.3",

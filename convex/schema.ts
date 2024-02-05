@@ -1,30 +1,24 @@
-import { defineSchema } from 'convex/server'
-import { agentsTable } from './agents/agents'
-import { authTokensTable } from './authTokens'
-import { imagesTable } from './files/images'
-import { generationsTable } from './generations'
-import { imageModelTable } from './imageModels'
-import { jobsTable } from './jobs'
-import { messagesTable } from './llm/messages'
-import { threadsTable } from './llm/threads'
-import { clerkWebhookEventsTable } from './providers/clerk'
-import { usersTable } from './users'
+import { defineEntSchema, getEntDefinitions } from 'convex-ents'
+import { imagesEnt } from './files/images'
+import { generationsEnt } from './generations'
+import { imageModelEnt } from './imageModels'
+import { messagesEnt } from './llm/messages'
+import { threadsEnt } from './llm/threads'
+import { clerkWebhookEventsEnt } from './providers/clerk'
+import { usersEnt } from './users'
 
-export default defineSchema(
+const schema = defineEntSchema(
   {
-    agents: agentsTable,
-    authTokens: authTokensTable,
-    clerkWebhookEvents: clerkWebhookEventsTable,
-    generations: generationsTable,
-    images: imagesTable,
-    imageModels: imageModelTable,
-    jobs: jobsTable,
-    messages: messagesTable,
-    threads: threadsTable,
-    users: usersTable,
+    clerkWebhookEvents: clerkWebhookEventsEnt.deletion('soft'),
+    generations: generationsEnt.deletion('soft'),
+    images: imagesEnt.deletion('soft'),
+    imageModels: imageModelEnt.deletion('soft'),
+    messages: messagesEnt.deletion('soft'),
+    threads: threadsEnt.deletion('soft'),
+    users: usersEnt.deletion('soft'),
   },
-  {
-    strictTableNameTypes: false, // allow tables without schema
-    schemaValidation: false,
-  },
+  { schemaValidation: false },
 )
+
+export default schema
+export const entDefinitions = getEntDefinitions(schema)

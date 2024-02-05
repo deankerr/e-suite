@@ -10,26 +10,26 @@ const authTokensFields = {
 
 export const authTokensTable = defineTable(authTokensFields)
 
-export const create = internalMutation({
-  args: {
-    ownerInfo: v.string(),
-  },
-  handler: async (ctx, { ownerInfo }) => {
-    const token = nanoid()
-    await ctx.db.insert('authTokens', { token, ownerInfo })
-  },
-})
+// export const create = internalMutation({
+//   args: {
+//     ownerInfo: v.string(),
+//   },
+//   handler: async (ctx, { ownerInfo }) => {
+//     const token = nanoid()
+//     await ctx.db.insert('authTokens', { token, ownerInfo })
+//   },
+// })
 
-export const validate = internalQuery({
-  args: {
-    token: v.string(),
-  },
-  handler: async (ctx, { token }) => {
-    const match = await ctx.db
-      .query('authTokens')
-      .filter((q) => q.eq(q.field('token'), token))
-      .unique()
+// export const validate = internalQuery({
+//   args: {
+//     token: v.string(),
+//   },
+//   handler: async (ctx, { token }) => {
+//     const match = await ctx.db
+//       .query('authTokens')
+//       .filter((q) => q.eq(q.field('token'), token))
+//       .unique()
 
-    return match
-  },
-})
+//     return match
+//   },
+// })

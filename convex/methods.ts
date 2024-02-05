@@ -26,7 +26,7 @@ const getLoggedInUser = async (ctx: QueryCtx | MutationCtx) => {
 
   const user = await ctx.db
     .query('users')
-    .withIndex('by_token', (q) => q.eq('token', identity.tokenIdentifier))
+    .withIndex('token', (q) => q.eq('token', identity.tokenIdentifier))
     .unique()
   assert(user, 'Unregistered identity')
   assert(!user.deleted, 'User is deleted')

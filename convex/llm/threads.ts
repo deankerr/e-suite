@@ -1,4 +1,4 @@
-import { defineTable } from 'convex/server'
+import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internalQuery } from '../_generated/server'
@@ -7,12 +7,11 @@ import { assert } from '../util'
 import { createMessage, getMessagesByThreadId } from './messages'
 
 const threadsFields = {
-  ownerId: v.id('users'),
   name: v.string(),
   firstMessageId: v.optional(v.id('messages')),
 }
 
-export const threadsTable = defineTable(threadsFields)
+export const threadsEnt = defineEnt(threadsFields).edge('user', { field: 'ownerId' })
 
 //* Internal
 export const getThread = internalQuery({

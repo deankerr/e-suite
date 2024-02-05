@@ -1,3 +1,4 @@
+import { defineEnt } from 'convex-ents'
 import { customMutation } from 'convex-helpers/server/customFunctions'
 import { defineTable, paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
@@ -42,7 +43,7 @@ const generationsInternalFields = {
   deleted: v.boolean(),
 }
 
-export const generationsTable = defineTable({
+export const generationsEnt = defineEnt({
   ...generationsParameterFields,
   ...generationsInternalFields,
 })
@@ -106,7 +107,7 @@ const userMutation = customMutation(mutation, {
 
     const user = await ctx.db
       .query('users')
-      .withIndex('by_token', (q) => q.eq('token', identity.tokenIdentifier))
+      .withIndex('token', (q) => q.eq('token', identity.tokenIdentifier))
       .unique()
 
     if (!user) {
