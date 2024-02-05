@@ -2,6 +2,7 @@
 
 import { Shell } from '@/app/components/Shell/Shell'
 import { Label } from '@/app/components/ui/Label'
+import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,12 +13,12 @@ import { Controller, useForm } from 'react-hook-form'
 import * as z from 'zod'
 
 const formSchema = z.object({
-  textModel: z.string().min(1),
-  maxTokens: z.number().min(1).max(2048).step(1),
+  model: z.string().min(1),
+  max_tokens: z.number().min(1).max(2048).step(1),
   temperature: z.number().min(0).max(2).step(0.1),
-  topP: z.number().min(0).max(1).step(0.1),
-  topK: z.number().min(1).max(100).step(1),
-  repetitionPenalty: z.number().min(1).max(2).step(0.01),
+  top_p: z.number().min(0).max(1).step(0.1),
+  top_k: z.number().min(1).max(100).step(1),
+  repetition_penalty: z.number().min(1).max(2).step(0.01),
 })
 
 type Props = {}
@@ -26,15 +27,14 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
   function ChatShell({ className, ...props }, forwardedRef) {
     const textModels = useQuery(api.text.models.list)
 
-    const { control, handleSubmit, register } = useForm<z.infer<typeof formSchema>>({
+    const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-        textModel: 'a',
-        maxTokens: 512,
+        max_tokens: 512,
         temperature: 0.7,
-        topP: 0.7,
-        topK: 50,
-        repetitionPenalty: 1,
+        top_p: 0.7,
+        top_k: 50,
+        repetition_penalty: 1,
       },
     })
 
@@ -50,13 +50,25 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
     )
 
     const [fData, setFData] = useState<object | null>(null)
+    const [messageContent, setMessageContent] = useState('')
 
     return (
       <Shell.Root {...props} className={cn('', className)} ref={forwardedRef}>
         <Shell.TitleBar>Untitled chat</Shell.TitleBar>
 
         <Shell.Content className="min-h-96">
-          {fData ? <pre>{JSON.stringify(fData, null, 2)}</pre> : 'empty'}
+          <div className="flex h-full flex-col justify-between gap-2">
+            {fData ? <pre className="text-xs">{JSON.stringify(fData, null, 2)}</pre> : 'empty'}
+            {/* ChatInput */}
+
+            <div className="flex gap-2">
+              <TextArea
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
+              />
+              <Button variant="surface">send</Button>
+            </div>
+          </div>
         </Shell.Content>
 
         <Shell.Controls>
@@ -69,44 +81,50 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
         </Shell.Controls>
 
         <Shell.Sidebar>
-          <form onSubmit={submit} className="">
-            <div className="flex flex-col gap-1 p-3">
-              <Label htmlFor="textModel">Model</Label>
-              <Select.Root {...register('textModel')}>
-                <Select.Trigger placeholder="Select a model" />
-                <Select.Content>
-                  {textModels && (
-                    <>
-                      <Select.Group>
-                        <Select.Label>Chat</Select.Label>
-                        {textModels.chat.map((model) => (
-                          <Select.Item key={model.reference} value={model.reference}>
-                            {model.name}
-                          </Select.Item>
-                        ))}
-                      </Select.Group>
-                      <Select.Separator />
-                      <Select.Group>
-                        <Select.Label>Completion</Select.Label>
-                        {textModels.completion.map((model) => (
-                          <Select.Item key={model.reference} value={model.reference}>
-                            {model.name}
-                          </Select.Item>
-                        ))}
-                      </Select.Group>
-                    </>
-                  )}
-                </Select.Content>
-              </Select.Root>
-            </div>
+          <form onSubmit={submit}>
+            <Controller
+              name="model"
+              control={control}
+              render={({ field: { value, onChange, ref, ...fieldProps } }) => (
+                <div className="flex flex-col gap-1 p-3">
+                  <Label htmlFor="model">Model</Label>
+                  <Select.Root {...fieldProps} value={value} onValueChange={(v) => onChange(v)}>
+                    <Select.Trigger placeholder="Select a model" ref={ref} />
+                    <Select.Content>
+                      {textModels && (
+                        <>
+                          <Select.Group>
+                            <Select.Label>Chat</Select.Label>
+                            {textModels.chat.map((model) => (
+                              <Select.Item key={model.reference} value={model.reference}>
+                                {model.name}
+                              </Select.Item>
+                            ))}
+                          </Select.Group>
+                          <Select.Separator />
+                          <Select.Group>
+                            <Select.Label>Completion</Select.Label>
+                            {textModels.completion.map((model) => (
+                              <Select.Item key={model.reference} value={model.reference}>
+                                {model.name}
+                              </Select.Item>
+                            ))}
+                          </Select.Group>
+                        </>
+                      )}
+                    </Select.Content>
+                  </Select.Root>
+                </div>
+              )}
+            />
 
             <Controller
-              name="maxTokens"
+              name="max_tokens"
               control={control}
               render={({ field: { onChange, value, ...fieldProps } }) => (
-                <div className="flex flex-col gap-1 p-3">
+                <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="maxTokens">Max tokens</Label>
+                    <Label htmlFor="max_tokens">Max tokens</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
@@ -125,7 +143,7 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
               name="temperature"
               control={control}
               render={({ field: { onChange, value, ...fieldProps } }) => (
-                <div className="flex flex-col gap-1 p-3">
+                <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="temperature">Temperature</Label>
                     <div className="text-sm">{value}</div>
@@ -144,12 +162,12 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             />
 
             <Controller
-              name="topP"
+              name="top_p"
               control={control}
               render={({ field: { onChange, value, ...fieldProps } }) => (
-                <div className="flex flex-col gap-1 p-3">
+                <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="topP">Top-P</Label>
+                    <Label htmlFor="top_p">Top-P</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
@@ -166,12 +184,12 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             />
 
             <Controller
-              name="topK"
+              name="top_k"
               control={control}
               render={({ field: { onChange, value, ...fieldProps } }) => (
-                <div className="flex flex-col gap-1 p-3">
+                <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="topK">Top-K</Label>
+                    <Label htmlFor="top_k">Top-K</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
@@ -188,12 +206,12 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             />
 
             <Controller
-              name="repetitionPenalty"
+              name="repetition_penalty"
               control={control}
               render={({ field: { onChange, value, ...fieldProps } }) => (
-                <div className="flex flex-col gap-1 p-3">
+                <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="repetitionPenalty">Repetition penalty</Label>
+                    <Label htmlFor="repetition_penalty">Repetition penalty</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
@@ -208,8 +226,6 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
                 </div>
               )}
             />
-
-            <Button>Submitty</Button>
           </form>
         </Shell.Sidebar>
       </Shell.Root>
