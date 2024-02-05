@@ -2,7 +2,7 @@ import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internalQuery } from '../_generated/server'
-import { userInternalMutation, userMutation } from '../methods'
+import { userInternalMutation, userMutation, userQuery, zInternalQuery } from '../methods'
 import { assert } from '../util'
 import { createMessage, getMessagesByThreadId } from './messages'
 
@@ -14,6 +14,7 @@ const threadsFields = {
 
 export const threadsTable = defineTable(threadsFields)
 
+//* Internal
 export const getThread = internalQuery({
   args: {
     id: v.id('threads'),
@@ -21,6 +22,23 @@ export const getThread = internalQuery({
   handler: async (ctx, { id }) => {
     const thread = await ctx.db.get(id)
     assert(thread, 'Invalid thread id')
+    const messages = await getMessagesByThreadId(ctx, { threadId: thread._id })
+    return {
+      ...thread,
+      messages,
+    }
+  },
+})
+
+export const tryGetThread = zInternalQuery({
+  args: {
+    id: z.string().length(32),
+  },
+  handler: async (ctx, { id }) => {
+    const validId = ctx.db.normalizeId('threads', id)
+    if (!validId) return null
+    const thread = await ctx.db.get(validId)
+    if (!thread) return null
     const messages = await getMessagesByThreadId(ctx, { threadId: thread._id })
     return {
       ...thread,
@@ -76,14 +94,23 @@ export const getOrCreateThread = userInternalMutation({
   },
 })
 
+//* External
+export const handle = userQuery({
+  args: { id: z.string().length(32) },
+  handler: async (ctx, { id }) => {
+    return await tryGetThread(ctx, { id })
+  },
+})
+
 export const send = userMutation({
   args: {
-    id: z.string().length(32).optional(),
+    threadId: z.string().length(32).optional(),
     message: z.string(),
   },
-  handler: async (ctx, { id, message }) => {
-    const thread = await getOrCreateThread(ctx, { id })
-    const newMessageId = await createMessage(ctx, { threadId: thread._id, content: message })
-    return newMessageId
+  handler: async (ctx, { threadId, message }) => {
+    const thread = await getOrCreateThread(ctx, { id: threadId })
+    const messageId = await createMessage(ctx, { threadId: thread._id, content: message })
+    if (!thread.firstMessageId) await ctx.db.patch(thread._id, { firstMessageId: messageId })
+    return thread._id
   },
 })

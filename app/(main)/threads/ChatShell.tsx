@@ -7,7 +7,7 @@ import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Select, Slider } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { forwardRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -25,7 +25,10 @@ type Props = {}
 
 export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function ChatShell({ className, ...props }, forwardedRef) {
+    const [threadId, setThreadId] = useState('')
     const textModels = useQuery(api.text.models.list)
+    const thread = useQuery(api.llm.threads.handle, threadId ? { id: threadId } : 'skip')
+    const send = useMutation(api.llm.threads.send)
 
     const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -59,14 +62,27 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
             {fData ? <pre className="text-xs">{JSON.stringify(fData, null, 2)}</pre> : 'empty'}
-            {/* ChatInput */}
+            {thread?.messages.map((message) => (
+              <div key={message._id}>
+                {message.role}: {message.content}
+              </div>
+            ))}
 
+            {/* /* ChatInput */}
             <div className="flex gap-2">
               <TextArea
                 value={messageContent}
                 onChange={(e) => setMessageContent(e.target.value)}
               />
-              <Button variant="surface">send</Button>
+              <Button
+                variant="surface"
+                onClick={async () => {
+                  const id = await send({ threadId, message: messageContent })
+                  if (threadId !== id) setThreadId(id)
+                }}
+              >
+                send
+              </Button>
             </div>
           </div>
         </Shell.Content>
@@ -81,6 +97,14 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
         </Shell.Controls>
 
         <Shell.Sidebar>
+          <pre className="bg-black text-xs text-white">
+            threadId: {threadId}
+            {'\n'}
+            thread: {thread?._id}
+            {'\n'}
+            msg: {thread?.messages.length}
+          </pre>
+
           <form onSubmit={submit}>
             <Controller
               name="model"

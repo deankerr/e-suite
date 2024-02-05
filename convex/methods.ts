@@ -12,21 +12,6 @@ import {
 } from './_generated/server'
 import { assert } from './util'
 
-// const image2Fields = {
-//   sourceUrl: v.string(),
-//   nsfw: vEnum(nsfwRatings),
-//   width: v.number(),
-//   height: v.number(),
-//   blurDataUrl: v.string(),
-
-//   storageId: v.id('_storage'),
-//   generationId: v.optional(v.id('generations')),
-//   userId: v.optional(v.id("users")),
-//   public: v.boolean(),
-//   private: v.boolean(),
-//   deleted: v.boolean(),
-// }
-
 const userEntity = z.object({
   _id: z.string().transform((v) => v as Id<'users'>),
   _creationTime: z.number(),
@@ -49,6 +34,7 @@ const getLoggedInUser = async (ctx: QueryCtx | MutationCtx) => {
   return userEntity.parse(user)
 }
 
+export const zInternalQuery = zCustomQuery(internalQuery, NoOp)
 export const zInternalMutation = zCustomMutation(internalMutation, NoOp)
 
 export const userQuery = zCustomQuery(
