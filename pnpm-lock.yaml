@@ -65,6 +65,9 @@ dependencies:
   '@react-spring/web':
     specifier: ^9.7.3
     version: 9.7.3(react-dom@18.2.0)(react@18.2.0)
+  '@uidotdev/usehooks':
+    specifier: 2.4.1-experimental.1
+    version: 2.4.1-experimental.1(react-dom@18.2.0)(react@18.2.0)
   '@use-gesture/react':
     specifier: ^10.3.0
     version: 10.3.0(react@18.2.0)
@@ -3661,6 +3664,17 @@ packages:
       '@typescript-eslint/types': 6.20.0
       eslint-visitor-keys: 3.4.3
     dev: true
+
+  /@uidotdev/usehooks@2.4.1-experimental.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-rcDUGS2Cpw6fTkdvYAytK+ej2nW0/ZNTAVvN9Eyj1Fu5XshsZPjnstDCDjkO/J6w7W9cwPWPoj4q4iiYW2seZA==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      react: 0.0.0-experimental-bfb9cbd8c-20230223
+      react-dom: 0.0.0-experimental-bfb9cbd8c-20230223
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}

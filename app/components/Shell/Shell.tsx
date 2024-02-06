@@ -45,7 +45,7 @@ const Content = ({
   children,
   className,
 }: { children?: React.ReactNode } & React.ComponentProps<'div'>) => {
-  return <div className={cn('col-start-1 row-start-2 p-rx-1', className)}>{children}</div>
+  return <div className={cn('col-start-1 row-start-2 min-h-96 p-rx-1', className)}>{children}</div>
 }
 
 const Controls = ({

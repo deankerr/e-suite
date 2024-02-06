@@ -2,11 +2,15 @@
 
 import { api } from '@/convex/_generated/api'
 import { Card, ScrollArea } from '@radix-ui/themes'
+import { useDebounce } from '@uidotdev/usehooks'
 import { usePaginatedQuery, type PaginationStatus } from 'convex/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Generation } from '../Shell/Generation'
 import { Spinner } from '../ui/Spinner'
+
+const initialNumItems = 1
+const itemsPerLoad = 6
 
 export const GenerationFeed = ({
   className,
@@ -15,21 +19,27 @@ export const GenerationFeed = ({
   const { results, status, loadMore } = usePaginatedQuery(
     api.generations.page,
     {},
-    { initialNumItems: 3 },
+    { initialNumItems },
   )
-  const { ref, inView } = useInView({ delay: 3000 })
+  const { ref, inView } = useInView()
+  const shouldLoadMore = inView && status === 'CanLoadMore'
+  const shouldLoadMore2 = useDebounce(shouldLoadMore, 2000)
 
   useEffect(() => {
-    if (inView && status === 'CanLoadMore') {
-      loadMore(6)
+    if (shouldLoadMore && shouldLoadMore2) {
+      console.log('load', itemsPerLoad)
+      loadMore(itemsPerLoad)
     }
-  }, [inView, loadMore, status])
+  }, [shouldLoadMore, loadMore, shouldLoadMore2])
 
   return (
     <ScrollArea className={className} {...props}>
       <div className="space-y-rx-8 overflow-y-auto px-4 pb-28 pt-4">
         {results?.map((gen) => <Generation key={gen.generation._id} {...gen} />)}
-        {/* <Loader status={status} loadRef={ref} /> */}
+        <Loader status={status} loadRef={ref} />
+      </div>
+      <div className="fixed right-0 top-0 bg-black p-1 text-sm">
+        {inView && 'inView'} {results.length} {status}
       </div>
     </ScrollArea>
   )
