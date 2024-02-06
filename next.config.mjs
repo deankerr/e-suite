@@ -1,6 +1,11 @@
+/** @type {import('next').NextConfig} */
+
+import bundleAnalyzer from '@next/bundle-analyzer'
 import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js'
 
-/** @type {import('next').NextConfig} */
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
 
 const images = {
   remotePatterns: [
@@ -22,7 +27,6 @@ const config = (phase) => {
     return {
       images,
       experimental: {
-        missingSuspenseWithCSRBailout: false,
         swcPlugins: [
           ['@swc-jotai/react-refresh', {}],
           ['@swc-jotai/debug-label', {}],
@@ -31,12 +35,9 @@ const config = (phase) => {
     }
   }
 
-  return {
+  return withBundleAnalyzer({
     images,
-    experimental: {
-      missingSuspenseWithCSRBailout: false,
-    },
-  }
+  })
 }
 
 export default config
