@@ -1,4 +1,3 @@
-import { GenericMutationCtx } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internalQuery as baseInternalQuery } from '../_generated/server'
@@ -8,16 +7,13 @@ import { assert } from '../util'
 import { createMessage, getMessagesByThreadId, messagesFields } from './messages'
 
 //* Internal
-
 export const getOrCreate = internalMutation({
   args: {
     id: v.optional(v.id('threads')),
   },
   handler: async (ctx, { id }) => {
     const existingThread = id ? await ctx.table('threads').get(id) : null
-    const thread =
-      existingThread ??
-      (await ctx.table('threads').getX(await create(ctx as unknown as GenericMutationCtx<any>, {})))
+    const thread = existingThread ?? (await ctx.table('threads').getX(await create(ctx as any, {})))
     return { ...thread, messages: await thread.edgeX('messages') }
   },
 })
@@ -36,7 +32,7 @@ export const send = mutation({
     messages: v.array(v.object(messagesFields)),
   },
   handler: async (ctx, { threadId, messages }) => {
-    const thread = await getOrCreate(ctx as unknown as GenericMutationCtx<any>, { id: threadId })
+    const thread = await getOrCreate(ctx as any, { id: threadId })
     for (const message of messages) {
       const newMessageId = await ctx.table('messages').insert({ ...message, threadId: thread._id })
       if (message.llmParameters && message.role === 'assistant') {

@@ -4,9 +4,9 @@ import {
   internalMutation as baseInternalMutation,
   internalQuery as baseInternalQuery,
   mutation as baseMutation,
+  MutationCtx as BaseMutationCtx,
   query as baseQuery,
-  MutationCtx,
-  QueryCtx,
+  QueryCtx as BaseQueryCtx,
 } from './_generated/server'
 import { getEntDefinitionsWithRules, getViewerId } from './rules'
 import { entDefinitions } from './schema'
@@ -40,14 +40,12 @@ export const internalMutation = customMutation(
   }),
 )
 
-async function queryCtx(baseCtx: QueryCtx) {
+async function queryCtx(baseCtx: BaseQueryCtx) {
   const ctx = {
-    // TODO causes type error when passing ctx between functions
-    db: baseCtx.db as unknown as undefined,
-    // db: baseCtx.db,
+    unsafeDb: baseCtx.db,
+    db: undefined,
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   ;(ctx as any).viewerId = viewerId
@@ -74,14 +72,12 @@ async function queryCtx(baseCtx: QueryCtx) {
   return { ...ctx, table, viewer, viewerX, viewerId, viewerIdX }
 }
 
-async function mutationCtx(baseCtx: MutationCtx) {
+async function mutationCtx(baseCtx: BaseMutationCtx) {
   const ctx = {
-    // TODO causes type error when passing ctx between functions
-    db: baseCtx.db as unknown as undefined,
-    // db: baseCtx.db,
+    unsafeDb: baseCtx.db,
+    db: undefined,
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   ;(ctx as any).viewerId = viewerId

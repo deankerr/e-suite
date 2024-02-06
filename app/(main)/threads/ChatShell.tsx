@@ -41,8 +41,8 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
       },
     })
 
-    const submit = handleSubmit(
-      async (data) => {
+    const submit = void handleSubmit(
+      (data) => {
         console.log('submit', data)
         setFData(data)
       },
@@ -54,6 +54,11 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
 
     const [fData, setFData] = useState<object | null>(null)
     const [messageContent, setMessageContent] = useState('')
+
+    const messageSubmit = async () => {
+      const id = await send({ threadId, message: messageContent })
+      if (threadId !== id) setThreadId(id)
+    }
 
     return (
       <Shell.Root {...props} className={cn('', className)} ref={forwardedRef}>
@@ -74,13 +79,7 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
                 value={messageContent}
                 onChange={(e) => setMessageContent(e.target.value)}
               />
-              <Button
-                variant="surface"
-                onClick={async () => {
-                  const id = await send({ threadId, message: messageContent })
-                  if (threadId !== id) setThreadId(id)
-                }}
-              >
+              <Button variant="surface" onClick={void messageSubmit}>
                 send
               </Button>
             </div>
