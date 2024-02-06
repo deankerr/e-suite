@@ -43,8 +43,8 @@ export const internalMutation = customMutation(
 async function queryCtx(baseCtx: QueryCtx) {
   const ctx = {
     // TODO causes type error when passing ctx between functions
-    // db: baseCtx.db as unknown as undefined,
-    db: baseCtx.db,
+    db: baseCtx.db as unknown as undefined,
+    // db: baseCtx.db,
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -77,8 +77,8 @@ async function queryCtx(baseCtx: QueryCtx) {
 async function mutationCtx(baseCtx: MutationCtx) {
   const ctx = {
     // TODO causes type error when passing ctx between functions
-    // db: baseCtx.db as unknown as undefined,
-    db: baseCtx.db,
+    db: baseCtx.db as unknown as undefined,
+    // db: baseCtx.db,
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
