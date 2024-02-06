@@ -4,12 +4,14 @@ import { Shell } from '@/app/components/Shell/Shell'
 import { Label } from '@/app/components/ui/Label'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Select, Slider } from '@radix-ui/themes'
-import { useMutation, useQuery } from 'convex/react'
-import { forwardRef, useState } from 'react'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { forwardRef, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import * as z from 'zod'
 
 const formSchema = z.object({
@@ -25,11 +27,7 @@ type Props = {}
 
 export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function ChatShell({ className, ...props }, forwardedRef) {
-    const [threadId, setThreadId] = useState('')
-    const textModels = useQuery(api.text.models.list)
-    const thread = useQuery(api.llm.threads.handle, threadId ? { id: threadId } : 'skip')
-    const send = useMutation(api.llm.threads.nsend)
-
+    const formRef = useRef<HTMLFormElement>(null)
     const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -40,25 +38,36 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
         repetition_penalty: 1,
       },
     })
-
-    const submit = void handleSubmit(
-      (data) => {
-        console.log('submit', data)
-        setFData(data)
+    const submit = handleSubmit(
+      (llmParameters) => {
+        const body = {
+          threadId,
+          messages: [{ role: 'user' as const, content: messageContent, llmParameters }],
+        }
+        send(body)
+          .then((threadId) => setThreadId(threadId))
+          .catch((error) => {
+            console.error(error)
+            if (error instanceof Error) {
+              toast.error(error.message)
+            } else {
+              toast.error('An unknown error occurred.')
+            }
+          })
       },
       (errors) => {
         console.error(errors)
-        setFData(errors)
+        toast.error('Form validation error')
       },
     )
-
-    const [fData, setFData] = useState<object | null>(null)
     const [messageContent, setMessageContent] = useState('')
 
-    const messageSubmit = async () => {
-      const id = await send({ threadId, message: messageContent })
-      if (threadId !== id) setThreadId(id)
-    }
+    const textModels = useQuery(api.text.models.list)
+    const [threadId, setThreadId] = useState<Id<'threads'>>()
+    const thread = usePaginatedQuery(api.llm.threads.read, threadId ? { id: threadId } : 'skip', {
+      initialNumItems: 10,
+    })
+    const send = useMutation(api.llm.threads.send)
 
     return (
       <Shell.Root {...props} className={cn('', className)} ref={forwardedRef}>
@@ -66,12 +75,7 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
 
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
-            {fData ? <pre className="text-xs">{JSON.stringify(fData, null, 2)}</pre> : 'empty'}
-            {thread?.messages.map((message) => (
-              <div key={message._id}>
-                {message.role}: {message.content}
-              </div>
-            ))}
+            {thread ? <pre className="text-xs">{JSON.stringify(thread, null, 2)}</pre> : 'empty'}
 
             {/* /* ChatInput */}
             <div className="flex gap-2">
@@ -79,7 +83,7 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
                 value={messageContent}
                 onChange={(e) => setMessageContent(e.target.value)}
               />
-              <Button variant="surface" onClick={void messageSubmit}>
+              <Button variant="surface" onClick={() => formRef.current?.requestSubmit()}>
                 send
               </Button>
             </div>
@@ -101,12 +105,9 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
           <pre className="bg-black text-xs text-white">
             threadId: {threadId}
             {'\n'}
-            thread: {thread?._id}
-            {'\n'}
-            msg: {thread?.messages.length}
           </pre>
 
-          <form onSubmit={submit}>
+          <form ref={formRef} onSubmit={(e) => void submit(e)}>
             <Controller
               name="model"
               control={control}

@@ -27,29 +27,3 @@ export const messagesFields = {
 }
 
 export const messagesEnt = defineEnt(messagesFields).edge('thread', { field: 'threadId' })
-
-// TODO refactor/remove below
-export const getMessagesByThreadId = internalQuery({
-  args: {
-    threadId: v.id('threads'),
-  },
-  handler: async (ctx, { threadId }) => {
-    return await ctx.db
-      .query('messages')
-      .withIndex('threadId', (q) => q.eq('threadId', threadId))
-      .collect()
-  },
-})
-
-export const createMessage = zInternalMutation({
-  args: {
-    threadId: z.string().length(32),
-    content: z.string(),
-  },
-  handler: async (ctx, { threadId, content }) => {
-    const vThreadId = ctx.db.normalizeId('threads', threadId)
-    assert(vThreadId, 'Invalid thread id')
-    const id = await ctx.db.insert('messages', { threadId: vThreadId, role: 'user', content })
-    return id
-  },
-})

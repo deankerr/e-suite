@@ -79,8 +79,10 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
   const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
+
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   ;(ctx as any).viewerId = viewerId
+
   const viewerIdX = () => {
     if (viewerId === null) {
       throw error('Expected authenticated viewer')
@@ -90,6 +92,7 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
 
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
   ;(ctx as any).table = table
+
   // Example: add `viewer` and `viewerX` helpers to `ctx`:
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
   ;(ctx as any).viewer = viewer
