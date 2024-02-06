@@ -17,7 +17,7 @@ export const GenerationFeed = ({
     {},
     { initialNumItems: 3 },
   )
-  const { ref, inView } = useInView({ delay: 1000, initialInView: true })
+  const { ref, inView } = useInView({ delay: 3000 })
 
   useEffect(() => {
     if (inView && status === 'CanLoadMore') {

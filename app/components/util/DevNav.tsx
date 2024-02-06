@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
-import NextLink from 'next/link'
 
 const links = {
   home: '/',
+  threads: '/threads',
 }
 
 type DevNavProps = {
@@ -14,9 +14,9 @@ export const DevNav = ({ side = 'bl' }: DevNavProps) => {
   return (
     <div className={cn('fixed bg-accent-1 p-0.5 text-xs', sides[side])}>
       {[...devlinks].map(([key, value]) => (
-        <NextLink key={key} href={value}>
+        <a key={key} href={value}>
           {key}
-        </NextLink>
+        </a>
       ))}
     </div>
   )
