@@ -91,4 +91,4 @@ const nameSchema = z
   .optional()
   .transform((v) => (v ? v.slice(0, 32) : undefined))
 
-const contentSchema = z.string().min(1).max(20000)
+const contentSchema = z.string().max(20000)

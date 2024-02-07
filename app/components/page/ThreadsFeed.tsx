@@ -22,8 +22,8 @@ export const ThreadsFeed = forwardRef<HTMLDivElement, Props & React.ComponentPro
           {threads.results.map((thread) => (
             <ThreadShell key={thread._id} threadId={thread._id} />
           ))}
+          {!threads.results.length && <ThreadShell setTitle={'New Chat'} />}
         </div>
-        <div>load more</div>
       </ScrollArea>
     )
   },

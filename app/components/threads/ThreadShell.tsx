@@ -1,8 +1,11 @@
 'use client'
 
 import { Shell } from '@/app/components/Shell/Shell'
+import { Button } from '@/app/components/ui/Button'
 import { IconButton } from '@/app/components/ui/IconButton'
+import { Label } from '@/app/components/ui/Label'
 import { TextArea } from '@/app/components/ui/TextArea'
+import { DebugEntityInfo } from '@/app/components/util/DebugEntityInfo'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { ScrollArea, TextFieldInput } from '@radix-ui/themes'
@@ -14,24 +17,21 @@ import {
   SendIcon,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Button } from '../ui/Button'
-import { Label } from '../ui/Label'
-import { DebugEntityInfo } from '../util/DebugEntityInfo'
 import { DeleteThreadDialog } from './DeleteThreadDialog'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 
 type Props = {
   threadId?: Id<'threads'>
+  setTitle?: string
 }
 
 export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function ThreadShell({ threadId: externalThreadId, ...props }, forwardedRef) {
-    const [localThreadId, setLocalThreadId] = useState<Id<'threads'>>()
-    const threadId = externalThreadId ?? localThreadId
-
+  function ThreadShell({ setTitle, threadId, ...props }, forwardedRef) {
+    const router = useRouter()
     const thread = useQuery(api.threads.get, threadId ? { id: threadId } : 'skip')
     const messages = useQuery(api.threads.tail, threadId ? { id: threadId } : 'skip')
     const sendMessage = useMutation(api.threads.send)
@@ -41,7 +41,6 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const [nameValue, setNameValue] = useState('')
 
     const handleSubmit = (values: FormSchema) => {
-      console.log('main submit')
       const body = {
         threadId: threadId,
         messages: [
@@ -49,16 +48,19 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
             role: 'user' as const,
             name: nameSchema.parse(nameValue),
             content: messageSchema.parse(messageValue),
+          },
+          {
+            role: 'assistant' as const,
+            content: '',
             llmParameters: values,
           },
         ],
       }
 
       sendMessage(body)
-        .then((threadId) => {
-          console.log(threadId)
-          if (threadId !== localThreadId) setLocalThreadId(threadId)
+        .then((id) => {
           setMessageValue('')
+          if (!threadId) router.push(`/thread/${id}`)
         })
         .catch((error) => {
           console.error(error)
@@ -91,7 +93,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
 
     return (
       <Shell.Root {...props} ref={forwardedRef}>
-        <Shell.TitleBar icon={titleBarIcon}>Thread: {thread?.name}</Shell.TitleBar>
+        <Shell.TitleBar icon={titleBarIcon}>{setTitle ? setTitle : thread?.name}</Shell.TitleBar>
 
         <Shell.Content className="flex flex-col">
           {/* messages */}
@@ -139,7 +141,9 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
           </Button>
 
           <DeleteThreadDialog id={threadId}>
-            <Button color="red">Delete</Button>
+            <Button color="red" disabled={!threadId}>
+              Delete
+            </Button>
           </DeleteThreadDialog>
         </Shell.Controls>
 
