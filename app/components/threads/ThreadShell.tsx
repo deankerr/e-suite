@@ -12,27 +12,30 @@ import { toast } from 'sonner'
 import { DebugEntityInfo } from '../util/DebugEntityInfo'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 
-type Props = {}
+type Props = {
+  threadId?: Id<'threads'>
+}
 
 export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function ThreadShell({ className, ...props }, forwardedRef) {
-    const [threadId, setThreadId] = useState<Id<'threads'>>()
+  function ThreadShell({ threadId: externalThreadId, className, ...props }, forwardedRef) {
+    const [localThreadId, setLocalThreadId] = useState<Id<'threads'>>()
+    const threadId = externalThreadId ?? localThreadId
 
-    const thread = useQuery(api.llm.threads.get, threadId ? { id: threadId } : 'skip')
-    const messages = usePaginatedQuery(api.llm.threads.read, threadId ? { id: threadId } : 'skip', {
+    const thread = useQuery(api.threads.get, threadId ? { id: threadId } : 'skip')
+    const messages = usePaginatedQuery(api.threads.read, threadId ? { id: threadId } : 'skip', {
       initialNumItems: 10,
     })
-    const send = useMutation(api.llm.threads.send)
+    const send = useMutation(api.threads.send)
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageContent, setMessageContent] = useState('')
     const handleSubmit = (values: FormSchema) => {
       const body = {
-        threadId,
+        threadId: threadId,
         messages: [{ role: 'user' as const, content: messageContent, llmParameters: values }],
       }
       send(body)
-        .then((threadId) => setThreadId(threadId))
+        .then((threadId) => setLocalThreadId(threadId))
         .catch((error) => {
           console.error(error)
           if (error instanceof Error) {

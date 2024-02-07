@@ -3,8 +3,8 @@ import { v } from 'convex/values'
 import { imagesEnt } from './files/images'
 import { generationsEnt } from './generations'
 import { imageModelEnt } from './imageModels'
-import { messagesEnt } from './llm/messages'
 import { clerkWebhookEventsEnt } from './providers/clerk'
+import { messagesEnt } from './threads/messages'
 import { usersEnt } from './users'
 
 const schema = defineEntSchema(

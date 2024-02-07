@@ -1,7 +1,7 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { mutation, query } from '../functions'
-import { messagesFields } from './messages'
+import { mutation, query } from './functions'
+import { messagesFields } from './threads/messages'
 
 export const get = query({
   args: {
@@ -9,6 +9,16 @@ export const get = query({
   },
   handler: async (ctx, { id }) => {
     return await ctx.table('threads').getX(id)
+  },
+})
+
+// TODO thread visibility permissions
+export const list = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    return await ctx.table('threads').paginate(paginationOpts)
   },
 })
 

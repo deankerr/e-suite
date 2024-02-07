@@ -41,7 +41,7 @@ export const LlmParametersForm = forwardRef<HTMLFormElement, Props & React.Compo
       toast.error('Form validation error')
     })
 
-    const textModels = useQuery(api.text.models.list)
+    const textModels = useQuery(api.threads.models.list)
 
     return (
       <form
