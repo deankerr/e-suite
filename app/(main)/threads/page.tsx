@@ -1,12 +1,9 @@
-import { api } from '@/convex/_generated/api'
-import { usePaginatedQuery } from 'convex/react'
-import { ThreadShell } from '../../components/threads/ThreadShell'
+import { ThreadsFeed } from '@/app/components/page/ThreadsFeed'
 
 export default function ThreadsPage() {
   return (
-    <div className="p-8">
-      <p>ThreadsPage</p>
-      <ThreadShell />
-    </div>
+    <>
+      <ThreadsFeed />
+    </>
   )
 }

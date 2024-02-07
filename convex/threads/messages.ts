@@ -1,9 +1,5 @@
-import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
-import z from 'zod'
-import { internalQuery } from '../_generated/server'
-import { zInternalMutation } from '../methods'
-import { assert, vEnum } from '../util'
+import { vEnum } from '../util'
 
 export const messageFields = {
   role: vEnum(['system', 'user', 'assistant']),
@@ -25,5 +21,3 @@ export const messagesFields = {
   ...messageFields,
   llmParameters: v.optional(v.object(llmParametersFields)),
 }
-
-export const messagesEnt = defineEnt(messagesFields).edge('thread', { field: 'threadId' })

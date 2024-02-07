@@ -4,7 +4,7 @@ import { imagesEnt } from './files/images'
 import { generationsEnt } from './generations'
 import { imageModelEnt } from './imageModels'
 import { clerkWebhookEventsEnt } from './providers/clerk'
-import { messagesEnt } from './threads/messages'
+import { messagesFields } from './threads/messages'
 import { usersEnt } from './users'
 
 const schema = defineEntSchema(
@@ -18,7 +18,7 @@ const schema = defineEntSchema(
     generations: generationsEnt.deletion('soft'),
     images: imagesEnt.deletion('soft'),
     imageModels: imageModelEnt.deletion('soft'),
-    messages: messagesEnt.deletion('soft'),
+    messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
     threads: defineEnt({ name: v.string(), firstMessageId: v.optional(v.id('messages')) })
       .edge('user', { field: 'ownerId' })
       .edges('messages', { ref: 'threadId' })

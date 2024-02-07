@@ -4,11 +4,12 @@ import { Shell } from '@/app/components/Shell/Shell'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { Button } from '@radix-ui/themes'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { MessageSquareIcon, MessageSquareMoreIcon, MessageSquareTextIcon } from 'lucide-react'
+import Link from 'next/link'
 import { forwardRef, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { Button } from '../ui/Button'
 import { DebugEntityInfo } from '../util/DebugEntityInfo'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 
@@ -25,16 +26,18 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const messages = usePaginatedQuery(api.threads.read, threadId ? { id: threadId } : 'skip', {
       initialNumItems: 10,
     })
-    const send = useMutation(api.threads.send)
+    const sendMessage = useMutation(api.threads.send)
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageContent, setMessageContent] = useState('')
+
     const handleSubmit = (values: FormSchema) => {
       const body = {
         threadId: threadId,
         messages: [{ role: 'user' as const, content: messageContent, llmParameters: values }],
       }
-      send(body)
+
+      sendMessage(body)
         .then((threadId) => setLocalThreadId(threadId))
         .catch((error) => {
           console.error(error)
@@ -55,7 +58,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
 
     return (
       <Shell.Root {...props} ref={forwardedRef}>
-        <Shell.TitleBar icon={titleBarIcon}>Thread:</Shell.TitleBar>
+        <Shell.TitleBar icon={titleBarIcon}>Thread: {thread?.name}</Shell.TitleBar>
 
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
@@ -86,7 +89,9 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         </Shell.Content>
 
         <Shell.Controls>
-          <Button variant="outline">Action</Button>
+          <Button asChild>
+            <Link href={`/thread/${threadId}`}>Link</Link>
+          </Button>
         </Shell.Controls>
 
         <Shell.Sidebar>
