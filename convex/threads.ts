@@ -28,7 +28,23 @@ export const read = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { id, paginationOpts }) => {
-    return await ctx.table('threads').getX(id).edgeX('messages').paginate(paginationOpts)
+    return await ctx
+      .table('threads')
+      .getX(id)
+      .edgeX('messages')
+      .order('desc')
+      .paginate(paginationOpts)
+  },
+})
+
+export const tail = query({
+  args: {
+    id: v.id('threads'),
+    take: v.optional(v.number()),
+  },
+  handler: async (ctx, { id, take = 50 }) => {
+    const messages = await ctx.table('threads').getX(id).edgeX('messages').order('desc').take(take)
+    return messages.reverse()
   },
 })
 

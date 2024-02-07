@@ -14,7 +14,7 @@ import {
   SendIcon,
 } from 'lucide-react'
 import Link from 'next/link'
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '../ui/Button'
 import { DebugEntityInfo } from '../util/DebugEntityInfo'
@@ -30,9 +30,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const threadId = externalThreadId ?? localThreadId
 
     const thread = useQuery(api.threads.get, threadId ? { id: threadId } : 'skip')
-    const messages = usePaginatedQuery(api.threads.read, threadId ? { id: threadId } : 'skip', {
-      initialNumItems: 10,
-    })
+    const messages = useQuery(api.threads.tail, threadId ? { id: threadId } : 'skip')
     const sendMessage = useMutation(api.threads.send)
 
     const formRef = useRef<HTMLFormElement>(null)
@@ -60,10 +58,17 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         })
     }
 
+    const latestMessageRef = useRef<HTMLDivElement>(null)
+    useEffect(() => {
+      if (latestMessageRef.current) {
+        latestMessageRef.current.scrollIntoView()
+      }
+    }, [messages?.length])
+
     const tempWaiting = false
     const titleBarIcon = tempWaiting
       ? MessageSquareMoreIcon
-      : messages.results.length
+      : messages?.length
         ? MessageSquareTextIcon
         : MessageSquareIcon
 
@@ -71,34 +76,31 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
       <Shell.Root {...props} ref={forwardedRef}>
         <Shell.TitleBar icon={titleBarIcon}>Thread: {thread?.name}</Shell.TitleBar>
 
-        <Shell.Content className="min-h-96">
-          <div className="flex h-full flex-col justify-between gap-2">
-            {/* messages */}
-            <ScrollArea className="grow">
-              <div className="flex flex-col justify-end divide-y">
-                {messages.results.map((message) => (
-                  <div key={message._id} className="p-2">
-                    [{message.role}] {message.content}
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-
-            {/* message input */}
-            <div className="flex items-center gap-2">
-              <TextArea
-                value={messageContent}
-                onChange={(e) => setMessageContent(e.target.value)}
-              />
-              <IconButton variant="surface" onClick={() => formRef.current?.requestSubmit()}>
-                <SendIcon />
-              </IconButton>
+        <Shell.Content className="flex flex-col">
+          {/* messages */}
+          <ScrollArea className="grow">
+            <div className="flex flex-col justify-end divide-y">
+              {messages?.map((message, i) => (
+                <div
+                  key={message._id}
+                  className="p-2"
+                  ref={messages.length - 1 === i ? latestMessageRef : undefined}
+                >
+                  {`<${message.role}>`} {message.content}
+                </div>
+              ))}
             </div>
+          </ScrollArea>
 
-            <DebugEntityInfo
-              values={[thread?._id, `${messages.status} ${messages.results.length}`]}
-            />
+          {/* message input */}
+          <div className="flex items-center gap-2">
+            <TextArea value={messageContent} onChange={(e) => setMessageContent(e.target.value)} />
+            <IconButton variant="surface" onClick={() => formRef.current?.requestSubmit()}>
+              <SendIcon />
+            </IconButton>
           </div>
+
+          <DebugEntityInfo values={[thread?._id, messages?.length]} />
         </Shell.Content>
 
         <Shell.Controls>
