@@ -5,9 +5,11 @@ import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Button } from '@radix-ui/themes'
-import { useMutation, usePaginatedQuery } from 'convex/react'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { MessageSquareIcon, MessageSquareMoreIcon, MessageSquareTextIcon } from 'lucide-react'
 import { forwardRef, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { DebugEntityInfo } from '../util/DebugEntityInfo'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 
 type Props = {}
@@ -15,14 +17,15 @@ type Props = {}
 export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function ThreadShell({ className, ...props }, forwardedRef) {
     const [threadId, setThreadId] = useState<Id<'threads'>>()
-    const thread = usePaginatedQuery(api.llm.threads.read, threadId ? { id: threadId } : 'skip', {
+
+    const thread = useQuery(api.llm.threads.get, threadId ? { id: threadId } : 'skip')
+    const messages = usePaginatedQuery(api.llm.threads.read, threadId ? { id: threadId } : 'skip', {
       initialNumItems: 10,
     })
     const send = useMutation(api.llm.threads.send)
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageContent, setMessageContent] = useState('')
-
     const handleSubmit = (values: FormSchema) => {
       const body = {
         threadId,
@@ -40,24 +43,29 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         })
     }
 
+    const tempWaiting = false
+    const titleBarIcon = tempWaiting
+      ? MessageSquareMoreIcon
+      : messages.results.length
+        ? MessageSquareTextIcon
+        : MessageSquareIcon
+
     return (
       <Shell.Root {...props} ref={forwardedRef}>
-        <Shell.TitleBar>Thread:</Shell.TitleBar>
+        <Shell.TitleBar icon={titleBarIcon}>Thread:</Shell.TitleBar>
 
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
-            {thread ? <pre className="text-xs">{JSON.stringify(thread, null, 2)}</pre> : 'empty'}
-
+            {/* messages */}
             <div className="flex flex-col divide-y">
-              {thread &&
-                thread.results.map((message) => (
-                  <div key={message._id} className="p-2">
-                    [{message.role}] {message.content}
-                  </div>
-                ))}
+              {messages.results.map((message) => (
+                <div key={message._id} className="p-2">
+                  [{message.role}] {message.content}
+                </div>
+              ))}
             </div>
 
-            {/* /* ChatInput */}
+            {/* message input */}
             <div className="flex gap-2">
               <TextArea
                 value={messageContent}
@@ -67,26 +75,18 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
                 send
               </Button>
             </div>
+
+            <DebugEntityInfo
+              values={[thread?._id, `${messages.status} ${messages.results.length}`]}
+            />
           </div>
         </Shell.Content>
 
         <Shell.Controls>
           <Button variant="outline">Action</Button>
-          {/* <Button variant="outline" onClick={() => createApiKey()}>CreateKey</Button> */}
-
-          {/* <DeleteGenerationDialog id={generation._id}>
-          <Button variant="outline" color="red">
-            Delete
-          </Button>
-        </DeleteGenerationDialog> */}
         </Shell.Controls>
 
         <Shell.Sidebar>
-          <pre className="bg-black text-xs text-white">
-            threadId: {threadId}
-            {'\n'}
-          </pre>
-
           <LlmParametersForm ref={formRef} onSubmitSuccess={handleSubmit} />
         </Shell.Sidebar>
       </Shell.Root>

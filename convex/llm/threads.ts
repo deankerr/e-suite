@@ -3,6 +3,25 @@ import { v } from 'convex/values'
 import { mutation, query } from '../functions'
 import { messagesFields } from './messages'
 
+export const get = query({
+  args: {
+    id: v.id('threads'),
+  },
+  handler: async (ctx, { id }) => {
+    return await ctx.table('threads').getX(id)
+  },
+})
+
+export const read = query({
+  args: {
+    id: v.id('threads'),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { id, paginationOpts }) => {
+    return await ctx.table('threads').getX(id).edgeX('messages').paginate(paginationOpts)
+  },
+})
+
 export const send = mutation({
   args: {
     threadId: v.optional(v.id('threads')),
@@ -23,20 +42,5 @@ export const send = mutation({
     }
 
     return threadId
-  },
-})
-
-export const read = query({
-  args: {
-    id: v.id('threads'),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, { id, paginationOpts }) => {
-    const thread = await ctx.table('threads').getX(id)
-    const messages = await thread.edgeX('messages').paginate(paginationOpts)
-    return {
-      ...messages,
-      thread,
-    }
   },
 })
