@@ -8,7 +8,7 @@ export const Button = forwardRef<HTMLButtonElement, React.ComponentProps<typeof 
       <RxButton
         variant="surface"
         {...props}
-        className={cn('cursor-pointer', className)}
+        className={cn('cursor-pointer disabled:cursor-not-allowed', className)}
         ref={forwardedRef}
       >
         {children}

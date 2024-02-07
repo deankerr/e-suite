@@ -8,7 +8,10 @@ export const IconButton = forwardRef<HTMLButtonElement, React.ComponentProps<typ
       <RxIconButton
         variant="surface"
         {...props}
-        className={cn('cursor-pointer [&_svg]:size-5 [&_svg]:stroke-1', className)}
+        className={cn(
+          'cursor-pointer disabled:cursor-not-allowed [&_svg]:size-5 [&_svg]:stroke-1',
+          className,
+        )}
         ref={forwardedRef}
       >
         {children}

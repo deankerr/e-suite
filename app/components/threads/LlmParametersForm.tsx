@@ -27,6 +27,7 @@ export const LlmParametersForm = forwardRef<HTMLFormElement, Props & React.Compo
     const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
+        model: 'mistralai/Mixtral-8x7B-v0.1',
         max_tokens: 512,
         temperature: 0.7,
         top_p: 0.7,

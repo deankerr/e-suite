@@ -5,8 +5,8 @@ import { IconButton } from '@/app/components/ui/IconButton'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { ScrollArea } from '@radix-ui/themes'
-import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { ScrollArea, TextFieldInput } from '@radix-ui/themes'
+import { useMutation, useQuery } from 'convex/react'
 import {
   MessageSquareIcon,
   MessageSquareMoreIcon,
@@ -16,7 +16,9 @@ import {
 import Link from 'next/link'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { Button } from '../ui/Button'
+import { Label } from '../ui/Label'
 import { DebugEntityInfo } from '../util/DebugEntityInfo'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 
@@ -34,19 +36,28 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const sendMessage = useMutation(api.threads.send)
 
     const formRef = useRef<HTMLFormElement>(null)
-    const [messageContent, setMessageContent] = useState('')
+    const [messageValue, setMessageValue] = useState('')
+    const [nameValue, setNameValue] = useState('')
 
     const handleSubmit = (values: FormSchema) => {
       console.log('main submit')
       const body = {
         threadId: threadId,
-        messages: [{ role: 'user' as const, content: messageContent, llmParameters: values }],
+        messages: [
+          {
+            role: 'user' as const,
+            name: nameSchema.parse(nameValue),
+            content: messageSchema.parse(messageValue),
+            llmParameters: values,
+          },
+        ],
       }
 
       sendMessage(body)
         .then((threadId) => {
           console.log(threadId)
-          setLocalThreadId(threadId)
+          if (threadId !== localThreadId) setLocalThreadId(threadId)
+          setMessageValue('')
         })
         .catch((error) => {
           console.error(error)
@@ -86,7 +97,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
                   className="p-2"
                   ref={messages.length - 1 === i ? latestMessageRef : undefined}
                 >
-                  {`<${message.role}>`} {message.content}
+                  {`<${message.role}${message.name ? `:${message.name}` : ''}>`} {message.content}
                 </div>
               ))}
             </div>
@@ -94,8 +105,12 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
 
           {/* message input */}
           <div className="flex items-center gap-2">
-            <TextArea value={messageContent} onChange={(e) => setMessageContent(e.target.value)} />
-            <IconButton variant="surface" onClick={() => formRef.current?.requestSubmit()}>
+            <TextArea value={messageValue} onChange={(e) => setMessageValue(e.target.value)} />
+            <IconButton
+              variant="surface"
+              disabled={messageValue.length === 0}
+              onClick={() => formRef.current?.requestSubmit()}
+            >
               <SendIcon />
             </IconButton>
           </div>
@@ -110,9 +125,20 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         </Shell.Controls>
 
         <Shell.Sidebar>
+          <div className="flex flex-col gap-1.5 p-3">
+            <Label>Name</Label>
+            <TextFieldInput onChange={(e) => setNameValue(e.target.value)} />
+          </div>
           <LlmParametersForm ref={formRef} onSubmitSuccess={handleSubmit} />
         </Shell.Sidebar>
       </Shell.Root>
     )
   },
 )
+
+const nameSchema = z
+  .string()
+  .optional()
+  .transform((v) => (v ? v.slice(0, 32) : undefined))
+
+const messageSchema = z.string().min(1).max(20000)

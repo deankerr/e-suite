@@ -1,5 +1,6 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
+import z from 'zod'
 import { mutation, query } from './functions'
 import { messagesFields } from './threads/messages'
 
@@ -61,7 +62,11 @@ export const send = mutation({
       (await ctx.table('threads').insert({ ownerId: ctx.viewerIdX(), name: 'a new thread' }))
 
     for (const message of args.messages) {
-      const newMessageId = await ctx.table('messages').insert({ ...message, threadId })
+      const name = nameSchema.parse(message.name)
+      const content = contentSchema.parse(message.content)
+      const newMessageId = await ctx
+        .table('messages')
+        .insert({ ...message, name, content, threadId })
       if (message.llmParameters && message.role === 'assistant') {
         console.log('todo: schedule llm job', newMessageId)
       }
@@ -70,3 +75,10 @@ export const send = mutation({
     return threadId
   },
 })
+
+const nameSchema = z
+  .string()
+  .optional()
+  .transform((v) => (v ? v.slice(0, 32) : undefined))
+
+const contentSchema = z.string().min(1).max(20000)
