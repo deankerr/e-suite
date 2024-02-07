@@ -1,4 +1,4 @@
-import { ChatShell } from './ChatShell'
+import { ThreadShell } from '../../components/threads/ThreadShell'
 
 export default function ThreadsPage() {
   // ThreadsPage
@@ -6,7 +6,7 @@ export default function ThreadsPage() {
   return (
     <div className="p-8">
       <p>ThreadsPage</p>
-      <ChatShell />
+      <ThreadShell />
     </div>
   )
 }
