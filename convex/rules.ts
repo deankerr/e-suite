@@ -10,6 +10,11 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return ctx.viewerId === apiKeys.ownerId
       },
     },
+    threads: {
+      read: async (thread) => {
+        return !thread.deletionTime
+      },
+    },
   })
 }
 

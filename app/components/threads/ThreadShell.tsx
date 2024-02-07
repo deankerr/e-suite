@@ -20,6 +20,7 @@ import { z } from 'zod'
 import { Button } from '../ui/Button'
 import { Label } from '../ui/Label'
 import { DebugEntityInfo } from '../util/DebugEntityInfo'
+import { DeleteThreadDialog } from './DeleteThreadDialog'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 
 type Props = {
@@ -136,6 +137,10 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
           <Button asChild>
             <Link href={`/thread/${threadId}`}>Link</Link>
           </Button>
+
+          <DeleteThreadDialog id={threadId}>
+            <Button color="red">Delete</Button>
+          </DeleteThreadDialog>
         </Shell.Controls>
 
         <Shell.Sidebar>

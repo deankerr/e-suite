@@ -76,6 +76,16 @@ export const send = mutation({
   },
 })
 
+export const remove = mutation({
+  args: {
+    id: v.id('threads'),
+  },
+  handler: async (ctx, { id }) => {
+    await ctx.table('threads').getX(id).delete()
+    return true
+  },
+})
+
 const nameSchema = z
   .string()
   .optional()

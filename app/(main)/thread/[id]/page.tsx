@@ -1,5 +1,3 @@
-'use client'
-
 import { ThreadShell } from '@/app/components/threads/ThreadShell'
 import { Id } from '@/convex/_generated/dataModel'
 
