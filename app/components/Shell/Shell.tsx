@@ -9,8 +9,8 @@ const Root = ({
 }: { children?: React.ReactNode } & React.ComponentProps<typeof Card>) => {
   return (
     <Card className={cn('mx-auto', className)} {...props}>
-      <Inset>
-        <div className="md:grid md:grid-cols-[auto_18rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]">
+      <Inset className="h-full">
+        <div className="h-full md:grid md:grid-cols-[auto_18rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]">
           {children}
         </div>
       </Inset>

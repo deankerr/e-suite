@@ -6,7 +6,7 @@ export const Button = forwardRef<HTMLButtonElement, React.ComponentProps<typeof 
   function Button({ children, className, ...props }, forwardedRef) {
     return (
       <RxButton
-        variant="outline"
+        variant="surface"
         {...props}
         className={cn('cursor-pointer', className)}
         ref={forwardedRef}

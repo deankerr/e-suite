@@ -7,8 +7,8 @@ export default function ThreadIdPage({ params }: { params: { id: Id<'threads'> }
   // ThreadIdPage
 
   return (
-    <div className="p-1 md:p-8">
-      <ThreadShell threadId={params.id} />
+    <div className="grid p-1 md:p-8">
+      <ThreadShell className="w-full" threadId={params.id} />
     </div>
   )
 }

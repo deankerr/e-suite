@@ -1,11 +1,17 @@
 'use client'
 
 import { Shell } from '@/app/components/Shell/Shell'
+import { IconButton } from '@/app/components/ui/IconButton'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
-import { MessageSquareIcon, MessageSquareMoreIcon, MessageSquareTextIcon } from 'lucide-react'
+import {
+  MessageSquareIcon,
+  MessageSquareMoreIcon,
+  MessageSquareTextIcon,
+  SendIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { forwardRef, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -18,7 +24,7 @@ type Props = {
 }
 
 export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function ThreadShell({ threadId: externalThreadId, className, ...props }, forwardedRef) {
+  function ThreadShell({ threadId: externalThreadId, ...props }, forwardedRef) {
     const [localThreadId, setLocalThreadId] = useState<Id<'threads'>>()
     const threadId = externalThreadId ?? localThreadId
 
@@ -63,7 +69,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
             {/* messages */}
-            <div className="flex flex-col divide-y">
+            <div className="flex grow flex-col divide-y">
               {messages.results.map((message) => (
                 <div key={message._id} className="p-2">
                   [{message.role}] {message.content}
@@ -72,14 +78,14 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
             </div>
 
             {/* message input */}
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <TextArea
                 value={messageContent}
                 onChange={(e) => setMessageContent(e.target.value)}
               />
-              <Button variant="surface" onClick={() => formRef.current?.requestSubmit()}>
-                send
-              </Button>
+              <IconButton variant="surface" onClick={() => formRef.current?.requestSubmit()}>
+                <SendIcon />
+              </IconButton>
             </div>
 
             <DebugEntityInfo
