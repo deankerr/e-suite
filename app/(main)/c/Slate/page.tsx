@@ -1,4 +1,4 @@
-import { Slate } from '@/app/components/ui/Slate'
+import { CardLite } from '@/app/components/ui/CardLite'
 import logoPng from '@/assets/e-suite-logo.png'
 import robocop from '@/assets/robocop.webp'
 import { Heading, Inset, Card as RXCard } from '@radix-ui/themes'
@@ -32,7 +32,7 @@ export default function SlatePage() {
         </div>
       </RXCard>
 
-      <Slate className="flex gap-2">
+      <CardLite className="flex gap-2">
         <Inset className="-m-rx-2 flex-none rounded">
           <NextImage src={robocop} alt="" width={256} height={512} />
         </Inset>
@@ -52,7 +52,7 @@ export default function SlatePage() {
             cupidatat officia irure commodo et laborum.
           </p>
         </div>
-      </Slate>
+      </CardLite>
     </div>
   )
 }

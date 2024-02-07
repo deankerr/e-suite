@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
-import { Card, IconButton, Inset } from '@radix-ui/themes'
+import { Card, IconButton } from '@radix-ui/themes'
 import { LucideIcon, PanelTopIcon } from 'lucide-react'
+import { CardLite } from '../ui/CardLite'
 
 const Root = ({
   children,
@@ -8,13 +9,15 @@ const Root = ({
   ...props
 }: { children?: React.ReactNode } & React.ComponentProps<typeof Card>) => {
   return (
-    <Card className={cn('mx-auto', className)} {...props}>
-      <Inset className="h-full">
-        <div className="h-full md:grid md:grid-cols-[auto_18rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]">
-          {children}
-        </div>
-      </Inset>
-    </Card>
+    <CardLite
+      className={cn(
+        'mx-auto h-full md:grid md:grid-cols-[auto_18rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]',
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </CardLite>
   )
 }
 

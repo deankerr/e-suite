@@ -69,7 +69,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
             {/* messages */}
-            <div className="flex grow flex-col divide-y">
+            <div className="flex grow flex-col justify-end divide-y">
               {messages.results.map((message) => (
                 <div key={message._id} className="p-2">
                   [{message.role}] {message.content}
