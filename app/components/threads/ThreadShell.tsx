@@ -5,6 +5,7 @@ import { IconButton } from '@/app/components/ui/IconButton'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { ScrollArea } from '@radix-ui/themes'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import {
   MessageSquareIcon,
@@ -38,13 +39,17 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const [messageContent, setMessageContent] = useState('')
 
     const handleSubmit = (values: FormSchema) => {
+      console.log('main submit')
       const body = {
         threadId: threadId,
         messages: [{ role: 'user' as const, content: messageContent, llmParameters: values }],
       }
 
       sendMessage(body)
-        .then((threadId) => setLocalThreadId(threadId))
+        .then((threadId) => {
+          console.log(threadId)
+          setLocalThreadId(threadId)
+        })
         .catch((error) => {
           console.error(error)
           if (error instanceof Error) {
@@ -69,13 +74,15 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         <Shell.Content className="min-h-96">
           <div className="flex h-full flex-col justify-between gap-2">
             {/* messages */}
-            <div className="flex grow flex-col justify-end divide-y">
-              {messages.results.map((message) => (
-                <div key={message._id} className="p-2">
-                  [{message.role}] {message.content}
-                </div>
-              ))}
-            </div>
+            <ScrollArea className="grow">
+              <div className="flex flex-col justify-end divide-y">
+                {messages.results.map((message) => (
+                  <div key={message._id} className="p-2">
+                    [{message.role}] {message.content}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
 
             {/* message input */}
             <div className="flex items-center gap-2">

@@ -1,13 +1,12 @@
 import { Label } from '@/app/components/ui/Label'
-import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Select, Slider } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
+import { Slider } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
+import { ModelSelect } from './ModelSelect'
 
 type Props = {
   onSubmitSuccess: (values: FormSchema) => void
@@ -41,8 +40,6 @@ export const LlmParametersForm = forwardRef<HTMLFormElement, Props & React.Compo
       toast.error('Form validation error')
     })
 
-    const textModels = useQuery(api.threads.models.list)
-
     return (
       <form
         {...props}
@@ -53,40 +50,10 @@ export const LlmParametersForm = forwardRef<HTMLFormElement, Props & React.Compo
         <Controller
           name="model"
           control={control}
-          render={({ field: { value, onChange, ref, name, ...fieldProps } }) => (
+          render={({ field }) => (
             <div className="flex flex-col gap-1 p-3">
-              <Label htmlFor={name}>Model</Label>
-              <Select.Root
-                {...fieldProps}
-                name={name}
-                value={value}
-                onValueChange={(v) => onChange(v)}
-              >
-                <Select.Trigger placeholder="Select a model" ref={ref} />
-                <Select.Content>
-                  {textModels && (
-                    <>
-                      <Select.Group>
-                        <Select.Label>Chat</Select.Label>
-                        {textModels.chat.map((model) => (
-                          <Select.Item key={model.reference} value={model.reference}>
-                            {model.name}
-                          </Select.Item>
-                        ))}
-                      </Select.Group>
-                      <Select.Separator />
-                      <Select.Group>
-                        <Select.Label>Completion</Select.Label>
-                        {textModels.completion.map((model) => (
-                          <Select.Item key={model.reference} value={model.reference}>
-                            {model.name}
-                          </Select.Item>
-                        ))}
-                      </Select.Group>
-                    </>
-                  )}
-                </Select.Content>
-              </Select.Root>
+              <Label htmlFor={field.name}>Model</Label>
+              <ModelSelect {...field} />
             </div>
           )}
         />
