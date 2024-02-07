@@ -1,5 +1,6 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { v } from 'convex/values'
+import { jobFields } from './fields'
 import { imagesEnt } from './files/images'
 import { generationsEnt } from './generations'
 import { imageModelEnt } from './imageModels'
@@ -18,6 +19,7 @@ const schema = defineEntSchema(
     generations: generationsEnt.deletion('soft'),
     images: imagesEnt.deletion('soft'),
     imageModels: imageModelEnt.deletion('soft'),
+    jobs: defineEnt(jobFields).deletion('soft'),
     messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
     threads: defineEnt({ name: v.string(), firstMessageId: v.optional(v.id('messages')) })
       .edge('user', { field: 'ownerId' })

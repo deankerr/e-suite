@@ -1,64 +1,74 @@
-import { defineTable } from 'convex/server'
 import { v } from 'convex/values'
-import { internalMutation } from './_generated/server'
-import { chatProviders } from './constants'
-import { llmParametersFields } from './threads/messages'
-import { vEnum } from './util'
+import { internal } from './_generated/api'
+import { jobEventFields, jobRefs, jobTypes } from './fields'
+import { internalMutation, internalQuery } from './functions'
+import { error } from './util'
 
-const jobStatusNames = vEnum([
-  'pending',
-  'active',
-  'complete',
-  'error',
-  'streaming',
-  'cancelled',
-  'failed',
-])
+export const observe = internalQuery({
+  args: {
+    id: v.id('jobs'),
+  },
+  handler: async (ctx, { id }) => await ctx.table('jobs').getX(id),
+})
 
-const jobEventFields = {
-  status: jobStatusNames,
-  message: v.optional(v.string()),
-  data: v.optional(v.any()),
-  creationTime: v.number(),
-}
+export const dispatch = internalMutation({
+  args: {
+    type: jobTypes,
+    ref: jobRefs,
+  },
+  handler: async (ctx, args) => {
+    const id = await ctx.table('jobs').insert({ ...args, status: 'pending', events: [] })
+    if (args.type === 'llm') await ctx.scheduler.runAfter(0, internal.threads.jobs.llm, { id })
+    return id
+  },
+})
 
-const sharedJobsFields = {
-  status: jobStatusNames,
-  events: v.array(v.object(jobEventFields)),
-}
+export const acquire = internalMutation({
+  args: {
+    id: v.id('jobs'),
+    type: jobTypes,
+  },
+  handler: async (ctx, { id, type }) => {
+    const job = await ctx.table('jobs').getX(id)
 
-const chatJobFields = {
-  resultMessageId: v.id('messages'),
-  chatMessageIds: v.array(v.id('messages')),
-  chatParameters: v.object(llmParametersFields),
-  chatProvider: vEnum(chatProviders),
-}
+    if (job.type !== type) {
+      const err = error('Job acquisition type mismatch', { job: job.type, acquire: type })
+      await job.patch({
+        status: 'error',
+        events: [...job.events, { ...err, status: 'error', creationTime: Date.now() }],
+      })
+      throw err
+    }
+    if (!(job.status === 'pending' || job.status === 'error')) {
+      const err = error('Job acquisition status error', { job: job.status })
+      await job.patch({
+        status: 'error',
+        events: [...job.events, { ...err, status: 'error', creationTime: Date.now() }],
+      })
+      throw err
+    }
 
-// export const jobsTable = defineTable(
-//   v.union(
-//     v.object({ type: v.literal('chat'), ...chatJobFields, ...sharedJobsFields }),
-//     v.object({
-//       type: v.literal('generation'),
-//       width: v.number(), // TODO
-//       height: v.number(),
-//       n: v.number(),
-//     }),
-//   ),
-// )
+    await job.patch({
+      status: 'active',
+      events: [...job.events, { status: 'active', creationTime: Date.now() }],
+    })
+    return job.ref
+  },
+})
 
-// export const create = internalMutation({
-//   args: {
-//     chat: v.optional(v.object({ ...chatJobFields })),
-//     generation: v.optional(v.null()),
-//   },
-//   handler: async (ctx, { chat, generation }) => {
-//     if (chat) {
-//       return await ctx.db.insert('jobs', { ...chat, type: 'chat', status: 'pending', events: [] })
-//       //TODO trigger workflow
-//     }
-
-//     if (generation) {
-//       throw new Error('not implemented')
-//     }
-//   },
-// })
+export const update = internalMutation({
+  args: {
+    ...jobEventFields,
+    id: v.id('jobs'),
+  },
+  handler: async (ctx, { id, ...event }) => {
+    const job = await ctx.table('jobs').getX(id)
+    await ctx
+      .table('jobs')
+      .getX(id)
+      .patch({
+        status: event.status,
+        events: [...job.events, { ...event, creationTime: Date.now() }],
+      })
+  },
+})

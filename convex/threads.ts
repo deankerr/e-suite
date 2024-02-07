@@ -1,7 +1,9 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
-import { mutation, query } from './functions'
+import { internal } from './_generated/api'
+import { internalMutation, internalQuery, mutation, query } from './functions'
+import { dispatch } from './jobs'
 import { messagesFields } from './threads/messages'
 
 export const get = query({
@@ -49,6 +51,20 @@ export const tail = query({
   },
 })
 
+export const getMessageContext = internalQuery({
+  args: {
+    id: v.id('messages'),
+  },
+  handler: async (ctx, { id }) => {
+    const message = await ctx.table('messages').getX(id)
+    return await message
+      .edgeX('thread')
+      .edgeX('messages')
+      .order('desc')
+      .filter((q) => q.lte(q.field('_creationTime'), message._creationTime))
+  },
+})
+
 export const send = mutation({
   args: {
     threadId: v.optional(v.id('threads')),
@@ -68,11 +84,21 @@ export const send = mutation({
         .table('messages')
         .insert({ ...message, name, content, threadId })
       if (message.llmParameters && message.role === 'assistant') {
-        console.log('todo: schedule llm job', newMessageId)
+        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'llm', ref: newMessageId })
       }
     }
 
     return threadId
+  },
+})
+
+export const updateMessage = internalMutation({
+  args: {
+    id: v.id('messages'),
+    content: v.string(),
+  },
+  handler: async (ctx, { id, content }) => {
+    await ctx.table('messages').getX(id).patch({ content })
   },
 })
 
