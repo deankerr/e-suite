@@ -111,10 +111,15 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             <Controller
               name="model"
               control={control}
-              render={({ field: { value, onChange, ref, ...fieldProps } }) => (
+              render={({ field: { value, onChange, ref, name, ...fieldProps } }) => (
                 <div className="flex flex-col gap-1 p-3">
-                  <Label htmlFor="model">Model</Label>
-                  <Select.Root {...fieldProps} value={value} onValueChange={(v) => onChange(v)}>
+                  <Label htmlFor={name}>Model</Label>
+                  <Select.Root
+                    {...fieldProps}
+                    name={name}
+                    value={value}
+                    onValueChange={(v) => onChange(v)}
+                  >
                     <Select.Trigger placeholder="Select a model" ref={ref} />
                     <Select.Content>
                       {textModels && (
@@ -147,14 +152,15 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             <Controller
               name="max_tokens"
               control={control}
-              render={({ field: { onChange, value, ...fieldProps } }) => (
+              render={({ field: { onChange, value, name, ...fieldProps } }) => (
                 <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="max_tokens">Max tokens</Label>
+                    <Label htmlFor={name}>Max tokens</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
                     {...fieldProps}
+                    name={name}
                     min={1}
                     max={2048}
                     value={[value]}
@@ -168,14 +174,15 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             <Controller
               name="temperature"
               control={control}
-              render={({ field: { onChange, value, ...fieldProps } }) => (
+              render={({ field: { onChange, value, name, ...fieldProps } }) => (
                 <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="temperature">Temperature</Label>
+                    <Label htmlFor={name}>Temperature</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
                     {...fieldProps}
+                    name={name}
                     min={0}
                     max={2}
                     step={0.1}
@@ -190,14 +197,15 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             <Controller
               name="top_p"
               control={control}
-              render={({ field: { onChange, value, ...fieldProps } }) => (
+              render={({ field: { onChange, value, name, ...fieldProps } }) => (
                 <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="top_p">Top-P</Label>
+                    <Label htmlFor={name}>Top-P</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
                     {...fieldProps}
+                    name={name}
                     min={0}
                     max={1}
                     step={0.1}
@@ -212,14 +220,15 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             <Controller
               name="top_k"
               control={control}
-              render={({ field: { onChange, value, ...fieldProps } }) => (
+              render={({ field: { onChange, value, name, ...fieldProps } }) => (
                 <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="top_k">Top-K</Label>
+                    <Label htmlFor={name}>Top-K</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
                     {...fieldProps}
+                    name={name}
                     min={1}
                     max={100}
                     step={1}
@@ -234,14 +243,15 @@ export const ChatShell = forwardRef<HTMLDivElement, Props & React.ComponentProps
             <Controller
               name="repetition_penalty"
               control={control}
-              render={({ field: { onChange, value, ...fieldProps } }) => (
+              render={({ field: { onChange, value, name, ...fieldProps } }) => (
                 <div className="flex flex-col gap-1.5 p-3">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="repetition_penalty">Repetition penalty</Label>
+                    <Label htmlFor={name}>Repetition penalty</Label>
                     <div className="text-sm">{value}</div>
                   </div>
                   <Slider
                     {...fieldProps}
+                    name={name}
                     min={1}
                     max={2}
                     step={0.01}
