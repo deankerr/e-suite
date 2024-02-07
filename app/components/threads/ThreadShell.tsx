@@ -69,6 +69,11 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         })
     }
 
+    const handleSubmitMessage = () => {
+      if (!messageValue) return
+      formRef.current?.requestSubmit()
+    }
+
     const latestMessageRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
       if (latestMessageRef.current) {
@@ -105,11 +110,20 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
 
           {/* message input */}
           <div className="flex items-center gap-2">
-            <TextArea value={messageValue} onChange={(e) => setMessageValue(e.target.value)} />
+            <TextArea
+              value={messageValue}
+              onChange={(e) => setMessageValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSubmitMessage()
+                }
+              }}
+            />
             <IconButton
               variant="surface"
               disabled={messageValue.length === 0}
-              onClick={() => formRef.current?.requestSubmit()}
+              onClick={handleSubmitMessage}
             >
               <SendIcon />
             </IconButton>
