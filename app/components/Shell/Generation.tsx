@@ -11,9 +11,9 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
   const { width, height, n, status } = generation
   const creator = author?.username
 
-  const portraitLayout = height > width && 'max-w-[28%]'
-  const squareLayout = height === width && 'max-w-[40%]'
-  const landscapeLayout = height < width && 'max-w-[45%]'
+  const portraitLayout = height > width && 'max-w-[33%]'
+  const squareLayout = height === width && 'max-w-[48%]'
+  const landscapeLayout = height < width && 'max-w-[49%]'
 
   const isError = status === 'error' || status === 'failed'
 
@@ -21,7 +21,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
     <Shell.Root>
       <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
 
-      <Shell.Content>
+      <Shell.Content className="grid content-center">
         <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
           {Array.from({ length: n }, (_, i) => (
             <Frame
