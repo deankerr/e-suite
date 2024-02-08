@@ -34,7 +34,7 @@ type GenerationBarProps = {} & React.ComponentProps<'form'>
 
 export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
   function GenerationForm(props, forwardedRef) {
-    const list = useQuery(api.imageModels.list, { type: 'checkpoint', take: 16 })
+    const list = useQuery(api.imageModels.list, { type: 'checkpoint', take: 64 })
 
     const createGeneration = useMutation(api.generations.create)
 
