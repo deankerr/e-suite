@@ -84,7 +84,7 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
     const labelCn = 'text-xs sr-only'
 
     return (
-      <form onSubmit={void submit} {...props} ref={forwardedRef}>
+      <form onSubmit={(e) => void submit(e)} {...props} ref={forwardedRef}>
         <div>
           <Label.Root className={cn(labelCn)} htmlFor="prompt">
             Prompt
