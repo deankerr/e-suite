@@ -3,7 +3,6 @@ import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from './_generated/api'
 import { internalMutation, internalQuery, mutation, query } from './functions'
-import { dispatch } from './jobs'
 import { messagesFields } from './threads/messages'
 
 export const get = query({
@@ -57,11 +56,22 @@ export const getMessageContext = internalQuery({
   },
   handler: async (ctx, { id }) => {
     const message = await ctx.table('messages').getX(id)
-    return await message
-      .edgeX('thread')
+    const thread = await message.edgeX('thread')
+
+    const messages = await thread
       .edgeX('messages')
-      .order('desc')
       .filter((q) => q.lte(q.field('_creationTime'), message._creationTime))
+      .docs()
+
+    if (thread.systemPrompt) {
+      const systemMessage = {
+        role: 'system' as const,
+        content: thread.systemPrompt,
+        llmParameters: undefined,
+      }
+      return [systemMessage, ...messages]
+    }
+    return messages
   },
 })
 
@@ -69,13 +79,22 @@ export const send = mutation({
   args: {
     threadId: v.optional(v.id('threads')),
     messages: v.array(v.object(messagesFields)),
+    systemPrompt: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const existingThread = args.threadId ? await ctx.table('threads').get(args.threadId) : null
-
     const threadId =
       existingThread?._id ??
-      (await ctx.table('threads').insert({ ownerId: ctx.viewerIdX(), name: 'a new thread' }))
+      (await ctx.table('threads').insert({
+        ownerId: ctx.viewerIdX(),
+        name: 'a new thread',
+        systemPrompt: args.systemPrompt ?? '',
+      }))
+    const thread = existingThread ?? (await ctx.table('threads').getX(threadId))
+
+    if (args.systemPrompt && thread.systemPrompt !== args.systemPrompt) {
+      await thread.patch({ systemPrompt: args.systemPrompt })
+    }
 
     for (const message of args.messages) {
       const name = nameSchema.parse(message.name)

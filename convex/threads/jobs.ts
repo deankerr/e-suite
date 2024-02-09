@@ -20,17 +20,17 @@ export const llm = internalAction({
         id: messageId,
       })
       console.log(messages)
-      const message = messages.shift()
-      console.log('target', message)
+
+      const message = messages.pop()
       assert(message, 'llm target message missing') // TODO event
       const { llmParameters } = message
       assert(llmParameters, 'llm parameters missing') // TODO event
 
       const body = {
         ...llmParameters,
-        stop: ['</s>', '[/INST]'],
+        stop: ['</s>', '[/INST]'], // TODO relevant stop strings
         n: 1,
-        messages: messageSchema.array().parse(messages).reverse(),
+        messages: messageSchema.array().parse(messages),
       }
 
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
@@ -43,6 +43,7 @@ export const llm = internalAction({
         body: JSON.stringify(body),
       })
       const json = await response.json()
+
       console.log('response', json)
       const {
         choices: [m],

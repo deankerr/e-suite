@@ -38,5 +38,7 @@ module.exports = {
     '@typescript-eslint/require-await': 'off',
     // thanks vercel
     '@next/next/no-img-element': 'off',
+    // very slow
+    '@typescript-eslint/no-misused-promises': 'off',
   },
 }

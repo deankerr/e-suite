@@ -51,7 +51,7 @@ const schema = defineEntSchema(
     imageModels: imageModelEnt.deletion('soft'),
     jobs: defineEnt(jobFields).deletion('soft'),
     messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
-    threads: defineEnt({ name: v.string(), firstMessageId: v.optional(v.id('messages')) })
+    threads: defineEnt({ name: v.string(), systemPrompt: v.string() })
       .edge('user', { field: 'ownerId' })
       .edges('messages', { ref: 'threadId' })
       .deletion('soft'),

@@ -36,6 +36,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const messages = useQuery(api.threads.tail, threadId ? { id: threadId } : 'skip')
     const sendMessage = useMutation(api.threads.send)
     const messagesIsLoading = threadId && !messages
+    const systemPrompt = thread?.systemPrompt
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageValue, setMessageValue] = useState('')
@@ -43,21 +44,24 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const [systemPromptValue, setSystemPromptValue] = useState('')
 
     const handleSubmit = (values: FormSchema) => {
-      const body = {
+      const body: Parameters<typeof sendMessage>[0] = {
         threadId: threadId,
+        systemPrompt: systemPromptValue,
         messages: [
           {
-            role: 'user' as const,
+            role: 'user',
             name: nameSchema.parse(nameValue),
             content: messageSchema.parse(messageValue),
           },
           {
-            role: 'assistant' as const,
+            role: 'assistant',
             content: '',
             llmParameters: values,
           },
         ],
       }
+
+      console.log(body)
 
       sendMessage(body)
         .then((id) => {
@@ -85,8 +89,14 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
         latestMessageRef.current.scrollIntoView()
       }
       const name = messages?.findLast((msg) => msg.role === 'user' && msg.name)?.name
-      if (name) setNameValue(name)
+      if (name && nameValue !== name) setNameValue(name)
     }, [messages?.length])
+
+    useEffect(() => {
+      if (systemPrompt && systemPrompt !== systemPromptValue) {
+        setSystemPromptValue(systemPrompt)
+      }
+    }, [systemPrompt, systemPromptValue, setSystemPromptValue])
 
     const tempWaiting = false
     const titleBarIcon = tempWaiting
@@ -106,7 +116,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
               {messages?.map((message, i) => (
                 <div
                   key={message._id}
-                  className="p-2"
+                  className="p-1"
                   ref={messages.length - 1 === i ? latestMessageRef : undefined}
                 >
                   {`<${message.role}${message.name ? `:${message.name}` : ''}>`} {message.content}
@@ -155,7 +165,9 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
           <div className="flex flex-col gap-1.5 p-3">
             <Label>System prompt</Label>
             <TextArea
+              className="sm:text-sm"
               minRows={3}
+              maxRows={6}
               value={systemPromptValue}
               onChange={(e) => setSystemPromptValue(e.target.value)}
             />
