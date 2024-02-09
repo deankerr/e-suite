@@ -11,7 +11,7 @@ const Root = ({
   return (
     <CardLite
       className={cn(
-        'mx-auto h-full md:grid md:grid-cols-[auto_18rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]',
+        'mx-auto md:grid md:grid-cols-[auto_18rem] md:grid-rows-[2.5rem_minmax(6rem,auto)]',
         className,
       )}
       {...props}
