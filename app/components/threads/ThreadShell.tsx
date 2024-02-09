@@ -23,6 +23,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { DeleteThreadDialog } from './DeleteThreadDialog'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
+import { Message } from './Message'
 
 type Props = {
   threadId?: Id<'threads'>
@@ -107,20 +108,21 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
 
     return (
       <Shell.Root {...props} ref={forwardedRef}>
-        <Shell.TitleBar icon={titleBarIcon}>{setTitle ? setTitle : thread?.name}</Shell.TitleBar>
+        <Shell.TitleBar icon={titleBarIcon}>
+          {setTitle ? setTitle : thread?.name}
+          <DebugEntityInfo values={[thread?._id, messages?.length]} />
+        </Shell.TitleBar>
 
         <Shell.Content className="flex flex-col">
           {/* messages */}
           <ScrollArea className="grow">
             <div className="flex flex-col justify-end divide-y">
               {messages?.map((message, i) => (
-                <div
+                <Message
                   key={message._id}
-                  className="p-1"
                   ref={messages.length - 1 === i ? latestMessageRef : undefined}
-                >
-                  {`<${message.role}${message.name ? `:${message.name}` : ''}>`} {message.content}
-                </div>
+                  message={message}
+                />
               ))}
             </div>
           </ScrollArea>
@@ -145,8 +147,6 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
               <SendIcon />
             </IconButton>
           </div>
-
-          <DebugEntityInfo values={[thread?._id, messages?.length]} />
         </Shell.Content>
 
         <Shell.Controls>
