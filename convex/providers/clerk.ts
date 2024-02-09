@@ -1,5 +1,4 @@
 import { WebhookEvent } from '@clerk/nextjs/server'
-import { defineEnt } from 'convex-ents'
 import { v } from 'convex/values'
 import { Webhook } from 'svix'
 import z from 'zod'
@@ -10,14 +9,6 @@ import { assert } from '../util'
 
 type ClerkEvent = 'user.created' | 'user.updated' | 'user.deleted'
 
-const clerkWebhookEventsFields = {
-  body: v.string(),
-  id: v.string(),
-  type: v.string(),
-}
-
-export const clerkWebhookEventsEnt = defineEnt(clerkWebhookEventsFields)
-
 export const clerkWebhookHandler = httpAction(async (ctx, request) => {
   const clerkWebhookSecret = process.env.CLERK_WEBHOOK_SECRET
   assert(clerkWebhookSecret, 'CLERK_WEBHOOK_SECRET is undefined')
@@ -26,7 +17,7 @@ export const clerkWebhookHandler = httpAction(async (ctx, request) => {
   const svix_timestamp = request.headers.get('svix-timestamp')
   const svix_signature = request.headers.get('svix-signature')
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Error occured -- no svix headers', {
+    return new Response('Error occurred -- no svix headers', {
       status: 400,
     })
   }
@@ -87,6 +78,7 @@ export const processUserEvent = internalAction({
     eventId: v.id('clerkWebhookEvents'),
   },
   handler: async (ctx, { eventId }) => {
+    // avoid return type implicit any error
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const event = (await ctx.runQuery(internal.providers.clerk.get, {
       id: eventId,

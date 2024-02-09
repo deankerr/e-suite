@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
-import { jobEventFields, jobRefs, jobTypes } from './fields'
 import { internalMutation, internalQuery } from './functions'
+import { jobEventFields, jobRefs, jobTypes } from './schema'
 import { error } from './util'
 
 export const observe = internalQuery({
