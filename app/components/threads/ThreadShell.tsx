@@ -35,10 +35,12 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const thread = useQuery(api.threads.get, threadId ? { id: threadId } : 'skip')
     const messages = useQuery(api.threads.tail, threadId ? { id: threadId } : 'skip')
     const sendMessage = useMutation(api.threads.send)
+    const messagesIsLoading = threadId && !messages
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageValue, setMessageValue] = useState('')
     const [nameValue, setNameValue] = useState('')
+    const [systemPromptValue, setSystemPromptValue] = useState('')
 
     const handleSubmit = (values: FormSchema) => {
       const body = {
@@ -82,6 +84,8 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
       if (latestMessageRef.current) {
         latestMessageRef.current.scrollIntoView()
       }
+      const name = messages?.findLast((msg) => msg.role === 'user' && msg.name)?.name
+      if (name) setNameValue(name)
     }, [messages?.length])
 
     const tempWaiting = false
@@ -149,10 +153,24 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
 
         <Shell.Sidebar>
           <div className="flex flex-col gap-1.5 p-3">
-            <Label>Name</Label>
-            <TextFieldInput onChange={(e) => setNameValue(e.target.value)} />
+            <Label>System prompt</Label>
+            <TextArea
+              minRows={3}
+              value={systemPromptValue}
+              onChange={(e) => setSystemPromptValue(e.target.value)}
+            />
           </div>
-          <LlmParametersForm ref={formRef} onSubmitSuccess={handleSubmit} />
+          <div className="flex flex-col gap-1.5 p-3">
+            <Label>Name</Label>
+            <TextFieldInput value={nameValue} onChange={(e) => setNameValue(e.target.value)} />
+          </div>
+          {!messagesIsLoading && (
+            <LlmParametersForm
+              ref={formRef}
+              initialValues={messages?.findLast((msg) => msg.llmParameters)?.llmParameters}
+              onSubmitSuccess={handleSubmit}
+            />
+          )}
         </Shell.Sidebar>
       </Shell.Root>
     )

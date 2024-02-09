@@ -10,6 +10,7 @@ import { ModelSelect } from './ModelSelect'
 
 type Props = {
   onSubmitSuccess: (values: FormSchema) => void
+  initialValues?: Partial<FormSchema>
 }
 
 const formSchema = z.object({
@@ -22,18 +23,23 @@ const formSchema = z.object({
 })
 export type FormSchema = z.infer<typeof formSchema>
 
+const defaultValues = {
+  model: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+  max_tokens: 512,
+  temperature: 0.7,
+  top_p: 0.7,
+  top_k: 50,
+  repetition_penalty: 1,
+} as const
+
 export const LlmParametersForm = forwardRef<HTMLFormElement, Props & React.ComponentProps<'form'>>(
-  function LlmParametersForm({ onSubmitSuccess, className, ...props }, forwardedRef) {
+  function LlmParametersForm(
+    { initialValues, onSubmitSuccess, className, ...props },
+    forwardedRef,
+  ) {
     const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
-      defaultValues: {
-        model: 'mistralai/Mixtral-8x7B-v0.1',
-        max_tokens: 512,
-        temperature: 0.7,
-        top_p: 0.7,
-        top_k: 50,
-        repetition_penalty: 1,
-      },
+      defaultValues: initialValues ?? defaultValues,
     })
 
     const submit = handleSubmit(onSubmitSuccess, (errors) => {
