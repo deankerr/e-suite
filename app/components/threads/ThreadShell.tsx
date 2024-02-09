@@ -35,9 +35,11 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const router = useRouter()
     const thread = useQuery(api.threads.get, threadId ? { id: threadId } : 'skip')
     const messages = useQuery(api.threads.tail, threadId ? { id: threadId } : 'skip')
-    const sendMessage = useMutation(api.threads.send)
     const messagesIsLoading = threadId && !messages
     const systemPrompt = thread?.systemPrompt
+
+    const sendMessage = useMutation(api.threads.send)
+    const removeMessage = useMutation(api.threads.removeMessage)
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageValue, setMessageValue] = useState('')
@@ -122,6 +124,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
                   key={message._id}
                   ref={messages.length - 1 === i ? latestMessageRef : undefined}
                   message={message}
+                  onDelete={(id) => void removeMessage({ id })}
                 />
               ))}
             </div>

@@ -15,6 +15,11 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return !thread.deletionTime
       },
     },
+    messages: {
+      read: async (message) => {
+        return !message.deletionTime
+      },
+    },
   })
 }
 
