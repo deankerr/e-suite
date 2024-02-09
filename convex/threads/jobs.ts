@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 import z from 'zod'
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
@@ -49,8 +49,9 @@ export const llm = internalAction({
         choices: [m],
       } = responseSchema.parse(json)
 
-      await ctx.runMutation(internal.threads.updateMessage, {
+      await ctx.runMutation(api.threads.updateMessage, {
         id: messageId,
+        role: 'assistant',
         content: m?.message.content ?? 'something is wrong',
       })
       return true

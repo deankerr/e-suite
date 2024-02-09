@@ -4,6 +4,7 @@ import z from 'zod'
 import { internal } from './_generated/api'
 import { internalMutation, internalQuery, mutation, query } from './functions'
 import { messagesFields } from './threads/messages'
+import { vEnum } from './util'
 
 export const get = query({
   args: {
@@ -111,13 +112,18 @@ export const send = mutation({
   },
 })
 
-export const updateMessage = internalMutation({
+export const updateMessage = mutation({
   args: {
     id: v.id('messages'),
     content: v.string(),
+    role: vEnum(['system', 'user', 'assistant']),
+    name: v.optional(v.string()),
   },
-  handler: async (ctx, { id, content }) => {
-    await ctx.table('messages').getX(id).patch({ content })
+  handler: async (ctx, { id, ...values }) => {
+    await ctx
+      .table('messages')
+      .getX(id)
+      .patch({ ...values })
   },
 })
 

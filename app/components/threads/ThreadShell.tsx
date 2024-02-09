@@ -39,6 +39,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const systemPrompt = thread?.systemPrompt
 
     const sendMessage = useMutation(api.threads.send)
+    const updateMessage = useMutation(api.threads.updateMessage)
     const removeMessage = useMutation(api.threads.removeMessage)
 
     const formRef = useRef<HTMLFormElement>(null)
@@ -124,7 +125,8 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
                   key={message._id}
                   ref={messages.length - 1 === i ? latestMessageRef : undefined}
                   message={message}
-                  onDelete={(id) => void removeMessage({ id })}
+                  onDelete={(id) => removeMessage({ id })}
+                  onEdit={(values) => updateMessage(values)}
                 />
               ))}
             </div>

@@ -3,17 +3,26 @@
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Badge, DropdownMenu } from '@radix-ui/themes'
-import { PencilRulerIcon, PenSquareIcon } from 'lucide-react'
-import { forwardRef } from 'react'
+import { CheckIcon, PenSquareIcon, XIcon } from 'lucide-react'
+import { forwardRef, useState } from 'react'
 import { IconButton } from '../ui/IconButton'
+import { TextArea } from '../ui/TextArea'
 
 type Props = {
   message: Doc<'messages'>
   onDelete: (id: Id<'messages'>) => void
+  onEdit: (values: {
+    id: Id<'messages'>
+    role: 'system' | 'user' | 'assistant'
+    content: string
+  }) => void
 }
 
 export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function Message({ message, onDelete, className, ...props }, forwardedRef) {
+  function Message({ message, onDelete, onEdit, className, ...props }, forwardedRef) {
+    const [isEditing, setIsEditing] = useState(false)
+    const [contentValue, setContentValue] = useState(message.content)
+
     const displayName = message.name ?? getDisplayRole(message.role)
     // const displayClassname = getDisplayClassname(message.role)
 
@@ -27,24 +36,51 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
             {displayName}
           </Badge>
         </div>
-        <p className="">{message.content}</p>
+        {isEditing ? (
+          <TextArea value={contentValue} onChange={(e) => setContentValue(e.target.value)} />
+        ) : (
+          <p className="">{message.content}</p>
+        )}
 
         <div className="flex shrink-0 grow justify-end space-x-1 px-4">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <IconButton variant="ghost">
-                <PenSquareIcon />
+          {isEditing ? (
+            <>
+              <IconButton onClick={() => setIsEditing(false)}>
+                <XIcon />
               </IconButton>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content variant="soft">
-              <DropdownMenu.Item shortcut="⌘ E" disabled>
-                Edit
-              </DropdownMenu.Item>
-              <DropdownMenu.Item shortcut="⌘ ⌫" color="red" onSelect={() => onDelete(message._id)}>
-                Delete
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+              <IconButton
+                color="green"
+                onClick={() => {
+                  if (contentValue !== message.content) {
+                    onEdit({ id: message._id, role: message.role, content: contentValue })
+                  }
+                  setIsEditing(false)
+                }}
+              >
+                <CheckIcon />
+              </IconButton>
+            </>
+          ) : (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <IconButton>
+                  <PenSquareIcon />
+                </IconButton>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content variant="soft">
+                <DropdownMenu.Item shortcut="⌘ E" onSelect={() => setIsEditing(true)}>
+                  Edit
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  shortcut="⌘ ⌫"
+                  color="red"
+                  onSelect={() => onDelete(message._id)}
+                >
+                  Delete
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
         </div>
       </div>
     )
