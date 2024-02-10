@@ -29,7 +29,6 @@ const getLoggedInUser = async (ctx: QueryCtx | MutationCtx) => {
     .withIndex('tokenIdentifier', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
     .unique()
   assert(user, 'Unregistered identity')
-  assert(!user.deleted, 'User is deleted')
 
   return userEntity.parse(user)
 }

@@ -53,7 +53,7 @@ async function queryCtx(baseCtx: BaseQueryCtx) {
     return viewerId
   }
 
-  const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
+  const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
 
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
@@ -79,7 +79,7 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
     return viewerId
   }
 
-  const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
+  const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
 
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)

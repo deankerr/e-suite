@@ -4,7 +4,6 @@ import { imagesEnt } from './files/images'
 import { generationsEnt } from './generations'
 import { imageModelEnt } from './imageModels'
 import { messagesFields } from './threads/messages'
-import { usersEnt } from './users'
 import { vEnum } from './util'
 
 const jobStatusNames = vEnum([
@@ -34,6 +33,17 @@ export const jobFields = {
   events: v.array(v.object({ ...jobEventFields, creationTime: v.number() })),
 }
 
+export const usersFields = {
+  username: v.string(),
+  avatar: v.string(),
+  personal: v.object({
+    email: v.string(),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
+  }),
+  admin: v.boolean(),
+}
+
 const schema = defineEntSchema(
   {
     apiKeys: defineEnt({
@@ -55,7 +65,11 @@ const schema = defineEntSchema(
       .edge('user', { field: 'ownerId' })
       .edges('messages', { ref: 'threadId', deletion: 'soft' })
       .deletion('soft'),
-    users: usersEnt.deletion('soft'),
+    users: defineEnt(usersFields)
+      .deletion('soft')
+      .edges('threads', { ref: 'ownerId' })
+      .edge('apiKey', { optional: true, ref: 'ownerId' })
+      .field('tokenIdentifier', v.string(), { index: true }),
   },
   { schemaValidation: false },
 )

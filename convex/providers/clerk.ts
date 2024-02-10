@@ -3,7 +3,7 @@ import { v } from 'convex/values'
 import { Webhook } from 'svix'
 import z from 'zod'
 import { internal } from '../_generated/api'
-import { Doc, Id } from '../_generated/dataModel'
+import { Doc } from '../_generated/dataModel'
 import { httpAction, internalAction, internalMutation, internalQuery } from '../_generated/server'
 import { assert } from '../util'
 
@@ -116,6 +116,7 @@ const parseUserFieldsFromEvent = (body: string) => {
       firstName: payload.first_name,
       lastName: payload.last_name,
     },
+    admin: false,
   }
 }
 
