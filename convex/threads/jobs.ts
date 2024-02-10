@@ -9,7 +9,7 @@ export const llm = internalAction({
   args: {
     id: v.id('jobs'),
   },
-  handler: async (ctx, { id: jobId }) => {
+  handler: async (ctx, { id: jobId }): Promise<void> => {
     try {
       const messageId = (await ctx.runMutation(internal.jobs.acquire, {
         id: jobId,
@@ -19,12 +19,11 @@ export const llm = internalAction({
       const messages = await ctx.runQuery(internal.threads.getMessageContext, {
         id: messageId,
       })
-      console.log(messages)
 
       const message = messages.pop()
-      assert(message, 'llm target message missing') // TODO event
+      assert(message, 'llm target message missing')
       const { llmParameters } = message
-      assert(llmParameters, 'llm parameters missing') // TODO event
+      assert(llmParameters, 'llm parameters missing')
 
       const body = {
         ...llmParameters,
@@ -32,6 +31,7 @@ export const llm = internalAction({
         n: 1,
         messages: messageSchema.array().parse(messages),
       }
+      console.log(body)
 
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
@@ -54,9 +54,16 @@ export const llm = internalAction({
         role: 'assistant',
         content: m?.message.content ?? 'something is wrong',
       })
-      return true
+
+      await ctx.runMutation(internal.jobs.update, { id: jobId, status: 'complete' })
     } catch (err) {
-      console.error(err)
+      await ctx.runMutation(internal.jobs.update, {
+        id: jobId,
+        status: 'error',
+        message: err instanceof Error ? err.message : 'Unknown error',
+        data: err,
+      })
+
       throw err
     }
   },

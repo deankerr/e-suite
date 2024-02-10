@@ -63,7 +63,7 @@ export const update = internalMutation({
   },
   handler: async (ctx, { id, ...event }) => {
     const job = await ctx.table('jobs').getX(id)
-    await ctx
+    return await ctx
       .table('jobs')
       .getX(id)
       .patch({
