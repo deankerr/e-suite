@@ -7,6 +7,7 @@ import type { Metadata } from 'next'
 import { BIZ_UDMincho, DotGothic16 } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
+import { DebugPanel } from './components/util/DebugPanel'
 
 export const metadata: Metadata = {
   title: 'e/suite',
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />
-              {/* <DebugPanel /> */}
+              <DebugPanel />
               {/* <ThemePanel defaultOpen={false} /> */}
             </Theme>
           </JotaiProvider>

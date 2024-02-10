@@ -31,7 +31,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         </div>
 
         <div className="overflow-hidden">
-          <IconButton variant="ghost" className="h-14 w-full">
+          <IconButton variant="ghost" className="h-14 w-full" asChild>
             <NextLink href="/threads">
               <MessagesSquareIcon className="scale-125 stroke-[1.2]" />
             </NextLink>
@@ -39,7 +39,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         </div>
 
         <div className="overflow-hidden">
-          <IconButton variant="ghost" className="h-14 w-full">
+          <IconButton variant="ghost" className="h-14 w-full" asChild>
             <NextLink href="/generations">
               <ImageIcon className="scale-125 stroke-[1.2]" />
             </NextLink>

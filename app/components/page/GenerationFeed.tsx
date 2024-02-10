@@ -9,7 +9,7 @@ import { useInView } from 'react-intersection-observer'
 import { Generation } from '../Shell/Generation'
 import { Spinner } from '../ui/Spinner'
 
-const initialNumItems = 1
+const initialNumItems = 2
 const itemsPerLoad = 6
 
 export const GenerationFeed = ({
