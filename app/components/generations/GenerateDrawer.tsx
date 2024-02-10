@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import { animated, useSpring } from '@react-spring/web'
 import { useAtom } from 'jotai'
-import { forwardRef, useEffect } from 'react'
+import { forwardRef, useEffect, useMemo } from 'react'
 import { getUiAtom } from '../atoms'
 import { GenerationForm } from './GenerationForm'
 
@@ -29,9 +29,9 @@ const GenerateDrawerElement = forwardRef<HTMLDivElement, Props & React.Component
 type AProps = {}
 
 export const GenerateDrawer = forwardRef<HTMLDivElement, AProps & React.ComponentProps<'div'>>(
-  function GenerateDrawer({ className, ...props }, forwardedRef) {
-    const positionClosed = { y: '88%' }
-    const positionOpen = { y: '0%' }
+  function GenerateDrawer({ ...props }, forwardedRef) {
+    const positionClosed = useMemo(() => ({ y: '88%' }), [])
+    const positionOpen = useMemo(() => ({ y: '0%' }), [])
 
     const [springs, api] = useSpring(() => positionClosed)
     const [generationDrawerOpen, toggle] = useAtom(getUiAtom('generationDrawerOpen'))
@@ -50,7 +50,7 @@ export const GenerateDrawer = forwardRef<HTMLDivElement, AProps & React.Componen
           to: positionOpen,
         })
       }
-    }, [generationDrawerOpen])
+    }, [generationDrawerOpen, positionClosed, positionOpen, api])
 
     return (
       <>

@@ -2,7 +2,7 @@ import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from './_generated/api'
-import { internalMutation, internalQuery, mutation, query } from './functions'
+import { internalQuery, mutation, query } from './functions'
 import { messagesFields } from './threads/messages'
 import { vEnum } from './util'
 

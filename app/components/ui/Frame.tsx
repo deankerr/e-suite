@@ -1,7 +1,7 @@
 import { Id } from '@/convex/_generated/dataModel'
 import { Image } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { AlertOctagonIcon, FileQuestionIcon, HourglassIcon } from 'lucide-react'
+import { AlertOctagonIcon } from 'lucide-react'
 import NextImage from 'next/image'
 
 type EImageProps = {

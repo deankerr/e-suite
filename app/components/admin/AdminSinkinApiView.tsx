@@ -56,7 +56,7 @@ export const AdminSinkinApiView = () => {
                     <Card className="h-36 w-96">
                       <div className="grid h-full grid-flow-col gap-1">
                         <Inset side="left" className="">
-                          <img src={model.cover_img} className="max-w-24" />
+                          <img src={model.cover_img} className="max-w-24" alt="" />
                         </Inset>
                         <div className="divide-y text-xs text-gray-10">
                           <div className="text-sm">{model.name}</div>
@@ -135,7 +135,7 @@ const ImageModelEditCard = ({ sinkin, type, current, ...props }: ImageModelEditC
     },
   })
 
-  const onSubmit = handleSubmit(async ({ imageUrl, ...values }, ev) => {
+  const onSubmit = handleSubmit(async ({ imageUrl, ...values }) => {
     const imageId = await pull({ url: imageUrl, nsfw: 'safe' })
     if (!imageId) return console.error('failed to get imageId')
 

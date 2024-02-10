@@ -94,7 +94,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
       }
       const name = messages?.findLast((msg) => msg.role === 'user' && msg.name)?.name
       if (name && nameValue !== name) setNameValue(name)
-    }, [messages?.length])
+    }, [messages, nameValue])
 
     useEffect(() => {
       if (systemPrompt && systemPrompt !== systemPromptValue) {
