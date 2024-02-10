@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/card/ImageModelCard'
+import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { CardLite } from '@/app/components/ui/CardLite'
 import { api } from '@/convex/_generated/api'
 import { usePaginatedQuery } from 'convex/react'

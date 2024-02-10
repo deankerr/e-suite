@@ -1,11 +1,11 @@
-import { ImageModelCard } from '@/app/components/card/ImageModelCard'
+import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { GenerationResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
-import { DeleteGenerationDialog } from '../card/DeleteGenerationDialog'
 import { Frame } from '../ui/Frame'
-import { Shell } from './Shell'
+import { Shell } from '../ui/Shell'
+import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
 export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
   const { width, height, n, status } = generation

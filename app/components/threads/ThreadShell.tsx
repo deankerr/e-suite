@@ -1,9 +1,9 @@
 'use client'
 
-import { Shell } from '@/app/components/Shell/Shell'
 import { Button } from '@/app/components/ui/Button'
 import { IconButton } from '@/app/components/ui/IconButton'
 import { Label } from '@/app/components/ui/Label'
+import { Shell } from '@/app/components/ui/Shell'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { DebugEntityInfo } from '@/app/components/util/DebugEntityInfo'
 import { api } from '@/convex/_generated/api'

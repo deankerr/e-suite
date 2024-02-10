@@ -1,4 +1,4 @@
-import { Shell } from '@/app/components/Shell/Shell'
+import { Shell } from '@/app/components/ui/Shell'
 import { Button } from '@radix-ui/themes'
 
 export default function Page() {

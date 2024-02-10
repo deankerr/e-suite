@@ -5,9 +5,7 @@ import { animated, useSpring } from '@react-spring/web'
 import { useAtom } from 'jotai'
 import { forwardRef, useEffect } from 'react'
 import { getUiAtom } from '../atoms'
-import { GenerationForm } from '../section/GenerationForm'
-import { TheSun } from '../ui/TheSun'
-import { UserButton } from '../ui/UserButton'
+import { GenerationForm } from './GenerationForm'
 
 type Props = {}
 
@@ -23,10 +21,6 @@ const GenerateDrawerElement = forwardRef<HTMLDivElement, Props & React.Component
         ref={forwardedRef}
       >
         <GenerationForm className="flex flex-col gap-3" />
-        <div className="flex justify-between">
-          <TheSun />
-          <UserButton className="" />
-        </div>
       </div>
     )
   },

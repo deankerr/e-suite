@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/card/ImageModelCard'
+import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { modelBases, modelTypes, nsfwRatings } from '@/convex/constants'
 import { ImageModelResult, ModelBase, ModelType, NsfwRatings } from '@/convex/types'
@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Select } from '../ui/Select'
-import { Shell } from './Shell'
+import { Shell } from '../ui/Shell'
 
 type SinkinModelListing = typeof api.providers.sinkin.getModelsApi._returnType
 type SinkinApiModel = SinkinModelListing['models'][number]

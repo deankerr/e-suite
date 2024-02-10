@@ -1,4 +1,4 @@
-import { AdminSinkinApiView } from '@/app/components/Shell/AdminSinkinApiView'
+import { AdminSinkinApiView } from '@/app/components/admin/AdminSinkinApiView'
 
 export default function SinkinPage() {
   // SinkinPage

@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils'
 import { ScrollArea } from '@radix-ui/themes'
 import { usePaginatedQuery } from 'convex/react'
 import { forwardRef } from 'react'
-import { ThreadShell } from '../../components/threads/ThreadShell'
 import { Button } from '../ui/Button'
 import { DebugEntityInfo } from '../util/DebugEntityInfo'
+import { ThreadShell } from './ThreadShell'
 
 type Props = {}
 

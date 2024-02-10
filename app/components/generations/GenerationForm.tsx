@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/card/ImageModelCard'
+import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { ImageModelResult } from '@/convex/types'
@@ -14,8 +14,8 @@ import { forwardRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
-import { ImageModelPickerDialog } from '../card/ImageModelPickerDialog'
-import { DimensionsToggle } from '../ui/DimensionsToggle'
+import { DimensionsToggle } from './DimensionsToggle'
+import { ImageModelPickerDialog } from './ImageModelPickerDialog'
 
 const formSchema = z.object({
   prompt: z.string().min(1),

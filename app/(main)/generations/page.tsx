@@ -1,7 +1,7 @@
 'use client'
 
-import { GenerateDrawer } from '../../components/card/GenerateDrawer'
-import { GenerationFeed } from '../../components/page/GenerationFeed'
+import { GenerateDrawer } from '../../components/generations/GenerateDrawer'
+import { GenerationFeed } from '../../components/generations/GenerationFeed'
 
 export default function HomePage() {
   // HomePage

@@ -1,6 +1,6 @@
 'use client'
 
-import { Generation } from '@/app/components/Shell/Generation'
+import { Generation } from '@/app/components/generations/Generation'
 import { api } from '@/convex/_generated/api'
 import { usePaginatedQuery } from 'convex/react'
 
