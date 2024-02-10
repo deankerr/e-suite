@@ -68,14 +68,8 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
                 </IconButton>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content variant="soft">
-                <DropdownMenu.Item shortcut="⌘ E" onSelect={() => setIsEditing(true)}>
-                  Edit
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  shortcut="⌘ ⌫"
-                  color="red"
-                  onSelect={() => onDelete(message._id)}
-                >
+                <DropdownMenu.Item onSelect={() => setIsEditing(true)}>Edit</DropdownMenu.Item>
+                <DropdownMenu.Item color="red" onSelect={() => onDelete(message._id)}>
                   Delete
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
