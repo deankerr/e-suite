@@ -13,21 +13,20 @@ export const RailUserButton = forwardRef<HTMLDivElement, Props & React.Component
   function RailUserButton({ className, ...props }, forwardedRef) {
     const { isAuthenticated, isLoading } = useConvexAuth()
     return (
-      <div {...props} className={cn('grid place-content-center', className)} ref={forwardedRef}>
+      <div
+        {...props}
+        className={cn('grid place-content-center sm:[&_.cl-rootBox]:scale-125', className)}
+        ref={forwardedRef}
+      >
         {isLoading ? (
           <Spinner />
         ) : isAuthenticated ? (
-          <ClerkUserButton
-            afterSignOutUrl="/"
-            appearance={{
-              elements: {
-                rootBox: { scale: '1.3' },
-              },
-            }}
-          />
+          <ClerkUserButton afterSignOutUrl="/" />
         ) : (
           <ClerkSignInButton mode="modal">
-            <Button size="1">Log in</Button>
+            <Button size="1" className="h-fit text-center">
+              <div className="h-full py-2">Log in</div>
+            </Button>
           </ClerkSignInButton>
         )}
       </div>

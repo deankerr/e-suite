@@ -17,7 +17,11 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     return (
       <div
         {...props}
-        className={cn('flex w-16 shrink-0 flex-col border-r', isRailExpanded && 'w-64', className)}
+        className={cn(
+          'flex w-10 shrink-0 flex-col border-r sm:w-16',
+          isRailExpanded && 'w-64',
+          className,
+        )}
         ref={forwardedRef}
       >
         <div className="overflow-hidden">
@@ -26,22 +30,22 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
             className="h-16 w-full"
             onClick={() => setIsRailExpanded(!isRailExpanded)}
           >
-            <Logo className="size-10" />
+            <Logo className="size-8 sm:size-10" />
           </IconButton>
         </div>
 
         <div className="overflow-hidden">
-          <IconButton variant="ghost" className="h-14 w-full" asChild>
+          <IconButton variant="ghost" className="h-12 w-full sm:h-14" asChild>
             <NextLink href="/threads">
-              <MessagesSquareIcon className="scale-125 stroke-[1.2]" />
+              <MessagesSquareIcon className="stroke-[1.2] sm:scale-125" />
             </NextLink>
           </IconButton>
         </div>
 
         <div className="overflow-hidden">
-          <IconButton variant="ghost" className="h-14 w-full" asChild>
+          <IconButton variant="ghost" className="h-12 w-full sm:h-14" asChild>
             <NextLink href="/generations">
-              <ImageIcon className="scale-125 stroke-[1.2]" />
+              <ImageIcon className="stroke-[1.2] sm:scale-125" />
             </NextLink>
           </IconButton>
         </div>
@@ -49,7 +53,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         <div id="nav-rail-space" className="grow" />
 
         <div id="nav-rail-footer" className="pb-4">
-          <RailUserButton className="h-14" />
+          <RailUserButton className="h-12 sm:h-14" />
         </div>
       </div>
     )
