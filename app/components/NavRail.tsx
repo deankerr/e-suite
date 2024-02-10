@@ -17,7 +17,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     return (
       <div
         {...props}
-        className={cn('flex w-16 flex-col border-r', isRailExpanded && 'w-64', className)}
+        className={cn('flex w-16 shrink-0 flex-col border-r', isRailExpanded && 'w-64', className)}
         ref={forwardedRef}
       >
         <div className="overflow-hidden">
@@ -33,7 +33,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         <div className="overflow-hidden">
           <IconButton variant="ghost" className="h-14 w-full">
             <NextLink href="/threads">
-              <MessagesSquareIcon className="stroke-[1.2]" />
+              <MessagesSquareIcon className="scale-125 stroke-[1.2]" />
             </NextLink>
           </IconButton>
         </div>
@@ -41,7 +41,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         <div className="overflow-hidden">
           <IconButton variant="ghost" className="h-14 w-full">
             <NextLink href="/generations">
-              <ImageIcon className="stroke-[1.2]" />
+              <ImageIcon className="scale-125 stroke-[1.2]" />
             </NextLink>
           </IconButton>
         </div>

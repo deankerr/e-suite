@@ -6,7 +6,7 @@ export default function ThreadIdPage({ params }: { params: { id: Id<'threads'> }
 
   return (
     <div className="grid overflow-hidden">
-      <ThreadShell className="w-full" threadId={params.id} />
+      <ThreadShell className="w-full border-none" threadId={params.id} />
     </div>
   )
 }
