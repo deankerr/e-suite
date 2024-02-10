@@ -46,29 +46,23 @@ async function queryCtx(baseCtx: BaseQueryCtx) {
     db: undefined,
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
-  const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
+
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
-  ;(ctx as any).viewerId = viewerId
   const viewerIdX = () => {
-    if (viewerId === null) {
-      throw error('Expected authenticated viewer')
-    }
+    if (viewerId === null) throw error('Expected authenticated viewer')
     return viewerId
   }
 
+  const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
-  ;(ctx as any).table = table
-  // Example: add `viewer` and `viewerX` helpers to `ctx`:
+
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
-  ;(ctx as any).viewer = viewer
   const viewerX = async () => {
     const ent = await viewer()
-    if (ent === null) {
-      throw new Error('Expected authenticated viewer')
-    }
+    if (ent === null) throw error('Expected authenticated viewer')
     return ent
   }
-  ;(ctx as any).viewerX = viewerX
+
   return { ...ctx, table, viewer, viewerX, viewerId, viewerIdX }
 }
 
@@ -78,31 +72,22 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
     db: undefined,
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
-  const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
 
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
-  ;(ctx as any).viewerId = viewerId
-
   const viewerIdX = () => {
-    if (viewerId === null) {
-      throw error('Expected authenticated viewer')
-    }
+    if (viewerId === null) throw error('Expected authenticated viewer')
     return viewerId
   }
 
+  const entDefinitionsWithRules = getEntDefinitionsWithRules(ctx as any)
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
-  ;(ctx as any).table = table
 
-  // Example: add `viewer` and `viewerX` helpers to `ctx`:
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
-  ;(ctx as any).viewer = viewer
   const viewerX = async () => {
     const ent = await viewer()
-    if (ent === null) {
-      throw new Error('Expected authenticated viewer')
-    }
+    if (ent === null) throw error('Expected authenticated viewer')
     return ent
   }
-  ;(ctx as any).viewerX = viewerX
+
   return { ...ctx, table, viewer, viewerX, viewerId, viewerIdX }
 }
