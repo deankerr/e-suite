@@ -4,24 +4,28 @@ import z from 'zod'
 import { internal } from './_generated/api'
 import { internalQuery, mutation, query } from './functions'
 import { messagesFields } from './threads/messages'
-import { vEnum } from './util'
+import { assert, vEnum } from './util'
 
 export const get = query({
   args: {
     id: v.id('threads'),
   },
   handler: async (ctx, { id }) => {
-    return await ctx.table('threads').getX(id)
+    const thread = await ctx.table('threads').getX(id)
+    assert(!thread.deletionTime, 'Thread is deleted')
+    return thread
   },
 })
 
-// TODO thread visibility permissions
 export const list = query({
   args: {
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { paginationOpts }) => {
-    return await ctx.table('threads').paginate(paginationOpts)
+    return await ctx
+      .table('threads')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
   },
 })
 
@@ -36,6 +40,7 @@ export const read = query({
       .getX(id)
       .edgeX('messages')
       .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
   },
 })
@@ -46,7 +51,13 @@ export const tail = query({
     take: v.optional(v.number()),
   },
   handler: async (ctx, { id, take = 50 }) => {
-    const messages = await ctx.table('threads').getX(id).edgeX('messages').order('desc').take(take)
+    const messages = await ctx
+      .table('threads')
+      .getX(id)
+      .edgeX('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(take)
     return messages.reverse()
   },
 })
@@ -61,6 +72,7 @@ export const getMessageContext = internalQuery({
 
     const messages = await thread
       .edgeX('messages')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .filter((q) => q.lte(q.field('_creationTime'), message._creationTime))
       .docs()
 

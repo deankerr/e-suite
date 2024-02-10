@@ -53,7 +53,7 @@ const schema = defineEntSchema(
     messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
     threads: defineEnt({ name: v.string(), systemPrompt: v.string() })
       .edge('user', { field: 'ownerId' })
-      .edges('messages', { ref: 'threadId' })
+      .edges('messages', { ref: 'threadId', deletion: 'soft' })
       .deletion('soft'),
     users: usersEnt.deletion('soft'),
   },
