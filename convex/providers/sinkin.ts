@@ -3,73 +3,73 @@ import z from 'zod'
 import { api, internal } from '../_generated/api'
 import { action, internalAction, query } from '../_generated/server'
 
-export const run = internalAction({
-  args: {
-    id: v.id('generations'),
-  },
-  handler: async (ctx, { id }) => {
-    const { generation, imageModel } = await ctx.runMutation(internal.generations.run, { id })
-    const body = new URLSearchParams()
-    body.set('access_token', process.env.SINKIN_API_KEY as string)
-    body.set('model_id', imageModel?.sinkin?.refId ?? '')
-    body.set('prompt', generation.prompt)
-    body.set('width', String(generation.width))
-    body.set('height', String(generation.height))
-    body.set('num_images', String(generation.n))
-    generation.negativePrompt && body.set('negative_prompt', generation.negativePrompt)
-    generation.seed && body.set('seed', String(generation.seed))
-    generation.scheduler && body.set('scheduler', generation.scheduler)
-    generation.steps && body.set('steps', String(generation.steps))
-    generation.guidance && body.set('scale', String(generation.guidance))
-    generation.lcm && body.set('lcm', String(generation.lcm))
-    const response = await fetch('https://sinkin.ai/m/inference', {
-      method: 'POST',
-      body,
-    })
-    const data = await response.json()
-    const { result, error } = parseApiInferenceResponse(data)
-    if (error) {
-      await ctx.runMutation(internal.generations.update, {
-        id,
-        status: 'error',
-        message: error.message,
-        data: error,
-      })
-      throw new ConvexError({ message: error.message, error })
-    }
-    //todo fallback unresolved image
-    //* success, create images
-    const { images: urls, ...res } = result
-    const imageResults = await Promise.allSettled(
-      urls.map(
-        async (url) => await ctx.runAction(api.files.images.pull, { url, generationsId: id }),
-      ),
-    )
-    const errors: string[] = []
-    const imageIds = imageResults.map((result) => {
-      if (result.status === 'fulfilled') return result.value
-      console.error(result.reason)
-      if (result.reason instanceof Error) {
-        const { name, message } = result.reason
-        errors.push(`${name}: ${message}`)
-      } else {
-        errors.push('Unknown error creating image')
-      }
-      return null
-    })
-    //* all failed
-    if (errors.length === generation.n) {
-      await ctx.runMutation(internal.generations.update, { id, status: 'failed', data: errors })
-      return
-    }
-    await ctx.runMutation(internal.generations.update, {
-      id,
-      imageIds,
-      status: 'complete',
-      data: { res, errors: errors.length ? errors : undefined },
-    })
-  },
-})
+// export const run = internalAction({
+//   args: {
+//     id: v.id('generations'),
+//   },
+//   handler: async (ctx, { id }) => {
+//     const { generation, imageModel } = await ctx.runMutation(internal.generations.run, { id })
+//     const body = new URLSearchParams()
+//     body.set('access_token', process.env.SINKIN_API_KEY as string)
+//     body.set('model_id', imageModel?.sinkin?.refId ?? '')
+//     body.set('prompt', generation.prompt)
+//     body.set('width', String(generation.width))
+//     body.set('height', String(generation.height))
+//     body.set('num_images', String(generation.n))
+//     generation.negativePrompt && body.set('negative_prompt', generation.negativePrompt)
+//     generation.seed && body.set('seed', String(generation.seed))
+//     generation.scheduler && body.set('scheduler', generation.scheduler)
+//     generation.steps && body.set('steps', String(generation.steps))
+//     generation.guidance && body.set('scale', String(generation.guidance))
+//     generation.lcm && body.set('lcm', String(generation.lcm))
+//     const response = await fetch('https://sinkin.ai/m/inference', {
+//       method: 'POST',
+//       body,
+//     })
+//     const data = await response.json()
+//     const { result, error } = parseApiInferenceResponse(data)
+//     if (error) {
+//       await ctx.runMutation(internal.generations.update, {
+//         id,
+//         status: 'error',
+//         message: error.message,
+//         data: error,
+//       })
+//       throw new ConvexError({ message: error.message, error })
+//     }
+//     //todo fallback unresolved image
+//     //* success, create images
+//     const { images: urls, ...res } = result
+//     const imageResults = await Promise.allSettled(
+//       urls.map(
+//         async (url) => await ctx.runAction(api.files.images.pull, { url, generationsId: id }),
+//       ),
+//     )
+//     const errors: string[] = []
+//     const imageIds = imageResults.map((result) => {
+//       if (result.status === 'fulfilled') return result.value
+//       console.error(result.reason)
+//       if (result.reason instanceof Error) {
+//         const { name, message } = result.reason
+//         errors.push(`${name}: ${message}`)
+//       } else {
+//         errors.push('Unknown error creating image')
+//       }
+//       return null
+//     })
+//     //* all failed
+//     if (errors.length === generation.n) {
+//       await ctx.runMutation(internal.generations.update, { id, status: 'failed', data: errors })
+//       return
+//     }
+//     await ctx.runMutation(internal.generations.update, {
+//       id,
+//       imageIds,
+//       status: 'complete',
+//       data: { res, errors: errors.length ? errors : undefined },
+//     })
+//   },
+// })
 
 const parseApiInferenceResponse = (data: unknown) => {
   //* check error code

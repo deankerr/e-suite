@@ -1,6 +1,5 @@
 import { httpRouter } from 'convex/server'
 import z from 'zod'
-import { api, internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
@@ -17,7 +16,7 @@ http.route({
     const blob = await ctx.storage.get(storageId)
     if (blob === null) {
       return new Response('Image not found', {
-        status: 400,  
+        status: 400,
       })
     }
     return new Response(blob)
@@ -90,21 +89,21 @@ const generateRequestSchema = z.object({
   model: z.string().optional(),
 })
 
-http.route({
-  path: '/generate_va1',
-  method: 'POST',
-  handler: httpAction(async (ctx, request) => {
-    const json = await request.json()
-    const genReq = generateRequestSchema.parse(json)
-    // const auth = await ctx.runQuery(internal.authTokens.validate, { token: genReq.authToken })
-    const auth = true //! temp
-    if (!auth) return new Response('Unauthorized', { status: 401 })
+// http.route({
+//   path: '/generate_va1',
+//   method: 'POST',
+//   handler: httpAction(async (ctx, request) => {
+//     const json = await request.json()
+//     const genReq = generateRequestSchema.parse(json)
+//     // const auth = await ctx.runQuery(internal.authTokens.validate, { token: genReq.authToken })
+//     const auth = true //! temp
+//     if (!auth) return new Response('Unauthorized', { status: 401 })
 
-    await ctx.runMutation(internal.generations.createRandom, { prompt: genReq.prompt })
+//     await ctx.runMutation(internal.generations.createRandom, { prompt: genReq.prompt })
 
-    return new Response('', { status: 200 })
-  }),
-})
+//     return new Response('', { status: 200 })
+//   }),
+// })
 
 http.route({
   path: '/internal/clerk/webhook/v1',

@@ -1,9 +1,6 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { v } from 'convex/values'
 import { nsfwRatings } from './constants'
-import { imagesEnt } from './files/images'
-import { generationsEnt } from './generations'
-import { imageModelEnt } from './imageModels'
 import { messagesFields } from './threads/messages'
 import { vEnum } from './util'
 
@@ -24,7 +21,7 @@ export const generationParameters = v.object({
   lcm: v.optional(v.boolean()),
 })
 
-export const v2imagesFields = {
+export const imagesFields = {
   storageId: v.optional(v.id('_storage')),
   url: v.optional(v.string()),
 
@@ -39,18 +36,10 @@ export const v2imagesFields = {
 
   parameters: v.optional(generationParameters),
 }
-const v2images = defineEnt(v2imagesFields)
-  .deletion('soft')
-  .field('permissions', permissions, { default: { private: true } })
-  .index('sourceUrl', ['sourceUrl'])
 
-const v2generationsFields = {
-  imageIds: v.array(v.id('v2images')),
+const generationsFields = {
+  imageIds: v.array(v.id('images')),
 }
-const v2generations = defineEnt(v2generationsFields)
-  .deletion('soft')
-  .field('permissions', permissions, { default: { private: true } })
-  .edge('user', { field: 'authorId' })
 
 const jobStatusNames = vEnum([
   'pending',
@@ -68,7 +57,7 @@ export const jobEventFields = {
   data: v.optional(v.any()),
 }
 export const jobTypes = vEnum(['llm', 'generation'])
-export const jobRefs = v.union(v.id('messages'), v.id('v2images'))
+export const jobRefs = v.union(v.id('messages'), v.id('images'))
 export const jobFields = {
   type: jobTypes,
   ref: jobRefs,
@@ -100,14 +89,16 @@ const schema = defineEntSchema(
       id: v.string(),
       type: v.string(),
     }).deletion('soft'),
-    generations: generationsEnt.deletion('soft'),
 
-    v2generations,
-    v2images,
+    generations: defineEnt(generationsFields)
+      .deletion('soft')
+      .field('permissions', permissions, { default: { private: true } })
+      .edge('user', { field: 'authorId' }),
 
-    images: imagesEnt.deletion('soft'),
-
-    imageModels: imageModelEnt.deletion('soft'),
+    images: defineEnt(imagesFields)
+      .deletion('soft')
+      .field('permissions', permissions, { default: { private: true } })
+      .index('sourceUrl', ['sourceUrl']),
 
     jobs: defineEnt(jobFields).deletion('soft'),
 
@@ -120,7 +111,7 @@ const schema = defineEntSchema(
 
     users: defineEnt(usersFields)
       .deletion('soft')
-      .edges('v2generations', { ref: 'authorId' })
+      .edges('generations', { ref: 'authorId' })
       .edges('threads', { ref: 'ownerId' })
       .edge('apiKey', { optional: true, ref: 'ownerId' })
       .field('tokenIdentifier', v.string(), { index: true }),
