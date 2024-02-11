@@ -44,7 +44,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
 
       <Shell.Controls>
         <Button variant="outline">Link</Button>
-        <Button variant="outline">Copy</Button>
+        {/* <Button variant="outline">Copy</Button> */}
         <DeleteGenerationDialog id={generation._id}>
           <Button variant="outline" color="red">
             Delete

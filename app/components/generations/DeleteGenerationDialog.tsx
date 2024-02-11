@@ -12,9 +12,9 @@ export const DeleteGenerationDialog = ({
   children: React.ReactNode
   id: Id<'generations'>
 }) => {
-  const mDelete = useMutation(api.generations.destroy)
-  const runDelete = async () => {
-    await mDelete({ id })
+  const remove = useMutation(api.generations.remove)
+  const execute = async () => {
+    await remove({ id })
   }
 
   return (
@@ -32,7 +32,7 @@ export const DeleteGenerationDialog = ({
               Cancel
             </Button>
           </AlertDialog.Cancel>
-          <AlertDialog.Action onClick={() => void runDelete()}>
+          <AlertDialog.Action onClick={() => void execute()}>
             <Button variant="solid" color="red">
               Delete
             </Button>

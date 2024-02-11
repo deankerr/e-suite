@@ -53,7 +53,11 @@ export const page = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { paginationOpts }) => {
-    const result = await ctx.db.query('generations').order('desc').paginate(paginationOpts)
+    const result = await ctx.db
+      .query('generations')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deleted'), false))
+      .paginate(paginationOpts)
 
     const pageAndRelations = await Promise.all(
       result.page.map(async (generation) => ({
