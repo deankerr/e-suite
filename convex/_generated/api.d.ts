@@ -29,7 +29,6 @@ import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as rules from "../rules.js";
 import type * as threads_jobs from "../threads/jobs.js";
-import type * as threads_messages from "../threads/messages.js";
 import type * as threads_models from "../threads/models.js";
 import type * as threads from "../threads.js";
 import type * as types from "../types.js";
@@ -60,7 +59,6 @@ declare const fullApi: ApiFromModules<{
   "providers/togetherai": typeof providers_togetherai;
   rules: typeof rules;
   "threads/jobs": typeof threads_jobs;
-  "threads/messages": typeof threads_messages;
   "threads/models": typeof threads_models;
   threads: typeof threads;
   types: typeof types;

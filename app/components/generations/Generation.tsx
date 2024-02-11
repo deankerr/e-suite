@@ -1,7 +1,7 @@
 'use client'
 
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
-import { GenerationResult } from '@/convex/types'
+import { Generation as TGeneration } from '@/convex/generations'
 import { cn } from '@/lib/utils'
 import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
@@ -11,23 +11,26 @@ import { Frame } from '../ui/Frame'
 import { Shell } from '../ui/Shell'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
-export const Generation = ({ author, generation, images, imageModel }: GenerationResult) => {
-  const { width, height, n, status } = generation
-  const creator = author?.username
+export const Generation = ({ generation }: { generation: TGeneration }) => {
+  const creator = 'Fix.Me'
 
-  const portraitLayout = height > width && 'max-w-[33%]'
-  const squareLayout = height === width && 'max-w-[48%]'
-  const landscapeLayout = height < width && 'max-w-[49%]'
+  // const portraitLayout = height > width && 'max-w-[33%]'
+  // const squareLayout = height === width && 'max-w-[48%]'
+  // const landscapeLayout = height < width && 'max-w-[49%]'
 
-  const isError = status === 'error' || status === 'failed'
+  // const isError = status === 'error' || status === 'failed'
+  const isError = false
 
   return (
     <Shell.Root>
-      <Shell.TitleBar icon={FileImageIcon}>{generation.prompt}</Shell.TitleBar>
+      <Shell.TitleBar icon={FileImageIcon}>unamed creation</Shell.TitleBar>
 
       <Shell.Content className="grid content-center">
         <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
-          {Array.from({ length: n }, (_, i) => (
+          {generation.images.map((image) => (
+            <p key={image._id}>image {image._id}</p>
+          ))}
+          {/* {Array.from({ length: n }, (_, i) => (
             <Frame
               key={i}
               image={images[i]}
@@ -42,7 +45,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
               )}
               isError={isError}
             />
-          ))}
+          ))} */}
         </div>
       </Shell.Content>
 
@@ -63,7 +66,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
           <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
         </div>
         <Separator size="4" />
-        <div className="py-rx-4 text-sm">
+        {/* <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>
           <div>{generation.prompt}</div>
         </div>
@@ -99,7 +102,7 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
           status: {generation.status}
           <br />
           {generation._id}
-        </div>
+        </div> */}
       </Shell.Sidebar>
     </Shell.Root>
   )

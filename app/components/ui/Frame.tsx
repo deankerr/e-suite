@@ -1,11 +1,11 @@
 import { Id } from '@/convex/_generated/dataModel'
-import { Image } from '@/convex/types'
+import { Ent } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { AlertOctagonIcon } from 'lucide-react'
 import NextImage from 'next/image'
 
 type EImageProps = {
-  image?: Image | null
+  image?: Ent<'images'> | null
   frameWidth?: number //* used for frames if image is missing/is being generated
   frameHeight?: number //* should eventually not need this
   isError?: boolean
@@ -19,7 +19,7 @@ export const Frame = ({
   isError,
   ...imageProps
 }: EImageProps) => {
-  if (!image)
+  if (!image || !image.storageId)
     return (
       <EmptyFrame width={frameWidth} height={frameHeight} isError={isError || image === null} />
     )

@@ -1,4 +1,4 @@
-import { ImageModelResult } from '@/convex/types'
+import type { ImageModel } from '@/convex/imageModels'
 import { cn } from '@/lib/utils'
 import { Badge, Card, Inset } from '@radix-ui/themes'
 import { ArrowUpRightSquare } from 'lucide-react'
@@ -7,14 +7,14 @@ import { forwardRef } from 'react'
 import { Frame } from '../ui/Frame'
 
 type Props = {
-  from?: ImageModelResult | null
+  from?: ImageModel
 }
 
 export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.ComponentProps<typeof Card>>(
   function ImageModelSlate({ from, className, ...props }, forwardedRef) {
     if (!from) return null
 
-    const { imageModel, image } = from
+    const { image, ...imageModel } = from
     return (
       <Card {...props} className={cn('h-32 w-full max-w-72', className)} ref={forwardedRef}>
         <Inset side="x" className="absolute left-[65%] top-0 w-32">
@@ -25,7 +25,7 @@ export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.Component
           {imageModel?.name}
 
           <div className="flex flex-wrap gap-1 py-1">
-            {imageModel && <ImageModelBadges imageModel={imageModel} />}
+            {imageModel && <ImageModelBadges imageModel={from} />}
           </div>
         </div>
 
@@ -37,7 +37,7 @@ export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.Component
   },
 )
 
-const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageModel'] }) => {
+const ImageModelBadges = ({ imageModel }: { imageModel: ImageModel }) => {
   const colors: Record<string, React.ComponentProps<typeof Badge>['color']> = {
     dalle2: 'grass',
     dalle3: 'jade',
@@ -47,7 +47,7 @@ const ImageModelBadges = ({ imageModel }: { imageModel: ImageModelResult['imageM
     CIVITAI: 'blue',
   }
 
-  const baseName: Record<ImageModelResult['imageModel']['base'], string> = {
+  const baseName: Record<ImageModel['base'], string> = {
     dalle2: 'DALL-E 2',
     dalle3: 'DALL-E 3',
     'sd1.5': 'Stable Diffusion 1.5',

@@ -3,12 +3,12 @@
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { ImageModelResult } from '@/convex/types'
+import { ImageModel } from '@/convex/imageModels'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Label from '@radix-ui/react-label'
 import { Button, Card, Checkbox, TextArea } from '@radix-ui/themes'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { forwardRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -34,11 +34,11 @@ type GenerationBarProps = {} & React.ComponentProps<'form'>
 
 export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
   function GenerationForm(props, forwardedRef) {
-    const list = useQuery(api.imageModels.list, { type: 'checkpoint', take: 64 })
+    const list = usePaginatedQuery(api.imageModels.list, {}, { initialNumItems: 64 })
 
-    const createGeneration = useMutation(api.generations.create)
+    const createGeneration = useMutation(api.generations.send)
 
-    const [imageModel, setImageModel] = useState<ImageModelResult>()
+    const [imageModel, setImageModel] = useState<ImageModel>()
 
     const { register, control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -54,8 +54,12 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
     const submit = handleSubmit(
       async (data) => {
         console.log('submit', data)
+        const { randomize, dimensions, ...parameters } = data
         try {
-          await createGeneration(data)
+          await createGeneration({
+            parameters,
+            images: Array.from({ length: 4 }, () => ({ dimensions })),
+          })
         } catch (err) {
           console.error(err)
           if (err instanceof ConvexError) {
@@ -115,7 +119,7 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
                 list={list}
                 onValueChange={(value) => {
                   setImageModel(value)
-                  field.onChange(value.imageModel._id)
+                  field.onChange(value._id)
                 }}
                 className="max-w-[90vw]"
               >

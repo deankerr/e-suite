@@ -15,7 +15,7 @@ export default function GenerationIdPage({ params }: { params: { id: Id<'generat
 
   return (
     <ScrollArea>
-      <Generation {...generation} />
+      <Generation generation={generation} />
     </ScrollArea>
   )
 }

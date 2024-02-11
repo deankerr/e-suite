@@ -1,7 +1,6 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { v } from 'convex/values'
-import { nsfwRatings } from './constants'
-import { messagesFields } from './threads/messages'
+import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
 
 export const permissions = v.object({
@@ -51,6 +50,28 @@ const jobStatusNames = vEnum([
   'failed',
 ])
 
+export const imageModelFields = {
+  name: v.string(),
+  description: v.string(),
+  base: vEnum(modelBases),
+  type: vEnum(modelTypes),
+  nsfw: vEnum(nsfwRatings),
+  imageId: v.id('images'),
+  tags: v.array(v.string()),
+
+  civitaiId: v.optional(v.string()),
+  huggingFaceId: v.optional(v.string()),
+
+  sinkin: v.optional(
+    v.object({
+      refId: v.string(),
+      hidden: v.optional(v.boolean()),
+    }),
+  ),
+
+  hidden: v.optional(v.boolean()),
+}
+
 export const jobEventFields = {
   status: jobStatusNames,
   message: v.optional(v.string()),
@@ -76,6 +97,27 @@ export const usersFields = {
   admin: v.boolean(),
 }
 
+export const messageFields = {
+  role: vEnum(['system', 'user', 'assistant']),
+  name: v.optional(v.string()),
+  content: v.string(),
+}
+
+export const llmParametersFields = {
+  model: v.string(),
+  max_tokens: v.optional(v.number()),
+  stop: v.optional(v.array(v.string())),
+  temperature: v.optional(v.number()),
+  top_p: v.optional(v.number()),
+  top_k: v.optional(v.number()),
+  repetition_penalty: v.optional(v.number()),
+}
+
+export const messagesFields = {
+  ...messageFields,
+  llmParameters: v.optional(v.object(llmParametersFields)),
+}
+
 const schema = defineEntSchema(
   {
     apiKeys: defineEnt({
@@ -99,6 +141,10 @@ const schema = defineEntSchema(
       .deletion('soft')
       .field('permissions', permissions, { default: { private: true } })
       .index('sourceUrl', ['sourceUrl']),
+
+    imageModels: defineEnt(imageModelFields)
+      .deletion('soft')
+      .field('order', v.number(), { index: true }),
 
     jobs: defineEnt(jobFields).deletion('soft'),
 

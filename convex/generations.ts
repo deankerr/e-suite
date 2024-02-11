@@ -6,15 +6,24 @@ import { mutation, query } from './functions'
 import { generationParameters, permissions } from './schema'
 import { error, vEnum } from './util'
 
+export type Generation = Awaited<ReturnType<typeof get>>
+
 export const get = query({
   args: {
     id: v.id('generations'),
   },
   handler: async (ctx, args) => {
-    return await ctx
+    const generation = await ctx
       .table('generations')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .getX(args.id)
+
+    const images = await ctx.table('images').getManyX(generation.imageIds)
+
+    return {
+      ...generation,
+      images,
+    }
   },
 })
 
@@ -23,11 +32,21 @@ export const list = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    return await ctx
+    const results = await ctx
       .table('generations')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .order('desc')
       .paginate(args.paginationOpts)
+
+    return {
+      ...results,
+      page: await Promise.all(
+        results.page.map(async (generation) => ({
+          ...generation,
+          images: await ctx.table('images').getManyX(generation.imageIds),
+        })),
+      ),
+    }
   },
 })
 
@@ -36,7 +55,7 @@ export const send = mutation({
     parameters: generationParameters,
     images: v.array(
       v.object({
-        dimensions: vEnum(dimensions),
+        dimensions: v.string(),
       }),
     ),
     permissions: v.optional(permissions),
@@ -72,12 +91,13 @@ export const send = mutation({
   },
 })
 
-const getDimensionSizes = (value: (typeof dimensions)[number]) => {
+const getDimensionSizes = (value: string) => {
   const sizes = {
     portrait: { width: 512, height: 768 },
     square: { width: 512, height: 512 },
     landscape: { width: 768, height: 512 },
   }
-  if (value in sizes) return sizes[value]
+
+  if (value in sizes) return sizes[value as keyof typeof sizes]
   throw error('Invalid generation dimension', { dimension: value })
 }
