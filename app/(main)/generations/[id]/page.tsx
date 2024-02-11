@@ -4,6 +4,7 @@ import { Generation } from '@/app/components/generations/Generation'
 import { Spinner } from '@/app/components/ui/Spinner'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { ScrollArea } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 
 export default function GenerationIdPage({ params }: { params: { id: Id<'generations'> } }) {
@@ -12,5 +13,9 @@ export default function GenerationIdPage({ params }: { params: { id: Id<'generat
   if (generation === undefined) return <Spinner />
   if (generation === null) return <div>Generation not found :-(</div>
 
-  return <Generation {...generation} />
+  return (
+    <ScrollArea>
+      <Generation {...generation} />
+    </ScrollArea>
+  )
 }
