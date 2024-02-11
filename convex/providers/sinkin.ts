@@ -9,7 +9,6 @@ export const run = internalAction({
   },
   handler: async (ctx, { id }) => {
     const { generation, imageModel } = await ctx.runMutation(internal.generations.run, { id })
-
     const body = new URLSearchParams()
     body.set('access_token', process.env.SINKIN_API_KEY as string)
     body.set('model_id', imageModel?.sinkin?.refId ?? '')
@@ -17,20 +16,17 @@ export const run = internalAction({
     body.set('width', String(generation.width))
     body.set('height', String(generation.height))
     body.set('num_images', String(generation.n))
-
     generation.negativePrompt && body.set('negative_prompt', generation.negativePrompt)
     generation.seed && body.set('seed', String(generation.seed))
     generation.scheduler && body.set('scheduler', generation.scheduler)
     generation.steps && body.set('steps', String(generation.steps))
     generation.guidance && body.set('scale', String(generation.guidance))
     generation.lcm && body.set('lcm', String(generation.lcm))
-
     const response = await fetch('https://sinkin.ai/m/inference', {
       method: 'POST',
       body,
     })
     const data = await response.json()
-
     const { result, error } = parseApiInferenceResponse(data)
     if (error) {
       await ctx.runMutation(internal.generations.update, {
@@ -49,7 +45,6 @@ export const run = internalAction({
         async (url) => await ctx.runAction(api.files.images.pull, { url, generationsId: id }),
       ),
     )
-
     const errors: string[] = []
     const imageIds = imageResults.map((result) => {
       if (result.status === 'fulfilled') return result.value
@@ -62,13 +57,11 @@ export const run = internalAction({
       }
       return null
     })
-
     //* all failed
     if (errors.length === generation.n) {
       await ctx.runMutation(internal.generations.update, { id, status: 'failed', data: errors })
       return
     }
-
     await ctx.runMutation(internal.generations.update, {
       id,
       imageIds,

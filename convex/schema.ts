@@ -7,13 +7,13 @@ import { imageModelEnt } from './imageModels'
 import { messagesFields } from './threads/messages'
 import { vEnum } from './util'
 
-const permissions = v.object({
+export const permissions = v.object({
   private: v.boolean(), // only visible by owner/author
-  allowOnPublicFeeds: v.boolean(),
-  allowOtherUsersToEdit: v.boolean(),
+  allowOnPublicFeeds: v.optional(v.boolean()),
+  allowOtherUsersToEdit: v.optional(v.boolean()),
 })
 
-const generationParameters = {
+export const generationParameters = v.object({
   imageModelId: v.string(), //TODO v.id
   prompt: v.string(),
   negativePrompt: v.optional(v.string()),
@@ -22,9 +22,9 @@ const generationParameters = {
   steps: v.optional(v.number()),
   guidance: v.optional(v.number()),
   lcm: v.optional(v.boolean()),
-}
+})
 
-const v2imagesFields = {
+export const v2imagesFields = {
   storageId: v.optional(v.id('_storage')),
   url: v.optional(v.string()),
 
@@ -37,17 +37,19 @@ const v2imagesFields = {
   color: v.string(),
   metadata: v.any(),
 
-  parameters: v.optional(v.object(generationParameters)),
-  permissions,
+  parameters: v.optional(generationParameters),
 }
-const v2images = defineEnt(v2imagesFields).deletion('soft').index('sourceUrl', ['sourceUrl'])
+const v2images = defineEnt(v2imagesFields)
+  .deletion('soft')
+  .field('permissions', permissions, { default: { private: true } })
+  .index('sourceUrl', ['sourceUrl'])
 
 const v2generationsFields = {
-  permissions,
-  images: v.array(v.object(v2imagesFields)),
+  imageIds: v.array(v.id('v2images')),
 }
 const v2generations = defineEnt(v2generationsFields)
   .deletion('soft')
+  .field('permissions', permissions, { default: { private: true } })
   .edge('user', { field: 'authorId' })
 
 const jobStatusNames = vEnum([
@@ -65,8 +67,8 @@ export const jobEventFields = {
   message: v.optional(v.string()),
   data: v.optional(v.any()),
 }
-export const jobTypes = vEnum(['llm', 'throw'])
-export const jobRefs = v.union(v.id('messages'), v.id('generations'))
+export const jobTypes = vEnum(['llm', 'generation'])
+export const jobRefs = v.union(v.id('messages'), v.id('v2images'))
 export const jobFields = {
   type: jobTypes,
   ref: jobRefs,

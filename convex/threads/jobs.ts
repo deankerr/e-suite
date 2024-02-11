@@ -11,10 +11,12 @@ export const llm = internalAction({
   },
   handler: async (ctx, { id: jobId }): Promise<void> => {
     try {
-      const messageId = (await ctx.runMutation(internal.jobs.acquire, {
+      const jobRef = await ctx.runMutation(internal.jobs.acquire, {
         id: jobId,
         type: 'llm',
-      })) as Id<'messages'>
+      })
+
+      const messageId = jobRef as Id<'messages'>
 
       const messages = await ctx.runQuery(internal.threads.getMessageContext, {
         id: messageId,
