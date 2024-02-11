@@ -14,21 +14,20 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as agents_agents from "../agents/agents.js";
 import type * as apiKeys from "../apiKeys.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
 import type * as files_plaiceholder from "../files/plaiceholder.js";
 import type * as functions from "../functions.js";
+import type * as generations_generate from "../generations/generate.js";
+import type * as generations_imageModels from "../generations/imageModels.js";
 import type * as generations from "../generations.js";
-import type * as http from "../http.js";
-import type * as imageModels from "../imageModels.js";
 import type * as jobs from "../jobs.js";
 import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as rules from "../rules.js";
-import type * as threads_jobs from "../threads/jobs.js";
+import type * as threads_llm from "../threads/llm.js";
 import type * as threads_models from "../threads/models.js";
 import type * as threads from "../threads.js";
 import type * as types from "../types.js";
@@ -44,21 +43,20 @@ import type * as util from "../util.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "agents/agents": typeof agents_agents;
   apiKeys: typeof apiKeys;
   constants: typeof constants;
   "files/images": typeof files_images;
   "files/plaiceholder": typeof files_plaiceholder;
   functions: typeof functions;
+  "generations/generate": typeof generations_generate;
+  "generations/imageModels": typeof generations_imageModels;
   generations: typeof generations;
-  http: typeof http;
-  imageModels: typeof imageModels;
   jobs: typeof jobs;
   "providers/clerk": typeof providers_clerk;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
   rules: typeof rules;
-  "threads/jobs": typeof threads_jobs;
+  "threads/llm": typeof threads_llm;
   "threads/models": typeof threads_models;
   threads: typeof threads;
   types: typeof types;

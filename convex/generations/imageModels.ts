@@ -1,25 +1,19 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { Id } from './_generated/dataModel'
-import { mutation, query } from './functions'
-import { imageModelFields } from './schema'
-import { Ent } from './types'
+import { Doc, Id } from '../_generated/dataModel'
+import { mutation, query } from '../functions'
+import { imageModelFields } from '../schema'
+import { Ent } from '../types'
 
-export type ImageModel = Awaited<ReturnType<typeof get>>
+export type ImageModel = Ent<'imageModels'> & { images: Ent<'images'> | null }
 
 export const get = query({
   args: {
     id: v.id('imageModels'),
   },
   handler: async (ctx, { id }) => {
-    const imageModel = await ctx
-      .table('imageModels')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .getX(id)
-    const image = await ctx
-      .table('images')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .get(imageModel.imageId)
+    const imageModel = await ctx.table('imageModels').getX(id)
+    const image = await ctx.table('images').get(imageModel.imageId)
 
     return {
       ...imageModel,

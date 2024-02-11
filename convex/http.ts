@@ -1,43 +1,43 @@
-import { httpRouter } from 'convex/server'
-import z from 'zod'
-import { Id } from './_generated/dataModel'
-import { httpAction } from './_generated/server'
-import { clerkWebhookHandler } from './providers/clerk'
+// import { httpRouter } from 'convex/server'
+// import z from 'zod'
+// import { Id } from './_generated/dataModel'
+// import { httpAction } from './_generated/server'
+// import { clerkWebhookHandler } from './providers/clerk'
 
-const http = httpRouter()
+// const http = httpRouter()
 
-http.route({
-  path: '/image',
-  method: 'GET',
-  handler: httpAction(async (ctx, request) => {
-    const { searchParams } = new URL(request.url)
-    //TODO authorized to get image
-    const storageId = searchParams.get('storageId') as Id<'_storage'>
-    const blob = await ctx.storage.get(storageId)
-    if (blob === null) {
-      return new Response('Image not found', {
-        status: 400,
-      })
-    }
-    return new Response(blob)
-  }),
-})
+// http.route({
+//   path: '/image',
+//   method: 'GET',
+//   handler: httpAction(async (ctx, request) => {
+//     const { searchParams } = new URL(request.url)
+//     //TODO authorized to get image
+//     const storageId = searchParams.get('storageId') as Id<'_storage'>
+//     const blob = await ctx.storage.get(storageId)
+//     if (blob === null) {
+//       return new Response('Image not found', {
+//         status: 400,
+//       })
+//     }
+//     return new Response(blob)
+//   }),
+// })
 
-const chatRequestSchema = z.object({
-  threadId: z.string().optional(),
-  messages: z
-    .array(
-      z.object({
-        role: z.enum(['user', 'assistant', 'system']),
-        name: z.string().optional(),
-        content: z.string(),
-      }),
-    )
-    .min(1),
-  temp_runChatProfileId: z.string().optional(),
-  webhook: z.string().url(),
-  authToken: z.string(),
-})
+// const chatRequestSchema = z.object({
+//   threadId: z.string().optional(),
+//   messages: z
+//     .array(
+//       z.object({
+//         role: z.enum(['user', 'assistant', 'system']),
+//         name: z.string().optional(),
+//         content: z.string(),
+//       }),
+//     )
+//     .min(1),
+//   temp_runChatProfileId: z.string().optional(),
+//   webhook: z.string().url(),
+//   authToken: z.string(),
+// })
 
 // http.route({
 //   path: '/chat_va1',
@@ -83,11 +83,11 @@ const chatRequestSchema = z.object({
 //   }),
 // })
 
-const generateRequestSchema = z.object({
-  authToken: z.string().min(1),
-  prompt: z.string().min(1),
-  model: z.string().optional(),
-})
+// const generateRequestSchema = z.object({
+//   authToken: z.string().min(1),
+//   prompt: z.string().min(1),
+//   model: z.string().optional(),
+// })
 
 // http.route({
 //   path: '/generate_va1',
@@ -105,10 +105,10 @@ const generateRequestSchema = z.object({
 //   }),
 // })
 
-http.route({
-  path: '/internal/clerk/webhook/v1',
-  method: 'POST',
-  handler: clerkWebhookHandler,
-})
+// http.route({
+//   path: '/internal/clerk/webhook/v1',
+//   method: 'POST',
+//   handler: clerkWebhookHandler,
+// })
 
-export default http
+// export default http

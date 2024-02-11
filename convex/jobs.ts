@@ -18,7 +18,9 @@ export const dispatch = internalMutation({
   },
   handler: async (ctx, args) => {
     const id = await ctx.table('jobs').insert({ ...args, status: 'pending', events: [] })
-    if (args.type === 'llm') await ctx.scheduler.runAfter(0, internal.threads.jobs.llm, { id })
+    if (args.type === 'llm') await ctx.scheduler.runAfter(0, internal.threads.llm.llm, { id })
+    if (args.type === 'generate')
+      await ctx.scheduler.runAfter(0, internal.generations.generate.generate, { id })
   },
 })
 
@@ -51,6 +53,7 @@ export const acquire = internalMutation({
       status: 'active',
       events: [...job.events, { status: 'active', creationTime: Date.now() }],
     })
+
     return job.ref
   },
 })

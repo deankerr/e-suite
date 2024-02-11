@@ -10,7 +10,7 @@ export const permissions = v.object({
 })
 
 export const generationParameters = v.object({
-  imageModelId: v.string(), //TODO v.id
+  imageModelId: v.id('imageModels'),
   prompt: v.string(),
   negativePrompt: v.optional(v.string()),
   seed: v.optional(v.number()),
@@ -77,7 +77,7 @@ export const jobEventFields = {
   message: v.optional(v.string()),
   data: v.optional(v.any()),
 }
-export const jobTypes = vEnum(['llm', 'generation'])
+export const jobTypes = vEnum(['llm', 'generate'])
 export const jobRefs = v.union(v.id('messages'), v.id('images'))
 export const jobFields = {
   type: jobTypes,

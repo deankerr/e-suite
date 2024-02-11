@@ -35,8 +35,8 @@ export const GenerationFeed = ({
   return (
     <ScrollArea className={className} {...props}>
       <div className="space-y-rx-8 overflow-y-auto px-4 pb-28 pt-4">
-        {/* {results?.map((gen) => <Generation key={gen.generation._id} {...gen} />)}
-        <Loader status={status} loadRef={ref} /> */}
+        {results?.map((gen) => <Generation key={gen._id} generation={gen} />)}
+        {/* <Loader status={status} loadRef={ref} /> */}
       </div>
       <div className="fixed right-0 top-0 bg-black p-1 text-sm">
         {inView && 'inView'} {results.length} {status}

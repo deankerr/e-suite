@@ -1,7 +1,14 @@
 import { v } from 'convex/values'
-import { internalMutation, mutation, query } from '../functions'
-import { generationParameters, imagesFields, permissions } from '../schema'
-import { vEnum } from '../util'
+import { internalMutation, internalQuery } from '../functions'
+import { imagesFields, permissions } from '../schema'
+import { Ent } from '../types'
+
+export const get = internalQuery({
+  args: {
+    id: v.id('images'),
+  },
+  handler: async (ctx, { id }): Promise<Ent<'images'>> => await ctx.table('images').getX(id),
+})
 
 export const create = internalMutation({
   args: {

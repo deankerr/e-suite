@@ -12,7 +12,7 @@ module.exports = {
     warnOnUnsupportedTypeScriptVersion: true,
     project: true,
   },
-  ignorePatterns: ['convex/_generated', '.next', 'unused'],
+  ignorePatterns: ['.next', 'unused'],
   rules: {
     // support unused vars during dev
     '@typescript-eslint/no-unused-vars': [

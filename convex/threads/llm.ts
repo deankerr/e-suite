@@ -15,7 +15,6 @@ export const llm = internalAction({
         id: jobId,
         type: 'llm',
       })
-
       const messageId = jobRef as Id<'messages'>
 
       const messages = await ctx.runQuery(internal.threads.getMessageContext, {

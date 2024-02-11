@@ -1,7 +1,6 @@
-import { ConvexError, v } from 'convex/values'
+import { v } from 'convex/values'
 import z from 'zod'
-import { api, internal } from '../_generated/api'
-import { action, internalAction, query } from '../_generated/server'
+import { action } from '../_generated/server'
 
 // export const run = internalAction({
 //   args: {
@@ -70,6 +69,8 @@ import { action, internalAction, query } from '../_generated/server'
 //     })
 //   },
 // })
+
+// export const createGenerationRequest = () => {}
 
 const parseApiInferenceResponse = (data: unknown) => {
   //* check error code

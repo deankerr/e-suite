@@ -1,6 +1,9 @@
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel } from '@/convex/imageModels'
 import { cn } from '@/lib/utils'
 import { Badge, Card, Inset } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
@@ -8,13 +11,17 @@ import { Frame } from '../ui/Frame'
 
 type Props = {
   from?: ImageModel
+  fromId?: Id<'imageModels'>
 }
 
 export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.ComponentProps<typeof Card>>(
-  function ImageModelSlate({ from, className, ...props }, forwardedRef) {
-    if (!from) return null
+  function ImageModelSlate({ from, fromId, className, ...props }, forwardedRef) {
+    const fromfromId = useQuery(api.imageModels.get, fromId ? { id: fromId } : 'skip')
 
-    const { image, ...imageModel } = from
+    const source = from ?? fromfromId
+    if (!source) return null
+
+    const { image, ...imageModel } = source
     return (
       <Card {...props} className={cn('h-32 w-full max-w-72', className)} ref={forwardedRef}>
         <Inset side="x" className="absolute left-[65%] top-0 w-32">
@@ -25,7 +32,7 @@ export const ImageModelCard = forwardRef<HTMLDivElement, Props & React.Component
           {imageModel?.name}
 
           <div className="flex flex-wrap gap-1 py-1">
-            {imageModel && <ImageModelBadges imageModel={from} />}
+            {imageModel && <ImageModelBadges imageModel={source} />}
           </div>
         </div>
 
