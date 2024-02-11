@@ -1,11 +1,12 @@
 import { defineEnt } from 'convex-ents'
 import { customMutation } from 'convex-helpers/server/customFunctions'
-import { defineTable, paginationOptsValidator } from 'convex/server'
+import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { internal } from './_generated/api'
-import { Doc, Id } from './_generated/dataModel'
+import { Id } from './_generated/dataModel'
 import { internalMutation, mutation, query } from './_generated/server'
 import { dimensions, generationStatus } from './constants'
+import { query as newQuery } from './functions'
 import { get as getImageModel } from './imageModels'
 import { Dimension } from './types'
 import { assert, error, vEnum } from './util'
@@ -81,7 +82,20 @@ export const page = query({
 export const get = query({
   args: { id: v.id('generations') },
   handler: async (ctx, { id }) => {
-    return await ctx.db.get(id)
+    const generation = await ctx.db.get(id)
+    if (!generation) return null
+    return {
+      generation,
+      images: await Promise.all(
+        generation.imageIds.map(async (id: Id<'images'> | null) =>
+          id ? await ctx.db.get(id) : null,
+        ),
+      ),
+      imageModel: await getImageModel(ctx, {
+        id: generation.imageModelId,
+      }),
+      author: generation.userId ? await ctx.db.get(generation.userId) : null,
+    }
   },
 })
 

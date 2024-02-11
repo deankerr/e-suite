@@ -1,8 +1,12 @@
+'use client'
+
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { GenerationResult } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { Button, Em, Heading, Separator, Strong } from '@radix-ui/themes'
+import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
+import NextLink from 'next/link'
+import { Button } from '../ui/Button'
 import { Frame } from '../ui/Frame'
 import { Shell } from '../ui/Shell'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
@@ -43,7 +47,9 @@ export const Generation = ({ author, generation, images, imageModel }: Generatio
       </Shell.Content>
 
       <Shell.Controls>
-        <Button variant="outline">Link</Button>
+        <Button asChild>
+          <NextLink href={`/generations/${generation._id}`}>Link</NextLink>
+        </Button>
         {/* <Button variant="outline">Copy</Button> */}
         <DeleteGenerationDialog id={generation._id}>
           <Button variant="outline" color="red">
