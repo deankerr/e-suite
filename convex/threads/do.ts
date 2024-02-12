@@ -1,8 +1,8 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
+import { internal } from '../_generated/api'
 import { internalQuery, mutation, query } from '../functions'
-import { dispatch } from '../jobs'
 import { messagesFields } from '../schema'
 import { assert, vEnum } from '../util'
 
@@ -116,7 +116,7 @@ export const send = mutation({
         .table('messages')
         .insert({ ...message, name, content, threadId })
       if (message.llmParameters && message.role === 'assistant') {
-        await dispatch(ctx as any, { type: 'llm', ref: newMessageId })
+        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'llm', ref: newMessageId })
       }
     }
 
