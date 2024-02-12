@@ -8,7 +8,7 @@ import { ScrollArea } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 
 export default function GenerationIdPage({ params }: { params: { id: Id<'generations'> } }) {
-  const generation = useQuery(api.generations.get, { id: params.id })
+  const generation = useQuery(api.generations.do.get, { id: params.id })
 
   if (generation === undefined) return <Spinner />
   if (generation === null) return <div>Generation not found :-(</div>

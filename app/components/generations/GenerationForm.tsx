@@ -3,7 +3,7 @@
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { ImageModel } from '@/convex/imageModels'
+import type { ImageModel } from '@/convex/generations/imageModels'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Label from '@radix-ui/react-label'
@@ -34,9 +34,9 @@ type GenerationBarProps = {} & React.ComponentProps<'form'>
 
 export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
   function GenerationForm(props, forwardedRef) {
-    const list = usePaginatedQuery(api.imageModels.list, {}, { initialNumItems: 64 })
+    const list = usePaginatedQuery(api.generations.imageModels.list, {}, { initialNumItems: 64 })
 
-    const createGeneration = useMutation(api.generations.send)
+    const createGeneration = useMutation(api.generations.do.send)
 
     const [imageModel, setImageModel] = useState<ImageModel>()
 

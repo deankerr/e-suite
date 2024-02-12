@@ -78,10 +78,10 @@ export const jobEventFields = {
   data: v.optional(v.any()),
 }
 export const jobTypes = vEnum(['llm', 'generate'])
-export const jobRefs = v.union(v.id('messages'), v.id('images'))
+
 export const jobFields = {
   type: jobTypes,
-  ref: jobRefs,
+  ref: v.string(),
   status: jobStatusNames,
   events: v.array(v.object({ ...jobEventFields, creationTime: v.number() })),
 }

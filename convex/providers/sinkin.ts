@@ -1,7 +1,3 @@
-import { v } from 'convex/values'
-import z from 'zod'
-import { action } from '../_generated/server'
-
 // export const run = internalAction({
 //   args: {
 //     id: v.id('generations'),
@@ -72,26 +68,26 @@ import { action } from '../_generated/server'
 
 // export const createGenerationRequest = () => {}
 
-const parseApiInferenceResponse = (data: unknown) => {
-  //* check error code
-  const { error_code } = z.object({ error_code: z.number() }).parse(data)
+// const parseApiInferenceResponse = (data: unknown) => {
+//   //* check error code
+//   const { error_code } = z.object({ error_code: z.number() }).parse(data)
 
-  if (error_code > 0) {
-    //* error, get message
-    const { message } = z.object({ message: z.string() }).parse(data)
-    return { error: { error_code, message } }
-  }
+//   if (error_code > 0) {
+//     //* error, get message
+//     const { message } = z.object({ message: z.string() }).parse(data)
+//     return { error: { error_code, message } }
+//   }
 
-  const parsed = z
-    .object({
-      inf_id: z.string(),
-      credit_cost: z.number(),
-      images: z.array(z.string()),
-    })
-    .parse(data)
+//   const parsed = z
+//     .object({
+//       inf_id: z.string(),
+//       credit_cost: z.number(),
+//       images: z.array(z.string()),
+//     })
+//     .parse(data)
 
-  return { result: parsed }
-}
+//   return { result: parsed }
+// }
 
 // export const registerAvailableModels = internalAction(async (ctx) => {
 //   const apiModelData = await apiGetModels()
@@ -193,63 +189,63 @@ const parseApiInferenceResponse = (data: unknown) => {
 //   }
 // })
 
-export const getModelsApi = action(async (ctx) => await apiGetModels())
+// export const getModelsApi = action(async (ctx) => await apiGetModels())
 
-const apiGetModels = async () => {
-  console.log(`[sinkin] /api/models`)
-  const body = new FormData()
-  body.set('access_token', process.env.SINKIN_API_KEY as string)
+// const apiGetModels = async () => {
+//   console.log(`[sinkin] /api/models`)
+//   const body = new FormData()
+//   body.set('access_token', process.env.SINKIN_API_KEY as string)
 
-  const response = await fetch('https://sinkin.ai/api/models', {
-    method: 'POST',
-    body,
-  })
-  if (!response.ok) throw new Error(`[sinkin] request failed: ${response.statusText}`)
-  //TODO handle error message response
-  const json = await response.json()
-  return apiGetModelsResponseSchema.parse(json)
-}
+//   const response = await fetch('https://sinkin.ai/api/models', {
+//     method: 'POST',
+//     body,
+//   })
+//   if (!response.ok) throw new Error(`[sinkin] request failed: ${response.statusText}`)
+//   //TODO handle error message response
+//   const json = await response.json()
+//   return apiGetModelsResponseSchema.parse(json)
+// }
 
-const getIdFromUrl = (url: string) => {
-  const match = url.match(/\/(\d+)/)
-  const id = (match && match[1]) ?? null
-  return id
-}
+// const getIdFromUrl = (url: string) => {
+//   const match = url.match(/\/(\d+)/)
+//   const id = (match && match[1]) ?? null
+//   return id
+// }
 
-const apiGetModelsResponseSchema = z.object({
-  error_code: z.number(),
-  models: z
-    .object({
-      civitai_model_id: z
-        .number()
-        .transform((id) => String(id))
-        .optional(),
-      cover_img: z.string(),
-      id: z.string(),
-      link: z.string(),
-      name: z.string(),
-      tags: z.string().array().optional(),
-    })
-    .array(),
-  loras: z
-    .object({
-      cover_img: z.string(),
-      id: z.string(),
-      link: z.string(),
-      name: z.string(),
-    })
-    .array(),
-  message: z.string().optional(),
-})
+// const apiGetModelsResponseSchema = z.object({
+//   error_code: z.number(),
+//   models: z
+//     .object({
+//       civitai_model_id: z
+//         .number()
+//         .transform((id) => String(id))
+//         .optional(),
+//       cover_img: z.string(),
+//       id: z.string(),
+//       link: z.string(),
+//       name: z.string(),
+//       tags: z.string().array().optional(),
+//     })
+//     .array(),
+//   loras: z
+//     .object({
+//       cover_img: z.string(),
+//       id: z.string(),
+//       link: z.string(),
+//       name: z.string(),
+//     })
+//     .array(),
+//   message: z.string().optional(),
+// })
 
-export const sinkinApiGetModelsResponseSchema = apiGetModelsResponseSchema
+// export const sinkinApiGetModelsResponseSchema = apiGetModelsResponseSchema
 
-export const sinkinImageProviderData = v.object({
-  civitai_model_id: v.optional(v.string()),
-  cover_img: v.string(),
-  id: v.string(),
-  link: v.string(),
-  name: v.string(),
-  type: v.union(v.literal('checkpoint'), v.literal('lora')),
-  tags: v.optional(v.array(v.string())),
-})
+// export const sinkinImageProviderData = v.object({
+//   civitai_model_id: v.optional(v.string()),
+//   cover_img: v.string(),
+//   id: v.string(),
+//   link: v.string(),
+//   name: v.string(),
+//   type: v.union(v.literal('checkpoint'), v.literal('lora')),
+//   tags: v.optional(v.array(v.string())),
+// })

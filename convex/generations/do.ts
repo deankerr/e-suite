@@ -1,12 +1,12 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { internal } from './_generated/api'
-import { mutation, query } from './functions'
-import { generationParameters, permissions } from './schema'
-import { Ent } from './types'
-import { error } from './util'
+import { mutation, query } from '../functions'
+import { dispatch } from '../jobs'
+import { generationParameters, permissions } from '../schema'
+import { Ent } from '../types'
+import { error } from '../util'
 
-export type Generation = Ent<'generations'> & { images: Ent<'images'> | null }
+export type Generation = Awaited<ReturnType<typeof get>>
 
 export const get = query({
   args: {
@@ -76,7 +76,7 @@ export const send = mutation({
           parameters: args.parameters,
           permissions: args.permissions ?? { private: true },
         })
-        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'generate', ref: id })
+        await dispatch(ctx as any, { type: 'generate', ref: id })
         return id
       }),
     )

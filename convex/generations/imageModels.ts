@@ -5,7 +5,7 @@ import { mutation, query } from '../functions'
 import { imageModelFields } from '../schema'
 import { Ent } from '../types'
 
-export type ImageModel = Ent<'imageModels'> & { images: Ent<'images'> | null }
+export type ImageModel = Awaited<ReturnType<typeof get>>
 
 export const get = query({
   args: {

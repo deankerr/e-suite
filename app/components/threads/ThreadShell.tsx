@@ -33,14 +33,14 @@ type Props = {
 export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function ThreadShell({ setTitle, threadId, ...props }, forwardedRef) {
     const router = useRouter()
-    const thread = useQuery(api.threads.get, threadId ? { id: threadId } : 'skip')
-    const messages = useQuery(api.threads.tail, threadId ? { id: threadId } : 'skip')
+    const thread = useQuery(api.threads.do.get, threadId ? { id: threadId } : 'skip')
+    const messages = useQuery(api.threads.do.tail, threadId ? { id: threadId } : 'skip')
     const messagesIsLoading = threadId && !messages
     const systemPrompt = thread?.systemPrompt
 
-    const sendMessage = useMutation(api.threads.send)
-    const updateMessage = useMutation(api.threads.updateMessage)
-    const removeMessage = useMutation(api.threads.removeMessage)
+    const sendMessage = useMutation(api.threads.do.send)
+    const updateMessage = useMutation(api.threads.do.updateMessage)
+    const removeMessage = useMutation(api.threads.do.removeMessage)
 
     const formRef = useRef<HTMLFormElement>(null)
     const [messageValue, setMessageValue] = useState('')

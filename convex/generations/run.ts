@@ -3,9 +3,10 @@ import { internalAction } from '../_generated/server'
 
 export const generate = internalAction({
   args: {
-    id: v.id('jobs'),
+    jobId: v.id('jobs'),
+    refId: v.string(),
   },
-  handler: async (ctx, { id: jobId }): Promise<void> => {
+  handler: async (ctx, args): Promise<void> => {
     // const jobRef = await ctx.runMutation(internal.jobs.acquire, {
     //   id: jobId,
     //   type: 'generate',

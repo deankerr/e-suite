@@ -17,7 +17,7 @@ export const GenerationFeed = ({
   ...props
 }: React.ComponentProps<typeof ScrollArea>) => {
   const { results, status, loadMore } = usePaginatedQuery(
-    api.generations.list,
+    api.generations.do.list,
     {},
     { initialNumItems },
   )

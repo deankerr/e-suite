@@ -7,17 +7,14 @@ import { assert } from '../util'
 
 export const llm = internalAction({
   args: {
-    id: v.id('jobs'),
+    jobId: v.id('jobs'),
+    refId: v.string(),
   },
-  handler: async (ctx, { id: jobId }): Promise<void> => {
+  handler: async (ctx, args): Promise<void> => {
     try {
-      const jobRef = await ctx.runMutation(internal.jobs.acquire, {
-        id: jobId,
-        type: 'llm',
-      })
-      const messageId = jobRef as Id<'messages'>
+      const messageId = args.refId as Id<'messages'>
 
-      const messages = await ctx.runQuery(internal.threads.getMessageContext, {
+      const messages = await ctx.runQuery(internal.threads.do.getMessageContext, {
         id: messageId,
       })
 
@@ -50,16 +47,16 @@ export const llm = internalAction({
         choices: [m],
       } = responseSchema.parse(json)
 
-      await ctx.runMutation(api.threads.updateMessage, {
+      await ctx.runMutation(api.threads.do.updateMessage, {
         id: messageId,
         role: 'assistant',
         content: m?.message.content ?? 'something is wrong',
       })
 
-      await ctx.runMutation(internal.jobs.update, { id: jobId, status: 'complete' })
+      await ctx.runMutation(internal.jobs.update, { id: args.jobId, status: 'complete' })
     } catch (err) {
       await ctx.runMutation(internal.jobs.update, {
-        id: jobId,
+        id: args.jobId,
         status: 'error',
         message: err instanceof Error ? err.message : 'Unknown error',
         data: err,

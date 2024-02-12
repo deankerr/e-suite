@@ -4,7 +4,8 @@ import { Webhook } from 'svix'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { Doc } from '../_generated/dataModel'
-import { httpAction, internalAction, internalMutation, internalQuery } from '../_generated/server'
+import { httpAction, internalAction } from '../_generated/server'
+import { internalMutation, internalQuery } from '../functions'
 import { assert } from '../util'
 
 type ClerkEvent = 'user.created' | 'user.updated' | 'user.deleted'
@@ -63,14 +64,14 @@ export const clerkWebhookHandler = httpAction(async (ctx, request) => {
 
 export const addEvent = internalMutation(
   async (ctx, args: { type: ClerkEvent; id: string; body: string }) =>
-    await ctx.db.insert('clerkWebhookEvents', args),
+    await ctx.table('clerkWebhookEvents').insert(args),
 )
 
 export const get = internalQuery({
   args: {
     id: v.id('clerkWebhookEvents'),
   },
-  handler: async (ctx, { id }) => await ctx.db.get(id),
+  handler: async (ctx, { id }) => await ctx.table('clerkWebhookEvents').getX(id),
 })
 
 export const processUserEvent = internalAction({

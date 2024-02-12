@@ -15,7 +15,7 @@ export const DeleteThreadDialog = ({
   id?: Id<'threads'>
   onDelete?: () => void
 }) => {
-  const removeThread = useMutation(api.threads.remove)
+  const removeThread = useMutation(api.threads.do.remove)
 
   if (!id) return children
 

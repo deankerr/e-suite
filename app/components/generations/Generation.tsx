@@ -1,7 +1,7 @@
 'use client'
 
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
-import { Generation as TGeneration } from '@/convex/generations'
+import { Generation as TGeneration } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
 import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'

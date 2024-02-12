@@ -13,7 +13,7 @@ type Props = {}
 
 export const ThreadsFeed = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function ThreadsFeed({ className, ...props }, forwardedRef) {
-    const threads = usePaginatedQuery(api.threads.list, {}, { initialNumItems: 10 })
+    const threads = usePaginatedQuery(api.threads.do.list, {}, { initialNumItems: 10 })
 
     return (
       <ScrollArea>

@@ -1,8 +1,7 @@
 'use client'
 
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
-import { api } from '@/convex/_generated/api'
-import { ImageModel } from '@/convex/imageModels'
+import { ImageModel } from '@/convex/generations/imageModels'
 import { Button, Dialog } from '@radix-ui/themes'
 import { UsePaginatedQueryResult } from 'convex/react'
 
