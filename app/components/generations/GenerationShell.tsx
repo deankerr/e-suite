@@ -13,11 +13,6 @@ import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
 export const GenerationShell = ({ generation }: { generation: Generation }) => {
   const creator = generation.author
-
-  // const portraitLayout = height > width && 'max-w-[33%]'
-  // const squareLayout = height === width && 'max-w-[48%]'
-  // const landscapeLayout = height < width && 'max-w-[49%]'
-
   const parameters = generation.images[0]!.parameters!
   return (
     <Shell.Root>
@@ -26,7 +21,16 @@ export const GenerationShell = ({ generation }: { generation: Generation }) => {
       <Shell.Content className="grid content-center">
         <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
           {generation.images.map((image) => (
-            <StoredImage key={image._id} image={image} className="max-w-[40%] border" />
+            <StoredImage
+              key={image._id}
+              image={image}
+              className={cn(
+                'rounded border',
+                image.height > image.width && 'max-w-[33%]',
+                image.height === image.width && 'max-w-[48%]',
+                image.height < image.width && 'max-w-[49%]',
+              )}
+            />
           ))}
         </div>
       </Shell.Content>
