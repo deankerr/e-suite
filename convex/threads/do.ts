@@ -6,6 +6,8 @@ import { internalQuery, mutation, query } from '../functions'
 import { messagesFields } from '../schema'
 import { assert, vEnum } from '../util'
 
+export type ThreadMessage = Awaited<ReturnType<typeof tail>>[number]
+
 export const get = query({
   args: {
     id: v.id('threads'),
@@ -29,21 +31,21 @@ export const list = query({
   },
 })
 
-export const read = query({
-  args: {
-    id: v.id('threads'),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, { id, paginationOpts }) => {
-    return await ctx
-      .table('threads')
-      .getX(id)
-      .edgeX('messages')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .paginate(paginationOpts)
-  },
-})
+// export const read = query({
+//   args: {
+//     id: v.id('threads'),
+//     paginationOpts: paginationOptsValidator,
+//   },
+//   handler: async (ctx, { id, paginationOpts }) => {
+//     return await ctx
+//       .table('threads')
+//       .getX(id)
+//       .edgeX('messages')
+//       .order('desc')
+//       .filter((q) => q.eq(q.field('deletionTime'), undefined))
+//       .paginate(paginationOpts)
+//   },
+// })
 
 export const tail = query({
   args: {
@@ -58,6 +60,15 @@ export const tail = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(take)
+      .map(async (message) => ({
+        ...message,
+        job: await ctx
+          .table('jobs')
+          .order('desc', 'messageId')
+          .filter((q) => q.eq(q.field('deletionTime'), undefined))
+          .filter((q) => q.eq(q.field('messageId'), message._id))
+          .first(),
+      }))
     return messages.reverse()
   },
 })

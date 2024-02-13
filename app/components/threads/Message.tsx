@@ -1,15 +1,17 @@
 'use client'
 
-import { Doc, Id } from '@/convex/_generated/dataModel'
+import type { Id } from '@/convex/_generated/dataModel'
+import type { ThreadMessage } from '@/convex/threads/do'
 import { cn } from '@/lib/utils'
 import { Badge, DropdownMenu } from '@radix-ui/themes'
 import { CheckIcon, PenSquareIcon, XIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 import { IconButton } from '../ui/IconButton'
+import { Spinner } from '../ui/Spinner'
 import { TextArea } from '../ui/TextArea'
 
 type Props = {
-  message: Doc<'messages'>
+  message: ThreadMessage
   onDelete: (id: Id<'messages'>) => void
   onEdit: (values: {
     id: Id<'messages'>
@@ -36,11 +38,26 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
             {displayName}
           </Badge>
         </div>
-        {isEditing ? (
-          <TextArea value={contentValue} onChange={(e) => setContentValue(e.target.value)} />
-        ) : (
-          <p className="">{message.content}</p>
-        )}
+
+        <div>
+          <div className="font-code text-xs text-gray">
+            {message.job ? (
+              <>
+                {message.job?.type} | {message.job?.status} | {message.job?._id}
+              </>
+            ) : (
+              'none'
+            )}
+          </div>
+
+          {message.job?.status === 'pending' && <Spinner />}
+
+          {isEditing ? (
+            <TextArea value={contentValue} onChange={(e) => setContentValue(e.target.value)} />
+          ) : (
+            <p>{message.content}</p>
+          )}
+        </div>
 
         <div className="flex shrink-0 grow justify-end space-x-1 px-4">
           {isEditing ? (

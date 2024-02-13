@@ -1,6 +1,6 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { Doc, Id } from '../_generated/dataModel'
+import { Id } from '../_generated/dataModel'
 import { mutation, query } from '../functions'
 import { imageModelFields } from '../schema'
 import { Ent } from '../types'
