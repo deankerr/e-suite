@@ -65,7 +65,7 @@ export const imageModelFields = {
 }
 
 export const jobFields = {
-  type: vEnum(['inference', 'generation']),
+  type: vEnum(['inference', 'generation', 'downloadImage']),
   status: vEnum(['pending', 'complete', 'error']),
   message: v.optional(v.string()),
   data: v.optional(v.any()),

@@ -54,6 +54,7 @@
     "eslint-plugin-drizzle": "^0.2.3",
     "image-size": "^1.1.1",
     "jotai": "^2.6.4",
+    "ky": "^1.2.0",
     "lucide-react": "^0.299.0",
     "nanoid": "^5.0.5",
     "next": "^14.1.0",

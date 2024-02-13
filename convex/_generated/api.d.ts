@@ -17,7 +17,7 @@ import type {
 import type * as apiKeys from "../apiKeys.js";
 import type * as constants from "../constants.js";
 import type * as files_images from "../files/images.js";
-import type * as files_plaiceholder from "../files/plaiceholder.js";
+import type * as files_process from "../files/process.js";
 import type * as functions from "../functions.js";
 import type * as generations_do from "../generations/do.js";
 import type * as generations_imageModels from "../generations/imageModels.js";
@@ -46,7 +46,7 @@ declare const fullApi: ApiFromModules<{
   apiKeys: typeof apiKeys;
   constants: typeof constants;
   "files/images": typeof files_images;
-  "files/plaiceholder": typeof files_plaiceholder;
+  "files/process": typeof files_process;
   functions: typeof functions;
   "generations/do": typeof generations_do;
   "generations/imageModels": typeof generations_imageModels;
