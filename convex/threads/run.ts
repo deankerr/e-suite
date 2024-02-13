@@ -1,30 +1,27 @@
 import { v } from 'convex/values'
 import z from 'zod'
 import { api, internal } from '../_generated/api'
-import { Id } from '../_generated/dataModel'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
-export const llm = internalAction({
+export const inference = internalAction({
   args: {
-    jobId: v.id('jobs'),
-    refId: v.string(),
+    messageId: v.id('messages'),
   },
-  handler: async (ctx, args): Promise<void> => {
+  handler: async (ctx, { messageId }): Promise<void> => {
     try {
-      const messageId = args.refId as Id<'messages'>
-
       const messages = await ctx.runQuery(internal.threads.do.getMessageContext, {
         id: messageId,
       })
 
       const message = messages.pop()
-      assert(message, 'llm target message missing')
-      const { llmParameters } = message
-      assert(llmParameters, 'llm parameters missing')
+      assert(message, 'inference target message missing')
+      const inferenceParameters =
+        'inferenceParameters' in message ? message.inferenceParameters : null
+      assert(inferenceParameters, 'inference parameters missing')
 
       const body = {
-        ...llmParameters,
+        ...inferenceParameters,
         stop: ['</s>', '[/INST]'], // TODO relevant stop strings
         n: 1,
         messages: messageSchema.array().parse(messages),
@@ -53,10 +50,15 @@ export const llm = internalAction({
         content: m?.message.content ?? 'something is wrong',
       })
 
-      await ctx.runMutation(internal.jobs.update, { id: args.jobId, status: 'complete' })
+      await ctx.runMutation(internal.jobs.event, {
+        type: 'inference',
+        messageId,
+        status: 'complete',
+      })
     } catch (err) {
-      await ctx.runMutation(internal.jobs.update, {
-        id: args.jobId,
+      await ctx.runMutation(internal.jobs.event, {
+        type: 'inference',
+        messageId,
         status: 'error',
         message: err instanceof Error ? err.message : 'Unknown error',
         data: err,

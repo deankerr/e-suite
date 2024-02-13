@@ -115,8 +115,11 @@ export const send = mutation({
       const newMessageId = await ctx
         .table('messages')
         .insert({ ...message, name, content, threadId })
-      if (message.llmParameters && message.role === 'assistant') {
-        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'llm', ref: newMessageId })
+      if (message.inferenceParameters && message.role === 'assistant') {
+        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, {
+          type: 'inference',
+          messageId: newMessageId,
+        })
       }
     }
 

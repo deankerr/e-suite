@@ -40,16 +40,6 @@ const generationsFields = {
   imageIds: v.array(v.id('images')),
 }
 
-const jobStatusNames = vEnum([
-  'pending',
-  'active',
-  'complete',
-  'error',
-  'streaming',
-  'cancelled',
-  'failed',
-])
-
 export const imageModelFields = {
   name: v.string(),
   description: v.string(),
@@ -72,18 +62,14 @@ export const imageModelFields = {
   hidden: v.optional(v.boolean()),
 }
 
-export const jobEventFields = {
-  status: jobStatusNames,
+export const jobFields = {
+  type: vEnum(['inference', 'generation']),
+  status: vEnum(['pending', 'complete', 'error']),
   message: v.optional(v.string()),
   data: v.optional(v.any()),
-}
-export const jobTypes = vEnum(['llm', 'generate'])
 
-export const jobFields = {
-  type: jobTypes,
-  ref: v.string(),
-  status: jobStatusNames,
-  events: v.array(v.object({ ...jobEventFields, creationTime: v.number() })),
+  messageId: v.optional(v.id('messages')),
+  imageId: v.optional(v.id('images')),
 }
 
 export const usersFields = {
@@ -103,7 +89,7 @@ export const messageFields = {
   content: v.string(),
 }
 
-export const llmParametersFields = {
+export const inferenceParametersFields = {
   model: v.string(),
   max_tokens: v.optional(v.number()),
   stop: v.optional(v.array(v.string())),
@@ -115,7 +101,7 @@ export const llmParametersFields = {
 
 export const messagesFields = {
   ...messageFields,
-  llmParameters: v.optional(v.object(llmParametersFields)),
+  inferenceParameters: v.optional(v.object(inferenceParametersFields)),
 }
 
 const schema = defineEntSchema(
@@ -146,7 +132,10 @@ const schema = defineEntSchema(
       .deletion('soft')
       .field('order', v.number(), { index: true }),
 
-    jobs: defineEnt(jobFields).deletion('soft'),
+    jobs: defineEnt(jobFields)
+      .deletion('soft')
+      .index('messageId', ['messageId'])
+      .index('imageId', ['imageId']),
 
     messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
 

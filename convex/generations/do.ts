@@ -75,7 +75,7 @@ export const send = mutation({
           parameters: args.parameters,
           permissions: args.permissions ?? { private: true },
         })
-        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'generate', ref: id })
+        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'generation', imageId: id })
         return id
       }),
     )

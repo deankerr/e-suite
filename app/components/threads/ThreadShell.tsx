@@ -60,7 +60,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
           {
             role: 'assistant',
             content: '',
-            llmParameters: values,
+            inferenceParameters: values,
           },
         ],
       }
@@ -184,7 +184,9 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
           {!messagesIsLoading && (
             <LlmParametersForm
               ref={formRef}
-              initialValues={messages?.findLast((msg) => msg.llmParameters)?.llmParameters}
+              initialValues={
+                messages?.findLast((msg) => msg.inferenceParameters)?.inferenceParameters
+              }
               onSubmitSuccess={handleSubmit}
             />
           )}
