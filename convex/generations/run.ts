@@ -1,4 +1,4 @@
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import z from 'zod'
 import { api, internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
@@ -23,6 +23,7 @@ export const generate = internalAction({
         model: imageModel.sinkin?.refId ?? '',
         width: image.width,
         height: image.height,
+        n: image.parameters.n ?? 1,
       }
       const { url, options } = createGenerationRequest(parameters)
 
@@ -31,7 +32,7 @@ export const generate = internalAction({
       const parsed = parseApiInferenceResponse(json)
 
       if (parsed.error) {
-        throw error(parsed.error.message, { error })
+        throw error(parsed.error.message, { error: parsed.error })
       }
 
       const sourceUrl = first.parse(parsed.result.images)
@@ -52,6 +53,7 @@ export const generate = internalAction({
         imageId,
         status: 'error' as const,
         message: err instanceof Error ? `${err.name}: ${err.message}` : 'Unknown error',
+        data: err instanceof ConvexError ? err.data : undefined,
       }
       await ctx.runMutation(internal.jobs.event, event)
       throw err

@@ -66,7 +66,7 @@ export const send = mutation({
     //TODO validation
 
     const imageIds = await Promise.all(
-      args.images.map(async ({ dimensions }) => {
+      args.images.map(async ({ dimensions }, i) => {
         const { width, height } = getDimensionSizes(dimensions)
         const id = await ctx.table('images').insert({
           width,
@@ -78,7 +78,7 @@ export const send = mutation({
           parameters: args.parameters,
           permissions: args.permissions ?? { private: true },
         })
-        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, { type: 'generation', imageId: id })
+        await ctx.scheduler.runAfter(i, internal.jobs.dispatch, { type: 'generation', imageId: id })
         return id
       }),
     )

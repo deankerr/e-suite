@@ -6,7 +6,7 @@ import { vEnum } from './util'
 export type GenerationParameters = Infer<typeof generationParameters>
 
 export const permissions = v.object({
-  private: v.boolean(), // only visible by owner/author
+  private: v.boolean(),
   allowOnPublicFeeds: v.optional(v.boolean()),
   allowOtherUsersToEdit: v.optional(v.boolean()),
 })
@@ -20,6 +20,7 @@ export const generationParameters = v.object({
   steps: v.optional(v.number()),
   guidance: v.optional(v.number()),
   lcm: v.optional(v.boolean()),
+  n: v.optional(v.number()),
 })
 
 export const imagesFields = {

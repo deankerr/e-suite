@@ -6,6 +6,7 @@ import { useDebounce } from '@uidotdev/usehooks'
 import { usePaginatedQuery, type PaginationStatus } from 'convex/react'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { Button } from '../ui/Button'
 import { Spinner } from '../ui/Spinner'
 import { GenerationShell } from './GenerationShell'
 
@@ -37,6 +38,9 @@ export const GenerationFeed = ({
       <div className="space-y-rx-8 overflow-y-auto px-4 pb-28 pt-4">
         {results?.map((gen) => <GenerationShell key={gen._id} generation={gen} />)}
         {/* <Loader status={status} loadRef={ref} /> */}
+        {status === 'CanLoadMore' && (
+          <Button onClick={() => loadMore(itemsPerLoad)}>Load More</Button>
+        )}
       </div>
       <div className="fixed right-0 top-0 bg-black p-1 text-sm">
         {inView && 'inView'} {results.length} {status}

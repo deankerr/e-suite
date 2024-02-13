@@ -1,7 +1,6 @@
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery } from '../functions'
-import { imagesFields, permissions } from '../schema'
 import { assert } from '../util'
 
 export type StoredImage = Awaited<ReturnType<typeof get>>
@@ -11,16 +10,6 @@ export const get = internalQuery({
     id: v.id('images'),
   },
   handler: async (ctx, { id }) => await ctx.table('images').getX(id),
-})
-
-export const create = internalMutation({
-  args: {
-    ...imagesFields,
-    width: v.number(),
-    height: v.number(),
-    permissions: v.optional(permissions),
-  },
-  handler: async (ctx, args) => {},
 })
 
 export const addSourceUrl = internalMutation({
