@@ -1,7 +1,7 @@
 'use client'
 
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
-import { Generation as TGeneration } from '@/convex/generations/do'
+import { Generation } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
 import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
@@ -11,8 +11,8 @@ import { Shell } from '../ui/Shell'
 import { StoredImage } from '../ui/StoredImage'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
-export const GenerationShell = ({ generation }: { generation: TGeneration }) => {
-  const creator = generation.author.username
+export const GenerationShell = ({ generation }: { generation: Generation }) => {
+  const creator = generation.author
 
   // const portraitLayout = height > width && 'max-w-[33%]'
   // const squareLayout = height === width && 'max-w-[48%]'

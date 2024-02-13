@@ -1,9 +1,10 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
+import { getImages } from '../files/images'
 import { mutation, query } from '../functions'
 import { generationParameters, permissions } from '../schema'
-import { error } from '../util'
+import { assert, error } from '../util'
 
 export type Generation = Awaited<ReturnType<typeof get>>
 
@@ -12,13 +13,12 @@ export const get = query({
     id: v.id('generations'),
   },
   handler: async (ctx, args) => {
-    const generation = await ctx
-      .table('generations')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .getX(args.id)
+    const generation = await ctx.table('generations').getX(args.id)
 
-    const images = await ctx.table('images').getManyX(generation.imageIds)
-    const author = await ctx.table('users').getX(generation.authorId)
+    assert(!generation.deletionTime, 'Generation was deleted')
+
+    const images = await getImages(ctx, generation.imageIds)
+    const author = (await ctx.table('users').getX(generation.authorId)).username
 
     return {
       ...generation,
@@ -44,8 +44,8 @@ export const list = query({
       page: await Promise.all(
         results.page.map(async (generation) => ({
           ...generation,
-          images: await ctx.table('images').getManyX(generation.imageIds),
-          author: await ctx.table('users').getX(generation.authorId),
+          images: await getImages(ctx, generation.imageIds),
+          author: (await ctx.table('users').getX(generation.authorId)).username,
         })),
       ),
     }
