@@ -24,6 +24,7 @@ import type * as generations_imageModels from "../generations/imageModels.js";
 import type * as generations_run from "../generations/run.js";
 import type * as jobs from "../jobs.js";
 import type * as providers_clerk from "../providers/clerk.js";
+import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as rules from "../rules.js";
 import type * as threads_do from "../threads/do.js";
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   "generations/run": typeof generations_run;
   jobs: typeof jobs;
   "providers/clerk": typeof providers_clerk;
+  "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
   rules: typeof rules;
   "threads/do": typeof threads_do;

@@ -1,3 +1,69 @@
+import z from 'zod'
+import { GenerationParameters } from '../schema'
+import { assert } from '../util'
+
+const getSinkinApiKey = () => {
+  const apiKey = process.env.SINKIN_API_KEY
+  assert(apiKey, 'Sinkin API key not provided')
+  return apiKey
+}
+
+export const createGenerationRequest = (
+  parameters: GenerationParameters & { model: string; width: number; height: number },
+) => {
+  const paramsKey: Record<string, (value: any) => [string, string]> = {
+    model: (value: string) => ['model_id', value],
+    width: (value: number) => ['width', value.toString()],
+    height: (value: number) => ['height', value.toString()],
+    prompt: (value: string) => ['prompt', value],
+    negativePrompt: (value: string) => ['negative_prompt', value],
+    seed: (value: number) => ['seed', value.toString()],
+    scheduler: (value: string) => ['scheduler', value],
+    steps: (value: number) => ['steps', value.toString()],
+    guidance: (value: string) => ['guidance', value],
+    lcm: (value: boolean) => ['lcm', String(value)],
+  }
+
+  const params = Object.entries(parameters).reduce(
+    (acc, [key, value]) => {
+      const res = paramsKey[key]
+      if (res) return [...acc, res(value)]
+      return acc
+    },
+    [['access_token', getSinkinApiKey()]],
+  )
+  const body = new URLSearchParams(params)
+
+  return {
+    url: 'https://sinkin.ai/m/inference',
+    options: {
+      method: 'POST',
+      body,
+    },
+  }
+}
+
+export const parseApiInferenceResponse = (data: unknown) => {
+  // check error code
+  const { error_code } = z.object({ error_code: z.number() }).parse(data)
+
+  if (error_code > 0) {
+    // is error, get message
+    const { message } = z.object({ message: z.string() }).parse(data)
+    return { error: { error_code, message } }
+  }
+
+  const parsed = z
+    .object({
+      inf_id: z.string(),
+      credit_cost: z.number(),
+      images: z.array(z.string()),
+    })
+    .parse(data)
+
+  return { result: parsed }
+}
+
 // export const run = internalAction({
 //   args: {
 //     id: v.id('generations'),
@@ -67,27 +133,6 @@
 // })
 
 // export const createGenerationRequest = () => {}
-
-// const parseApiInferenceResponse = (data: unknown) => {
-//   //* check error code
-//   const { error_code } = z.object({ error_code: z.number() }).parse(data)
-
-//   if (error_code > 0) {
-//     //* error, get message
-//     const { message } = z.object({ message: z.string() }).parse(data)
-//     return { error: { error_code, message } }
-//   }
-
-//   const parsed = z
-//     .object({
-//       inf_id: z.string(),
-//       credit_cost: z.number(),
-//       images: z.array(z.string()),
-//     })
-//     .parse(data)
-
-//   return { result: parsed }
-// }
 
 // export const registerAvailableModels = internalAction(async (ctx) => {
 //   const apiModelData = await apiGetModels()

@@ -3,23 +3,23 @@ import { v } from 'convex/values'
 import { Id } from '../_generated/dataModel'
 import { mutation, query } from '../functions'
 import { imageModelFields } from '../schema'
-import { Ent } from '../types'
+import { Ent, QueryCtx } from '../types'
 
 export type ImageModel = Awaited<ReturnType<typeof get>>
+
+export const getImageModel = async (ctx: QueryCtx, id: Id<'imageModels'>) => {
+  const imageModel = await ctx.table('imageModels').getX(id)
+  return {
+    ...imageModel,
+    image: await ctx.table('images').get(imageModel.imageId),
+  }
+}
 
 export const get = query({
   args: {
     id: v.id('imageModels'),
   },
-  handler: async (ctx, { id }) => {
-    const imageModel = await ctx.table('imageModels').getX(id)
-    const image = await ctx.table('images').get(imageModel.imageId)
-
-    return {
-      ...imageModel,
-      image,
-    }
-  },
+  handler: async (ctx, { id }) => await getImageModel(ctx, id),
 })
 
 export const list = query({

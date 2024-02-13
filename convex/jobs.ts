@@ -21,13 +21,11 @@ export const dispatch = internalMutation({
     if (args.type === 'generation' && args.imageId) {
       const id = await ctx.table('jobs').insert({ ...args, status: 'pending' })
       await ctx.scheduler.runAfter(0, internal.generations.run.generate, {
-        jobId: id,
         imageId: args.imageId,
       })
       return id
     }
 
-    // TODO invalid job state
     throw error('Invalid job dispatch')
   },
 })

@@ -1,7 +1,9 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { v } from 'convex/values'
+import { Infer, v } from 'convex/values'
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
+
+export type GenerationParameters = Infer<typeof generationParameters>
 
 export const permissions = v.object({
   private: v.boolean(), // only visible by owner/author
