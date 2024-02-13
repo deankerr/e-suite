@@ -4,6 +4,8 @@ import { internalMutation, internalQuery } from '../functions'
 import { imagesFields, permissions } from '../schema'
 import { assert } from '../util'
 
+export type StoredImage = Awaited<ReturnType<typeof get>>
+
 export const get = internalQuery({
   args: {
     id: v.id('images'),

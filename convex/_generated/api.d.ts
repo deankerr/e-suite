@@ -22,6 +22,7 @@ import type * as functions from "../functions.js";
 import type * as generations_do from "../generations/do.js";
 import type * as generations_imageModels from "../generations/imageModels.js";
 import type * as generations_run from "../generations/run.js";
+import type * as http from "../http.js";
 import type * as jobs from "../jobs.js";
 import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   "generations/do": typeof generations_do;
   "generations/imageModels": typeof generations_imageModels;
   "generations/run": typeof generations_run;
+  http: typeof http;
   jobs: typeof jobs;
   "providers/clerk": typeof providers_clerk;
   "providers/sinkin": typeof providers_sinkin;

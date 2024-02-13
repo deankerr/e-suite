@@ -7,7 +7,7 @@ import { usePaginatedQuery, type PaginationStatus } from 'convex/react'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Spinner } from '../ui/Spinner'
-import { Generation } from './Generation'
+import { GenerationShell } from './GenerationShell'
 
 const initialNumItems = 2
 const itemsPerLoad = 6
@@ -35,7 +35,7 @@ export const GenerationFeed = ({
   return (
     <ScrollArea className={className} {...props}>
       <div className="space-y-rx-8 overflow-y-auto px-4 pb-28 pt-4">
-        {results?.map((gen) => <Generation key={gen._id} generation={gen} />)}
+        {results?.map((gen) => <GenerationShell key={gen._id} generation={gen} />)}
         {/* <Loader status={status} loadRef={ref} /> */}
       </div>
       <div className="fixed right-0 top-0 bg-black p-1 text-sm">

@@ -7,19 +7,17 @@ import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { Button } from '../ui/Button'
-import { Frame } from '../ui/Frame'
 import { Shell } from '../ui/Shell'
+import { StoredImage } from '../ui/StoredImage'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
-export const Generation = ({ generation }: { generation: TGeneration }) => {
-  const creator = 'Fix.Me'
+export const GenerationShell = ({ generation }: { generation: TGeneration }) => {
+  const creator = generation.author.username
 
   // const portraitLayout = height > width && 'max-w-[33%]'
   // const squareLayout = height === width && 'max-w-[48%]'
   // const landscapeLayout = height < width && 'max-w-[49%]'
 
-  // const isError = status === 'error' || status === 'failed'
-  const isError = false
   const parameters = generation.images[0]!.parameters!
   return (
     <Shell.Root>
@@ -28,30 +26,8 @@ export const Generation = ({ generation }: { generation: TGeneration }) => {
       <Shell.Content className="grid content-center">
         <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
           {generation.images.map((image) => (
-            <img
-              key={image._id}
-              src={image.url ?? fallbackUrl}
-              width={image.width / 3}
-              height={image.height / 3}
-              className="aspect-[2/3]"
-            />
+            <StoredImage key={image._id} image={image} className="max-w-[40%] border" />
           ))}
-          {/* {Array.from({ length: n }, (_, i) => (
-            <Frame
-              key={i}
-              image={images[i]}
-              frameWidth={width}
-              frameHeight={height}
-              alt={`generation result ${i}`}
-              className={cn(
-                'max-w-[50%] border border-bronze-6',
-                portraitLayout,
-                squareLayout,
-                landscapeLayout,
-              )}
-              isError={isError}
-            />
-          ))} */}
         </div>
       </Shell.Content>
 

@@ -1,27 +1,33 @@
-// import { httpRouter } from 'convex/server'
-// import z from 'zod'
-// import { Id } from './_generated/dataModel'
-// import { httpAction } from './_generated/server'
-// import { clerkWebhookHandler } from './providers/clerk'
+import { httpRouter } from 'convex/server'
+import { Id } from './_generated/dataModel'
+import { httpAction } from './_generated/server'
+import { clerkWebhookHandler } from './providers/clerk'
 
-// const http = httpRouter()
+const http = httpRouter()
 
-// http.route({
-//   path: '/image',
-//   method: 'GET',
-//   handler: httpAction(async (ctx, request) => {
-//     const { searchParams } = new URL(request.url)
-//     //TODO authorized to get image
-//     const storageId = searchParams.get('storageId') as Id<'_storage'>
-//     const blob = await ctx.storage.get(storageId)
-//     if (blob === null) {
-//       return new Response('Image not found', {
-//         status: 400,
-//       })
-//     }
-//     return new Response(blob)
-//   }),
-// })
+http.route({
+  path: '/internal/clerk/webhook/v1',
+  method: 'POST',
+  handler: clerkWebhookHandler,
+})
+
+http.route({
+  path: '/image',
+  method: 'GET',
+  handler: httpAction(async (ctx, request) => {
+    const { searchParams } = new URL(request.url)
+    const storageId = searchParams.get('storageId') as Id<'_storage'>
+    const blob = await ctx.storage.get(storageId)
+    if (blob === null) {
+      return new Response('Image not found', {
+        status: 400,
+      })
+    }
+    return new Response(blob)
+  }),
+})
+
+export default http
 
 // const chatRequestSchema = z.object({
 //   threadId: z.string().optional(),
@@ -104,11 +110,3 @@
 //     return new Response('', { status: 200 })
 //   }),
 // })
-
-// http.route({
-//   path: '/internal/clerk/webhook/v1',
-//   method: 'POST',
-//   handler: clerkWebhookHandler,
-// })
-
-// export default http

@@ -1,6 +1,6 @@
 'use client'
 
-import { Generation } from '@/app/components/generations/Generation'
+import { GenerationShell } from '@/app/components/generations/GenerationShell'
 import { Spinner } from '@/app/components/ui/Spinner'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -15,7 +15,7 @@ export default function GenerationIdPage({ params }: { params: { id: Id<'generat
 
   return (
     <ScrollArea>
-      <Generation generation={generation} />
+      <GenerationShell generation={generation} />
     </ScrollArea>
   )
 }

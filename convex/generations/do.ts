@@ -18,10 +18,12 @@ export const get = query({
       .getX(args.id)
 
     const images = await ctx.table('images').getManyX(generation.imageIds)
+    const author = await ctx.table('users').getX(generation.authorId)
 
     return {
       ...generation,
       images,
+      author,
     }
   },
 })
@@ -43,6 +45,7 @@ export const list = query({
         results.page.map(async (generation) => ({
           ...generation,
           images: await ctx.table('images').getManyX(generation.imageIds),
+          author: await ctx.table('users').getX(generation.authorId),
         })),
       ),
     }
