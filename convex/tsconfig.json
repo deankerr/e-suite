@@ -8,6 +8,7 @@
     "allowJs": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
 
     /* These compiler options are required by Convex */
     "target": "ESNext",

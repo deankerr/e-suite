@@ -62,7 +62,7 @@ export const GenerationShell = ({ generation }: { generation: Generation }) => {
           <div>{parameters.negativePrompt || <i>blank</i>}</div>
         </div>
         <ImageModelCard fromId={parameters.imageModelId} className="mx-auto" />
-        <div className="px-rx-1 py-rx-4">
+        {/* <div className="px-rx-1 py-rx-4">
           <table className="divide-y text-sm">
             <tbody>
               <tr>
@@ -83,7 +83,7 @@ export const GenerationShell = ({ generation }: { generation: Generation }) => {
               </tr>
             </tbody>
           </table>
-        </div>
+        </div> */}
         <div className="absolute bottom-0 right-1 text-right font-code text-[8px] text-gold-5">
           {/* status: {generation.status}
           <br /> */}

@@ -93,6 +93,13 @@ export const send = mutation({
   },
 })
 
+export const remove = mutation({
+  args: {
+    id: v.id('generations'),
+  },
+  handler: async (ctx, { id }) => await ctx.table('generations').getX(id).delete(),
+})
+
 const getDimensionSizes = (value: string) => {
   const sizes = {
     portrait: { width: 512, height: 768 },

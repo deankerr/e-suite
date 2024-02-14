@@ -12,9 +12,9 @@ export const DeleteGenerationDialog = ({
   children: React.ReactNode
   id: Id<'generations'>
 }) => {
-  // const remove = useMutation(api.generations.remove)
+  const remove = useMutation(api.generations.do.remove)
   const execute = async () => {
-    // await remove({ id })
+    await remove({ id })
   }
 
   return (

@@ -10,6 +10,15 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return ctx.viewerId === apiKeys.ownerId
       },
     },
+
+    generations: {
+      write: async ({ operation, ent: generation, value }) => {
+        if (operation === 'update' || operation === 'delete') {
+          return ctx.viewerId === generation.authorId
+        }
+        return ctx.viewerId === value.authorId
+      },
+    },
   })
 }
 
