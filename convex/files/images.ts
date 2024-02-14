@@ -16,7 +16,6 @@ export const getImage = async (ctx: QueryCtx, id: Id<'images'>) => {
     .order('desc', 'imageId')
     .filter((q) => q.eq(q.field('imageId'), image._id))
     .first()
-    .doc()
 
   return {
     ...image,
@@ -36,8 +35,7 @@ export const getImages = async (ctx: QueryCtx, ids: Id<'images'>[]): Promise<Sto
           .table('jobs')
           .order('desc', 'imageId')
           .filter((q) => q.eq(q.field('imageId'), image._id))
-          .first()
-          .doc(),
+          .first(),
       }
     })
 }

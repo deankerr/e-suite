@@ -1,17 +1,19 @@
 'use client'
 
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
-import { Generation } from '@/convex/generations/do'
+import type { Generation } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
 import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
 import { FileImageIcon } from 'lucide-react'
 import NextLink from 'next/link'
+import { Permissions } from '../Permissions'
 import { Button } from '../ui/Button'
 import { Shell } from '../ui/Shell'
 import { StoredImage } from '../ui/StoredImage'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
 export const GenerationShell = ({ generation }: { generation: Generation }) => {
+  const { author, images } = generation
   const creator = generation.author.username
   const parameters = generation.images[0]!.parameters!
 
@@ -21,13 +23,13 @@ export const GenerationShell = ({ generation }: { generation: Generation }) => {
 
       <Shell.Content className="grid content-center">
         <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
-          {generation.images.map((image) => (
+          {images.map((image) => (
             <StoredImage
               key={image._id}
               image={image}
               className={cn(
                 'rounded border',
-                image.height > image.width && 'max-w-[33%]',
+                image.height > image.width && 'max-w-[24%]',
                 image.height === image.width && 'max-w-[48%]',
                 image.height < image.width && 'max-w-[49%]',
               )}
@@ -41,59 +43,46 @@ export const GenerationShell = ({ generation }: { generation: Generation }) => {
           <NextLink href={`/generations/${generation._id}`}>Link</NextLink>
         </Button>
         {/* <Button variant="outline">Copy</Button> */}
-        <DeleteGenerationDialog id={generation._id}>
-          <Button variant="outline" color="red">
-            Delete
-          </Button>
-        </DeleteGenerationDialog>
+        {author.isViewer && (
+          <DeleteGenerationDialog id={generation._id}>
+            <Button variant="outline" color="red">
+              Delete
+            </Button>
+          </DeleteGenerationDialog>
+        )}
       </Shell.Controls>
 
       <Shell.Sidebar className="px-rx-2">
+        {author.isViewer && (
+          <div className="pt-1">
+            <Permissions permissions={generation.permissions} onValueChange={() => {}} />
+          </div>
+        )}
+
         <div className="py-rx-4 text-center">
-          <Em>&quot;created by&quot;</Em> <Strong>{creator ? `@${creator}` : 'anonymous'}</Strong>
+          <Em>&quot;created by&quot;</Em> <Strong>{author.username}</Strong>
         </div>
+
         <Separator size="4" />
+
         <div className="py-rx-4 text-sm">
           <Heading size="1">Prompt</Heading>
           <div>{parameters.prompt}</div>
         </div>
+
         <Separator size="4" />
+
         <div className="py-rx-4 text-sm">
           <Heading size="1">Negative prompt</Heading>
           <div>{parameters.negativePrompt || <i>blank</i>}</div>
         </div>
+
         <ImageModelCard fromId={parameters.imageModelId} className="mx-auto" />
-        {/* <div className="px-rx-1 py-rx-4">
-          <table className="divide-y text-sm">
-            <tbody>
-              <tr>
-                <td className="w-1/2 font-bold">Scheduler</td>
-                <td>{parameters.scheduler}</td>
-              </tr>
-              <tr>
-                <td className="font-bold">Guidance</td>
-                <td>{parameters.guidance}</td>
-              </tr>
-              <tr>
-                <td className="font-bold">LCM</td>
-                <td>{parameters.lcm ? 'yes' : 'no'}</td>
-              </tr>
-              <tr>
-                <td className="font-bold">Seed</td>
-                <td>{parameters.seed ?? 'random'}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div> */}
+
         <div className="absolute bottom-0 right-1 text-right font-code text-[8px] text-gold-5">
-          {/* status: {generation.status}
-          <br /> */}
           {generation._id}
         </div>
       </Shell.Sidebar>
     </Shell.Root>
   )
 }
-
-const fallbackUrl =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAECAIAAAArjXluAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAJUlEQVR4nGP4+/fvt2/fGJYvX75p0yYGU1NTNzc3BhYWNktLCwDmfgwO/QBPIAAAAABJRU5ErkJggg=='

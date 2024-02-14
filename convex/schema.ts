@@ -4,6 +4,7 @@ import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
 
 export type GenerationParameters = Infer<typeof generationParameters>
+export type Permissions = Infer<typeof permissions>
 
 export const permissions = v.object({
   private: v.boolean(),
@@ -83,7 +84,7 @@ export const usersFields = {
     firstName: v.optional(v.string()),
     lastName: v.optional(v.string()),
   }),
-  admin: v.boolean(),
+  isAdmin: v.boolean(),
 }
 
 export const messageFields = {

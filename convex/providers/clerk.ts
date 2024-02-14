@@ -117,7 +117,7 @@ const parseUserFieldsFromEvent = (body: string) => {
       firstName: payload.first_name,
       lastName: payload.last_name,
     },
-    admin: false,
+    isAdmin: false,
   }
 }
 

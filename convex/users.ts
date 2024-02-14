@@ -1,17 +1,30 @@
 import { v } from 'convex/values'
+import z from 'zod'
 import { Id } from './_generated/dataModel'
 import { internalMutation, query } from './functions'
 import { usersFields } from './schema'
 import { QueryCtx } from './types'
 
+const publicUserSchema = z.object({
+  _id: z
+    .string()
+    .length(32)
+    .transform((v) => v as Id<'users'>),
+  username: z.string(),
+  avatar: z.string(),
+  isAdmin: z.boolean(),
+  isViewer: z.boolean(),
+})
+
 export const getUser = async (ctx: QueryCtx, id: Id<'users'>) => {
   const user = await ctx.table('users').getX(id)
-  return {
-    _id: user._id,
-    username: user.username,
-    avatar: user.avatar,
-    admin: user.admin,
-  }
+  const isViewer = ctx.viewerId === user._id
+  return publicUserSchema.parse({ ...user, isViewer })
+}
+
+export const getViewer = async (ctx: QueryCtx) => {
+  const viewer = await ctx.viewer()
+  return publicUserSchema.parse(viewer)
 }
 
 export const create = internalMutation({
@@ -20,7 +33,7 @@ export const create = internalMutation({
     tokenIdentifier: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.table('users').insert({ ...args, admin: false })
+    return await ctx.table('users').insert({ ...args, isAdmin: false })
   },
 })
 
