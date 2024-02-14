@@ -12,8 +12,9 @@ import { StoredImage } from '../ui/StoredImage'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
 export const GenerationShell = ({ generation }: { generation: Generation }) => {
-  const creator = generation.author
+  const creator = generation.author.username
   const parameters = generation.images[0]!.parameters!
+
   return (
     <Shell.Root>
       <Shell.TitleBar icon={FileImageIcon}>{parameters.prompt}</Shell.TitleBar>

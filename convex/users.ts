@@ -1,6 +1,18 @@
 import { v } from 'convex/values'
+import { Id } from './_generated/dataModel'
 import { internalMutation, query } from './functions'
 import { usersFields } from './schema'
+import { QueryCtx } from './types'
+
+export const getUser = async (ctx: QueryCtx, id: Id<'users'>) => {
+  const user = await ctx.table('users').getX(id)
+  return {
+    _id: user._id,
+    username: user.username,
+    avatar: user.avatar,
+    admin: user.admin,
+  }
+}
 
 export const create = internalMutation({
   args: {
