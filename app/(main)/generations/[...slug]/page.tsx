@@ -27,5 +27,5 @@ export default function GenerationIdPage({
     })
     .parse(focusString)
 
-  return <GenerationShell generation={generation} focus={focus} />
+  return <GenerationShell className="w-full border-none" generation={generation} focus={focus} />
 }
