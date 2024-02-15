@@ -12,6 +12,32 @@ export const permissionsFields = v.object({
   allowOtherUsersToEdit: v.optional(v.boolean()),
 })
 
+export const jobFields = {
+  type: vEnum(['inference', 'generation', 'downloadImage']),
+  status: vEnum(['pending', 'complete', 'error']),
+  message: v.optional(v.string()),
+  data: v.optional(v.any()),
+
+  messageId: v.optional(v.id('messages')),
+  imageId: v.optional(v.id('images')),
+}
+
+export const usersFields = {
+  username: v.string(),
+  avatar: v.string(),
+  personal: v.object({
+    email: v.string(),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
+  }),
+  isAdmin: v.boolean(),
+}
+
+//* Generations
+const generationsFields = {
+  imageIds: v.array(v.id('images')),
+}
+
 export const generationParameters = v.object({
   imageModelId: v.id('imageModels'),
   prompt: v.string(),
@@ -23,26 +49,6 @@ export const generationParameters = v.object({
   lcm: v.optional(v.boolean()),
   n: v.optional(v.number()),
 })
-
-export const imagesFields = {
-  storageId: v.optional(v.id('_storage')),
-  url: v.optional(v.string()),
-
-  sourceUrl: v.optional(v.string()),
-  nsfw: vEnum(nsfwRatings),
-
-  width: v.number(),
-  height: v.number(),
-  blurDataURL: v.string(),
-  color: v.string(),
-  metadata: v.any(),
-
-  parameters: v.optional(generationParameters),
-}
-
-const generationsFields = {
-  imageIds: v.array(v.id('images')),
-}
 
 export const imageModelFields = {
   name: v.string(),
@@ -66,27 +72,24 @@ export const imageModelFields = {
   hidden: v.optional(v.boolean()),
 }
 
-export const jobFields = {
-  type: vEnum(['inference', 'generation', 'downloadImage']),
-  status: vEnum(['pending', 'complete', 'error']),
-  message: v.optional(v.string()),
-  data: v.optional(v.any()),
+//* Images
+export const imagesFields = {
+  storageId: v.optional(v.id('_storage')),
+  url: v.optional(v.string()),
 
-  messageId: v.optional(v.id('messages')),
-  imageId: v.optional(v.id('images')),
+  sourceUrl: v.optional(v.string()),
+  nsfw: vEnum(nsfwRatings),
+
+  width: v.number(),
+  height: v.number(),
+  blurDataURL: v.string(),
+  color: v.string(),
+  metadata: v.any(),
+
+  parameters: v.optional(generationParameters),
 }
 
-export const usersFields = {
-  username: v.string(),
-  avatar: v.string(),
-  personal: v.object({
-    email: v.string(),
-    firstName: v.optional(v.string()),
-    lastName: v.optional(v.string()),
-  }),
-  isAdmin: v.boolean(),
-}
-
+//* Threads
 export const messageFields = {
   role: vEnum(['system', 'user', 'assistant']),
   name: v.optional(v.string()),
@@ -106,6 +109,12 @@ export const inferenceParametersFields = {
 export const messagesFields = {
   ...messageFields,
   inferenceParameters: v.optional(v.object(inferenceParametersFields)),
+}
+
+export const threadsFields = {
+  name: v.string(),
+  systemPrompt: v.string(),
+  permissions: permissionsFields,
 }
 
 const schema = defineEntSchema(
@@ -143,7 +152,7 @@ const schema = defineEntSchema(
 
     messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
 
-    threads: defineEnt({ name: v.string(), systemPrompt: v.string() })
+    threads: defineEnt(threadsFields)
       .edge('user', { field: 'ownerId' })
       .edges('messages', { ref: 'threadId', deletion: 'soft' })
       .deletion('soft'),

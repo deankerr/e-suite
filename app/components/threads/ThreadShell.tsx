@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { PermissionsCard } from '../PermissionsCard'
 import { DeleteThreadDialog } from './DeleteThreadDialog'
 import { FormSchema, LlmParametersForm } from './LlmParametersForm'
 import { Message } from './Message'
@@ -35,6 +36,8 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
     const router = useRouter()
     const thread = useQuery(api.threads.do.get, threadId ? { id: threadId } : 'skip')
     const messages = useQuery(api.threads.do.tail, threadId ? { id: threadId } : 'skip')
+    const updatePermissions = useMutation(api.threads.do.updatePermissions)
+
     const messagesIsLoading = threadId && !messages
     const systemPrompt = thread?.systemPrompt
 
@@ -143,10 +146,11 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
                   handleSubmitMessage()
                 }
               }}
+              disabled={!thread?.owner.isViewer}
             />
             <IconButton
               variant="surface"
-              disabled={messageValue.length === 0}
+              disabled={!thread?.owner.isViewer || messageValue.length === 0}
               onClick={handleSubmitMessage}
             >
               <SendIcon />
@@ -159,15 +163,31 @@ export const ThreadShell = forwardRef<HTMLDivElement, Props & React.ComponentPro
             <Link href={`/thread/${threadId}`}>Link</Link>
           </Button>
 
-          <DeleteThreadDialog id={threadId}>
-            <Button color="red" disabled={!threadId}>
-              Delete
-            </Button>
-          </DeleteThreadDialog>
+          {thread?.owner.isViewer && (
+            <DeleteThreadDialog id={threadId}>
+              <Button color="red" disabled={!threadId}>
+                Delete
+              </Button>
+            </DeleteThreadDialog>
+          )}
         </Shell.Controls>
 
         <Shell.Sidebar>
           <div className="flex flex-col gap-1.5 p-3">
+            {thread?.owner.isViewer && (
+              <div className="pt-1">
+                <PermissionsCard
+                  permissions={thread.permissions}
+                  onPermissionsChange={(permissions) =>
+                    void updatePermissions({
+                      id: thread._id,
+                      permissions,
+                    })
+                  }
+                />
+              </div>
+            )}
+
             <Label>System prompt</Label>
             <TextArea
               className="sm:text-sm"

@@ -9,8 +9,11 @@ type Props = {
   onPermissionsChange: (permissions: PermissionsType) => void
 }
 
-export const Permissions = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function Permissions({ permissions, onPermissionsChange, className, ...props }, forwardedRef) {
+export const PermissionsCard = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
+  function PermissionsCard(
+    { permissions, onPermissionsChange, className, ...props },
+    forwardedRef,
+  ) {
     const [privateValue, setPrivateValue] = useState(permissions.private)
 
     // lock options on change until update received

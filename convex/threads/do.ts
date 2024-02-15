@@ -2,22 +2,31 @@ import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
-import { internalQuery, mutation, query } from '../functions'
+import { Id } from '../_generated/dataModel'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields } from '../schema'
+import { QueryCtx } from '../types'
+import { getUser } from '../users'
 import { assert, vEnum } from '../util'
 
 export type ThreadMessage = Awaited<ReturnType<typeof tail>>[number]
-export type Thread = Awaited<ReturnType<typeof get>>
+export type Thread = Awaited<ReturnType<typeof getThread>>
+
+export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
+  const thread = await ctx.table('threads').getX(id)
+  assert(!thread.deletionTime, 'Thread is deleted')
+  const owner = await getUser(ctx, thread.ownerId)
+  return {
+    ...thread,
+    owner,
+  }
+}
 
 export const get = query({
   args: {
     id: v.id('threads'),
   },
-  handler: async (ctx, { id }) => {
-    const thread = await ctx.table('threads').getX(id)
-    assert(!thread.deletionTime, 'Thread is deleted')
-    return thread
-  },
+  handler: async (ctx, { id }) => await getThread(ctx, id),
 })
 
 export const list = query({
@@ -29,24 +38,15 @@ export const list = query({
       .table('threads')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
+      .map(async (thread) => {
+        const owner = await getUser(ctx, thread.ownerId)
+        return {
+          ...thread,
+          owner,
+        }
+      })
   },
 })
-
-// export const read = query({
-//   args: {
-//     id: v.id('threads'),
-//     paginationOpts: paginationOptsValidator,
-//   },
-//   handler: async (ctx, { id, paginationOpts }) => {
-//     return await ctx
-//       .table('threads')
-//       .getX(id)
-//       .edgeX('messages')
-//       .order('desc')
-//       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-//       .paginate(paginationOpts)
-//   },
-// })
 
 export const tail = query({
   args: {
@@ -105,6 +105,7 @@ export const send = mutation({
     threadId: v.optional(v.id('threads')),
     messages: v.array(v.object(messagesFields)),
     systemPrompt: v.optional(v.string()),
+    permissions: v.optional(permissionsFields),
   },
   handler: async (ctx, args) => {
     const existingThread = args.threadId ? await ctx.table('threads').get(args.threadId) : null
@@ -114,6 +115,7 @@ export const send = mutation({
         ownerId: ctx.viewerIdX(),
         name: 'a new thread',
         systemPrompt: args.systemPrompt ?? '',
+        permissions: args.permissions ?? { private: true },
       }))
     const thread = existingThread ?? (await ctx.table('threads').getX(threadId))
 
@@ -154,6 +156,17 @@ export const updateMessage = mutation({
   },
 })
 
+export const streamMessageContent = internalMutation({
+  args: {
+    id: v.id('messages'),
+    content: v.string(),
+  },
+  handler: async (ctx, { id, content }) => {
+    console.log('viewerId sMut', ctx.viewerId)
+    await ctx.skipRules.table('messages').getX(id).patch({ content })
+  },
+})
+
 export const removeMessage = mutation({
   args: {
     id: v.id('messages'),
@@ -176,10 +189,8 @@ export const updatePermissions = mutation({
     id: v.id('threads'),
     permissions: permissionsFields,
   },
-  handler: async (ctx, { id, permissions }) => {
-    // TODO
-    // await ctx.table('threads').getX(id).patch({ permissions })
-  },
+  handler: async (ctx, { id, permissions }) =>
+    await ctx.table('threads').getX(id).patch({ permissions }),
 })
 
 const nameSchema = z

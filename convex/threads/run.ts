@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 import z from 'zod'
-import { api, internal } from '../_generated/api'
+import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
@@ -44,10 +44,9 @@ export const inference = internalAction({
         choices: [m],
       } = responseSchema.parse(json)
 
-      await ctx.runMutation(api.threads.do.updateMessage, {
+      await ctx.runMutation(internal.threads.do.streamMessageContent, {
         id: messageId,
-        role: 'assistant',
-        content: m?.message.content ?? 'something is wrong',
+        content: m?.message.content ?? '{{ Response missing? }}',
       })
 
       await ctx.runMutation(internal.jobs.event, {

@@ -13,6 +13,7 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
 
     generations: {
       read: async (generation) => {
+        // only owner can read private generations
         if (generation.permissions.private) {
           return ctx.viewerId === generation.authorId
         }
@@ -25,6 +26,38 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         }
         // must be logged in to create
         return ctx.viewerId === value.authorId
+      },
+    },
+
+    messages: {
+      write: async ({ operation, ent: message, value }) => {
+        // only owner can create
+        if (operation === 'create') {
+          const thread = await ctx.skipRules.table('threads').getX(value.threadId)
+          return ctx.viewerId === thread.ownerId
+        }
+
+        // only owner can update/delete
+        const thread = await message.edgeX('thread')
+        return ctx.viewerId === thread.ownerId
+      },
+    },
+
+    threads: {
+      read: async (thread) => {
+        // only owner can read private threads
+        if (thread.permissions.private) {
+          return ctx.viewerId === thread.ownerId
+        }
+        return true
+      },
+      write: async ({ operation, ent: thread, value }) => {
+        // only owner can update/delete
+        if (operation === 'update' || operation === 'delete') {
+          return ctx.viewerId === thread.ownerId
+        }
+        // must be logged in to create
+        return ctx.viewerId === value.ownerId
       },
     },
   })

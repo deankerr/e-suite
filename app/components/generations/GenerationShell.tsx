@@ -9,7 +9,7 @@ import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
-import { Permissions } from '../Permissions'
+import { PermissionsCard } from '../PermissionsCard'
 import { Button } from '../ui/Button'
 import { Shell } from '../ui/Shell'
 import { StoredImage } from '../ui/StoredImage'
@@ -93,7 +93,7 @@ export const GenerationShell = forwardRef<HTMLDivElement, Props & React.Componen
         <Shell.Sidebar className="px-rx-2">
           {author.isViewer && !focusItem && (
             <div className="pt-1">
-              <Permissions
+              <PermissionsCard
                 permissions={generation.permissions}
                 onPermissionsChange={(permissions) =>
                   void updatePermissions({
