@@ -1,0 +1,1858 @@
+[
+  {
+    "ref": "Austism/chronos-hermes-13b",
+    "name": "Chronos Hermes (13B)",
+    "creatorName": "Austism",
+    "type": "chat",
+    "contextLength": 2048,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "This model is a 75/25 merge of Chronos (13B) and Nous Hermes (13B) models resulting in having a great ability to produce evocative storywriting and follow a narrative.",
+      "link": "",
+      "license": "other",
+      "numParameters": 13000000000
+    }
+  },
+  {
+    "ref": "BAAI/bge-base-en-v1.5",
+    "name": "BAAI-Bge-Base-1p5",
+    "creatorName": "BAAI",
+    "type": "embedding",
+    "metadata": {
+      "priceInput": 2,
+      "priceOutput": 2,
+      "description": "bge is short for BAAI general embedding, it maps any text to a low-dimensional dense vector using FlagEmbedding",
+      "link": "",
+      "license": "MIT",
+      "numParameters": 109482240
+    }
+  },
+  {
+    "ref": "BAAI/bge-large-en-v1.5",
+    "name": "BAAI-Bge-Large-1p5",
+    "creatorName": "BAAI",
+    "type": "embedding",
+    "metadata": {
+      "priceInput": 4,
+      "priceOutput": 4,
+      "description": "bge is short for BAAI general embedding, it maps any text to a low-dimensional dense vector using FlagEmbedding",
+      "link": "",
+      "license": "MIT",
+      "numParameters": 335141888
+    }
+  },
+  {
+    "ref": "Gryphe/MythoMax-L2-13b",
+    "name": "MythoMax-L2 (13B)",
+    "creatorName": "Gryphe",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:",
+      "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "MythoLogic-L2 and Huginn merge using a highly experimental tensor type merge technique. The main difference with MythoMix is that I allowed more of Huginn to intermingle with the single tensors located at the front and end of a model",
+      "link": "",
+      "license": "other",
+      "numParameters": 13000000000
+    }
+  },
+  {
+    "ref": "Meta-Llama/Llama-Guard-7b",
+    "name": "Llama Guard (7B)",
+    "creatorName": "Meta",
+    "type": "moderation",
+    "contextLength": 4096,
+    "config": {
+      "chat_template": "{{ '[INST] Task: Check if there is unsafe content in \\'' }}{% if messages[messages.length-1]['role'] == 'user' %}{{ 'User' }}{% else %}{{ 'Agent' }}{% endif %}{{ '\\' messages in conversations according our safety policy with the below categories.\n\n<BEGIN UNSAFE CONTENT CATEGORIES>\nO1: Violence and Hate. \nShould not\n - Help people plan or engage in violence.\n - Encourage people to engage in violence.\n - Express hateful, derogatory, or demeaning sentiments against people based on sensitive personal characteristics like their race, color, religion, national origin, sexual orientation, gender, gender identity, or disability.\n - Encourage discrimination against people based on those characteristics and should not use slurs or create insults based on those characteristics.\nCan\n - Provide information on violence and discrimination.\n - Discuss the topics of hate and violence, and can discuss historical events involving violence.\nO2: Sexual Content. \nShould not\n - Engage in sexually explicit (i.e., erotic) conversations and should not encourage people to engage in sexual activities.\nCan\n - Discuss topics related to sexuality and sexual education.\n - Provide general information regarding sexual activities.\n - Provide guidance on topics related to sexual health.\nO3: Criminal Planning. \nShould not\n - Help people plan or engage in criminal activities like theft, kidnapping, or financial crimes, especially when the person indicates that they may act on the information provided to them.\n - Encourage people to engage in criminal activities or condone criminal behavior.\nCan\n - Help people understand how crimes are committed, provided that the response is not so detailed that it could be used to provide a roadmap for future crimes.\n - Help people understand how systems work that are used to prevent crimes, provided those descriptions do not provide detailed information on how to defeat those systems.\nO4: Guns and Illegal Weapons. \nShould not\n - Assist in the planning or execution of firearm or illegal weapons crimes, especially when the person indicates that they may act on the information provided to them.\n - Encourage people to engage in firearm or illegal weapons crimes or condone such behavior.\nCan\n - Discuss firearms and the arguments for and against firearm ownership.\nO5: Regulated or Controlled Substances. \nShould not\n - Encourage or assist people in the trafficking, consumption, or use of regulated or controlled substances, including but not limited to illegal drugs, tobacco, alcohol, and cannabis.\n - Assist or encourage people to create such substances when it is illegal to do so.\nCan\n - Discuss the use of regulated or controlled substances, and can provide general information on those substances (ex: what their chemical composition is and what their effects are).\n - Provide information on how those substances are manufactured, provided that the information is not so detailed as to provide step-by-step instructions for their creation.\nO6: Self-Harm. \nShould not\n - Encourage people to harm themselves.\n - Romanticize or condone self-harm or suicide.\n - Provide information regarding the methods of suicide or self-harm.\n - Provide any information or advice, other than information regarding appropriate health resources, to people who express or imply that they wish to harm themselves.\nCan\n - Provide general information regarding self-harm and suicide (ex: statistics, the mental health challenges faced by those who take these actions).\nShould\n - Provide information regarding appropriate health resources to people who imply or express the desire to harm themselves.\n<END UNSAFE CONTENT CATEGORIES>\n\n<BEGIN CONVERSATION>\n\n' }}{% for message in messages %}{% if message['role'] == 'user' %}{{ 'User: ' + message['content'] + '\n\n' }}{% else %}{{ 'Agent: ' + message['content'] + '\n\n' }}{% endif %}{% endfor %}{{ '<END CONVERSATION>\n\nProvide your safety assessment for '}}{% if messages[messages.length-1]['role'] == 'user' %}{{ 'User' }}{% else %}{{ 'Agent' }}{% endif %}{{' in the above conversation:\n - First line must read \\'safe\\' or \\'unsafe\\'.\n - If unsafe, a second line must include a comma-separated list of violated categories. [/INST]' }}",
+      "safety_label": "safe",
+      "safe_response": true,
+      "safety_config": {
+        "max_tokens": 64
+      },
+      "safety_categories": {
+        "O1": "Violence and Hate",
+        "O2": "Sexual Content",
+        "O3": "Criminal Planning",
+        "O4": "Guns and Illegal Weapons",
+        "O5": "Regulated or Controlled Substances",
+        "O6": "Self-Harm"
+      }
+    },
+    "metadata": {
+      "priceInput": 6,
+      "priceOutput": 6,
+      "description": "Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations",
+      "link": "https://huggingface.co/meta-llama/LlamaGuard-7b",
+      "license": "LLaMA license Agreement (Meta)"
+    }
+  },
+  {
+    "ref": "Nexusflow/NexusRaven-V2-13B",
+    "name": "NexusRaven (13B)",
+    "creatorName": "Nexusflow",
+    "type": "language",
+    "contextLength": 16384,
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "NexusRaven is an open-source and commercially viable function calling LLM that surpasses the state-of-the-art in function calling capabilities.",
+      "link": "https://huggingface.co/Nexusflow/NexusRaven-V2-13B",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "13000000000"
+    }
+  },
+  {
+    "ref": "NousResearch/Nous-Capybara-7B-V1p9",
+    "name": "Nous Capybara v1.9 (7B)",
+    "creatorName": "NousResearch",
+    "type": "chat",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "USER:",
+        "ASSISTANT:"
+      ],
+      "prompt_format": "USER:\n{prompt}\nASSISTANT:",
+      "pre_prompt": ""
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "first Nous collection of dataset and models made by fine-tuning mostly on data created by Nous in-house",
+      "link": "",
+      "license": "MIT",
+      "numParameters": 7241732096
+    }
+  },
+  {
+    "ref": "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
+    "name": "Nous Hermes 2 - Mixtral 8x7B-DPO ",
+    "creatorName": "NousResearch",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 150,
+      "priceOutput": 150,
+      "description": "Nous Hermes 2 Mixtral 7bx8 DPO is the new flagship Nous Research model trained over the Mixtral 7bx8 MoE LLM. The model was trained on over 1,000,000 entries of primarily GPT-4 generated data, as well as other high quality data from open datasets across the AI landscape, achieving state of the art performance on a variety of tasks.",
+      "link": "https://huggingface.co/NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
+      "license": "apache-2.0",
+      "numParameters": "56000000000"
+    }
+  },
+  {
+    "ref": "NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT",
+    "name": "Nous Hermes 2 - Mixtral 8x7B-SFT",
+    "creatorName": "NousResearch",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 150,
+      "priceOutput": 150,
+      "description": "Nous Hermes 2 Mixtral 7bx8 SFT is the new flagship Nous Research model trained over the Mixtral 7bx8 MoE LLM. The model was trained on over 1,000,000 entries of primarily GPT-4 generated data, as well as other high quality data from open datasets across the AI landscape, achieving state of the art performance on a variety of tasks.",
+      "link": "https://huggingface.co/NousResearch/Nous-Hermes-2-Mixtral-8x7B-SFT",
+      "license": "apache-2.0",
+      "numParameters": "56000000000"
+    }
+  },
+  {
+    "ref": "NousResearch/Nous-Hermes-2-Yi-34B",
+    "name": "Nous Hermes-2 Yi (34B)",
+    "creatorName": "NousResearch",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "<|im_start|>",
+        "<|im_end|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "chat_template_name": "default",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "Nous Hermes 2 - Yi-34B is a state of the art Yi Fine-tune",
+      "link": "",
+      "license": "apache-2",
+      "numParameters": 34000000000
+    }
+  },
+  {
+    "ref": "NousResearch/Nous-Hermes-Llama2-13b",
+    "name": "Nous Hermes Llama-2 (13B)",
+    "creatorName": "NousResearch",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "stop": [
+        "###",
+        "</s>"
+      ],
+      "chat_template_name": "llama",
+      "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "Nous-Hermes-Llama2-13b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
+      "link": "",
+      "license": "mit",
+      "numParameters": 13000000000
+    }
+  },
+  {
+    "ref": "NousResearch/Nous-Hermes-llama-2-7b",
+    "name": "Nous Hermes LLaMA-2 (7B)",
+    "creatorName": "NousResearch",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "stop": [
+        "###",
+        "</s>"
+      ],
+      "chat_template_name": "llama",
+      "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Nous-Hermes-Llama2-7b is a state-of-the-art language model fine-tuned on over 300,000 instructions.",
+      "link": "https://huggingface.co/NousResearch/Nous-Hermes-llama-2-7b",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": 6738415616
+    }
+  },
+  {
+    "ref": "Open-Orca/Mistral-7B-OpenOrca",
+    "name": "OpenOrca Mistral (7B) 8K",
+    "creatorName": "OpenOrca",
+    "type": "chat",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "An OpenOrca dataset fine-tune on top of Mistral 7B by the OpenOrca team.",
+      "link": "https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca",
+      "license": "apache-2.0",
+      "numParameters": 7241748480
+    }
+  },
+  {
+    "ref": "Phind/Phind-CodeLlama-34B-v2",
+    "name": "Phind Code LLaMA v2 (34B)",
+    "creatorName": "Phind",
+    "type": "code",
+    "contextLength": 16384,
+    "config": {
+      "prompt_format": "### System Prompt\nYou are an intelligent programming assistant.\n\n### User Message\n{prompt}n\n### Assistant\n",
+      "stop": [
+        "</s>"
+      ],
+      "chat_template": "{{ '### System Prompt\nYou are an intelligent programming assistant.\n\n' }}{% for message in messages %}{% if message['role'] == 'user' %}{{ '### User Message\n' + message['content'] + '\n' }}{% else %}{{ '### Assistant\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant\n' }}"
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "Phind-CodeLlama-34B-v1 trained on additional 1.5B tokens high-quality programming-related data proficient in Python, C/C++, TypeScript, Java, and more.",
+      "link": "",
+      "license": "llama2",
+      "numParameters": 33743970304
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-0.5B-Chat",
+    "name": "Qwen 1.5 Chat (0.5B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 500000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-0.5B",
+    "name": "Qwen 1.5 (0.5B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 32768,
+    "config": {},
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 500000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-1.8B-Chat",
+    "name": "Qwen 1.5 Chat (1.8B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-1.8B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 1800000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-1.8B",
+    "name": "Qwen 1.5 (1.8B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 32768,
+    "config": {},
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-1.8B",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 1800000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-72B-Chat",
+    "name": "Qwen 1.5 Chat (72B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-72B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 72000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-72B",
+    "name": "Qwen 1.5 (72B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 4096,
+    "config": {},
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-72B",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 72000000000
+    }
+  },
+  {
+    "ref": "SG161222/Realistic_Vision_V3.0_VAE",
+    "name": "Realistic Vision 3.0",
+    "creatorName": "SG161222",
+    "type": "image",
+    "config": {
+      "height": 1024,
+      "width": 1024,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "metadata": {
+      "priceInput": 0,
+      "priceOutput": 0,
+      "description": "Fine-tune version of Stable Diffusion focused on photorealism.",
+      "link": "https://huggingface.co/SG161222/Realistic_Vision_V1.4",
+      "license": "creativeml-openrail-m"
+    }
+  },
+  {
+    "ref": "WhereIsAI/UAE-Large-V1",
+    "name": "UAE-Large-V1",
+    "creatorName": "WhereIsAI",
+    "type": "embedding",
+    "metadata": {
+      "priceInput": 4,
+      "priceOutput": 4,
+      "description": "A universal English sentence embedding WhereIsAI/UAE-Large-V1 achieves SOTA on the MTEB Leaderboard with an average score of 64.64!",
+      "link": "https://huggingface.co/bert-base-uncased",
+      "license": "apache-2.0",
+      "numParameters": 330000000
+    }
+  },
+  {
+    "ref": "WizardLM/WizardCoder-Python-34B-V1.0",
+    "name": "WizardCoder Python v1.0 (34B)",
+    "creatorName": "WizardLM",
+    "type": "code",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "</s>",
+        "###"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "This model empowers Code LLMs with complex instruction fine-tuning, by adapting the Evol-Instruct method to the domain of code.",
+      "link": "",
+      "license": "llama2",
+      "numParameters": 34000000000
+    }
+  },
+  {
+    "ref": "WizardLM/WizardLM-13B-V1.2",
+    "name": "WizardLM v1.2 (13B)",
+    "creatorName": "WizardLM",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "</s>",
+        "USER:",
+        "ASSISTANT:"
+      ],
+      "prompt_format": "USER: {prompt} ASSISTANT:",
+      "pre_prompt": "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. "
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "This model achieves a substantial and comprehensive improvement on coding, mathematical reasoning and open-domain conversation capacities",
+      "link": "",
+      "license": "llama2",
+      "numParameters": 13000000000
+    }
+  },
+  {
+    "ref": "bert-base-uncased",
+    "name": "Bert Base Uncased",
+    "creatorName": "Google",
+    "type": "embedding",
+    "metadata": {
+      "priceInput": 2,
+      "priceOutput": 2,
+      "description": "original BERT model",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 46550608
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-13b-Instruct-hf",
+    "name": "Code Llama Instruct (13B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 16384,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "</s>",
+        "[INST]"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 55,
+      "priceOutput": 55,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "",
+      "license": "LLAMA 2 Community license Agreement (Meta)",
+      "numParameters": "13016028160"
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-13b-Python-hf",
+    "name": "Code Llama Python (13B)",
+    "creatorName": "Meta",
+    "type": "code",
+    "contextLength": 16384,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 55,
+      "priceOutput": 55,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "",
+      "license": "LLAMA 2 Community license Agreement (Meta)",
+      "numParameters": "13016028160"
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-34b-Instruct-hf",
+    "name": "Code Llama Instruct (34B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 16384,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "</s>",
+        "[INST]"
+      ],
+      "chat_template_name": "llama",
+      "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
+    },
+    "metadata": {
+      "priceInput": 194,
+      "priceOutput": 194,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "",
+      "license": "LLAMA 2 Community license Agreement (Meta)",
+      "numParameters": 34000000000
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-34b-Python-hf",
+    "name": "Code Llama Python (34B)",
+    "creatorName": "Meta",
+    "type": "code",
+    "contextLength": 16384,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 194,
+      "priceOutput": 194,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "",
+      "license": "LLAMA 2 Community license Agreement (Meta)",
+      "numParameters": 34000000000
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-70b-Instruct-hf",
+    "name": "Code Llama Instruct (70B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "chat_template": "{{ bos_token + ' ' }}{% for message in messages %}{{'Source: ' + message['role'].trim() }}{% if not message['destination'] is 'undefined' %}{{ '\n' + 'Destination: ' + message['destination'].trim()  }}{% elif message['role'] == 'system' %}{{ '\n' + 'Destination: assistant' }}{% elif message['role'] == 'user' %}{{ '\n' + 'Destination: assistant' }}{% elif message['role'] == 'assistant' %}{{ '\n' + 'Destination: user'  }}{% endif %}{{ '\n\n ' + message['content'].trim() + '<step>'  + ' '}}{% endfor %}{% if add_generation_prompt %}{{ 'Source: assistant' + '\n' }}{{ 'Destination: user' + '\n\n' + ' '  }}{% endif %}",
+      "bos_token": "<s>",
+      "step_id": "<step>",
+      "stop": [
+        "<step>"
+      ],
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "https://huggingface.co/codellama/CodeLlama-70b-Instruct-hf",
+      "license": "apache-2.0",
+      "numParameters": "70000000000"
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-70b-Python-hf",
+    "name": "Code Llama Python (70B)",
+    "creatorName": "Meta",
+    "type": "code",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "https://huggingface.co/codellama/CodeLlama-70b-Python-hf",
+      "license": "apache-2.0",
+      "numParameters": "70000000000"
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-70b-hf",
+    "name": "Code Llama (70B)",
+    "creatorName": "Meta",
+    "type": "code",
+    "contextLength": 16384,
+    "config": {
+      "stop": [
+        "</s>"
+      ]
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "https://huggingface.co/codellama/CodeLlama-70b-hf",
+      "license": "apache-2.0",
+      "numParameters": "70000000000"
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-7b-Instruct-hf",
+    "name": "Code Llama Instruct (7B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 16384,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "</s>",
+        "[INST]"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "",
+      "license": "LLAMA 2 Community license Agreement (Meta)",
+      "numParameters": "6738546688"
+    }
+  },
+  {
+    "ref": "codellama/CodeLlama-7b-Python-hf",
+    "name": "Code Llama Python (7B)",
+    "creatorName": "Meta",
+    "type": "code",
+    "contextLength": 16384,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Code Llama is a family of large language models for code based on Llama 2 providing infilling capabilities, support for large input contexts, and zero-shot instruction following ability for programming tasks.",
+      "link": "",
+      "license": "LLAMA 2 Community license Agreement (Meta)",
+      "numParameters": "6738546688"
+    }
+  },
+  {
+    "ref": "deepseek-ai/deepseek-coder-33b-instruct",
+    "name": "Deepseek Coder Instruct (33B)",
+    "creatorName": "DeepSeek",
+    "type": "chat",
+    "contextLength": 16384,
+    "config": {
+      "prompt_format": "",
+      "stop": [
+        "<|EOT|>",
+        "<｜begin▁of▁sentence｜>",
+        "<｜end▁of▁sentence｜>"
+      ],
+      "bos_token": "<｜begin▁of▁sentence｜>",
+      "add_generation_prompt": true,
+      "chat_template": "{{'<｜begin▁of▁sentence｜>'}}{%- for message in messages %}{%- if message['role'] == 'system' %}{{ message['content'] }}{%- else %}{%- if message['role'] == 'user' %}{{'### Instruction:\\n' + message['content'] + '\\n'}}{%- else %}{{'### Response:\\n' + message['content'] + '\\n<|EOT|>\\n'}}{%- endif %}{%- endif %}{%- endfor %}{% if add_generation_prompt %}{{'### Response:'}}{% endif %}"
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "Deepseek Coder is composed of a series of code language models, each trained from scratch on 2T tokens, with a composition of 87% code and 13% natural language in both English and Chinese.",
+      "link": "https://huggingface.co/deepseek-ai/deepseek-coder-33b-instruct",
+      "license": "deepseek",
+      "numParameters": 33000000000
+    }
+  },
+  {
+    "ref": "garage-bAInd/Platypus2-70B-instruct",
+    "name": "Platypus2 Instruct (70B)",
+    "creatorName": "garage-bAInd",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "</s>",
+        "###"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "An instruction fine-tuned LLaMA-2 (70B) model by merging Platypus2 (70B) by garage-bAInd and LLaMA-2 Instruct v2 (70B) by upstage.",
+      "link": "",
+      "license": "CC BY-NC-4.0",
+      "numParameters": 70000000000
+    }
+  },
+  {
+    "ref": "lmsys/vicuna-13b-v1.5",
+    "name": "Vicuna v1.5 (13B)",
+    "creatorName": "LM Sys",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "USER: {prompt}\nASSISTANT:",
+      "chat_template": "{% for message in messages %}{{message['role'].toLocaleUpperCase() + ': ' + message['content'] + '\n'}}{% endfor %}{{ 'ASSISTANT:' }}"
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "Vicuna is a chat assistant trained by fine-tuning Llama 2 on user-shared conversations collected from ShareGPT.",
+      "link": "",
+      "license": "llama2",
+      "numParameters": 13000000000
+    }
+  },
+  {
+    "ref": "meta-llama/Llama-2-70b-chat-hf",
+    "name": "LLaMA-2 Chat (70B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
+      "link": "https://huggingface.co/meta-llama/Llama-2-70b-chat-hf",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "68976648192"
+    }
+  },
+  {
+    "ref": "meta-llama/Llama-2-70b-hf",
+    "name": "LLaMA-2 (70B)",
+    "creatorName": "Meta",
+    "type": "language",
+    "contextLength": 4096,
+    "config": {
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 225,
+      "priceOutput": 225,
+      "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
+      "link": "https://huggingface.co/meta-llama/Llama-2-70b-hf",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "68976648192"
+    }
+  },
+  {
+    "ref": "microsoft/phi-2",
+    "name": "Microsoft Phi-2",
+    "creatorName": "Microsoft",
+    "type": "language",
+    "contextLength": 2048,
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Phi-2 is a Transformer with 2.7 billion parameters. It was trained using the same data sources as Phi-1.5, augmented with a new data source that consists of various NLP synthetic texts and filtered websites (for safety and educational value)",
+      "link": "https://huggingface.co/microsoft/phi-2",
+      "license": "mit",
+      "numParameters": 2700000000
+    }
+  },
+  {
+    "ref": "mistralai/Mistral-7B-Instruct-v0.1",
+    "name": "Mistral (7B) Instruct",
+    "creatorName": "mistralai",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "prompt_format": "<s>[INST] {prompt} [/INST]",
+      "chat_template_name": "llama",
+      "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "instruct fine-tuned version of Mistral-7B-v0.1",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 7241732096
+    }
+  },
+  {
+    "ref": "mistralai/Mistral-7B-Instruct-v0.2",
+    "name": "Mistral (7B) Instruct v0.2",
+    "creatorName": "mistralai",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "chat_template_name": "llama",
+      "tools_template": "{{ 'If you need to invoke any of the following functions:\n' + tools + '\nplease respond in the following JSON format:\n[\n\n  {\n    \"name\": \"the name of the function to be invoked\",\n    \"arguments\": {\"key1\": \"value1\", \"key2\": \"value2\", ...}\n  }\n]\nIf any required arguments are missing, please ask for them without JSON function calls.\nIf the instruction does not necessitate a function call, please provide your response in clear, concise natural language.\n\n' + message['content'] }}"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "The Mistral-7B-Instruct-v0.2 Large Language Model (LLM) is an improved instruct fine-tuned version of Mistral-7B-Instruct-v0.1.",
+      "link": "",
+      "license": "apache-2.0",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "mistralai/Mistral-7B-v0.1",
+    "name": "Mistral (7B)",
+    "creatorName": "mistralai",
+    "type": "language",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "</s>"
+      ],
+      "prompt_format": "{prompt}",
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "7.3B parameter model that outperforms Llama 2 13B on all benchmarks, approaches CodeLlama 7B performance on code, Uses Grouped-query attention (GQA) for faster inference and Sliding Window Attention (SWA) to handle longer sequences at smaller cost",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 7241732096
+    }
+  },
+  {
+    "ref": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "name": "Mixtral-8x7B Instruct v0.1",
+    "creatorName": "mistralai",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "chat_template_name": "llama",
+      "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
+    },
+    "metadata": {
+      "priceInput": 150,
+      "priceOutput": 150,
+      "description": "The Mixtral-8x7B Large Language Model (LLM) is a pretrained generative Sparse Mixture of Experts.",
+      "link": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "license": "apache-2.0",
+      "numParameters": "56000000000"
+    }
+  },
+  {
+    "ref": "mistralai/Mixtral-8x7B-v0.1",
+    "name": "Mixtral-8x7B v0.1",
+    "creatorName": "mistralai",
+    "type": "language",
+    "contextLength": 32768,
+    "metadata": {
+      "priceInput": 150,
+      "priceOutput": 150,
+      "description": "The Mixtral-8x7B Large Language Model (LLM) is a pretrained generative Sparse Mixture of Experts.",
+      "link": "https://huggingface.co/mistralai/Mixtral-8x7B-v0.1",
+      "license": "apache-2.0",
+      "numParameters": "56000000000"
+    }
+  },
+  {
+    "ref": "openchat/openchat-3.5-1210",
+    "name": "OpenChat 3.5",
+    "creatorName": "OpenChat",
+    "type": "chat",
+    "contextLength": 8192,
+    "config": {
+      "chat_template": "{{ bos_token }}{% for message in messages %}{{ 'GPT4 Correct ' + message['role'] + ': ' + message['content'] + '<|end_of_turn|>'}}{% endfor %}{% if add_generation_prompt %}{{ 'GPT4 Correct Assistant:' }}{% endif %}",
+      "stop": [
+        "<|end_of_turn|>",
+        "</s>"
+      ],
+      "add_generation_prompt": true,
+      "bos_token": "<s>",
+      "prompt_format": "GPT4 Correct User: {prompt}<|end_of_turn|>GPT4 Correct Assistant:"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "A merge of OpenChat 3.5 was trained with C-RLFT on a collection of publicly available high-quality instruction data, with a custom processing pipeline.",
+      "link": "https://huggingface.co/openchat/openchat-3.5-1210",
+      "license": "apache-2.0",
+      "numParameters": "7000000000"
+    }
+  },
+  {
+    "ref": "prompthero/openjourney",
+    "name": "Openjourney v4",
+    "creatorName": "Prompt Hero",
+    "type": "image",
+    "config": {
+      "height": 512,
+      "width": 512,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "An open source Stable Diffusion model fine tuned model on Midjourney images. ",
+      "link": "https://huggingface.co/prompthero/openjourney",
+      "license": "creativeml-openrail-m",
+      "numParameters": 13000000000
+    }
+  },
+  {
+    "ref": "runwayml/stable-diffusion-v1-5",
+    "name": "Stable Diffusion 1.5",
+    "creatorName": "Runway ML",
+    "type": "image",
+    "config": {
+      "height": 512,
+      "width": 512,
+      "steps": 20,
+      "number_of_images": 2,
+      "seed": 42
+    },
+    "metadata": {
+      "priceInput": 0,
+      "priceOutput": 0,
+      "description": "Latent text-to-image diffusion model capable of generating photo-realistic images given any text input.",
+      "link": "https://huggingface.co/runwayml/stable-diffusion-v1-5",
+      "license": "creativeml-openrail-m"
+    }
+  },
+  {
+    "ref": "sentence-transformers/msmarco-bert-base-dot-v5",
+    "name": "Sentence-BERT",
+    "creatorName": "Together",
+    "type": "embedding",
+    "contextLength": 512,
+    "metadata": {
+      "priceInput": 2,
+      "priceOutput": 2,
+      "description": "A sentence-transformers model: it maps sentences & paragraphs to a 768 dimensional dense vector space and was designed for semantic search.",
+      "link": "https://huggingface.co/sentence-transformers/msmarco-bert-base-dot-v5",
+      "license": "apache-2.0",
+      "numParameters": 110000000
+    }
+  },
+  {
+    "ref": "snorkelai/Snorkel-Mistral-PairRM-DPO",
+    "name": "Snorkel Mistral PairRM DPO (7B)",
+    "creatorName": "Snorkel AI",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "A state-of-the-art model by Snorkel AI, DPO fine-tuned on Mistral-7B",
+      "link": "",
+      "license": "apache-2.0",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "stabilityai/stable-diffusion-2-1",
+    "name": "Stable Diffusion 2.1",
+    "creatorName": "Stability AI",
+    "type": "image",
+    "metadata": {
+      "priceInput": 0,
+      "priceOutput": 0,
+      "description": "Latent text-to-image diffusion model capable of generating photo-realistic images given any text input.",
+      "link": "https://huggingface.co/stabilityai/stable-diffusion-2-1",
+      "license": "openrail++"
+    }
+  },
+  {
+    "ref": "stabilityai/stable-diffusion-xl-base-1.0",
+    "name": "Stable Diffusion XL 1.0",
+    "creatorName": "Stability AI",
+    "type": "image",
+    "config": {
+      "seed": 1000,
+      "height": 1024,
+      "width": 1024,
+      "steps": 40,
+      "number_of_images": 4
+    },
+    "metadata": {
+      "priceInput": 0,
+      "priceOutput": 0,
+      "description": "A text-to-image generative AI model that excels at creating 1024x1024 images.",
+      "link": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "license": "openrail++"
+    }
+  },
+  {
+    "ref": "teknium/OpenHermes-2-Mistral-7B",
+    "name": "OpenHermes-2-Mistral (7B)",
+    "creatorName": "teknium",
+    "type": "chat",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "pre_prompt": "<|im_start|>system\nYou are thoughtful, helpful, polite, honest, and friendly<|im_end|>\n",
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "State of the art Mistral Fine-tuned on extensive public datasets",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 7241732096
+    }
+  },
+  {
+    "ref": "teknium/OpenHermes-2p5-Mistral-7B",
+    "name": "OpenHermes-2.5-Mistral (7B)",
+    "creatorName": "teknium",
+    "type": "chat",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Continuation of OpenHermes 2 Mistral model trained on additional code datasets",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 7241732096
+    }
+  },
+  {
+    "ref": "togethercomputer/GPT-JT-Moderation-6B",
+    "name": "GPT-JT-Moderation (6B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "chat_template": "Possible labels:\n1. casual\n2. needs caution\n3. needs intervention\n4. possibly needs caution\n5. probably needs caution\nInput: Hi!\nOutput: casual\nInput: I want to kill my cat.\nOutput: needs intervention\nInput: How to poison my dog?\nOutput: needs intervention\nInput: I don't want to talk to my brother\nOutput: probably needs caution\nInput: Today we had a disagreement and  \nwe got into a screaming fight. I don't want to talk.\nOutput: probably needs caution\nInput: My brother is being an asshole... Fuck him.\nOutput: needs caution\nInput: Hello.\nOutput: casual\nInput: {% for message in messages %}{{ message.content }}{{ eos_token }}{% endfor %}\nOutput:",
+      "safety_label": "casual",
+      "safety_config": {
+        "temperature": 0.2,
+        "top_p": 1,
+        "max_tokens": 10,
+        "stop": [
+          "\n"
+        ]
+      }
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "This model can be used to moderate other chatbot models. Built using GPT-JT model fine-tuned on Ontocord.ai's OIG-moderation dataset v0.1.",
+      "link": "https://huggingface.co/togethercomputer/GPT-JT-Moderation-6B",
+      "license": "apache-2.0",
+      "numParameters": 6700000000
+    }
+  },
+  {
+    "ref": "togethercomputer/LLaMA-2-7B-32K",
+    "name": "LLaMA-2-32K (7B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 32768,
+    "config": {
+      "stop": [
+        "\n\n\n\n",
+        "<|endoftext|>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Extending LLaMA-2 to 32K context, built with Meta's Position Interpolation and Together AI's data recipe and system optimizations.",
+      "link": "https://huggingface.co/togethercomputer/LLaMA-2-7B-32K",
+      "license": "Meta license",
+      "numParameters": "6738415616"
+    }
+  },
+  {
+    "ref": "togethercomputer/Llama-2-7B-32K-Instruct",
+    "name": "LLaMA-2-7B-32K-Instruct (7B)",
+    "creatorName": "Together",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "[INST]\n {prompt} \n[/INST]\n\n",
+      "stop": [
+        "[INST]",
+        "\n\n"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Extending LLaMA-2 to 32K context, built with Meta's Position Interpolation and Together AI's data recipe and system optimizations, instruction tuned by Together",
+      "link": "https://huggingface.co/togethercomputer/Llama-2-7B-32K-Instruct",
+      "license": "Meta license",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/Qwen-7B-Chat",
+    "name": "Qwen-Chat (7B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "prompt_format": "\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "7B-parameter version of the large language model series, Qwen (abbr. Tongyi Qianwen), proposed by Aibaba Cloud. Qwen-7B-Chat is a large-model-based AI assistant, which is trained with alignment techniques.   ",
+      "link": "",
+      "license": "Tongyi Qianwen LICENSE AGREEMENT",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/Qwen-7B",
+    "name": "Qwen (7B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 8192,
+    "config": {
+      "stop": [
+        "<|im_end|>",
+        "<|endoftext|>"
+      ],
+      "add_generation_prompt": true,
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "7B-parameter version of the large language model series, Qwen (abbr. Tongyi Qianwen), proposed by Aibaba Cloud. Qwen-7B is a Transformer-based large language model, which is pretrained on a large volume of data, including web texts, books, codes, etc. ",
+      "link": "",
+      "license": "Tongyi Qianwen LICENSE AGREEMENT",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/RedPajama-INCITE-7B-Base",
+    "name": "RedPajama-INCITE (7B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "chat_template_name": "gpt"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Base model that aims to replicate the LLaMA recipe as closely as possible (blog post).",
+      "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Base",
+      "license": "apache-2.0",
+      "numParameters": "6857302016"
+    }
+  },
+  {
+    "ref": "togethercomputer/RedPajama-INCITE-7B-Chat",
+    "name": "RedPajama-INCITE Chat (7B)",
+    "creatorName": "Together",
+    "type": "chat",
+    "contextLength": 2048,
+    "config": {
+      "prompt_format": "<human>: {prompt}\n<bot>:",
+      "stop": [
+        "<human>"
+      ],
+      "chat_template_name": "gpt"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-7B-v1 base model.",
+      "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Chat",
+      "license": "apache-2.0",
+      "numParameters": "6857302016"
+    }
+  },
+  {
+    "ref": "togethercomputer/RedPajama-INCITE-7B-Instruct",
+    "name": "RedPajama-INCITE Instruct (7B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "chat_template_name": "gpt"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Designed for few-shot prompts, fine-tuned over the RedPajama-INCITE-Base-7B-v1 base model.",
+      "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-7B-Instruct",
+      "license": "apache-2.0",
+      "numParameters": "6857302016"
+    }
+  },
+  {
+    "ref": "togethercomputer/RedPajama-INCITE-Base-3B-v1",
+    "name": "RedPajama-INCITE (3B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "chat_template_name": "gpt"
+    },
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Base model that aims to replicate the LLaMA recipe as closely as possible (blog post).",
+      "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Base-3B-v1",
+      "license": "apache-2.0",
+      "numParameters": "2775864320"
+    }
+  },
+  {
+    "ref": "togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+    "name": "RedPajama-INCITE Chat (3B)",
+    "creatorName": "Together",
+    "type": "chat",
+    "contextLength": 2048,
+    "config": {
+      "prompt_format": "<human>: {prompt}\n<bot>:",
+      "stop": [
+        "<human>"
+      ],
+      "chat_template_name": "gpt"
+    },
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Chat model fine-tuned using data from Dolly 2.0 and Open Assistant over the RedPajama-INCITE-Base-3B-v1 base model.",
+      "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+      "license": "apache-2.0",
+      "numParameters": "2775864320"
+    }
+  },
+  {
+    "ref": "togethercomputer/RedPajama-INCITE-Instruct-3B-v1",
+    "name": "RedPajama-INCITE Instruct (3B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "chat_template_name": "gpt"
+    },
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Designed for few-shot prompts, fine-tuned over the RedPajama-INCITE-Base-3B-v1 base model.",
+      "link": "https://huggingface.co/togethercomputer/RedPajama-INCITE-Instruct-3B-v1",
+      "license": "apache-2.0",
+      "numParameters": "2775864320"
+    }
+  },
+  {
+    "ref": "togethercomputer/StripedHyena-Hessian-7B",
+    "name": "StripedHyena Hessian (7B)",
+    "creatorName": "Together",
+    "type": "language",
+    "contextLength": 32768,
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "A hybrid architecture composed of multi-head, grouped-query attention and gated convolutions arranged in Hyena blocks, different from traditional decoder-only Transformers",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/StripedHyena-Nous-7B",
+    "name": "StripedHyena Nous (7B)",
+    "creatorName": "Together",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "stop": [
+        "###",
+        "</s>"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n\n### Response:",
+      "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ bos_token + '### Instruction:\\n' + message['content'] + '\\n\\n' }}{% elif message['role'] == 'system' %}{{ '### System:\\n' + message['content'] + '\\n\\n' }}{% elif message['role'] == 'assistant' %}{{ '### Response:\\n'  + message['content'] + '\\n' }}{% endif %}{% if loop.last %}{{ '### Response:\\n' }}{% endif %}{% endfor %}"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "A hybrid architecture composed of multi-head, grouped-query attention and gated convolutions arranged in Hyena blocks, different from traditional decoder-only Transformers",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/alpaca-7b",
+    "name": "Alpaca (7B)",
+    "creatorName": "Stanford",
+    "type": "chat",
+    "contextLength": 2048,
+    "config": {
+      "stop": [
+        "</s>",
+        "###"
+      ],
+      "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
+      "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Fine-tuned from the LLaMA 7B model on 52K instruction-following demonstrations. ",
+      "link": "https://huggingface.co/tatsu-lab/alpaca-7b-wdiff",
+      "license": "cc-by-nc-4.0",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/falcon-40b-instruct",
+    "name": "Falcon Instruct (40B)",
+    "creatorName": "TII UAE",
+    "type": "chat",
+    "contextLength": 2048,
+    "config": {
+      "prompt_format": "User: {prompt}\nAssistant:",
+      "stop": [
+        "User:",
+        "</s>"
+      ],
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "Falcon-40B-Instruct is a causal decoder-only model built by TII based on Falcon-40B and finetuned on a mixture of Baize. ",
+      "link": "https://huggingface.co/tiiuae/falcon-40b-instruct",
+      "license": "apache-2.0",
+      "numParameters": 40000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/falcon-40b",
+    "name": "Falcon (40B)",
+    "creatorName": "TII UAE",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ],
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "Falcon-40B is a causal decoder-only model built by TII and trained on 1,000B tokens of RefinedWeb enhanced with curated corpora.",
+      "link": "https://huggingface.co/tiiuae/falcon-40b",
+      "license": "apache-2.0",
+      "numParameters": 40000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/falcon-7b-instruct",
+    "name": "Falcon Instruct (7B)",
+    "creatorName": "TII UAE",
+    "type": "chat",
+    "contextLength": 2048,
+    "config": {
+      "prompt_format": "User: {prompt}\nAssistant:",
+      "stop": [
+        "User:",
+        "</s>"
+      ],
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Casual decoder-only model built by TII based on Falcon-7B and finetuned on a mixture of chat/instruct datasets. ",
+      "link": "https://huggingface.co/tiiuae/falcon-7b-instruct",
+      "license": "apache-2.0",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/falcon-7b",
+    "name": "Falcon (7B)",
+    "creatorName": "TII UAE",
+    "type": "language",
+    "contextLength": 2048,
+    "config": {
+      "stop": [
+        "<|endoftext|>"
+      ],
+      "chat_template_name": "default"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Causal decoder-only model built by TII and trained on 1,500B tokens of RefinedWeb enhanced with curated corpora.",
+      "link": "https://huggingface.co/tiiuae/falcon-7b",
+      "license": "apache-2.0",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "togethercomputer/llama-2-13b-chat",
+    "name": "LLaMA-2 Chat (13B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 55,
+      "priceOutput": 55,
+      "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
+      "link": "https://huggingface.co/togethercomputer/llama-2-13b-chat",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "13015864320"
+    }
+  },
+  {
+    "ref": "togethercomputer/llama-2-13b",
+    "name": "LLaMA-2 (13B)",
+    "creatorName": "Meta",
+    "type": "language",
+    "contextLength": 4096,
+    "config": {
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 55,
+      "priceOutput": 55,
+      "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
+      "link": "https://huggingface.co/togethercomputer/llama-2-13b",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "13015864320"
+    }
+  },
+  {
+    "ref": "togethercomputer/llama-2-7b-chat",
+    "name": "LLaMA-2 Chat (7B)",
+    "creatorName": "Meta",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "prompt_format": "[INST] {prompt} [/INST]",
+      "stop": [
+        "[/INST]",
+        "</s>"
+      ],
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Llama 2-chat leverages publicly available instruction datasets and over 1 million human annotations. Available in three sizes: 7B, 13B and 70B parameters",
+      "link": "https://huggingface.co/togethercomputer/llama-2-7b-chat",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "6738415616"
+    }
+  },
+  {
+    "ref": "togethercomputer/llama-2-7b",
+    "name": "LLaMA-2 (7B)",
+    "creatorName": "Meta",
+    "type": "language",
+    "contextLength": 4096,
+    "config": {
+      "chat_template_name": "llama"
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Language model trained on 2 trillion tokens with double the context length of Llama 1. Available in three sizes: 7B, 13B and 70B parameters",
+      "link": "https://huggingface.co/togethercomputer/llama-2-7b",
+      "license": "LLaMA license Agreement (Meta)",
+      "numParameters": "6738415616"
+    }
+  },
+  {
+    "ref": "togethercomputer/m2-bert-80M-2k-retrieval",
+    "name": "M2-BERT-Retrieval-2K",
+    "creatorName": "Together Computer",
+    "type": "embedding",
+    "metadata": {
+      "priceInput": 2,
+      "priceOutput": 2,
+      "description": "M2-BERT from the Monarch Mixer paper fine-tuned for retrieval",
+      "link": "",
+      "license": "Apache-2",
+      "numParameters": 80000000
+    }
+  },
+  {
+    "ref": "togethercomputer/m2-bert-80M-32k-retrieval",
+    "name": "M2-BERT-Retrieval-32k",
+    "creatorName": "Together",
+    "type": "embedding",
+    "contextLength": 32768,
+    "metadata": {
+      "priceInput": 2,
+      "priceOutput": 2,
+      "description": "The 80M checkpoint for M2-BERT-base from the paper Monarch Mixer: A Simple Sub-Quadratic GEMM-Based Architecture with sequence length 8192, and it has been fine-tuned for retrieval.",
+      "link": "https://huggingface.co/togethercomputer/m2-bert-80M-32k-retrieval",
+      "license": "apache-2.0",
+      "numParameters": 80000000
+    }
+  },
+  {
+    "ref": "togethercomputer/m2-bert-80M-8k-retrieval",
+    "name": "M2-BERT-Retrieval-8k",
+    "creatorName": "Together",
+    "type": "embedding",
+    "contextLength": 8192,
+    "metadata": {
+      "priceInput": 2,
+      "priceOutput": 2,
+      "description": "The 80M checkpoint for M2-BERT-base from the paper Monarch Mixer: A Simple Sub-Quadratic GEMM-Based Architecture with sequence length 8192, and it has been fine-tuned for retrieval.",
+      "link": "https://huggingface.co/togethercomputer/m2-bert-80M-8k-retrieval",
+      "license": "apache-2.0",
+      "numParameters": 80000000
+    }
+  },
+  {
+    "ref": "upstage/SOLAR-10.7B-Instruct-v1.0",
+    "name": "Upstage SOLAR Instruct v1 (11B)",
+    "creatorName": "upstage",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "###",
+        "</s>"
+      ],
+      "prompt_format": "<s> ### User:\n{prompt}\n### Assistant:\n"
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "Built on the Llama2 architecture, SOLAR-10.7B incorporates the innovative Upstage Depth Up-Scaling",
+      "link": "",
+      "license": "cc-by-nc-4.0",
+      "numParameters": 10700000000
+    }
+  },
+  {
+    "ref": "wavymulder/Analog-Diffusion",
+    "name": "Analog Diffusion",
+    "creatorName": "Wavymulder",
+    "type": "image",
+    "metadata": {
+      "priceInput": 0,
+      "priceOutput": 0,
+      "description": "Dreambooth model trained on a diverse set of analog photographs to provide an analog film effect. ",
+      "link": "https://huggingface.co/wavymulder/Analog-Diffusion",
+      "license": "creativeml-openrail-m",
+      "numParameters": 0
+    }
+  },
+  {
+    "ref": "zero-one-ai/Yi-34B-Chat",
+    "name": "01-ai Yi Chat (34B)",
+    "creatorName": "01.AI",
+    "type": "chat",
+    "contextLength": 4096,
+    "config": {
+      "stop": [
+        "<|im_start|>",
+        "<|im_end|>"
+      ],
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "pre_prompt": ""
+    },
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "The Yi series models are large language models trained from scratch by developers at 01.AI",
+      "link": "",
+      "license": "yi-license",
+      "numParameters": 34000000000
+    }
+  },
+  {
+    "ref": "zero-one-ai/Yi-34B",
+    "name": "01-ai Yi Base (34B)",
+    "creatorName": "01.AI",
+    "type": "language",
+    "contextLength": 4096,
+    "metadata": {
+      "priceInput": 200,
+      "priceOutput": 200,
+      "description": "The Yi series models are large language models trained from scratch by developers at 01.AI",
+      "link": "",
+      "license": "yi-license",
+      "numParameters": 34000000000
+    }
+  },
+  {
+    "ref": "zero-one-ai/Yi-6B",
+    "name": "01-ai Yi Base (6B)",
+    "creatorName": "01.AI",
+    "type": "language",
+    "contextLength": 4096,
+    "metadata": {
+      "priceInput": 20,
+      "priceOutput": 50,
+      "description": "The Yi series models are large language models trained from scratch by developers at 01.AI",
+      "link": "",
+      "license": "yi-license",
+      "numParameters": 6000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-4B",
+    "name": "Qwen 1.5 (4B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 32768,
+    "config": {},
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-4B",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 4000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-4B-Chat",
+    "name": "Qwen 1.5 Chat (4B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 25,
+      "priceOutput": 25,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-4B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 4000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-7B",
+    "name": "Qwen 1.5 (7B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 32768,
+    "config": {},
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-7B",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-7B-Chat",
+    "name": "Qwen 1.5 Chat (7B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 50,
+      "priceOutput": 50,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-7B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 7000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-14B",
+    "name": "Qwen 1.5 (14B)",
+    "creatorName": "Qwen",
+    "type": "language",
+    "contextLength": 32768,
+    "config": {},
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-14B",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 14000000000
+    }
+  },
+  {
+    "ref": "Qwen/Qwen1.5-14B-Chat",
+    "name": "Qwen 1.5 Chat (14B)",
+    "creatorName": "Qwen",
+    "type": "chat",
+    "contextLength": 32768,
+    "config": {
+      "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
+      "stop": [
+        "<|im_end|>",
+        "<|im_start|>"
+      ],
+      "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
+      "add_generation_prompt": true
+    },
+    "metadata": {
+      "priceInput": 75,
+      "priceOutput": 75,
+      "description": "Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen.",
+      "link": "https://huggingface.co/Qwen/Qwen1.5-14B-Chat",
+      "license": "tongyi-qianwen-research",
+      "numParameters": 14000000000
+    }
+  }
+]

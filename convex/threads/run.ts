@@ -22,7 +22,6 @@ export const inference = internalAction({
 
       const body = {
         ...inferenceParameters,
-        stop: ['</s>', '[/INST]'], // TODO relevant stop strings
         n: 1,
         messages: messageSchema.array().parse(messages),
       }
