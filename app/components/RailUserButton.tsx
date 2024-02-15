@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import { SignInButton as ClerkSignInButton, UserButton as ClerkUserButton } from '@clerk/nextjs'
 import { useConvexAuth } from 'convex/react'
+import { usePathname } from 'next/navigation'
 import { forwardRef } from 'react'
 import { Button } from './ui/Button'
 import { Spinner } from './ui/Spinner'
@@ -12,6 +13,7 @@ type Props = {}
 export const RailUserButton = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function RailUserButton({ className, ...props }, forwardedRef) {
     const { isAuthenticated, isLoading } = useConvexAuth()
+    const pathname = usePathname()
     return (
       <div
         {...props}
@@ -21,9 +23,9 @@ export const RailUserButton = forwardRef<HTMLDivElement, Props & React.Component
         {isLoading ? (
           <Spinner />
         ) : isAuthenticated ? (
-          <ClerkUserButton afterSignOutUrl="/" />
+          <ClerkUserButton afterSignOutUrl={pathname} />
         ) : (
-          <ClerkSignInButton mode="modal">
+          <ClerkSignInButton mode="modal" redirectUrl={pathname}>
             <Button size="1" className="h-fit text-center">
               <div className="h-full py-2">Log in</div>
             </Button>
