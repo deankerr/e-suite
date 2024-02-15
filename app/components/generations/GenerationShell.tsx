@@ -14,30 +14,46 @@ import { Shell } from '../ui/Shell'
 import { StoredImage } from '../ui/StoredImage'
 import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
-export const GenerationShell = ({ generation }: { generation: Generation }) => {
+export const GenerationShell = ({
+  generation,
+  focus,
+}: {
+  generation: Generation
+  focus?: number
+}) => {
   const { author, images } = generation
   const updatePermissions = useMutation(api.generations.do.updatePermissions)
   const parameters = generation.images[0]!.parameters!
 
+  const focusItem = focus ? images[focus] : undefined
   return (
     <Shell.Root>
-      <Shell.TitleBar icon={FileImageIcon}>{parameters.prompt}</Shell.TitleBar>
+      <Shell.TitleBar icon={FileImageIcon}>
+        {parameters.prompt} {focus}
+      </Shell.TitleBar>
 
-      <Shell.Content className="grid content-center">
-        <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
-          {images.map((image) => (
-            <StoredImage
-              key={image._id}
-              image={image}
-              className={cn(
-                'rounded border',
-                image.height > image.width && 'max-w-[24%]',
-                image.height === image.width && 'max-w-[48%]',
-                image.height < image.width && 'max-w-[49%]',
-              )}
-            />
-          ))}
-        </div>
+      <Shell.Content>
+        {focusItem && (
+          <div className="grid content-center">
+            <StoredImage image={focusItem} className={cn('rounded border')} />
+          </div>
+        )}
+        {!focusItem && (
+          <div className={cn('flex h-full flex-wrap items-center justify-center gap-1')}>
+            {images.map((image) => (
+              <StoredImage
+                key={image._id}
+                image={image}
+                className={cn(
+                  'rounded border',
+                  image.height > image.width && 'max-w-[24%]',
+                  image.height === image.width && 'max-w-[48%]',
+                  image.height < image.width && 'max-w-[49%]',
+                )}
+              />
+            ))}
+          </div>
+        )}
       </Shell.Content>
 
       <Shell.Controls>
