@@ -1,9 +1,11 @@
 'use client'
 
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
+import { api } from '@/convex/_generated/api'
 import type { Generation } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
 import { Em, Heading, Separator, Strong } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { FileImageIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { Permissions } from '../Permissions'
@@ -14,7 +16,7 @@ import { DeleteGenerationDialog } from './DeleteGenerationDialog'
 
 export const GenerationShell = ({ generation }: { generation: Generation }) => {
   const { author, images } = generation
-  const creator = generation.author.username
+  const updatePermissions = useMutation(api.generations.do.updatePermissions)
   const parameters = generation.images[0]!.parameters!
 
   return (
@@ -55,7 +57,15 @@ export const GenerationShell = ({ generation }: { generation: Generation }) => {
       <Shell.Sidebar className="px-rx-2">
         {author.isViewer && (
           <div className="pt-1">
-            <Permissions permissions={generation.permissions} onValueChange={() => {}} />
+            <Permissions
+              permissions={generation.permissions}
+              onPermissionsChange={(permissions) =>
+                void updatePermissions({
+                  id: generation._id,
+                  permissions,
+                })
+              }
+            />
           </div>
         )}
 

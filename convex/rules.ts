@@ -12,10 +12,18 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
     },
 
     generations: {
+      read: async (generation) => {
+        if (generation.permissions.private) {
+          return ctx.viewerId === generation.authorId
+        }
+        return true
+      },
       write: async ({ operation, ent: generation, value }) => {
+        // only owner can update/delete
         if (operation === 'update' || operation === 'delete') {
           return ctx.viewerId === generation.authorId
         }
+        // must be logged in to create
         return ctx.viewerId === value.authorId
       },
     },

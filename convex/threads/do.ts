@@ -3,10 +3,11 @@ import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { internalQuery, mutation, query } from '../functions'
-import { messagesFields } from '../schema'
+import { messagesFields, permissionsFields } from '../schema'
 import { assert, vEnum } from '../util'
 
 export type ThreadMessage = Awaited<ReturnType<typeof tail>>[number]
+export type Thread = Awaited<ReturnType<typeof get>>
 
 export const get = query({
   args: {
@@ -167,6 +168,17 @@ export const remove = mutation({
   handler: async (ctx, { id }) => {
     await ctx.table('threads').getX(id).delete()
     return true
+  },
+})
+
+export const updatePermissions = mutation({
+  args: {
+    id: v.id('threads'),
+    permissions: permissionsFields,
+  },
+  handler: async (ctx, { id, permissions }) => {
+    // TODO
+    // await ctx.table('threads').getX(id).patch({ permissions })
   },
 })
 

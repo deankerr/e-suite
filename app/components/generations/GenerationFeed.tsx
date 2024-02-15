@@ -22,7 +22,7 @@ export const GenerationFeed = ({
     {},
     { initialNumItems },
   )
-  const { ref, inView } = useInView()
+  const { inView } = useInView()
   const shouldLoadMore = inView && status === 'CanLoadMore'
   const shouldLoadMore2 = useDebounce(shouldLoadMore, 2000)
 
@@ -49,7 +49,7 @@ export const GenerationFeed = ({
   )
 }
 
-const Loader = ({
+export const Loader = ({
   status,
   loadRef,
 }: {

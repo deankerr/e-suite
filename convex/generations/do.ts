@@ -4,7 +4,7 @@ import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
 import { getImages } from '../files/images'
 import { mutation, query } from '../functions'
-import { generationParameters, permissions } from '../schema'
+import { generationParameters, permissionsFields } from '../schema'
 import { QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert, error } from '../util'
@@ -63,7 +63,7 @@ export const send = mutation({
         dimensions: v.string(),
       }),
     ),
-    permissions: v.optional(permissions),
+    permissions: v.optional(permissionsFields),
   },
   handler: async (ctx, args) => {
     //TODO validation
@@ -101,6 +101,15 @@ export const remove = mutation({
     id: v.id('generations'),
   },
   handler: async (ctx, { id }) => await ctx.table('generations').getX(id).delete(),
+})
+
+export const updatePermissions = mutation({
+  args: {
+    id: v.id('generations'),
+    permissions: permissionsFields,
+  },
+  handler: async (ctx, { id, permissions }) =>
+    await ctx.table('generations').getX(id).patch({ permissions }),
 })
 
 const getDimensionSizes = (value: string) => {

@@ -4,9 +4,9 @@ import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
 
 export type GenerationParameters = Infer<typeof generationParameters>
-export type Permissions = Infer<typeof permissions>
+export type Permissions = Infer<typeof permissionsFields>
 
-export const permissions = v.object({
+export const permissionsFields = v.object({
   private: v.boolean(),
   allowOnPublicFeeds: v.optional(v.boolean()),
   allowOtherUsersToEdit: v.optional(v.boolean()),
@@ -124,12 +124,12 @@ const schema = defineEntSchema(
 
     generations: defineEnt(generationsFields)
       .deletion('soft')
-      .field('permissions', permissions, { default: { private: true } })
+      .field('permissions', permissionsFields, { default: { private: true } })
       .edge('user', { field: 'authorId' }),
 
     images: defineEnt(imagesFields)
       .deletion('soft')
-      .field('permissions', permissions, { default: { private: true } })
+      .field('permissions', permissionsFields, { default: { private: true } })
       .index('sourceUrl', ['sourceUrl']),
 
     imageModels: defineEnt(imageModelFields)
