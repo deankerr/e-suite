@@ -3,6 +3,10 @@
 
 @tailwind components;
 
+.radix-themes {
+  --default-font-family: var(--font-inter);
+}
+
 /* Fix tailwind preflight overriding Clerk styles */
 .cl-modalContent {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI (Custom)', Roboto, 'Helvetica Neue',
