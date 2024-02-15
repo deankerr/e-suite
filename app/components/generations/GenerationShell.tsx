@@ -25,7 +25,7 @@ export const GenerationShell = forwardRef<HTMLDivElement, Props & React.Componen
     const { author, images } = generation
     const updatePermissions = useMutation(api.generations.do.updatePermissions)
 
-    const focusItem = focus ? images[focus] : undefined
+    const focusItem = focus !== undefined ? images[focus] : undefined
 
     const parameters = focusItem?.parameters ?? generation.images[0]!.parameters!
 
@@ -35,8 +35,24 @@ export const GenerationShell = forwardRef<HTMLDivElement, Props & React.Componen
 
         <Shell.Content className="grid">
           {focusItem && (
-            <div className="grid w-full place-content-center">
-              <StoredImage image={focusItem} className={cn('rounded border')} />
+            <div className="grid h-full grid-rows-[80%_20%]">
+              <StoredImage
+                image={focusItem}
+                className={cn('place-self-center rounded border', 'max-w-[min(50vh,80vw)]')}
+              />
+              <div className="flex items-center justify-self-center">
+                {images
+                  .filter((image) => focusItem !== image)
+                  .map((image, i) => (
+                    <NextLink href={`/generations/${generation._id}/${i}`} className={cn('h-fit')}>
+                      <StoredImage
+                        key={image._id}
+                        image={image}
+                        className={cn('max-w-[100px] rounded border')}
+                      />
+                    </NextLink>
+                  ))}
+              </div>
             </div>
           )}
           {!focusItem && (
@@ -46,7 +62,7 @@ export const GenerationShell = forwardRef<HTMLDivElement, Props & React.Componen
                   href={`/generations/${generation._id}/${i}`}
                   className={cn(
                     image.height > image.width && (i === 0 || i === 2) && 'justify-self-end',
-                    image.height > image.width ? 'max-w-[256px]' : 'max-w-[340px]',
+                    image.height > image.width ? 'max-w-[min(256px,40vw)]' : 'max-w-[340px]',
                   )}
                 >
                   <StoredImage
