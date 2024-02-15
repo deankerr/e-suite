@@ -1,6 +1,6 @@
 import { ClientProviders } from '@/app/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreakpointIndicator'
-import { Theme, ThemePanel } from '@radix-ui/themes'
+import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
 import type { Metadata } from 'next'
@@ -8,7 +8,6 @@ import { BIZ_UDMincho, DotGothic16, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 import { cn } from '@/lib/utils'
-import { DebugPanel } from './components/util/DebugPanel'
 
 export const metadata: Metadata = {
   title: 'e/suite',
@@ -47,8 +46,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />
-              <DebugPanel />
-              <ThemePanel defaultOpen={false} />
+              {/* <DebugPanel /> */}
+              {/* <ThemePanel defaultOpen={false} /> */}
             </Theme>
           </JotaiProvider>
         </ClientProviders>
