@@ -54,6 +54,7 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
     const submit = handleSubmit(
       async (data) => {
         console.log('submit', data)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { randomize, dimensions, ...parameters } = data
         try {
           await createGeneration({
