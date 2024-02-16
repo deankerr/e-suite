@@ -3,10 +3,11 @@ import { TextArea } from '@/app/components/ui/TextArea'
 import { useThread } from '@/components/threads/useThread'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
-import { Heading, ScrollArea } from '@radix-ui/themes'
+import { Em, Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SendIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 import { CShell } from '../ui/CShell'
+import { InferenceParametersForm } from './InferenceParametersForm'
 import { Message } from './Message'
 
 type ThreadShellProps = {
@@ -49,7 +50,44 @@ export const ThreadShell = forwardRef<
         </div>
       </CShell.Content>
 
-      <CShell.RightSidebar>r</CShell.RightSidebar>
+      <CShell.RightSidebar titlebar={<TabArea />}>
+        <Tabs.Root defaultValue="parameters">
+          <Tabs.List className="hidden">
+            <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
+            <Tabs.Trigger value="history">History</Tabs.Trigger>
+            <Tabs.Trigger value="details">Details</Tabs.Trigger>
+          </Tabs.List>
+
+          <ScrollArea className="">
+            <div className="flex w-full flex-col">
+              <Tabs.Content value="parameters" className="">
+                <InferenceParametersForm />
+                <InferenceParametersForm />
+              </Tabs.Content>
+
+              <Tabs.Content value="history">
+                <Heading size="2">History</Heading>
+                <Em>Is written by those who dare.</Em>
+              </Tabs.Content>
+
+              <Tabs.Content value="details">
+                <Heading size="2">Details</Heading>
+                <p>🤠</p>
+              </Tabs.Content>
+            </div>
+          </ScrollArea>
+        </Tabs.Root>
+      </CShell.RightSidebar>
     </CShell.Root>
   )
 })
+
+const TabArea = () => (
+  <Tabs.Root defaultValue="parameters">
+    <Tabs.List>
+      <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
+      <Tabs.Trigger value="history">History</Tabs.Trigger>
+      <Tabs.Trigger value="details">Details</Tabs.Trigger>
+    </Tabs.List>
+  </Tabs.Root>
+)

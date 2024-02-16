@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Label } from '@/app/components/ui/Label'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Slider } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+// import { toast } from 'sonner'
 import * as z from 'zod'
 import { ModelSelect } from './ModelSelect'
 
 type Props = {
-  onSubmitSuccess: (values: FormSchema) => void
+  onSubmitSuccess?: (values: FormSchema) => void
   initialValues?: Partial<FormSchema>
 }
 
@@ -35,26 +36,23 @@ const defaultValues = {
 export const InferenceParametersForm = forwardRef<
   HTMLFormElement,
   Props & React.ComponentProps<'form'>
->(function InferenceParametersForm(
-  { initialValues, onSubmitSuccess, className, ...props },
-  forwardedRef,
-) {
+>(function InferenceParametersForm({ initialValues, className, ...props }, forwardedRef) {
   const { control, handleSubmit } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues ?? defaultValues,
   })
 
-  const submit = handleSubmit(onSubmitSuccess, (errors) => {
-    console.error(errors)
-    toast.error('Form validation error')
-  })
+  // const submit = handleSubmit(onSubmitSuccess, (errors) => {
+  //   console.error(errors)
+  //   toast.error('Form validation error')
+  // })
 
   return (
     <form
       {...props}
       className={cn('', className)}
       ref={forwardedRef}
-      onSubmit={(e) => void submit(e)}
+      // onSubmit={(e) => void submit(e)}
     >
       <Controller
         name="model"
