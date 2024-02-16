@@ -99,7 +99,7 @@ export const Content = forwardRef<HTMLDivElement, ContentProps & React.Component
       <animated.div
         {...props}
         id="shell-content"
-        className={cn('grow bg-panel-translucent', className)}
+        className={cn('h-full grow bg-panel-translucent', className)}
         ref={forwardedRef}
       >
         <ATitlebar className="justify-between">
@@ -147,7 +147,7 @@ export const LeftSidebar = forwardRef<
       ref={forwardedRef}
       style={{ width: spring.width }}
     >
-      <div className="absolute right-0" style={{ width: shell.leftWidth }}>
+      <div className="absolute inset-0" style={{ width: shell.leftWidth }}>
         <ATitlebar>
           <IconButton
             lucideIcon={PanelLeftCloseIcon}
@@ -186,7 +186,7 @@ export const RightSidebar = forwardRef<
       ref={forwardedRef}
       style={spring}
     >
-      <div className="absolute left-0" style={{ width: shell.rightWidth }}>
+      <div className="absolute inset-0 overflow-hidden" style={{ width: shell.rightWidth }}>
         <ATitlebar>
           <IconButton
             lucideIcon={PanelRightCloseIcon}
