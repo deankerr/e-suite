@@ -7,8 +7,6 @@ import { PanelRightCloseIcon } from 'lucide-react'
 import { createContext, forwardRef, useContext, useState } from 'react'
 import { IconButton } from '../../app/components/ui/IconButton'
 
-type RootProps = {}
-
 const CShellContext = createContext<ReturnType<typeof createShellAtom> | null>(null)
 
 const createShellAtom = () => {
@@ -21,6 +19,8 @@ const createShellAtom = () => {
   )
   return interfaceAtom
 }
+
+type RootProps = {}
 
 const useShellContext = () => {
   const context = useContext(CShellContext)
