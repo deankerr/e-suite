@@ -1,12 +1,12 @@
 'use client'
 
-import { ThreadCShell } from '@/components/threads/ThreadCShell'
+import { ThreadShell } from '@/components/threads/ThreadShell'
 import { Id } from '@/convex/_generated/dataModel'
 
 const ThreadSlugPage = ({ params }: { params: { slug: [Id<'threads'>] } }) => {
   const [threadId] = params.slug
 
-  return <ThreadCShell threadId={threadId} />
+  return <ThreadShell threadId={threadId} />
 }
 
 export default ThreadSlugPage

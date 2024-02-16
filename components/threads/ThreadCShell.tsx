@@ -1,12 +1,12 @@
 'use client'
 
 import { PermissionsCard } from '@/app/components/PermissionsCard'
-import { CShell } from '@/app/components/ui/CShell'
 import { IconButton } from '@/app/components/ui/IconButton'
 import { Label } from '@/app/components/ui/Label'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { Message } from '@/components/threads/Message'
 import { useThread } from '@/components/threads/useThread'
+import { CShell } from '@/components/ui/CShell'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { ScrollArea, Text, TextFieldInput } from '@radix-ui/themes'
@@ -29,12 +29,7 @@ export const ThreadCShell = forwardRef<
   const ShellIcon = thread ? MessageSquareTextIcon : MessageSquareIcon
 
   return (
-    <CShell.Root
-      {...props}
-      showLoadingState={!thread}
-      className={cn('', className)}
-      ref={forwardedRef}
-    >
+    <CShell.Root {...props} className={cn('', className)} ref={forwardedRef}>
       <CShell.Section className="bg-panel-translucent">
         <CShell.Titlebar className="bg-gray-1" icon={<ShellIcon className="size-5 stroke-1" />}>
           <Text>{thread?.name ?? 'This thread is currently loading'}</Text>
