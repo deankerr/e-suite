@@ -19,8 +19,7 @@ export const IconButton = forwardRef<
       className={cn('cursor-pointer disabled:cursor-not-allowed', className)}
       ref={forwardedRef}
     >
-      {LIcon && <LIcon className="stroke-1" />}
-      {children}
+      {LIcon ? <LIcon className="stroke-1" /> : children}
     </RxIconButton>
   )
 })

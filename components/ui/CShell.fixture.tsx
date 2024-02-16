@@ -44,10 +44,13 @@ const EComp = () => {
   return (
     <CShell.Root shellAtom={shellAtom} className="mx-auto">
       <CShell.LeftSidebar titlebar={<Heading size="2">LeftSidebar</Heading>}>
-        <div className="">
-          <ASCIIRocket />
-          <DebugCornerMarkers no={!cornerHelpers} />
-        </div>
+        <ScrollArea className="h-[calc(100%-2.5rem)]">
+          <div className="space-y-2 px-2 py-2">
+            <ASCIIRocket />
+            <p>Boom</p>
+          </div>
+        </ScrollArea>
+        <DebugCornerMarkers no={!cornerHelpers} />
       </CShell.LeftSidebar>
 
       <CShell.Content titlebar={<Heading size="2">CShell</Heading>}>

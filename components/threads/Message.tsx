@@ -81,7 +81,7 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
                 <IconButton>
-                  <PenSquareIcon />
+                  <PenSquareIcon className="size-5 stroke-1" />
                 </IconButton>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content variant="soft">

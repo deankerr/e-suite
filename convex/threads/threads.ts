@@ -9,9 +9,22 @@ import { assert } from '../util'
 export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')
+  const messages = await thread
+    .edgeX('messages')
+    .order('desc')
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .map(async (message) => ({
+      ...message,
+      job: await ctx
+        .table('jobs')
+        .order('desc', 'messageId')
+        .filter((q) => q.eq(q.field('messageId'), message._id))
+        .first(),
+    }))
   const owner = await getUser(ctx, thread.userId)
   return {
     ...thread,
+    messages,
     owner,
   }
 }

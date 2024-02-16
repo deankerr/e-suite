@@ -2,15 +2,13 @@
 
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { usePaginatedQuery, useQuery } from 'convex/react'
+import { useQuery } from 'convex/react'
 
-export const useThread = (args: { id?: Id<'threads'> }) => {
-  const threadId = args.id
+export const useThread = (args: { threadId?: Id<'threads'> }) => {
+  const threadId = args.threadId
   const queryKey = threadId ? { id: threadId } : 'skip'
-  const thread = useQuery(api.threads.threads.get, queryKey)
-  const messages = usePaginatedQuery(api.threads.threads.listMessages, queryKey, {
-    initialNumItems: 10,
-  })
 
-  return { thread, messages }
+  const thread = useQuery(api.threads.threads.get, queryKey)
+
+  return { thread }
 }

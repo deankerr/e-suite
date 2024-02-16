@@ -27,7 +27,10 @@ const Root = forwardRef<HTMLDivElement, RootProps & React.ComponentProps<'div'>>
       <div
         {...props}
         id="cshell-root"
-        className={cn('flex h-full w-full divide-x overflow-hidden rounded border', className)}
+        className={cn(
+          'flex h-full w-full divide-x overflow-hidden rounded border text-sm',
+          className,
+        )}
         ref={forwardedRef}
       >
         {children}
@@ -99,10 +102,10 @@ export const Content = forwardRef<HTMLDivElement, ContentProps & React.Component
       <animated.div
         {...props}
         id="shell-content"
-        className={cn('h-full grow bg-panel-translucent', className)}
+        className={cn('flex h-full grow flex-col overflow-hidden bg-panel-translucent', className)}
         ref={forwardedRef}
       >
-        <ATitlebar className="justify-between">
+        <ATitlebar className="shrink-0">
           <IconButton
             lucideIcon={PanelLeftOpenIcon}
             variant="ghost"
@@ -147,7 +150,7 @@ export const LeftSidebar = forwardRef<
       ref={forwardedRef}
       style={{ width: spring.width }}
     >
-      <div className="absolute inset-0" style={{ width: shell.leftWidth }}>
+      <div className="absolute inset-y-0 right-0" style={{ width: shell.leftWidth }}>
         <ATitlebar>
           <IconButton
             lucideIcon={PanelLeftCloseIcon}
@@ -157,7 +160,7 @@ export const LeftSidebar = forwardRef<
           />
           {titlebar}
         </ATitlebar>
-        <div>{children}</div>
+        {children}
       </div>
     </animated.div>
   )
@@ -186,7 +189,7 @@ export const RightSidebar = forwardRef<
       ref={forwardedRef}
       style={spring}
     >
-      <div className="absolute inset-0 overflow-hidden" style={{ width: shell.rightWidth }}>
+      <div className="absolute inset-y-0 left-0" style={{ width: shell.rightWidth }}>
         <ATitlebar>
           <IconButton
             lucideIcon={PanelRightCloseIcon}

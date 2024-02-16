@@ -22,8 +22,8 @@ export const ThreadCShell = forwardRef<
   HTMLDivElement,
   ThreadCShellProps & React.ComponentProps<'div'>
 >(function ThreadCShell({ threadId, className, ...props }, forwardedRef) {
-  const { thread, messages } = useThread({ id: threadId })
-
+  const { thread } = useThread({ threadId: threadId })
+  const messages = { results: thread?.messages }
   const [messageValue, setMessageValue] = useState('')
 
   const ShellIcon = thread ? MessageSquareTextIcon : MessageSquareIcon
@@ -37,7 +37,7 @@ export const ThreadCShell = forwardRef<
 
         <ScrollArea className="grow">
           <div className="flex flex-col justify-end divide-y">
-            {messages.results.map((message) => (
+            {messages.results?.map((message) => (
               <Message key={message._id} message={message} onDelete={() => {}} onEdit={() => {}} />
             ))}
           </div>
