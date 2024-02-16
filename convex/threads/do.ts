@@ -15,7 +15,7 @@ export type Thread = Awaited<ReturnType<typeof getThread>>
 export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')
-  const owner = await getUser(ctx, thread.ownerId)
+  const owner = await getUser(ctx, thread.userId)
   return {
     ...thread,
     owner,
@@ -39,7 +39,7 @@ export const list = query({
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
       .map(async (thread) => {
-        const owner = await getUser(ctx, thread.ownerId)
+        const owner = await getUser(ctx, thread.userId)
         return {
           ...thread,
           owner,
@@ -112,7 +112,7 @@ export const send = mutation({
     const threadId =
       existingThread?._id ??
       (await ctx.table('threads').insert({
-        ownerId: ctx.viewerIdX(),
+        userId: ctx.viewerIdX(),
         name: 'a new thread',
         systemPrompt: args.systemPrompt ?? '',
         permissions: args.permissions ?? { private: true },

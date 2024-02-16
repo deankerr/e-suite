@@ -153,14 +153,14 @@ const schema = defineEntSchema(
     messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
 
     threads: defineEnt(threadsFields)
-      .edge('user', { field: 'ownerId' })
+      .edge('user')
       .edges('messages', { ref: 'threadId', deletion: 'soft' })
       .deletion('soft'),
 
     users: defineEnt(usersFields)
       .deletion('soft')
       .edges('generations', { ref: 'authorId' })
-      .edges('threads', { ref: 'ownerId' })
+      .edges('threads', { ref: true })
       .edge('apiKey', { optional: true, ref: 'ownerId' })
       .field('tokenIdentifier', v.string(), { index: true }),
   },

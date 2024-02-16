@@ -17,6 +17,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     return (
       <div
         {...props}
+        id="nav-rail"
         className={cn(
           'flex w-10 shrink-0 flex-col border-r sm:w-16',
           isRailExpanded && 'w-64',

@@ -46,8 +46,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />
-              {/* <DebugPanel /> */}
-              {/* <ThemePanel defaultOpen={false} /> */}
             </Theme>
           </JotaiProvider>
         </ClientProviders>

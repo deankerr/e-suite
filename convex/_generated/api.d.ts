@@ -31,6 +31,7 @@ import type * as rules from "../rules.js";
 import type * as threads_do from "../threads/do.js";
 import type * as threads_models from "../threads/models.js";
 import type * as threads_run from "../threads/run.js";
+import type * as threads_threads from "../threads/threads.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as util from "../util.js";
@@ -61,6 +62,7 @@ declare const fullApi: ApiFromModules<{
   "threads/do": typeof threads_do;
   "threads/models": typeof threads_models;
   "threads/run": typeof threads_run;
+  "threads/threads": typeof threads_threads;
   types: typeof types;
   users: typeof users;
   util: typeof util;
