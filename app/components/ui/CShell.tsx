@@ -48,10 +48,7 @@ export const Titlebar = forwardRef<HTMLDivElement, TitlebarProps & React.Compone
       <div
         {...props}
         id="cshell-titlebar"
-        className={cn(
-          'flex h-8 items-center justify-between border-b bg-gray-1 px-1 text-sm',
-          className,
-        )}
+        className={cn('flex h-8 items-center border-b bg-gray-1 px-1 text-sm', className)}
         ref={forwardedRef}
       >
         {icon && (
@@ -60,7 +57,6 @@ export const Titlebar = forwardRef<HTMLDivElement, TitlebarProps & React.Compone
           </IconButton>
         )}
         {children}
-        end
       </div>
     )
   },
@@ -82,7 +78,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps & React.Component
       <animated.div
         {...props}
         id="cshell-section"
-        className={cn('grid overflow-hidden', className)}
+        className={cn('grid overflow-hidden', width && 'shrink-0', className)}
         ref={forwardedRef}
         style={spring}
       >
