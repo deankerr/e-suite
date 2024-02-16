@@ -1,14 +1,11 @@
 'use client'
 
-import { IconButton } from '@/app/components/ui/IconButton'
 import { Spinner } from '@/app/components/ui/Spinner'
-import { TextArea } from '@/app/components/ui/TextArea'
 import type { Id } from '@/convex/_generated/dataModel'
 import type { ThreadMessage } from '@/convex/threads/do'
 import { cn } from '@/lib/utils'
-import { Badge, DropdownMenu } from '@radix-ui/themes'
-import { CheckIcon, PenSquareIcon, XIcon } from 'lucide-react'
-import { forwardRef, useState } from 'react'
+import { Badge, Text } from '@radix-ui/themes'
+import { forwardRef } from 'react'
 
 type Props = {
   message: ThreadMessage
@@ -21,45 +18,73 @@ type Props = {
 }
 
 export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function Message({ message, onDelete, onEdit, className, ...props }, forwardedRef) {
-    const [isEditing, setIsEditing] = useState(false)
-    const [contentValue, setContentValue] = useState(message.content)
-
+  function Message({ message, className, ...props }, forwardedRef) {
     const displayName = message.name ?? getDisplayRole(message.role)
     // const displayClassname = getDisplayClassname(message.role)
 
+    const badgeColors = {
+      user: 'orange',
+      assistant: 'gold',
+      system: 'green',
+    } as const
+
+    const bgColors = {
+      user: 'bg-gold-1',
+      assistant: 'bg-gray-1',
+      system: 'bg-green-1',
+    } as const
+
     return (
-      <div {...props} className={cn('flex gap-3 p-1', className)} ref={forwardedRef}>
-        <div className={cn('sm:min-w-20')}>
-          <Badge
-            color={message.role === 'assistant' ? 'gray' : 'orange'}
-            className="h-min w-full justify-center text-sm"
-          >
+      <div
+        {...props}
+        className={cn('flex items-center gap-4 py-4 pl-2 pr-4', bgColors[message.role], className)}
+        ref={forwardedRef}
+      >
+        {/* role info */}
+        <div className="flex min-w-28 shrink-0 flex-col justify-center">
+          <Badge size="2" className="justify-center" color={badgeColors[message.role]}>
             {displayName}
           </Badge>
         </div>
 
-        <div>
-          <div className="font-code text-xs text-gray">
-            {message.job ? (
-              <>
-                {message.job?.type} | {message.job?.status} | {message.job?._id}
-              </>
-            ) : (
-              'none'
-            )}
-          </div>
-
+        <div className="wd-[90ch] text-sm">
           {message.job?.status === 'pending' && <Spinner />}
-
-          {isEditing ? (
-            <TextArea value={contentValue} onChange={(e) => setContentValue(e.target.value)} />
-          ) : (
-            <p>{message.content}</p>
-          )}
+          {/* content body */}
+          <Text className="">{message.content}</Text>
         </div>
 
-        <div className="flex shrink-0 grow justify-end space-x-1 px-4">
+        {/* job status */}
+        <div className="absolute right-2.5 top-0.5 space-y-0.5 text-right font-code text-xs text-gold-5">
+          <div>
+            {message.job?.status} {message.job?.type} {message.job?._id}
+          </div>
+        </div>
+      </div>
+    )
+  },
+)
+
+const getDisplayRole = (role: string) => {
+  const displayRoles: Record<string, string> = {
+    user: 'User',
+    assistant: 'AI',
+    system: 'System',
+  }
+  if (role in displayRoles) return displayRoles[role]
+  return role
+}
+
+// const getDisplayColor = (role: string) => {
+//   const displayRoles: Record<string, string> = {
+//     user: 'text-accent',
+//     assistant: 'text-blue',
+//     system: 'text-cyan',
+//   }
+//   if (role in displayRoles) return displayRoles[role]
+//   return ''
+// }
+
+/* 
           {isEditing ? (
             <>
               <IconButton onClick={() => setIsEditing(false)}>
@@ -92,28 +117,5 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           )}
-        </div>
-      </div>
-    )
-  },
-)
 
-const getDisplayRole = (role: string) => {
-  const displayRoles: Record<string, string> = {
-    user: 'User',
-    assistant: 'AI',
-    system: 'System',
-  }
-  if (role in displayRoles) return displayRoles[role]
-  return role
-}
-
-// const getDisplayClassname = (role: string) => {
-//   const displayRoles: Record<string, string> = {
-//     user: 'bg-surface-accent',
-//     assistant: 'bg-cyan-4A',
-//     system: 'text-cyan',
-//   }
-//   if (role in displayRoles) return displayRoles[role]
-//   return ''
-// }
+*/

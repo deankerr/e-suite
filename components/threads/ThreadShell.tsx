@@ -22,7 +22,7 @@ export const ThreadShell = forwardRef<
 
   const title = thread ? thread.name : threadId ? 'Loading...' : 'No Thread ID'
   return (
-    <CShell.Root {...props} className={cn('', className)} ref={forwardedRef}>
+    <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       <CShell.Content
         titlebar={
           <>
@@ -34,7 +34,7 @@ export const ThreadShell = forwardRef<
       >
         {/* message feed */}
         <ScrollArea className="grow">
-          <div className="flex flex-col justify-end divide-y">
+          <div className="divide-y">
             {thread?.messages.map((msg) => (
               <Message key={msg._id} message={msg} onEdit={() => {}} onDelete={() => {}} />
             ))}
