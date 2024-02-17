@@ -57,6 +57,8 @@ const EComp = () => {
         <ScrollArea className="h-[calc(100%-2.5rem)]">
           <div className="space-y-2 p-2">
             <p>Widths: {sidebarConfigWidths.join(', ')}</p>
+            <CShell.SidebarToggle side="left" />
+            <CShell.SidebarToggle side="right" />
             <SampleText />
           </div>
         </ScrollArea>

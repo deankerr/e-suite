@@ -14,9 +14,9 @@ import { createShellContextAtom, ShellContext, useShellContext } from './shell.a
 
 type RootProps = {
   shellAtom?: ReturnType<typeof createShellContextAtom>
-}
+} & React.ComponentProps<'div'>
 
-const Root = forwardRef<HTMLDivElement, RootProps & React.ComponentProps<'div'>>(function Root(
+const Root = forwardRef<HTMLDivElement, RootProps>(function Root(
   { shellAtom, children, className, ...props },
   forwardedRef,
 ) {
@@ -41,47 +41,48 @@ const Root = forwardRef<HTMLDivElement, RootProps & React.ComponentProps<'div'>>
 
 type ContentProps = {
   titlebar?: React.ReactNode
-}
+} & React.ComponentProps<'div'>
 
-export const Content = forwardRef<HTMLDivElement, ContentProps & React.ComponentProps<'div'>>(
-  function Content({ titlebar, children, className, ...props }, forwardedRef) {
-    const [_, setShell] = useShellContext()
+export const Content = forwardRef<HTMLDivElement, ContentProps>(function Content(
+  { titlebar, children, className, ...props },
+  forwardedRef,
+) {
+  const [_, setShell] = useShellContext()
 
-    return (
-      <animated.div
-        {...props}
-        id="shell-content"
-        className={cn('flex h-full grow flex-col overflow-hidden bg-panel-translucent', className)}
-        ref={forwardedRef}
-      >
-        <ATitlebar className="shrink-0">
-          <IconButton
-            lucideIcon={PanelLeftOpenIcon}
-            variant="ghost"
-            className="m-0"
-            onClick={() => setShell({ leftOpen: true })}
-          />
-          {titlebar}
-          <IconButton
-            lucideIcon={PanelRightOpenIcon}
-            variant="ghost"
-            className="m-0"
-            onClick={() => setShell({ rightOpen: true })}
-          />
-        </ATitlebar>
-        {children}
-      </animated.div>
-    )
-  },
-)
+  return (
+    <animated.div
+      {...props}
+      id="shell-content"
+      className={cn('flex h-full grow flex-col overflow-hidden bg-panel-translucent', className)}
+      ref={forwardedRef}
+    >
+      <ATitlebar className="shrink-0">
+        <IconButton
+          lucideIcon={PanelLeftOpenIcon}
+          variant="ghost"
+          className="m-0"
+          onClick={() => setShell({ leftOpen: true })}
+        />
+        {titlebar}
+        <IconButton
+          lucideIcon={PanelRightOpenIcon}
+          variant="ghost"
+          className="m-0"
+          onClick={() => setShell({ rightOpen: true })}
+        />
+      </ATitlebar>
+      {children}
+    </animated.div>
+  )
+})
 
-type LeftSidebarProps = { titlebar?: React.ReactNode }
+type LeftSidebarProps = { titlebar?: React.ReactNode } & React.ComponentProps<'div'>
 
-export const LeftSidebar = forwardRef<
-  HTMLDivElement,
-  LeftSidebarProps & React.ComponentProps<'div'>
->(function LeftSidebar({ titlebar, children, className, ...props }, forwardedRef) {
-  const [shell, setShell] = useShellContext()
+export const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(function LeftSidebar(
+  { titlebar, children, className, ...props },
+  forwardedRef,
+) {
+  const [shell] = useShellContext()
 
   const spring = useSpring({
     width: shell.leftOpen ? shell.leftWidth : 0,
@@ -100,28 +101,20 @@ export const LeftSidebar = forwardRef<
       style={{ width: spring.width }}
     >
       <div className="absolute inset-y-0 right-0" style={{ width: shell.leftWidth }}>
-        <ATitlebar>
-          <IconButton
-            lucideIcon={PanelLeftCloseIcon}
-            variant="ghost"
-            className="m-0"
-            onClick={() => setShell({ leftOpen: false })}
-          />
-          {titlebar}
-        </ATitlebar>
+        <ATitlebar>{titlebar}</ATitlebar>
         {children}
       </div>
     </animated.div>
   )
 })
 
-type RightSidebarProps = { titlebar?: React.ReactNode }
+type RightSidebarProps = { titlebar?: React.ReactNode } & React.ComponentProps<'div'>
 
-export const RightSidebar = forwardRef<
-  HTMLDivElement,
-  RightSidebarProps & React.ComponentProps<'div'>
->(function RightSidebar({ titlebar, children, className, ...props }, forwardedRef) {
-  const [shell, setShell] = useShellContext()
+export const RightSidebar = forwardRef<HTMLDivElement, RightSidebarProps>(function RightSidebar(
+  { titlebar, children, className, ...props },
+  forwardedRef,
+) {
+  const [shell] = useShellContext()
 
   const spring = useSpring({
     width: shell.rightOpen ? shell.rightWidth : 0,
@@ -139,27 +132,19 @@ export const RightSidebar = forwardRef<
       style={spring}
     >
       <div className="absolute inset-y-0 left-0" style={{ width: shell.rightWidth }}>
-        <ATitlebar>
-          <IconButton
-            lucideIcon={PanelRightCloseIcon}
-            variant="ghost"
-            className={cn('m-0')}
-            onClick={() => setShell({ rightOpen: false })}
-          />
-          {titlebar}
-        </ATitlebar>
+        <ATitlebar>{titlebar}</ATitlebar>
         {children}
       </div>
     </animated.div>
   )
 })
 
-type ATitlebarProps = {}
+type ATitlebarProps = {} & React.ComponentProps<typeof animated.div>
 
-const ATitlebar = forwardRef<
-  HTMLDivElement,
-  ATitlebarProps & React.ComponentProps<typeof animated.div>
->(function Titlebar({ children, className, ...props }, forwardedRef) {
+const ATitlebar = forwardRef<HTMLDivElement, ATitlebarProps>(function Titlebar(
+  { children, className, ...props },
+  forwardedRef,
+) {
   return (
     <animated.div
       {...props}
@@ -171,4 +156,27 @@ const ATitlebar = forwardRef<
   )
 })
 
-export const CShell = Object.assign({}, { Root, Content, LeftSidebar, RightSidebar })
+type SidebarToggleProps = { side: 'left' | 'right' } & React.ComponentProps<typeof IconButton>
+
+export const SidebarToggle = forwardRef<HTMLButtonElement, SidebarToggleProps>(
+  function SidebarToggle({ side, className, ...props }, forwardedRef) {
+    const [shell, setShell] = useShellContext()
+    const sideLeftIcon = shell.leftOpen ? PanelLeftCloseIcon : PanelLeftOpenIcon
+    const sideRightIcon = shell.rightOpen ? PanelRightCloseIcon : PanelRightOpenIcon
+
+    return (
+      <IconButton
+        lucideIcon={side === 'left' ? sideLeftIcon : sideRightIcon}
+        {...props}
+        className={cn('', className)}
+        ref={forwardedRef}
+        onClick={() => {
+          if (side === 'left') setShell({ leftOpen: !shell.leftOpen })
+          else setShell({ rightOpen: !shell.rightOpen })
+        }}
+      />
+    )
+  },
+)
+
+export const CShell = Object.assign({}, { Root, Content, LeftSidebar, RightSidebar, SidebarToggle })
