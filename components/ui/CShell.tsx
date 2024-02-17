@@ -39,57 +39,6 @@ const Root = forwardRef<HTMLDivElement, RootProps & React.ComponentProps<'div'>>
   )
 })
 
-type TitlebarProps = { icon?: React.ReactNode }
-
-export const Titlebar = forwardRef<HTMLDivElement, TitlebarProps & React.ComponentProps<'div'>>(
-  function Titlebar({ icon, children, className, ...props }, forwardedRef) {
-    return (
-      <div
-        {...props}
-        id="cshell-titlebar"
-        className={cn('flex h-8 items-center border-b bg-gray-1 px-1 text-sm', className)}
-        ref={forwardedRef}
-      >
-        {icon && (
-          <IconButton variant="ghost" className="m-0 -ml-1">
-            {/* {showLoadingState ? <WifiIcon className="size-5 animate-pulse stroke-1" /> : icon} */}
-            {icon}
-          </IconButton>
-        )}
-        {children}
-      </div>
-    )
-  },
-)
-
-type SectionProps = {
-  open?: boolean
-  side?: 'left' | 'right'
-  width?: number
-}
-
-export const Section = forwardRef<HTMLDivElement, SectionProps & React.ComponentProps<'div'>>(
-  function Section({ open = true, width, children, className, ...props }, forwardedRef) {
-    const spring = useSpring({
-      width: width ? (open ? width : 0) : '100%',
-    })
-
-    return (
-      <animated.div
-        {...props}
-        id="cshell-section"
-        className={cn('grid w-64 overflow-hidden', width && 'shrink-0', className)}
-        ref={forwardedRef}
-        style={spring}
-      >
-        <div style={{ width }} className="grid overflow-hidden text-sm">
-          {children}
-        </div>
-      </animated.div>
-    )
-  },
-)
-
 type ContentProps = {
   titlebar?: React.ReactNode
 }
@@ -222,7 +171,4 @@ const ATitlebar = forwardRef<
   )
 })
 
-export const CShell = Object.assign(
-  {},
-  { Root, Titlebar, Section, Content, LeftSidebar, RightSidebar },
-)
+export const CShell = Object.assign({}, { Root, Content, LeftSidebar, RightSidebar })

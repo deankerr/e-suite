@@ -17,6 +17,8 @@ type Props = {
   }) => void
 }
 
+// https://source.boringavatars.com/beam/120/${nanoid(5)}?square
+
 export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function Message({ message, className, ...props }, forwardedRef) {
     const displayName = message.name ?? getDisplayRole(message.role)
