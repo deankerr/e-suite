@@ -39,53 +39,33 @@ const Root = forwardRef<HTMLDivElement, RootProps>(function Root(
   )
 })
 
-type ContentProps = {
-  titlebar?: React.ReactNode
-} & React.ComponentProps<'div'>
-
-export const Content = forwardRef<HTMLDivElement, ContentProps>(function Content(
-  { titlebar, children, className, ...props },
+type ContentProps = {} & React.ComponentProps<'div'>
+const Content = forwardRef<HTMLDivElement, ContentProps>(function Content(
+  { children, className, ...props },
   forwardedRef,
 ) {
-  const [_, setShell] = useShellContext()
-
   return (
-    <animated.div
+    <div
       {...props}
       id="shell-content"
       className={cn('flex h-full grow flex-col overflow-hidden bg-panel-translucent', className)}
       ref={forwardedRef}
     >
-      <ATitlebar className="shrink-0">
-        <IconButton
-          lucideIcon={PanelLeftOpenIcon}
-          variant="ghost"
-          className="m-0"
-          onClick={() => setShell({ leftOpen: true })}
-        />
-        {titlebar}
-        <IconButton
-          lucideIcon={PanelRightOpenIcon}
-          variant="ghost"
-          className="m-0"
-          onClick={() => setShell({ rightOpen: true })}
-        />
-      </ATitlebar>
       {children}
-    </animated.div>
+    </div>
   )
 })
 
-type LeftSidebarProps = { titlebar?: React.ReactNode } & React.ComponentProps<'div'>
+type LeftSidebarProps = {} & React.ComponentProps<'div'>
 
-export const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(function LeftSidebar(
-  { titlebar, children, className, ...props },
+const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(function LeftSidebar(
+  { children, className, ...props },
   forwardedRef,
 ) {
   const [shell] = useShellContext()
 
   const spring = useSpring({
-    width: shell.leftOpen ? shell.leftWidth : 0,
+    width: shell.leftOpen ? shell.leftWidth : 0, //*
   })
 
   return (
@@ -93,66 +73,65 @@ export const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(function
       {...props}
       id="shell-left-sidebar"
       className={cn(
-        'h-full shrink-0 overflow-hidden bg-gray-1',
-        shell.leftFloating && 'absolute left-0 z-10',
+        'h-full shrink-0 overflow-hidden bg-gray-1', //*
+        shell.leftFloating && 'absolute left-0 z-10', //###
         className,
       )}
       ref={forwardedRef}
       style={{ width: spring.width }}
     >
+      {/* //### */}
       <div className="absolute inset-y-0 right-0" style={{ width: shell.leftWidth }}>
-        <ATitlebar>{titlebar}</ATitlebar>
         {children}
       </div>
     </animated.div>
   )
 })
 
-type RightSidebarProps = { titlebar?: React.ReactNode } & React.ComponentProps<'div'>
+type RightSidebarProps = {} & React.ComponentProps<'div'>
 
-export const RightSidebar = forwardRef<HTMLDivElement, RightSidebarProps>(function RightSidebar(
-  { titlebar, children, className, ...props },
+const RightSidebar = forwardRef<HTMLDivElement, RightSidebarProps>(function RightSidebar(
+  { children, className, ...props },
   forwardedRef,
 ) {
   const [shell] = useShellContext()
 
   const spring = useSpring({
-    width: shell.rightOpen ? shell.rightWidth : 0,
+    width: shell.rightOpen ? shell.rightWidth : 0, //*
   })
   return (
     <animated.div
       {...props}
       id="shell-right-sidebar"
       className={cn(
-        'h-full shrink-0 overflow-hidden bg-gray-1',
-        shell.rightFloating && 'absolute right-0 z-10',
+        'h-full shrink-0 overflow-hidden bg-gray-1', //*
+        shell.rightFloating && 'absolute right-0 z-10', //###
         className,
       )}
       ref={forwardedRef}
       style={spring}
     >
+      {/* //### */}
       <div className="absolute inset-y-0 left-0" style={{ width: shell.rightWidth }}>
-        <ATitlebar>{titlebar}</ATitlebar>
         {children}
       </div>
     </animated.div>
   )
 })
 
-type ATitlebarProps = {} & React.ComponentProps<typeof animated.div>
-
-const ATitlebar = forwardRef<HTMLDivElement, ATitlebarProps>(function Titlebar(
+type TitlebarProps = {} & React.ComponentProps<'div'>
+const Titlebar = forwardRef<HTMLDivElement, TitlebarProps>(function Titlebar(
   { children, className, ...props },
   forwardedRef,
 ) {
   return (
-    <animated.div
+    <div
       {...props}
-      className={cn('flex h-10 items-center border-b', className)}
+      className={cn('flex h-10 shrink-0 items-center border-b', className)}
       ref={forwardedRef}
     >
       {children}
-    </animated.div>
+    </div>
   )
 })
 
@@ -179,4 +158,7 @@ export const SidebarToggle = forwardRef<HTMLButtonElement, SidebarToggleProps>(
   },
 )
 
-export const CShell = Object.assign({}, { Root, Content, LeftSidebar, RightSidebar, SidebarToggle })
+export const CShell = Object.assign(
+  {},
+  { Root, Content, LeftSidebar, RightSidebar, Titlebar, SidebarToggle },
+)

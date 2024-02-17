@@ -43,7 +43,10 @@ const EComp = () => {
 
   return (
     <CShell.Root shellAtom={shellAtom} className="mx-auto">
-      <CShell.LeftSidebar titlebar={<Heading size="2">LeftSidebar</Heading>}>
+      <CShell.LeftSidebar>
+        <CShell.Titlebar className="justify-center">
+          <Heading size="2">LeftSidebar</Heading>
+        </CShell.Titlebar>
         <ScrollArea className="h-[calc(100%-2.5rem)]">
           <div className="space-y-2 px-2 py-2">
             <ASCIIRocket />
@@ -53,7 +56,10 @@ const EComp = () => {
         <DebugCornerMarkers no={!cornerHelpers} />
       </CShell.LeftSidebar>
 
-      <CShell.Content titlebar={<Heading size="2">CShell</Heading>}>
+      <CShell.Content>
+        <CShell.Titlebar className="justify-center">
+          <Heading size="2">CShell</Heading>
+        </CShell.Titlebar>
         <ScrollArea className="h-[calc(100%-2.5rem)]">
           <div className="space-y-2 p-2">
             <p>Widths: {sidebarConfigWidths.join(', ')}</p>
@@ -65,7 +71,10 @@ const EComp = () => {
         <DebugCornerMarkers no={!cornerHelpers} />
       </CShell.Content>
 
-      <CShell.RightSidebar titlebar={<Heading size="2">RightSidebar</Heading>}>
+      <CShell.RightSidebar>
+        <CShell.Titlebar className="justify-center">
+          <Heading size="2">RightSidebar</Heading>
+        </CShell.Titlebar>
         <ScrollArea className="h-[calc(100%-2.5rem)]">
           <div className="space-y-2 px-2 py-2">
             <PermissionsCard permissions={{ private: true }} onPermissionsChange={() => {}} />
