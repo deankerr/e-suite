@@ -27,10 +27,7 @@ const Root = forwardRef<HTMLDivElement, RootProps>(function Root(
       <div
         {...props}
         id="cshell-root"
-        className={cn(
-          'flex h-full w-full divide-x overflow-hidden rounded border text-sm',
-          className,
-        )}
+        className={cn('flex h-full w-full overflow-hidden rounded border text-sm', className)}
         ref={forwardedRef}
       >
         {children}
@@ -56,63 +53,36 @@ const Content = forwardRef<HTMLDivElement, ContentProps>(function Content(
   )
 })
 
-type LeftSidebarProps = {} & React.ComponentProps<'div'>
-
-const LeftSidebar = forwardRef<HTMLDivElement, LeftSidebarProps>(function LeftSidebar(
-  { children, className, ...props },
+type SidebarProps = { side: 'left' | 'right' } & React.ComponentProps<'div'>
+export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
+  { side, children, className, ...props },
   forwardedRef,
 ) {
   const [shell] = useShellContext()
+  const width = side === 'left' ? shell.leftWidth : shell.rightWidth
+  const floating = side === 'left' ? shell.leftFloating : shell.rightFloating
+  const open = side === 'left' ? shell.leftOpen : shell.rightOpen
+
+  const floatingPosition = side === 'left' ? 'right-0' : 'left-0'
 
   const spring = useSpring({
-    width: shell.leftOpen ? shell.leftWidth : 0, //*
-  })
-
-  return (
-    <animated.div
-      {...props}
-      id="shell-left-sidebar"
-      className={cn(
-        'h-full shrink-0 overflow-hidden bg-gray-1', //*
-        shell.leftFloating && 'absolute left-0 z-10', //###
-        className,
-      )}
-      ref={forwardedRef}
-      style={{ width: spring.width }}
-    >
-      {/* //### */}
-      <div className="absolute inset-y-0 right-0" style={{ width: shell.leftWidth }}>
-        {children}
-      </div>
-    </animated.div>
-  )
-})
-
-type RightSidebarProps = {} & React.ComponentProps<'div'>
-
-const RightSidebar = forwardRef<HTMLDivElement, RightSidebarProps>(function RightSidebar(
-  { children, className, ...props },
-  forwardedRef,
-) {
-  const [shell] = useShellContext()
-
-  const spring = useSpring({
-    width: shell.rightOpen ? shell.rightWidth : 0, //*
+    width: open ? width : 0,
   })
   return (
     <animated.div
       {...props}
-      id="shell-right-sidebar"
+      id={`shell-sidebar-${side}`}
       className={cn(
-        'h-full shrink-0 overflow-hidden bg-gray-1', //*
-        shell.rightFloating && 'absolute right-0 z-10', //###
+        'h-full shrink-0 overflow-hidden bg-gray-1',
+        floating && 'absolute z-10',
+        floating && floatingPosition,
+        open && side === 'left' ? 'border-r' : 'border-l',
         className,
       )}
       ref={forwardedRef}
       style={spring}
     >
-      {/* //### */}
-      <div className="absolute inset-y-0 left-0" style={{ width: shell.rightWidth }}>
+      <div className={cn('absolute inset-y-0', floatingPosition)} style={{ width }}>
         {children}
       </div>
     </animated.div>
@@ -136,7 +106,6 @@ const Titlebar = forwardRef<HTMLDivElement, TitlebarProps>(function Titlebar(
 })
 
 type SidebarToggleProps = { side: 'left' | 'right' } & React.ComponentProps<typeof IconButton>
-
 export const SidebarToggle = forwardRef<HTMLButtonElement, SidebarToggleProps>(
   function SidebarToggle({ side, className, ...props }, forwardedRef) {
     const [shell, setShell] = useShellContext()
@@ -158,7 +127,4 @@ export const SidebarToggle = forwardRef<HTMLButtonElement, SidebarToggleProps>(
   },
 )
 
-export const CShell = Object.assign(
-  {},
-  { Root, Content, LeftSidebar, RightSidebar, Titlebar, SidebarToggle },
-)
+export const CShell = Object.assign({}, { Root, Content, Sidebar, Titlebar, SidebarToggle })

@@ -43,7 +43,7 @@ const EComp = () => {
 
   return (
     <CShell.Root shellAtom={shellAtom} className="mx-auto">
-      <CShell.LeftSidebar>
+      <CShell.Sidebar side="left">
         <CShell.Titlebar className="justify-center">
           <Heading size="2">LeftSidebar</Heading>
         </CShell.Titlebar>
@@ -54,13 +54,16 @@ const EComp = () => {
           </div>
         </ScrollArea>
         <DebugCornerMarkers no={!cornerHelpers} />
-      </CShell.LeftSidebar>
+      </CShell.Sidebar>
 
       <CShell.Content>
-        <CShell.Titlebar className="justify-center">
+        <CShell.Titlebar className="justify-between">
+          <CShell.SidebarToggle side="left" />
           <Heading size="2">CShell</Heading>
+          <CShell.SidebarToggle side="right" />
         </CShell.Titlebar>
-        <ScrollArea className="h-[calc(100%-2.5rem)]">
+
+        <ScrollArea>
           <div className="space-y-2 p-2">
             <p>Widths: {sidebarConfigWidths.join(', ')}</p>
             <CShell.SidebarToggle side="left" />
@@ -71,19 +74,19 @@ const EComp = () => {
         <DebugCornerMarkers no={!cornerHelpers} />
       </CShell.Content>
 
-      <CShell.RightSidebar>
+      <CShell.Sidebar side="right">
         <CShell.Titlebar className="justify-center">
           <Heading size="2">RightSidebar</Heading>
         </CShell.Titlebar>
-        <ScrollArea className="h-[calc(100%-2.5rem)]">
+
+        <ScrollArea>
           <div className="space-y-2 px-2 py-2">
             <PermissionsCard permissions={{ private: true }} onPermissionsChange={() => {}} />
             <SampleForm />
-
             <DebugCornerMarkers no={!cornerHelpers} />
           </div>
         </ScrollArea>
-      </CShell.RightSidebar>
+      </CShell.Sidebar>
     </CShell.Root>
   )
 }

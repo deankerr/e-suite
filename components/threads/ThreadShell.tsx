@@ -24,10 +24,15 @@ export const ThreadShell = forwardRef<
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       <CShell.Content>
-        <CShell.Titlebar>
-          <IconButton lucideIcon={MessageSquareIcon} variant="ghost" className="m-0" />
-          <Heading size="2">{title}</Heading>
+        <CShell.Titlebar className="justify-between">
+          <CShell.SidebarToggle side="left" />
+          <div className="flex items-center">
+            <IconButton lucideIcon={MessageSquareIcon} variant="ghost" className="m-0" />
+            <Heading size="2">{title}</Heading>
+          </div>
+          <CShell.SidebarToggle side="right" />
         </CShell.Titlebar>
+
         {/* message feed */}
         <ScrollArea className="grow">
           <div className="divide-y">
@@ -46,7 +51,7 @@ export const ThreadShell = forwardRef<
         </div>
       </CShell.Content>
 
-      <CShell.RightSidebar>
+      <CShell.Sidebar side="right">
         <CShell.Titlebar>
           <TabArea />
         </CShell.Titlebar>
@@ -76,7 +81,7 @@ export const ThreadShell = forwardRef<
             </div>
           </ScrollArea>
         </Tabs.Root>
-      </CShell.RightSidebar>
+      </CShell.Sidebar>
     </CShell.Root>
   )
 })
