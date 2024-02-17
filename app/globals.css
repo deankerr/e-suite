@@ -5,6 +5,7 @@
 
 .radix-themes {
   --default-font-family: var(--font-inter);
+  --code-font-family: var(--font-jetbrains-mono);
 }
 
 /* Fix tailwind preflight overriding Clerk styles */

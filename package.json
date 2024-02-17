@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cosmos-export --expose-imports&& next build",
+    "build": "cosmos-export --expose-imports && next build",
     "start": "next start",
     "lint": "tsc --noEmit && next lint",
     "convex": "pnpm dlx convex dev",
-    "dev:all": "pnpm run /dev$\\|convex$/",
+    "dev:all": "pnpm run /dev$\\|convex$\\|cosmos$/",
     "types": "tsc --noEmit",
     "cosmos": "cosmos --expose-imports",
     "cosmos-export": "cosmos-export --expose-imports",

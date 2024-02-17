@@ -4,7 +4,7 @@ import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
 import type { Metadata } from 'next'
-import { BIZ_UDMincho, DotGothic16, Inter } from 'next/font/google'
+import { BIZ_UDMincho, DotGothic16, Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 import { cn } from '@/lib/utils'
@@ -18,6 +18,12 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+})
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 })
 
 const dotGothic16 = DotGothic16({
@@ -36,7 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={cn(`overscroll-none`, inter.variable, bizUdMincho.variable, dotGothic16.variable)}
+      className={cn(
+        `overscroll-none`,
+        inter.variable,
+        jetBrainsMono.variable,
+        bizUdMincho.variable,
+        dotGothic16.variable,
+      )}
       suppressHydrationWarning
     >
       <body>
