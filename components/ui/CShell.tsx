@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { animated, useSpring } from '@react-spring/web'
+import { animated } from '@react-spring/web'
 import {
   PanelLeftCloseIcon,
   PanelLeftOpenIcon,
@@ -27,7 +27,10 @@ const Root = forwardRef<HTMLDivElement, RootProps>(function Root(
       <div
         {...props}
         id="cshell-root"
-        className={cn('flex h-full w-full overflow-hidden rounded border text-sm', className)}
+        className={cn(
+          'flex h-full w-full overflow-hidden rounded border bg-panel-translucent text-sm',
+          className,
+        )}
         ref={forwardedRef}
       >
         {children}
@@ -45,7 +48,7 @@ const Content = forwardRef<HTMLDivElement, ContentProps>(function Content(
     <div
       {...props}
       id="shell-content"
-      className={cn('flex h-full grow flex-col overflow-hidden bg-panel-translucent', className)}
+      className={cn('flex h-full w-full grow flex-col', className)}
       ref={forwardedRef}
     >
       {children}
@@ -53,38 +56,27 @@ const Content = forwardRef<HTMLDivElement, ContentProps>(function Content(
   )
 })
 
-type SidebarProps = { side: 'left' | 'right' } & React.ComponentProps<'div'>
+type SidebarProps = { open?: boolean; side: 'left' | 'right' } & React.ComponentProps<'div'>
 export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
-  { side, children, className, ...props },
+  { open, side, children, className, ...props },
   forwardedRef,
 ) {
-  const [shell] = useShellContext()
-  const width = side === 'left' ? shell.leftWidth : shell.rightWidth
-  const floating = side === 'left' ? shell.leftFloating : shell.rightFloating
-  const open = side === 'left' ? shell.leftOpen : shell.rightOpen
+  const isRight = side === 'right'
 
-  const floatingPosition = side === 'left' ? 'right-0' : 'left-0'
-
-  const spring = useSpring({
-    width: open ? width : 0,
-  })
   return (
     <animated.div
       {...props}
       id={`shell-sidebar-${side}`}
       className={cn(
-        'h-full shrink-0 overflow-hidden bg-gray-1',
-        floating && 'absolute z-10',
-        floating && floatingPosition,
-        open && side === 'left' ? 'border-r' : 'border-l',
+        'absolute right-0 flex h-full w-72 shrink-0 translate-x-72 flex-col bg-gray-1 transition-transform duration-300',
+        'lg:static lg:translate-x-0',
+        isRight ? 'border-l' : 'border-r',
+        open && 'translate-x-0',
         className,
       )}
       ref={forwardedRef}
-      style={spring}
     >
-      <div className={cn('absolute inset-y-0', floatingPosition)} style={{ width }}>
-        {children}
-      </div>
+      {children}
     </animated.div>
   )
 })
@@ -97,7 +89,7 @@ const Titlebar = forwardRef<HTMLDivElement, TitlebarProps>(function Titlebar(
   return (
     <div
       {...props}
-      className={cn('flex h-10 shrink-0 items-center border-b', className)}
+      className={cn('flex h-10 shrink-0 items-center border-b bg-gray-1', className)}
       ref={forwardedRef}
     >
       {children}

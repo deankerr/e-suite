@@ -1,77 +1,42 @@
 'use client'
 
-import { PermissionsCard } from '@/app/components/PermissionsCard'
+import { IconButton } from '@/app/components/ui/IconButton'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { Label } from '@radix-ui/react-label'
 import { Heading, ScrollArea, Slider, TextFieldInput } from '@radix-ui/themes'
-import { deepEqual } from 'fast-equals'
-import { useAtom } from 'jotai'
-import { useEffect } from 'react'
+import { Shell } from 'lucide-react'
 import { useValue } from 'react-cosmos/client'
-import { DebugCornerMarkers } from '../util/DebugUtils'
 import { CShell } from './CShell'
-import { createShellContextAtom, sidebarConfigWidths } from './shell.atoms'
 
-const config = {
-  leftOpen: false,
-  leftFloating: false,
-  leftWidth: 256,
-  rightOpen: true,
-  rightFloating: false,
-  rightWidth: 256,
-} as const
-
-const shellAtom = createShellContextAtom(config)
 const EComp = () => {
-  const [lockConfig] = useValue('lock config', {
-    defaultValue: true,
-  })
-  const [shellConfig] = useValue('shell config', {
-    defaultValue: config,
-  })
-  const [cornerHelpers] = useValue('cornerHelpers', {
-    defaultValue: false,
-  })
-
-  const [shell, setShell] = useAtom(shellAtom)
-
-  const configIsEqual = deepEqual(shellConfig, shell)
-
-  useEffect(() => {
-    if (lockConfig && !configIsEqual) setShell(shellConfig)
-  }, [configIsEqual, shellConfig, setShell, lockConfig])
-
+  const [enableLeft] = useValue('enable left bar', { defaultValue: false })
   return (
-    <CShell.Root shellAtom={shellAtom} className="mx-auto">
-      <CShell.Sidebar side="left">
-        <CShell.Titlebar className="justify-center">
-          <Heading size="2">LeftSidebar</Heading>
-        </CShell.Titlebar>
-        <ScrollArea className="h-[calc(100%-2.5rem)]">
-          <div className="space-y-2 px-2 py-2">
-            <ASCIIRocket />
-            <p>Boom</p>
-          </div>
-        </ScrollArea>
-        <DebugCornerMarkers no={!cornerHelpers} />
-      </CShell.Sidebar>
+    <CShell.Root className="mx-auto">
+      {enableLeft && (
+        <CShell.Sidebar side="left">
+          <CShell.Titlebar className="justify-center">
+            <Heading size="2">LeftSidebar</Heading>
+          </CShell.Titlebar>
+
+          <ScrollArea>
+            <div className="space-y-2 px-2 py-2">
+              <ASCIIRocket />
+              <p>Boom</p>
+            </div>
+          </ScrollArea>
+        </CShell.Sidebar>
+      )}
 
       <CShell.Content>
-        <CShell.Titlebar className="justify-between">
-          <CShell.SidebarToggle side="left" />
+        <CShell.Titlebar className="justify-between bg-gray-1">
+          <IconButton lucideIcon={Shell} variant="ghost" className="m-0" />
           <Heading size="2">CShell</Heading>
-          <CShell.SidebarToggle side="right" />
+          <CShell.SidebarToggle side="right" className="opacity-0" />
         </CShell.Titlebar>
 
         <ScrollArea>
-          <div className="space-y-2 p-2">
-            <p>Widths: {sidebarConfigWidths.join(', ')}</p>
-            <CShell.SidebarToggle side="left" />
-            <CShell.SidebarToggle side="right" />
-            <SampleText />
-          </div>
+          <div className="space-y-2 p-2"></div>
         </ScrollArea>
-        <DebugCornerMarkers no={!cornerHelpers} />
       </CShell.Content>
 
       <CShell.Sidebar side="right">
@@ -80,11 +45,7 @@ const EComp = () => {
         </CShell.Titlebar>
 
         <ScrollArea>
-          <div className="space-y-2 px-2 py-2">
-            <PermissionsCard permissions={{ private: true }} onPermissionsChange={() => {}} />
-            <SampleForm />
-            <DebugCornerMarkers no={!cornerHelpers} />
-          </div>
+          <div className="space-y-2 p-2"></div>
         </ScrollArea>
       </CShell.Sidebar>
     </CShell.Root>
@@ -92,6 +53,7 @@ const EComp = () => {
 }
 export default EComp
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SampleForm = () => (
   <div className="space-y-4 px-2">
     <div>
@@ -131,6 +93,7 @@ const SampleForm = () => (
   </div>
 )
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SampleText = () => (
   <>
     <p>

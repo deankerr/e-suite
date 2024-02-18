@@ -1,7 +1,6 @@
 'use client'
 
 import { Spinner } from '@/app/components/ui/Spinner'
-import type { Id } from '@/convex/_generated/dataModel'
 import type { ThreadMessage } from '@/convex/threads/do'
 import { cn } from '@/lib/utils'
 import { Badge, Text } from '@radix-ui/themes'
@@ -9,12 +8,6 @@ import { forwardRef } from 'react'
 
 type Props = {
   message: ThreadMessage
-  onDelete: (id: Id<'messages'>) => void
-  onEdit: (values: {
-    id: Id<'messages'>
-    role: 'system' | 'user' | 'assistant'
-    content: string
-  }) => void
 }
 
 // https://source.boringavatars.com/beam/120/${nanoid(5)}?square
@@ -22,7 +15,6 @@ type Props = {
 export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function Message({ message, className, ...props }, forwardedRef) {
     const displayName = message.name ?? getDisplayRole(message.role)
-    // const displayClassname = getDisplayClassname(message.role)
 
     const badgeColors = {
       user: 'orange',
@@ -39,28 +31,33 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     return (
       <div
         {...props}
-        className={cn('flex items-center gap-4 py-4 pl-2 pr-4', bgColors[message.role], className)}
+        className={cn('space-y-1 px-4 py-2', bgColors[message.role], className)}
         ref={forwardedRef}
       >
         {/* role info */}
-        <div className="flex min-w-28 shrink-0 flex-col justify-center">
-          <Badge size="2" className="justify-center" color={badgeColors[message.role]}>
+        <div className="flex">
+          <Badge
+            size="1"
+            variant="soft"
+            className="w-24 justify-center"
+            color={badgeColors[message.role]}
+          >
             {displayName}
           </Badge>
         </div>
 
-        <div className="wd-[90ch] text-sm">
+        <div className="text-base">
           {message.job?.status === 'pending' && <Spinner />}
           {/* content body */}
-          <Text className="">{message.content}</Text>
+          <Text>{message.content}</Text>
         </div>
 
         {/* job status */}
-        <div className="absolute right-2.5 top-0.5 space-y-0.5 text-right font-code text-xs text-gold-5">
-          <div>
-            {message.job?.status} {message.job?.type} {message.job?._id}
+        {message.job ? (
+          <div className="absolute right-2.5 top-0.5 space-y-0.5 text-right font-code text-xs text-gold-5">
+            {message.job.status}
           </div>
-        </div>
+        ) : null}
       </div>
     )
   },
@@ -69,22 +66,12 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
 const getDisplayRole = (role: string) => {
   const displayRoles: Record<string, string> = {
     user: 'User',
-    assistant: 'AI',
+    assistant: 'Assistant',
     system: 'System',
   }
   if (role in displayRoles) return displayRoles[role]
   return role
 }
-
-// const getDisplayColor = (role: string) => {
-//   const displayRoles: Record<string, string> = {
-//     user: 'text-accent',
-//     assistant: 'text-blue',
-//     system: 'text-cyan',
-//   }
-//   if (role in displayRoles) return displayRoles[role]
-//   return ''
-// }
 
 /* 
           {isEditing ? (

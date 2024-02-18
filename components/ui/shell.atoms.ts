@@ -5,13 +5,9 @@ import { createContext, useContext } from 'react'
 
 export const sidebarConfigWidths = [256, 288, 320, 384] as const
 
-const defaultShellAtom = {
+export const defaultShellAtom = {
   leftOpen: false,
-  leftFloating: false,
-  leftWidth: 256,
   rightOpen: true,
-  rightFloating: false,
-  rightWidth: 256,
 }
 
 type ShellAtomConfig = typeof defaultShellAtom & {
