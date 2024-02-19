@@ -4,12 +4,12 @@ import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useMemo, useState } from 'react'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { Message } from './Message'
 import { MessageInput } from './MessageInput'
-import { paramValues, useThreadAtomCallback } from './threads.store'
+import { useThreadAtomCallback } from './threads.store'
 
 type ThreadShellProps = {
   threadId?: Id<'threads'>
@@ -24,8 +24,30 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const readValues = useThreadAtomCallback()
-  useEffect(() => console.log('render ThreadsShell'))
+  const inputParams = useMemo(
+    () => ({
+      message: { threadId, name: 'message', defaultValue: '' },
+      model: {
+        threadId,
+        name: 'model',
+        defaultValue: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+      },
+      max_tokens: { threadId, name: 'max_tokens', min: 1, max: 2048, step: 1, defaultValue: 512 },
+      temperature: { threadId, name: 'temperature', min: 0, max: 2, step: 0.1, defaultValue: 0.7 },
+      top_p: { threadId, name: 'top_p', min: 0, max: 1, step: 0.1, defaultValue: 0.7 },
+      top_k: { threadId, name: 'top_k', min: 1, max: 100, step: 1, defaultValue: 50 },
+      repetition_penalty: {
+        threadId,
+        name: 'repetition_penalty',
+        min: 1,
+        max: 2,
+        step: 0.01,
+        defaultValue: 1,
+      },
+    }),
+    [threadId],
+  )
+  const readValues = useThreadAtomCallback(inputParams)
 
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
@@ -54,7 +76,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
         </ScrollArea>
 
         <MessageInput
-          inputData={paramValues.message}
+          inputData={inputParams.message}
           onSend={() => {
             console.log(readValues())
           }}
@@ -79,7 +101,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </Tabs.List>
 
           <Tabs.Content value="parameters">
-            <InferenceParameterControls />
+            <InferenceParameterControls inputData={inputParams} />
           </Tabs.Content>
         </Tabs.Root>
       </CShell.Sidebar>

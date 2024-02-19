@@ -4,7 +4,7 @@
 import { Spinner } from '@/app/components/ui/Spinner'
 import type { ThreadMessage } from '@/convex/threads/do'
 import { cn } from '@/lib/utils'
-import { Badge, Text } from '@radix-ui/themes'
+import { Text } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 
 type Props = {
@@ -16,12 +16,6 @@ type Props = {
 export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
   function Message({ message, className, ...props }, forwardedRef) {
     const displayName = message.name ?? getDisplayRole(message.role)
-
-    const badgeColors = {
-      user: 'orange',
-      assistant: 'gold',
-      system: 'green',
-    } as const
 
     const bgColors = {
       user: 'bg-gold-1',
@@ -38,21 +32,11 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     return (
       <div
         {...props}
-        className={cn('space-y-0.5 px-4 py-2', bgColors[message.role], className)}
+        className={cn('space-y-0.5 px-4 py-1', bgColors[message.role], className)}
         ref={forwardedRef}
       >
         {/* role info */}
-        <div className={cn('flex', roleColors[message.role])}>
-          {/* <Badge
-            size="1"
-            variant="soft"
-            className="w-24 justify-center"
-            color={badgeColors[message.role]}
-          >
-            {displayName}
-          </Badge> */}
-          {displayName}
-        </div>
+        <div className={cn('flex', roleColors[message.role])}>{displayName}</div>
 
         <div className="text-base">
           {message.job?.status === 'pending' && <Spinner />}

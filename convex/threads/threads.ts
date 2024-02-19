@@ -1,8 +1,9 @@
 import { PaginationOptions, paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { Id } from '../_generated/dataModel'
-import { query } from '../functions'
-import { QueryCtx } from '../types'
+import { mutation, query } from '../functions'
+import { messagesFields, Permissions, permissionsFields } from '../schema'
+import { MutationCtx, QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert } from '../util'
 
@@ -56,6 +57,27 @@ export const getMessages = async (
   }
 }
 
+type NewThreadFields = {
+  name?: string
+  systemPrompt?: string
+  permissions?: Permissions
+}
+export const createThread = async (ctx: MutationCtx, fields: NewThreadFields) => {
+  return await ctx.table('threads').insert({
+    userId: ctx.viewerIdX(),
+    name: fields.name ?? `thread ${new Date().toISOString()}`,
+    systemPrompt: fields.systemPrompt ?? '',
+    permissions: fields.permissions ?? { private: true },
+  })
+}
+
+export const getOrCreateThread = async (ctx: MutationCtx, id?: Id<'threads'>) => {
+  const existing = id ? await ctx.table('threads').get(id) : null
+  if (existing) return existing
+  const thread = await createThread(ctx, {})
+  return thread
+}
+
 export const get = query({
   args: {
     id: v.id('threads'),
@@ -69,4 +91,14 @@ export const listMessages = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { id, paginationOpts }) => await getMessages(ctx, { id, paginationOpts }),
+})
+
+export const send = mutation({
+  args: {
+    threadId: v.id('threads'),
+    messages: v.array(v.object(messagesFields)),
+    systemPrompt: v.optional(v.string()),
+    permissions: v.optional(permissionsFields),
+  },
+  handler: async (ctx, args) => {},
 })
