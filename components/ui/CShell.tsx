@@ -27,10 +27,7 @@ const Root = forwardRef<HTMLDivElement, RootProps>(function Root(
       <div
         {...props}
         id="cshell-root"
-        className={cn(
-          'flex h-full w-full overflow-hidden rounded border bg-panel-translucent text-sm',
-          className,
-        )}
+        className={cn('flex h-full overflow-hidden bg-panel-translucent text-sm', className)}
         ref={forwardedRef}
       >
         {children}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { Spinner } from '@/app/components/ui/Spinner'
@@ -28,22 +29,29 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
       system: 'bg-green-1',
     } as const
 
+    const roleColors = {
+      user: 'text-accent',
+      assistant: 'text-gold',
+      system: 'text-gray',
+    } as const
+
     return (
       <div
         {...props}
-        className={cn('space-y-1 px-4 py-2', bgColors[message.role], className)}
+        className={cn('space-y-0.5 px-4 py-2', bgColors[message.role], className)}
         ref={forwardedRef}
       >
         {/* role info */}
-        <div className="flex">
-          <Badge
+        <div className={cn('flex', roleColors[message.role])}>
+          {/* <Badge
             size="1"
             variant="soft"
             className="w-24 justify-center"
             color={badgeColors[message.role]}
           >
             {displayName}
-          </Badge>
+          </Badge> */}
+          {displayName}
         </div>
 
         <div className="text-base">
@@ -66,7 +74,7 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
 const getDisplayRole = (role: string) => {
   const displayRoles: Record<string, string> = {
     user: 'User',
-    assistant: 'Assistant',
+    assistant: 'AI',
     system: 'System',
   }
   if (role in displayRoles) return displayRoles[role]
