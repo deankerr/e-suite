@@ -1,3 +1,4 @@
+import { Button } from '@/app/components/ui/Button'
 import { IconButton } from '@/app/components/ui/IconButton'
 import { useThread } from '@/components/threads/useThread'
 import { Id } from '@/convex/_generated/dataModel'
@@ -9,6 +10,7 @@ import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { MessageFeed } from './MessageFeed'
 import { MessageInput } from './MessageInput'
+import { RemoveThreadDialog } from './RemoveThreadDialog'
 
 type ThreadShellProps = {
   threadId?: Id<'threads'>
@@ -19,7 +21,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   forwardedRef,
 ) {
   const { thread, send, threadAtoms } = useThread({ threadId })
-  const title = thread ? thread.name : threadId ? 'Loading...' : 'No Thread ID'
+  const title = thread ? thread.title : threadId ? 'Loading...' : 'No Thread ID'
 
   const [menuOpen, setMenuOpen] = useState(false)
   useEffect(() => console.log('render thread shell'))
@@ -43,7 +45,6 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </IconButton>
         </CShell.Titlebar>
 
-        {/* message feed */}
         <MessageFeed messages={thread?.messages ?? []} />
 
         <MessageInput inputAtom={threadAtoms.message} onSend={send} />
@@ -68,6 +69,16 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
           <Tabs.Content value="parameters">
             <InferenceParameterControls threadAtoms={threadAtoms} />
+          </Tabs.Content>
+
+          <Tabs.Content value="details">
+            <div className="flex flex-col justify-center p-4">
+              {thread && thread.owner.isViewer ? (
+                <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
+                  <Button color="red">Delete Thread</Button>
+                </RemoveThreadDialog>
+              ) : null}
+            </div>
           </Tabs.Content>
         </Tabs.Root>
       </CShell.Sidebar>

@@ -147,3 +147,10 @@ export const send = mutation({
     return thread._id
   },
 })
+
+export const remove = mutation({
+  args: {
+    id: v.id('threads'),
+  },
+  handler: async (ctx, { id }) => await ctx.table('threads').getX(id).delete(),
+})

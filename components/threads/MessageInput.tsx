@@ -17,6 +17,11 @@ export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(functi
   forwardedRef,
 ) {
   const [value, setValue] = useAtom(inputAtom.atom)
+
+  const send = () => {
+    if (value) onSend()
+  }
+
   return (
     <div {...props} className={cn('flex items-center gap-2 p-2', className)} ref={forwardedRef}>
       <Label htmlFor={inputAtom.name} className="sr-only" />
@@ -25,8 +30,19 @@ export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(functi
         minRows={1}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            send()
+          }
+        }}
       />
-      <IconButton lucideIcon={SendIcon} variant="outline" onClick={() => onSend()} />
+      <IconButton
+        lucideIcon={SendIcon}
+        variant="outline"
+        onClick={() => send()}
+        disabled={!value}
+      />
     </div>
   )
 })
