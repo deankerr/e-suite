@@ -113,7 +113,8 @@ export const send = mutation({
       existingThread?._id ??
       (await ctx.table('threads').insert({
         userId: ctx.viewerIdX(),
-        name: 'a new thread',
+        title: 'a new thread',
+        name: '',
         systemPrompt: args.systemPrompt ?? '',
         permissions: args.permissions ?? { private: true },
       }))

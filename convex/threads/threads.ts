@@ -67,7 +67,8 @@ type NewThreadFields = {
 export const createThread = async (ctx: MutationCtx, fields: NewThreadFields) => {
   return await ctx.table('threads').insert({
     userId: ctx.viewerIdX(),
-    name: fields.name ?? `thread ${new Date().toISOString()}`,
+    title: fields.name ?? `thread ${new Date().toISOString()}`,
+    name: '',
     systemPrompt: fields.systemPrompt ?? '',
     permissions: fields.permissions ?? { private: true },
   })
@@ -116,6 +117,9 @@ export const send = mutation({
         .optional()
         .transform((v) => (v ? v.slice(0, 30) : undefined))
         .parse(message.name)
+      if (message.role === 'user' && name !== undefined)
+        await ctx.table('threads').getX(thread._id).patch({ name })
+
       const content = z
         .string()
         .transform((v) => v.slice(0, 32768))
@@ -124,11 +128,17 @@ export const send = mutation({
       const messageId = await ctx
         .table('messages')
         .insert({ ...message, name, content, threadId: thread._id })
+
       if (message.inferenceParameters && message.role === 'assistant') {
         await ctx.scheduler.runAfter(0, internal.jobs.dispatch, {
           type: 'inference',
           messageId: messageId,
         })
+
+        await ctx
+          .table('threads')
+          .getX(thread._id)
+          .patch({ parameters: message.inferenceParameters })
       }
     }
 

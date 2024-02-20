@@ -96,7 +96,7 @@ export const messageFields = {
   content: v.string(),
 }
 
-export const inferenceParametersFields = {
+export const inferenceParametersFields = v.object({
   model: v.string(),
   max_tokens: v.optional(v.number()),
   stop: v.optional(v.array(v.string())),
@@ -104,16 +104,18 @@ export const inferenceParametersFields = {
   top_p: v.optional(v.number()),
   top_k: v.optional(v.number()),
   repetition_penalty: v.optional(v.number()),
-}
+})
 
 export const messagesFields = {
   ...messageFields,
-  inferenceParameters: v.optional(v.object(inferenceParametersFields)),
+  inferenceParameters: v.optional(inferenceParametersFields),
 }
 
 export const threadsFields = {
-  name: v.string(),
+  title: v.string(),
   systemPrompt: v.string(),
+  name: v.string(),
+  parameters: v.optional(inferenceParametersFields),
   permissions: permissionsFields,
 }
 

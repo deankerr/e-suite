@@ -4,7 +4,7 @@ import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
-import { forwardRef, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { Message } from './Message'
@@ -22,7 +22,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   const title = thread ? thread.name : threadId ? 'Loading...' : 'No Thread ID'
 
   const [menuOpen, setMenuOpen] = useState(false)
-
+  useEffect(() => console.log('render thread shell'))
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       {/* content */}

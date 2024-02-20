@@ -16,8 +16,81 @@ export type NumberInputAtom = ReturnType<typeof createNumberInputAtom>
 export const useThread = (args: { threadId?: Id<'threads'> }) => {
   const threadId = args.threadId
   const queryKey = threadId ? { id: threadId } : 'skip'
+  const thread = useQuery(api.threads.threads.get, queryKey)
 
-  const threadAtoms = useMemo(() => createThreadAtoms(threadId), [threadId])
+  const threadAtoms = useMemo(
+    () => ({
+      threadId,
+      message: createTextInputAtom({
+        label: 'Message',
+        name: 'message',
+        initialValue: '',
+      }),
+      systemPrompt: createTextInputAtom({
+        label: 'System Prompt',
+        name: 'systemPrompt',
+        initialValue: thread?.systemPrompt ?? '',
+      }),
+      name: createTextInputAtom({ label: 'Name', name: 'name', initialValue: thread?.name ?? '' }),
+      model: createTextInputAtom({
+        label: 'Model',
+        name: 'model',
+        initialValue: thread?.parameters?.model ?? 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+      }),
+      max_tokens: createNumberInputAtom({
+        label: 'Max tokens',
+        name: 'max_tokens',
+        initialValue: thread?.parameters?.max_tokens ?? 512,
+        min: 1,
+        max: 2048,
+        step: 1,
+      }),
+      temperature: createNumberInputAtom({
+        label: 'Temperature',
+        name: 'temperature',
+        initialValue: thread?.parameters?.temperature ?? 0.7,
+        min: 0,
+        max: 2,
+        step: 0.1,
+      }),
+      top_p: createNumberInputAtom({
+        label: 'Top P',
+        name: 'top_p',
+        initialValue: thread?.parameters?.top_p ?? 0.7,
+        min: 0,
+        max: 1,
+        step: 0.1,
+      }),
+      top_k: createNumberInputAtom({
+        label: 'Top K',
+        name: 'top_k',
+        initialValue: thread?.parameters?.top_k ?? 50,
+        min: 1,
+        max: 100,
+        step: 1,
+      }),
+      repetition_penalty: createNumberInputAtom({
+        label: 'Repetition penalty',
+        name: 'repetition_penalty',
+        initialValue: thread?.parameters?.repetition_penalty ?? 1,
+        min: 1,
+        max: 2,
+        step: 0.01,
+      }),
+    }),
+    [
+      threadId,
+      thread?.name,
+      thread?.systemPrompt,
+      thread?.parameters?.model,
+      thread?.parameters?.max_tokens,
+      thread?.parameters?.temperature,
+      thread?.parameters?.top_p,
+      thread?.parameters?.top_k,
+      thread?.parameters?.repetition_penalty,
+    ],
+  )
+
   const readAtomValues = useAtomCallback(
     useCallback(
       (get) => {
@@ -37,7 +110,6 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
     ),
   )
 
-  const thread = useQuery(api.threads.threads.get, queryKey)
   const runSend = useMutation(api.threads.threads.send)
 
   const send = () => {
