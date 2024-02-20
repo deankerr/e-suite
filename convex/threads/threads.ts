@@ -9,6 +9,8 @@ import { MutationCtx, QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert } from '../util'
 
+export type Thread = Awaited<ReturnType<typeof getThread>>
+
 export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')

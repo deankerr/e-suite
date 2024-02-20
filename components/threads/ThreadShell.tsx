@@ -2,12 +2,12 @@ import { IconButton } from '@/app/components/ui/IconButton'
 import { useThread } from '@/components/threads/useThread'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
-import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
+import { Heading, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { forwardRef, useEffect, useState } from 'react'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
-import { Message } from './Message'
+import { MessageFeed } from './MessageFeed'
 import { MessageInput } from './MessageInput'
 
 type ThreadShellProps = {
@@ -23,6 +23,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
   const [menuOpen, setMenuOpen] = useState(false)
   useEffect(() => console.log('render thread shell'))
+
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       {/* content */}
@@ -43,11 +44,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
         </CShell.Titlebar>
 
         {/* message feed */}
-        <ScrollArea>
-          <div className="flex flex-col-reverse">
-            {thread?.messages.map((msg) => <Message key={msg._id} message={msg} />)}
-          </div>
-        </ScrollArea>
+        <MessageFeed messages={thread?.messages ?? []} />
 
         <MessageInput inputAtom={threadAtoms.message} onSend={send} />
       </CShell.Content>

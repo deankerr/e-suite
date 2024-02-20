@@ -45,11 +45,9 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         </div>
 
         {/* job status */}
-        {message.job ? (
-          <div className="absolute right-2.5 top-0.5 space-y-0.5 text-right font-code text-xs text-gold-5">
-            {message.job.status}
-          </div>
-        ) : null}
+        <div className="absolute right-2.5 top-0.5 space-y-0.5 text-right font-code text-xs text-gold-5">
+          {message.job ? message.job.status : null} {message._id.slice(-8)}
+        </div>
       </div>
     )
   },
