@@ -23,6 +23,8 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
       (get) => {
         return {
           message: get(threadAtoms.message.atom),
+          systemPrompt: get(threadAtoms.systemPrompt.atom),
+          name: get(threadAtoms.name.atom),
           model: get(threadAtoms.model.atom),
           max_tokens: get(threadAtoms.max_tokens.atom),
           temperature: get(threadAtoms.temperature.atom),
@@ -40,14 +42,14 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
 
   const send = () => {
     if (!thread) return
-    const { message, ...inferenceParameters } = readAtomValues()
+    const { message, name, systemPrompt, ...inferenceParameters } = readAtomValues()
 
     runSend({
       threadId: thread._id,
       messages: [
         {
           role: 'user',
-          // name: '',
+          name,
           content: message,
         },
         {
@@ -56,6 +58,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
           inferenceParameters,
         },
       ],
+      systemPrompt,
     })
       .then((id) => {
         console.log('sent', id)
@@ -77,6 +80,12 @@ function createThreadAtoms(threadId?: string) {
   const threadAtoms = {
     threadId,
     message: createTextInputAtom({ label: 'Message', name: 'message', initialValue: '' }),
+    systemPrompt: createTextInputAtom({
+      label: 'System Prompt',
+      name: 'systemPrompt',
+      initialValue: '',
+    }),
+    name: createTextInputAtom({ label: 'Name', name: 'name', initialValue: '' }),
     model: createTextInputAtom({
       label: 'Model',
       name: 'model',

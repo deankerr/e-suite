@@ -4,7 +4,7 @@ import { Label } from '@/app/components/ui/Label'
 import { cn } from '@/lib/utils'
 import { Slider as RxSlider } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
-import { forwardRef, useEffect } from 'react'
+import { forwardRef } from 'react'
 import { NumberInputAtom } from '../threads/useThread'
 
 type SliderProps = {
@@ -18,7 +18,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
   const { atom, label, initialValue, ...sliderProps } = inputAtom
   const [value, setValue] = useAtom(atom)
 
-  useEffect(() => console.log('render slider', inputAtom.name))
   return (
     <div className={cn('flex flex-col gap-1.5 p-3', className)} ref={forwardedRef}>
       <div className="flex items-center justify-between">
