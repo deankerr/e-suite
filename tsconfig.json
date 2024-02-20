@@ -35,5 +35,5 @@
     "**/*.tsx",
     "**/*.js"
   ],
-  "exclude": ["node_modules", "unused"]
+  "exclude": ["node_modules", "unused", "cosmos-export"]
 }

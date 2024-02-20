@@ -1,18 +1,9 @@
+/* eslint-env node */
 module.exports = {
   root: true,
-  extends: ['plugin:@typescript-eslint/recommended-type-checked', 'next/core-web-vitals'],
+  extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 'es2022',
-    sourceType: 'module',
-    tsconfigRootDir: __dirname,
-    ecmaFeatures: {
-      jsx: true,
-    },
-    warnOnUnsupportedTypeScriptVersion: true,
-    project: true,
-  },
-  ignorePatterns: ['convex/_generated', '.next', 'unused'],
+  ignorePatterns: ['convex/_generated', '.next', 'unused', 'cosmos-export'],
   rules: {
     // support unused vars during dev
     '@typescript-eslint/no-unused-vars': [
@@ -34,11 +25,11 @@ module.exports = {
         extendDefaults: true,
       },
     ],
-    // convex support
-    '@typescript-eslint/require-await': 'off',
     // thanks vercel
     '@next/next/no-img-element': 'off',
-    // very slow
-    '@typescript-eslint/no-misused-promises': 'off',
+
+    // type checked
+    //'@typescript-eslint/require-await': 'off', // convex support
+    //'@typescript-eslint/no-misused-promises': 'off',
   },
 }
