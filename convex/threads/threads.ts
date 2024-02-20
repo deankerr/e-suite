@@ -1,5 +1,7 @@
 import { PaginationOptions, paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
+import z from 'zod'
+import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
 import { mutation, query } from '../functions'
 import { messagesFields, Permissions, permissionsFields } from '../schema'
@@ -100,5 +102,36 @@ export const send = mutation({
     systemPrompt: v.optional(v.string()),
     permissions: v.optional(permissionsFields),
   },
-  handler: async (ctx, args) => {},
+  handler: async (ctx, args) => {
+    const thread = await ctx.table('threads').getX(args.threadId)
+    assert(!thread.deletionTime, 'Thread is deleted')
+
+    if (args.systemPrompt && thread.systemPrompt !== args.systemPrompt) {
+      await thread.patch({ systemPrompt: args.systemPrompt })
+    }
+
+    for (const message of args.messages) {
+      const name = z
+        .string()
+        .optional()
+        .transform((v) => (v ? v.slice(0, 30) : undefined))
+        .parse(message.name)
+      const content = z
+        .string()
+        .transform((v) => v.slice(0, 32768))
+        .parse(message.content)
+
+      const messageId = await ctx
+        .table('messages')
+        .insert({ ...message, name, content, threadId: thread._id })
+      if (message.inferenceParameters && message.role === 'assistant') {
+        await ctx.scheduler.runAfter(0, internal.jobs.dispatch, {
+          type: 'inference',
+          messageId: messageId,
+        })
+      }
+    }
+
+    return thread._id
+  },
 })

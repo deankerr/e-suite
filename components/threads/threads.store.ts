@@ -33,13 +33,13 @@ export const useThreadAtomCallback = (inputParams: InputParams) => {
     useCallback(
       (get) => {
         const values = {
-          message: get(threadsFamily(inputParams.message)),
-          model: get(threadsFamily(inputParams.model)),
-          max_tokens: get(threadsFamily(inputParams.max_tokens)),
-          temperature: get(threadsFamily(inputParams.temperature)),
-          top_p: get(threadsFamily(inputParams.top_p)),
-          top_k: get(threadsFamily(inputParams.top_k)),
-          repetition_penalty: get(threadsFamily(inputParams.repetition_penalty)),
+          message: get(threadsFamily(inputParams.message)) as string,
+          model: get(threadsFamily(inputParams.model)) as string,
+          max_tokens: get(threadsFamily(inputParams.max_tokens)) as number,
+          temperature: get(threadsFamily(inputParams.temperature)) as number,
+          top_p: get(threadsFamily(inputParams.top_p)) as number,
+          top_k: get(threadsFamily(inputParams.top_k)) as number,
+          repetition_penalty: get(threadsFamily(inputParams.repetition_penalty)) as number,
         }
 
         return values
