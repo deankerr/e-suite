@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
-import { toast } from 'sonner'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { Message } from './Message'
@@ -19,42 +18,10 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   { threadId, className, ...props },
   forwardedRef,
 ) {
-  const { thread, send, threadAtoms, readValues } = useThread({ threadId })
+  const { thread, send, threadAtoms } = useThread({ threadId })
   const title = thread ? thread.name : threadId ? 'Loading...' : 'No Thread ID'
 
   const [menuOpen, setMenuOpen] = useState(false)
-
-  const sendMessages = () => {
-    if (!thread) return
-    const { message, ...inferenceParameters } = readValues()
-
-    send({
-      threadId: thread._id,
-      messages: [
-        {
-          role: 'user',
-          // name: '',
-          content: message,
-        },
-        {
-          role: 'assistant',
-          content: '',
-          inferenceParameters,
-        },
-      ],
-    })
-      .then((id) => {
-        console.log('sent', id)
-      })
-      .catch((error) => {
-        console.error(error)
-        if (error instanceof Error) {
-          toast.error(error.message)
-        } else {
-          toast.error('An unknown error occurred.')
-        }
-      })
-  }
 
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
@@ -82,7 +49,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </div>
         </ScrollArea>
 
-        <MessageInput inputAtom={threadAtoms.message} onSend={sendMessages} />
+        <MessageInput inputAtom={threadAtoms.message} onSend={send} />
       </CShell.Content>
 
       {/* rightbar */}

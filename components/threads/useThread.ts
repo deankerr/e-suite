@@ -6,6 +6,7 @@ import { useMutation, useQuery } from 'convex/react'
 import { atom } from 'jotai'
 import { useAtomCallback } from 'jotai/utils'
 import { useCallback, useMemo } from 'react'
+import { toast } from 'sonner'
 
 export type ThreadHelpers = ReturnType<typeof useThread>
 export type ThreadAtoms = ReturnType<typeof createThreadAtoms>
@@ -17,8 +18,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
   const queryKey = threadId ? { id: threadId } : 'skip'
 
   const threadAtoms = useMemo(() => createThreadAtoms(threadId), [threadId])
-
-  const readValues = useAtomCallback(
+  const readAtomValues = useAtomCallback(
     useCallback(
       (get) => {
         return {
@@ -36,9 +36,41 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
   )
 
   const thread = useQuery(api.threads.threads.get, queryKey)
-  const send = useMutation(api.threads.threads.send)
+  const runSend = useMutation(api.threads.threads.send)
 
-  return { thread, send, threadAtoms, readValues }
+  const send = () => {
+    if (!thread) return
+    const { message, ...inferenceParameters } = readAtomValues()
+
+    runSend({
+      threadId: thread._id,
+      messages: [
+        {
+          role: 'user',
+          // name: '',
+          content: message,
+        },
+        {
+          role: 'assistant',
+          content: '',
+          inferenceParameters,
+        },
+      ],
+    })
+      .then((id) => {
+        console.log('sent', id)
+      })
+      .catch((error) => {
+        console.error(error)
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error('An unknown error occurred.')
+        }
+      })
+  }
+
+  return { thread, send, threadAtoms }
 }
 
 function createThreadAtoms(threadId?: string) {
