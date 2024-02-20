@@ -4,13 +4,12 @@ import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
-import { forwardRef, useMemo, useState } from 'react'
+import { forwardRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { Message } from './Message'
 import { MessageInput } from './MessageInput'
-import { useThreadAtomCallback } from './threads.store'
 
 type ThreadShellProps = {
   threadId?: Id<'threads'>
@@ -20,35 +19,10 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   { threadId, className, ...props },
   forwardedRef,
 ) {
-  const { thread, send } = useThread({ threadId })
+  const { thread, send, threadAtoms, readValues } = useThread({ threadId })
   const title = thread ? thread.name : threadId ? 'Loading...' : 'No Thread ID'
 
   const [menuOpen, setMenuOpen] = useState(false)
-
-  const inputParams = useMemo(
-    () => ({
-      message: { threadId, name: 'message', defaultValue: '' },
-      model: {
-        threadId,
-        name: 'model',
-        defaultValue: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
-      },
-      max_tokens: { threadId, name: 'max_tokens', min: 1, max: 2048, step: 1, defaultValue: 512 },
-      temperature: { threadId, name: 'temperature', min: 0, max: 2, step: 0.1, defaultValue: 0.7 },
-      top_p: { threadId, name: 'top_p', min: 0, max: 1, step: 0.1, defaultValue: 0.7 },
-      top_k: { threadId, name: 'top_k', min: 1, max: 100, step: 1, defaultValue: 50 },
-      repetition_penalty: {
-        threadId,
-        name: 'repetition_penalty',
-        min: 1,
-        max: 2,
-        step: 0.01,
-        defaultValue: 1,
-      },
-    }),
-    [threadId],
-  )
-  const readValues = useThreadAtomCallback(inputParams)
 
   const sendMessages = () => {
     if (!thread) return
@@ -108,7 +82,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </div>
         </ScrollArea>
 
-        <MessageInput inputData={inputParams.message} onSend={sendMessages} />
+        <MessageInput inputAtom={threadAtoms.message} onSend={sendMessages} />
       </CShell.Content>
 
       {/* rightbar */}
@@ -129,7 +103,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </Tabs.List>
 
           <Tabs.Content value="parameters">
-            <InferenceParameterControls inputData={inputParams} />
+            <InferenceParameterControls threadAtoms={threadAtoms} />
           </Tabs.Content>
         </Tabs.Root>
       </CShell.Sidebar>

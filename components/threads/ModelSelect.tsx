@@ -2,29 +2,28 @@
 
 import { Label } from '@/app/components/ui/Label'
 import { Select } from '@radix-ui/themes'
+import { useAtom } from 'jotai'
 import { forwardRef } from 'react'
-import { TextInputData, useThreadsAtom } from './threads.store'
 import togetheraiModels from './togetheraiModels.json'
+import { TextInputAtom } from './useThread'
 
 type Props = {
-  label: string
-  inputData: TextInputData
+  inputAtom: TextInputAtom
 }
 
 export const ModelSelect = forwardRef<
   HTMLButtonElement,
   Props & React.ComponentProps<typeof Select.Root>
->(function ModelSelect({ label, inputData, ...props }, forwardedRef) {
-  const [value, setValue] = useThreadsAtom(inputData)
-  const { name } = inputData
-
+>(function ModelSelect({ inputAtom, ...props }, forwardedRef) {
+  const [value, setValue] = useAtom(inputAtom.atom)
+  const { label, name } = inputAtom
   const textModels = togetheraiModels
 
   return (
     <div className="flex flex-col gap-1 p-3">
       <Label htmlFor={name}>{label}</Label>
 
-      <Select.Root value={value as string} onValueChange={(v) => setValue(v)}>
+      <Select.Root value={value} onValueChange={(v) => setValue(v)}>
         <Select.Trigger {...props} placeholder="Select a model" ref={forwardedRef} />
         <Select.Content>
           <Select.Group>

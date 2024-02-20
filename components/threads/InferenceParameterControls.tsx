@@ -1,20 +1,20 @@
 import { Slider } from '../ui/Slider'
 import { ModelSelect } from './ModelSelect'
-import { InputParams } from './threads.store'
+import { ThreadAtoms } from './useThread'
 
 type Props = {
-  inputData: InputParams
+  threadAtoms: ThreadAtoms
 }
 
-export const InferenceParameterControls = ({ inputData }: Props) => {
+export const InferenceParameterControls = ({ threadAtoms }: Props) => {
   return (
     <>
-      <ModelSelect label="Model" inputData={inputData.model} />
-      <Slider label="Max tokens" paramValue={inputData['max_tokens']} />
-      <Slider label="Temperature" paramValue={inputData['temperature']} />
-      <Slider label="Top P" paramValue={inputData['top_p']} />
-      <Slider label="Top K" paramValue={inputData['top_k']} />
-      <Slider label="Repetition penalty" paramValue={inputData['repetition_penalty']} />
+      <ModelSelect inputAtom={threadAtoms.model} />
+      <Slider inputAtom={threadAtoms.max_tokens} />
+      <Slider inputAtom={threadAtoms.temperature} />
+      <Slider inputAtom={threadAtoms.top_p} />
+      <Slider inputAtom={threadAtoms.top_k} />
+      <Slider inputAtom={threadAtoms.repetition_penalty} />
     </>
   )
 }

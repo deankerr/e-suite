@@ -3,34 +3,33 @@
 import { Label } from '@/app/components/ui/Label'
 import { cn } from '@/lib/utils'
 import { Slider as RxSlider } from '@radix-ui/themes'
+import { useAtom } from 'jotai'
 import { forwardRef, useEffect } from 'react'
-import { NumberInputData, useThreadsAtom } from '../threads/threads.store'
+import { NumberInputAtom } from '../threads/useThread'
 
 type SliderProps = {
-  label: string
-  paramValue: NumberInputData
-} & Omit<React.ComponentProps<typeof RxSlider>, 'defaultValue'>
+  inputAtom: NumberInputAtom
+} & React.ComponentProps<typeof RxSlider>
 
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
-  { label, name, paramValue, className, ...props },
+  { inputAtom, className, ...props },
   forwardedRef,
 ) {
-  const [atomValue, setAtomValue] = useThreadsAtom(paramValue)
-  const { defaultValue, ...sliderProps } = paramValue
+  const { atom, label, initialValue, ...sliderProps } = inputAtom
+  const [value, setValue] = useAtom(atom)
 
-  useEffect(() => console.log('render slider', name))
+  useEffect(() => console.log('render slider', inputAtom.name))
   return (
     <div className={cn('flex flex-col gap-1.5 p-3', className)} ref={forwardedRef}>
       <div className="flex items-center justify-between">
-        <Label htmlFor={name}>{label}</Label>
-        <div className="text-sm">{atomValue}</div>
+        <Label htmlFor={inputAtom.name}>{label}</Label>
+        <div className="text-sm">{value}</div>
       </div>
       <RxSlider
         {...props}
         {...sliderProps}
-        name={name}
-        value={[atomValue as number]}
-        onValueChange={([v]) => setAtomValue(v ?? defaultValue)}
+        value={[value]}
+        onValueChange={([v]) => setValue(v ?? initialValue)}
         className="cursor-pointer"
       />
     </div>

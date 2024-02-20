@@ -1,20 +1,23 @@
 import { IconButton } from '@/app/components/ui/IconButton'
 import { TextArea } from '@/app/components/ui/TextArea'
 import { cn } from '@/lib/utils'
+import { useAtom } from 'jotai'
 import { SendIcon } from 'lucide-react'
-import { forwardRef } from 'react'
-import { TextInputData, useThreadsAtom } from './threads.store'
+import { forwardRef, useEffect } from 'react'
+import { TextInputAtom } from './useThread'
 
 type MessageInputProps = {
-  inputData: TextInputData
+  inputAtom: TextInputAtom
   onSend: () => void
 } & React.ComponentProps<'div'>
 
 export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(function MessageInput(
-  { inputData, onSend, className, ...props },
+  { inputAtom, onSend, className, ...props },
   forwardedRef,
 ) {
-  const [value, setValue] = useThreadsAtom(inputData)
+  const [value, setValue] = useAtom(inputAtom.atom)
+  useEffect(() => console.log('render MessageInput'))
+  //TODO add SR label
   return (
     <div {...props} className={cn('flex items-center gap-2 p-2', className)} ref={forwardedRef}>
       <TextArea minRows={1} value={value} onChange={(e) => setValue(e.target.value)} />
