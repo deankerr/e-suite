@@ -1,10 +1,9 @@
-'use client'
-
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useMutation, useQuery } from 'convex/react'
 import { atom } from 'jotai'
 import { useAtomCallback } from 'jotai/utils'
+import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
 
@@ -14,6 +13,7 @@ export type TextInputAtom = ReturnType<typeof createTextInputAtom>
 export type NumberInputAtom = ReturnType<typeof createNumberInputAtom>
 
 export const useThread = (args: { threadId?: Id<'threads'> }) => {
+  const router = useRouter()
   const threadId = args.threadId
   const queryKey = threadId ? { id: threadId } : 'skip'
   const thread = useQuery(api.threads.threads.get, queryKey)
@@ -113,11 +113,10 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
   const runSend = useMutation(api.threads.threads.send)
 
   const send = () => {
-    if (!thread) return
     const { message, name, systemPrompt, ...inferenceParameters } = readAtomValues()
 
     runSend({
-      threadId: thread._id,
+      threadId: thread?._id,
       messages: [
         {
           role: 'user',
@@ -134,6 +133,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
     })
       .then((id) => {
         console.log('sent', id)
+        if (!thread) router.push(`/beta/thread/${id}`)
       })
       .catch((error) => {
         console.error(error)

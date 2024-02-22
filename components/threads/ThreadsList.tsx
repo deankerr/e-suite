@@ -22,7 +22,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
   return (
     <div
       {...props}
-      className={cn('flex w-96 flex-col border-r bg-gray-1', className)}
+      className={cn('flex w-72 shrink-0 flex-col border-r bg-gray-1', className)}
       ref={forwardedRef}
     >
       <CShell.Titlebar className="px-2">
@@ -34,7 +34,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
           className={cn(
             'grid h-14 grid-cols-[15%_1fr] place-content-center py-2 text-sm text-gray-12 hover:bg-gray-2',
           )}
-          href={`/beta/thread/new`}
+          href="/beta/thread"
         >
           <div className="flex items-center justify-center">
             <MessageSquarePlusIcon className="size-4" />

@@ -62,11 +62,24 @@ export const getMessages = async (
 }
 
 export const createThread = async (ctx: MutationCtx) => {
-  return await ctx.table('threads').insert({
-    userId: ctx.viewerIdX(),
-    title: `thread ${new Date().toISOString()}`,
-    permissions: { private: true },
-  })
+  const count =
+    (await ctx.table('threads', 'userId', (q) => q.eq('userId', ctx.viewerIdX()))).length + 1
+
+  return await ctx
+    .table('threads')
+    .insert({
+      userId: ctx.viewerIdX(),
+      title: `Untitled thread #${count}`,
+      permissions: { private: true },
+    })
+    .get()
+}
+
+const getOrCreateThread = async (ctx: MutationCtx, id?: Id<'threads'>) => {
+  if (!id) return await createThread(ctx)
+  const thread = await ctx.table('threads').getX(id)
+  assert(!thread.deletionTime, 'Thread is deleted')
+  return thread
 }
 
 export const get = query({
@@ -98,11 +111,6 @@ export const listMessages = query({
   handler: async (ctx, { id, paginationOpts }) => await getMessages(ctx, { id, paginationOpts }),
 })
 
-export const create = internalMutation({
-  args: {},
-  handler: async (ctx) => await createThread(ctx),
-})
-
 export const createThreadFor = internalMutation({
   args: {
     userId: v.id('users'),
@@ -118,14 +126,13 @@ export const createThreadFor = internalMutation({
 
 export const send = mutation({
   args: {
-    threadId: v.id('threads'),
+    threadId: v.optional(v.id('threads')),
     messages: v.array(v.object(messagesFields)),
     systemPrompt: v.optional(v.string()),
     permissions: v.optional(permissionsFields),
   },
   handler: async (ctx, args) => {
-    const thread = await ctx.table('threads').getX(args.threadId)
-    assert(!thread.deletionTime, 'Thread is deleted')
+    const thread = await getOrCreateThread(ctx, args.threadId)
 
     if (args.systemPrompt && thread.systemPrompt !== args.systemPrompt) {
       await thread.patch({ systemPrompt: args.systemPrompt })
