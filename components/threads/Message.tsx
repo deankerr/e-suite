@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
+import { LoaderBars } from '@/app/components/ui/LoaderBars'
 import { Spinner } from '@/app/components/ui/Spinner'
+import loaderBars from '@/assets/hola-loader-bars-sm.svg'
 import type { ThreadMessage } from '@/convex/threads/do'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'
+import NextImage from 'next/image'
 import { forwardRef } from 'react'
 
 type Props = {
@@ -18,7 +21,7 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     const displayName = message.name ?? getDisplayRole(message.role)
 
     const bgColors = {
-      user: 'bg-gold-1',
+      user: 'bg-bronze-2',
       assistant: 'bg-gray-1',
       system: 'bg-green-1',
     } as const
@@ -39,7 +42,7 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         <div className={cn('flex', roleColors[message.role])}>{displayName}</div>
 
         <div className="space-y-5 text-base">
-          {message.job?.status === 'pending' && <Spinner />}
+          {message.job?.status === 'pending' && <LoaderBars className="absolute" />}
           {/* content body */}
           {message.content.split('\n').map((p, i) => (
             <Text key={i} as="p">

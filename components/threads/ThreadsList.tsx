@@ -52,7 +52,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
         <Heading
           size={{
             initial: '1',
-            lg: '3',
+            sm: '2',
           }}
         >
           Threads

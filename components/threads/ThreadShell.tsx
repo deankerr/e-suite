@@ -38,7 +38,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
               className="truncate"
               size={{
                 initial: '1',
-                lg: '3',
+                sm: '2',
               }}
             >
               {title}
