@@ -1,14 +1,20 @@
 'use client'
 
+import { IconButton } from '@/app/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'
-import { MessageSquarePlusIcon, MessageSquareTextIcon } from 'lucide-react'
+import {
+  MessageSquarePlusIcon,
+  MessageSquareTextIcon,
+  PanelLeftCloseIcon,
+  PanelLeftOpenIcon,
+} from 'lucide-react'
 import NextLink from 'next/link'
 import { useSelectedLayoutSegment } from 'next/navigation'
-import { forwardRef } from 'react'
+import { forwardRef, useState } from 'react'
 import { CShell } from '../ui/CShell'
 
 type ThreadsListProps = {} & React.ComponentProps<'div'>
@@ -19,14 +25,38 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
 ) {
   const segment = useSelectedLayoutSegment()
   const threads = useQuery(api.threads.threads.list)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
   return (
     <div
       {...props}
-      className={cn('flex w-72 shrink-0 flex-col border-r bg-gray-1', className)}
+      className={cn(
+        'absolute z-10 flex h-full w-72 shrink-0 -translate-x-72 flex-col border-r bg-gray-1 transition-transform duration-300 lg:static lg:translate-x-0',
+        sidebarOpen && 'translate-x-0',
+        className,
+      )}
       ref={forwardedRef}
     >
-      <CShell.Titlebar className="px-2">
-        <Heading size="3">Threads</Heading>
+      <CShell.Titlebar className="lg:px-2">
+        <IconButton
+          variant="ghost"
+          className={cn('m-0 lg:hidden', !sidebarOpen && 'fixed left-72 top-1 bg-gray-1')}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          {sidebarOpen ? (
+            <PanelLeftCloseIcon className="stroke-[1.75]" />
+          ) : (
+            <PanelLeftOpenIcon className="stroke-[1.75]" />
+          )}
+        </IconButton>
+        <Heading
+          size={{
+            initial: '1',
+            lg: '3',
+          }}
+        >
+          Threads
+        </Heading>
       </CShell.Titlebar>
 
       <ScrollArea className="grow">

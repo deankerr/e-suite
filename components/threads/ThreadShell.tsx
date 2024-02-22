@@ -34,7 +34,15 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
         <CShell.Titlebar className="justify-between">
           <div className="flex items-center">
             <IconButton lucideIcon={MessageSquareIcon} variant="ghost" className="m-0" />
-            <Heading size="3">{title}</Heading>
+            <Heading
+              className="truncate"
+              size={{
+                initial: '1',
+                lg: '3',
+              }}
+            >
+              {title}
+            </Heading>
           </div>
 
           <div className="flex items-center gap-1 lg:px-2">
