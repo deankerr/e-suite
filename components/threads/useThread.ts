@@ -1,11 +1,11 @@
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useMutation, useQuery } from 'convex/react'
-import { atom } from 'jotai'
 import { useAtomCallback } from 'jotai/utils'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
+import { createNumberInputAtom, createTextInputAtom } from '../atoms'
 
 export type ThreadHelpers = ReturnType<typeof useThread>
 export type ThreadAtoms = ReturnType<typeof createThreadAtoms>
@@ -206,19 +206,4 @@ function createThreadAtoms(threadId?: string) {
   }
 
   return threadAtoms
-}
-
-function createTextInputAtom(args: { label: string; name: string; initialValue: string }) {
-  return { ...args, atom: atom(args.initialValue) }
-}
-
-function createNumberInputAtom(args: {
-  label: string
-  name: string
-  initialValue: number
-  min: number
-  max: number
-  step: number
-}) {
-  return { ...args, atom: atom(args.initialValue) }
 }

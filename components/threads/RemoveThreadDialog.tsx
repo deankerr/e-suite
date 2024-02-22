@@ -1,9 +1,10 @@
 'use client'
 
+import { Button } from '@/app/components/ui/Button'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
-import { AlertDialog, Button } from '@radix-ui/themes'
+import { AlertDialog } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { forwardRef } from 'react'
 import { toast } from 'sonner'
@@ -35,6 +36,7 @@ export const RemoveThreadDialog = forwardRef<HTMLDivElement, RemoveThreadDialogP
     return (
       <AlertDialog.Root {...props}>
         <AlertDialog.Trigger>{children}</AlertDialog.Trigger>
+
         <AlertDialog.Content ref={forwardedRef} className={cn('max-w-sm')}>
           <AlertDialog.Title>Delete thread</AlertDialog.Title>
           <AlertDialog.Description size="2">

@@ -65,7 +65,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar
       {...props}
       id={`shell-sidebar-${side}`}
       className={cn(
-        'absolute right-0 flex h-full w-72 shrink-0 translate-x-72 flex-col bg-gray-1 transition-transform duration-300',
+        'absolute right-0 flex h-full w-80 shrink-0 translate-x-80 flex-col bg-gray-1 transition-transform duration-300',
         'lg:static lg:translate-x-0',
         isRight ? 'border-l' : 'border-r',
         open && 'translate-x-0',

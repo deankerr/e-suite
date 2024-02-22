@@ -1,4 +1,3 @@
-import { PaginationOptions, paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
@@ -31,33 +30,6 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
     ...thread,
     messages,
     owner,
-  }
-}
-
-export const getMessages = async (
-  ctx: QueryCtx,
-  { id, paginationOpts }: { id: Id<'threads'>; paginationOpts: PaginationOptions },
-) => {
-  const results = await ctx
-    .table('threads')
-    .getX(id)
-    .edgeX('messages')
-    .order('desc')
-    .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .paginate(paginationOpts)
-    .map(async (message) => ({
-      ...message,
-      job: await ctx
-        .table('jobs')
-        .order('desc', 'messageId')
-        .filter((q) => q.eq(q.field('deletionTime'), undefined))
-        .filter((q) => q.eq(q.field('messageId'), message._id))
-        .first(),
-    }))
-
-  return {
-    ...results,
-    page: results.page.reverse(),
   }
 }
 
@@ -101,14 +73,6 @@ export const list = query({
     await ctx
       .table('threads', 'userId', (q) => q.eq('userId', ctx.viewerIdX()))
       .filter((q) => q.eq(q.field('deletionTime'), undefined)),
-})
-
-export const listMessages = query({
-  args: {
-    id: v.id('threads'),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, { id, paginationOpts }) => await getMessages(ctx, { id, paginationOpts }),
 })
 
 export const createThreadFor = internalMutation({
@@ -206,6 +170,18 @@ export const streamMessageContent = internalMutation({
   },
   handler: async (ctx, { id, content }) => {
     await ctx.skipRules.table('messages').getX(id).patch({ content })
+  },
+})
+
+export const updateTitle = mutation({
+  args: {
+    id: v.id('threads'),
+    title: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (!args.title) return
+    const title = args.title.slice(0, 64)
+    await ctx.table('threads').getX(args.id).patch({ title })
   },
 })
 

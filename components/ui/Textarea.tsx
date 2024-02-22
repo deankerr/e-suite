@@ -15,12 +15,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
 ) {
   const [value, setValue] = useAtom(inputAtom.atom)
   return (
-    <div className="flex flex-col gap-1 p-3">
+    <div className={cn('flex flex-col gap-1', className)}>
       <Label htmlFor={inputAtom.name}>{inputAtom.label}</Label>
       <TextareaAutosize
         rows={1}
         {...props}
-        className={cn('w-full resize-none rounded border border-gray-7A bg-surface p-1', className)}
+        className="w-full resize-none rounded border border-gray-7A bg-surface p-1"
         name={inputAtom.name}
         value={value}
         onChange={(e) => setValue(e.target.value)}

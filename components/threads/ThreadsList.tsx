@@ -26,43 +26,48 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
       ref={forwardedRef}
     >
       <CShell.Titlebar className="px-2">
-        <Heading size="2">Threads</Heading>
+        <Heading size="3">Threads</Heading>
       </CShell.Titlebar>
 
       <ScrollArea className="grow">
-        <NextLink
-          className={cn(
-            'grid h-14 grid-cols-[15%_1fr] place-content-center py-2 text-sm text-gray-12 hover:bg-gray-2',
-          )}
-          href="/beta/thread"
-        >
-          <div className="flex items-center justify-center">
-            <MessageSquarePlusIcon className="size-4" />
-          </div>
-          <div className="col-start-2 row-start-1 flex items-center">Create new thread</div>
-        </NextLink>
-
-        {threads?.map((thread) => (
+        <div className="divide-y divide-gray-3">
           <NextLink
-            key={thread._id}
             className={cn(
-              'grid h-20 grid-cols-[15%_1fr] grid-rows-[1fr_1fr] place-content-center py-2 text-sm text-gray-11',
-              segment === thread._id
-                ? 'bg-gray-3 text-gray-12'
-                : 'hover:bg-gray-2 hover:text-gray-12',
+              'grid h-14 grid-cols-[15%_1fr] place-content-center py-2 text-sm text-gray-12',
+              !segment ? 'bg-gray-3 font-medium' : 'hover:bg-gray-2',
             )}
-            href={`/beta/thread/${thread._id}`}
+            href="/beta/thread"
           >
             <div className="flex items-center justify-center">
-              <MessageSquareTextIcon className="size-4" />
+              <MessageSquarePlusIcon className="size-4" />
             </div>
-
-            <div className="col-start-2 row-start-1 flex items-center">{thread.title}</div>
-            <div className="col-start-2 row-start-2 flex">
-              {formatDistanceToNow(new Date(thread._creationTime), { addSuffix: true })}
-            </div>
+            <div className="col-start-2 row-start-1 flex items-center">Create new thread</div>
           </NextLink>
-        ))}
+
+          {threads?.map((thread) => (
+            <NextLink
+              key={thread._id}
+              className={cn(
+                'grid h-20 grid-cols-[15%_1fr] grid-rows-[1fr_1fr] place-content-center py-2 text-sm text-gray-11',
+                segment === thread._id
+                  ? 'bg-gray-3 text-gray-12'
+                  : 'font-medium hover:bg-gray-2 hover:text-gray-12',
+              )}
+              href={`/beta/thread/${thread._id}`}
+            >
+              <div className="flex items-center justify-center">
+                <MessageSquareTextIcon className="size-4" />
+              </div>
+
+              <div className="col-start-2 row-start-1 flex items-center font-medium">
+                {thread.title}
+              </div>
+              <div className="col-start-2 row-start-2 flex">
+                {formatDistanceToNow(new Date(thread._creationTime), { addSuffix: true })}
+              </div>
+            </NextLink>
+          ))}
+        </div>
       </ScrollArea>
     </div>
   )

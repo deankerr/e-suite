@@ -12,6 +12,7 @@ import { InferenceParameterControls } from './InferenceParameterControls'
 import { MessageFeed } from './MessageFeed'
 import { MessageInput } from './MessageInput'
 import { RemoveThreadDialog } from './RemoveThreadDialog'
+import { RenameThreadDialog } from './RenameThreadDialog'
 
 type ThreadShellProps = {
   threadId?: Id<'threads'>
@@ -33,16 +34,26 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
         <CShell.Titlebar className="justify-between">
           <div className="flex items-center">
             <IconButton lucideIcon={MessageSquareIcon} variant="ghost" className="m-0" />
-            <Heading size="2">{title}</Heading>
+            <Heading size="3">{title}</Heading>
           </div>
 
-          <IconButton
-            variant="ghost"
-            className="mr-0.5 lg:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <SlidersHorizontalIcon />
-          </IconButton>
+          <div className="flex items-center gap-1 lg:px-2">
+            {thread && thread.owner.isViewer ? (
+              <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
+                <Button size="1" variant="outline" color="gray">
+                  Rename
+                </Button>
+              </RenameThreadDialog>
+            ) : null}
+
+            <IconButton
+              variant="ghost"
+              className="m-0 lg:hidden"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              <SlidersHorizontalIcon />
+            </IconButton>
+          </div>
         </CShell.Titlebar>
 
         <MessageFeed messages={thread?.messages ?? []} />

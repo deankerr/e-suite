@@ -11,8 +11,8 @@ type Props = {
 export const InferenceParameterControls = ({ threadAtoms }: Props) => {
   return (
     <>
-      <Textarea inputAtom={threadAtoms.systemPrompt} minRows={3} maxRows={6} />
-      <TextInput inputAtom={threadAtoms.name} />
+      <Textarea className="p-3" inputAtom={threadAtoms.systemPrompt} minRows={3} maxRows={6} />
+      <TextInput className="p-3" inputAtom={threadAtoms.name} />
       <ModelSelect inputAtom={threadAtoms.model} />
       <Slider inputAtom={threadAtoms.max_tokens} />
       <Slider inputAtom={threadAtoms.temperature} />

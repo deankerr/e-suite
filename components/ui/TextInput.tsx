@@ -7,19 +7,22 @@ import { TextInputAtom } from '../threads/useThread'
 
 type Props = {
   inputAtom: TextInputAtom
+  hideLabel?: boolean
 } & React.ComponentProps<typeof TextFieldInput>
 
 export const TextInput = forwardRef<HTMLInputElement, Props>(function TextInput(
-  { inputAtom, className, ...props },
+  { inputAtom, hideLabel, className, ...props },
   forwardedRef,
 ) {
   const [value, setValue] = useAtom(inputAtom.atom)
   return (
-    <div className="flex flex-col gap-1 p-3">
-      <Label htmlFor={inputAtom.name}>{inputAtom.label}</Label>
+    <div className={cn('flex w-full flex-col gap-1', className)}>
+      <Label htmlFor={inputAtom.name} className={cn(hideLabel && 'sr-only')}>
+        {inputAtom.label}
+      </Label>
       <TextFieldInput
         {...props}
-        className={cn('w-full resize-none rounded border border-gray-7A bg-surface p-1', className)}
+        size="3"
         name={inputAtom.name}
         value={value}
         onChange={(e) => setValue(e.target.value)}
