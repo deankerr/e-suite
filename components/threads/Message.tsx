@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import { LoaderBars } from '@/app/components/ui/LoaderBars'
 import { Spinner } from '@/app/components/ui/Spinner'
 import loaderBars from '@/assets/hola-loader-bars-sm.svg'
+import { LoaderBars } from '@/components/ui/LoaderBars'
 import type { ThreadMessage } from '@/convex/threads/do'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'

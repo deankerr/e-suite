@@ -31,7 +31,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
     <div
       {...props}
       className={cn(
-        'absolute z-10 flex h-full w-72 shrink-0 -translate-x-72 flex-col border-r bg-gray-1 transition-transform duration-300 lg:static lg:translate-x-0',
+        'absolute z-10 flex h-full w-72 shrink-0 -translate-x-72 flex-col border-r bg-gray-1 transition-all duration-300 lg:static lg:translate-x-0',
         sidebarOpen && 'translate-x-0',
         className,
       )}
@@ -63,8 +63,10 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
         <div className="divide-y divide-gray-3">
           <NextLink
             className={cn(
-              'grid h-14 grid-cols-[15%_1fr] place-content-center py-2 text-sm text-gray-12',
-              !segment ? 'bg-gray-3 font-medium' : 'hover:bg-gray-2',
+              'grid h-14 grid-cols-[15%_1fr] place-content-center py-2 text-sm text-gray-11',
+              !segment
+                ? 'bg-gray-3 font-medium text-gray-12'
+                : 'hover:bg-gray-2 hover:text-gray-12',
             )}
             href="/beta/thread"
           >
@@ -78,7 +80,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
             <NextLink
               key={thread._id}
               className={cn(
-                'grid h-20 grid-cols-[15%_1fr] grid-rows-[1fr_1fr] place-content-center py-2 text-sm text-gray-11',
+                'grid h-20 grid-cols-[15%_1fr] grid-rows-[1fr_1fr] place-content-center bg-gray-1 py-2 text-sm text-gray-11',
                 segment === thread._id
                   ? 'bg-gray-3 text-gray-12'
                   : 'font-medium hover:bg-gray-2 hover:text-gray-12',

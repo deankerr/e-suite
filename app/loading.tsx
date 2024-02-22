@@ -1,4 +1,4 @@
-import { LoaderBars } from './components/ui/LoaderBars'
+import { LoaderBars } from '../components/ui/LoaderBars'
 
 export default function LoadingPage() {
   // LoadingPage
