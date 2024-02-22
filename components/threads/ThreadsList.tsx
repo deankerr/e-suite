@@ -31,7 +31,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
     <div
       {...props}
       className={cn(
-        'absolute z-10 flex h-full w-72 shrink-0 -translate-x-72 flex-col border-r bg-gray-1 transition-all duration-300 lg:static lg:translate-x-0',
+        'absolute z-10 flex h-full w-60 shrink-0 -translate-x-60 flex-col border-r bg-gray-1 transition-all duration-300 md:static md:translate-x-0',
         sidebarOpen && 'translate-x-0',
         className,
       )}
@@ -40,7 +40,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
       <CShell.Titlebar className="lg:px-2">
         <IconButton
           variant="ghost"
-          className={cn('m-0 lg:hidden', !sidebarOpen && 'fixed left-72 top-1 bg-gray-1')}
+          className={cn('m-0 lg:hidden', !sidebarOpen && 'fixed left-60 top-1 bg-gray-1')}
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           {sidebarOpen ? (
@@ -61,46 +61,52 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
 
       <ScrollArea className="grow">
         <div className="divide-y divide-gray-3">
-          <NextLink
-            className={cn(
-              'grid h-14 grid-cols-[15%_1fr] place-content-center py-2 text-sm text-gray-11',
-              !segment
-                ? 'bg-gray-3 font-medium text-gray-12'
-                : 'hover:bg-gray-2 hover:text-gray-12',
-            )}
-            href="/beta/thread"
-          >
-            <div className="flex items-center justify-center">
-              <MessageSquarePlusIcon className="size-4" />
-            </div>
-            <div className="col-start-2 row-start-1 flex items-center">Create new thread</div>
-          </NextLink>
+          <ThreadNavLink href="/beta/thread" isActive={!segment}>
+            <MessageSquarePlusIcon className="size-4" />
+            <div className="font-medium">Create new thread</div>
+          </ThreadNavLink>
 
           {threads?.map((thread) => (
-            <NextLink
+            <ThreadNavLink
               key={thread._id}
-              className={cn(
-                'grid h-20 grid-cols-[15%_1fr] grid-rows-[1fr_1fr] place-content-center bg-gray-1 py-2 text-sm text-gray-11',
-                segment === thread._id
-                  ? 'bg-gray-3 text-gray-12'
-                  : 'font-medium hover:bg-gray-2 hover:text-gray-12',
-              )}
               href={`/beta/thread/${thread._id}`}
+              isActive={segment === thread._id}
             >
-              <div className="flex items-center justify-center">
-                <MessageSquareTextIcon className="size-4" />
-              </div>
+              <MessageSquareTextIcon className="size-4" />
 
-              <div className="col-start-2 row-start-1 flex items-center font-medium">
-                {thread.title}
+              <div className="space-y-1">
+                <div className="font-medium">{thread.title}</div>
+                <div className="text-xs">
+                  {formatDistanceToNow(new Date(thread._creationTime), { addSuffix: true })}
+                </div>
               </div>
-              <div className="col-start-2 row-start-2 flex">
-                {formatDistanceToNow(new Date(thread._creationTime), { addSuffix: true })}
-              </div>
-            </NextLink>
+            </ThreadNavLink>
           ))}
         </div>
       </ScrollArea>
     </div>
   )
 })
+
+type ThreadNavLinkProps = {
+  isActive?: boolean
+} & Partial<React.ComponentProps<typeof NextLink>>
+
+export const ThreadNavLink = forwardRef<HTMLAnchorElement, ThreadNavLinkProps>(
+  function ThreadNavLink({ isActive, children, className, ...props }, forwardedRef) {
+    return (
+      <NextLink
+        href="#"
+        {...props}
+        className={cn(
+          'flex h-16 items-center gap-3 bg-gray-1 px-3 text-sm text-gray-11',
+          isActive ? 'bg-gray-3 text-gray-12' : 'hover:bg-gray-2',
+          className,
+        )}
+        ref={forwardedRef}
+      >
+        {children}
+      </NextLink>
+    )
+  },
+)
