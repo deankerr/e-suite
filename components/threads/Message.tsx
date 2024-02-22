@@ -38,10 +38,14 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         {/* role info */}
         <div className={cn('flex', roleColors[message.role])}>{displayName}</div>
 
-        <div className="text-base">
+        <div className="space-y-5 text-base">
           {message.job?.status === 'pending' && <Spinner />}
           {/* content body */}
-          <Text>{message.content}</Text>
+          {message.content.split('\n').map((p, i) => (
+            <Text key={i} as="p">
+              {p}
+            </Text>
+          ))}
         </div>
 
         {/* job status */}

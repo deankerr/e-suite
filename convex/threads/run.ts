@@ -10,7 +10,7 @@ export const inference = internalAction({
   },
   handler: async (ctx, { messageId }): Promise<void> => {
     try {
-      const messages = await ctx.runQuery(internal.threads.do.getMessageContext, {
+      const messages = await ctx.runQuery(internal.threads.threads.getMessageContext, {
         id: messageId,
       })
 
@@ -43,7 +43,7 @@ export const inference = internalAction({
         choices: [m],
       } = responseSchema.parse(json)
 
-      await ctx.runMutation(internal.threads.do.streamMessageContent, {
+      await ctx.runMutation(internal.threads.threads.streamMessageContent, {
         id: messageId,
         content: m?.message.content ?? '{{ Response missing? }}',
       })

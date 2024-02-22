@@ -113,8 +113,8 @@ export const messagesFields = {
 
 export const threadsFields = {
   title: v.string(),
-  systemPrompt: v.string(),
-  name: v.string(),
+  systemPrompt: v.optional(v.string()),
+  name: v.optional(v.string()),
   parameters: v.optional(inferenceParametersFields),
   permissions: permissionsFields,
 }

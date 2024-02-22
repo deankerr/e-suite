@@ -45,7 +45,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
 
         <div className="overflow-hidden">
           <IconButton variant="ghost" className="h-12 w-full sm:h-14" asChild>
-            <NextLink href="/beta/thread/m17968tyj6hdg6g8ktbd7avzz56khqk4">
+            <NextLink href="/beta/thread">
               <BeakerIcon className="stroke-[1.2] sm:scale-125" />
             </NextLink>
           </IconButton>

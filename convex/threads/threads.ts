@@ -3,8 +3,8 @@ import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
-import { mutation, query } from '../functions'
-import { messagesFields, Permissions, permissionsFields } from '../schema'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
+import { messagesFields, permissionsFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert } from '../util'
@@ -15,7 +15,7 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')
   const messages = await thread
-    .edgeX('messages')
+    .edge('messages')
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
     .map(async (message) => ({
@@ -61,33 +61,33 @@ export const getMessages = async (
   }
 }
 
-type NewThreadFields = {
-  name?: string
-  systemPrompt?: string
-  permissions?: Permissions
-}
-export const createThread = async (ctx: MutationCtx, fields: NewThreadFields) => {
+export const createThread = async (ctx: MutationCtx) => {
   return await ctx.table('threads').insert({
     userId: ctx.viewerIdX(),
-    title: fields.name ?? `thread ${new Date().toISOString()}`,
-    name: '',
-    systemPrompt: fields.systemPrompt ?? '',
-    permissions: fields.permissions ?? { private: true },
+    title: `thread ${new Date().toISOString()}`,
+    permissions: { private: true },
   })
-}
-
-export const getOrCreateThread = async (ctx: MutationCtx, id?: Id<'threads'>) => {
-  const existing = id ? await ctx.table('threads').get(id) : null
-  if (existing) return existing
-  const thread = await createThread(ctx, {})
-  return thread
 }
 
 export const get = query({
   args: {
     id: v.id('threads'),
   },
-  handler: async (ctx, { id }) => await getThread(ctx, id),
+  handler: async (ctx, { id }) => {
+    const thread = await ctx.table('threads').get(id)
+    if (!thread || thread.deletionTime) {
+      return null
+    }
+    return await getThread(ctx, id)
+  },
+})
+
+export const list = query({
+  args: {},
+  handler: async (ctx) =>
+    await ctx
+      .table('threads', 'userId', (q) => q.eq('userId', ctx.viewerIdX()))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined)),
 })
 
 export const listMessages = query({
@@ -96,6 +96,24 @@ export const listMessages = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { id, paginationOpts }) => await getMessages(ctx, { id, paginationOpts }),
+})
+
+export const create = internalMutation({
+  args: {},
+  handler: async (ctx) => await createThread(ctx),
+})
+
+export const createThreadFor = internalMutation({
+  args: {
+    userId: v.id('users'),
+  },
+  handler: async (ctx, { userId }) => {
+    return await ctx.skipRules.table('threads').insert({
+      userId,
+      title: `thread ${new Date().toISOString()}`,
+      permissions: { private: true },
+    })
+  },
 })
 
 export const send = mutation({
@@ -145,6 +163,42 @@ export const send = mutation({
     }
 
     return thread._id
+  },
+})
+
+export const getMessageContext = internalQuery({
+  args: {
+    id: v.id('messages'),
+  },
+  handler: async (ctx, { id }) => {
+    const message = await ctx.skipRules.table('messages').getX(id)
+    const thread = await message.edgeX('thread')
+
+    const messages = await thread
+      .edgeX('messages')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .filter((q) => q.lte(q.field('_creationTime'), message._creationTime))
+      .docs()
+
+    if (thread.systemPrompt) {
+      const systemMessage = {
+        role: 'system' as const,
+        content: thread.systemPrompt,
+        llmParameters: undefined,
+      }
+      return [systemMessage, ...messages]
+    }
+    return messages
+  },
+})
+
+export const streamMessageContent = internalMutation({
+  args: {
+    id: v.id('messages'),
+    content: v.string(),
+  },
+  handler: async (ctx, { id, content }) => {
+    await ctx.skipRules.table('messages').getX(id).patch({ content })
   },
 })
 

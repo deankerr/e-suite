@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Heading, Tabs } from '@radix-ui/themes'
 import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { forwardRef, useEffect, useState } from 'react'
+import { FallbackProps } from 'react-error-boundary'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { MessageFeed } from './MessageFeed'
@@ -85,3 +86,13 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
     </CShell.Root>
   )
 })
+
+export const FallbackComponent = ({ error, resetErrorBoundary }: FallbackProps) => {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  )
+}
