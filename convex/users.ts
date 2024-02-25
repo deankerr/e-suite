@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 import z from 'zod'
 import { Id } from './_generated/dataModel'
-import { internalMutation, query } from './functions'
+import { internalMutation, mutation, query } from './functions'
 import { usersFields } from './schema'
 import { QueryCtx } from './types'
 
@@ -22,10 +22,14 @@ export const getUser = async (ctx: QueryCtx, id: Id<'users'>) => {
   return publicUserSchema.parse({ ...user, isViewer })
 }
 
-export const getViewer = async (ctx: QueryCtx) => {
-  const viewer = await ctx.viewer()
-  return publicUserSchema.parse(viewer)
-}
+export const getViewer = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.viewer()
+    if (user?.deletionTime) return null
+    return user
+  },
+})
 
 export const create = internalMutation({
   args: {
@@ -46,6 +50,18 @@ export const update = internalMutation({
     }),
   },
   handler: async (ctx, { id, fields }) => await ctx.table('users').getX(id).patch(fields),
+})
+
+export const updateUsername = mutation({
+  args: {
+    username: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const username = args.username.slice(0, 32)
+    if (!username.length) return null
+    const user = await ctx.viewerX()
+    await user.patch({ username })
+  },
 })
 
 export const authDeleted = internalMutation({

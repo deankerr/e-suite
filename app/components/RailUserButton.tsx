@@ -23,7 +23,7 @@ export const RailUserButton = forwardRef<HTMLDivElement, Props & React.Component
         {isLoading ? (
           <Spinner />
         ) : isAuthenticated ? (
-          <ClerkUserButton afterSignOutUrl={pathname} />
+          <ClerkUserButton afterSignOutUrl={'/'} />
         ) : (
           <ClerkSignInButton mode="modal" redirectUrl={pathname}>
             <Button size="1" className="h-fit text-center">
