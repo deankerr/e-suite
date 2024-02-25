@@ -185,6 +185,15 @@ export const updateTitle = mutation({
   },
 })
 
+export const updatePermissions = mutation({
+  args: {
+    id: v.id('threads'),
+    permissions: permissionsFields,
+  },
+  handler: async (ctx, { id, permissions }) =>
+    await ctx.table('threads').getX(id).patch({ permissions }),
+})
+
 export const remove = mutation({
   args: {
     id: v.id('threads'),

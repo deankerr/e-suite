@@ -1,5 +1,6 @@
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
+import { Permissions } from '@/convex/schema'
 import { useMutation, useQuery } from 'convex/react'
 import { useAtomCallback } from 'jotai/utils'
 import { useRouter } from 'next/navigation'
@@ -145,7 +146,22 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
       })
   }
 
-  return { thread, send, threadAtoms }
+  const runUpdatePermissions = useMutation(api.threads.threads.updatePermissions)
+  const updatePermissions = (permissions: Permissions) => {
+    if (!thread) return
+    runUpdatePermissions({ id: thread._id, permissions })
+      .then((id) => console.log('permissions updated', id))
+      .catch((error) => {
+        console.error(error)
+        if (error instanceof Error) {
+          toast.error(error.message)
+        } else {
+          toast.error('An unknown error occurred.')
+        }
+      })
+  }
+
+  return { thread, send, threadAtoms, updatePermissions }
 }
 
 function createThreadAtoms(threadId?: string) {

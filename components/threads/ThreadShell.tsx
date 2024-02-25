@@ -1,3 +1,4 @@
+import { PermissionsCard } from '@/app/components/PermissionsCard'
 import { Button } from '@/app/components/ui/Button'
 import { IconButton } from '@/app/components/ui/IconButton'
 import { useThread } from '@/components/threads/useThread'
@@ -22,7 +23,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   { threadId, className, ...props },
   forwardedRef,
 ) {
-  const { thread, send, threadAtoms } = useThread({ threadId })
+  const { thread, send, threadAtoms, updatePermissions } = useThread({ threadId })
   const title = thread ? thread.title : threadId ? 'Loading...' : 'New Thread'
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -91,11 +92,17 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </Tabs.Content>
 
           <Tabs.Content value="details">
-            <div className="flex flex-col justify-center p-4">
+            <div className="flex flex-col justify-center gap-4 p-4">
               {thread && thread.owner.isViewer ? (
-                <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
-                  <Button color="red">Delete Thread</Button>
-                </RemoveThreadDialog>
+                <>
+                  <PermissionsCard
+                    permissions={thread.permissions}
+                    onPermissionsChange={(permissions) => updatePermissions(permissions)}
+                  />
+                  <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
+                    <Button color="red">Delete Thread</Button>
+                  </RemoveThreadDialog>
+                </>
               ) : null}
             </div>
           </Tabs.Content>
