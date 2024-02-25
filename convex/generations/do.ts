@@ -9,6 +9,8 @@ import { QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert, error } from '../util'
 
+const schedulerDelayInterval = 6
+
 export type Generation = Awaited<ReturnType<typeof getGeneration>>
 
 export const getGeneration = async (ctx: QueryCtx, id: Id<'generations'>) => {
@@ -81,7 +83,10 @@ export const send = mutation({
           parameters: args.parameters,
           permissions: args.permissions ?? { private: true },
         })
-        await ctx.scheduler.runAfter(i, internal.jobs.dispatch, { type: 'generation', imageId: id })
+        await ctx.scheduler.runAfter(i * schedulerDelayInterval, internal.jobs.dispatch, {
+          type: 'generation',
+          imageId: id,
+        })
         return id
       }),
     )

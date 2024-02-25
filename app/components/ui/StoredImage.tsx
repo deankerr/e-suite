@@ -35,7 +35,7 @@ export const StoredImage = forwardRef<HTMLDivElement, Props & React.ComponentPro
           <div className="absolute -inset-x-[5%] inset-y-[90%] h-16 w-[110%] bg-blue-4A blur-xl motion-safe:animate-wipedown" />
         ) : (
           <>
-            <AlertOctagonIcon className="size-8" />
+            {job?.status === 'error' && <AlertOctagonIcon className="size-8" />}
             <span className="">{job?.message}</span>
           </>
         )}
