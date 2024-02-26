@@ -1,10 +1,10 @@
 import { IconButton } from '@/app/components/ui/IconButton'
 import { Label } from '@/app/components/ui/Label'
-import { TextArea } from '@/app/components/ui/TextArea'
 import { cn } from '@/lib/utils'
 import { useAtom } from 'jotai'
 import { SendIcon } from 'lucide-react'
 import { forwardRef } from 'react'
+import { Textarea } from '../ui/Textarea'
 import { TextInputAtom } from './useThread'
 
 type MessageInputProps = {
@@ -23,12 +23,15 @@ export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(functi
   }
 
   return (
-    <div {...props} className={cn('flex items-center gap-2 p-2', className)} ref={forwardedRef}>
-      <Label htmlFor={inputAtom.name} className="sr-only" />
-      <TextArea
-        name={inputAtom.name}
+    <div
+      {...props}
+      className={cn('flex w-full items-center gap-2 p-2', className)}
+      ref={forwardedRef}
+    >
+      <Textarea
+        hideLabel
+        inputAtom={inputAtom}
         minRows={1}
-        value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {

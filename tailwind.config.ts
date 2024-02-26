@@ -9,7 +9,6 @@ const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   plugins: [
     require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
     radixThemePlugin({
       useTailwindColorNames: false,
       useTailwindRadiusNames: false,
