@@ -1,7 +1,7 @@
 /* eslint-env node */
 module.exports = {
   root: true,
-  extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended'],
+  extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended', 'prettier'],
   parser: '@typescript-eslint/parser',
   ignorePatterns: ['convex/_generated', '.next', 'cosmos-export'],
   rules: {
