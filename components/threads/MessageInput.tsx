@@ -1,5 +1,4 @@
 import { IconButton } from '@/app/components/ui/IconButton'
-import { Label } from '@/app/components/ui/Label'
 import { cn } from '@/lib/utils'
 import { useAtom } from 'jotai'
 import { SendIcon } from 'lucide-react'

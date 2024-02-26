@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { BeakerIcon, ImageIcon, MessagesSquareIcon } from 'lucide-react'
+import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
 import { RailUserButton } from './RailUserButton'
@@ -29,8 +29,8 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
 
         <div className="overflow-hidden">
           <IconButton variant="ghost" className="h-12 w-full sm:h-14" asChild>
-            <NextLink href="/threads">
-              <MessagesSquareIcon className="stroke-[1.2] sm:scale-125" />
+            <NextLink href="/thread">
+              <MessagesSquareIcon className="sm:scale-125" />
             </NextLink>
           </IconButton>
         </div>
@@ -38,15 +38,7 @@ export const NavRail = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
         <div className="overflow-hidden">
           <IconButton variant="ghost" className="h-12 w-full sm:h-14" asChild>
             <NextLink href="/generations">
-              <ImageIcon className="stroke-[1.2] sm:scale-125" />
-            </NextLink>
-          </IconButton>
-        </div>
-
-        <div className="overflow-hidden">
-          <IconButton variant="ghost" className="h-12 w-full sm:h-14" asChild>
-            <NextLink href="/beta/thread">
-              <BeakerIcon className="stroke-[1.2] sm:scale-125" />
+              <ImageIcon className="sm:scale-125" />
             </NextLink>
           </IconButton>
         </div>

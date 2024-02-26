@@ -61,7 +61,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
 
       <ScrollArea className="grow">
         <div className="divide-y divide-gray-3">
-          <ThreadNavLink href="/beta/thread" isActive={!segment}>
+          <ThreadNavLink href="/thread" isActive={!segment}>
             <MessageSquarePlusIcon className="size-4" />
             <div className="font-medium">Create new thread</div>
           </ThreadNavLink>
@@ -69,7 +69,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
           {threads?.map((thread) => (
             <ThreadNavLink
               key={thread._id}
-              href={`/beta/thread/${thread._id}`}
+              href={`/thread/${thread._id}`}
               isActive={segment === thread._id}
             >
               <MessageSquareTextIcon className="size-4" />
