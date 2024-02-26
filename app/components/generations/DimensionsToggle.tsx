@@ -4,7 +4,7 @@ import { Button } from '@radix-ui/themes'
 import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'
 import React, { forwardRef } from 'react'
 
-const toggleGroupItemClasses: TailwindClass =
+const toggleGroupItemClasses =
   'data-[state=on]:bg-accent-3 rounded-none first:rounded-l last:rounded-r'
 
 type Props = React.ComponentProps<typeof ToggleGroup.Root>
