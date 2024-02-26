@@ -1,12 +1,15 @@
-import { NavRail } from '../components/NavRail'
+import { NavBar } from '@/components/NavBar'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   // AppLayout
 
   return (
-    <div id="main-layout" className="dark:bg-grid-dark flex h-dvh overflow-hidden">
-      <NavRail />
-      {children}
+    <div
+      id="main-layout"
+      className="dark:bg-grid-dark grid grid-rows-[3rem,_calc(100vh_-_3rem)] overflow-hidden"
+    >
+      <NavBar />
+      <div className="flex overflow-hidden">{children}</div>
     </div>
   )
 }

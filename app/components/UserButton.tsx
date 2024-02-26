@@ -15,11 +15,7 @@ export const RailUserButton = forwardRef<HTMLDivElement, Props & React.Component
     const { isAuthenticated, isLoading } = useConvexAuth()
     const pathname = usePathname()
     return (
-      <div
-        {...props}
-        className={cn('grid place-content-center sm:[&_.cl-rootBox]:scale-125', className)}
-        ref={forwardedRef}
-      >
+      <div {...props} className={cn('grid place-content-center', className)} ref={forwardedRef}>
         {isLoading ? (
           <Spinner />
         ) : isAuthenticated ? (
