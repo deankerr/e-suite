@@ -10,8 +10,8 @@ import { Spinner } from './ui/Spinner'
 
 type Props = {}
 
-export const RailUserButton = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function RailUserButton({ className, ...props }, forwardedRef) {
+export const UserButton = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
+  function UserButton({ className, ...props }, forwardedRef) {
     const { isAuthenticated, isLoading } = useConvexAuth()
     const pathname = usePathname()
     return (

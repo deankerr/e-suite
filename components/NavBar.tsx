@@ -1,7 +1,7 @@
 'use client'
 
 import { Logo } from '@/app/components/ui/Logo'
-import { RailUserButton } from '@/app/components/UserButton'
+import { UserButton } from '@/app/components/UserButton'
 import { cn } from '@/lib/utils'
 import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
@@ -42,7 +42,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
       </div>
 
       <div className="flex justify-end pr-2">
-        <RailUserButton />
+        <UserButton />
       </div>
     </div>
   )

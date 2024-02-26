@@ -55,7 +55,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
             sm: '2',
           }}
         >
-          Threads
+          Chats
         </Heading>
       </CShell.Titlebar>
 
@@ -63,7 +63,7 @@ export const ThreadsList = forwardRef<HTMLDivElement, ThreadsListProps>(function
         <div className="divide-y divide-gray-3">
           <ThreadNavLink href="/thread" isActive={!segment}>
             <MessageSquarePlusIcon className="size-4" />
-            <div className="font-medium">Create new thread</div>
+            <div className="font-medium">Create new chat</div>
           </ThreadNavLink>
 
           {threads?.map((thread) => (

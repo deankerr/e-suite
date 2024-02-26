@@ -24,7 +24,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   forwardedRef,
 ) {
   const { thread, send, threadAtoms, updatePermissions } = useThread({ threadId })
-  const title = thread ? thread.title : threadId ? 'Loading...' : 'New Thread'
+  const title = thread ? thread.title : threadId ? 'Loading...' : 'New Chat'
 
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -100,7 +100,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
                     onPermissionsChange={(permissions) => updatePermissions(permissions)}
                   />
                   <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
-                    <Button color="red">Delete Thread</Button>
+                    <Button color="red">Delete Chat</Button>
                   </RemoveThreadDialog>
                 </>
               ) : null}

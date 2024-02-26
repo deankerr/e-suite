@@ -38,7 +38,7 @@ export const RemoveThreadDialog = forwardRef<HTMLDivElement, RemoveThreadDialogP
         <AlertDialog.Trigger>{children}</AlertDialog.Trigger>
 
         <AlertDialog.Content ref={forwardedRef} className={cn('max-w-sm')}>
-          <AlertDialog.Title>Delete thread</AlertDialog.Title>
+          <AlertDialog.Title>Delete Chat</AlertDialog.Title>
           <AlertDialog.Description size="2">
             Are you sure? This insightful yet witty exchange will be gone forever.
           </AlertDialog.Description>
