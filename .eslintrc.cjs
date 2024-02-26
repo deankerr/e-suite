@@ -3,7 +3,7 @@ module.exports = {
   root: true,
   extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
-  ignorePatterns: ['convex/_generated', '.next', 'unused', 'cosmos-export'],
+  ignorePatterns: ['convex/_generated', '.next', 'cosmos-export'],
   rules: {
     // support unused vars during dev
     '@typescript-eslint/no-unused-vars': [

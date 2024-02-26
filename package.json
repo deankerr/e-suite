@@ -11,12 +11,7 @@
     "dev:all": "pnpm run /dev$\\|convex$\\|cosmos$/",
     "types": "tsc --noEmit",
     "cosmos": "cosmos --expose-imports",
-    "cosmos-export": "cosmos-export --expose-imports",
-    "turso:generate": "drizzle-kit generate:sqlite",
-    "turso:migrate": "tsx drizzle/migrate",
-    "turso:studio": "drizzle-kit studio --port 3333",
-    "turso:seed": "tsx drizzle/seed",
-    "turso:push": "drizzle-kit push:sqlite"
+    "cosmos-export": "cosmos-export --expose-imports"
   },
   "dependencies": {
     "@anatine/zod-openapi": "^2.2.3",

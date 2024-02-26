@@ -28,12 +28,11 @@
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "global.d.ts",
     ".eslintrc.cjs",
     "next.config.mjs",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js"
   ],
-  "exclude": ["node_modules", "unused", "cosmos-export"]
+  "exclude": ["node_modules", "cosmos-export"]
 }
