@@ -36,12 +36,10 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
       </div>
 
       <div className="flex justify-center gap-2 text-sm sm:text-base">
-        <NavLink href="/thread" isActive={segment === 'thread'}>
+        <NavLink href="/chat" isActive={segment === 'chat'}>
           <MessagesSquareIcon className="size-5" /> Chat
         </NavLink>
-        <NavLink href="/chat" isActive={segment === 'thread'}>
-          <MessagesSquareIcon className="size-5" /> 2
-        </NavLink>
+
         <NavLink href="/generations" isActive={segment === 'generations'}>
           <ImageIcon className="size-5" /> Generate
         </NavLink>
