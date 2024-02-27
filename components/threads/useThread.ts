@@ -134,7 +134,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
     })
       .then((id) => {
         console.log('sent', id)
-        if (!thread) router.push(`/beta/thread/${id}`)
+        if (!thread) router.push(`/thread/${id}`)
       })
       .catch((error) => {
         console.error(error)

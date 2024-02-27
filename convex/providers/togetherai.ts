@@ -1,3 +1,11 @@
+import { assert } from '../util'
+
+export const getTogetherAiApiKey = () => {
+  const apiKey = process.env.TOGETHERAI_API_KEY
+  assert(apiKey, 'TOGETHERAI_API_KEY is undefined')
+  return apiKey
+}
+
 export const models = {
   chat: [
     {

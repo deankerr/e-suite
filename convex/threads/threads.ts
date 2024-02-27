@@ -3,7 +3,7 @@ import z from 'zod'
 import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { messagesFields, permissionsFields } from '../schema'
+import { messagesFields, permissionsFields, threadsFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert } from '../util'
@@ -34,14 +34,10 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
 }
 
 export const createThread = async (ctx: MutationCtx) => {
-  const count =
-    (await ctx.table('threads', 'userId', (q) => q.eq('userId', ctx.viewerIdX()))).length + 1
-
   return await ctx
     .table('threads')
     .insert({
       userId: ctx.viewerIdX(),
-      title: `Untitled thread #${count}`,
       permissions: { private: true },
     })
     .get()
@@ -60,7 +56,7 @@ export const get = query({
   },
   handler: async (ctx, { id }) => {
     const thread = await ctx.table('threads').get(id)
-    if (!thread || thread.deletionTime) {
+    if (!thread || thread.deletionTime !== undefined) {
       return null
     }
     return await getThread(ctx, id)
@@ -133,6 +129,11 @@ export const send = mutation({
       }
     }
 
+    if (!thread.title)
+      await ctx.scheduler.runAfter(15, internal.threads.lib.inference.generateThreadTitle, {
+        threadId: thread._id,
+      })
+
     return thread._id
   },
 })
@@ -192,6 +193,22 @@ export const updatePermissions = mutation({
   },
   handler: async (ctx, { id, permissions }) =>
     await ctx.table('threads').getX(id).patch({ permissions }),
+})
+
+export const internalGet = internalQuery({
+  args: {
+    id: v.id('threads'),
+  },
+  handler: async (ctx, { id }) => await getThread(ctx.skipRules as any, id),
+})
+
+export const internalUpdate = internalMutation({
+  args: {
+    id: v.id('threads'),
+    fields: v.object(threadsFields),
+  },
+  handler: async (ctx, { id, fields }) =>
+    await ctx.skipRules.table('threads').getX(id).patch(fields),
 })
 
 export const remove = mutation({

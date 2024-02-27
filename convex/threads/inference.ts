@@ -4,7 +4,7 @@ import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
-export const inference = internalAction({
+export const chat = internalAction({
   args: {
     messageId: v.id('messages'),
   },

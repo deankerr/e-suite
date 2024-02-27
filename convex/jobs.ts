@@ -12,7 +12,7 @@ export const dispatch = internalMutation({
   handler: async (ctx, args) => {
     if (args.type === 'inference' && args.messageId) {
       const id = await ctx.table('jobs').insert({ ...args, status: 'pending' })
-      await ctx.scheduler.runAfter(0, internal.threads.run.inference, {
+      await ctx.scheduler.runAfter(0, internal.threads.inference.chat, {
         messageId: args.messageId,
       })
       return id
