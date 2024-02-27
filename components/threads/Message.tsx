@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
-import { Spinner } from '@/app/components/ui/Spinner'
-import loaderBars from '@/assets/hola-loader-bars-sm.svg'
 import { LoaderBars } from '@/components/ui/LoaderBars'
-import type { ThreadMessage } from '@/convex/threads/do'
+import { Doc } from '@/convex/_generated/dataModel'
+import { Ent } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'
-import NextImage from 'next/image'
 import { forwardRef } from 'react'
 
 type Props = {
-  message: ThreadMessage
+  message: Doc<'messages'> & { job: Doc<'jobs'> | null }
 }
 
 // https://source.boringavatars.com/beam/120/${nanoid(5)}?square
