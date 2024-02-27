@@ -28,14 +28,14 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
       <div>
         <NextLink
           href="/"
-          className="flex h-full w-fit items-center gap-1 pl-2 text-xl font-medium tracking-tighter"
+          className="flex h-full w-fit items-center gap-1 pl-2 text-lg font-medium tracking-tighter sm:text-xl"
         >
-          <Logo className="size-7" />
+          <Logo className="size-6 sm:size-7" />
           e/suite
         </NextLink>
       </div>
 
-      <div className="flex justify-center gap-2">
+      <div className="flex justify-center gap-2 text-sm sm:text-base">
         <NavLink href="/thread" isActive={segment === 'thread'}>
           <MessagesSquareIcon className="size-5" /> Chat
         </NavLink>
@@ -44,7 +44,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
         </NavLink>
       </div>
 
-      <div className="flex justify-end pr-2">
+      <div className="flex min-w-9 justify-end pr-2">
         <UserButton />
       </div>
     </div>
@@ -64,7 +64,7 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(function NavL
       {...props}
       href={href}
       className={cn(
-        'flex min-w-24 items-center justify-center gap-1.5 rounded border bg-gray-2 px-3 py-1 font-medium tracking-tight text-gray-10',
+        'flex items-center justify-center gap-1.5 rounded border bg-gray-2 px-3 py-1 font-medium tracking-tight text-gray-10 sm:min-w-24',
         isActive ? 'bg-gray-3 text-accent-11' : 'hover:bg-gray-2 hover:text-gray-11',
         className,
       )}
