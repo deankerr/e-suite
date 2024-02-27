@@ -19,7 +19,10 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
   return (
     <div
       {...props}
-      className={cn('grid grid-cols-3 items-center justify-between border-b bg-gray-1', className)}
+      className={cn(
+        'flex grid-cols-3 items-center justify-between border-b bg-gray-1 sm:grid',
+        className,
+      )}
       ref={forwardedRef}
     >
       <div>

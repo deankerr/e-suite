@@ -16,13 +16,13 @@ export default function HomePage() {
   return (
     <div className="grid w-full place-content-center">
       <Card className="min-h-72">
-        <div className="flex flex-col gap-10 px-12 py-6">
+        <div className="flex flex-col gap-10 px-3 py-6 sm:px-12">
           <div className="flex items-center gap-3">
             <Logo className="size-20" />
             <span className="text-5xl">e/suite</span>
           </div>
 
-          {user ? (
+          {isAuthenticated && user ? (
             <div className="flex w-full flex-col items-center gap-5">
               <div className="text-lg">
                 Welcome <Strong>@{user.username}</Strong>
