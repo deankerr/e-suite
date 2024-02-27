@@ -5,9 +5,10 @@ import { useThread } from '@/components/threads/useThread'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Heading, Tabs } from '@radix-ui/themes'
-import { MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
+import { MenuSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 import { FallbackProps } from 'react-error-boundary'
+import { useChatListOpenAtom } from '../atoms'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { MessageFeed } from './MessageFeed'
@@ -28,20 +29,22 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
   const [menuOpen, setMenuOpen] = useState(false)
 
+  const { open } = useChatListOpenAtom()
+
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       {/* content */}
       <CShell.Content>
         <CShell.Titlebar className="justify-between">
           <div className="flex items-center">
-            <IconButton lucideIcon={MessageSquareIcon} variant="ghost" className="m-0" />
-            <Heading
-              className="truncate"
-              size={{
-                initial: '1',
-                sm: '2',
-              }}
-            >
+            <IconButton
+              lucideIcon={MenuSquareIcon}
+              onClick={open}
+              variant="ghost"
+              className="m-0"
+            />
+
+            <Heading className="truncate" size="2">
               {title}
             </Heading>
           </div>

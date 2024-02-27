@@ -1,10 +1,12 @@
 'use client'
 
+import { IconButton } from '@/app/components/ui/IconButton'
+import { useChatListOpenAtom } from '@/components/atoms'
 import { Ent } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
-import { PlusCircleIcon, SquareAsteriskIcon } from 'lucide-react'
+import { PlusCircleIcon, XIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
 
@@ -18,22 +20,29 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
 ) {
   const segment = '' //! temp
 
+  const { isOpen, close } = useChatListOpenAtom()
+
   return (
     <div
       {...props}
-      className={cn('w-full overflow-hidden bg-gray-1', className)}
+      className={cn(
+        'absolute z-10 h-full w-full translate-x-0 overflow-hidden bg-gray-1 transition-transform duration-300',
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+        className,
+      )}
       ref={forwardedRef}
     >
       {/* title bar */}
-      <div className="flex h-10 shrink-0 items-center gap-1 border-b bg-gray-1 px-1">
-        <SquareAsteriskIcon className="size-5" />
+      <div className="flex h-10 shrink-0 items-center justify-between gap-1 border-b bg-gray-1 px-1">
         <Heading size="3">Chats</Heading>
+        <IconButton lucideIcon={XIcon} variant="ghost" className="m-0" onClick={close} />
       </div>
 
       <ThreadNavLink
-        href="/thread"
+        href="/chat"
         isActive={!segment}
         className="items-center gap-1.5 border-b text-gray-11"
+        onClick={close}
       >
         <div className="font-medium">New chat</div>
         <PlusCircleIcon className="size-5" />
@@ -45,9 +54,10 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
           {threads?.map((thread) => (
             <ThreadNavLink
               key={thread._id}
-              href={`/thread/${thread._id}`}
+              href={`/chat/${thread._id}`}
               isActive={segment === thread._id}
               className="flex-col justify-center gap-1"
+              onClick={close}
             >
               {/* info */}
               <div className="flex h-4 items-center justify-between gap-3 text-sm">
