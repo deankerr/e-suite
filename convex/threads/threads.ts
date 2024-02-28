@@ -65,10 +65,12 @@ export const get = query({
 
 export const list = query({
   args: {},
-  handler: async (ctx) =>
-    await ctx
+  handler: async (ctx) => {
+    if (!ctx.viewerId) return []
+    return await ctx
       .table('threads', 'userId', (q) => q.eq('userId', ctx.viewerIdX()))
-      .filter((q) => q.eq(q.field('deletionTime'), undefined)),
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+  },
 })
 
 export const createThreadFor = internalMutation({

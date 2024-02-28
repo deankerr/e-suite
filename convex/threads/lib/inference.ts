@@ -13,26 +13,6 @@ const ai = () =>
     baseURL: 'https://api.together.xyz/v1',
   })
 
-const sendChat = async ({ prompt }: { prompt: string }) => {
-  const chatCompletion = await ai().chat.completions.create({
-    messages: [
-      {
-        role: 'system',
-        content:
-          "Create a concise, 3-5 word phrase as a title for the following conversation, strictly adhering to the 3-5 word limit and avoiding the use of the word 'title'. Respond with the title only, exactly as it should appear in a menu. Do not add any extra notes or explanations.",
-      },
-      { role: 'user', content: prompt },
-    ],
-    model: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
-    max_tokens: 256,
-  })
-
-  const result = chatCompletion.choices[0]?.message.content
-  assert(result, 'Chat completion is empty')
-
-  return result
-}
-
 export const generateThreadTitle = internalAction({
   args: {
     threadId: v.id('threads'),
