@@ -41,7 +41,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
               lucideIcon={MenuSquareIcon}
               onClick={open}
               variant="ghost"
-              className="m-0"
+              className="m-0 [&_svg]:size-7"
             />
 
             <Heading className="truncate" size="2">
@@ -50,21 +50,12 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </div>
 
           <div className="flex items-center gap-1 lg:px-2">
-            {thread && thread.owner.isViewer ? (
-              <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
-                <Button size="1" variant="outline" color="gray">
-                  Rename
-                </Button>
-              </RenameThreadDialog>
-            ) : null}
-
             <IconButton
+              lucideIcon={SlidersHorizontalIcon}
               variant="ghost"
               className="m-0 lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <SlidersHorizontalIcon />
-            </IconButton>
+            />
           </div>
         </CShell.Titlebar>
 
@@ -102,6 +93,9 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
                     permissions={thread.permissions}
                     onPermissionsChange={(permissions) => updatePermissions(permissions)}
                   />
+                  <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
+                    <Button>Rename</Button>
+                  </RenameThreadDialog>
                   <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
                     <Button color="red">Delete Chat</Button>
                   </RemoveThreadDialog>

@@ -36,9 +36,9 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
       ref={forwardedRef}
     >
       {/* title bar */}
-      <div className="flex h-10 shrink-0 items-center justify-between gap-1 border-b bg-gray-1 px-1">
+      <div className="flex h-10 shrink-0 items-center justify-between gap-1 border-b bg-gray-1 pl-2.5 pr-1">
         <Heading size="3">Chats</Heading>
-        <IconButton lucideIcon={XIcon} variant="ghost" className="m-0" onClick={close} />
+        <IconButton lucideIcon={XIcon} variant="ghost" className="m-0 md:hidden" onClick={close} />
       </div>
 
       <NextLink
