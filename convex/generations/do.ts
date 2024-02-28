@@ -9,7 +9,7 @@ import { QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert, error } from '../util'
 
-const schedulerDelayInterval = 6
+const schedulerDelayInterval = 2000
 
 export type Generation = Awaited<ReturnType<typeof getGeneration>>
 
