@@ -40,7 +40,7 @@ next-env.d.ts
 
 # local
 output
-.vscode
+.vscode/settings.json
 
 # cosmos
 cosmos.imports.ts
