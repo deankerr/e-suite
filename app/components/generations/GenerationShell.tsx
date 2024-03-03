@@ -39,6 +39,7 @@ export const GenerationShell = forwardRef<HTMLDivElement, Props & React.Componen
               <StoredImage
                 image={focusItem}
                 className={cn('place-self-center rounded border', 'max-w-[min(50vh,80vw)]')}
+                unoptimized
               />
               <div className="flex items-center justify-self-center">
                 {images

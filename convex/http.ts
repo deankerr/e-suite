@@ -23,7 +23,12 @@ http.route({
         status: 400,
       })
     }
-    return new Response(blob)
+    return new Response(blob, {
+      headers: {
+        'content-type': 'image/png',
+        'content-disposition': `attachment; filename="${storageId}.png"`,
+      },
+    })
   }),
 })
 

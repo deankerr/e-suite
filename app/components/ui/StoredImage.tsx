@@ -7,10 +7,11 @@ import { forwardRef } from 'react'
 
 type Props = {
   image: StoredImageType
+  unoptimized?: boolean
 }
 
 export const StoredImage = forwardRef<HTMLDivElement, Props & React.ComponentProps<'div'>>(
-  function StoredImage({ image, className, ...props }, forwardedRef) {
+  function StoredImage({ image, unoptimized = false, className, ...props }, forwardedRef) {
     const { width, height, blurDataURL, storageId, job } = image
     const aspect =
       height > width ? 'aspect-[2/3]' : height < width ? 'aspect-[3/2]' : 'aspect-square'
@@ -30,6 +31,7 @@ export const StoredImage = forwardRef<HTMLDivElement, Props & React.ComponentPro
             height={height}
             blurDataURL={blurDataURL}
             placeholder="blur"
+            unoptimized={unoptimized}
           />
         ) : job?.status === 'pending' ? (
           <div className="absolute -inset-x-[5%] inset-y-[90%] h-16 w-[110%] bg-blue-4A blur-xl motion-safe:animate-wipedown" />
