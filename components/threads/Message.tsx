@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
+import { IconButton } from '@/app/components/ui/IconButton'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { Doc } from '@/convex/_generated/dataModel'
 import { Ent } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'
+import { MoreHorizontal } from 'lucide-react'
 import { forwardRef } from 'react'
+import { MessageMenu } from './MessageMenu'
 
 type Props = {
   message: Doc<'messages'> & { job: Doc<'jobs'> | null }
@@ -33,13 +36,30 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
     return (
       <div
         {...props}
-        className={cn('space-y-0.5 px-4 py-1', bgColors[message.role], className)}
+        className={cn('space-y-0.5 py-1', bgColors[message.role], className)}
         ref={forwardedRef}
       >
-        {/* role info */}
-        <div className={cn('flex', roleColors[message.role])}>{displayName}</div>
+        <div
+          className={cn(
+            'flex items-center justify-between gap-1 px-3 pr-2',
+            roleColors[message.role],
+          )}
+        >
+          {/* role/username */}
+          {displayName}
 
-        <div className="space-y-5 text-base">
+          {/* job status */}
+          <div className="grow space-y-0.5 text-right font-code text-xs text-gold-5">
+            {message.job ? message.job.status : null} {message._id.slice(-8)}
+          </div>
+
+          <MessageMenu messageId={message._id}>
+            <IconButton lucideIcon={MoreHorizontal} size="1" variant="ghost" className="m-0 p-0" />
+          </MessageMenu>
+        </div>
+
+        {/* content */}
+        <div className="space-y-5 px-1 text-base sm:px-3">
           {message.job?.status === 'pending' && <LoaderBars className="absolute" />}
           {/* content body */}
           {message.content.split('\n').map((p, i) => (
@@ -47,11 +67,6 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
               {p}
             </Text>
           ))}
-        </div>
-
-        {/* job status */}
-        <div className="absolute right-2.5 top-0.5 space-y-0.5 text-right font-code text-xs text-gold-5">
-          {message.job ? message.job.status : null} {message._id.slice(-8)}
         </div>
       </div>
     )

@@ -44,7 +44,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
               className="m-0 [&_svg]:size-7"
             />
 
-            <Heading className="truncate" size="2">
+            <Heading className="truncate" size="3">
               {title}
             </Heading>
           </div>

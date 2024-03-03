@@ -219,3 +219,10 @@ export const remove = mutation({
   },
   handler: async (ctx, { id }) => await ctx.table('threads').getX(id).delete(),
 })
+
+export const removeMessage = mutation({
+  args: {
+    id: v.id('messages'),
+  },
+  handler: async (ctx, { id }) => await ctx.table('messages').getX(id).delete(),
+})
