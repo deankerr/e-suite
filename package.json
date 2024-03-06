@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "cosmos-export --expose-imports && next build",
+    "deploy": "pnpm dlx convex deploy --cmd 'pnpm build'",
     "start": "next start",
     "lint": "tsc --noEmit && next lint",
     "convex": "pnpm dlx convex dev",
