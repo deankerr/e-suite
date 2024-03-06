@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { IconButton } from '@/app/components/ui/IconButton'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { Doc } from '@/convex/_generated/dataModel'
-import { Ent } from '@/convex/types'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'
 import { MoreHorizontal } from 'lucide-react'
@@ -25,12 +23,14 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
       user: 'bg-bronze-2',
       assistant: 'bg-gray-1',
       system: 'bg-green-1',
+      tool: 'bg-green-1',
     } as const
 
     const roleColors = {
       user: 'text-accent',
       assistant: 'text-gold',
       system: 'text-gray',
+      tool: 'text-gray',
     } as const
 
     return (
