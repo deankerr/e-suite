@@ -91,7 +91,7 @@ export const imagesFields = {
 
 //* Threads
 export const messageFields = {
-  role: vEnum(['system', 'user', 'assistant']),
+  role: vEnum(['system', 'user', 'assistant', 'tool']),
   name: v.optional(v.string()),
   content: v.string(),
 }
@@ -124,8 +124,9 @@ const schema = defineEntSchema(
     apiKeys: defineEnt({
       secret: v.string(),
     })
+      .deletion('soft')
       .edge('user', { field: 'ownerId' })
-      .deletion('soft'),
+      .index('secret', ['secret']),
 
     clerkWebhookEvents: defineEnt({
       body: v.string(),

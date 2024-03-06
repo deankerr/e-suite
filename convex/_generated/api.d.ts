@@ -35,6 +35,7 @@ import type * as threads_threads from "../threads/threads.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as util from "../util.js";
+import type * as validators from "../validators.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -66,6 +67,7 @@ declare const fullApi: ApiFromModules<{
   types: typeof types;
   users: typeof users;
   util: typeof util;
+  validators: typeof validators;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

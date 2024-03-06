@@ -7,6 +7,7 @@ import { messagesFields, permissionsFields, threadsFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert } from '../util'
+import { messageValidator } from '../validators'
 
 export type Thread = Awaited<ReturnType<typeof getThread>>
 
@@ -140,6 +141,8 @@ export const send = mutation({
   },
 })
 
+//* Action/Internal interface
+
 export const getMessageContext = internalQuery({
   args: {
     id: v.id('messages'),
@@ -173,6 +176,25 @@ export const streamMessageContent = internalMutation({
   },
   handler: async (ctx, { id, content }) => {
     await ctx.skipRules.table('messages').getX(id).patch({ content })
+  },
+})
+
+export const pushMessages = internalMutation({
+  args: {
+    id: v.id('threads'),
+    messages: v.array(v.object(messagesFields)),
+  },
+  handler: async (ctx, { id, messages }) => {
+    const thread = await ctx.skipRules.table('threads').getX(id)
+    assert(!thread.deletionTime, 'Thread is deleted')
+
+    for (const message of messages) {
+      const parsed = messageValidator.parse(message)
+      await ctx.skipRules.table('messages').insert({
+        ...parsed,
+        threadId: id,
+      })
+    }
   },
 })
 
