@@ -28,9 +28,9 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
     <div
       {...props}
       className={cn(
-        'absolute z-10 h-full w-full translate-x-0 overflow-hidden bg-gray-1 transition-transform duration-300',
+        'absolute z-10 flex h-full w-full shrink-0 translate-x-0 flex-col overflow-hidden bg-gray-1 transition-transform duration-300',
         isOpen ? 'translate-x-0' : '-translate-x-full',
-        'md:static md:w-96 md:translate-x-0 md:border-r',
+        'md:static md:w-72 md:translate-x-0 md:border-r',
         className,
       )}
       ref={forwardedRef}
@@ -55,13 +55,13 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
 
       {/* chat listing */}
       <ScrollArea>
-        <div className="divide-y">
+        <div className="flex flex-col-reverse divide-y">
           {threads?.map((thread) => (
             <NextLink
               key={thread._id}
               href={`/chat/${thread._id}`}
               className={cn(
-                'flex h-16 flex-col justify-center gap-1.5 px-2 py-1',
+                'flex h-16 shrink-0 flex-col justify-center gap-1.5 px-3 py-1',
                 active(thread._id) ? 'bg-gray-2' : 'hover:bg-gray-2',
               )}
               onClick={close}
