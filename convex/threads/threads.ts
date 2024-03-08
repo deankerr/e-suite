@@ -134,7 +134,7 @@ export const send = mutation({
     }
 
     if (!thread.title)
-      await ctx.scheduler.runAfter(15, internal.threads.lib.inference.generateThreadTitle, {
+      await ctx.scheduler.runAfter(15, internal.threads.inference.generateThreadTitle, {
         threadId: thread._id,
       })
 
@@ -197,15 +197,35 @@ export const pushMessage = internalMutation({
   },
 })
 
+export const getVoiceoverParameters = internalQuery({
+  args: {
+    voiceoverId: v.id('voiceovers'),
+  },
+  handler: async (ctx, { voiceoverId }) =>
+    await ctx.skipRules.table('voiceovers').getX(voiceoverId),
+})
+
 export const pushVoiceover = internalMutation({
   args: {
     messageId: v.id('messages'),
     voiceover: v.object(voiceoversFields),
   },
   handler: async (ctx, { messageId, voiceover }) => {
-    await ctx.skipRules.table('voiceovers').insert({ ...voiceover, messageId })
-    //todo voiceover job
+    const voiceoverId = await ctx.skipRules.table('voiceovers').insert({ ...voiceover, messageId })
+    await ctx.scheduler.runAfter(0, internal.jobs.dispatch, {
+      type: 'voiceover',
+      voiceoverId,
+    })
   },
+})
+
+export const updateVoiceoverStorageId = internalMutation({
+  args: {
+    voiceoverId: v.id('voiceovers'),
+    storageId: v.id('_storage'),
+  },
+  handler: async (ctx, { voiceoverId, storageId }) =>
+    await ctx.table('voiceovers').getX(voiceoverId).patch({ storageId }),
 })
 
 export const updateTitle = mutation({

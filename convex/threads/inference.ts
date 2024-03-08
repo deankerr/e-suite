@@ -1,8 +1,63 @@
+'use node'
+
 import { v } from 'convex/values'
+import ky from 'ky'
+import OpenAI from 'openai'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
+import { getElevenlabsApiKey } from '../providers/elevenlabs'
+import { getTogetherAiApiKey } from '../providers/togetherai'
 import { assert } from '../util'
+
+const ai = () =>
+  new OpenAI({
+    apiKey: getTogetherAiApiKey(),
+    baseURL: 'https://api.together.xyz/v1',
+  })
+
+export const generateThreadTitle = internalAction({
+  args: {
+    threadId: v.id('threads'),
+  },
+  handler: async (ctx, { threadId }): Promise<void> => {
+    const thread = await ctx.runQuery(internal.threads.threads.internalGet, {
+      id: threadId,
+    })
+    assert(thread, 'Invalid thread id')
+
+    // concat messages into single prompt
+    const conversation = thread.messages
+      .reverse()
+      .reduce<string>((acc, curr) => acc.concat(`${curr.role}: ${curr.content}\n`), '')
+      .trim()
+
+    const prompt = `You are a summarization system that can provide summaries of a conversation. In clear and concise language, provide a short summary of the following conversation.
+    Afterward, create a 3 to 6 word title for the conversation, strictly adhering to the word limit and avoiding use of the words 'title' or 'user'. Enclose the title in <<<>>>.
+    
+    # Conversation
+    ${conversation}
+
+    # Summary`
+
+    console.log({ prompt })
+    const response = await ai().completions.create({
+      prompt,
+      model: 'mistralai/Mistral-7B-Instruct-v0.2',
+    })
+
+    const result = response.choices[0]?.text
+    console.log(result)
+
+    const title = result?.match(/<<<(.*)>>>/)?.[1]
+    assert(title, 'Invalid title')
+
+    await ctx.runMutation(internal.threads.threads.internalUpdate, {
+      id: threadId,
+      fields: { title: title.trim(), permissions: thread.permissions },
+    })
+  },
+})
 
 export const chat = internalAction({
   args: {
@@ -82,4 +137,59 @@ const responseSchema = z.object({
     })
     .array()
     .min(1),
+})
+
+export const voice = internalAction({
+  args: {
+    voiceoverId: v.id('voiceovers'),
+  },
+  handler: async (ctx, { voiceoverId }) => {
+    try {
+      const apiKey = getElevenlabsApiKey()
+      const { model_id, voice_id, text, voice_settings } = await ctx.runQuery(
+        internal.threads.threads.getVoiceoverParameters,
+        {
+          voiceoverId,
+        },
+      )
+
+      const response = await ky
+        .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
+          headers: {
+            Accept: 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': apiKey,
+          },
+          json: {
+            text,
+            voice_settings,
+            model_id,
+          },
+        })
+        .blob()
+
+      const storageId = await ctx.storage.store(response)
+
+      await ctx.runMutation(internal.threads.threads.updateVoiceoverStorageId, {
+        voiceoverId,
+        storageId,
+      })
+
+      await ctx.runMutation(internal.jobs.event, {
+        type: 'voiceover',
+        voiceoverId,
+        status: 'complete',
+      })
+    } catch (err) {
+      await ctx.runMutation(internal.jobs.event, {
+        type: 'voiceover',
+        voiceoverId,
+        status: 'error',
+        message: err instanceof Error ? err.message : 'Unknown error',
+        data: err instanceof Error ? JSON.stringify(err) : undefined,
+      })
+
+      throw err
+    }
+  },
 })

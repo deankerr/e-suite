@@ -46,7 +46,6 @@ http.route({
         .string()
         .length(32, 'Invalid thread id')
         .transform((v) => v as Id<'threads'>),
-      // messages: z.array(z.union([messageValidator, z.object({voiceover: voiceoverRequestValidator}).optional()])).min(1),
       messages: z
         .array(
           messageValidator.merge(z.object({ voiceover: voiceoverRequestValidator.optional() })),

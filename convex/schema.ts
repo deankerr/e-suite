@@ -13,13 +13,14 @@ export const permissionsFields = v.object({
 })
 
 export const jobFields = {
-  type: vEnum(['inference', 'generation', 'downloadImage']),
+  type: vEnum(['inference', 'generation', 'downloadImage', 'voiceover']),
   status: vEnum(['pending', 'complete', 'error']),
   message: v.optional(v.string()),
   data: v.optional(v.any()),
 
   messageId: v.optional(v.id('messages')),
   imageId: v.optional(v.id('images')),
+  voiceoverId: v.optional(v.id('voiceovers')),
 }
 
 export const usersFields = {
@@ -122,6 +123,7 @@ export const threadsFields = {
 export const voiceoversFields = {
   text: v.string(),
   model_id: v.string(),
+  voice_id: v.string(),
   voice_settings: v.optional(
     v.object({
       similarity_boost: v.optional(v.number()),
@@ -130,6 +132,7 @@ export const voiceoversFields = {
       use_speaker_boost: v.optional(v.boolean()),
     }),
   ),
+  storageId: v.optional(v.id('_storage')),
 }
 const voiceovers = defineEnt(voiceoversFields).deletion('soft').edge('message')
 

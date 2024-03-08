@@ -12,6 +12,7 @@ export const messageValidator = z.object({
 export const voiceoverRequestValidator = z.object({
   text: z.string().transform((value) => value.slice(0, 1024)),
   model_id: z.string(),
+  voice_id: z.string(),
   voice_settings: z
     .object({
       similarity_boost: z.number(),

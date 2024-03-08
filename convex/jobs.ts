@@ -8,12 +8,21 @@ export const dispatch = internalMutation({
     type: jobFields.type,
     messageId: jobFields.messageId,
     imageId: jobFields.imageId,
+    voiceoverId: jobFields.voiceoverId,
   },
   handler: async (ctx, args) => {
     if (args.type === 'inference' && args.messageId) {
       const id = await ctx.table('jobs').insert({ ...args, status: 'pending' })
       await ctx.scheduler.runAfter(0, internal.threads.inference.chat, {
         messageId: args.messageId,
+      })
+      return id
+    }
+
+    if (args.type === 'voiceover' && args.voiceoverId) {
+      const id = await ctx.table('jobs').insert({ ...args, status: 'pending' })
+      await ctx.scheduler.runAfter(0, internal.threads.inference.voice, {
+        voiceoverId: args.voiceoverId,
       })
       return id
     }
