@@ -14,16 +14,17 @@ export type Thread = Awaited<ReturnType<typeof getThread>>
 export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')
+
   const messages = await thread
     .edge('messages')
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .take(100)
     .map(async (message) => ({
       ...message,
       job: await ctx
-        .table('jobs')
-        .order('desc', 'messageId')
-        .filter((q) => q.eq(q.field('messageId'), message._id))
+        .table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
+        .order('desc')
         .first(),
     }))
   const owner = await getUser(ctx, thread.userId)
