@@ -4,7 +4,7 @@ import { internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
-import { messageValidator } from './validators'
+import { messageValidator, voiceoverRequestValidator } from './validators'
 
 const http = httpRouter()
 
@@ -46,7 +46,12 @@ http.route({
         .string()
         .length(32, 'Invalid thread id')
         .transform((v) => v as Id<'threads'>),
-      messages: z.array(messageValidator).min(1),
+      // messages: z.array(z.union([messageValidator, z.object({voiceover: voiceoverRequestValidator}).optional()])).min(1),
+      messages: z
+        .array(
+          messageValidator.merge(z.object({ voiceover: voiceoverRequestValidator.optional() })),
+        )
+        .min(1),
     })
 
     const parsed = requestSchema.safeParse(await request.json())
@@ -63,10 +68,21 @@ http.route({
       return new Response('Unauthorized', { status: 401 })
     }
 
-    await ctx.runMutation(internal.threads.threads.pushMessages, {
-      id: parsed.data.threadId,
-      messages: parsed.data.messages,
-    })
+    for (const item of parsed.data.messages) {
+      const { voiceover, ...message } = item
+      const messageId = await ctx.runMutation(internal.threads.threads.pushMessage, {
+        id: parsed.data.threadId,
+        message,
+      })
+
+      if (voiceover) {
+        await ctx.runMutation(internal.threads.threads.pushVoiceover, {
+          messageId,
+          voiceover,
+        })
+      }
+    }
+
     return new Response('OK', { status: 200 })
   }),
 })

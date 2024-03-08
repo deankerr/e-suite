@@ -5,6 +5,20 @@ export const messageValidator = z.object({
   name: z
     .string()
     .optional()
-    .transform((v) => (v ? v.slice(0, 32) : undefined)),
-  content: z.string().transform((v) => v.slice(0, 32767)),
+    .transform((value) => (value ? value.slice(0, 32) : undefined)),
+  content: z.string().transform((value) => value.slice(0, 32767)),
+})
+
+export const voiceoverRequestValidator = z.object({
+  text: z.string().transform((value) => value.slice(0, 1024)),
+  model_id: z.string(),
+  voice_settings: z
+    .object({
+      similarity_boost: z.number(),
+      stability: z.number(),
+      style: z.number(),
+      use_speaker_boost: z.boolean(),
+    })
+    .partial()
+    .optional(),
 })

@@ -3,7 +3,7 @@ import z from 'zod'
 import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { messagesFields, permissionsFields, threadsFields } from '../schema'
+import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert } from '../util'
@@ -180,22 +180,31 @@ export const streamMessageContent = internalMutation({
   },
 })
 
-export const pushMessages = internalMutation({
+export const pushMessage = internalMutation({
   args: {
     id: v.id('threads'),
-    messages: v.array(v.object(messagesFields)),
+    message: v.object(messagesFields),
   },
-  handler: async (ctx, { id, messages }) => {
+  handler: async (ctx, { id, message }) => {
     const thread = await ctx.skipRules.table('threads').getX(id)
     assert(!thread.deletionTime, 'Thread is deleted')
 
-    for (const message of messages) {
-      const parsed = messageValidator.parse(message)
-      await ctx.skipRules.table('messages').insert({
-        ...parsed,
-        threadId: id,
-      })
-    }
+    const parsed = messageValidator.parse(message)
+    return await ctx.skipRules.table('messages').insert({
+      ...parsed,
+      threadId: id,
+    })
+  },
+})
+
+export const pushVoiceover = internalMutation({
+  args: {
+    messageId: v.id('messages'),
+    voiceover: v.object(voiceoversFields),
+  },
+  handler: async (ctx, { messageId, voiceover }) => {
+    await ctx.skipRules.table('voiceovers').insert({ ...voiceover, messageId })
+    //todo voiceover job
   },
 })
 

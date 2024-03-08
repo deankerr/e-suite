@@ -119,6 +119,20 @@ export const threadsFields = {
   permissions: permissionsFields,
 }
 
+export const voiceoversFields = {
+  text: v.string(),
+  model_id: v.string(),
+  voice_settings: v.optional(
+    v.object({
+      similarity_boost: v.optional(v.number()),
+      stability: v.optional(v.number()),
+      style: v.optional(v.number()),
+      use_speaker_boost: v.optional(v.boolean()),
+    }),
+  ),
+}
+const voiceovers = defineEnt(voiceoversFields).deletion('soft').edge('message')
+
 const schema = defineEntSchema(
   {
     apiKeys: defineEnt({
@@ -153,7 +167,10 @@ const schema = defineEntSchema(
       .index('messageId', ['messageId'])
       .index('imageId', ['imageId']),
 
-    messages: defineEnt(messagesFields).edge('thread', { field: 'threadId' }).deletion('soft'),
+    messages: defineEnt(messagesFields)
+      .deletion('soft')
+      .edge('thread', { field: 'threadId' })
+      .edge('voiceover', { optional: true }),
 
     threads: defineEnt(threadsFields)
       .edge('user')
@@ -166,6 +183,8 @@ const schema = defineEntSchema(
       .edges('threads', { ref: true })
       .edge('apiKey', { optional: true, ref: 'ownerId' })
       .field('tokenIdentifier', v.string(), { index: true }),
+
+    voiceovers,
   },
   { schemaValidation: false },
 )
