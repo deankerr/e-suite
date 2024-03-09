@@ -20,13 +20,18 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
     .take(100)
-    .map(async (message) => ({
-      ...message,
-      job: await ctx
-        .table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
-        .order('desc')
-        .first(),
-    }))
+    .map(async (message) => {
+      const voiceover = await message.edge('voiceover')
+
+      return {
+        ...message,
+        job: await ctx
+          .table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
+          .order('desc')
+          .first(),
+        voiceoverUrl: voiceover?.storageId ? await ctx.storage.getUrl(voiceover.storageId) : null,
+      }
+    })
   const owner = await getUser(ctx, thread.userId)
   return {
     ...thread,

@@ -10,7 +10,7 @@ import { forwardRef } from 'react'
 import { MessageMenu } from './MessageMenu'
 
 type Props = {
-  message: Doc<'messages'> & { job: Doc<'jobs'> | null }
+  message: Doc<'messages'> & { job: Doc<'jobs'> | null } & { voiceoverUrl: string | null }
 }
 
 // https://source.boringavatars.com/beam/120/${nanoid(5)}?square
@@ -56,6 +56,14 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
           <MessageMenu messageId={message._id}>
             <IconButton lucideIcon={MoreHorizontal} size="1" variant="ghost" className="m-0 p-0" />
           </MessageMenu>
+        </div>
+
+        <div>
+          {message.voiceoverUrl && (
+            <audio controls>
+              <source src={message.voiceoverUrl} type="audio/mpeg" />
+            </audio>
+          )}
         </div>
 
         {/* content */}
