@@ -32,7 +32,8 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
   const { open } = useChatListOpenAtom()
 
-  const { enqueue, clearQueue, isActive } = useVoiceoverPlayer(messages)
+  const { enqueue, clearQueue, audioPlayer, queue, currentMessageId, playingIndex } =
+    useVoiceoverPlayer(messages, true)
 
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
@@ -104,26 +105,40 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
                   </RemoveThreadDialog>
                 </>
               ) : null}
+              <Button
+                onClick={() => {
+                  clearQueue()
+                  const all = messages.toReversed().map((msg) => msg._id)
+                  if (all) enqueue(all)
+                }}
+              >
+                Play All
+              </Button>
 
-              {isActive ? (
-                <Button
-                  onClick={() => {
-                    clearQueue()
-                  }}
-                >
-                  Stop
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => {
-                    clearQueue()
-                    const all = messages.toReversed().map((msg) => msg._id)
-                    if (all) enqueue(all)
-                  }}
-                >
-                  Play All
-                </Button>
-              )}
+              <Button onClick={() => audioPlayer.play()}>Play</Button>
+
+              <Button
+                onClick={() => {
+                  clearQueue()
+                }}
+              >
+                Stop
+              </Button>
+
+              <div className="border text-xs">
+                q {queue.length} <br />
+                {audioPlayer.src ?? 'no src'} <br />
+                {audioPlayer.playing ? 'playing' : 'not playing'} <br />
+                {audioPlayer.paused ? 'paused' : 'not paused'} <br />
+                {audioPlayer.stopped ? 'stopped' : 'not stopped'} <br />
+                {audioPlayer.isLoading ? 'loading' : 'not loading'} <br />
+                {audioPlayer.isReady ? ' ready' : 'not ready'}
+                <br />
+                msgId: {currentMessageId?.slice(-4)} <br />
+                index: {playingIndex} <br />
+                {audioPlayer.error}
+                <br />
+              </div>
             </div>
           </Tabs.Content>
         </Tabs.Root>

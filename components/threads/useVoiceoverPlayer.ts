@@ -2,19 +2,18 @@ import { Message } from '@/convex/threads/threads'
 import { useEffect, useState } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
 
-export const useVoiceoverPlayer = (messages: Message[]) => {
+export const useVoiceoverPlayer = (messages: Message[], autoplayNew = false) => {
   const [queue, setQueue] = useState<string[]>([]) // message id
   const [playingIndex, setPlayingIndex] = useState(0)
+  const currentMessageId = queue[playingIndex]
   const currentUrl = messages.find((m) => m._id === queue[playingIndex])?.voiceover?.url
 
-  const { load, cleanup, stop, playing, isLoading } = useAudioPlayer()
+  const audioPlayer = useAudioPlayer()
+  const { load, cleanup, stop } = audioPlayer
 
   useEffect(() => {
     const queueNext = () => {
-      setPlayingIndex((index) => {
-        if (index >= queue.length) return index
-        return index + 1
-      })
+      setPlayingIndex((index) => (index >= queue.length ? index : index + 1))
     }
 
     if (!currentUrl) {
@@ -29,9 +28,11 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
     })
 
     return () => cleanup()
-  }, [cleanup, currentUrl, load, playingIndex, queue.length])
+  }, [cleanup, currentUrl, load, queue.length])
 
   useEffect(() => {
+    if (!autoplayNew) return
+
     const newIds = messages
       .filter((msg) => msg.voiceover?.url)
       .map((msg) => msg._id)
@@ -39,13 +40,11 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
       .reverse()
     if (!newIds.length) return
 
-    console.log('auto enqueue', newIds)
     setQueue((queue) => [...queue, ...newIds])
-  }, [messages, queue])
+  }, [autoplayNew, messages, queue])
 
   const enqueue = (messageIds: string[]) => {
     const newIds = messageIds.filter((id) => !queue.includes(id))
-    console.log('enqueue', newIds)
     setQueue((queue) => [...queue, ...newIds])
   }
 
@@ -55,5 +54,13 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
     setPlayingIndex(0)
   }
 
-  return { enqueue, clearQueue, queue, isActive: playing || isLoading }
+  return {
+    enqueue,
+    clearQueue,
+    queue,
+    audioPlayer,
+    currentMessageId,
+    currentUrl,
+    playingIndex,
+  }
 }
