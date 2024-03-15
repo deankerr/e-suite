@@ -19,6 +19,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
   const queryKey = threadId ? { id: threadId } : 'skip'
   const thread = useQuery(api.threads.threads.get, queryKey)
 
+  //* Parameters
   const threadAtoms = useMemo(
     () => ({
       threadId,
@@ -111,6 +112,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
     ),
   )
 
+  //* Send input
   const runSend = useMutation(api.threads.threads.send)
 
   const send = () => {
@@ -146,6 +148,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
       })
   }
 
+  //* Permissions
   const runUpdatePermissions = useMutation(api.threads.threads.updatePermissions)
   const updatePermissions = (permissions: Permissions) => {
     if (!thread) return

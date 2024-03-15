@@ -26,3 +26,9 @@ export function useChatListOpenAtom() {
 
   return { isOpen, setIsOpen, open, close, toggle }
 }
+
+const voiceoverAutoplayedListAtom = atom<string[]>([])
+
+export function useVoiceoverAutoplayedListAtom() {
+  return useAtom(voiceoverAutoplayedListAtom)
+}

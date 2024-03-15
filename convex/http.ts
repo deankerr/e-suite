@@ -14,6 +14,7 @@ http.route({
   handler: clerkWebhookHandler,
 })
 
+//* Assets
 http.route({
   path: '/image',
   method: 'GET',
@@ -35,6 +36,7 @@ http.route({
   }),
 })
 
+//* (pre) Agents
 http.route({
   path: '/thread',
   method: 'POST',
