@@ -5,17 +5,9 @@ import { useThread } from '@/components/threads/useThread'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Heading, Tabs } from '@radix-ui/themes'
-import {
-  AirplayIcon,
-  CheckIcon,
-  MenuSquareIcon,
-  PlayIcon,
-  SlidersHorizontalIcon,
-  XIcon,
-} from 'lucide-react'
-import { forwardRef, useEffect, useMemo, useState } from 'react'
+import { MenuSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
+import { forwardRef, useState } from 'react'
 import { FallbackProps } from 'react-error-boundary'
-import { useAudioPlayer } from 'react-use-audio-player'
 import { useChatListOpenAtom } from '../atoms'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
@@ -23,6 +15,7 @@ import { MessageFeed } from './MessageFeed'
 import { MessageInput } from './MessageInput'
 import { RemoveThreadDialog } from './RemoveThreadDialog'
 import { RenameThreadDialog } from './RenameThreadDialog'
+import { useVoiceoverPlayer } from './useVoiceoverPlayer'
 
 type ThreadShellProps = {
   threadId?: Id<'threads'>
@@ -32,47 +25,14 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
   { threadId, className, ...props },
   forwardedRef,
 ) {
-  const { thread, send, threadAtoms, updatePermissions } = useThread({ threadId })
+  const { thread, messages, send, threadAtoms, updatePermissions } = useThread({ threadId })
   const title = thread ? thread.title : threadId ? 'Loading...' : 'New Chat'
 
   const [menuOpen, setMenuOpen] = useState(false)
 
   const { open } = useChatListOpenAtom()
 
-  //* Voiceovers
-  const voiceoverUrls = thread?.messages
-    .filter((message) => message.voiceoverUrl)
-    .map((message) => message.voiceoverUrl)
-    .reverse() as string[] | undefined
-
-  const urlsMemo = useMemo(() => voiceoverUrls, [voiceoverUrls])
-
-  const [voiceoverUrlsPlayed, setVoiceoverUrlsPlayed] = useState<string[]>([])
-  const nextVoiceoverUrls = voiceoverUrls?.filter((url) => !voiceoverUrlsPlayed.includes(url))
-  const [songIndex, setSongIndex] = useState(0)
-
-  const { src, load, error, isLoading, isReady, cleanup } = useAudioPlayer()
-
-  useEffect(() => {
-    return () => cleanup()
-  }, [cleanup])
-
-  useEffect(() => {
-    if (!urlsMemo || src || isLoading) return
-    console.log('load', urlsMemo[songIndex])
-    load(urlsMemo[songIndex]!, {
-      autoplay: true,
-      onend: () => {
-        setSongIndex((index) => {
-          if (index === urlsMemo.length - 1) {
-            return 0
-          }
-
-          return index + 1
-        })
-      },
-    })
-  }, [load, songIndex, urlsMemo, src, isLoading])
+  const { enqueue, clearQueue, isActive } = useVoiceoverPlayer(messages)
 
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
@@ -142,53 +102,27 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
                   <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
                     <Button color="red">Delete Chat</Button>
                   </RemoveThreadDialog>
-
-                  <Button
-                    onClick={() => {
-                      if (nextVoiceoverUrls && !src) {
-                        const nextVoiceoverUrl = nextVoiceoverUrls[0]
-                        const followingVoiceoverUrl = nextVoiceoverUrls[1]
-                        console.log('load', nextVoiceoverUrls[0])
-                        if (nextVoiceoverUrl) {
-                          load(nextVoiceoverUrl, {
-                            autoplay: true,
-                            format: 'mp3',
-                            onend: () => {
-                              setVoiceoverUrlsPlayed([...voiceoverUrlsPlayed, nextVoiceoverUrl])
-                              if (followingVoiceoverUrl) {
-                                load(followingVoiceoverUrl, { autoplay: true, format: 'mp3' })
-                              }
-                            },
-                          })
-                        }
-                      }
-                    }}
-                  >
-                    Play
-                  </Button>
-
-                  <div className="flex flex-col">
-                    {voiceoverUrls?.map((url) => (
-                      <div key={url} className="flex">
-                        {url.slice(-6)}
-
-                        {voiceoverUrlsPlayed.includes(url) ? (
-                          <CheckIcon className="size-4" />
-                        ) : null}
-
-                        {url === src ? <PlayIcon className="size-4" /> : null}
-
-                        {nextVoiceoverUrls && nextVoiceoverUrls[1] === url && (
-                          <AirplayIcon className="size-4" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <pre className="overflow-hidden text-xs">
-                    {JSON.stringify([src, load, error, isLoading, isReady], null, 2)}
-                  </pre>
                 </>
               ) : null}
+
+              {isActive ? (
+                <Button
+                  onClick={() => {
+                    clearQueue()
+                  }}
+                >
+                  Stop
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    const all = messages.toReversed().map((msg) => msg._id)
+                    if (all) enqueue(all)
+                  }}
+                >
+                  Play All
+                </Button>
+              )}
             </div>
           </Tabs.Content>
         </Tabs.Root>

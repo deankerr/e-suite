@@ -18,6 +18,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
   const threadId = args.threadId
   const queryKey = threadId ? { id: threadId } : 'skip'
   const thread = useQuery(api.threads.threads.get, queryKey)
+  const messages = thread?.messages ?? []
 
   //* Parameters
   const threadAtoms = useMemo(
@@ -164,7 +165,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
       })
   }
 
-  return { thread, send, threadAtoms, updatePermissions }
+  return { thread, messages, send, threadAtoms, updatePermissions }
 }
 
 function createThreadAtoms(threadId?: string) {

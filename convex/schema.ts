@@ -168,7 +168,8 @@ const schema = defineEntSchema(
     jobs: defineEnt(jobFields)
       .deletion('soft')
       .index('messageId', ['messageId'])
-      .index('imageId', ['imageId']),
+      .index('imageId', ['imageId'])
+      .index('voiceoverId', ['voiceoverId']),
 
     messages: defineEnt(messagesFields)
       .deletion('soft')

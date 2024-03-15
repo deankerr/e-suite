@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 import z from 'zod'
 import { internal } from '../_generated/api'
-import { Id } from '../_generated/dataModel'
+import { Doc, Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
@@ -10,6 +10,13 @@ import { assert } from '../util'
 import { messageValidator } from '../validators'
 
 export type Thread = Awaited<ReturnType<typeof getThread>>
+
+export type Message = Doc<'messages'> & {
+  job?: Doc<'jobs'> | null
+  voiceover?: Voiceover
+}
+
+export type Voiceover = Doc<'voiceovers'> & { url?: string; job: Doc<'jobs'> | null }
 
 export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
   const thread = await ctx.table('threads').getX(id)
@@ -22,6 +29,9 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
     .take(100)
     .map(async (message) => {
       const voiceover = await message.edge('voiceover')
+      const voiceOverUrl = voiceover?.storageId
+        ? (await ctx.storage.getUrl(voiceover.storageId)) ?? undefined
+        : undefined
 
       return {
         ...message,
@@ -29,7 +39,16 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
           .table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
           .order('desc')
           .first(),
-        voiceoverUrl: voiceover?.storageId ? await ctx.storage.getUrl(voiceover.storageId) : null,
+        voiceover: voiceover
+          ? {
+              ...voiceover,
+              url: voiceOverUrl,
+              job: await ctx
+                .table('jobs', 'voiceoverId', (q) => q.eq('voiceoverId', voiceover._id))
+                .order('desc')
+                .first(),
+            }
+          : undefined,
       }
     })
   const owner = await getUser(ctx, thread.userId)

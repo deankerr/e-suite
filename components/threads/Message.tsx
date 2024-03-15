@@ -2,7 +2,7 @@
 
 import { IconButton } from '@/app/components/ui/IconButton'
 import { LoaderBars } from '@/components/ui/LoaderBars'
-import { Doc } from '@/convex/_generated/dataModel'
+import { Message as MessageType } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'
 import { MoreHorizontal } from 'lucide-react'
@@ -10,7 +10,7 @@ import { forwardRef } from 'react'
 import { MessageMenu } from './MessageMenu'
 
 type Props = {
-  message: Doc<'messages'> & { job: Doc<'jobs'> | null } & { voiceoverUrl: string | null }
+  message: MessageType
 }
 
 // https://source.boringavatars.com/beam/120/${nanoid(5)}?square
@@ -50,20 +50,14 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
 
           {/* job status */}
           <div className="grow space-y-0.5 text-right font-code text-xs text-gold-5">
-            {message.job ? message.job.status : null} {message._id.slice(-8)}
+            vo: {message.voiceover?._id.slice(-4)}{' '}
+            {message.voiceover?.job?.status.slice(0, 1) ?? 'n'} | {message._id.slice(-4)}{' '}
+            {message.job?.status.slice(0, 1) ?? 'n'}
           </div>
 
           <MessageMenu messageId={message._id}>
             <IconButton lucideIcon={MoreHorizontal} size="1" variant="ghost" className="m-0 p-0" />
           </MessageMenu>
-        </div>
-
-        <div>
-          {message.voiceoverUrl && (
-            <audio controls>
-              <source src={message.voiceoverUrl} type="audio/mpeg" />
-            </audio>
-          )}
         </div>
 
         {/* content */}
