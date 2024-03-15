@@ -31,14 +31,28 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
     return () => cleanup()
   }, [cleanup, currentUrl, load, playingIndex, queue.length])
 
+  useEffect(() => {
+    const newIds = messages
+      .filter((msg) => msg.voiceover?.url)
+      .map((msg) => msg._id)
+      .filter((id) => !queue.includes(id))
+      .reverse()
+    if (!newIds.length) return
+
+    console.log('auto enqueue', newIds)
+    setQueue((queue) => [...queue, ...newIds])
+  }, [messages, queue])
+
   const enqueue = (messageIds: string[]) => {
     const newIds = messageIds.filter((id) => !queue.includes(id))
+    console.log('enqueue', newIds)
     setQueue((queue) => [...queue, ...newIds])
   }
 
   const clearQueue = () => {
     stop()
     setQueue([])
+    setPlayingIndex(0)
   }
 
   return { enqueue, clearQueue, queue, isActive: playing || isLoading }

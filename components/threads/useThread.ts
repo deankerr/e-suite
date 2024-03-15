@@ -18,7 +18,7 @@ export const useThread = (args: { threadId?: Id<'threads'> }) => {
   const threadId = args.threadId
   const queryKey = threadId ? { id: threadId } : 'skip'
   const thread = useQuery(api.threads.threads.get, queryKey)
-  const messages = thread?.messages ?? []
+  const messages = useMemo(() => thread?.messages ?? [], [thread?.messages])
 
   //* Parameters
   const threadAtoms = useMemo(

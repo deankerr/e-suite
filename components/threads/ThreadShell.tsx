@@ -116,6 +116,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
               ) : (
                 <Button
                   onClick={() => {
+                    clearQueue()
                     const all = messages.toReversed().map((msg) => msg._id)
                     if (all) enqueue(all)
                   }}
