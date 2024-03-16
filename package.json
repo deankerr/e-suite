@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cosmos-export --expose-imports && next build",
-    "deploy": "pnpm dlx convex deploy --cmd 'pnpm build'",
+    "build": "if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm build-production; else pnpm build-development; fi",
+    "build-development": "pnpm cosmos-export && next build",
+    "build-production": "pnpm dlx convex deploy --cmd 'pnpm cosmos-export && next build'",
     "start": "next start",
     "lint": "tsc --noEmit && next lint",
     "convex": "pnpm dlx convex dev",
