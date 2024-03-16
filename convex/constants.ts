@@ -12,3 +12,4 @@ export const generationStatus = [
 export const dimensions = ['portrait', 'square', 'landscape'] as const
 
 export const chatProviders = ['openai', 'openrouter', 'togetherai']
+export const voiceoverProviders = ['elevenlabs', 'aws'] as const

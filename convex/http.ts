@@ -1,3 +1,4 @@
+import { zid } from 'convex-helpers/server/zod'
 import { httpRouter } from 'convex/server'
 import z from 'zod'
 import { internal } from './_generated/api'
@@ -5,7 +6,7 @@ import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
 import { generateSha256Hash } from './util'
-import { messageValidator, voiceoverRequestValidator } from './validators'
+import { messageValidator, voiceoverValidator } from './validators'
 
 const http = httpRouter()
 
@@ -37,58 +38,46 @@ http.route({
   }),
 })
 
-//* (pre) Agents
+//* Threads
+const threadsMessagesPushRequestSchema = z.object({
+  apiKey: z.string().length(32, 'Invalid api key'),
+  threadId: zid('threads'),
+  message: messageValidator,
+  voiceover: voiceoverValidator.optional(),
+})
+
 http.route({
-  path: '/thread',
+  path: '/threads/messages/push',
   method: 'POST',
   handler: httpAction(async (ctx, request) => {
-    // parse request
-    const requestSchema = z.object({
-      apiKey: z.string().length(32, 'Invalid api key'),
-      threadId: z
-        .string()
-        .length(32, 'Invalid thread id')
-        .transform((v) => v as Id<'threads'>),
-      messages: z
-        .array(
-          messageValidator.merge(z.object({ voiceover: voiceoverRequestValidator.optional() })),
-        )
-        .min(1),
-    })
-
-    const parsed = requestSchema.safeParse(await request.json())
+    const parsed = threadsMessagesPushRequestSchema.safeParse(await request.json())
     if (!parsed.success) {
       return new Response(parsed.error.message, { status: 400 })
     }
+    const { apiKey, threadId, message, voiceover } = parsed.data
 
     // authenticate access to thread
     const ownerId = await ctx.runQuery(internal.apiKeys.authorizeThreadOwner, {
-      threadId: parsed.data.threadId,
-      apiKey: parsed.data.apiKey,
+      threadId,
+      apiKey,
     })
     if (!ownerId) {
       return new Response('Unauthorized', { status: 401 })
     }
 
-    for (const item of parsed.data.messages) {
-      const { voiceover, ...message } = item
-      const messageId = await ctx.runMutation(internal.threads.threads.pushMessage, {
-        id: parsed.data.threadId,
-        message,
-      })
+    const messageId = await ctx.runMutation(internal.threads.threads.pushMessage, {
+      id: threadId,
+      message,
+    })
 
-      if (voiceover) {
-        const { text, ...elevenlabs } = voiceover
-        await ctx.runMutation(internal.threads.threads.pushVoiceover, {
-          messageId,
-          voiceover: {
-            parameters: { elevenlabs },
-            text,
-            provider: 'elevenlabs',
-            textSha256: await generateSha256Hash(voiceover.text),
-          },
-        })
-      }
+    if (voiceover) {
+      await ctx.runMutation(internal.threads.threads.pushVoiceover, {
+        messageId,
+        voiceover: {
+          ...voiceover,
+          textSha256: await generateSha256Hash(voiceover.text),
+        },
+      })
     }
 
     return new Response('OK', { status: 200 })
