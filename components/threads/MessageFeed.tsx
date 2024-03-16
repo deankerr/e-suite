@@ -17,11 +17,11 @@ export const MessageFeed = forwardRef<HTMLDivElement, MessageFeedProps>(function
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
-  }, [messages.length])
+  }, [messages])
 
   return (
     <ScrollArea {...props} className={cn('', className)} ref={forwardedRef}>
-      <div className="flex flex-col" ref={scrollRef}>
+      <div className="flex flex-col divide-y" ref={scrollRef}>
         {messages.map((msg) => (
           <Message key={msg._id} message={msg} />
         ))}
