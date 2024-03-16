@@ -5,11 +5,11 @@ import { Doc, Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
-import { getUser } from '../users'
+import { getUser, User } from '../users'
 import { assert } from '../util'
 import { messageValidator } from '../validators'
 
-export type Thread = Awaited<ReturnType<typeof getThread>>
+export type Thread = Doc<'threads'> & { messages: Message[]; owner: User }
 
 export type Message = Doc<'messages'> & {
   job?: Doc<'jobs'> | null
@@ -18,7 +18,7 @@ export type Message = Doc<'messages'> & {
 
 export type Voiceover = Doc<'voiceovers'> & { url?: string; job: Doc<'jobs'> | null }
 
-export const getThread = async (ctx: QueryCtx, id: Id<'threads'>) => {
+export const getThread = async (ctx: QueryCtx, id: Id<'threads'>): Promise<Thread> => {
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')
 

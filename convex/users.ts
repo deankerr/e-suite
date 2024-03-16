@@ -5,6 +5,8 @@ import { internalMutation, mutation, query } from './functions'
 import { usersFields } from './schema'
 import { QueryCtx } from './types'
 
+export type User = z.infer<typeof publicUserSchema>
+
 const publicUserSchema = z.object({
   _id: z
     .string()
@@ -73,20 +75,5 @@ export const authDeleted = internalMutation({
       .table('users', 'tokenIdentifier', (q) => q.eq('tokenIdentifier', token))
       .uniqueX()
       .delete()
-  },
-})
-
-//* permissions testing
-export const getPrivateProfile = query({
-  args: {
-    id: v.optional(v.id('users')),
-  },
-  handler: async (ctx, { id }) => {
-    const user = await ctx.table('users').getX(id ?? ctx.viewerIdX())
-    const key = await user.edge('apiKey')
-    return {
-      ...user,
-      key,
-    }
   },
 })
