@@ -5,7 +5,7 @@ import { LoaderBars } from '@/components/ui/LoaderBars'
 import { Message as MessageType } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Text } from '@radix-ui/themes'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontalIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 import { MessageMenu } from './MessageMenu'
 
@@ -33,6 +33,7 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
       tool: 'text-gray',
     } as const
 
+    // const play = usePlayAudio()
     return (
       <div
         {...props}
@@ -55,8 +56,22 @@ export const Message = forwardRef<HTMLDivElement, Props & React.ComponentProps<'
             {message.job?.status.slice(0, 1) ?? 'n'}
           </div>
 
+          {/* <IconButton
+            lucideIcon={PlayCircleIcon}
+            size="1"
+            variant="ghost"
+            className="m-0 p-0"
+            onClick={() => {
+              // if (message.voiceover?.url) play(message.voiceover.url)
+            }}
+          /> */}
           <MessageMenu messageId={message._id}>
-            <IconButton lucideIcon={MoreHorizontal} size="1" variant="ghost" className="m-0 p-0" />
+            <IconButton
+              lucideIcon={MoreHorizontalIcon}
+              size="1"
+              variant="ghost"
+              className="m-0 p-0"
+            />
           </MessageMenu>
         </div>
 

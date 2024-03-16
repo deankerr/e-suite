@@ -21,7 +21,7 @@ export const MessageFeed = forwardRef<HTMLDivElement, MessageFeedProps>(function
 
   return (
     <ScrollArea {...props} className={cn('', className)} ref={forwardedRef}>
-      <div className="flex flex-col-reverse" ref={scrollRef}>
+      <div className="flex flex-col" ref={scrollRef}>
         {messages.map((msg) => (
           <Message key={msg._id} message={msg} />
         ))}

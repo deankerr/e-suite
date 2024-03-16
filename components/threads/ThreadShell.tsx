@@ -8,14 +8,15 @@ import { Heading, Tabs } from '@radix-ui/themes'
 import { MenuSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 import { FallbackProps } from 'react-error-boundary'
+import { useGlobalAudioPlayer } from 'react-use-audio-player'
 import { useChatListOpenAtom } from '../atoms'
+import { useAudio, useEnqueueAudio } from '../audio/useAudio'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
 import { MessageFeed } from './MessageFeed'
 import { MessageInput } from './MessageInput'
 import { RemoveThreadDialog } from './RemoveThreadDialog'
 import { RenameThreadDialog } from './RenameThreadDialog'
-import { useVoiceoverPlayer } from './useVoiceoverPlayer'
 
 type ThreadShellProps = {
   threadId?: Id<'threads'>
@@ -32,9 +33,18 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
   const { open } = useChatListOpenAtom()
 
-  const { enqueue, clearQueue, audioPlayer, queue, currentMessageId, playingIndex } =
-    useVoiceoverPlayer(messages, true)
+  // const { enqueue, clearQueue, audioPlayer, queue, currentMessageId, playingIndex } =
+  //   useVoiceoverPlayer(messages, true)
 
+  useAudio()
+  const [_, enqueue] = useEnqueueAudio()
+  enqueue(
+    messages
+      .filter((m) => m.voiceover?.url)
+      .map((m) => ({ messageId: m._id, url: m.voiceover?.url ?? '', played: false })),
+  )
+
+  const audioPlayer = useGlobalAudioPlayer()
   return (
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       {/* content */}
@@ -63,7 +73,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
           </div>
         </CShell.Titlebar>
 
-        <MessageFeed messages={thread?.messages ?? []} />
+        <MessageFeed messages={messages} />
 
         <MessageInput inputAtom={threadAtoms.message} onSend={send} />
       </CShell.Content>
@@ -105,28 +115,16 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
                   </RemoveThreadDialog>
                 </>
               ) : null}
-              <Button
-                onClick={() => {
-                  clearQueue()
-                  const all = messages.toReversed().map((msg) => msg._id)
-                  if (all) enqueue(all)
-                }}
-              >
-                Play All
-              </Button>
 
-              <Button onClick={() => audioPlayer.play()}>Play</Button>
+              {/* <VoiceoverControls /> */}
 
-              <Button
-                onClick={() => {
-                  clearQueue()
-                }}
-              >
-                Stop
-              </Button>
+              {/* <pre className="whitespace-pre-wrap bg-black text-xs">
+                {JSON.stringify(currentAudio, null, 2)}
+              </pre> */}
+              {/* <div>{JSON.stringify(audioPlayer, null, 2)}</div> */}
 
-              <div className="border text-xs">
-                q {queue.length} <br />
+              <div className="hidden border text-xs">
+                {/* q {queue.length} <br /> */}
                 {audioPlayer.src ?? 'no src'} <br />
                 {audioPlayer.playing ? 'playing' : 'not playing'} <br />
                 {audioPlayer.paused ? 'paused' : 'not paused'} <br />
@@ -134,11 +132,17 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
                 {audioPlayer.isLoading ? 'loading' : 'not loading'} <br />
                 {audioPlayer.isReady ? ' ready' : 'not ready'}
                 <br />
-                msgId: {currentMessageId?.slice(-4)} <br />
-                index: {playingIndex} <br />
+                {/* msgId: {currentMessageId?.slice(-4)} <br /> */}
+                {/* index: {playingIndex} <br /> */}
                 {audioPlayer.error}
                 <br />
               </div>
+
+              {/* <pre className="whitespace-pre-wrap bg-black text-xs">
+                {queue.map((audio, i) => (
+                  <div key={i}>{(audio.played ? 'x' : '.') + ' ' + audio.messageId.slice(-4)}</div>
+                ))}
+              </pre> */}
             </div>
           </Tabs.Content>
         </Tabs.Root>
