@@ -4,6 +4,7 @@ import { internal } from './_generated/api'
 import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
+import { generateSha256Hash } from './util'
 import { messageValidator, voiceoverRequestValidator } from './validators'
 
 const http = httpRouter()
@@ -77,9 +78,15 @@ http.route({
       })
 
       if (voiceover) {
+        const { text, ...elevenlabs } = voiceover
         await ctx.runMutation(internal.threads.threads.pushVoiceover, {
           messageId,
-          voiceover,
+          voiceover: {
+            parameters: { elevenlabs },
+            text,
+            provider: 'elevenlabs',
+            textSha256: await generateSha256Hash(voiceover.text),
+          },
         })
       }
     }

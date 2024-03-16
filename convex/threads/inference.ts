@@ -146,12 +146,15 @@ export const voice = internalAction({
   handler: async (ctx, { voiceoverId }) => {
     try {
       const apiKey = getElevenlabsApiKey()
-      const { model_id, voice_id, text, voice_settings } = await ctx.runQuery(
+      const { parameters, text } = await ctx.runQuery(
         internal.threads.threads.getVoiceoverParameters,
         {
           voiceoverId,
         },
       )
+      if (!parameters?.elevenlabs) throw new Error('migration: elevenlabs only please') //! temp
+
+      const { voice_id, model_id, voice_settings } = parameters.elevenlabs
 
       const response = await ky
         .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {

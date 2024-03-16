@@ -122,17 +122,26 @@ export const threadsFields = {
 
 export const voiceoversFields = {
   text: v.string(),
-  model_id: v.string(),
-  voice_id: v.string(),
-  voice_settings: v.optional(
-    v.object({
-      similarity_boost: v.optional(v.number()),
-      stability: v.optional(v.number()),
-      style: v.optional(v.number()),
-      use_speaker_boost: v.optional(v.boolean()),
-    }),
-  ),
+  textSha256: v.string(),
   storageId: v.optional(v.id('_storage')),
+
+  provider: vEnum(['elevenlabs', 'aws']),
+  parameters: v.object({
+    elevenlabs: v.optional(
+      v.object({
+        voice_id: v.optional(v.string()),
+        model_id: v.optional(v.string()),
+        voice_settings: v.optional(
+          v.object({
+            similarity_boost: v.optional(v.number()),
+            stability: v.optional(v.number()),
+            style: v.optional(v.number()),
+            use_speaker_boost: v.optional(v.boolean()),
+          }),
+        ),
+      }),
+    ),
+  }),
 }
 const voiceovers = defineEnt(voiceoversFields).deletion('soft').edge('message')
 
