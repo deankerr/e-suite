@@ -1,12 +1,11 @@
 'use node'
 
 import { v } from 'convex/values'
-import ky from 'ky'
 import OpenAI from 'openai'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
-import { getElevenlabsApiKey } from '../providers/elevenlabs'
+import { createTextToSpeechRequest } from '../providers/elevenlabs'
 import { getTogetherAiApiKey } from '../providers/togetherai'
 import { assert } from '../util'
 
@@ -145,33 +144,17 @@ export const voice = internalAction({
   },
   handler: async (ctx, { voiceoverId }) => {
     try {
-      const apiKey = getElevenlabsApiKey()
       const { parameters, text } = await ctx.runQuery(
         internal.threads.threads.getVoiceoverParameters,
         {
           voiceoverId,
         },
       )
-      if (!parameters?.elevenlabs) throw new Error('migration: elevenlabs only please') //! temp
 
-      const { voice_id, model_id, voice_settings } = parameters.elevenlabs
+      if (!('elevenlabs' in parameters)) throw new Error('migration: elevenlabs only please') //! temp
 
-      const response = await ky
-        .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
-          headers: {
-            Accept: 'audio/mpeg',
-            'Content-Type': 'application/json',
-            'xi-api-key': apiKey,
-          },
-          json: {
-            text,
-            voice_settings,
-            model_id,
-          },
-        })
-        .blob()
-
-      const storageId = await ctx.storage.store(response)
+      const blob = await createTextToSpeechRequest({ text, parameters })
+      const storageId = await ctx.storage.store(blob)
 
       await ctx.runMutation(internal.threads.threads.updateVoiceoverStorageId, {
         voiceoverId,

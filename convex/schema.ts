@@ -126,9 +126,9 @@ export const voiceoversFields = {
   storageId: v.optional(v.id('_storage')),
 
   provider: vEnum(['elevenlabs', 'aws']),
-  parameters: v.object({
-    elevenlabs: v.optional(
-      v.object({
+  parameters: v.union(
+    v.object({
+      elevenlabs: v.object({
         voice_id: v.optional(v.string()),
         model_id: v.optional(v.string()),
         voice_settings: v.optional(
@@ -140,8 +140,15 @@ export const voiceoversFields = {
           }),
         ),
       }),
-    ),
-  }),
+    }),
+
+    v.object({
+      aws: v.object({
+        VoiceId: v.string(),
+        Engine: vEnum(['neural', 'standard', 'long-form']),
+      }),
+    }),
+  ),
 }
 const voiceovers = defineEnt(voiceoversFields).deletion('soft').edge('message')
 

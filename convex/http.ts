@@ -52,6 +52,7 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     const parsed = threadsMessagesPushRequestSchema.safeParse(await request.json())
     if (!parsed.success) {
+      console.error(parsed.error.issues)
       return new Response(parsed.error.message, { status: 400 })
     }
     const { apiKey, threadId, message, voiceover } = parsed.data

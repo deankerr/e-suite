@@ -15,9 +15,9 @@ export const messageValidator = z.object({
 export const voiceoverValidator = z.object({
   text: z.string().transform((value) => value.slice(0, MAX_STRING_LENGTH)),
   provider: z.enum(voiceoverProviders),
-  parameters: z.object({
-    elevenlabs: z
-      .object({
+  parameters: z.union([
+    z.object({
+      elevenlabs: z.object({
         model_id: z.string(),
         voice_id: z.string(),
         voice_settings: z
@@ -29,7 +29,14 @@ export const voiceoverValidator = z.object({
           })
           .partial()
           .optional(),
-      })
-      .optional(),
-  }),
+      }),
+    }),
+
+    z.object({
+      aws: z.object({
+        VoiceId: z.string(),
+        Engine: z.enum(['neural', 'standard', 'long-form']),
+      }),
+    }),
+  ]),
 })
