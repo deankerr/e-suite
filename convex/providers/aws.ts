@@ -2,35 +2,44 @@
 
 import {
   DescribeVoicesCommand,
-  ListLexiconsCommand,
   PollyClient,
   SynthesizeSpeechCommand,
+  SynthesizeSpeechCommandInput,
 } from '@aws-sdk/client-polly'
 import { fromEnv } from '@aws-sdk/credential-providers'
+import { ConvexError } from 'convex/values'
+import { Doc } from '../_generated/dataModel'
 import { internalAction } from '../_generated/server'
+import { assert } from '../util'
 
 const client = new PollyClient({ region: 'us-east-1', credentials: fromEnv() })
 
-export const listLexicons = internalAction(async () => {
-  const lexicons = await client.send(new ListLexiconsCommand({}))
-  console.log('lexicons')
-  console.log(lexicons)
-})
+export const createTextToSpeechRequest = async ({
+  text,
+  parameters,
+}: {
+  text: string
+  parameters: Doc<'voiceovers'>['parameters']
+}) => {
+  if (!('aws' in parameters)) throw new ConvexError('invalid parameters')
+  const { VoiceId, Engine } = parameters.aws
 
-export const demoSpeech = internalAction(async () => {
-  const data = await client.send(
+  const response = await client.send(
     new SynthesizeSpeechCommand({
       OutputFormat: 'mp3',
-      Text: 'Hi there, my name is Olivia. I will read any text you type here.',
+      Text: text,
       TextType: 'text',
-      VoiceId: 'Olivia',
-      Engine: 'neural',
+      VoiceId: VoiceId as SynthesizeSpeechCommandInput['VoiceId'],
+      Engine,
     }),
   )
-  console.log(data)
-})
 
-export const describeVoices = internalAction(async () => {
+  assert(response.AudioStream, 'aws response missing AudioStream', { data: response.$metadata })
+  const arrayBuffer = await response.AudioStream.transformToByteArray()
+  return new Blob([arrayBuffer], { type: 'audio/mpeg' })
+}
+
+export const getVoicesList = internalAction(async () => {
   const { Voices } = await client.send(new DescribeVoicesCommand({}))
   if (Voices) {
     console.log(

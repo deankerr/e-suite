@@ -5,7 +5,8 @@ import OpenAI from 'openai'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
-import { createTextToSpeechRequest } from '../providers/elevenlabs'
+import { createTextToSpeechRequest as awsCreateTextToSpeechRequest } from '../providers/aws'
+import { createTextToSpeechRequest as elevenlabsCreateTextToSpeechRequest } from '../providers/elevenlabs'
 import { getTogetherAiApiKey } from '../providers/togetherai'
 import { assert } from '../util'
 
@@ -144,16 +145,19 @@ export const voice = internalAction({
   },
   handler: async (ctx, { voiceoverId }) => {
     try {
-      const { parameters, text } = await ctx.runQuery(
+      const { text, provider, parameters } = await ctx.runQuery(
         internal.threads.threads.getVoiceoverParameters,
         {
           voiceoverId,
         },
       )
 
-      if (!('elevenlabs' in parameters)) throw new Error('migration: elevenlabs only please') //! temp
+      const createTextToSpeechRequest = {
+        elevenlabs: elevenlabsCreateTextToSpeechRequest,
+        aws: awsCreateTextToSpeechRequest,
+      }
 
-      const blob = await createTextToSpeechRequest({ text, parameters })
+      const blob = await createTextToSpeechRequest[provider]({ text, parameters })
       const storageId = await ctx.storage.store(blob)
 
       await ctx.runMutation(internal.threads.threads.updateVoiceoverStorageId, {
