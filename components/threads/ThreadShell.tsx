@@ -4,12 +4,11 @@ import { IconButton } from '@/app/components/ui/IconButton'
 import { useThread } from '@/components/threads/useThread'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
-import { Heading, Tabs } from '@radix-ui/themes'
-import { MenuSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
+import { Tabs } from '@radix-ui/themes'
+import { MessageCircleIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 import { FallbackProps } from 'react-error-boundary'
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
-import { useChatListOpenAtom } from '../atoms'
 import { useAudio, useEnqueueAudio } from '../audio/useAudio'
 import { CShell } from '../ui/CShell'
 import { InferenceParameterControls } from './InferenceParameterControls'
@@ -31,8 +30,6 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
 
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const { open } = useChatListOpenAtom()
-
   // const { enqueue, clearQueue, audioPlayer, queue, currentMessageId, playingIndex } =
   //   useVoiceoverPlayer(messages, true)
 
@@ -49,18 +46,10 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
     <CShell.Root {...props} className={cn('bg-gray-1', className)} ref={forwardedRef}>
       {/* content */}
       <CShell.Content>
-        <CShell.Titlebar className="justify-between">
-          <div className="flex items-center">
-            <IconButton
-              lucideIcon={MenuSquareIcon}
-              onClick={open}
-              variant="ghost"
-              className="m-0 [&_svg]:size-7"
-            />
-
-            <Heading className="truncate" size="3">
-              {title}
-            </Heading>
+        <CShell.Titlebar className="h-14 justify-between">
+          <div className="flex items-center gap-2 pl-4 text-base font-medium">
+            <MessageCircleIcon className="size-5" />
+            {title}
           </div>
 
           <div className="flex items-center gap-1 lg:px-2">
@@ -79,7 +68,7 @@ export const ThreadShell = forwardRef<HTMLDivElement, ThreadShellProps>(function
       </CShell.Content>
 
       {/* rightbar */}
-      <CShell.Sidebar side="right" open={menuOpen}>
+      <CShell.Sidebar side="right" open={menuOpen} className="">
         <Tabs.Root defaultValue="details">
           <Tabs.List>
             <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>

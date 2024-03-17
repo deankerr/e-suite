@@ -33,10 +33,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
       suppressHydrationWarning
     >
-      <body>
+      <body className="h-full">
         <ClientProviders>
           <JotaiProvider>
-            <Theme accentColor="orange" appearance="dark">
+            <Theme className="h-full" accentColor="orange" appearance="dark">
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />

@@ -18,7 +18,6 @@ const config: Config = {
     plugin(({ addBase }) => {
       addBase({
         '*': { boxSizing: 'border-box', position: 'relative', minWidth: '0' },
-        body: { minHeight: '100dvh' },
         h1: { textWrap: 'balance' },
         h2: { textWrap: 'balance' },
         h3: { textWrap: 'balance' },
