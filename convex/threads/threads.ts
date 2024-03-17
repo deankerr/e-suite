@@ -1,4 +1,5 @@
 import { v } from 'convex/values'
+import { deepEqual } from 'fast-equals'
 import z from 'zod'
 import { internal } from '../_generated/api'
 import { Doc, Id } from '../_generated/dataModel'
@@ -235,11 +236,26 @@ export const pushVoiceover = internalMutation({
     voiceover: v.object(voiceoversFields),
   },
   handler: async (ctx, { messageId, voiceover }) => {
+    // link storageId of any matching voiceover if found
+    const matches = await ctx.table('voiceovers', 'textSha256', (q) =>
+      q.eq('textSha256', voiceover.textSha256),
+    )
+
+    for (const match of matches) {
+      if (match.storageId && deepEqual(match.parameters, voiceover.parameters)) {
+        return await ctx.skipRules
+          .table('voiceovers')
+          .insert({ ...voiceover, messageId, storageId: match.storageId })
+      }
+    }
+
+    // otherwise create new voiceover
     const voiceoverId = await ctx.skipRules.table('voiceovers').insert({ ...voiceover, messageId })
     await ctx.scheduler.runAfter(0, internal.jobs.dispatch, {
       type: 'voiceover',
       voiceoverId,
     })
+    return voiceoverId
   },
 })
 

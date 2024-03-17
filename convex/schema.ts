@@ -150,7 +150,10 @@ export const voiceoversFields = {
     }),
   ),
 }
-const voiceovers = defineEnt(voiceoversFields).deletion('soft').edge('message')
+const voiceovers = defineEnt(voiceoversFields)
+  .deletion('soft')
+  .edge('message')
+  .index('textSha256', ['textSha256'])
 
 const schema = defineEntSchema(
   {
