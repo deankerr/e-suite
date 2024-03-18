@@ -1,6 +1,5 @@
 'use client'
 
-import { IconButton } from '@/app/components/ui/IconButton'
 import { Logo } from '@/app/components/ui/Logo'
 import { UserButton } from '@/app/components/UserButton'
 import { api } from '@/convex/_generated/api'
@@ -9,11 +8,12 @@ import * as Tabs from '@radix-ui/react-tabs'
 import { Heading } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
-import { ImageIcon, MessagesSquareIcon, PanelLeftCloseIcon, PanelLeftOpenIcon } from 'lucide-react'
+import { ImageIcon, MessagesSquareIcon, PanelLeftCloseIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
-import { navOpenAtom } from './atoms'
+import { navbarOpenAtom } from './atoms'
 import { ChatMenuBarList } from './threads/ChatMenuBarList'
+import { UIIconButton } from './ui/UIIconButton'
 
 type NavBarProps = {} & React.ComponentProps<'div'>
 
@@ -23,7 +23,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
 ) {
   const threads = useQuery(api.threads.threads.list)
 
-  const [isOpen, toggle] = useAtom(navOpenAtom)
+  const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
 
   const menuTabs = [
     ['Chat', <MessagesSquareIcon key="Chat" className="size-6" />],
@@ -35,27 +35,29 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
       {...props}
       className={cn(
         'flex h-full w-14 shrink-0 flex-col border-r bg-gray-1',
-        isOpen && 'w-80',
+        navbarIsOpen && 'w-80',
         className,
       )}
       ref={forwardedRef}
     >
       {/* site title */}
-      <div className={cn('flex h-14 shrink-0 items-center justify-between border-b px-3')}>
+      <div className={cn('flex h-14 shrink-0 items-center justify-between border-b px-4')}>
         <NextLink href="/" className="flex h-full items-center gap-1.5">
           <Logo className="size-7 min-w-7" />
-          <Heading size="5" className={cn(!isOpen && 'hidden')}>
+          <Heading size="5" className={cn(!navbarIsOpen && 'hidden')}>
             e/suite
           </Heading>
         </NextLink>
 
-        <IconButton
-          lucideIcon={isOpen ? PanelLeftCloseIcon : PanelLeftOpenIcon}
-          variant="ghost"
-          color="gray"
-          className={cn('size-8', !isOpen && 'absolute -right-2/3 z-20')}
-          onClick={() => toggle()}
-        />
+        {navbarIsOpen && (
+          <UIIconButton
+            label="collapse navigation bar"
+            color="gray"
+            onClick={() => setNavbarOpen(!navbarIsOpen)}
+          >
+            <PanelLeftCloseIcon />
+          </UIIconButton>
+        )}
       </div>
 
       {/* tabs */}
@@ -70,11 +72,11 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
                 className={cn(
                   'flex h-full w-full items-center justify-center gap-2 border-b border-b-transparent text-gray-10',
                   'hover:bg-gray-2 hover:text-gray-11 data-[state=active]:border-b-accent data-[state=active]:text-gray-12 data-[state=active]:hover:text-gray-12',
-                  !isOpen && 'hidden data-[state=active]:flex',
+                  !navbarIsOpen && 'hidden data-[state=active]:flex',
                 )}
               >
                 {icon}
-                {isOpen && title}
+                {navbarIsOpen && title}
               </Tabs.Trigger>
             )
           })}
