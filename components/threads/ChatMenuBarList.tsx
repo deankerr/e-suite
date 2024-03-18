@@ -19,13 +19,13 @@ export const ChatMenuBarList = forwardRef<HTMLDivElement, ChatMenuBarListProps>(
 
     return (
       <ScrollArea {...props} scrollbars="vertical" className={cn('', className)} ref={forwardedRef}>
-        <div className="flex flex-col-reverse divide-y">
+        <div className="flex flex-col-reverse divide-y divide-gray-5">
           {threads?.map((thread) => (
             <NextLink
               key={thread._id}
               href={`/chat/${thread._id}`}
               className={cn(
-                'flex h-12 shrink-0 items-center gap-1 overflow-hidden py-3',
+                'flex h-14 w-80 shrink-0 items-center gap-1 overflow-hidden py-3',
                 active(thread._id) ? 'bg-gray-2' : 'hover:bg-gray-2',
               )}
               onClick={close}
@@ -38,11 +38,6 @@ export const ChatMenuBarList = forwardRef<HTMLDivElement, ChatMenuBarListProps>(
               </div>
 
               <div className="flex flex-col gap-1">
-                {/* time */}
-                {/* <div className="shrink-0 text-right text-xs text-gray-11">
-                  {formatDistanceToNow(new Date(thread._creationTime), { addSuffix: true })}
-                </div> */}
-
                 {/* model name */}
                 <div className={cn('text-xs text-gray-10', active(thread._id) && 'text-gray-11')}>
                   {formatModelString(thread.parameters?.model)}
@@ -51,7 +46,7 @@ export const ChatMenuBarList = forwardRef<HTMLDivElement, ChatMenuBarListProps>(
                 {/* title */}
                 <div
                   className={cn(
-                    'text-sm font-medium text-gray-11',
+                    'truncate text-sm font-medium text-gray-11',
                     active(thread._id) && 'text-gray-12',
                   )}
                 >

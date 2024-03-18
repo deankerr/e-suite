@@ -41,23 +41,30 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
       ref={forwardedRef}
     >
       {/* site title */}
-      <div className={cn('flex h-14 shrink-0 items-center justify-between border-b px-4')}>
-        <NextLink href="/" className="flex h-full items-center gap-1.5">
-          <Logo className="size-7 min-w-7" />
-          <Heading size="5" className={cn(!navbarIsOpen && 'hidden')}>
-            e/suite
-          </Heading>
-        </NextLink>
+      <div className={cn('h-14 shrink-0 border-b')}>
+        <div
+          className={cn(
+            'flex h-full items-center',
+            navbarIsOpen ? 'justify-between px-3' : 'justify-center',
+          )}
+        >
+          <NextLink href="/" className="justfify-center flex h-full items-center gap-1.5">
+            <Logo className="size-7 min-w-7" />
+            <Heading size="5" className={cn(!navbarIsOpen && 'hidden')}>
+              e/suite
+            </Heading>
+          </NextLink>
 
-        {navbarIsOpen && (
-          <UIIconButton
-            label="collapse navigation bar"
-            color="gray"
-            onClick={() => setNavbarOpen(!navbarIsOpen)}
-          >
-            <PanelLeftCloseIcon />
-          </UIIconButton>
-        )}
+          {navbarIsOpen && (
+            <UIIconButton
+              label="collapse navigation bar"
+              color="gray"
+              onClick={() => setNavbarOpen(!navbarIsOpen)}
+            >
+              <PanelLeftCloseIcon />
+            </UIIconButton>
+          )}
+        </div>
       </div>
 
       {/* tabs */}
@@ -91,7 +98,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
         <Tabs.Content value="Generate">generate</Tabs.Content>
       </Tabs.Root>
 
-      <div className="flex h-fit shrink-0 grow items-end p-3">
+      <div className="flex h-14 shrink-0 grow items-end border-t p-3">
         <UserButton />
       </div>
     </div>
