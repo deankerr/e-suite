@@ -47,7 +47,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
             navbarIsOpen ? 'justify-between px-3' : 'justify-center',
           )}
         >
-          <NextLink href="/" className="justfify-center flex h-full items-center gap-1.5">
+          <NextLink href="/" className="flex h-full items-center gap-1.5">
             <Logo className="size-7 min-w-7" />
             <Heading size="5" className={cn(!navbarIsOpen && 'hidden')}>
               e/suite
@@ -97,7 +97,9 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
         <Tabs.Content value="Generate">generate</Tabs.Content>
       </Tabs.Root>
 
-      <div className="flex h-14 shrink-0 grow items-end border-t p-3">{children}</div>
+      <div className="flex h-14 shrink-0 grow items-center justify-center border-t p-3">
+        {children}
+      </div>
     </div>
   )
 })
