@@ -15,18 +15,6 @@ export function createNumberInputAtom(args: {
   return { ...args, atom: atom(args.initialValue) }
 }
 
-const chatListOpenAtom = atom(false)
-
-export function useChatListOpenAtom() {
-  const [isOpen, setIsOpen] = useAtom(chatListOpenAtom)
-
-  const open = () => setIsOpen(true)
-  const close = () => setIsOpen(false)
-  const toggle = () => setIsOpen(!isOpen)
-
-  return { isOpen, setIsOpen, open, close, toggle }
-}
-
 const voiceoverAutoplayedListAtom = atom<string[]>([])
 
 export function useVoiceoverAutoplayedListAtom() {
@@ -35,9 +23,3 @@ export function useVoiceoverAutoplayedListAtom() {
 
 export const navbarOpenAtom = atom(true)
 export const sidebarOpenAtom = atom(true)
-
-export const TEMPchatinputatom = createTextInputAtom({
-  label: 'Message',
-  name: 'message',
-  initialValue: '',
-})
