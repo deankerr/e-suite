@@ -1,7 +1,6 @@
 'use client'
 
 import { Logo } from '@/app/components/ui/Logo'
-import { UserButton } from '@/app/components/UserButton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import * as Tabs from '@radix-ui/react-tabs'
@@ -18,7 +17,7 @@ import { UIIconButton } from './ui/UIIconButton'
 type NavBarProps = {} & React.ComponentProps<'div'>
 
 export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
-  { className, ...props },
+  { className, children, ...props },
   forwardedRef,
 ) {
   const threads = useQuery(api.threads.threads.list)
@@ -98,9 +97,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
         <Tabs.Content value="Generate">generate</Tabs.Content>
       </Tabs.Root>
 
-      <div className="flex h-14 shrink-0 grow items-end border-t p-3">
-        <UserButton />
-      </div>
+      <div className="flex h-14 shrink-0 grow items-end border-t p-3">{children}</div>
     </div>
   )
 })

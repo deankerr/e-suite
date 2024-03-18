@@ -8,6 +8,8 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 import { cn } from '@/lib/utils'
+import { ClerkProvider } from '@clerk/nextjs'
+import { dark } from '@clerk/themes'
 
 export const metadata: Metadata = {
   title: 'e/suite',
@@ -28,23 +30,25 @@ const jetBrainsMono = JetBrains_Mono({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
-      suppressHydrationWarning
-    >
-      <body className="h-full">
-        <ClientProviders>
-          <JotaiProvider>
-            <Theme className="h-full" accentColor="orange" appearance="dark">
-              {children}
-              <Toaster richColors />
-              <TailwindBreakpointIndicator />
-            </Theme>
-          </JotaiProvider>
-        </ClientProviders>
-        {process.env.NODE_ENV !== 'development' && <Analytics />}
-      </body>
-    </html>
+    <ClerkProvider appearance={{ baseTheme: dark }}>
+      <html
+        lang="en"
+        className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
+        suppressHydrationWarning
+      >
+        <body className="h-full">
+          <ClientProviders>
+            <JotaiProvider>
+              <Theme className="h-full" accentColor="orange" appearance="dark">
+                {children}
+                <Toaster richColors />
+                <TailwindBreakpointIndicator />
+              </Theme>
+            </JotaiProvider>
+          </ClientProviders>
+          {process.env.NODE_ENV !== 'development' && <Analytics />}
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

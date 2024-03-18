@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Dev",
+      "label": "Run Next Dev",
       "type": "shell",
       "command": "pnpm dev",
       "presentation": {
@@ -11,7 +11,8 @@
       },
       "runOptions": {
         "runOn": "folderOpen"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "Run Cosmos",

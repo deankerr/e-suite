@@ -1,7 +1,6 @@
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { Permissions } from '@/convex/schema'
-import { useMutation, useQuery } from 'convex/react'
+import { Preloaded, useMutation, usePreloadedQuery } from 'convex/react'
 import { useAtomCallback } from 'jotai/utils'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
@@ -13,12 +12,12 @@ export type ThreadAtoms = ReturnType<typeof createThreadAtoms>
 export type TextInputAtom = ReturnType<typeof createTextInputAtom>
 export type NumberInputAtom = ReturnType<typeof createNumberInputAtom>
 
-export const useThread = (args: { threadId?: Id<'threads'> }) => {
+export const useThread = (args: { preload: Preloaded<typeof api.threads.threads.get> }) => {
   const router = useRouter()
-  const threadId = args.threadId
-  const queryKey = threadId ? { id: threadId } : 'skip'
 
-  const thread = useQuery(api.threads.threads.get, queryKey)
+  const thread = usePreloadedQuery(args.preload)
+  const threadId = thread?._id
+
   const messages = useMemo(() => thread?.messages.toReversed() ?? [], [thread?.messages])
 
   //* Parameters
