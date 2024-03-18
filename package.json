@@ -24,6 +24,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@huggingface/hub": "^0.12.3",
     "@plaiceholder/next": "^3.0.0",
+    "@radix-ui/react-accessible-icon": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-popover": "^1.0.7",
