@@ -2,12 +2,14 @@
 
 import { PermissionsCard } from '@/app/components/PermissionsCard'
 import { Button } from '@/app/components/ui/Button'
-import { navbarOpenAtom, sidebarOpenAtom, TEMPchatinputatom } from '@/components/atoms'
+import { navbarOpenAtom, sidebarOpenAtom } from '@/components/atoms'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
+import { MessageInput } from '@/components/threads/MessageInput'
+import { MessageMenu } from '@/components/threads/MessageMenu'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { useThread } from '@/components/threads/useThread'
-import { Textarea } from '@/components/ui/Textarea'
+import { LoaderBars } from '@/components/ui/LoaderBars'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
@@ -15,29 +17,45 @@ import { Heading, ScrollArea, Tabs, Text } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
 import {
-  ImageIcon,
   MessageCircleIcon,
+  MoreHorizontalIcon,
   PanelLeftOpenIcon,
-  SendHorizonalIcon,
   SlidersHorizontalIcon,
-  SmileIcon,
   XIcon,
 } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 
 type ChatProps = {
   preload: Preloaded<typeof api.threads.threads.get>
 }
 
 export const Chat = ({ preload }: ChatProps) => {
-  const { thread, messages, threadAtoms, updatePermissions } = useThread({ preload })
+  const { thread, messages, send, threadAtoms, updatePermissions } = useThread({ preload })
+
+  const title = thread?.title ?? 'New Chat'
 
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
   const [sidebarIsOpen, setSidebarOpen] = useAtom(sidebarOpenAtom)
 
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [messages])
+  /*
+    useAudio()
+    const [_, enqueue] = useEnqueueAudio()
+    enqueue(
+      messages
+        .filter((m) => m.voiceover?.url)
+        .map((m) => ({ messageId: m._id, url: m.voiceover?.url ?? '', played: false })),
+    )
+
+    const audioPlayer = useGlobalAudioPlayer()
+  */
+
   return (
-    // <ErrorBoundary FallbackComponent={FallbackComponent}>
-    //   <ThreadShell threadId={threadId} />
-    // </ErrorBoundary>
     <>
       <div className="h-full grow overflow-hidden">
         {/* header */}
@@ -54,7 +72,7 @@ export const Chat = ({ preload }: ChatProps) => {
           )}
           <Heading size="3" className="flex items-center gap-1.5">
             <MessageCircleIcon className="size-5" />
-            Chat Header
+            {title}
           </Heading>
 
           <div className="grow"></div>
@@ -67,9 +85,9 @@ export const Chat = ({ preload }: ChatProps) => {
           )}
         </div>
 
-        {/* content */}
+        {/* chat feed */}
         <ScrollArea className="h-[calc(100%-3.5rem-3.5rem)]">
-          <div className="flex flex-col items-center gap-6 p-6">
+          <div className="flex flex-col items-center gap-3 p-6" ref={scrollRef}>
             {messages.map((message) => (
               <div
                 key={message._id}
@@ -77,7 +95,14 @@ export const Chat = ({ preload }: ChatProps) => {
                   'flex w-full max-w-[80ch] flex-col gap-2 rounded border bg-gray-2 p-4',
                 )}
               >
-                <Heading size="2">{message.role}</Heading>
+                <div className="flex justify-between">
+                  <Heading size="2">{message.role}</Heading>
+
+                  <MessageMenu messageId={message._id}>
+                    <UIIconButton icon={MoreHorizontalIcon} label="message menu" size="1" />
+                  </MessageMenu>
+                </div>
+
                 <div className="prose prose-invert">
                   {message.content.split('\n').map((p, i) => (
                     <Text key={i} as="p">
@@ -85,20 +110,17 @@ export const Chat = ({ preload }: ChatProps) => {
                     </Text>
                   ))}
                 </div>
+
+                {/* pending state */}
+                {message.job?.status === 'pending' && <LoaderBars />}
               </div>
             ))}
           </div>
         </ScrollArea>
 
         {/* input */}
-        <div className="flex h-14 items-center gap-3 border-t px-3">
-          <UIIconButton icon={ImageIcon} label="do something with an image" disabled />
-          <UIIconButton icon={SmileIcon} label="do something with a smiley face" disabled />
 
-          <Textarea inputAtom={TEMPchatinputatom} hideLabel />
-
-          <UIIconButton icon={SendHorizonalIcon} label="send message" variant="outline" />
-        </div>
+        <MessageInput inputAtom={threadAtoms.message} onSend={send} />
       </div>
 
       {/* sidebar */}

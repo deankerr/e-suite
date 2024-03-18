@@ -1,9 +1,9 @@
-import { IconButton } from '@/app/components/ui/IconButton'
 import { cn } from '@/lib/utils'
 import { useAtom } from 'jotai'
-import { SendIcon } from 'lucide-react'
+import { SendHorizonalIcon, SmileIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 import { Textarea } from '../ui/Textarea'
+import { UIIconButton } from '../ui/UIIconButton'
 import { TextInputAtom } from './useThread'
 
 type MessageInputProps = {
@@ -24,9 +24,11 @@ export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(functi
   return (
     <div
       {...props}
-      className={cn('flex w-full items-center gap-2 p-2', className)}
+      className={cn('flex h-14 items-center gap-3 border-t px-3', className)}
       ref={forwardedRef}
     >
+      <UIIconButton icon={SmileIcon} label="do something with a smiley face" disabled />
+
       <Textarea
         hideLabel
         inputAtom={inputAtom}
@@ -39,9 +41,11 @@ export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(functi
           }
         }}
       />
-      <IconButton
-        lucideIcon={SendIcon}
-        variant="outline"
+
+      <UIIconButton
+        icon={SendHorizonalIcon}
+        label="send message"
+        // variant="outline"
         onClick={() => send()}
         disabled={!value}
       />
