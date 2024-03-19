@@ -19,7 +19,7 @@ export const UIIconButton = forwardRef<
     <RxIconButton
       variant="ghost"
       {...props}
-      className={cn('m-0 cursor-pointer disabled:cursor-not-allowed', className)}
+      className={cn('cursor-pointer disabled:cursor-not-allowed', className)}
       ref={forwardedRef}
     >
       <AccessibleIcon label={label}>{LuIcon ? <LuIcon className="" /> : children}</AccessibleIcon>

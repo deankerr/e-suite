@@ -20,13 +20,16 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
   return (
     <div
       {...props}
-      className={cn('flex w-full max-w-[80ch] flex-col gap-1 rounded border p-3', className)}
+      className={cn(
+        'flex w-full max-w-[80ch] flex-col gap-1 rounded border p-3 sm:gap-1',
+        className,
+      )}
       ref={forwardedRef}
     >
       <div className="flex-between">
         <Heading size="2">{message.name ?? style.role}</Heading>
 
-        <div className="">
+        <div className="flex gap-2.5">
           <UIIconButton
             icon={SpeechIcon}
             label="speak"

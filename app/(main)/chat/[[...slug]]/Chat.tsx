@@ -52,7 +52,7 @@ export const Chat = ({ preload }: ChatProps) => {
     <>
       <div className="h-full grow overflow-hidden">
         {/* header */}
-        <div className="flex-between h-14 border-b px-1 sm:gap-2 sm:px-3">
+        <div className="flex-between h-14 border-b px-3 sm:gap-2">
           {/* open navbar button */}
           {!navbarIsOpen && (
             <UIIconButton
@@ -79,7 +79,7 @@ export const Chat = ({ preload }: ChatProps) => {
 
         {/* chat feed */}
         <ScrollArea className="h-[calc(100%-3.5rem-4rem)]">
-          <div className="flex flex-col items-center gap-3 p-6" ref={scrollRef}>
+          <div className="flex flex-col items-center gap-3 p-3 sm:p-6" ref={scrollRef}>
             {messages.map((message) => (
               <MessageBubble message={message} key={message._id} />
             ))}

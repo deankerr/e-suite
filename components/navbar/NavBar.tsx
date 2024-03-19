@@ -29,13 +29,17 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
   return (
     <div
       {...props}
-      className={cn('h-full w-16 shrink-0', navbarIsOpen ? 'w-80' : 'w-14', className)}
+      className={cn(
+        'h-full w-0 shrink-0 sm:block',
+        navbarIsOpen ? 'sm:w-80' : 'sm:w-14',
+        className,
+      )}
       ref={forwardedRef}
     >
       <div
         className={cn(
-          '@container z-10 flex h-full w-80 shrink-0 flex-col border-r bg-gray-1',
-          !navbarIsOpen && 'w-14 has-[:hover]:absolute has-[:hover]:w-80',
+          '@container z-10 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r bg-gray-1 sm:flex',
+          navbarIsOpen ? 'block sm:w-80' : 'w-14 has-[:hover]:absolute has-[:hover]:w-80',
           className,
         )}
       >
@@ -59,7 +63,10 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
         </div>
 
         {/* tabs */}
-        <Tabs.Root defaultValue="Chat" className="flex grow flex-col overflow-hidden">
+        <Tabs.Root
+          defaultValue="Chat"
+          className="flex max-h-[calc(100%-3.5rem-4rem)] grow flex-col overflow-hidden"
+        >
           <Tabs.List className={cn('flex h-14 shrink-0 items-center border-b')}>
             {menuTabs.map((t) => {
               const [title, icon] = t
