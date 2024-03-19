@@ -1,27 +1,24 @@
 'use client'
 
 import { Logo } from '@/app/components/ui/Logo'
-import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import * as Tabs from '@radix-ui/react-tabs'
 import { Heading } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
 import { ImageIcon, MessagesSquareIcon, PanelLeftCloseIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
-import { navbarOpenAtom } from './atoms'
-import { ChatMenuBarList } from './threads/ChatMenuBarList'
-import { UIIconButton } from './ui/UIIconButton'
+import { navbarOpenAtom } from '../atoms'
+import { UIIconButton } from '../ui/UIIconButton'
 
-type NavBarProps = {} & React.ComponentProps<'div'>
+type NavBarProps = {
+  chatList?: JSX.Element
+} & React.ComponentProps<'div'>
 
 export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
-  { className, children, ...props },
+  { className, chatList, children, ...props },
   forwardedRef,
 ) {
-  const threads = useQuery(api.threads.threads.list)
-
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
 
   const menuTabs = [
@@ -33,8 +30,8 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
     <div
       {...props}
       className={cn(
-        'flex h-full w-14 shrink-0 flex-col border-r bg-gray-1',
-        navbarIsOpen && 'w-80',
+        'flex h-full shrink-0 flex-col border-r bg-gray-1',
+        navbarIsOpen ? 'w-80' : 'w-14',
         className,
       )}
       ref={forwardedRef}
@@ -67,7 +64,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
       </div>
 
       {/* tabs */}
-      <Tabs.Root defaultValue="Chat" className="flex flex-col overflow-hidden">
+      <Tabs.Root defaultValue="Chat" className="flex grow flex-col overflow-hidden">
         <Tabs.List className={cn('flex h-12 shrink-0 items-center border-b')}>
           {menuTabs.map((t) => {
             const [title, icon] = t
@@ -76,7 +73,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
                 key={title}
                 value={title}
                 className={cn(
-                  'flex h-full w-full items-center justify-center gap-2 border-b border-b-transparent text-gray-10',
+                  'flex h-full w-full items-center justify-center gap-2 border-b-2 border-b-transparent text-gray-10',
                   'hover:bg-gray-2 hover:text-gray-11 data-[state=active]:border-b-accent data-[state=active]:text-gray-12 data-[state=active]:hover:text-gray-12',
                   !navbarIsOpen && 'hidden data-[state=active]:flex',
                 )}
@@ -89,17 +86,17 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
         </Tabs.List>
 
         {/* chat */}
-        <Tabs.Content value="Chat" className="overflow-hidden">
-          <ChatMenuBarList threads={threads} />
+        <Tabs.Content value="Chat" asChild>
+          {chatList}
         </Tabs.Content>
 
         {/* generate */}
-        <Tabs.Content value="Generate">generate</Tabs.Content>
+        <Tabs.Content value="Generate" className="grid grow place-content-center">
+          <div className="text-gray-8">implement me</div>
+        </Tabs.Content>
       </Tabs.Root>
 
-      <div className="flex h-14 shrink-0 grow items-center justify-center border-t p-3">
-        {children}
-      </div>
+      <div className="flex h-14 shrink-0 items-center justify-center border-t p-3">{children}</div>
     </div>
   )
 })

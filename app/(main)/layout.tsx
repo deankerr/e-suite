@@ -1,24 +1,43 @@
-import { NavBar } from '@/components/NavBar'
-import { auth, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import { ChatList } from '@/components/navbar/ChatList'
+import { NavBar } from '@/components/navbar/NavBar'
+import { LoaderBars } from '@/components/ui/LoaderBars'
+import { getAuthToken } from '@/lib/auth'
+import { SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import { Suspense } from 'react'
 import { Button } from '../components/ui/Button'
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  // AppLayout
-  const { userId } = auth()
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const token = await getAuthToken()
 
   return (
     <div className="flex h-full overflow-hidden">
-      <NavBar>
+      <NavBar
+        chatList={
+          token ? (
+            <Suspense
+              fallback={
+                <div className="flex-center h-full">
+                  <LoaderBars />
+                </div>
+              }
+            >
+              <ChatList />
+            </Suspense>
+          ) : (
+            <div className="flex-center h-full text-center text-gray-8">not logged in</div>
+          )
+        }
+      >
         <UserButton />
 
-        {!userId && (
-          <div className="flex flex-col justify-center gap-5">
+        {!token && (
+          <div className="flex justify-center gap-5">
             <SignUpButton mode="modal">
-              <Button size="3">Create account</Button>
+              <Button size="2">Create account</Button>
             </SignUpButton>
 
             <SignInButton mode="modal">
-              <Button size="3">Log in</Button>
+              <Button size="2">Log in</Button>
             </SignInButton>
           </div>
         )}

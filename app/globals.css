@@ -18,6 +18,10 @@
 @tailwind utilities;
 
 @layer components {
+  .flex-center {
+    @apply flex flex-col items-center justify-center;
+  }
+
   .bg-grid-dark {
     background-color: rgb(8, 8, 6);
     background-image: linear-gradient(#111110 2px, transparent 2px),
