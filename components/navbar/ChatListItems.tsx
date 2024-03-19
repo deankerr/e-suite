@@ -23,14 +23,19 @@ export const ChatListItems = forwardRef<HTMLDivElement, ChatListItemsProps>(func
   const threads = usePreloadedQuery(preload)
 
   return (
-    <ScrollArea {...props} scrollbars="vertical" className={cn('', className)} ref={forwardedRef}>
+    <ScrollArea
+      {...props}
+      scrollbars="vertical"
+      className={cn('h-full grow', className)}
+      ref={forwardedRef}
+    >
       <div className="flex flex-col-reverse divide-y divide-gray-5">
         {threads?.map((thread) => (
           <NextLink
             key={thread._id}
             href={`/chat/${thread._id}`}
             className={cn(
-              'flex h-14 w-80 shrink-0 items-center gap-1 overflow-hidden py-3',
+              'flex h-16 w-80 shrink-0 items-center gap-1 overflow-hidden py-3 pr-3',
               active(thread._id) ? 'bg-gray-2' : 'hover:bg-gray-2',
             )}
           >

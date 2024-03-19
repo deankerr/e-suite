@@ -9,6 +9,7 @@ const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   plugins: [
     require('@tailwindcss/typography'),
+    require('@tailwindcss/container-queries'),
     radixThemePlugin({
       useTailwindColorNames: false,
       useTailwindRadiusNames: false,
@@ -72,6 +73,9 @@ const config: Config = {
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
         wipedown: 'wipeDown 1.75s linear infinite',
+      },
+      containers: {
+        '2xs': '16rem',
       },
     },
     screens: {
