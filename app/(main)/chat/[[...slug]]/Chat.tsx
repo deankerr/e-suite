@@ -70,11 +70,12 @@ export const Chat = ({ preload }: ChatProps) => {
           <div className="hidden grow sm:block"></div>
 
           {/* parameters sidebar button */}
-          {!sidebarIsOpen && (
-            <UIIconButton label="open parameters sidebar" onClick={() => setSidebarOpen(true)}>
-              <SlidersHorizontalIcon />
-            </UIIconButton>
-          )}
+          <UIIconButton
+            label="toggle parameters sidebar"
+            onClick={() => setSidebarOpen(!sidebarIsOpen)}
+          >
+            {sidebarIsOpen ? <XIcon /> : <SlidersHorizontalIcon />}
+          </UIIconButton>
         </div>
 
         {/* chat feed */}
@@ -88,35 +89,30 @@ export const Chat = ({ preload }: ChatProps) => {
 
         {/* input */}
         <MessageInput inputAtom={threadAtoms.message} onSend={send} />
-      </div>
 
-      {/* sidebar */}
-      <div
-        className={cn(
-          'right-0 h-full w-80 shrink-0 translate-x-0 border-l',
-          !sidebarIsOpen && 'absolute translate-x-full',
-        )}
-      >
-        {/* header */}
-        <div className="flex h-14 items-center justify-end border-b px-4">
-          <UIIconButton label="close parameters sidebar" onClick={() => setSidebarOpen(false)}>
-            <XIcon />
-          </UIIconButton>
-        </div>
-
-        <div>
+        {/* sidebar */}
+        <div
+          className={cn(
+            'absolute right-0 top-14 h-[calc(100%-3.5rem)] w-screen translate-x-0 overflow-hidden bg-gray-1 px-2 transition-transform sm:w-80 sm:border-l',
+            !sidebarIsOpen && 'absolute translate-x-full',
+          )}
+        >
           <Tabs.Root defaultValue="parameters">
-            <Tabs.List>
+            <Tabs.List className="shrink-0">
               <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
               <Tabs.Trigger value="details">Details</Tabs.Trigger>
             </Tabs.List>
 
-            <Tabs.Content value="parameters">
-              <InferenceParameterControls threadAtoms={threadAtoms} />
+            <Tabs.Content value="parameters" asChild>
+              <ScrollArea>
+                <div className="mx-auto max-w-80">
+                  <InferenceParameterControls threadAtoms={threadAtoms} />
+                </div>
+              </ScrollArea>
             </Tabs.Content>
 
-            <Tabs.Content value="details">
-              <div className="flex flex-col justify-center gap-4 p-4">
+            <Tabs.Content value="details" asChild>
+              <div className="flex grow flex-col justify-center gap-4 p-4">
                 {thread && thread.owner.isViewer ? (
                   <>
                     <PermissionsCard

@@ -47,7 +47,7 @@ export const ChatListItems = forwardRef<HTMLDivElement, ChatListItemsProps>(func
             </div>
 
             {/* details */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
               {/* title */}
               <Heading
                 size="2"
