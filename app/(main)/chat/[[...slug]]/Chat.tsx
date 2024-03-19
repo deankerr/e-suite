@@ -4,25 +4,18 @@ import { PermissionsCard } from '@/app/components/PermissionsCard'
 import { Button } from '@/app/components/ui/Button'
 import { navbarOpenAtom, sidebarOpenAtom } from '@/components/atoms'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
+import { MessageBubble } from '@/components/threads/MessageBubble'
 import { MessageInput } from '@/components/threads/MessageInput'
-import { MessageMenu } from '@/components/threads/MessageMenu'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { useThread } from '@/components/threads/useThread'
-import { LoaderBars } from '@/components/ui/LoaderBars'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
-import { Heading, ScrollArea, Tabs, Text } from '@radix-ui/themes'
+import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
-import {
-  MessageCircleIcon,
-  MoreHorizontalIcon,
-  PanelLeftOpenIcon,
-  SlidersHorizontalIcon,
-  XIcon,
-} from 'lucide-react'
+import { PanelLeftOpenIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 type ChatProps = {
@@ -59,7 +52,7 @@ export const Chat = ({ preload }: ChatProps) => {
     <>
       <div className="h-full grow overflow-hidden">
         {/* header */}
-        <div className="flex h-14 items-center gap-2 border-b px-4">
+        <div className="flex-between h-14 border-b px-1 sm:gap-2 sm:px-3">
           {/* open navbar button */}
           {!navbarIsOpen && (
             <UIIconButton
@@ -71,11 +64,10 @@ export const Chat = ({ preload }: ChatProps) => {
             </UIIconButton>
           )}
           <Heading size="3" className="flex items-center gap-1.5">
-            <MessageCircleIcon className="size-5" />
             {title}
           </Heading>
 
-          <div className="grow"></div>
+          <div className="hidden grow sm:block"></div>
 
           {/* parameters sidebar button */}
           {!sidebarIsOpen && (
@@ -86,40 +78,15 @@ export const Chat = ({ preload }: ChatProps) => {
         </div>
 
         {/* chat feed */}
-        <ScrollArea className="h-[calc(100%-3.5rem-3.5rem)]">
+        <ScrollArea className="h-[calc(100%-3.5rem-4rem)]">
           <div className="flex flex-col items-center gap-3 p-6" ref={scrollRef}>
             {messages.map((message) => (
-              <div
-                key={message._id}
-                className={cn(
-                  'flex w-full max-w-[80ch] flex-col gap-2 rounded border bg-gray-2 p-4',
-                )}
-              >
-                <div className="flex justify-between">
-                  <Heading size="2">{message.role}</Heading>
-
-                  <MessageMenu messageId={message._id}>
-                    <UIIconButton icon={MoreHorizontalIcon} label="message menu" size="1" />
-                  </MessageMenu>
-                </div>
-
-                <div className="prose prose-invert">
-                  {message.content.split('\n').map((p, i) => (
-                    <Text key={i} as="p">
-                      {p}
-                    </Text>
-                  ))}
-                </div>
-
-                {/* pending state */}
-                {message.job?.status === 'pending' && <LoaderBars />}
-              </div>
+              <MessageBubble message={message} key={message._id} />
             ))}
           </div>
         </ScrollArea>
 
         {/* input */}
-
         <MessageInput inputAtom={threadAtoms.message} onSend={send} />
       </div>
 

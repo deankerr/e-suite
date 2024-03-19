@@ -24,7 +24,7 @@ export const MessageInput = forwardRef<HTMLDivElement, MessageInputProps>(functi
   return (
     <div
       {...props}
-      className={cn('flex h-14 items-center gap-3 border-t px-3', className)}
+      className={cn('flex h-16 items-center gap-3 border-t px-3', className)}
       ref={forwardedRef}
     >
       <UIIconButton icon={SmileIcon} label="do something with a smiley face" disabled />
