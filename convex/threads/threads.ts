@@ -27,7 +27,7 @@ export const getThread = async (ctx: QueryCtx, id: Id<'threads'>): Promise<Threa
     .edge('messages')
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .take(20)
+    .take(100)
     .map(async (message) => {
       const voiceover = await message.edge('voiceover')
       const voiceOverUrl = voiceover?.storageId

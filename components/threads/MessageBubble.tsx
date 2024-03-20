@@ -22,15 +22,9 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
   const voiceoverUrl = message.voiceover?.url
 
   useEffect(() => {
-    if (!voiceoverUrl) return
-    load(voiceoverUrl, {
-      format: 'mp3',
-    })
-
     return () => cleanup()
-  }, [voiceoverUrl, load, cleanup])
+  }, [cleanup])
 
-  const voiceoverIcon = playing ? SquareIcon : isLoading ? Loader2Icon : Volume2Icon
   return (
     <div
       {...props}
@@ -45,13 +39,22 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
 
         <div className="flex gap-2.5">
           <UIIconButton
-            icon={voiceoverIcon}
+            icon={playing ? SquareIcon : isLoading ? Loader2Icon : Volume2Icon}
             label="play voiceover"
             size="1"
-            disabled={!isReady}
-            color={isReady ? undefined : 'gray'}
+            disabled={!voiceoverUrl}
+            color={voiceoverUrl ? undefined : 'gray'}
             className={cn(isLoading && 'animate-spin')}
-            onClick={() => (playing ? stop() : play())}
+            onClick={() =>
+              playing
+                ? stop()
+                : isReady
+                  ? play()
+                  : load(voiceoverUrl ?? '', {
+                      format: 'mp3',
+                      autoplay: true,
+                    })
+            }
           />
 
           <MessageMenu messageId={message._id}>
