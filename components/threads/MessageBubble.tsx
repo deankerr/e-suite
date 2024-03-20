@@ -1,23 +1,36 @@
 import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Heading, Text } from '@radix-ui/themes'
-import { MoreHorizontalIcon, SpeechIcon } from 'lucide-react'
-import { forwardRef } from 'react'
+import { Loader2Icon, MoreHorizontalIcon, SquareIcon, Volume2Icon } from 'lucide-react'
+import { forwardRef, useEffect } from 'react'
+import { useAudioPlayer } from 'react-use-audio-player'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
 
 type MessageBubbleProps = {
   message: Message
-  handlePlayVoiceover: (message: Message) => void
 } & React.ComponentProps<'div'>
 
 export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(function MessageBubble(
-  { message, handlePlayVoiceover, className, ...props },
+  { message, className, ...props },
   forwardedRef,
 ) {
   const style = getRoleStyle(message.role)
 
+  const { load, isReady, isLoading, playing, play, stop, cleanup } = useAudioPlayer()
+  const voiceoverUrl = message.voiceover?.url
+
+  useEffect(() => {
+    if (!voiceoverUrl) return
+    load(voiceoverUrl, {
+      format: 'mp3',
+    })
+
+    return () => cleanup()
+  }, [voiceoverUrl, load, cleanup])
+
+  const voiceoverIcon = playing ? SquareIcon : isLoading ? Loader2Icon : Volume2Icon
   return (
     <div
       {...props}
@@ -32,11 +45,13 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
 
         <div className="flex gap-2.5">
           <UIIconButton
-            icon={SpeechIcon}
-            label="speak"
+            icon={voiceoverIcon}
+            label="play voiceover"
             size="1"
-            disabled={!message.voiceover?.url}
-            onClick={() => handlePlayVoiceover(message)}
+            disabled={!isReady}
+            color={isReady ? undefined : 'gray'}
+            className={cn(isLoading && 'animate-spin')}
+            onClick={() => (playing ? stop() : play())}
           />
 
           <MessageMenu messageId={message._id}>

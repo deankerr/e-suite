@@ -2,6 +2,7 @@
 
 import { PermissionsCard } from '@/app/components/PermissionsCard'
 import { Button } from '@/app/components/ui/Button'
+import { Label } from '@/app/components/ui/Label'
 import { navbarOpenAtom, sidebarOpenAtom } from '@/components/atoms'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
 import { MessageBubble } from '@/components/threads/MessageBubble'
@@ -11,14 +12,12 @@ import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { useThread } from '@/components/threads/useThread'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
-import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
-import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
+import { Heading, ScrollArea, Switch, Tabs } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
 import { PanelLeftOpenIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
-import { useEffect, useRef } from 'react'
-import { useAudioPlayer } from 'react-use-audio-player'
+import { useEffect, useRef, useState } from 'react'
 
 type ChatProps = {
   preload: Preloaded<typeof api.threads.threads.get>
@@ -39,21 +38,7 @@ export const Chat = ({ preload }: ChatProps) => {
     }
   }, [messages])
 
-  const { cleanup, load } = useAudioPlayer()
-
-  const playMessageAudio = (message: Message) => {
-    const url = message.voiceover?.url
-    if (!url) return
-
-    load(url, {
-      autoplay: true,
-      format: 'mp3',
-    })
-  }
-
-  useEffect(() => {
-    return () => cleanup()
-  }, [cleanup])
+  const [autoplay, setAutoplay] = useState(true)
 
   return (
     <>
@@ -92,11 +77,7 @@ export const Chat = ({ preload }: ChatProps) => {
             <ScrollArea className="h-[calc(100%-4rem)]">
               <div className="flex flex-col items-center gap-3 p-3 sm:gap-6 sm:p-6" ref={scrollRef}>
                 {messages.map((message) => (
-                  <MessageBubble
-                    message={message}
-                    handlePlayVoiceover={playMessageAudio}
-                    key={message._id}
-                  />
+                  <MessageBubble message={message} key={message._id} />
                 ))}
               </div>
             </ScrollArea>
@@ -142,6 +123,22 @@ export const Chat = ({ preload }: ChatProps) => {
                       </RemoveThreadDialog>
                     </>
                   ) : null}
+
+                  {/* audio */}
+                  <div className="space-y-1 rounded border border-gold-7 bg-surface p-2 text-xs transition-transform">
+                    <Heading size="1">Audio</Heading>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="private" className="text-xs font-medium">
+                        Autoplay voiceovers
+                      </Label>
+                      <Switch
+                        id="private"
+                        size="1"
+                        checked={autoplay}
+                        onCheckedChange={setAutoplay}
+                      />
+                    </div>
+                  </div>
                 </div>
               </Tabs.Content>
             </Tabs.Root>
