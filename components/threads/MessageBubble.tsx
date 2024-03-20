@@ -1,7 +1,13 @@
 import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Heading, Text } from '@radix-ui/themes'
-import { Loader2Icon, MoreHorizontalIcon, SquareIcon, Volume2Icon } from 'lucide-react'
+import {
+  FileQuestionIcon,
+  Loader2Icon,
+  MoreHorizontalIcon,
+  SquareIcon,
+  Volume2Icon,
+} from 'lucide-react'
 import { forwardRef, useEffect } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
 import { LoaderBars } from '../ui/LoaderBars'
@@ -10,10 +16,11 @@ import { MessageMenu } from './MessageMenu'
 
 type MessageBubbleProps = {
   message: Message
+  autoplayVoiceover?: boolean
 } & React.ComponentProps<'div'>
 
 export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(function MessageBubble(
-  { message, className, ...props },
+  { message, autoplayVoiceover = false, className, ...props },
   forwardedRef,
 ) {
   const style = getRoleStyle(message.role)
@@ -21,9 +28,17 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
   const { load, isReady, isLoading, playing, play, stop, cleanup } = useAudioPlayer()
   const voiceoverUrl = message.voiceover?.url
 
+  const voiceoverIsPending = message.job?.status === 'pending'
+  const voiceoverIsError = message.job?.status === 'error'
+
   useEffect(() => {
+    if (!voiceoverUrl || !autoplayVoiceover) return
+    load(voiceoverUrl, {
+      format: 'mp3',
+      autoplay: true,
+    })
     return () => cleanup()
-  }, [cleanup])
+  }, [autoplayVoiceover, cleanup, load, voiceoverUrl])
 
   return (
     <div
@@ -39,7 +54,15 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
 
         <div className="flex gap-2.5">
           <UIIconButton
-            icon={playing ? SquareIcon : isLoading ? Loader2Icon : Volume2Icon}
+            icon={
+              playing
+                ? SquareIcon
+                : isLoading || voiceoverIsPending
+                  ? Loader2Icon
+                  : voiceoverIsError
+                    ? FileQuestionIcon
+                    : Volume2Icon
+            }
             label="play voiceover"
             size="1"
             disabled={!voiceoverUrl}

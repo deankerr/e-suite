@@ -24,7 +24,9 @@ type ChatProps = {
 }
 
 export const Chat = ({ preload }: ChatProps) => {
-  const { thread, messages, send, threadAtoms, updatePermissions } = useThread({ preload })
+  const { thread, messages, send, threadAtoms, updatePermissions, preloadedMessageIds } = useThread(
+    { preload },
+  )
 
   const title = thread?.title ?? 'New Chat'
 
@@ -72,12 +74,16 @@ export const Chat = ({ preload }: ChatProps) => {
 
         {/* content area */}
         <div className="flex grow overflow-hidden">
-          {/* chat feed */}
+          {/* message feed */}
           <div className="grow border-r">
             <ScrollArea className="h-[calc(100%-4rem)]">
-              <div className="flex flex-col items-center gap-3 p-3 sm:gap-6 sm:p-6" ref={scrollRef}>
+              <div className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4" ref={scrollRef}>
                 {messages.map((message) => (
-                  <MessageBubble message={message} key={message._id} />
+                  <MessageBubble
+                    message={message}
+                    autoplayVoiceover={autoplay && !preloadedMessageIds.includes(message._id)}
+                    key={message._id}
+                  />
                 ))}
               </div>
             </ScrollArea>
@@ -90,7 +96,7 @@ export const Chat = ({ preload }: ChatProps) => {
           <div
             className={cn(
               'absolute right-0 top-0 h-full w-screen shrink-0 translate-x-0 overflow-hidden bg-gray-1 px-2 transition-transform sm:w-80 sm:border-l lg:static',
-              !sidebarIsOpen && 'absolute translate-x-full',
+              !sidebarIsOpen && 'absolute translate-x-full lg:absolute',
             )}
           >
             <Tabs.Root defaultValue="parameters">
@@ -109,6 +115,21 @@ export const Chat = ({ preload }: ChatProps) => {
 
               <Tabs.Content value="details" asChild>
                 <div className="flex grow flex-col justify-center gap-4 p-4">
+                  <div className="px-1">
+                    {/* audio */}
+                    <div className="flex-between gap-2">
+                      <Label htmlFor="autoplay" className="text-sm font-medium">
+                        Play new voiceovers
+                      </Label>
+                      <Switch
+                        id="autoplay"
+                        size="1"
+                        checked={autoplay}
+                        onCheckedChange={setAutoplay}
+                      />
+                    </div>
+                  </div>
+
                   {thread && thread.owner.isViewer ? (
                     <>
                       <PermissionsCard
@@ -123,22 +144,6 @@ export const Chat = ({ preload }: ChatProps) => {
                       </RemoveThreadDialog>
                     </>
                   ) : null}
-
-                  {/* audio */}
-                  <div className="space-y-1 rounded border border-gold-7 bg-surface p-2 text-xs transition-transform">
-                    <Heading size="1">Audio</Heading>
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor="private" className="text-xs font-medium">
-                        Autoplay voiceovers
-                      </Label>
-                      <Switch
-                        id="private"
-                        size="1"
-                        checked={autoplay}
-                        onCheckedChange={setAutoplay}
-                      />
-                    </div>
-                  </div>
                 </div>
               </Tabs.Content>
             </Tabs.Root>

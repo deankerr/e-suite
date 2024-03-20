@@ -27,8 +27,9 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
       _creationTime: Date.now(),
       messages: [],
       owner: await getUser(ctx, ctx.viewerIdX()),
-      userId: await ctx.viewerIdX(),
+      userId: ctx.viewerIdX(),
       permissions: { private: true },
+      title: 'New Chat',
     }
   }
 

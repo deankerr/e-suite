@@ -3,7 +3,7 @@ import { Permissions } from '@/convex/schema'
 import { Preloaded, useMutation, usePreloadedQuery } from 'convex/react'
 import { useAtomCallback } from 'jotai/utils'
 import { useRouter } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { createNumberInputAtom, createTextInputAtom } from '../atoms'
 
@@ -19,6 +19,7 @@ export const useThread = ({ preload }: { preload: Preloaded<typeof api.threads.t
   const threadId = thread?._id
 
   const messages = useMemo(() => thread?.messages.toReversed() ?? [], [thread?.messages])
+  const [preloadedMessageIds] = useState(() => messages.map((m) => m._id))
 
   //* Parameters
   const threadAtoms = useMemo(
@@ -165,7 +166,7 @@ export const useThread = ({ preload }: { preload: Preloaded<typeof api.threads.t
       })
   }
 
-  return { thread, messages, send, threadAtoms, updatePermissions }
+  return { thread, messages, send, threadAtoms, updatePermissions, preloadedMessageIds }
 }
 
 function createThreadAtoms(threadId?: string) {
