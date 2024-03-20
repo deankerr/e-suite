@@ -11,12 +11,14 @@ import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { useThread } from '@/components/threads/useThread'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
+import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
 import { PanelLeftOpenIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { useAudioPlayer } from 'react-use-audio-player'
 
 type ChatProps = {
   preload: Preloaded<typeof api.threads.threads.get>
@@ -36,17 +38,22 @@ export const Chat = ({ preload }: ChatProps) => {
       scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
   }, [messages])
-  /*
-    useAudio()
-    const [_, enqueue] = useEnqueueAudio()
-    enqueue(
-      messages
-        .filter((m) => m.voiceover?.url)
-        .map((m) => ({ messageId: m._id, url: m.voiceover?.url ?? '', played: false })),
-    )
 
-    const audioPlayer = useGlobalAudioPlayer()
-  */
+  const { cleanup, load } = useAudioPlayer()
+
+  const playMessageAudio = (message: Message) => {
+    const url = message.voiceover?.url
+    if (!url) return
+
+    load(url, {
+      autoplay: true,
+      format: 'mp3',
+    })
+  }
+
+  useEffect(() => {
+    return () => cleanup()
+  }, [cleanup])
 
   return (
     <>
@@ -81,11 +88,15 @@ export const Chat = ({ preload }: ChatProps) => {
         {/* content area */}
         <div className="flex grow overflow-hidden">
           {/* chat feed */}
-          <div className="grow">
+          <div className="grow border-r">
             <ScrollArea className="h-[calc(100%-4rem)]">
               <div className="flex flex-col items-center gap-3 p-3 sm:gap-6 sm:p-6" ref={scrollRef}>
                 {messages.map((message) => (
-                  <MessageBubble message={message} key={message._id} />
+                  <MessageBubble
+                    message={message}
+                    handlePlayVoiceover={playMessageAudio}
+                    key={message._id}
+                  />
                 ))}
               </div>
             </ScrollArea>

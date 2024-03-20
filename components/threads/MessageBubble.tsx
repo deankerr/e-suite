@@ -9,10 +9,11 @@ import { MessageMenu } from './MessageMenu'
 
 type MessageBubbleProps = {
   message: Message
+  handlePlayVoiceover: (message: Message) => void
 } & React.ComponentProps<'div'>
 
 export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(function MessageBubble(
-  { message, className, ...props },
+  { message, handlePlayVoiceover, className, ...props },
   forwardedRef,
 ) {
   const style = getRoleStyle(message.role)
@@ -35,6 +36,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
             label="speak"
             size="1"
             disabled={!message.voiceover?.url}
+            onClick={() => handlePlayVoiceover(message)}
           />
 
           <MessageMenu messageId={message._id}>
