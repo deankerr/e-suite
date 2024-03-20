@@ -50,9 +50,9 @@ export const Chat = ({ preload }: ChatProps) => {
 
   return (
     <>
-      <div className="h-full grow overflow-hidden">
+      <div className="flex h-full grow flex-col overflow-hidden">
         {/* header */}
-        <div className="flex-between h-14 border-b px-3 sm:gap-2">
+        <div className="flex-between h-14 shrink-0 border-b px-3 sm:gap-2">
           {/* open navbar button */}
           {!navbarIsOpen && (
             <UIIconButton
@@ -69,7 +69,7 @@ export const Chat = ({ preload }: ChatProps) => {
 
           <div className="hidden grow sm:block"></div>
 
-          {/* parameters sidebar button */}
+          {/* sidebar button */}
           <UIIconButton
             label="toggle parameters sidebar"
             onClick={() => setSidebarOpen(!sidebarIsOpen)}
@@ -78,58 +78,63 @@ export const Chat = ({ preload }: ChatProps) => {
           </UIIconButton>
         </div>
 
-        {/* chat feed */}
-        <ScrollArea className="h-[calc(100%-3.5rem-4rem)]">
-          <div className="flex flex-col items-center gap-3 p-3 sm:p-6" ref={scrollRef}>
-            {messages.map((message) => (
-              <MessageBubble message={message} key={message._id} />
-            ))}
-          </div>
-        </ScrollArea>
-
-        {/* input */}
-        <MessageInput inputAtom={threadAtoms.message} onSend={send} />
-
-        {/* sidebar */}
-        <div
-          className={cn(
-            'absolute right-0 top-14 h-[calc(100%-3.5rem)] w-screen translate-x-0 overflow-hidden bg-gray-1 px-2 transition-transform sm:w-80 sm:border-l',
-            !sidebarIsOpen && 'absolute translate-x-full',
-          )}
-        >
-          <Tabs.Root defaultValue="parameters">
-            <Tabs.List className="shrink-0">
-              <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
-              <Tabs.Trigger value="details">Details</Tabs.Trigger>
-            </Tabs.List>
-
-            <Tabs.Content value="parameters" asChild>
-              <ScrollArea>
-                <div className="mx-auto max-w-80">
-                  <InferenceParameterControls threadAtoms={threadAtoms} />
-                </div>
-              </ScrollArea>
-            </Tabs.Content>
-
-            <Tabs.Content value="details" asChild>
-              <div className="flex grow flex-col justify-center gap-4 p-4">
-                {thread && thread.owner.isViewer ? (
-                  <>
-                    <PermissionsCard
-                      permissions={thread.permissions}
-                      onPermissionsChange={(permissions) => updatePermissions(permissions)}
-                    />
-                    <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
-                      <Button>Rename</Button>
-                    </RenameThreadDialog>
-                    <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
-                      <Button color="red">Delete Chat</Button>
-                    </RemoveThreadDialog>
-                  </>
-                ) : null}
+        {/* content area */}
+        <div className="flex grow overflow-hidden">
+          {/* chat feed */}
+          <div className="grow">
+            <ScrollArea className="h-[calc(100%-4rem)]">
+              <div className="flex flex-col items-center gap-3 p-3 sm:gap-6 sm:p-6" ref={scrollRef}>
+                {messages.map((message) => (
+                  <MessageBubble message={message} key={message._id} />
+                ))}
               </div>
-            </Tabs.Content>
-          </Tabs.Root>
+            </ScrollArea>
+
+            {/* input bar */}
+            <MessageInput inputAtom={threadAtoms.message} onSend={send} />
+          </div>
+
+          {/* sidebar */}
+          <div
+            className={cn(
+              'absolute right-0 top-0 h-full w-screen shrink-0 translate-x-0 overflow-hidden bg-gray-1 px-2 transition-transform sm:w-80 sm:border-l lg:static',
+              !sidebarIsOpen && 'absolute translate-x-full',
+            )}
+          >
+            <Tabs.Root defaultValue="parameters">
+              <Tabs.List className="shrink-0">
+                <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
+                <Tabs.Trigger value="details">Details</Tabs.Trigger>
+              </Tabs.List>
+
+              <Tabs.Content value="parameters" asChild>
+                <ScrollArea>
+                  <div className="mx-auto max-w-80">
+                    <InferenceParameterControls threadAtoms={threadAtoms} />
+                  </div>
+                </ScrollArea>
+              </Tabs.Content>
+
+              <Tabs.Content value="details" asChild>
+                <div className="flex grow flex-col justify-center gap-4 p-4">
+                  {thread && thread.owner.isViewer ? (
+                    <>
+                      <PermissionsCard
+                        permissions={thread.permissions}
+                        onPermissionsChange={(permissions) => updatePermissions(permissions)}
+                      />
+                      <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
+                        <Button>Rename</Button>
+                      </RenameThreadDialog>
+                      <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
+                        <Button color="red">Delete Chat</Button>
+                      </RemoveThreadDialog>
+                    </>
+                  ) : null}
+                </div>
+              </Tabs.Content>
+            </Tabs.Root>
+          </div>
         </div>
       </div>
     </>
