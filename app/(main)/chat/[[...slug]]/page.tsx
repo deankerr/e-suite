@@ -8,9 +8,7 @@ export default async function ChatPage({ params }: { params: { slug?: [Id<'threa
   const threadId = params.slug ? params.slug[0] : undefined
 
   const token = await getAuthToken()
-  const preloadedThread = threadId
-    ? await preloadQuery(api.threads.threads.get, { id: threadId }, { token })
-    : undefined
+  const preloadedThread = await preloadQuery(api.threads.threads.get, { id: threadId }, { token })
 
-  return threadId && preloadedThread ? <Chat preload={preloadedThread} /> : <div>Chat ?</div>
+  return <Chat preload={preloadedThread} />
 }

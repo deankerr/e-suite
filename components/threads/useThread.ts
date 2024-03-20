@@ -12,10 +12,10 @@ export type ThreadAtoms = ReturnType<typeof createThreadAtoms>
 export type TextInputAtom = ReturnType<typeof createTextInputAtom>
 export type NumberInputAtom = ReturnType<typeof createNumberInputAtom>
 
-export const useThread = (args: { preload: Preloaded<typeof api.threads.threads.get> }) => {
+export const useThread = ({ preload }: { preload: Preloaded<typeof api.threads.threads.get> }) => {
   const router = useRouter()
 
-  const thread = usePreloadedQuery(args.preload)
+  const thread = usePreloadedQuery(preload)
   const threadId = thread?._id
 
   const messages = useMemo(() => thread?.messages.toReversed() ?? [], [thread?.messages])
@@ -120,7 +120,7 @@ export const useThread = (args: { preload: Preloaded<typeof api.threads.threads.
     const { message, name, systemPrompt, ...inferenceParameters } = readAtomValues()
 
     runSend({
-      threadId: thread?._id,
+      threadId: threadId ? threadId : undefined,
       messages: [
         {
           role: 'user',
@@ -137,7 +137,7 @@ export const useThread = (args: { preload: Preloaded<typeof api.threads.threads.
     })
       .then((id) => {
         console.log('sent', id)
-        if (!thread) router.push(`/chat/${id}`)
+        if (!threadId) router.push(`/chat/${id}`)
       })
       .catch((error) => {
         console.error(error)

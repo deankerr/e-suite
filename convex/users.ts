@@ -24,6 +24,11 @@ export const getUser = async (ctx: QueryCtx, id: Id<'users'>) => {
   return publicUserSchema.parse({ ...user, isViewer })
 }
 
+export const getViewerUser = async (ctx: QueryCtx) => {
+  const user = await ctx.viewer()
+  return publicUserSchema.parse({ ...user, isViewer: true })
+}
+
 export const getViewer = query({
   args: {},
   handler: async (ctx) => {

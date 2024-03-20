@@ -19,7 +19,19 @@ export type Message = Doc<'messages'> & {
 
 export type Voiceover = Doc<'voiceovers'> & { url?: string; job: Doc<'jobs'> | null }
 
-export const getThread = async (ctx: QueryCtx, id: Id<'threads'>): Promise<Thread> => {
+export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thread> => {
+  if (!id) {
+    // "empty" thread
+    return {
+      _id: '' as Id<'threads'>,
+      _creationTime: Date.now(),
+      messages: [],
+      owner: await getUser(ctx, ctx.viewerIdX()),
+      userId: await ctx.viewerIdX(),
+      permissions: { private: true },
+    }
+  }
+
   const thread = await ctx.table('threads').getX(id)
   assert(!thread.deletionTime, 'Thread is deleted')
 
@@ -79,9 +91,11 @@ const getOrCreateThread = async (ctx: MutationCtx, id?: Id<'threads'>) => {
 
 export const get = query({
   args: {
-    id: v.id('threads'),
+    id: v.optional(v.id('threads')),
   },
   handler: async (ctx, { id }) => {
+    if (!id) return getThread(ctx, id)
+
     const thread = await ctx.table('threads').get(id)
     if (!thread || thread.deletionTime !== undefined) {
       return null
