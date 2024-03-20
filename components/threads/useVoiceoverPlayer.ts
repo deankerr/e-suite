@@ -1,64 +1,73 @@
+import { Id } from '@/convex/_generated/dataModel'
 import { Message } from '@/convex/threads/threads'
 import { useEffect, useState } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
 
+export type VoiceoverPlayer = ReturnType<typeof useVoiceoverPlayer>
 export const useVoiceoverPlayer = (messages: Message[]) => {
-  const { cleanup, load, stop, isLoading, playing, src } = useAudioPlayer()
-  const [sourceUrl, setSourceUrl] = useState('')
-  const [lastPlayedUrl, setLastPlayedUrl] = useState('')
+  const [autoplay, setAutoplay] = useState(true)
 
-  console.log(src)
-  const getNextSourceUrl = () => {
-    const currentIndex = messages.findIndex((message) => message.voiceover?.url === sourceUrl)
-    if (currentIndex === -1) return ''
-    return messages[currentIndex + 1]?.voiceover?.url ?? ''
-  }
+  const [hasAutoplayed, setHasAutoplayed] = useState(() => messages.map((message) => message._id))
 
-  const nextUrl = getNextSourceUrl()
+  const [playMessageId, setPlayMessageId] = useState<Id<'messages'> | null>(null)
+  const playMessage = messages.find((message) => message._id === playMessageId)
+
+  const autoplayMessage = autoplay
+    ? messages.find((message) => !hasAutoplayed.includes(message._id))
+    : null
+
+  const sourceMessage = playMessage ?? autoplayMessage
+  const sourceId = sourceMessage?._id
+  const sourceUrl = sourceMessage?.voiceover?.url
 
   useEffect(() => {
-    if (!sourceUrl) return
+    if (!autoplay) setHasAutoplayed(messages.map((message) => message._id))
+  }, [autoplay, messages])
 
+  const { cleanup, load, stop, isLoading, playing } = useAudioPlayer()
+  useEffect(() => {
+    if (!sourceUrl) return
+    console.log('load', sourceId)
     load(sourceUrl, {
       autoplay: true,
       format: 'mp3',
       onend: () => {
-        setLastPlayedUrl(sourceUrl)
-        setSourceUrl(nextUrl)
+        setPlayMessageId(null)
+        if (sourceId) setHasAutoplayed((list) => [...list, sourceId])
       },
     })
 
     return () => cleanup()
-  }, [cleanup, load, nextUrl, sourceUrl])
+  }, [cleanup, load, sourceUrl, sourceId])
 
-  // useEffect(() => {
-
-  // }, [])
-
-  const voiceovers = messages.map((message) => {
+  const statuses = messages.map((message) => {
     const job = message.voiceover?.job?.status
     const url = message.voiceover?.url
+    const isCurrent = sourceUrl === url
 
     const status = {
+      messageId: message._id,
       isAvailable: !!url,
-      isPlaying: sourceUrl === url && playing,
-      isLoading: sourceUrl === url && isLoading,
-      isPending: job === 'pending',
+      isPlaying: isCurrent && playing,
+      isLoading: (isCurrent && isLoading) || job === 'pending',
       isError: job === 'error',
     }
 
-    const controls = {
-      play: () => {
-        if (url && !status.isPlaying) setSourceUrl(url)
-      },
-      stop: () => {
-        stop()
-        setSourceUrl('')
-      },
-    }
-
-    return { ...status, ...controls }
+    return status
   })
 
-  return voiceovers
+  return {
+    autoplay,
+    setAutoplay,
+    statuses,
+    play: (id: Id<'messages'>) => {
+      setHasAutoplayed(messages.map((message) => message._id))
+      setPlayMessageId(id)
+    },
+    stop: () => {
+      stop()
+      setHasAutoplayed(messages.map((message) => message._id))
+      setPlayMessageId(null)
+    },
+  }
 }

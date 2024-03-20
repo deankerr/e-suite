@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
 import { createNumberInputAtom, createTextInputAtom } from '../atoms'
-import { useVoiceoverPlayer } from './useVoiceoverPlayer'
 
 export type ThreadHelpers = ReturnType<typeof useThread>
 export type ThreadAtoms = ReturnType<typeof createThreadAtoms>
@@ -19,8 +18,7 @@ export const useThread = ({ preload }: { preload: Preloaded<typeof api.threads.t
   const thread = usePreloadedQuery(preload)
   const threadId = thread?._id
 
-  const messages = useMemo(() => thread?.messages.toReversed() ?? [], [thread?.messages])
-  const voiceovers = useVoiceoverPlayer(messages)
+  const messages = useMemo(() => thread?.messages.toReversed().slice(-10) ?? [], [thread?.messages])
 
   //* Parameters
   const threadAtoms = useMemo(
@@ -167,7 +165,7 @@ export const useThread = ({ preload }: { preload: Preloaded<typeof api.threads.t
       })
   }
 
-  return { thread, messages, voiceovers, send, threadAtoms, updatePermissions }
+  return { thread, messages, send, threadAtoms, updatePermissions }
 }
 
 function createThreadAtoms(threadId?: string) {

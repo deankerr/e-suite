@@ -10,6 +10,7 @@ import { MessageInput } from '@/components/threads/MessageInput'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { useThread } from '@/components/threads/useThread'
+import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
@@ -17,14 +18,14 @@ import { Heading, ScrollArea, Switch, Tabs } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
 import { PanelLeftOpenIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 type ChatProps = {
   preload: Preloaded<typeof api.threads.threads.get>
 }
 
 export const Chat = ({ preload }: ChatProps) => {
-  const { thread, messages, voiceovers, send, threadAtoms, updatePermissions } = useThread({
+  const { thread, messages, send, threadAtoms, updatePermissions } = useThread({
     preload,
   })
 
@@ -40,7 +41,7 @@ export const Chat = ({ preload }: ChatProps) => {
     }
   }, [messages])
 
-  const [autoplay, setAutoplay] = useState(true)
+  const voPlayer = useVoiceoverPlayer(messages)
 
   return (
     <>
@@ -78,8 +79,8 @@ export const Chat = ({ preload }: ChatProps) => {
           <div className="grow border-r">
             <ScrollArea className="h-[calc(100%-4rem)]">
               <div className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4" ref={scrollRef}>
-                {messages.map((message, i) => (
-                  <MessageBubble message={message} voiceover={voiceovers[i]!} key={message._id} />
+                {messages.map((message) => (
+                  <MessageBubble voPlayer={voPlayer} message={message} key={message._id} />
                 ))}
               </div>
             </ScrollArea>
@@ -120,8 +121,8 @@ export const Chat = ({ preload }: ChatProps) => {
                       <Switch
                         id="autoplay"
                         size="1"
-                        checked={autoplay}
-                        onCheckedChange={setAutoplay}
+                        checked={voPlayer.autoplay}
+                        onCheckedChange={voPlayer.setAutoplay}
                       />
                     </div>
                   </div>

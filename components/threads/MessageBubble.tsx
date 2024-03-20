@@ -12,23 +12,27 @@ import { forwardRef } from 'react'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
-import { useVoiceoverPlayer } from './useVoiceoverPlayer'
+import type { VoiceoverPlayer } from './useVoiceoverPlayer'
 
 type MessageBubbleProps = {
   message: Message
-  voiceover: ReturnType<typeof useVoiceoverPlayer>[number]
+  voPlayer: VoiceoverPlayer
 } & React.ComponentProps<'div'>
 
 export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(function MessageBubble(
-  { message, voiceover, className, ...props },
+  { message, voPlayer, className, ...props },
   forwardedRef,
 ) {
   const style = getRoleStyle(message.role)
 
+  const { play, stop, statuses } = voPlayer
+  const status = statuses.find((status) => status.messageId === message._id)
+
   const getVoiceoverIcon = () => {
-    if (voiceover.isPlaying) return SquareIcon
-    if (voiceover.isLoading || voiceover.isPending) return Loader2Icon
-    if (voiceover.isError) return FileQuestionIcon
+    if (!status) return Volume2Icon
+    if (status.isPlaying) return SquareIcon
+    if (status.isLoading) return Loader2Icon
+    if (status.isError) return FileQuestionIcon
     return Volume2Icon
   }
 
@@ -49,10 +53,9 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
             icon={getVoiceoverIcon()}
             label="play voiceover"
             size="1"
-            disabled={!voiceover.isAvailable}
-            color={voiceover.isAvailable ? undefined : 'gray'}
-            className={cn((voiceover.isLoading || voiceover.isPending) && 'animate-spin')}
-            onClick={() => (voiceover.isPlaying ? voiceover.stop() : voiceover.play())}
+            disabled={!status?.isAvailable}
+            className={cn(status?.isLoading && 'animate-spin')}
+            onClick={() => (status?.isPlaying ? stop() : play(message._id))}
           />
 
           <MessageMenu messageId={message._id}>
