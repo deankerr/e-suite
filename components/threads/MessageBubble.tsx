@@ -8,37 +8,29 @@ import {
   SquareIcon,
   Volume2Icon,
 } from 'lucide-react'
-import { forwardRef, useEffect } from 'react'
-import { useAudioPlayer } from 'react-use-audio-player'
+import { forwardRef } from 'react'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
+import { useVoiceoverPlayer } from './useVoiceoverPlayer'
 
 type MessageBubbleProps = {
   message: Message
-  autoplayVoiceover?: boolean
+  voiceover: ReturnType<typeof useVoiceoverPlayer>[number]
 } & React.ComponentProps<'div'>
 
 export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(function MessageBubble(
-  { message, autoplayVoiceover = false, className, ...props },
+  { message, voiceover, className, ...props },
   forwardedRef,
 ) {
   const style = getRoleStyle(message.role)
 
-  const { load, isReady, isLoading, playing, play, stop, cleanup } = useAudioPlayer()
-  const voiceoverUrl = message.voiceover?.url
-
-  const voiceoverIsPending = message.job?.status === 'pending'
-  const voiceoverIsError = message.job?.status === 'error'
-
-  useEffect(() => {
-    if (!voiceoverUrl || !autoplayVoiceover) return
-    load(voiceoverUrl, {
-      format: 'mp3',
-      autoplay: true,
-    })
-    return () => cleanup()
-  }, [autoplayVoiceover, cleanup, load, voiceoverUrl])
+  const getVoiceoverIcon = () => {
+    if (voiceover.isPlaying) return SquareIcon
+    if (voiceover.isLoading || voiceover.isPending) return Loader2Icon
+    if (voiceover.isError) return FileQuestionIcon
+    return Volume2Icon
+  }
 
   return (
     <div
@@ -54,30 +46,13 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
 
         <div className="flex gap-2.5">
           <UIIconButton
-            icon={
-              playing
-                ? SquareIcon
-                : isLoading || voiceoverIsPending
-                  ? Loader2Icon
-                  : voiceoverIsError
-                    ? FileQuestionIcon
-                    : Volume2Icon
-            }
+            icon={getVoiceoverIcon()}
             label="play voiceover"
             size="1"
-            disabled={!voiceoverUrl}
-            color={voiceoverUrl ? undefined : 'gray'}
-            className={cn(isLoading && 'animate-spin')}
-            onClick={() =>
-              playing
-                ? stop()
-                : isReady
-                  ? play()
-                  : load(voiceoverUrl ?? '', {
-                      format: 'mp3',
-                      autoplay: true,
-                    })
-            }
+            disabled={!voiceover.isAvailable}
+            color={voiceover.isAvailable ? undefined : 'gray'}
+            className={cn((voiceover.isLoading || voiceover.isPending) && 'animate-spin')}
+            onClick={() => (voiceover.isPlaying ? voiceover.stop() : voiceover.play())}
           />
 
           <MessageMenu messageId={message._id}>

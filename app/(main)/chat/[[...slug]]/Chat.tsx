@@ -24,9 +24,9 @@ type ChatProps = {
 }
 
 export const Chat = ({ preload }: ChatProps) => {
-  const { thread, messages, send, threadAtoms, updatePermissions, preloadedMessageIds } = useThread(
-    { preload },
-  )
+  const { thread, messages, voiceovers, send, threadAtoms, updatePermissions } = useThread({
+    preload,
+  })
 
   const title = thread?.title ?? 'New Chat'
 
@@ -78,12 +78,8 @@ export const Chat = ({ preload }: ChatProps) => {
           <div className="grow border-r">
             <ScrollArea className="h-[calc(100%-4rem)]">
               <div className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4" ref={scrollRef}>
-                {messages.map((message) => (
-                  <MessageBubble
-                    message={message}
-                    autoplayVoiceover={autoplay && !preloadedMessageIds.includes(message._id)}
-                    key={message._id}
-                  />
+                {messages.map((message, i) => (
+                  <MessageBubble message={message} voiceover={voiceovers[i]!} key={message._id} />
                 ))}
               </div>
             </ScrollArea>
