@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Label from '@radix-ui/react-label'
 import { Button, Card, Checkbox, TextArea } from '@radix-ui/themes'
-import { useMutation, usePaginatedQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { forwardRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -34,7 +34,7 @@ type GenerationBarProps = {} & React.ComponentProps<'form'>
 
 export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
   function GenerationForm(props, forwardedRef) {
-    const list = usePaginatedQuery(api.generations.imageModels.list, {}, { initialNumItems: 64 })
+    const list = useQuery(api.generations.imageModels.list, {})
 
     const createGeneration = useMutation(api.generations.do.send)
 

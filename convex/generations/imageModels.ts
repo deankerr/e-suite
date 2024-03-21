@@ -1,4 +1,3 @@
-import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { Id } from '../_generated/dataModel'
 import { mutation, query } from '../functions'
@@ -23,21 +22,15 @@ export const get = query({
 })
 
 export const list = query({
-  args: {
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, { paginationOpts }) => {
-    const results = await ctx.table('imageModels').order('desc', 'order').paginate(paginationOpts)
-
-    return {
-      ...results,
-      page: await Promise.all(
-        results.page.map(async (imageModel) => ({
-          ...imageModel,
-          image: await ctx.table('images').get(imageModel.imageId),
-        })),
-      ),
-    }
+  args: {},
+  handler: async (ctx) => {
+    return await ctx
+      .table('imageModels', 'order')
+      .order('desc')
+      .map(async (imageModel) => ({
+        ...imageModel,
+        image: await ctx.table('images').get(imageModel.imageId),
+      }))
   },
 })
 

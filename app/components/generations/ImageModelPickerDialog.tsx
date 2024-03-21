@@ -3,7 +3,6 @@
 import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
 import { ImageModel } from '@/convex/generations/imageModels'
 import { Button, Dialog } from '@radix-ui/themes'
-import { UsePaginatedQueryResult } from 'convex/react'
 
 export const ImageModelPickerDialog = ({
   list,
@@ -11,7 +10,7 @@ export const ImageModelPickerDialog = ({
   onValueChange = () => {},
   ...props
 }: {
-  list?: UsePaginatedQueryResult<ImageModel>
+  list?: ImageModel[]
   onValueChange?: (value: ImageModel) => unknown
 } & React.ComponentProps<typeof Dialog.Content>) => {
   return (
@@ -22,7 +21,7 @@ export const ImageModelPickerDialog = ({
         <Dialog.Title>Select Model</Dialog.Title>
 
         <div className="grid-col grid place-content-center gap-4 md:grid-cols-[repeat(auto-fit,_18rem)]">
-          {list?.results.map((im) => (
+          {list?.map((im) => (
             <Dialog.Close key={im._id} onClick={() => onValueChange(im)}>
               <ImageModelCard key={im._id} from={im} />
             </Dialog.Close>
