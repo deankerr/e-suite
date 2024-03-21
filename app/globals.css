@@ -15,6 +15,12 @@
     'Open Sans (Custom)', system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
 }
 
+@layer base {
+  :root {
+    --e-header-h: 3.5rem
+  }
+}
+
 @tailwind utilities;
 
 @layer components {

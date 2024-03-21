@@ -61,7 +61,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
         </div>
       </div>
 
-      <div className="prose prose-invert max-w-[88vw]">
+      <div className="max-w-[88vw]">
         {message.content.split('\n').map((p, i) => (
           <Text key={i} as="p">
             {p}

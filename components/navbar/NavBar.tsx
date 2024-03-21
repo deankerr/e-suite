@@ -111,7 +111,9 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
           {/* generate */}
           <Tabs.Content value="Generate" asChild>
             <div className="@2xs:flex-col-center hidden h-full text-gray-9">
-              check back here later :)
+              <NextLink href="/generate" className="underline">
+                check back here later :)
+              </NextLink>
             </div>
           </Tabs.Content>
         </Tabs.Root>
