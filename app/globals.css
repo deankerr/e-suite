@@ -4,11 +4,34 @@
 @tailwind components;
 
 .radix-themes {
+  /* fonts */
   --default-font-family: var(--font-inter);
   --code-font-family: var(--font-jetbrains-mono);
+
+  /* add pointer cursor to controls */
+  --cursor-button: pointer;
+  --cursor-disabled: default;
+  --cursor-link: pointer;
+  --cursor-menu-item: pointer;
+  --cursor-slider-thumb: pointer;
+  --cursor-slider-thumb-active: pointer;
+  --cursor-switch: pointer;
 }
 
-/* Fix tailwind preflight overriding Clerk styles */
+/* add transitions */
+.rt-BaseButton,
+.rt-TabsTrigger,
+.rt-Link,
+.rt-TextFieldInput,
+.rt-CheckboxButton,
+.rt-BaseMenuItem {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+    opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* fix tailwind preflight overriding Clerk styles */
 .cl-modalContent,
 .cl-userButtonPopoverRootBox {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI (Custom)', Roboto, 'Helvetica Neue',
@@ -17,7 +40,7 @@
 
 @layer base {
   :root {
-    --e-header-h: 3.5rem
+    --e-header-h: 3.5rem;
   }
 }
 
