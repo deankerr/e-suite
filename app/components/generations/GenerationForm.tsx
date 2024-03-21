@@ -138,7 +138,7 @@ export const GenerationForm = forwardRef<HTMLFormElement, GenerationBarProps>(
             )}
           />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 p-3">
             <Label.Root className={cn(labelCn, 'not-sr-only')} htmlFor="randomModel">
               randomize
             </Label.Root>

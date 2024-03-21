@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { ScrollArea } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 
 type SidebarProps = {
@@ -13,7 +12,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar
   forwardedRef,
 ) {
   const overlayCn =
-    'w-full xl:z-10 pointer-events-auto z-40 bg-overlay xl:bg-transparent xl:pointer-events-none xl:w-80'
+    'w-full md:z-10 pointer-events-auto z-40 bg-overlay md:bg-transparent md:pointer-events-none md:w-80'
 
   return (
     // container / spacer / overlay
@@ -21,14 +20,14 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar
       {...props}
       className={cn(
         // xs - closed: inert, open: overlay
-        // xl - closed: inert, open: static spacer
-        'pointer-events-none absolute bottom-0 top-0 z-10 w-80 xl:static xl:translate-x-0',
+        // md - closed: inert, open: static spacer
+        'pointer-events-none absolute bottom-0 top-0 z-10 w-80 md:static md:translate-x-0',
         side === 'left' ? 'left-0' : 'right-0',
         open
           ? overlayCn
           : side === 'left'
-            ? 'xl:absolute xl:-translate-x-full'
-            : 'xl:absolute xl:translate-x-full',
+            ? 'md:absolute md:-translate-x-full'
+            : 'md:absolute md:translate-x-full',
         className,
       )}
       ref={forwardedRef}
@@ -43,9 +42,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <ScrollArea>
-          <div className="w-80 px-1.5">{children}</div>
-        </ScrollArea>
+        {children}
       </div>
     </div>
   )
