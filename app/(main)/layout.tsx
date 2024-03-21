@@ -24,14 +24,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <ChatList />
             </Suspense>
           ) : (
-            <div className="flex-center h-full text-center text-gray-8">not logged in</div>
+            <div className="@2xs:flex-center hidden h-full grow text-center text-gray-8">
+              not logged in
+            </div>
           )
         }
       >
         <UserButton />
 
         {!token && (
-          <div className="flex justify-center gap-5">
+          <div className="hidden justify-center gap-5 @2xs:flex">
             <SignUpButton mode="modal">
               <Button size="2">Create account</Button>
             </SignUpButton>

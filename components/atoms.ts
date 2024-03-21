@@ -21,5 +21,5 @@ export function useVoiceoverAutoplayedListAtom() {
   return useAtom(voiceoverAutoplayedListAtom)
 }
 
-export const navbarOpenAtom = atom(true)
+export const navbarOpenAtom = atom(false)
 export const sidebarOpenAtom = atom(false)

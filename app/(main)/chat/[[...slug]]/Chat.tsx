@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Switch, Tabs } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
-import { PanelLeftOpenIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
+import { MenuIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 type ChatProps = {
@@ -51,11 +51,11 @@ export const Chat = ({ preload }: ChatProps) => {
           {/* open navbar button */}
           {!navbarIsOpen && (
             <UIIconButton
-              label="close navigation bar"
-              color="gray"
+              label="open navigation bar"
+              className="sm:hidden"
               onClick={() => setNavbarOpen(!navbarIsOpen)}
             >
-              <PanelLeftOpenIcon />
+              <MenuIcon className="size-7" />
             </UIIconButton>
           )}
           <Heading size="3" className="flex items-center gap-1.5">
