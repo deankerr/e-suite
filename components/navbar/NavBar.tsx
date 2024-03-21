@@ -1,9 +1,11 @@
 'use client'
 
 import { Logo } from '@/app/components/ui/Logo'
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import * as Tabs from '@radix-ui/react-tabs'
 import { Heading } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
 import { ImageIcon, MessagesSquareIcon, PanelLeftCloseIcon, PinIcon, XIcon } from 'lucide-react'
 import NextLink from 'next/link'
@@ -11,6 +13,7 @@ import { usePathname } from 'next/navigation'
 import { forwardRef, useEffect } from 'react'
 import { navbarOpenAtom } from '../atoms'
 import { UIIconButton } from '../ui/UIIconButton'
+import { GenerationsList } from './GenerationsList'
 
 type NavBarProps = {
   chatList?: JSX.Element
@@ -31,6 +34,8 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
     ['Chat', <MessagesSquareIcon key="Chat" className="size-6" />],
     ['Generate', <ImageIcon key="Generate" className="size-6" />],
   ] as const
+
+  const generations = useQuery(api.generations.do.list, {})
 
   return (
     <div
@@ -111,9 +116,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
           {/* generate */}
           <Tabs.Content value="Generate" asChild>
             <div className="@2xs:flex-col-center hidden h-full text-gray-9">
-              <NextLink href="/generate" className="underline">
-                check back here later :)
-              </NextLink>
+              <GenerationsList list={generations} />
             </div>
           </Tabs.Content>
         </Tabs.Root>

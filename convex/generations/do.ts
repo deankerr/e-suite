@@ -1,4 +1,3 @@
-import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { Id } from '../_generated/dataModel'
@@ -34,26 +33,20 @@ export const get = query({
 })
 
 export const list = query({
-  args: {
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
-    const results = await ctx
-      .table('generations')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .order('desc')
-      .paginate(args.paginationOpts)
+  args: {},
+  handler: async (ctx) => {
+    if (!ctx.viewerId) return []
 
-    return {
-      ...results,
-      page: await Promise.all(
-        results.page.map(async (generation) => ({
-          ...generation,
-          images: await getImages(ctx, generation.imageIds),
-          author: await getUser(ctx, generation.authorId),
-        })),
-      ),
-    }
+    return await ctx
+      .table('generations', 'authorId', (q) => q.eq('authorId', ctx.viewerIdX()))
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(20)
+      .map(async (generation) => ({
+        ...generation,
+        images: await getImages(ctx, generation.imageIds),
+        author: await getUser(ctx, generation.authorId),
+      }))
   },
 })
 

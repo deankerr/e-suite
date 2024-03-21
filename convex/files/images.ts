@@ -11,15 +11,12 @@ export const getImage = async (ctx: QueryCtx, id: Id<'images'>) => {
   const image = await ctx.table('images').getX(id)
   assert(!image.deletionTime, 'Image was deleted')
 
-  const job = await ctx
-    .table('jobs')
-    .order('desc', 'imageId')
-    .filter((q) => q.eq(q.field('imageId'), image._id))
-    .first()
-
   return {
     ...image,
-    job,
+    job: await ctx
+      .table('jobs', 'imageId', (q) => q.eq('imageId', image._id))
+      .order('desc')
+      .first(),
   }
 }
 
@@ -32,9 +29,8 @@ export const getImages = async (ctx: QueryCtx, ids: Id<'images'>[]): Promise<Sto
       return {
         ...image,
         job: await ctx
-          .table('jobs')
-          .order('desc', 'imageId')
-          .filter((q) => q.eq(q.field('imageId'), image._id))
+          .table('jobs', 'imageId', (q) => q.eq('imageId', image._id))
+          .order('desc')
           .first(),
       }
     })
