@@ -18,7 +18,7 @@ export const useThread = ({ preload }: { preload: Preloaded<typeof api.threads.t
   const thread = usePreloadedQuery(preload)
   const threadId = thread?._id
 
-  const messages = useMemo(() => thread?.messages.toReversed().slice(-10) ?? [], [thread?.messages])
+  const messages = useMemo(() => thread?.messages.toReversed() ?? [], [thread?.messages])
 
   //* Parameters
   const threadAtoms = useMemo(

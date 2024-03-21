@@ -39,13 +39,10 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
   return (
     <div
       {...props}
-      className={cn(
-        'flex w-full max-w-[80ch] flex-col gap-1 rounded border p-3 sm:gap-1',
-        className,
-      )}
+      className={cn('flex w-full max-w-3xl flex-col gap-1 rounded border p-3', className)}
       ref={forwardedRef}
     >
-      <div className="flex-between">
+      <div className="flex-between max-w-[88vw]">
         <Heading size="2">{message.name ?? style.role}</Heading>
 
         <div className="flex gap-2.5">
@@ -64,7 +61,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
         </div>
       </div>
 
-      <div className="prose prose-invert max-w-none">
+      <div className="prose prose-invert max-w-[88vw]">
         {message.content.split('\n').map((p, i) => (
           <Text key={i} as="p">
             {p}

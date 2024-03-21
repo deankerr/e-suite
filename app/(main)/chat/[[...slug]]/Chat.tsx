@@ -77,7 +77,7 @@ export const Chat = ({ preload }: ChatProps) => {
         <div className="flex grow overflow-hidden">
           {/* message feed */}
           <div className="grow border-r">
-            <ScrollArea className="h-[calc(100%-4rem)]">
+            <ScrollArea className="h-[calc(100%-4rem)]" scrollbars="vertical">
               <div className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4" ref={scrollRef}>
                 {messages.map((message) => (
                   <MessageBubble voPlayer={voPlayer} message={message} key={message._id} />
