@@ -1,7 +1,7 @@
 import { Generation } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea } from '@radix-ui/themes'
-import { ImageIcon, MessageCirclePlusIcon } from 'lucide-react'
+import { FileImageIcon, MessageCirclePlusIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { useSelectedLayoutSegments } from 'next/navigation'
 
@@ -43,7 +43,9 @@ export const GenerationsList = ({ list, className, ...props }: GenerationsListPr
           >
             {/* icon */}
             <div className="flex shrink-0 flex-col justify-center px-4">
-              <ImageIcon className={cn('size-5 text-gray-11', isActive(_id) && 'text-gray-12')} />
+              <FileImageIcon
+                className={cn('size-5 text-gray-11', isActive(_id) && 'text-gray-12')}
+              />
             </div>
 
             {/* details */}

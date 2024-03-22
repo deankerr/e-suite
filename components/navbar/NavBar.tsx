@@ -29,6 +29,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
   useEffect(() => {
     setNavbarOpen(false)
   }, [pathname, setNavbarOpen])
+  const defaultTab = pathname.startsWith('/generate') ? 'Generate' : 'Chat'
 
   const menuTabs = [
     ['Chat', <MessagesSquareIcon key="Chat" className="size-6" />],
@@ -49,7 +50,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
     >
       <div
         className={cn(
-          'z-10 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r bg-gray-1 @container sm:flex',
+          'z-50 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r bg-gray-1 @container sm:flex',
           navbarIsOpen ? 'flex sm:w-80' : 'w-14 has-[:hover]:absolute has-[:hover]:w-80',
           className,
         )}
@@ -85,7 +86,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
 
         {/* tabs */}
         <Tabs.Root
-          defaultValue="Chat"
+          defaultValue={defaultTab}
           className="flex max-h-[calc(100%-3.5rem-4rem)] grow flex-col overflow-hidden @container"
         >
           <Tabs.List className={cn('flex h-14 shrink-0 items-center border-b')}>
@@ -115,7 +116,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
 
           {/* generate */}
           <Tabs.Content value="Generate" asChild>
-            <div className="@2xs:flex-col-center hidden h-full text-gray-9">
+            <div className="h-full w-full sm:w-80">
               <GenerationsList list={generations} />
             </div>
           </Tabs.Content>
