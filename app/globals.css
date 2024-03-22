@@ -47,6 +47,14 @@
 @tailwind utilities;
 
 @layer components {
+  .flex-start {
+    @apply flex items-center justify-start;
+  }
+
+  .flex-col-start {
+    @apply flex flex-col items-center justify-start;
+  }
+
   .flex-center {
     @apply flex items-center justify-center;
   }

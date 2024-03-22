@@ -63,16 +63,15 @@ export const GenerationShell = forwardRef<HTMLDivElement, Props & React.Componen
           {!focusItem && (
             <div className={cn('grid grid-cols-2 place-content-center gap-1 justify-self-center')}>
               {images.map((image, i) => (
-                <NextLink
+                <div
                   key={image._id}
-                  href={`/generations/${generation._id}/${i}`}
                   className={cn(
                     image.height > image.width && (i === 0 || i === 2) && 'justify-self-end',
                     image.height > image.width ? 'max-w-[min(256px,40vw)]' : 'max-w-[340px]',
                   )}
                 >
                   <StoredImage image={image} className={cn('max-w-full rounded border')} />
-                </NextLink>
+                </div>
               ))}
             </div>
           )}

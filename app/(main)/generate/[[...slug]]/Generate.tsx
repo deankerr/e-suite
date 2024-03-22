@@ -21,45 +21,53 @@ type GenerateProps = {
 
 export const Generate = ({ generationId, className, ...props }: GenerateProps) => {
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
-  const [sidebarROpen, setSidebarROpen] = useState(true)
+  const [sidebarROpen, setSidebarROpen] = useState(!generationId)
 
   const generation = useQuery(api.generations.do.get, generationId ? { id: generationId } : 'skip')
   const isLoading = generationId && !generation
 
-  const title = generation?.images?.[0]?.parameters?.prompt
+  const title = generationId ? generation?.images?.[0]?.parameters?.prompt : 'new'
 
   return (
-    <div {...props} className={cn('flex grow flex-col overflow-y-auto', className)}>
+    <div
+      {...props}
+      className={cn('flex grow flex-col overflow-y-auto overflow-x-hidden', className)}
+    >
       {/* header */}
-      <div className="flex-between z-40 h-[--e-header-h] shrink-0 border-b border-gold-7 px-3">
+      <div className="flex-between z-40 h-[--e-header-h] shrink-0 border-b border-gold-7 bg-gray-1 px-3">
         {/* open navbar button */}
-        {!navbarIsOpen && (
-          <UIIconButton
-            label="open navigation bar"
-            className="sm:hidden"
-            onClick={() => setNavbarOpen(!navbarIsOpen)}
-          >
-            <MenuIcon className="size-7" />
-          </UIIconButton>
-        )}
+        <div className="shrink-0">
+          {!navbarIsOpen && (
+            <UIIconButton
+              label="open navigation bar"
+              className="sm:hidden"
+              onClick={() => setNavbarOpen(!navbarIsOpen)}
+            >
+              <MenuIcon className="size-7" />
+            </UIIconButton>
+          )}
+        </div>
 
         {/* page title */}
-        <div className="flex-between gap-2">
-          <Heading size="4" className="text-accent-11">
+        <div className="flex-center sm:flex-start grow gap-1">
+          <Heading size="2" className="hidden sm:block" color="gray">
+            generate
+          </Heading>
+          <Heading size="3" className="hidden font-normal text-accent-10 sm:block">
             /
           </Heading>
-          <Heading size="3">generate</Heading>
-          <Heading size="4" className="text-accent-11">
-            /
+          <Heading size="3" className="truncate">
+            {title}
           </Heading>
-          <Heading size="3">{title}</Heading>
           {isLoading && <LoaderBars />}
         </div>
 
-        {/* sidebar button */}
-        <UIIconButton label="toggle sidebar" onClick={() => setSidebarROpen(!sidebarROpen)}>
-          {sidebarROpen ? <XIcon /> : <SlidersHorizontalIcon />}
-        </UIIconButton>
+        <div className="shrink-0">
+          {/* sidebar button */}
+          <UIIconButton label="toggle sidebar" onClick={() => setSidebarROpen(!sidebarROpen)}>
+            {sidebarROpen ? <XIcon /> : <SlidersHorizontalIcon />}
+          </UIIconButton>
+        </div>
       </div>
 
       {/* main */}

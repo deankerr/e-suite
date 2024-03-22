@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Switch, Tabs } from '@radix-ui/themes'
 import { Preloaded } from 'convex/react'
 import { useAtom } from 'jotai'
-import { MenuIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
+import { MenuIcon, MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 type ChatProps = {
@@ -58,11 +58,10 @@ export const Chat = ({ preload }: ChatProps) => {
               <MenuIcon className="size-7" />
             </UIIconButton>
           )}
-          <Heading size="3" className="flex items-center gap-1.5">
+          <Heading size="3" className="flex-center sm:flex-start grow gap-2.5 truncate">
+            <MessageSquareIcon className="size-5" />
             {title}
           </Heading>
-
-          <div className="hidden grow sm:block"></div>
 
           {/* sidebar button */}
           <UIIconButton
