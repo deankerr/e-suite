@@ -47,7 +47,7 @@ export const Chat = ({ preload }: ChatProps) => {
     <>
       <div className="flex h-full grow flex-col overflow-hidden">
         {/* header */}
-        <div className="flex-between h-14 shrink-0 border-b px-3 sm:gap-2">
+        <div className="flex-between h-14 shrink-0 border-b border-gold-7 px-3 sm:gap-2">
           {/* open navbar button */}
           {!navbarIsOpen && (
             <UIIconButton
@@ -91,7 +91,7 @@ export const Chat = ({ preload }: ChatProps) => {
           {/* sidebar */}
           <div
             className={cn(
-              'absolute right-0 top-0 h-full w-screen shrink-0 translate-x-0 overflow-hidden bg-gray-1 px-2 transition-transform sm:w-80 sm:border-l lg:static',
+              'absolute right-0 top-0 h-full w-screen shrink-0 translate-x-0 overflow-hidden border-gold-7 bg-gray-1 px-2 transition-transform sm:w-80 sm:border-l lg:static',
               !sidebarIsOpen && 'absolute translate-x-full lg:absolute',
             )}
           >

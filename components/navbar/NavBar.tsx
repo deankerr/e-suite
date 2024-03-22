@@ -50,13 +50,13 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
     >
       <div
         className={cn(
-          'z-50 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r bg-gray-1 @container sm:flex',
+          'z-50 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r border-gold-7 bg-gray-1 @container sm:flex',
           navbarIsOpen ? 'flex sm:w-80' : 'w-14 has-[:hover]:absolute has-[:hover]:w-80',
           className,
         )}
       >
-        {/* site title */}
-        <div className={cn('flex-between h-14 shrink-0 border-b px-3.5')}>
+        {/* site logo/title */}
+        <div className={cn('flex-between h-14 shrink-0 border-b border-gold-7 px-3.5')}>
           <NextLink
             href="/"
             className="flex h-full items-center gap-1.5"
