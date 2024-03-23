@@ -11,6 +11,7 @@ import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { useThread } from '@/components/threads/useThread'
 import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
+import { Sidebar } from '@/components/ui/Sidebar'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
@@ -58,6 +59,8 @@ export const Chat = ({ preload }: ChatProps) => {
               <MenuIcon className="size-7" />
             </UIIconButton>
           )}
+
+          {/* title */}
           <Heading size="3" className="flex-center sm:flex-start grow gap-2.5 truncate">
             <MessageSquareIcon className="size-5" />
             {title}
@@ -74,27 +77,28 @@ export const Chat = ({ preload }: ChatProps) => {
 
         {/* content area */}
         <div className="flex grow overflow-hidden bg-gold-1">
-          {/* message feed */}
-          <div className={cn('grow', sidebarIsOpen ? '' : 'border-r')}>
-            <ScrollArea className="h-[calc(100%-4rem)]" scrollbars="vertical">
-              <div className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4" ref={scrollRef}>
-                {messages.map((message) => (
-                  <MessageBubble voPlayer={voPlayer} message={message} key={message._id} />
-                ))}
-              </div>
-            </ScrollArea>
+          {/* chat */}
+          <div className={cn('flex grow', sidebarIsOpen ? 'md:mr-80' : '')}>
+            {/* message feed */}
+            <div className={cn('grow', sidebarIsOpen ? '' : 'border-r')}>
+              <ScrollArea className="h-[calc(100%-4rem)]" scrollbars="vertical">
+                <div
+                  className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4"
+                  ref={scrollRef}
+                >
+                  {messages.map((message) => (
+                    <MessageBubble voPlayer={voPlayer} message={message} key={message._id} />
+                  ))}
+                </div>
+              </ScrollArea>
 
-            {/* input bar */}
-            <MessageInput inputAtom={threadAtoms.message} onSend={send} />
+              {/* input bar */}
+              <MessageInput inputAtom={threadAtoms.message} onSend={send} />
+            </div>
           </div>
 
           {/* sidebar */}
-          <div
-            className={cn(
-              'absolute right-0 top-0 h-full w-screen shrink-0 translate-x-0 overflow-hidden border-gold-3 bg-gold-1 px-2 transition-transform sm:w-80 sm:border-l lg:static',
-              !sidebarIsOpen && 'absolute translate-x-full lg:absolute',
-            )}
-          >
+          <Sidebar side="right" open={sidebarIsOpen} onOpenChange={setSidebarOpen}>
             <Tabs.Root defaultValue="parameters">
               <Tabs.List className="shrink-0">
                 <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
@@ -143,7 +147,7 @@ export const Chat = ({ preload }: ChatProps) => {
                 </div>
               </Tabs.Content>
             </Tabs.Root>
-          </div>
+          </Sidebar>
         </div>
       </div>
     </>
