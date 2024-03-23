@@ -1,5 +1,5 @@
-import { ClientProviders } from '@/app/components/util/ClientProviders'
-import { TailwindBreakpointIndicator } from '@/app/components/util/TailwindBreakpointIndicator'
+import { ClientProviders } from '@/components/providers/ClientProviders'
+import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
@@ -7,6 +7,7 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
+import { CounterStoreProvider } from '@/components/providers/CounterStoreProvider'
 import { cn } from '@/lib/utils'
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
@@ -30,25 +31,27 @@ const jetBrainsMono = JetBrains_Mono({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
-      <html
-        lang="en"
-        className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
-        suppressHydrationWarning
-      >
-        <body className="h-full">
+    <html
+      lang="en"
+      className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
+      suppressHydrationWarning
+    >
+      <body className="h-full">
+        <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <JotaiProvider>
               <Theme className="h-full" accentColor="orange">
-                {children}
-                <Toaster richColors />
-                <TailwindBreakpointIndicator />
+                <CounterStoreProvider>
+                  {children}
+                  <Toaster richColors />
+                  <TailwindBreakpointIndicator />
+                </CounterStoreProvider>
               </Theme>
             </JotaiProvider>
           </ClientProviders>
-          {process.env.NODE_ENV !== 'development' && <Analytics />}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+        {process.env.NODE_ENV !== 'development' && <Analytics />}
+      </body>
+    </html>
   )
 }

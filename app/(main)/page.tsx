@@ -2,6 +2,7 @@
 
 import { navbarOpenAtom } from '@/components/atoms'
 import { ChangeUsernameDialog } from '@/components/ChangeUsernameDialog'
+import { useCounterStore } from '@/components/providers/CounterStoreProvider'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { api } from '@/convex/_generated/api'
@@ -18,6 +19,8 @@ export default function HomePage() {
   const user = useQuery(api.users.getViewer, isAuthenticated ? {} : 'skip')
 
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
+
+  const { count, incrementCount, decrementCount } = useCounterStore((state) => state)
 
   return (
     <div className="flex w-full flex-col">
@@ -36,7 +39,7 @@ export default function HomePage() {
         )}
       </div>
 
-      <div className="flex-center h-full p-4">
+      <div className="flex-col-center h-full gap-2 p-4">
         {/* title card */}
         <Card className="min-h-72">
           <div className="flex flex-col gap-10 px-12 py-6">
@@ -74,6 +77,13 @@ export default function HomePage() {
               </div>
             </AuthLoading>
           </div>
+        </Card>
+
+        <Card>
+          Count: {count}
+          <hr />
+          <Button onClick={() => void incrementCount()}>Increment Count</Button>
+          <Button onClick={() => void decrementCount()}>Decrement Count</Button>
         </Card>
       </div>
     </div>

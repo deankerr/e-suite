@@ -73,7 +73,7 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
       {/* main */}
       <div className="flex h-full">
         {/* content */}
-        <div className={cn('flex-center grow', sidebarROpen ? 'mr-80' : '')}>
+        <div className={cn('flex-center grow', sidebarROpen ? 'md:mr-80' : '')}>
           {generation && <GenerationShell generation={generation} />}
           {generationId && !generation && <LoaderBars className="w-1/2" />}
         </div>
