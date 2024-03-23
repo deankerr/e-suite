@@ -34,7 +34,7 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
       className={cn('flex grow flex-col overflow-y-auto overflow-x-hidden', className)}
     >
       {/* header */}
-      <div className="flex-between z-40 h-[--e-header-h] shrink-0 border-b border-gold-7 bg-gray-1 px-3">
+      <div className="flex-between z-40 h-[--e-header-h] shrink-0 border-b border-gold-5 bg-gray-1 sm:px-4">
         {/* open navbar button */}
         <div className="shrink-0">
           {!navbarIsOpen && (
@@ -50,10 +50,10 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
 
         {/* page title */}
         <div className="flex-center sm:flex-start grow gap-1">
-          <Heading size="2" className="hidden sm:block" color="gray">
+          <Heading size="3" className="hidden sm:block">
             generate
           </Heading>
-          <Heading size="3" className="hidden font-normal text-accent-10 sm:block">
+          <Heading size="4" className="hidden font-normal text-accent-11 sm:block">
             /
           </Heading>
           <Heading size="3" className="truncate">

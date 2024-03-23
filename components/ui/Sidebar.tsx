@@ -36,7 +36,7 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar
       {/* scrollbar main */}
       <div
         className={cn(
-          'pointer-events-auto absolute bottom-0 top-0 z-50 w-80 border-gold-7 bg-gray-1 transition-transform',
+          'pointer-events-auto absolute bottom-0 top-0 z-50 w-80 border-gold-5 bg-gold-2 transition-transform',
           side === 'left' ? '-translate-x-full border-r' : 'right-0 translate-x-full border-l',
           open && 'translate-x-0',
         )}

@@ -13,6 +13,7 @@ import { usePathname } from 'next/navigation'
 import { forwardRef, useEffect } from 'react'
 import { navbarOpenAtom } from '../atoms'
 import { UIIconButton } from '../ui/UIIconButton'
+import { ThemeToggle } from '../util/ThemeToggle'
 import { GenerationsList } from './GenerationsList'
 
 type NavBarProps = {
@@ -50,13 +51,13 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
     >
       <div
         className={cn(
-          'z-50 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r border-gold-7 bg-gray-1 @container sm:flex',
+          'z-50 hidden h-full w-screen shrink-0 flex-col overflow-hidden border-r border-gold-5 bg-gray-1 @container sm:flex',
           navbarIsOpen ? 'flex sm:w-80' : 'w-14 has-[:hover]:absolute has-[:hover]:w-80',
           className,
         )}
       >
         {/* site logo/title */}
-        <div className={cn('flex-between h-14 shrink-0 border-b border-gold-7 px-3.5')}>
+        <div className={cn('flex-between h-14 shrink-0 border-b border-gold-5 px-3.5')}>
           <NextLink
             href="/"
             className="flex h-full items-center gap-1.5"
@@ -89,7 +90,7 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
           defaultValue={defaultTab}
           className="flex max-h-[calc(100%-3.5rem-4rem)] grow flex-col overflow-hidden @container"
         >
-          <Tabs.List className={cn('flex h-14 shrink-0 items-center border-b')}>
+          <Tabs.List className={cn('flex h-14 shrink-0 items-center border-b ')}>
             {menuTabs.map((t) => {
               const [title, icon] = t
               return (
@@ -122,8 +123,9 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
           </Tabs.Content>
         </Tabs.Root>
 
-        <div className="flex h-16 shrink-0 items-center justify-center border-t p-3 @container">
+        <div className="flex-between h-16 w-full shrink-0 border-t p-3 @container sm:w-80">
           {children}
+          <ThemeToggle />
         </div>
       </div>
     </div>

@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body className="h-full">
           <ClientProviders>
             <JotaiProvider>
-              <Theme className="h-full" accentColor="orange" appearance="dark">
+              <Theme className="h-full" accentColor="orange">
                 {children}
                 <Toaster richColors />
                 <TailwindBreakpointIndicator />
