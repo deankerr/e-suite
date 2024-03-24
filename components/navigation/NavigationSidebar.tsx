@@ -7,11 +7,11 @@ import { Heading } from '@radix-ui/themes'
 import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChatList } from '../navbar/ChatList'
-import { GenerationsList } from '../navbar/GenerationsList'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { Sidebar2 } from '../ui/Sidebar2'
 import { ThemeToggle } from '../util/ThemeToggle'
+import { ChatList } from './ChatList'
+import { GenerationsList } from './GenerationsList'
 
 type NavigationSidebarProps = {} & Partial<React.ComponentProps<typeof Sidebar2>>
 
@@ -83,7 +83,7 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
         </Tabs.Root>
 
         <div className="flex-between h-16 w-full shrink-0 border-t p-3 @container sm:w-80">
-          {children}
+          <div className="grow">{children}</div>
           <ThemeToggle />
         </div>
       </div>
