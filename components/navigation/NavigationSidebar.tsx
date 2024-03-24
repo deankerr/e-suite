@@ -7,8 +7,10 @@ import { Heading } from '@radix-ui/themes'
 import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { Sidebar } from '../ui/Sidebar'
+import { useMediaQuery } from '../useMediaQuery'
 import { ThemeToggle } from '../util/ThemeToggle'
 import { ChatList } from './ChatList'
 import { GenerationsList } from './GenerationsList'
@@ -26,6 +28,14 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
 
   const pathname = usePathname()
   const defaultTab = pathname.startsWith('/generate') ? 'Generate' : 'Chat'
+
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 520px)', false)
+
+  useEffect(() => {
+    if (isSmallDevice) {
+      updateNavigationSidebarOpen(false)
+    }
+  }, [pathname, isSmallDevice, updateNavigationSidebarOpen])
   return (
     <Sidebar
       id="navigation-sidebar"
