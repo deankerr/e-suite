@@ -15,6 +15,7 @@ export const Sidebar2 = ({
   right,
   open,
   onOpenChange = () => {},
+  className,
   children,
   ...props
 }: Sidebar2Props) => {
@@ -35,11 +36,12 @@ export const Sidebar2 = ({
       <div
         {...props}
         className={cn(
-          'absolute z-20 flex h-full w-80 translate-x-0 flex-col transition-transform duration-500',
+          'absolute z-20 flex h-full w-80 translate-x-0 flex-col bg-gray-1 transition-transform duration-500',
           left && 'border-r',
           right && 'right-0 border-l',
           !open && left && '-translate-x-full',
           !open && right && 'translate-x-full',
+          className,
         )}
       >
         {children}

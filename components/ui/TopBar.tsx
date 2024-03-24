@@ -14,10 +14,12 @@ import { forwardRef } from 'react'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { UIIconButton } from './UIIconButton'
 
-type TopBarProps = {} & React.ComponentProps<'div'>
+type TopBarProps = {
+  extraTitle?: string
+} & React.ComponentProps<'div'>
 
 export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
-  { className, ...props },
+  { extraTitle, className, ...props },
   forwardedRef,
 ) {
   const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
@@ -26,11 +28,10 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   const sidebarOpen = useAppStore((state) => state.sidebarOpen)
   const toggleSidebar = useAppStore((state) => state.toggleSidebar)
 
-  // title
+  const threadsList = useAppStore((state) => state.threadsList)
+
   const pathname = usePathname()
   const [_, route, slug] = pathname.split('/')
-
-  const threadsList = useAppStore((state) => state.threadsList)
 
   const getThreadTitle = () => {
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
@@ -48,7 +49,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
     >
       {/* start */}
       <div className="shrink-0">
-        <UIIconButton label="toggle navigation bar" className="" onClick={toggleNavigationSidebar}>
+        <UIIconButton label="toggle navigation bar" onClick={toggleNavigationSidebar}>
           {navigationSidebarOpen ? (
             <MenuIcon className="size-7" />
           ) : (
@@ -59,10 +60,9 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
       {/* start/middle */}
       <div className="flex-center grow gap-2">
+        {extraTitle}
         {Icon && <Icon />}
-        <Heading size="3" className="">
-          {title}
-        </Heading>
+        <Heading size="3">{title}</Heading>
       </div>
 
       {/* end */}
