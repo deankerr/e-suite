@@ -3,7 +3,8 @@
 import { PermissionsCard } from '@/app/components/PermissionsCard'
 import { Button } from '@/app/components/ui/Button'
 import { Label } from '@/app/components/ui/Label'
-import { navbarOpenAtom, sidebarOpenAtom } from '@/components/atoms'
+import { navbarOpenAtom } from '@/components/atoms'
+import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
 import { MessageBubble } from '@/components/threads/MessageBubble'
 import { MessageInput } from '@/components/threads/MessageInput'
@@ -33,7 +34,6 @@ export const Chat = ({ preload }: ChatProps) => {
   const title = thread?.title ?? 'New Chat'
 
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
-  const [sidebarIsOpen, setSidebarOpen] = useAtom(sidebarOpenAtom)
 
   const scrollRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -43,6 +43,10 @@ export const Chat = ({ preload }: ChatProps) => {
   }, [messages])
 
   const voPlayer = useVoiceoverPlayer(messages)
+
+  const sidebarOpen = useAppStore((state) => state.sidebarOpen)
+  const toggleSidebar = useAppStore((state) => state.toggleSidebar)
+  const updateSidebarOpen = useAppStore((state) => state.updateSidebarOpen)
 
   return (
     <>
@@ -67,20 +71,17 @@ export const Chat = ({ preload }: ChatProps) => {
           </Heading>
 
           {/* sidebar button */}
-          <UIIconButton
-            label="toggle parameters sidebar"
-            onClick={() => setSidebarOpen(!sidebarIsOpen)}
-          >
-            {sidebarIsOpen ? <XIcon /> : <SlidersHorizontalIcon />}
+          <UIIconButton label="toggle parameters sidebar" onClick={toggleSidebar}>
+            {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
           </UIIconButton>
         </div>
 
         {/* content area */}
         <div className="flex grow overflow-hidden bg-gold-1">
           {/* chat */}
-          <div className={cn('flex grow', sidebarIsOpen ? 'md:mr-80' : '')}>
+          <div className={cn('flex grow', sidebarOpen ? 'md:mr-80' : '')}>
             {/* message feed */}
-            <div className={cn('grow', sidebarIsOpen ? '' : 'border-r')}>
+            <div className={cn('grow', sidebarOpen ? '' : 'border-r')}>
               <ScrollArea className="h-[calc(100%-4rem)]" scrollbars="vertical">
                 <div
                   className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4"
@@ -98,7 +99,7 @@ export const Chat = ({ preload }: ChatProps) => {
           </div>
 
           {/* sidebar */}
-          <Sidebar side="right" open={sidebarIsOpen} onOpenChange={setSidebarOpen}>
+          <Sidebar side="right" open={sidebarOpen} onOpenChange={updateSidebarOpen}>
             <Tabs.Root defaultValue="parameters">
               <Tabs.List className="shrink-0">
                 <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>

@@ -22,4 +22,3 @@ export function useVoiceoverAutoplayedListAtom() {
 }
 
 export const navbarOpenAtom = atom(false)
-export const sidebarOpenAtom = atom(false)

@@ -3,6 +3,7 @@
 import { GenerationForm } from '@/app/components/generations/GenerationForm'
 import { GenerationShell } from '@/app/components/generations/GenerationShell'
 import { navbarOpenAtom } from '@/components/atoms'
+import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { UIIconButton } from '@/components/ui/UIIconButton'
@@ -13,7 +14,6 @@ import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
 import { MenuIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
 
 type GenerateProps = {
   generationId?: Id<'generations'>
@@ -21,12 +21,15 @@ type GenerateProps = {
 
 export const Generate = ({ generationId, className, ...props }: GenerateProps) => {
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
-  const [sidebarROpen, setSidebarROpen] = useState(!generationId)
 
   const generation = useQuery(api.generations.do.get, generationId ? { id: generationId } : 'skip')
   const isLoading = generationId && !generation
 
   const title = generationId ? generation?.images?.[0]?.parameters?.prompt : 'new'
+
+  const sidebarOpen = useAppStore((state) => state.sidebarOpen)
+  const toggleSidebar = useAppStore((state) => state.toggleSidebar)
+  const updateSidebarOpen = useAppStore((state) => state.updateSidebarOpen)
 
   return (
     <div
@@ -64,8 +67,8 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
 
         <div className="shrink-0">
           {/* sidebar button */}
-          <UIIconButton label="toggle sidebar" onClick={() => setSidebarROpen(!sidebarROpen)}>
-            {sidebarROpen ? <XIcon /> : <SlidersHorizontalIcon />}
+          <UIIconButton label="toggle sidebar" onClick={toggleSidebar}>
+            {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
           </UIIconButton>
         </div>
       </div>
@@ -73,13 +76,13 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
       {/* main */}
       <div className="flex h-full">
         {/* content */}
-        <div className={cn('flex-center grow', sidebarROpen ? 'md:mr-80' : '')}>
+        <div className={cn('flex-center grow', sidebarOpen ? 'md:mr-80' : '')}>
           {generation && <GenerationShell generation={generation} />}
           {generationId && !generation && <LoaderBars className="w-1/2" />}
         </div>
 
         {/* sidebar */}
-        <Sidebar side="right" open={sidebarROpen} onOpenChange={setSidebarROpen}>
+        <Sidebar side="right" open={sidebarOpen} onOpenChange={updateSidebarOpen}>
           <Tabs.Root defaultValue="parameters" className="">
             <Tabs.List>
               <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>

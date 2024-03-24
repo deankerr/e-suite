@@ -7,6 +7,7 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
+import { AppStoreProvider } from '@/components/providers/AppStoreProvider'
 import { CounterStoreProvider } from '@/components/providers/CounterStoreProvider'
 import { cn } from '@/lib/utils'
 import { ClerkProvider } from '@clerk/nextjs'
@@ -41,11 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ClientProviders>
             <JotaiProvider>
               <Theme className="h-full" accentColor="orange">
-                <CounterStoreProvider>
-                  {children}
-                  <Toaster richColors />
-                  <TailwindBreakpointIndicator />
-                </CounterStoreProvider>
+                <AppStoreProvider>
+                  <CounterStoreProvider>
+                    {children}
+                    <Toaster richColors />
+                    <TailwindBreakpointIndicator />
+                  </CounterStoreProvider>
+                </AppStoreProvider>
               </Theme>
             </JotaiProvider>
           </ClientProviders>
