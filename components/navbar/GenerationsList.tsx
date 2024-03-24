@@ -1,12 +1,13 @@
 'use client'
 
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import { FileImageIcon, MessageCirclePlusIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { forwardRef } from 'react'
-import { useAppStore } from '../providers/AppStoreProvider'
 
 type GenerationsListProps = {} & React.ComponentProps<typeof ScrollArea>
 
@@ -15,7 +16,8 @@ export const GenerationsList = forwardRef<HTMLDivElement, GenerationsListProps>(
     const [route, routeId] = useSelectedLayoutSegments()
     const isActive = (slug?: string) => route === 'generate' && routeId === slug
 
-    const generationsList = useAppStore((state) => state.generationsList)
+    const generationsList = useQuery(api.generations.do.list, {})
+
     const generations = generationsList?.map((generation) => ({
       ...generation,
       title: generation.images ? generation.images[0]?.parameters?.prompt : 'new generation',

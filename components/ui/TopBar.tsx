@@ -1,7 +1,9 @@
 'use client'
 
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Heading } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import {
   FileImageIcon,
   MenuIcon,
@@ -29,6 +31,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   const toggleSidebar = useAppStore((state) => state.toggleSidebar)
 
   const threadsList = useAppStore((state) => state.threadsList)
+  const generationsList = useQuery(api.generations.do.list, {})
 
   const pathname = usePathname()
   const [_, route, slug] = pathname.split('/')
@@ -38,8 +41,15 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
     return title ?? 'New Chat'
   }
 
-  const title = route === 'chat' ? getThreadTitle() : 'Generation?'
-  const Icon = route === 'chat' ? MessageSquareIcon : route === 'generation' ? FileImageIcon : null
+  const getGenerationTitle = () => {
+    const generation = generationsList?.find(({ _id }) => _id === slug)
+    const title = generation?.images?.[0]?.parameters?.prompt
+    return title ?? 'New Generation'
+  }
+
+  const title =
+    route === 'chat' ? getThreadTitle() : route === 'generate' ? getGenerationTitle() : '???'
+  const Icon = route === 'chat' ? MessageSquareIcon : route === 'generate' ? FileImageIcon : null
 
   return (
     <div

@@ -1,12 +1,13 @@
 'use client'
 
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import { MessageCirclePlusIcon, MessageSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { forwardRef } from 'react'
-import { useAppStore } from '../providers/AppStoreProvider'
 
 type ChatListProps = {} & React.ComponentProps<typeof ScrollArea>
 
@@ -17,7 +18,7 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
   const [route, routeId] = useSelectedLayoutSegments()
   const isActive = (slug?: string) => route === 'chat' && routeId === slug
 
-  const threadsList = useAppStore((state) => state.threadsList)
+  const threadsList = useQuery(api.threads.threads.list, {})
 
   return (
     <ScrollArea
