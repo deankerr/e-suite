@@ -34,7 +34,13 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   const generationsList = useQuery(api.generations.do.list, {})
 
   const pathname = usePathname()
-  const [_, route, slug] = pathname.split('/')
+  const [_, routePath, slug] = pathname.split('/')
+
+  const route = {
+    home: !routePath,
+    chat: routePath === 'chat',
+    generate: routePath === 'generate',
+  }
 
   const getThreadTitle = () => {
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
@@ -47,14 +53,13 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
     return title ?? 'New Generation'
   }
 
-  const title =
-    route === 'chat' ? getThreadTitle() : route === 'generate' ? getGenerationTitle() : '???'
-  const Icon = route === 'chat' ? MessageSquareIcon : route === 'generate' ? FileImageIcon : null
+  const title = route.chat ? getThreadTitle() : route.generate ? getGenerationTitle() : ''
+  const Icon = route.chat ? MessageSquareIcon : route.generate ? FileImageIcon : null
 
   return (
     <div
       {...props}
-      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 sm:px-4', className)}
+      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 px-2', className)}
       ref={forwardedRef}
     >
       {/* start */}
@@ -69,7 +74,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
       </div>
 
       {/* start/middle */}
-      <div className="flex-center grow gap-2">
+      <div className="flex-center grow gap-2.5">
         {extraTitle}
         {Icon && <Icon />}
         <Heading size="3">{title}</Heading>
@@ -77,9 +82,11 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
       {/* end */}
       <div className="shrink-0">
-        <UIIconButton label="toggle parameters sidebar" onClick={toggleSidebar}>
-          {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
-        </UIIconButton>
+        {!route.home && (
+          <UIIconButton label="toggle parameters sidebar" onClick={toggleSidebar}>
+            {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
+          </UIIconButton>
+        )}
       </div>
     </div>
   )

@@ -1,16 +1,12 @@
 'use client'
 
-import { navbarOpenAtom } from '@/components/atoms'
 import { ChangeUsernameDialog } from '@/components/ChangeUsernameDialog'
-import { useCounterStore } from '@/components/providers/CounterStoreProvider'
 import { LoaderBars } from '@/components/ui/LoaderBars'
-import { UIIconButton } from '@/components/ui/UIIconButton'
+import { TopBar } from '@/components/ui/TopBar'
 import { api } from '@/convex/_generated/api'
 import { SignInButton, SignUpButton } from '@clerk/nextjs'
 import { Card, Strong } from '@radix-ui/themes'
 import { AuthLoading, Unauthenticated, useConvexAuth, useQuery } from 'convex/react'
-import { useAtom } from 'jotai'
-import { MenuIcon } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
 import { Logo } from '../../components/ui/Logo'
 
@@ -18,27 +14,9 @@ export default function HomePage() {
   const { isAuthenticated } = useConvexAuth()
   const user = useQuery(api.users.getViewer, isAuthenticated ? {} : 'skip')
 
-  const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
-
-  const { count, incrementCount, decrementCount } = useCounterStore((state) => state)
-
   return (
     <div className="flex w-full flex-col">
-      {/* header */}
-      {/* <HeaderBar /> */}
-      <div className="flex-between h-14 shrink-0 border-b px-3 sm:gap-2">
-        {/* open navbar button */}
-        {!navbarIsOpen && (
-          <UIIconButton
-            label="toggle navigation bar"
-            className="sm:hidden"
-            size="3"
-            onClick={() => setNavbarOpen(!navbarIsOpen)}
-          >
-            <MenuIcon className="size-7" />
-          </UIIconButton>
-        )}
-      </div>
+      <TopBar />
 
       <div className="flex-col-center h-full gap-2 p-4">
         {/* title card */}
@@ -78,13 +56,6 @@ export default function HomePage() {
               </div>
             </AuthLoading>
           </div>
-        </Card>
-
-        <Card>
-          Count: {count}
-          <hr />
-          <Button onClick={() => void incrementCount()}>Increment Count</Button>
-          <Button onClick={() => void decrementCount()}>Decrement Count</Button>
         </Card>
       </div>
     </div>
