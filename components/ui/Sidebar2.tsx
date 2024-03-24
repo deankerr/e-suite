@@ -1,7 +1,6 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { useMediaQuery } from '@uidotdev/usehooks'
 
 type Sidebar2Props = {
   left?: boolean

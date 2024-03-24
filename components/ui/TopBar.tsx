@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { Heading } from '@radix-ui/themes'
 import {
   FileImageIcon,
   MenuIcon,
@@ -33,7 +34,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
   const getThreadTitle = () => {
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
-    return title ?? 'Unknown Thread'
+    return title ?? 'New Chat'
   }
 
   const title = route === 'chat' ? getThreadTitle() : 'Generation?'
@@ -42,7 +43,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   return (
     <div
       {...props}
-      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-2 sm:px-4', className)}
+      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 sm:px-4', className)}
       ref={forwardedRef}
     >
       {/* start */}
@@ -59,7 +60,9 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
       {/* start/middle */}
       <div className="flex-center grow gap-2">
         {Icon && <Icon />}
-        {title}
+        <Heading size="3" className="">
+          {title}
+        </Heading>
       </div>
 
       {/* end */}
