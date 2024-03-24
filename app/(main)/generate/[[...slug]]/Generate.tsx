@@ -31,15 +31,22 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
   const toggleSidebar = useAppStore((state) => state.toggleSidebar)
   const updateSidebarOpen = useAppStore((state) => state.updateSidebarOpen)
 
+  const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
+  const toggleNavigationSidebar = useAppStore((state) => state.toggleNavigationSidebar)
+
   return (
     <div
       {...props}
       className={cn('flex grow flex-col overflow-y-auto overflow-x-hidden', className)}
     >
       {/* header */}
-      <div className="flex-between z-40 h-[--e-header-h] shrink-0 border-b border-gold-5 bg-gray-1 sm:px-4">
+      <div className="flex-between h-[--e-header-h] shrink-0 border-b border-gold-5 bg-gray-1 sm:px-4">
         {/* open navbar button */}
         <div className="shrink-0">
+          <UIIconButton label="toggle nav sidebar" onClick={toggleNavigationSidebar}>
+            {navigationSidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
+          </UIIconButton>
+
           {!navbarIsOpen && (
             <UIIconButton
               label="open navigation bar"

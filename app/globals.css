@@ -41,6 +41,7 @@
 @layer base {
   :root {
     --e-header-h: 3.5rem;
+    --e-top-h: 3.5rem;
   }
 }
 

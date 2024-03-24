@@ -12,6 +12,7 @@ import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import { forwardRef, useEffect } from 'react'
 import { navbarOpenAtom } from '../atoms'
+import { useAppStore } from '../providers/AppStoreProvider'
 import { UIIconButton } from '../ui/UIIconButton'
 import { ThemeToggle } from '../util/ThemeToggle'
 import { GenerationsList } from './GenerationsList'
@@ -24,12 +25,24 @@ export const NavBar = forwardRef<HTMLDivElement, NavBarProps>(function NavBar(
   { className, chatList, children, ...props },
   forwardedRef,
 ) {
+  //* app state
+  const updateHeaderTitle = useAppStore((state) => state.updateHeaderTitle)
+  //* end app state
+
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
 
   const pathname = usePathname()
+
+  const route = pathname.split('/')[1]
+
   useEffect(() => {
     setNavbarOpen(false)
-  }, [pathname, setNavbarOpen])
+
+    // const isChat = route === 'chat'
+    // const isGenerate = route === 'generate'
+    // const icon = isGenerate ? <FileImageIcon /> : isChat ? <MessagesSquareIcon /> : null
+    updateHeaderTitle(`tit ${pathname} / ${route}`)
+  }, [pathname, route, setNavbarOpen, updateHeaderTitle])
   const defaultTab = pathname.startsWith('/generate') ? 'Generate' : 'Chat'
 
   const menuTabs = [

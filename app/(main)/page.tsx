@@ -25,6 +25,7 @@ export default function HomePage() {
   return (
     <div className="flex w-full flex-col">
       {/* header */}
+      {/* <HeaderBar /> */}
       <div className="flex-between h-14 shrink-0 border-b px-3 sm:gap-2">
         {/* open navbar button */}
         {!navbarIsOpen && (
