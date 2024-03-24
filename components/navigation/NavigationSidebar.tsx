@@ -7,6 +7,7 @@ import { Heading } from '@radix-ui/themes'
 import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ChatList } from '../navbar/ChatList'
 import { GenerationsList } from '../navbar/GenerationsList'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { Sidebar2 } from '../ui/Sidebar'
@@ -72,7 +73,7 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
 
           {/* chat */}
           <Tabs.Content value="Chat" asChild>
-            implement me
+            <ChatList />
           </Tabs.Content>
 
           {/* generate */}

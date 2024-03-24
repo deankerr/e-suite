@@ -7,7 +7,7 @@ export type AppState = {
   sidebarOpen: boolean
   headerTitle: React.ReactNode
 
-  // generations
+  threadsList: FunctionReturnType<typeof api.threads.threads.list>
   generationsList: FunctionReturnType<typeof api.generations.do.list>
 }
 
@@ -24,7 +24,7 @@ export type AppActions = {
   // title
   updateHeaderTitle: (title: React.ReactNode) => void
 
-  // generations
+  updateThreadsList: (threadsList: FunctionReturnType<typeof api.threads.threads.list>) => void
   updateGenerationsList: (
     generationsList: FunctionReturnType<typeof api.generations.do.list>,
   ) => void
@@ -37,6 +37,7 @@ export const initAppStore = (): AppState => {
     navigationSidebarOpen: true,
     sidebarOpen: false,
     headerTitle: 'Default Title',
+    threadsList: [],
     generationsList: [],
   }
 }
@@ -45,6 +46,7 @@ export const defaultInitState: AppState = {
   navigationSidebarOpen: true,
   sidebarOpen: false,
   headerTitle: 'Default Title',
+  threadsList: [],
   generationsList: [],
 }
 
@@ -61,6 +63,8 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
     toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
     updateSidebarOpen: (open: boolean) => set(() => ({ sidebarOpen: open })),
     updateHeaderTitle: (title: React.ReactNode) => set(() => ({ headerTitle: title })),
+    updateThreadsList: (threadsList: FunctionReturnType<typeof api.threads.threads.list>) =>
+      set(() => ({ threadsList })),
     updateGenerationsList: (generationsList: FunctionReturnType<typeof api.generations.do.list>) =>
       set(() => ({ generationsList })),
   }))
