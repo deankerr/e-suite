@@ -1,45 +1,51 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { forwardRef } from 'react'
 
 type SidebarProps = {
-  side: 'left' | 'right'
+  left?: boolean
+  right?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  children: React.ReactNode
 } & React.ComponentProps<'div'>
 
-export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
-  { side, open, onOpenChange, children, className, ...props },
-  forwardedRef,
-) {
-  const overlayCn =
-    'w-full md:z-10 pointer-events-auto z-40 bg-overlay md:bg-transparent md:pointer-events-none md:w-80'
+export const Sidebar = ({
+  left,
+  right,
+  open,
+  onOpenChange = () => {},
+  className,
+  children,
+  ...props
+}: SidebarProps) => {
+  // const isSmallDevice = useMediaQuery('only screen and (max-width : 520px)')
+  const isSmallDevice = false
 
   return (
-    // container / overlay
-    <div
-      {...props}
-      className={cn(
-        'pointer-events-none absolute bottom-0 top-0 z-10 w-80',
-        side === 'left' ? 'left-0' : 'right-0',
-        open && overlayCn,
-        className,
-      )}
-      ref={forwardedRef}
-      onClick={() => onOpenChange && onOpenChange(false)}
-    >
-      {/* main */}
+    <>
+      {/* spacer */}
+      {!isSmallDevice && open ? <div className={cn('h-full w-80 shrink-0')}></div> : null}
+
+      {/* overlay */}
+      {isSmallDevice && open ? (
+        <div className="absolute inset-0 z-20 bg-overlay" onClick={() => onOpenChange(false)}></div>
+      ) : null}
+
+      {/* content */}
       <div
+        {...props}
         className={cn(
-          'pointer-events-auto absolute bottom-0 top-0 z-50 w-80 border-gold-5 bg-gray-1 transition-transform',
-          side === 'left' ? '-translate-x-full border-r' : 'right-0 translate-x-full border-l',
-          open && 'translate-x-0',
+          'absolute z-20 flex h-full w-80 translate-x-0 flex-col bg-gray-1 transition-transform duration-500',
+          left && 'border-r',
+          right && 'right-0 border-l',
+          !open && left && '-translate-x-full',
+          !open && right && 'translate-x-full',
+          className,
         )}
-        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
-    </div>
+    </>
   )
-})
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import { Label } from '@/app/components/ui/Label'
+import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
 import { Slider as RxSlider } from '@radix-ui/themes'
 import { useAtom } from 'jotai'

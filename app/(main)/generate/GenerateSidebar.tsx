@@ -1,6 +1,6 @@
-import { GenerationForm } from '@/app/components/generations/GenerationForm'
+import { GenerationForm } from '@/components/generations/GenerationForm'
 import { useAppStore } from '@/components/providers/AppStoreProvider'
-import { Sidebar2 } from '@/components/ui/Sidebar2'
+import { Sidebar } from '@/components/ui/Sidebar'
 import { Generation } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
 import { ScrollArea, Tabs } from '@radix-ui/themes'
@@ -16,7 +16,7 @@ export const GenerateSidebar = forwardRef<HTMLDivElement, GenerateSidebarProps>(
     const updateSidebarOpen = useAppStore((state) => state.updateSidebarOpen)
 
     return (
-      <Sidebar2
+      <Sidebar
         {...props}
         right
         open={sidebarOpen}
@@ -35,7 +35,7 @@ export const GenerateSidebar = forwardRef<HTMLDivElement, GenerateSidebarProps>(
             </ScrollArea>
           </Tabs.Content>
         </Tabs.Root>
-      </Sidebar2>
+      </Sidebar>
     )
   },
 )

@@ -1,6 +1,6 @@
 'use client'
 
-import { GenerationShell } from '@/app/components/generations/GenerationShell'
+import { GenerationShell } from '@/components/generations/GenerationShell'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'

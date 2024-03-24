@@ -1,7 +1,7 @@
 import { NavigationSidebar } from '@/components/navigation/NavigationSidebar'
 import { getAuthToken } from '@/lib/auth'
 import { SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
-import { Button } from '../components/ui/Button'
+import { Button } from '../../components/ui/Button'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const token = await getAuthToken()

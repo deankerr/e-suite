@@ -1,6 +1,6 @@
 'use client'
 
-import { Logo } from '@/app/components/ui/Logo'
+import { Logo } from '@/components/ui/Logo'
 import { cn } from '@/lib/utils'
 import * as Tabs from '@radix-ui/react-tabs'
 import { Heading } from '@radix-ui/themes'
@@ -8,12 +8,12 @@ import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAppStore } from '../providers/AppStoreProvider'
-import { Sidebar2 } from '../ui/Sidebar2'
+import { Sidebar } from '../ui/Sidebar'
 import { ThemeToggle } from '../util/ThemeToggle'
 import { ChatList } from './ChatList'
 import { GenerationsList } from './GenerationsList'
 
-type NavigationSidebarProps = {} & Partial<React.ComponentProps<typeof Sidebar2>>
+type NavigationSidebarProps = {} & Partial<React.ComponentProps<typeof Sidebar>>
 
 export const NavigationSidebar = ({ className, children, ...props }: NavigationSidebarProps) => {
   const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
@@ -27,7 +27,7 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
   const pathname = usePathname()
   const defaultTab = pathname.startsWith('/generate') ? 'Generate' : 'Chat'
   return (
-    <Sidebar2
+    <Sidebar
       id="navigation-sidebar"
       open={navigationSidebarOpen}
       onOpenChange={updateNavigationSidebarOpen}
@@ -87,6 +87,6 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
           <ThemeToggle />
         </div>
       </div>
-    </Sidebar2>
+    </Sidebar>
   )
 }

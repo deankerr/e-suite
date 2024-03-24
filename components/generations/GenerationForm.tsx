@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
+import { ImageModelCard } from '@/components/generations/ImageModelCard'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel } from '@/convex/generations/imageModels'

@@ -1,4 +1,4 @@
-import { Label } from '@/app/components/ui/Label'
+import { Label } from '@/components/ui/Label'
 import { Permissions as PermissionsType } from '@/convex/schema'
 import { cn } from '@/lib/utils'
 import { Heading, Switch } from '@radix-ui/themes'

@@ -1,14 +1,14 @@
 'use client'
 
-import { PermissionsCard } from '@/app/components/PermissionsCard'
-import { Button } from '@/app/components/ui/Button'
-import { Label } from '@/app/components/ui/Label'
 import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { ThreadHelpers } from '@/components/threads/useThread'
-import { Sidebar2 } from '@/components/ui/Sidebar2'
+import { Button } from '@/components/ui/Button'
+import { Label } from '@/components/ui/Label'
+import { PermissionsCard } from '@/components/ui/PermissionsCard'
+import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
 import { ScrollArea, Switch, Tabs } from '@radix-ui/themes'
 import { forwardRef } from 'react'
@@ -27,7 +27,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
   const { thread, threadAtoms, updatePermissions } = threadHelpers
 
   return (
-    <Sidebar2
+    <Sidebar
       {...props}
       right
       open={sidebarOpen}
@@ -83,6 +83,6 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
           </div>
         </Tabs.Content>
       </Tabs.Root>
-    </Sidebar2>
+    </Sidebar>
   )
 })

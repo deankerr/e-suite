@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageModelCard } from '@/app/components/generations/ImageModelCard'
+import { ImageModelCard } from '@/components/generations/ImageModelCard'
 import { ImageModel } from '@/convex/generations/imageModels'
 import { Button, Dialog } from '@radix-ui/themes'
 

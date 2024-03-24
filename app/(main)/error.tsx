@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/app/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { Card, Text } from '@radix-ui/themes'
 import { useEffect } from 'react'
 

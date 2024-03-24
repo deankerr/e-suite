@@ -1,4 +1,4 @@
-import { Button } from '@/app/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'

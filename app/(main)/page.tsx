@@ -11,8 +11,8 @@ import { Card, Strong } from '@radix-ui/themes'
 import { AuthLoading, Unauthenticated, useConvexAuth, useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
 import { MenuIcon } from 'lucide-react'
-import { Button } from '../components/ui/Button'
-import { Logo } from '../components/ui/Logo'
+import { Button } from '../../components/ui/Button'
+import { Logo } from '../../components/ui/Logo'
 
 export default function HomePage() {
   const { isAuthenticated } = useConvexAuth()

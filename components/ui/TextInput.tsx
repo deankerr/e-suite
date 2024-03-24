@@ -1,4 +1,4 @@
-import { Label } from '@/app/components/ui/Label'
+import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
 import { TextFieldInput } from '@radix-ui/themes'
 import { useAtom } from 'jotai'

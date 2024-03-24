@@ -1,6 +1,6 @@
 'use client'
 
-import { Label } from '@/app/components/ui/Label'
+import { Label } from '@/components/ui/Label'
 import { Select } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
 import { forwardRef } from 'react'
