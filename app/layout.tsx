@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <JotaiProvider>
-              <Theme className="h-full" accentColor="orange">
+              <Theme className="h-full" accentColor="orange" appearance="dark">
                 <AppStoreProvider>
                   <CounterStoreProvider>
                     {children}
