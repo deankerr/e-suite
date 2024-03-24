@@ -1,12 +1,10 @@
 import { NavigationSidebar } from '@/components/navigation/NavigationSidebar'
-import { ZData } from '@/components/ZData'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   // const token = await getAuthToken()
 
   return (
     <div className="flex h-full overflow-hidden">
-      <ZData />
       <NavigationSidebar />
       {children}
 

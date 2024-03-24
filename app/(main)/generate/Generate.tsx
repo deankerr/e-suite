@@ -5,16 +5,18 @@ import { GenerationShell } from '@/app/components/generations/GenerationShell'
 import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { Sidebar } from '@/components/ui/Sidebar'
+import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { ScrollArea, Tabs } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 
 type GenerateProps = {
   generationId?: Id<'generations'>
 } & React.ComponentProps<'div'>
 
 export const Generate = ({ generationId, className, ...props }: GenerateProps) => {
-  const generationsList = useAppStore((state) => state.generationsList)
+  const generationsList = useQuery(api.generations.do.list, {})
   const generation = generationsList?.find((g) => g._id === generationId)
 
   const sidebarOpen = useAppStore((state) => state.sidebarOpen)

@@ -30,7 +30,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   const sidebarOpen = useAppStore((state) => state.sidebarOpen)
   const toggleSidebar = useAppStore((state) => state.toggleSidebar)
 
-  const threadsList = useAppStore((state) => state.threadsList)
+  const threadsList = useQuery(api.threads.threads.list, {})
   const generationsList = useQuery(api.generations.do.list, {})
 
   const pathname = usePathname()
