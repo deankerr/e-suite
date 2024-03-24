@@ -1,7 +1,6 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { useMediaQuery } from '@uidotdev/usehooks'
 import { forwardRef } from 'react'
 
 type SidebarProps = {
@@ -44,48 +43,3 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(function Sidebar
     </div>
   )
 })
-
-type Sidebar2Props = {
-  left?: boolean
-  right?: boolean
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  children: React.ReactNode
-} & React.ComponentProps<'div'>
-
-export const Sidebar2 = ({
-  left,
-  right,
-  open,
-  onOpenChange = () => {},
-  children,
-  ...props
-}: Sidebar2Props) => {
-  const isSmallDevice = useMediaQuery('only screen and (max-width : 520px)')
-
-  return (
-    <>
-      {/* spacer */}
-      {!isSmallDevice && open ? <div className={cn('h-full w-80 shrink-0')}></div> : null}
-
-      {/* overlay */}
-      {isSmallDevice && open ? (
-        <div className="absolute inset-0 z-20 bg-overlay" onClick={() => onOpenChange(false)}></div>
-      ) : null}
-
-      {/* content */}
-      <div
-        {...props}
-        className={cn(
-          'absolute z-20 flex h-full w-80 translate-x-0 flex-col transition-transform duration-500',
-          left && 'border-r',
-          right && 'right-0 border-l',
-          !open && left && '-translate-x-full',
-          !open && right && 'translate-x-full',
-        )}
-      >
-        {children}
-      </div>
-    </>
-  )
-}

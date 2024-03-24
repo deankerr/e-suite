@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation'
 import { ChatList } from '../navbar/ChatList'
 import { GenerationsList } from '../navbar/GenerationsList'
 import { useAppStore } from '../providers/AppStoreProvider'
-import { Sidebar2 } from '../ui/Sidebar'
+import { Sidebar2 } from '../ui/Sidebar2'
 import { ThemeToggle } from '../util/ThemeToggle'
 
 type NavigationSidebarProps = {} & Partial<React.ComponentProps<typeof Sidebar2>>
