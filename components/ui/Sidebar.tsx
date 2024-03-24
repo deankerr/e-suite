@@ -78,7 +78,8 @@ export const Sidebar2 = ({
         {...props}
         className={cn(
           'absolute z-20 flex h-full w-80 translate-x-0 flex-col transition-transform duration-500',
-          right && 'right-0',
+          left && 'border-r',
+          right && 'right-0 border-l',
           !open && left && '-translate-x-full',
           !open && right && 'translate-x-full',
         )}

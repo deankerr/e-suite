@@ -7,11 +7,9 @@ import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { UIIconButton } from '@/components/ui/UIIconButton'
-import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Heading, ScrollArea, Tabs } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
 import { MenuIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 
@@ -22,7 +20,9 @@ type GenerateProps = {
 export const Generate = ({ generationId, className, ...props }: GenerateProps) => {
   const [navbarIsOpen, setNavbarOpen] = useAtom(navbarOpenAtom)
 
-  const generation = useQuery(api.generations.do.get, generationId ? { id: generationId } : 'skip')
+  const generationsList = useAppStore((state) => state.generationsList)
+  const generation = generationsList?.find((g) => g._id === generationId)
+
   const isLoading = generationId && !generation
 
   const title = generationId ? generation?.images?.[0]?.parameters?.prompt : 'new'

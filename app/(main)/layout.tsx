@@ -1,17 +1,16 @@
-import { ChatList } from '@/components/navbar/ChatList'
-import { NavBar } from '@/components/navbar/NavBar'
-import { LoaderBars } from '@/components/ui/LoaderBars'
-import { getAuthToken } from '@/lib/auth'
-import { SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
-import { Suspense } from 'react'
-import { Button } from '../components/ui/Button'
+import { NavigationSidebar } from '@/components/navigation/NavigationSidebar'
+import { ZData } from '@/components/ZData'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const token = await getAuthToken()
+  // const token = await getAuthToken()
 
   return (
     <div className="flex h-full overflow-hidden">
-      <NavBar
+      <ZData />
+      <NavigationSidebar />
+      {children}
+
+      {/* <NavBar
         chatList={
           token ? (
             <Suspense
@@ -43,8 +42,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </SignInButton>
           </div>
         )}
-      </NavBar>
-      {children}
+      </NavBar> */}
     </div>
   )
 }
