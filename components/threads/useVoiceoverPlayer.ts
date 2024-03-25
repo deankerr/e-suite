@@ -1,75 +1,67 @@
-import { Id } from '@/convex/_generated/dataModel'
 import { Message } from '@/convex/threads/threads'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
+import { useAppStore } from '../providers/AppStoreProvider'
 
-const off = true
-
-export type VoiceoverPlayer = ReturnType<typeof useVoiceoverPlayer>
 export const useVoiceoverPlayer = (messages: Message[]) => {
-  const [autoplay, setAutoplay] = useState(true)
+  const queue = useAppStore((state) => state.voiceoverMessageQueue)
+  const setQueue = useAppStore((state) => state.voiceoverSetMessageQueue)
 
-  const [hasAutoplayed, setHasAutoplayed] = useState(() => messages.map((message) => message._id))
+  const isAutoplayEnabled = useAppStore((state) => state.voiceoverIsAutoplayEnabled)
 
-  const [playMessageId, setPlayMessageId] = useState<Id<'messages'> | null>(null)
-  const playMessage = messages.find((message) => message._id === playMessageId)
-
-  const autoplayMessage = autoplay
-    ? messages.find((message) => !hasAutoplayed.includes(message._id))
-    : null
-
-  const sourceMessage = playMessage ?? autoplayMessage
-  const sourceId = sourceMessage?._id
-  const sourceUrl = sourceMessage?.voiceover?.url
-
+  const { cleanup, load, src, stop, playing, isLoading } = useAudioPlayer()
   useEffect(() => {
-    if (!autoplay) setHasAutoplayed(messages.map((message) => message._id))
-  }, [autoplay, messages])
+    return () => {
+      console.log('cleanup queue')
+      setQueue(undefined)
+      cleanup()
+    }
+  }, [cleanup, setQueue])
 
-  const { cleanup, load, stop, isLoading, playing } = useAudioPlayer()
-  useEffect(() => {
-    if (!sourceUrl || off) return
-    // console.log('load', sourceId)
-    load(sourceUrl, {
+  const currentIndex = queue?.findIndex(([_, status]) => status) ?? -1
+  const [currentId] = queue?.[currentIndex] ?? []
+  const currentUrl = messages.find((message) => message._id === currentId)?.voiceover?.url
+  const currentIsPlaying = playing && src === currentUrl
+
+  const play = () => {
+    if (!currentId) return console.log('play: queue empty')
+    if (currentIsPlaying) return console.log('play: already playing')
+    if (isLoading) return console.log('play: is loading')
+    if (!currentUrl) return console.log('play: no voiceover url')
+
+    console.log('play: load url')
+    load(currentUrl, {
       autoplay: true,
       format: 'mp3',
-      onend: () => {
-        setPlayMessageId(null)
-        if (sourceId) setHasAutoplayed((list) => [...list, sourceId])
-      },
+      onend: () => setQueue(queue?.with(currentIndex, [currentId, false])),
     })
+  }
 
-    return () => cleanup()
-  }, [cleanup, load, sourceUrl, sourceId])
+  const isQueueStale = () => !queue || messages.some(({ _id }, i) => _id !== queue[i]?.[0])
 
-  const statuses = messages.map((message) => {
-    const job = message.voiceover?.job?.status
-    const url = message.voiceover?.url
-    const isCurrent = sourceUrl === url
+  const rebuildQueue = () => {
+    console.log('is queue undef', !queue, queue)
+    console.log('msg', messages.length)
 
-    const status = {
-      messageId: message._id,
-      isAvailable: !!url,
-      isPlaying: isCurrent && playing,
-      isLoading: (isCurrent && isLoading) || job === 'pending',
-      isError: job === 'error',
-    }
+    setQueue(
+      messages.map(({ _id }) => {
+        if (!queue || !isAutoplayEnabled) [_id, false]
+        const status = queue?.find(([id]) => id === _id)?.[1] ?? isAutoplayEnabled
+        return [_id, status]
+      }),
+    )
+  }
 
-    return status
-  })
+  if (isQueueStale()) {
+    if (!queue) console.log('init queue')
+    else console.log('stale')
 
-  return {
-    autoplay,
-    setAutoplay,
-    statuses,
-    play: (id: Id<'messages'>) => {
-      setHasAutoplayed(messages.map((message) => message._id))
-      setPlayMessageId(id)
-    },
-    stop: () => {
-      stop()
-      setHasAutoplayed(messages.map((message) => message._id))
-      setPlayMessageId(null)
-    },
+    rebuildQueue()
+  }
+
+  if (currentId && !currentIsPlaying) play()
+  if (!currentId && playing) {
+    console.log('stop')
+    stop()
   }
 }

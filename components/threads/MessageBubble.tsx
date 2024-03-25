@@ -1,41 +1,22 @@
 import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Heading, Text } from '@radix-ui/themes'
-import {
-  FileQuestionIcon,
-  Loader2Icon,
-  MoreHorizontalIcon,
-  SquareIcon,
-  Volume2Icon,
-} from 'lucide-react'
+import { MoreHorizontalIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
-import type { VoiceoverPlayer } from './useVoiceoverPlayer'
 import { VoiceoverButton } from './VoiceoverButton'
 
 type MessageBubbleProps = {
   message: Message
-  voPlayer: VoiceoverPlayer
 } & React.ComponentProps<'div'>
 
 export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(function MessageBubble(
-  { message, voPlayer, className, ...props },
+  { message, className, ...props },
   forwardedRef,
 ) {
   const style = getRoleStyle(message.role)
-
-  const { play, stop, statuses } = voPlayer
-  const status = statuses.find((status) => status.messageId === message._id)
-
-  const getVoiceoverIcon = () => {
-    if (!status) return Volume2Icon
-    if (status.isPlaying) return SquareIcon
-    if (status.isLoading) return Loader2Icon
-    if (status.isError) return FileQuestionIcon
-    return Volume2Icon
-  }
 
   return (
     <div
@@ -48,15 +29,6 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
 
         <div className="flex gap-2.5">
           <VoiceoverButton voiceover={message.voiceover} />
-          <UIIconButton
-            icon={getVoiceoverIcon()}
-            label="play voiceover"
-            size="1"
-            disabled={!status?.isAvailable}
-            className={cn(status?.isLoading && 'animate-spin')}
-            onClick={() => (status?.isPlaying ? stop() : play(message._id))}
-          />
-
           <MessageMenu messageId={message._id}>
             <UIIconButton icon={MoreHorizontalIcon} label="message menu" size="1" />
           </MessageMenu>

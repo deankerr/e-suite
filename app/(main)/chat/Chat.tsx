@@ -4,7 +4,6 @@ import { MessageBubble } from '@/components/threads/MessageBubble'
 import { MessageInput } from '@/components/threads/MessageInput'
 import { useThread } from '@/components/threads/useThread'
 import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
-import { useVoiceoverPlayer4 } from '@/components/threads/useVoiceoverPlayer2'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { ScrollArea } from '@radix-ui/themes'
@@ -26,8 +25,7 @@ export const Chat = ({ threadId }: ChatProps) => {
     }
   }, [messages])
 
-  const voPlayer = useVoiceoverPlayer(messages)
-  useVoiceoverPlayer4(messages)
+  useVoiceoverPlayer(messages)
 
   return (
     <div className="flex grow overflow-hidden bg-gray-1">
@@ -38,7 +36,7 @@ export const Chat = ({ threadId }: ChatProps) => {
           <ScrollArea className="h-[calc(100%-4rem)]" scrollbars="vertical">
             <div className="flex flex-col items-center gap-3 p-3 md:gap-4 md:p-4" ref={scrollRef}>
               {messages.map((message) => (
-                <MessageBubble voPlayer={voPlayer} message={message} key={message._id} />
+                <MessageBubble message={message} key={message._id} />
               ))}
             </div>
           </ScrollArea>
