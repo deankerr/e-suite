@@ -5,6 +5,7 @@ import { LoaderBars } from '@/components/ui/LoaderBars'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
+import { ScrollArea } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 
 type GenerateProps = {
@@ -21,13 +22,10 @@ export const Generate = ({ generationId, className, ...props }: GenerateProps) =
       className={cn('flex grow flex-col overflow-y-auto overflow-x-hidden', className)}
     >
       {/* main */}
-      <div className="flex h-full">
-        {/* content */}
-        <div className={cn('flex-col-center grow')}>
-          {generation && <GenerationShell generation={generation} />}
-          {generationId && !generation && <LoaderBars className="w-1/2" />}
-        </div>
-      </div>
+      <ScrollArea className="grow" scrollbars="vertical">
+        {generation && <GenerationShell generation={generation} />}
+        {generationId && !generation && <LoaderBars className="w-1/2" />}
+      </ScrollArea>
     </div>
   )
 }

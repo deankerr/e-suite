@@ -2,7 +2,6 @@
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
-import { Heading } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import {
   FileImageIcon,
@@ -16,12 +15,10 @@ import { forwardRef } from 'react'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { UIIconButton } from './UIIconButton'
 
-type TopBarProps = {
-  extraTitle?: string
-} & React.ComponentProps<'div'>
+type TopBarProps = {} & React.ComponentProps<'div'>
 
 export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
-  { extraTitle, className, ...props },
+  { className, ...props },
   forwardedRef,
 ) {
   const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
@@ -54,12 +51,11 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   }
 
   const title = route.chat ? getThreadTitle() : route.generate ? getGenerationTitle() : ''
-  const Icon = route.chat ? MessageSquareIcon : route.generate ? FileImageIcon : null
 
   return (
     <div
       {...props}
-      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 px-3', className)}
+      className={cn('flex-between h-[--e-top-h] shrink-0 gap-1 border-b bg-gray-1 px-3', className)}
       ref={forwardedRef}
     >
       {/* start */}
@@ -74,10 +70,13 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
       </div>
 
       {/* start/middle */}
-      <div className="flex-center grow gap-2.5">
-        {extraTitle}
-        {Icon && <Icon />}
-        <Heading size="3">{title}</Heading>
+      <div className="flex-center grow gap-1.5">
+        {route.chat ? (
+          <MessageSquareIcon className="size-4 shrink-0" />
+        ) : route.generate ? (
+          <FileImageIcon className="stroke-1.5 size-4 shrink-0" />
+        ) : null}
+        <div className="truncate text-sm font-medium md:text-base">{title}</div>
       </div>
 
       {/* end */}
