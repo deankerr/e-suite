@@ -1,7 +1,16 @@
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { Voiceover } from '@/convex/threads/threads'
-import { AlertCircleIcon, FileQuestionIcon, Loader2Icon, PlayIcon, SquareIcon } from 'lucide-react'
+import {
+  AlertCircleIcon,
+  FileQuestionIcon,
+  Loader2Icon,
+  MoreHorizontalIcon,
+  PlayIcon,
+  SnailIcon,
+  SquareIcon,
+} from 'lucide-react'
 import { forwardRef } from 'react'
+import { useGlobalAudioPlayer } from 'react-use-audio-player'
 import { useAppStore } from '../providers/AppStoreProvider'
 
 type VoiceoverButtonProps = {
@@ -13,49 +22,53 @@ export const VoiceoverButton = forwardRef<HTMLButtonElement, VoiceoverButtonProp
     const url = voiceover?.url
     const job = voiceover?.job?.status
 
-    const voiceoverMessageQueue = useAppStore((state) => state.voiceoverMessageQueue)
+    const queue = useAppStore((state) => state.voiceoverMessageQueue)
     const voiceoverPlay = useAppStore((state) => state.voiceoverPlay)
     const voiceoverStop = useAppStore((state) => state.voiceoverStop)
 
-    const currentMessage = voiceoverMessageQueue?.find(([id]) => voiceover?.messageId === id)
-    const currentId = currentMessage?.[0] ?? null
-    const currentPlaying = currentMessage?.[1] ?? false
+    const [currentId] = queue?.find(([_, status]) => status) ?? []
+    const selfIsCurrent = currentId === voiceover?.messageId
+
+    const [queuedId] = queue?.find(([id, status]) => voiceover?.messageId === id && status) ?? []
+    const selfIsQueued = queuedId === voiceover?.messageId
+
+    const { isLoading, playing } = useGlobalAudioPlayer()
 
     const getVoiceoverStatus = () => {
-      if (!voiceover) return 'none'
-
-      const isCurrent = currentId === voiceover.messageId
-      if (url && isCurrent && currentPlaying) return 'playing'
-      if (url && isCurrent && !currentPlaying) return 'stopped'
+      if (!voiceover) return 'unknown'
+      if (job === 'error') return 'error'
+      if (job === 'pending') return 'pending'
+      if (selfIsCurrent && playing) return 'playing'
+      if (selfIsCurrent && isLoading) return 'loading'
+      if (selfIsCurrent && !playing) return 'ready'
+      if (!selfIsCurrent && selfIsQueued) return 'queued'
       if (url) return 'available'
 
-      if (job === 'pending') return 'pending'
-      if (job === 'error') return 'error'
-
-      return 'none'
+      return 'unknown'
     }
 
     const status = getVoiceoverStatus()
 
     const statusIcons: Record<ReturnType<typeof getVoiceoverStatus>, React.ReactNode> = {
-      available: <PlayIcon />,
-      stopped: <PlayIcon />,
-      error: <AlertCircleIcon />,
-      none: <FileQuestionIcon />,
-      pending: <Loader2Icon />,
       playing: <SquareIcon />,
+      ready: <SnailIcon />,
+      queued: <MoreHorizontalIcon />,
+      available: <PlayIcon />,
+      loading: <Loader2Icon className="animate-spin" />,
+      pending: <Loader2Icon className="animate-spin" />,
+      error: <AlertCircleIcon />,
+      unknown: <FileQuestionIcon />,
     }
 
     return (
       <UIIconButton
         {...props}
         label="play voiceover"
-        color="grass"
         ref={forwardedRef}
+        disabled={status === 'unknown'}
         onClick={() => {
           if (status === 'playing') voiceoverStop()
-          else if (url && voiceover.messageId) {
-            console.log('btn play')
+          else if (voiceover?.messageId) {
             voiceoverPlay(voiceover.messageId)
           }
         }}

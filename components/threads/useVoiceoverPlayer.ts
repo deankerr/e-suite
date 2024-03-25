@@ -1,6 +1,6 @@
 import { Message } from '@/convex/threads/threads'
 import { useEffect } from 'react'
-import { useAudioPlayer } from 'react-use-audio-player'
+import { useGlobalAudioPlayer } from 'react-use-audio-player'
 import { useAppStore } from '../providers/AppStoreProvider'
 
 export const useVoiceoverPlayer = (messages?: Message[]) => {
@@ -8,7 +8,7 @@ export const useVoiceoverPlayer = (messages?: Message[]) => {
   const setQueue = useAppStore((state) => state.voiceoverSetMessageQueue)
   const isAutoplayEnabled = useAppStore((state) => state.voiceoverIsAutoplayEnabled)
 
-  const { cleanup, load, src, stop, playing, isLoading } = useAudioPlayer()
+  const { load, src, stop, playing, isLoading } = useGlobalAudioPlayer()
 
   // "current" - first message with [Id, boolean = true]
   const currentIndex = queue?.findIndex(([_, status]) => status) ?? -1
@@ -53,7 +53,7 @@ export const useVoiceoverPlayer = (messages?: Message[]) => {
   useEffect(() => {
     return () => {
       setQueue(undefined)
-      cleanup()
+      stop()
     }
-  }, [cleanup, setQueue])
+  }, [setQueue, stop])
 }
