@@ -3,13 +3,7 @@
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { useQuery } from 'convex/react'
-import {
-  FileImageIcon,
-  MenuIcon,
-  MessageSquareIcon,
-  SlidersHorizontalIcon,
-  XIcon,
-} from 'lucide-react'
+import { ImageIcon, MenuIcon, MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { forwardRef } from 'react'
 import { useAppStore } from '../providers/AppStoreProvider'
@@ -22,7 +16,6 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   { className, ...props },
   forwardedRef,
 ) {
-  const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
   const toggleNavigationSidebar = useAppStore((state) => state.toggleNavigationSidebar)
 
   const sidebarOpen = useAppStore((state) => state.sidebarOpen)
@@ -42,59 +35,54 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
   const getThreadTitle = () => {
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
-    return title ?? 'New Chat'
+    return {
+      title: title ?? 'New Chat',
+      icon: <MessageSquareIcon className="-mb-0.5 size-5 shrink-0" />,
+    }
   }
 
   const getGenerationTitle = () => {
     const generation = generationsList?.find(({ _id }) => _id === slug)
     const title = generation?.images?.[0]?.parameters?.prompt
-    return title ?? 'New Generation'
+    return { title: title ?? 'New Generation', icon: <ImageIcon className="size-5 shrink-0" /> }
   }
 
-  const title = route.chat ? getThreadTitle() : route.generate ? getGenerationTitle() : ''
+  const { title, icon } = route.chat
+    ? getThreadTitle()
+    : route.generate
+      ? getGenerationTitle()
+      : { title: null, icon: null }
 
   return (
     <div
       {...props}
-      className={cn('flex-between h-[--e-top-h] shrink-0 gap-1 border-b bg-gray-1 px-3', className)}
+      className={cn(
+        'flex-between h-[--e-top-h] shrink-0 items-center border-b bg-gray-1 px-4',
+        className,
+      )}
       ref={forwardedRef}
     >
       {/* start */}
       <div className="shrink-0">
-        <UIIconButton label="toggle navigation bar" onClick={toggleNavigationSidebar}>
-          {navigationSidebarOpen ? (
-            <MenuIcon className="size-7" />
-          ) : (
-            <MenuIcon className="size-7" />
-          )}
+        <UIIconButton
+          variant="ghost"
+          label="toggle navigation bar"
+          onClick={toggleNavigationSidebar}
+        >
+          <MenuIcon className="scale-[1.2]" />
         </UIIconButton>
       </div>
 
       {/* middle */}
-      <div className="flex-center grow gap-1.5">
-        {/* page header */}
-        <div className="grid grid-cols-[1fr_auto_1fr] gap-2.5 overflow-hidden border-pink-8">
-          {/* item icon */}
-          <div className="flex-end">
-            {route.chat ? (
-              <MessageSquareIcon className="size-4 shrink-0 md:size-5" />
-            ) : route.generate ? (
-              <FileImageIcon className="stroke-1.5 size-4 shrink-0 md:size-5" />
-            ) : null}
-          </div>
-
-          {/* title */}
-          <div className="flex-center truncate font-medium">{title}</div>
-
-          {/* controls */}
-          <div className="flex-center">{route.chat && <PlayVoiceoversToggle />}</div>
-        </div>
-      </div>
+      <div className="flex-end shrink-0 grow pl-1.5">{icon}</div>
+      <div className="truncate px-1">{title}</div>
+      <div className="grow"></div>
 
       {/* end */}
-      <div className="shrink-0">
+      <div className="flex shrink-0 gap-3">
+        {route.chat && <PlayVoiceoversToggle />}
         {!route.home && (
-          <UIIconButton label="toggle parameters sidebar" onClick={toggleSidebar}>
+          <UIIconButton variant="ghost" label="toggle parameters sidebar" onClick={toggleSidebar}>
             {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
           </UIIconButton>
         )}
