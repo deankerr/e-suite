@@ -1,3 +1,4 @@
+import { Id } from '@/convex/_generated/dataModel'
 import { Message } from '@/convex/threads/threads'
 import { useEffect } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
@@ -6,30 +7,22 @@ import { useAppStore } from '../providers/AppStoreProvider'
 export const useVoiceoverPlayer = (messages?: Message[]) => {
   const queue = useAppStore((state) => state.voiceoverMessageQueue)
   const setQueue = useAppStore((state) => state.voiceoverSetMessageQueue)
-
   const isAutoplayEnabled = useAppStore((state) => state.voiceoverIsAutoplayEnabled)
 
   const { cleanup, load, src, stop, playing, isLoading } = useAudioPlayer()
-  useEffect(() => {
-    return () => {
-      console.log('cleanup queue')
-      setQueue(undefined)
-      cleanup()
-    }
-  }, [cleanup, setQueue])
 
+  // "current" - first message with [Id, boolean = true]
   const currentIndex = queue?.findIndex(([_, status]) => status) ?? -1
   const [currentId] = queue?.[currentIndex] ?? []
   const currentUrl = messages?.find((message) => message._id === currentId)?.voiceover?.url
   const currentIsPlaying = playing && src === currentUrl
 
   const play = () => {
-    if (!currentId) return console.log('play: queue empty')
-    if (currentIsPlaying) return console.log('play: already playing')
-    if (isLoading) return console.log('play: is loading')
-    if (!currentUrl) return console.log('play: no voiceover url')
+    if (!currentId) return // nothing to play
+    if (currentIsPlaying) return // already playing
+    if (isLoading) return
+    if (!currentUrl) return // no voiceover yet (or error?)
 
-    console.log('play: load url')
     load(currentUrl, {
       autoplay: true,
       format: 'mp3',
@@ -37,35 +30,39 @@ export const useVoiceoverPlayer = (messages?: Message[]) => {
     })
   }
 
-  const isQueueStale = () => !queue || messages?.some(({ _id }, i) => _id !== queue[i]?.[0])
+  // are the current thread message ids different from the current queue
+  const isQueueStale = (messages: Message[]) =>
+    !queue || messages.some(({ _id }, i) => _id !== queue[i]?.[0])
 
-  const rebuildQueue = () => {
-    console.log('is queue undef', !queue, queue)
-    console.log('msg', messages?.length)
-    if (!messages) {
-      console.log('messages loading')
-      return
-    }
+  const rebuildQueue = (messages: Message[]) => {
+    const newQueue: [Id<'messages'>, boolean][] = messages.map(({ _id }) => {
+      // if this is the initial load, don't autoplay everything
+      if (!queue || !isAutoplayEnabled) return [_id, false]
+      // otherwise restore old status, or is a new message and should autoplay
+      const status = queue.find(([id]) => id === _id)?.[1] ?? true
+      return [_id, status]
+    })
 
-    setQueue(
-      messages?.map(({ _id }) => {
-        if (!queue || !isAutoplayEnabled) [_id, false]
-        const status = queue?.find(([id]) => id === _id)?.[1] ?? isAutoplayEnabled
-        return [_id, status]
-      }),
-    )
+    setQueue(newQueue)
   }
 
-  if (isQueueStale()) {
-    if (!queue) console.log('init queue')
-    else console.log('stale')
-
-    rebuildQueue()
+  if (messages && isQueueStale(messages)) {
+    rebuildQueue(messages)
   }
 
-  if (currentId && !currentIsPlaying) play()
   if (!currentId && playing) {
-    console.log('stop')
+    // if something is playing but nothing is queued, stop
     stop()
+  } else {
+    // otherwise see if we can play anything
+    play()
   }
+
+  // cleanup
+  useEffect(() => {
+    return () => {
+      setQueue(undefined)
+      cleanup()
+    }
+  }, [cleanup, setQueue])
 }
