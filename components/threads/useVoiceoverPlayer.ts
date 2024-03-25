@@ -3,6 +3,8 @@ import { Message } from '@/convex/threads/threads'
 import { useEffect, useState } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
 
+const off = true
+
 export type VoiceoverPlayer = ReturnType<typeof useVoiceoverPlayer>
 export const useVoiceoverPlayer = (messages: Message[]) => {
   const [autoplay, setAutoplay] = useState(true)
@@ -26,8 +28,8 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
 
   const { cleanup, load, stop, isLoading, playing } = useAudioPlayer()
   useEffect(() => {
-    if (!sourceUrl) return
-    console.log('load', sourceId)
+    if (!sourceUrl || off) return
+    // console.log('load', sourceId)
     load(sourceUrl, {
       autoplay: true,
       format: 'mp3',

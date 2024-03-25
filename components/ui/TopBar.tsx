@@ -7,7 +7,7 @@ import { ImageIcon, MenuIcon, MessageSquareIcon, SlidersHorizontalIcon, XIcon } 
 import { usePathname } from 'next/navigation'
 import { forwardRef } from 'react'
 import { useAppStore } from '../providers/AppStoreProvider'
-import { PlayVoiceoversToggle } from '../threads/PlayVoiceoversToggle'
+import { VoiceoverPlayToggle } from '../threads/VoiceoverPlayToggle'
 import { UIIconButton } from './UIIconButton'
 
 type TopBarProps = {} & React.ComponentProps<'div'>
@@ -80,7 +80,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
       {/* end */}
       <div className="flex shrink-0 gap-3">
-        {route.chat && <PlayVoiceoversToggle />}
+        {route.chat && <VoiceoverPlayToggle />}
         {!route.home && (
           <UIIconButton variant="ghost" label="toggle parameters sidebar" onClick={toggleSidebar}>
             {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}

@@ -13,6 +13,7 @@ import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
 import type { VoiceoverPlayer } from './useVoiceoverPlayer'
+import { VoiceoverButton } from './VoiceoverButton'
 
 type MessageBubbleProps = {
   message: Message
@@ -46,6 +47,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
         <Heading size="2">{message.name ?? style.role}</Heading>
 
         <div className="flex gap-2.5">
+          <VoiceoverButton voiceover={message.voiceover} />
           <UIIconButton
             icon={getVoiceoverIcon()}
             label="play voiceover"

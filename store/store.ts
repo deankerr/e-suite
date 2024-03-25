@@ -1,9 +1,12 @@
+import { Id } from '@/convex/_generated/dataModel'
 import { createStore } from 'zustand/vanilla'
 
 export type AppState = {
   navigationSidebarOpen: boolean
   sidebarOpen: boolean
-  playVoiceovers: boolean
+
+  voiceoverMessageQueue: [Id<'messages'>, boolean][] | undefined
+  voiceoverIsAutoplayEnabled: boolean
 }
 
 export type AppActions = {
@@ -11,13 +14,16 @@ export type AppActions = {
   closeNavigationSidebar: () => void
   toggleNavigationSidebar: () => void
   updateNavigationSidebarOpen: (open: boolean) => void
-  // sidebar state
+
   openSidebar: () => void
   closeSidebar: () => void
   toggleSidebar: () => void
   updateSidebarOpen: (open: boolean) => void
 
-  togglePlayVoiceovers: (value?: boolean) => void
+  voiceoverSetMessageQueue: (queue: [Id<'messages'>, boolean][] | undefined) => void
+  voiceoverToggleIsAutoplayEnabled: (enabled?: boolean) => void
+  voiceoverPlay: (messageId: Id<'messages'>) => void
+  voiceoverStop: () => void
 }
 
 export type AppStore = AppState & AppActions
@@ -26,14 +32,16 @@ export const initAppStore = (): AppState => {
   return {
     navigationSidebarOpen: true,
     sidebarOpen: false,
-    playVoiceovers: false,
+    voiceoverMessageQueue: undefined,
+    voiceoverIsAutoplayEnabled: false,
   }
 }
 
 export const defaultInitState: AppState = {
   navigationSidebarOpen: true,
   sidebarOpen: false,
-  playVoiceovers: false,
+  voiceoverMessageQueue: undefined,
+  voiceoverIsAutoplayEnabled: false,
 }
 
 export const createAppStore = (initState: AppState = defaultInitState) => {
@@ -50,7 +58,25 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
     toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
     updateSidebarOpen: (open: boolean) => set(() => ({ sidebarOpen: open })),
 
-    togglePlayVoiceovers: (value?: boolean) =>
-      set((state) => ({ playVoiceovers: value ?? !state.playVoiceovers })),
+    // voiceover
+    voiceoverSetMessageQueue: (queue: [Id<'messages'>, boolean][] | undefined) =>
+      set(() => ({ voiceoverMessageQueue: queue })),
+
+    voiceoverToggleIsAutoplayEnabled: (enabled?: boolean) =>
+      set((state) => ({
+        voiceoverIsAutoplayEnabled: enabled ?? !state.voiceoverIsAutoplayEnabled,
+      })),
+
+    voiceoverPlay: (messageId: Id<'messages'>) =>
+      set((state) => ({
+        voiceoverMessageQueue: state.voiceoverMessageQueue?.map(([id]) =>
+          messageId === id ? [id, true] : [id, false],
+        ),
+      })),
+
+    voiceoverStop: () =>
+      set((state) => ({
+        voiceoverMessageQueue: state.voiceoverMessageQueue?.map(([id]) => [id, false]),
+      })),
   }))
 }
