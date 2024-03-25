@@ -20,6 +20,7 @@ type NavigationSidebarProps = {} & Partial<React.ComponentProps<typeof Sidebar>>
 export const NavigationSidebar = ({ className, children, ...props }: NavigationSidebarProps) => {
   const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
   const updateNavigationSidebarOpen = useAppStore((state) => state.updateNavigationSidebarOpen)
+  const updateSidebarOpen = useAppStore((state) => state.updateSidebarOpen)
 
   const menuTabs = [
     ['Chat', <MessagesSquareIcon key="Chat" className="size-6" />],
@@ -35,7 +36,19 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
     if (isSmallDevice) {
       updateNavigationSidebarOpen(false)
     }
-  }, [pathname, isSmallDevice, updateNavigationSidebarOpen])
+
+    const [_, routePath, slug] = pathname.split('/')
+    const route = {
+      home: !routePath,
+      chat: routePath === 'chat',
+      generate: routePath === 'generate',
+    }
+
+    if ((route.generate || route.chat) && !slug) {
+      updateSidebarOpen(true)
+    }
+  }, [pathname, isSmallDevice, updateNavigationSidebarOpen, updateSidebarOpen])
+
   return (
     <Sidebar
       id="navigation-sidebar"
@@ -50,9 +63,7 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
         <div className="flex-between h-[--e-top-h] shrink-0 border-b border-gold-5 px-3.5">
           <NextLink href="/" className="flex h-full items-center gap-1.5">
             <Logo className="size-7 min-w-7" />
-            <Heading size="5" className="">
-              e/suite
-            </Heading>
+            <Heading size="5">e/suite</Heading>
           </NextLink>
         </div>
 
