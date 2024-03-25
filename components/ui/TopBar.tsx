@@ -59,7 +59,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   return (
     <div
       {...props}
-      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 px-2', className)}
+      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 px-3', className)}
       ref={forwardedRef}
     >
       {/* start */}

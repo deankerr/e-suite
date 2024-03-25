@@ -92,7 +92,7 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
           </Tabs.Content>
         </Tabs.Root>
 
-        <div className="flex-between h-16 w-full shrink-0 border-t p-3 @container sm:w-80">
+        <div className="flex-between h-16 w-full shrink-0 border-t bg-gray-1 p-3">
           <div className="grow">{children}</div>
           <ThemeToggle />
         </div>
