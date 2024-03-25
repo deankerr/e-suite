@@ -13,6 +13,7 @@ import {
 import { usePathname } from 'next/navigation'
 import { forwardRef } from 'react'
 import { useAppStore } from '../providers/AppStoreProvider'
+import { PlayVoiceoversToggle } from '../threads/PlayVoiceoversToggle'
 import { UIIconButton } from './UIIconButton'
 
 type TopBarProps = {} & React.ComponentProps<'div'>
@@ -69,14 +70,25 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
         </UIIconButton>
       </div>
 
-      {/* start/middle */}
+      {/* middle */}
       <div className="flex-center grow gap-1.5">
-        {route.chat ? (
-          <MessageSquareIcon className="size-4 shrink-0" />
-        ) : route.generate ? (
-          <FileImageIcon className="stroke-1.5 size-4 shrink-0" />
-        ) : null}
-        <div className="truncate text-sm font-medium md:text-base">{title}</div>
+        {/* page header */}
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-2.5 overflow-hidden border-pink-8">
+          {/* item icon */}
+          <div className="flex-end">
+            {route.chat ? (
+              <MessageSquareIcon className="size-4 shrink-0 md:size-5" />
+            ) : route.generate ? (
+              <FileImageIcon className="stroke-1.5 size-4 shrink-0 md:size-5" />
+            ) : null}
+          </div>
+
+          {/* title */}
+          <div className="flex-center truncate font-medium">{title}</div>
+
+          {/* controls */}
+          <div className="flex-center">{route.chat && <PlayVoiceoversToggle />}</div>
+        </div>
       </div>
 
       {/* end */}

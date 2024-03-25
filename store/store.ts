@@ -3,6 +3,7 @@ import { createStore } from 'zustand/vanilla'
 export type AppState = {
   navigationSidebarOpen: boolean
   sidebarOpen: boolean
+  playVoiceovers: boolean
 }
 
 export type AppActions = {
@@ -15,6 +16,8 @@ export type AppActions = {
   closeSidebar: () => void
   toggleSidebar: () => void
   updateSidebarOpen: (open: boolean) => void
+
+  togglePlayVoiceovers: (value?: boolean) => void
 }
 
 export type AppStore = AppState & AppActions
@@ -23,12 +26,14 @@ export const initAppStore = (): AppState => {
   return {
     navigationSidebarOpen: true,
     sidebarOpen: false,
+    playVoiceovers: false,
   }
 }
 
 export const defaultInitState: AppState = {
   navigationSidebarOpen: true,
   sidebarOpen: false,
+  playVoiceovers: false,
 }
 
 export const createAppStore = (initState: AppState = defaultInitState) => {
@@ -44,5 +49,8 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
     closeSidebar: () => set(() => ({ sidebarOpen: false })),
     toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
     updateSidebarOpen: (open: boolean) => set(() => ({ sidebarOpen: open })),
+
+    togglePlayVoiceovers: (value?: boolean) =>
+      set((state) => ({ playVoiceovers: value ?? !state.playVoiceovers })),
   }))
 }

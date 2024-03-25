@@ -73,6 +73,14 @@
     @apply flex flex-col items-center justify-between;
   }
 
+  .flex-end {
+    @apply flex items-center justify-end;
+  }
+
+  .flex-col-end {
+    @apply flex flex-col items-center justify-end;
+  }
+
   .bg-grid-dark {
     background-color: rgb(8, 8, 6);
     background-image: linear-gradient(#111110 2px, transparent 2px),
