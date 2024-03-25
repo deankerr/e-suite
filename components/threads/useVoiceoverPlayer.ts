@@ -1,4 +1,3 @@
-import { Id } from '@/convex/_generated/dataModel'
 import { Message } from '@/convex/threads/threads'
 import { useEffect } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
@@ -30,33 +29,25 @@ export const useVoiceoverPlayer = (messages?: Message[]) => {
     })
   }
 
-  // are the current thread message ids different from the current queue
-  const isQueueStale = (messages: Message[]) =>
-    !queue || messages.some(({ _id }, i) => _id !== queue[i]?.[0])
+  // stop anything playing that is no longer current, otherwise try to play something
+  if (!currentId && playing) stop()
+  else play()
 
-  const rebuildQueue = (messages: Message[]) => {
-    const newQueue: [Id<'messages'>, boolean][] = messages.map(({ _id }) => {
-      // if this is the initial load, don't autoplay everything
-      if (!queue || !isAutoplayEnabled) return [_id, false]
-      // otherwise restore old status, or is a new message and should autoplay
-      const status = queue.find(([id]) => id === _id)?.[1] ?? true
-      return [_id, status]
-    })
+  // update the queue if messages have changed
+  useEffect(() => {
+    const isStale = messages && messages.some(({ _id }, i) => _id !== queue?.[i]?.[0])
+    if (!isStale) return
 
-    setQueue(newQueue)
-  }
-
-  if (messages && isQueueStale(messages)) {
-    rebuildQueue(messages)
-  }
-
-  if (!currentId && playing) {
-    // if something is playing but nothing is queued, stop
-    stop()
-  } else {
-    // otherwise see if we can play anything
-    play()
-  }
+    setQueue(
+      messages.map(({ _id }) => {
+        // if queue is undefined (initial load), don't autoplay everything
+        if (!queue || !isAutoplayEnabled) return [_id, false]
+        // otherwise restore old status, or queue the new message for autoplay
+        const status = queue.find(([id]) => id === _id)?.[1] ?? true
+        return [_id, status]
+      }),
+    )
+  }, [isAutoplayEnabled, messages, queue, setQueue])
 
   // cleanup
   useEffect(() => {
