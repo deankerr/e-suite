@@ -37,7 +37,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
     return {
       title: title ?? 'New Chat',
-      icon: <MessageSquareIcon className="-mb-0.5 size-5 shrink-0" />,
+      icon: <MessageSquareIcon className="size-5 shrink-0" />,
     }
   }
 
@@ -56,14 +56,11 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
   return (
     <div
       {...props}
-      className={cn(
-        'flex-between h-[--e-top-h] shrink-0 items-center border-b bg-gray-1 px-4',
-        className,
-      )}
+      className={cn('flex h-[--e-top-h] shrink-0 items-center border-b bg-gray-1 px-4', className)}
       ref={forwardedRef}
     >
       {/* start */}
-      <div className="shrink-0">
+      <div className="min-w-fit max-w-16 grow">
         <UIIconButton
           variant="ghost"
           label="toggle navigation bar"
@@ -74,12 +71,12 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
       </div>
 
       {/* middle */}
-      <div className="flex-end shrink-0 grow pl-1.5">{icon}</div>
-      <div className="truncate px-1">{title}</div>
-      <div className="grow"></div>
+      <div className="grow truncate px-1 text-center [&_>_svg]:inline">
+        {icon} {title}
+      </div>
 
       {/* end */}
-      <div className="flex shrink-0 gap-3">
+      <div className="flex min-w-fit max-w-16 grow justify-end gap-3 md:gap-4">
         {route.chat && <VoiceoverPlayToggle />}
         {!route.home && (
           <UIIconButton variant="ghost" label="toggle parameters sidebar" onClick={toggleSidebar}>
