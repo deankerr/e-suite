@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
 import { useAppStore } from '../providers/AppStoreProvider'
 
-export const useVoiceoverPlayer = (messages: Message[]) => {
+export const useVoiceoverPlayer = (messages?: Message[]) => {
   const queue = useAppStore((state) => state.voiceoverMessageQueue)
   const setQueue = useAppStore((state) => state.voiceoverSetMessageQueue)
 
@@ -20,7 +20,7 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
 
   const currentIndex = queue?.findIndex(([_, status]) => status) ?? -1
   const [currentId] = queue?.[currentIndex] ?? []
-  const currentUrl = messages.find((message) => message._id === currentId)?.voiceover?.url
+  const currentUrl = messages?.find((message) => message._id === currentId)?.voiceover?.url
   const currentIsPlaying = playing && src === currentUrl
 
   const play = () => {
@@ -37,14 +37,18 @@ export const useVoiceoverPlayer = (messages: Message[]) => {
     })
   }
 
-  const isQueueStale = () => !queue || messages.some(({ _id }, i) => _id !== queue[i]?.[0])
+  const isQueueStale = () => !queue || messages?.some(({ _id }, i) => _id !== queue[i]?.[0])
 
   const rebuildQueue = () => {
     console.log('is queue undef', !queue, queue)
-    console.log('msg', messages.length)
+    console.log('msg', messages?.length)
+    if (!messages) {
+      console.log('messages loading')
+      return
+    }
 
     setQueue(
-      messages.map(({ _id }) => {
+      messages?.map(({ _id }) => {
         if (!queue || !isAutoplayEnabled) [_id, false]
         const status = queue?.find(([id]) => id === _id)?.[1] ?? isAutoplayEnabled
         return [_id, status]

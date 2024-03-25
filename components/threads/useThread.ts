@@ -17,8 +17,7 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
   const router = useRouter()
 
   const thread = useQuery(api.threads.threads.get, { id: threadId })
-
-  const messages = useMemo(() => thread?.messages.toReversed() ?? [], [thread?.messages])
+  const messages = thread?.messages
 
   //* Parameters
   const threadAtoms = useMemo(

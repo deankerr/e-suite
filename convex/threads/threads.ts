@@ -40,7 +40,7 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
     .edge('messages')
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .take(50)
+    .take(20)
     .map(async (message) => {
       const voiceover = await message.edge('voiceover')
       const voiceOverUrl = voiceover?.storageId
@@ -65,10 +65,11 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
           : undefined,
       }
     })
+
   const owner = await getUser(ctx, thread.userId)
   return {
     ...thread,
-    messages,
+    messages: messages.reverse(),
     owner,
   }
 }
