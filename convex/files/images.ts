@@ -43,6 +43,13 @@ export const get = internalQuery({
   handler: async (ctx, { id }) => await getImage(ctx, id),
 })
 
+export const getIdBySourceUrl = internalQuery(async (ctx, { sourceUrl }) => {
+  const image = await ctx
+    .table('images', 'sourceUrl', (q) => q.eq('sourceUrl', sourceUrl as string))
+    .first()
+  return image?._id
+})
+
 export const addSourceUrl = internalMutation({
   args: {
     id: v.id('images'),
@@ -71,4 +78,26 @@ export const addStorageResults = internalMutation({
     metadata: v.any(),
   },
   handler: async (ctx, { id, ...results }) => await ctx.table('images').getX(id).patch(results),
+})
+
+export const createFromSourceUrl = internalMutation({
+  args: {
+    sourceUrl: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const id = await ctx.table('images').insert({
+      width: 99,
+      height: 99,
+      nsfw: 'safe',
+      blurDataURL: '',
+      color: '',
+      metadata: {},
+      permissions: { private: false },
+    })
+
+    await ctx.scheduler.runAfter(0, internal.files.images.addSourceUrl, {
+      id,
+      sourceUrl: args.sourceUrl,
+    })
+  },
 })
