@@ -29,7 +29,7 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
         <Button size="3" variant="surface" className="flex-between" asChild>
           <NextLink href={'/chat'}>
             <div className="w-4">
-              <PlusCircleIcon className="size-4" />
+              <PlusCircleIcon className="stroke-[1.5]" />
             </div>
             <div>Create</div>
             <div className="w-4"></div>

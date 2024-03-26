@@ -31,7 +31,7 @@ export const GenerationsList = forwardRef<HTMLDivElement, GenerationsListProps>(
           <Button size="3" variant="surface" className="flex-between" asChild>
             <NextLink href={'/generate'}>
               <div className="w-4">
-                <PlusCircleIcon className="size-4" />
+                <PlusCircleIcon className="stroke-[1.5]" />
               </div>
               <div>Create</div>
               <div className="w-4"></div>
