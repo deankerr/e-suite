@@ -5,8 +5,9 @@ import { useSelectedLayoutSegment } from 'next/navigation'
 
 import { TopBar } from '@/components/ui/TopBar'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { GenerateSidebar } from './GenerateSidebar'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 export default function GenerateLayout({ children }: { children: React.ReactNode }) {
   const slug = useSelectedLayoutSegment() as Id<'generations'> | null

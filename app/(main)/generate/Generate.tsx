@@ -6,8 +6,9 @@ import { useQuery } from 'convex/react'
 import { GenerationShell } from '@/components/generations/GenerationShell'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 type GenerateProps = {
   generationId?: Id<'generations'>

@@ -7,8 +7,9 @@ import { MessageBubble } from '@/components/threads/MessageBubble'
 import { MessageInput } from '@/components/threads/MessageInput'
 import { useThread } from '@/components/threads/useThread'
 import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
-import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 type ChatProps = {
   threadId?: Id<'threads'>

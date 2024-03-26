@@ -7,11 +7,12 @@ import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
-import { ThreadHelpers } from '@/components/threads/useThread'
 import { Button } from '@/components/ui/Button'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
+
+import type { ThreadHelpers } from '@/components/threads/useThread'
 
 type ChatSidebarProps = {
   threadHelpers: ThreadHelpers

@@ -5,10 +5,10 @@ import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
 
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { Frame } from '../ui/Frame'
 
+import type { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel } from '@/convex/generations/imageModels'
 
 type Props = {

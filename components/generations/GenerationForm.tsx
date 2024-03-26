@@ -12,11 +12,11 @@ import * as z from 'zod'
 
 import { ImageModelCard } from '@/components/generations/ImageModelCard'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { DimensionsToggle } from './DimensionsToggle'
 import { ImageModelPickerDialog } from './ImageModelPickerDialog'
 
+import type { Id } from '@/convex/_generated/dataModel'
 import type { ImageModel } from '@/convex/generations/imageModels'
 
 const formSchema = z.object({

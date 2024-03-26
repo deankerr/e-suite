@@ -4,8 +4,9 @@ import { useSelectedLayoutSegment } from 'next/navigation'
 
 import { useThread } from '@/components/threads/useThread'
 import { TopBar } from '@/components/ui/TopBar'
-import { Id } from '@/convex/_generated/dataModel'
 import { ChatSidebar } from './ChatSidebar'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
   const slug = useSelectedLayoutSegment() as Id<'threads'> | null

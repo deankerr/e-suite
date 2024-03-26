@@ -3,7 +3,8 @@
 import { Button, Dialog } from '@radix-ui/themes'
 
 import { ImageModelCard } from '@/components/generations/ImageModelCard'
-import { ImageModel } from '@/convex/generations/imageModels'
+
+import type { ImageModel } from '@/convex/generations/imageModels'
 
 export const ImageModelPickerDialog = ({
   list,
