@@ -9,6 +9,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const images = {
   remotePatterns: [
+    // convex dev
     {
       protocol: 'https',
       hostname: 'artful-husky-972.convex.cloud',
@@ -17,6 +18,17 @@ const images = {
     {
       protocol: 'https',
       hostname: 'artful-husky-972.convex.site',
+      pathname: '/image',
+    },
+    // convex prod
+    {
+      protocol: 'https',
+      hostname: 'animated-gnu-937.convex.cloud',
+      pathname: '/api/storage/**',
+    },
+    {
+      protocol: 'https',
+      hostname: 'animated-gnu-937.convex.site',
       pathname: '/image',
     },
   ],
