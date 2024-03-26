@@ -3,13 +3,15 @@ import { deepEqual } from 'fast-equals'
 import z from 'zod'
 
 import { internal } from '../_generated/api'
-import { Doc, Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
-import { MutationCtx, QueryCtx } from '../types'
-import { getUser, User } from '../users'
+import { getUser } from '../users'
 import { assert } from '../util'
 import { messageValidator } from '../validators'
+
+import type { Doc, Id } from '../_generated/dataModel'
+import type { MutationCtx, QueryCtx } from '../types'
+import type { User } from '../users'
 
 export type Thread = Doc<'threads'> & { messages: Message[]; owner: User }
 

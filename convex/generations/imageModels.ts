@@ -1,9 +1,10 @@
 import { v } from 'convex/values'
 
-import { Id } from '../_generated/dataModel'
 import { mutation, query } from '../functions'
 import { imageModelFields } from '../schema'
-import { Ent, QueryCtx } from '../types'
+
+import type { Id } from '../_generated/dataModel'
+import type { Ent, QueryCtx } from '../types'
 
 export type ImageModel = Awaited<ReturnType<typeof get>>
 

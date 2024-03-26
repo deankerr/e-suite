@@ -10,7 +10,6 @@ import { Toaster } from 'sonner'
 
 import { AppStoreProvider } from '@/components/providers/AppStoreProvider'
 import { ClientProviders } from '@/components/providers/ClientProviders'
-import { CounterStoreProvider } from '@/components/providers/CounterStoreProvider'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { cn } from '@/lib/utils'
 
@@ -46,11 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <JotaiProvider>
               <Theme className="h-full" accentColor="orange" appearance="dark">
                 <AppStoreProvider>
-                  <CounterStoreProvider>
-                    {children}
-                    <Toaster richColors />
-                    <TailwindBreakpointIndicator />
-                  </CounterStoreProvider>
+                  {children}
+                  <Toaster richColors />
+                  <TailwindBreakpointIndicator />
                 </AppStoreProvider>
               </Theme>
             </JotaiProvider>

@@ -3,8 +3,9 @@
 import { ConvexError } from 'convex/values'
 import ky from 'ky'
 
-import { Doc } from '../_generated/dataModel'
 import { assert } from '../util'
+
+import type { Doc } from '../_generated/dataModel'
 
 export const getElevenlabsApiKey = () => {
   const apiKey = process.env.ELEVENLABS_API_KEY

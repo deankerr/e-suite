@@ -5,13 +5,13 @@ import {
   internalMutation as baseInternalMutation,
   internalQuery as baseInternalQuery,
   mutation as baseMutation,
-  MutationCtx as BaseMutationCtx,
   query as baseQuery,
-  QueryCtx as BaseQueryCtx,
 } from './_generated/server'
 import { getEntDefinitionsWithRules, getViewerId } from './rules'
 import { entDefinitions } from './schema'
 import { error } from './util'
+
+import type { MutationCtx as BaseMutationCtx, QueryCtx as BaseQueryCtx } from './_generated/server'
 
 export const query = customQuery(
   baseQuery,

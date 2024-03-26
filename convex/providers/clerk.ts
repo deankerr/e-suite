@@ -1,13 +1,14 @@
-import { WebhookEvent } from '@clerk/nextjs/server'
 import { v } from 'convex/values'
 import { Webhook } from 'svix'
 import z from 'zod'
 
 import { internal } from '../_generated/api'
-import { Doc } from '../_generated/dataModel'
 import { httpAction, internalAction } from '../_generated/server'
 import { internalMutation, internalQuery } from '../functions'
 import { assert } from '../util'
+
+import type { Doc } from '../_generated/dataModel'
+import type { WebhookEvent } from '@clerk/nextjs/server'
 
 type ClerkEvent = 'user.created' | 'user.updated' | 'user.deleted'
 

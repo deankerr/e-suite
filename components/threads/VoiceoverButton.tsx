@@ -11,8 +11,9 @@ import {
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
 
 import { UIIconButton } from '@/components/ui/UIIconButton'
-import { Voiceover } from '@/convex/threads/threads'
 import { useAppStore } from '../providers/AppStoreProvider'
+
+import type { Voiceover } from '@/convex/threads/threads'
 
 type VoiceoverButtonProps = {
   voiceover?: Voiceover

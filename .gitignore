@@ -41,7 +41,3 @@ next-env.d.ts
 # local
 output
 .vscode/settings.json
-
-# cosmos
-cosmos.imports.ts
-cosmos-export

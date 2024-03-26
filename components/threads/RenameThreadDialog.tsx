@@ -6,10 +6,11 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { createTextInputAtom } from '../atoms'
 import { TextInput } from '../ui/TextInput'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 type RenameThreadDialogProps = { id?: Id<'threads'>; currentTitle?: string } & React.ComponentProps<
   typeof Dialog.Root

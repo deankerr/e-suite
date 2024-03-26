@@ -4,7 +4,8 @@ import TextareaAutosize from 'react-textarea-autosize'
 
 import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
-import { TextInputAtom } from '../threads/useThread'
+
+import type { TextInputAtom } from '../threads/useThread'
 
 type Props = {
   hideLabel?: boolean

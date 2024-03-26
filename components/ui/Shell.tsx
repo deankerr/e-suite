@@ -1,8 +1,10 @@
 import { Card, IconButton } from '@radix-ui/themes'
-import { LucideIcon, PanelTopIcon } from 'lucide-react'
+import { PanelTopIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { CardLite } from './CardLite'
+
+import type { LucideIcon } from 'lucide-react'
 
 const Root = ({
   children,

@@ -1,8 +1,9 @@
 import { api, internal } from './_generated/api'
-import { Id } from './_generated/dataModel'
 import { internalAction } from './_generated/server'
 import { internalQuery } from './functions'
-import { ImageModel } from './generations/imageModels'
+
+import type { Id } from './_generated/dataModel'
+import type { ImageModel } from './generations/imageModels'
 
 export const getUrlsForImageIds = internalQuery(
   async (ctx, { imageIds }: { imageIds: Id<'images'>[] }) => {

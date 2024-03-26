@@ -6,7 +6,8 @@ import { useAtom } from 'jotai'
 
 import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
-import { NumberInputAtom } from '../threads/useThread'
+
+import type { NumberInputAtom } from '../threads/useThread'
 
 type SliderProps = {
   inputAtom: NumberInputAtom

@@ -3,11 +3,12 @@ import { httpRouter } from 'convex/server'
 import z from 'zod'
 
 import { internal } from './_generated/api'
-import { Id } from './_generated/dataModel'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
 import { generateSha256Hash } from './util'
 import { messageValidator, voiceoverValidator } from './validators'
+
+import type { Id } from './_generated/dataModel'
 
 const http = httpRouter()
 

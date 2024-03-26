@@ -1,8 +1,10 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { Infer, v } from 'convex/values'
+import { v } from 'convex/values'
 
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
+
+import type { Infer } from 'convex/values'
 
 export type GenerationParameters = Infer<typeof generationParameters>
 export type Permissions = Infer<typeof permissionsFields>

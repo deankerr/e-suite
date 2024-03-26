@@ -2,12 +2,13 @@ import { forwardRef } from 'react'
 import { Heading, Text } from '@radix-ui/themes'
 import { MoreVerticalIcon } from 'lucide-react'
 
-import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
 import { VoiceoverButton } from './VoiceoverButton'
+
+import type { Message } from '@/convex/threads/threads'
 
 type MessageBubbleProps = {
   message: Message

@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
 
-import { Message } from '@/convex/threads/threads'
 import { useAppStore } from '../providers/AppStoreProvider'
+
+import type { Message } from '@/convex/threads/threads'
 
 export const useVoiceoverPlayer = (messages?: Message[]) => {
   const queue = useAppStore((state) => state.voiceoverMessageQueue)

@@ -29,6 +29,7 @@ import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_elevenlabs from "../providers/elevenlabs.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
+import type * as retrier from "../retrier.js";
 import type * as rules from "../rules.js";
 import type * as scripts from "../scripts.js";
 import type * as threads_inference from "../threads/inference.js";
@@ -63,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   "providers/elevenlabs": typeof providers_elevenlabs;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
+  retrier: typeof retrier;
   rules: typeof rules;
   scripts: typeof scripts;
   "threads/inference": typeof threads_inference;

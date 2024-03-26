@@ -1,13 +1,14 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { Id } from '../_generated/dataModel'
 import { getImages } from '../files/images'
 import { mutation, query } from '../functions'
 import { generationParameters, permissionsFields } from '../schema'
-import { QueryCtx } from '../types'
 import { getUser } from '../users'
 import { assert, error } from '../util'
+
+import type { Id } from '../_generated/dataModel'
+import type { QueryCtx } from '../types'
 
 const schedulerDelayInterval = 2000
 

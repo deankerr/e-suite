@@ -1,10 +1,11 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery } from '../functions'
-import { QueryCtx } from '../types'
 import { assert } from '../util'
+
+import type { Id } from '../_generated/dataModel'
+import type { QueryCtx } from '../types'
 
 export type StoredImage = Awaited<ReturnType<typeof getImage>>
 

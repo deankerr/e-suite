@@ -5,7 +5,8 @@ import { SendHorizonalIcon, SmileIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Textarea } from '../ui/Textarea'
 import { UIIconButton } from '../ui/UIIconButton'
-import { TextInputAtom } from './useThread'
+
+import type { TextInputAtom } from './useThread'
 
 type MessageInputProps = {
   inputAtom: TextInputAtom

@@ -1,10 +1,11 @@
 import { v } from 'convex/values'
 import z from 'zod'
 
-import { Id } from './_generated/dataModel'
 import { internalMutation, mutation, query } from './functions'
 import { usersFields } from './schema'
-import { QueryCtx } from './types'
+
+import type { Id } from './_generated/dataModel'
+import type { QueryCtx } from './types'
 
 export type User = z.infer<typeof publicUserSchema>
 

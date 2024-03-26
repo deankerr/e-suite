@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
-import { Permissions } from '@/convex/schema'
 import { createNumberInputAtom, createTextInputAtom } from '../atoms'
 
 import type { Id } from '@/convex/_generated/dataModel'
+import type { Permissions } from '@/convex/schema'
 
 export type ThreadHelpers = ReturnType<typeof useThread>
 export type ThreadAtoms = ReturnType<typeof createThreadAtoms>

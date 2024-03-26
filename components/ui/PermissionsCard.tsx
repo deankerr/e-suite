@@ -2,8 +2,9 @@ import { forwardRef, useEffect, useState } from 'react'
 import { Heading, Switch } from '@radix-ui/themes'
 
 import { Label } from '@/components/ui/Label'
-import { Permissions as PermissionsType } from '@/convex/schema'
 import { cn } from '@/lib/utils'
+
+import type { Permissions as PermissionsType } from '@/convex/schema'
 
 type Props = {
   permissions: PermissionsType

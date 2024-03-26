@@ -1,17 +1,14 @@
 'use node'
 
-import {
-  DescribeVoicesCommand,
-  PollyClient,
-  SynthesizeSpeechCommand,
-  SynthesizeSpeechCommandInput,
-} from '@aws-sdk/client-polly'
+import { DescribeVoicesCommand, PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 import { fromEnv } from '@aws-sdk/credential-providers'
 import { ConvexError } from 'convex/values'
 
-import { Doc } from '../_generated/dataModel'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
+
+import type { Doc } from '../_generated/dataModel'
+import type { SynthesizeSpeechCommandInput } from '@aws-sdk/client-polly'
 
 const client = new PollyClient({ region: 'us-east-1', credentials: fromEnv() })
 

@@ -2,7 +2,8 @@ import { Slider } from '../ui/Slider'
 import { Textarea } from '../ui/Textarea'
 import { TextInput } from '../ui/TextInput'
 import { ModelSelect } from './ModelSelect'
-import { ThreadAtoms } from './useThread'
+
+import type { ThreadAtoms } from './useThread'
 
 type Props = {
   threadAtoms: ThreadAtoms

@@ -4,7 +4,8 @@ import { useAtom } from 'jotai'
 
 import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
-import { TextInputAtom } from '../threads/useThread'
+
+import type { TextInputAtom } from '../threads/useThread'
 
 type Props = {
   inputAtom: TextInputAtom

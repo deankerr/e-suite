@@ -1,7 +1,8 @@
 import z from 'zod'
 
-import { GenerationParameters } from '../schema'
 import { assert } from '../util'
+
+import type { GenerationParameters } from '../schema'
 
 const getSinkinApiKey = () => {
   const apiKey = process.env.SINKIN_API_KEY

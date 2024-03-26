@@ -6,7 +6,8 @@ import { useAtom } from 'jotai'
 
 import { Label } from '@/components/ui/Label'
 import togetheraiModels from './togetheraiModels.json'
-import { TextInputAtom } from './useThread'
+
+import type { TextInputAtom } from './useThread'
 
 type Props = {
   inputAtom: TextInputAtom

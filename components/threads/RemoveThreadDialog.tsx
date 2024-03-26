@@ -7,8 +7,9 @@ import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 type RemoveThreadDialogProps = { id: Id<'threads'>; onDelete: () => void } & React.ComponentProps<
   typeof AlertDialog.Root

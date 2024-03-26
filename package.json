@@ -3,17 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm build-production; else pnpm build-development; fi",
-    "build-development": "pnpm cosmos-export && next build",
-    "build-production": "pnpm dlx convex deploy --cmd 'pnpm cosmos-export && next build'",
     "start": "next start",
-    "lint": "tsc --noEmit && next lint",
-    "convex": "pnpm dlx convex dev",
-    "dev:all": "pnpm run /dev$\\|convex$\\|cosmos$/",
-    "types": "tsc --noEmit",
-    "cosmos": "cosmos --expose-imports",
-    "cosmos-export": "cosmos-export --expose-imports"
+    "dev": "next dev",
+    "dev:convex": "pnpm dlx convex dev",
+    "build": "if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm build-production; else pnpm build-development; fi",
+    "build-development": "next build",
+    "build-production": "pnpm dlx convex deploy --cmd 'next build'",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.540.0",
