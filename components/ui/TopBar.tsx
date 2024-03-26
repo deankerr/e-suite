@@ -10,10 +10,12 @@ import { useAppStore } from '../providers/AppStoreProvider'
 import { VoiceoverPlayToggle } from '../threads/VoiceoverPlayToggle'
 import { UIIconButton } from './UIIconButton'
 
-type TopBarProps = {} & React.ComponentProps<'div'>
+type TopBarProps = {
+  overrideTitle?: string
+} & React.ComponentProps<'div'>
 
 export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
-  { className, ...props },
+  { overrideTitle, className, ...props },
   forwardedRef,
 ) {
   const toggleNavigationSidebar = useAppStore((state) => state.toggleNavigationSidebar)
@@ -76,7 +78,7 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
       {/* middle */}
       <div className="grow truncate px-1 text-center [&_>_svg]:inline">
         {icon}
-        {title}
+        {overrideTitle ?? title}
       </div>
 
       {/* end */}
