@@ -20,9 +20,13 @@ export const VoiceoverPlayToggle = forwardRef<HTMLButtonElement, VoiceoverPlayTo
           if (isAutoplayEnabled) voiceoverStop()
         }}
         ref={forwardedRef}
-        color={isAutoplayEnabled ? undefined : 'gray'}
+        color={isAutoplayEnabled ? undefined : 'gold'}
       >
-        {isAutoplayEnabled ? <Volume2Icon /> : <VolumeXIcon />}
+        {isAutoplayEnabled ? (
+          <Volume2Icon className="scale-[1.15]" />
+        ) : (
+          <VolumeXIcon className="scale-[1.15]" />
+        )}
       </UIIconButton>
     )
   },

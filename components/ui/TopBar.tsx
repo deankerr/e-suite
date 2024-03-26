@@ -2,6 +2,7 @@
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
+import { Heading } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ImageIcon, MenuIcon, MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
@@ -37,35 +38,32 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
   const getThreadTitle = () => {
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
-    return {
-      title: title ?? 'New Chat',
-      icon: <MessageSquareIcon className="stroke-[1.5] md:mr-1.5" />,
-    }
+    return title
   }
 
   const getGenerationTitle = () => {
     const generation = generationsList?.find(({ _id }) => _id === slug)
     const title = generation?.images?.[0]?.parameters?.prompt
-    return {
-      title: title ?? 'New Generation',
-      icon: <ImageIcon className="stroke-[1.5] md:mr-1.5" />,
-    }
+    return title
   }
 
-  const { title, icon } = route.chat
-    ? getThreadTitle()
-    : route.generate
-      ? getGenerationTitle()
-      : { title: null, icon: null }
+  const routeIcons = {
+    chat: <MessageSquareIcon />,
+    generate: <ImageIcon />,
+  } as Record<string, React.ReactNode>
+
+  const icon = routePath && routeIcons[routePath]
+
+  const title = route.chat ? getThreadTitle() : route.generate ? getGenerationTitle() : null
 
   return (
     <div
       {...props}
-      className={cn('flex h-[--e-top-h] shrink-0 items-center border-b bg-gray-1 px-4', className)}
+      className={cn('flex-between h-[--e-top-h] shrink-0 border-b bg-gray-1 px-4', className)}
       ref={forwardedRef}
     >
       {/* start */}
-      <div className="min-w-fit max-w-16 grow">
+      <div className="flex-between shrink-0 gap-3 md:grow md:gap-4">
         <UIIconButton
           variant="ghost"
           label="toggle navigation bar"
@@ -73,17 +71,18 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
         >
           <MenuIcon className="scale-[1.2]" />
         </UIIconButton>
+
+        {icon}
       </div>
 
       {/* middle */}
-      <div className="grow truncate px-1 text-center [&_>_svg]:inline">
-        {icon}
+      <Heading className="line-clamp-2 max-h-full px-1 text-center md:px-2.5" size="3">
         {overrideTitle ?? title}
-      </div>
+      </Heading>
 
       {/* end */}
-      <div className="flex min-w-fit max-w-16 grow justify-end gap-3 md:gap-4">
-        {route.chat && <VoiceoverPlayToggle />}
+      <div className="flex-end shrink-0 gap-3 md:grow md:gap-4">
+        {route.chat ? <VoiceoverPlayToggle /> : <div className="w-[24px]"></div>}
         {!route.home && (
           <UIIconButton variant="ghost" label="toggle parameters sidebar" onClick={toggleSidebar}>
             {sidebarOpen ? <XIcon /> : <SlidersHorizontalIcon />}
