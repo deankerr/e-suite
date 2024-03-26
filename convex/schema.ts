@@ -1,5 +1,6 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { Infer, v } from 'convex/values'
+
 import { modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
 

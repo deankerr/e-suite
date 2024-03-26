@@ -1,7 +1,8 @@
+import { forwardRef } from 'react'
+import NextImage from 'next/image'
+
 import sunLogoSvg from '@/assets/logo-sunset.svg'
 import { cn } from '@/lib/utils'
-import NextImage from 'next/image'
-import { forwardRef } from 'react'
 
 export const Logo = forwardRef<HTMLImageElement, Partial<React.ComponentProps<typeof NextImage>>>(
   function Logo({ className, ...props }, forwardedRef) {

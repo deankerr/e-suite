@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils'
+import { ComponentProps } from 'react'
 import { Button, IconButton } from '@radix-ui/themes'
 import { MenuIcon, Volume2Icon } from 'lucide-react'
-import { ComponentProps } from 'react'
+
+import { cn } from '@/lib/utils'
 
 type RxColor = ComponentProps<typeof Button>['color']
 const warmColors = [

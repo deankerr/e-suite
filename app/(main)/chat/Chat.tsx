@@ -1,13 +1,14 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+import { ScrollArea } from '@radix-ui/themes'
+
 import { MessageBubble } from '@/components/threads/MessageBubble'
 import { MessageInput } from '@/components/threads/MessageInput'
 import { useThread } from '@/components/threads/useThread'
 import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
-import { ScrollArea } from '@radix-ui/themes'
-import { useEffect, useRef } from 'react'
 
 type ChatProps = {
   threadId?: Id<'threads'>

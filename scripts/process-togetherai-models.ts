@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+
 import togetherAiModels from './togetherai-models-data.json'
 
 async function main() {

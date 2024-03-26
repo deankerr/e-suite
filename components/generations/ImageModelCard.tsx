@@ -1,13 +1,15 @@
-import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
-import type { ImageModel } from '@/convex/generations/imageModels'
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { Badge, Card, Inset } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ArrowUpRightSquare } from 'lucide-react'
 import NextLink from 'next/link'
-import { forwardRef } from 'react'
+
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
+import { cn } from '@/lib/utils'
 import { Frame } from '../ui/Frame'
+
+import type { ImageModel } from '@/convex/generations/imageModels'
 
 type Props = {
   from?: ImageModel

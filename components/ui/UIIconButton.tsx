@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { IconButton as RxIconButton } from '@radix-ui/themes'
 import { LucideIcon } from 'lucide-react'
-import { forwardRef } from 'react'
+
+import { cn } from '@/lib/utils'
 import { AccessibleIcon } from './AccessibleIcon'
 
 type Props = {

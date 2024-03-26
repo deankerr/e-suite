@@ -1,10 +1,11 @@
+import { forwardRef } from 'react'
+import { ScrollArea, Tabs } from '@radix-ui/themes'
+
 import { GenerationForm } from '@/components/generations/GenerationForm'
 import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { Generation } from '@/convex/generations/do'
 import { cn } from '@/lib/utils'
-import { ScrollArea, Tabs } from '@radix-ui/themes'
-import { forwardRef } from 'react'
 
 type GenerateSidebarProps = {
   generation?: Generation

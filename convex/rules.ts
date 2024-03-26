@@ -1,4 +1,5 @@
 import { addEntRules } from 'convex-ents'
+
 import { Id } from './_generated/dataModel'
 import { entDefinitions } from './schema'
 import { QueryCtx } from './types'

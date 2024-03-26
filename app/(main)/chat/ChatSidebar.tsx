@@ -1,5 +1,8 @@
 'use client'
 
+import { forwardRef } from 'react'
+import { ScrollArea, Tabs } from '@radix-ui/themes'
+
 import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
@@ -9,8 +12,6 @@ import { Button } from '@/components/ui/Button'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
-import { ScrollArea, Tabs } from '@radix-ui/themes'
-import { forwardRef } from 'react'
 
 type ChatSidebarProps = {
   threadHelpers: ThreadHelpers

@@ -1,6 +1,7 @@
-import { Message } from '@/convex/threads/threads'
 import { useEffect } from 'react'
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
+
+import { Message } from '@/convex/threads/threads'
 import { useAppStore } from '../providers/AppStoreProvider'
 
 export const useVoiceoverPlayer = (messages?: Message[]) => {

@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils'
-import * as RxLabel from '@radix-ui/react-label'
 import { forwardRef } from 'react'
+import * as RxLabel from '@radix-ui/react-label'
+
+import { cn } from '@/lib/utils'
 
 type Props = {}
 

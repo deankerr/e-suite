@@ -1,12 +1,14 @@
-import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
-import { Permissions } from '@/convex/schema'
+import { useCallback, useMemo } from 'react'
 import { useMutation, useQuery } from 'convex/react'
 import { useAtomCallback } from 'jotai/utils'
 import { useRouter } from 'next/navigation'
-import { useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
+
+import { api } from '@/convex/_generated/api'
+import { Permissions } from '@/convex/schema'
 import { createNumberInputAtom, createTextInputAtom } from '../atoms'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 export type ThreadHelpers = ReturnType<typeof useThread>
 export type ThreadAtoms = ReturnType<typeof createThreadAtoms>

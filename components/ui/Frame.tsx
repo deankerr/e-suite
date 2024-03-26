@@ -1,8 +1,9 @@
+import { AlertOctagonIcon } from 'lucide-react'
+import NextImage from 'next/image'
+
 import { Id } from '@/convex/_generated/dataModel'
 import { Ent } from '@/convex/types'
 import { cn } from '@/lib/utils'
-import { AlertOctagonIcon } from 'lucide-react'
-import NextImage from 'next/image'
 
 type EImageProps = {
   image?: Ent<'images'> | null

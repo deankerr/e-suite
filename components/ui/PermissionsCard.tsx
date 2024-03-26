@@ -1,8 +1,9 @@
+import { forwardRef, useEffect, useState } from 'react'
+import { Heading, Switch } from '@radix-ui/themes'
+
 import { Label } from '@/components/ui/Label'
 import { Permissions as PermissionsType } from '@/convex/schema'
 import { cn } from '@/lib/utils'
-import { Heading, Switch } from '@radix-ui/themes'
-import { forwardRef, useEffect, useState } from 'react'
 
 type Props = {
   permissions: PermissionsType

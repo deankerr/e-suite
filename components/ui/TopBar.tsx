@@ -1,12 +1,13 @@
 'use client'
 
-import { api } from '@/convex/_generated/api'
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { Heading } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { ImageIcon, MenuIcon, MessageSquareIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { forwardRef } from 'react'
+
+import { api } from '@/convex/_generated/api'
+import { cn } from '@/lib/utils'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { VoiceoverPlayToggle } from '../threads/VoiceoverPlayToggle'
 import { UIIconButton } from './UIIconButton'

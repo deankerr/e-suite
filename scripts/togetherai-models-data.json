@@ -17,9 +17,7 @@
     "isFeaturedModel": true,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
     },
@@ -237,9 +235,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
     },
@@ -647,10 +643,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "USER:",
-        "ASSISTANT:"
-      ],
+      "stop": ["USER:", "ASSISTANT:"],
       "prompt_format": "USER:\n{prompt}\nASSISTANT:",
       "pre_prompt": ""
     },
@@ -725,10 +718,7 @@
     "isFeaturedModel": true,
     "context_length": 32768,
     "config": {
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "add_generation_prompt": true,
       "chat_template_name": "default"
@@ -808,10 +798,7 @@
     "isFeaturedModel": true,
     "context_length": 32768,
     "config": {
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "add_generation_prompt": true,
       "chat_template_name": "default"
@@ -889,10 +876,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "<|im_start|>",
-        "<|im_end|>"
-      ],
+      "stop": ["<|im_start|>", "<|im_end|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "chat_template_name": "default",
       "add_generation_prompt": true
@@ -969,10 +953,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
-      "stop": [
-        "###",
-        "</s>"
-      ],
+      "stop": ["###", "</s>"],
       "chat_template_name": "llama",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
     },
@@ -1050,10 +1031,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
-      "stop": [
-        "###",
-        "</s>"
-      ],
+      "stop": ["###", "</s>"],
       "chat_template_name": "llama",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
     },
@@ -1128,9 +1106,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|im_end|>"
-      ],
+      "stop": ["<|im_end|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "add_generation_prompt": true,
       "chat_template_name": "default"
@@ -1219,9 +1195,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "### System Prompt\nYou are an intelligent programming assistant.\n\n### User Message\n{prompt}n\n### Assistant\n",
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template": "{{ '### System Prompt\nYou are an intelligent programming assistant.\n\n' }}{% for message in messages %}{% if message['role'] == 'user' %}{{ '### User Message\n' + message['content'] + '\n' }}{% else %}{{ '### Assistant\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant\n' }}"
     },
     "pricing": {
@@ -1295,10 +1269,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
       "add_generation_prompt": true
     },
@@ -1441,10 +1412,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
       "add_generation_prompt": true
     },
@@ -1587,10 +1555,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
       "add_generation_prompt": true
     },
@@ -1798,9 +1763,7 @@
     "isFeaturedModel": false,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "###"
-      ],
+      "stop": ["###"],
       "prompt_format": "### Instruction:\n{prompt}\n\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
     },
@@ -1873,9 +1836,7 @@
     "isFeaturedModel": false,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "###"
-      ],
+      "stop": ["###"],
       "prompt_format": "### Instruction:\n{prompt}\n\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
     },
@@ -2022,10 +1983,7 @@
     "context_length": 8192,
     "config": {
       "prompt_format": "### Instruction:\n{prompt}\n\n### Response:\n",
-      "stop": [
-        "###",
-        "<|endoftext|>"
-      ],
+      "stop": ["###", "<|endoftext|>"],
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
     },
     "pricing": {
@@ -2096,10 +2054,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "</s>",
-        "###"
-      ],
+      "stop": ["</s>", "###"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
     },
     "pricing": {
@@ -2173,11 +2128,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>",
-        "USER:",
-        "ASSISTANT:"
-      ],
+      "stop": ["</s>", "USER:", "ASSISTANT:"],
       "prompt_format": "USER: {prompt} ASSISTANT:",
       "pre_prompt": "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. "
     },
@@ -2324,10 +2275,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "</s>",
-        "[INST]"
-      ],
+      "stop": ["</s>", "[INST]"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -2399,9 +2347,7 @@
     "isFeaturedModel": true,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -2473,10 +2419,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "</s>",
-        "[INST]"
-      ],
+      "stop": ["</s>", "[INST]"],
       "chat_template_name": "llama",
       "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
     },
@@ -2548,9 +2491,7 @@
     "isFeaturedModel": true,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -2628,9 +2569,7 @@
       "chat_template": "{{ bos_token + ' ' }}{% for message in messages %}{{'Source: ' + message['role'].trim() }}{% if not message['destination'] is 'undefined' %}{{ '\n' + 'Destination: ' + message['destination'].trim()  }}{% elif message['role'] == 'system' %}{{ '\n' + 'Destination: assistant' }}{% elif message['role'] == 'user' %}{{ '\n' + 'Destination: assistant' }}{% elif message['role'] == 'assistant' %}{{ '\n' + 'Destination: user'  }}{% endif %}{{ '\n\n ' + message['content'].trim() + '<step>'  + ' '}}{% endfor %}{% if add_generation_prompt %}{{ 'Source: assistant' + '\n' }}{{ 'Destination: user' + '\n\n' + ' '  }}{% endif %}",
       "bos_token": "<s>",
       "step_id": "<step>",
-      "stop": [
-        "<step>"
-      ],
+      "stop": ["<step>"],
       "add_generation_prompt": true
     },
     "pricing": {
@@ -2702,9 +2641,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>"
-      ]
+      "stop": ["</s>"]
     },
     "pricing": {
       "input": 225,
@@ -2775,9 +2712,7 @@
     "isFeaturedModel": true,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ]
+      "stop": ["</s>"]
     },
     "pricing": {
       "input": 225,
@@ -2848,10 +2783,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "</s>",
-        "[INST]"
-      ],
+      "stop": ["</s>", "[INST]"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -2923,9 +2855,7 @@
     "isFeaturedModel": true,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -2998,11 +2928,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "",
-      "stop": [
-        "<|EOT|>",
-        "<｜begin▁of▁sentence｜>",
-        "<｜end▁of▁sentence｜>"
-      ],
+      "stop": ["<|EOT|>", "<｜begin▁of▁sentence｜>", "<｜end▁of▁sentence｜>"],
       "bos_token": "<｜begin▁of▁sentence｜>",
       "add_generation_prompt": true,
       "chat_template": "{{'<｜begin▁of▁sentence｜>'}}{%- for message in messages %}{%- if message['role'] == 'system' %}{{ message['content'] }}{%- else %}{%- if message['role'] == 'user' %}{{'### Instruction:\\n' + message['content'] + '\\n'}}{%- else %}{{'### Response:\\n' + message['content'] + '\\n<|EOT|>\\n'}}{%- endif %}{%- endif %}{%- endfor %}{% if add_generation_prompt %}{{'### Response:'}}{% endif %}"
@@ -3077,10 +3003,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>",
-        "###"
-      ],
+      "stop": ["</s>", "###"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n"
     },
     "pricing": {
@@ -3155,9 +3078,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "USER: {prompt}\nASSISTANT:",
       "chat_template": "{% for message in messages %}{{message['role'].toLocaleUpperCase() + ': ' + message['content'] + '\n'}}{% endfor %}{{ 'ASSISTANT:' }}"
     },
@@ -3233,10 +3154,7 @@
     "isFeaturedModel": false,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>",
-        "USER:"
-      ],
+      "stop": ["</s>", "USER:"],
       "prompt_format": "USER: {prompt}\nASSISTANT: Hello!",
       "chat_template": "{% for message in messages %}{{message['role'].toLocaleUpperCase() + ': ' + message['content'] + '\n'}}{% endfor %}{{ 'ASSISTANT:' }}"
     },
@@ -3311,10 +3229,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -3568,10 +3483,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "prompt_format": "<s>[INST] {prompt} [/INST]",
       "chat_template_name": "llama",
       "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
@@ -3664,10 +3576,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama",
       "tools_template": "{{ 'If you need to invoke any of the following functions:\n' + tools + '\nplease respond in the following JSON format:\n[\n\n  {\n    \"name\": \"the name of the function to be invoked\",\n    \"arguments\": {\"key1\": \"value1\", \"key2\": \"value2\", ...}\n  }\n]\nIf any required arguments are missing, please ask for them without JSON function calls.\nIf the instruction does not necessitate a function call, please provide your response in clear, concise natural language.\n\n' + message['content'] }}"
     },
@@ -3752,9 +3661,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "{prompt}",
       "chat_template_name": "llama"
     },
@@ -3830,10 +3737,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama",
       "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
     },
@@ -3995,10 +3899,7 @@
     "context_length": 8192,
     "config": {
       "chat_template": "{{ bos_token }}{% for message in messages %}{{ 'GPT4 Correct ' + message['role'] + ': ' + message['content'] + '<|end_of_turn|>'}}{% endfor %}{% if add_generation_prompt %}{{ 'GPT4 Correct Assistant:' }}{% endif %}",
-      "stop": [
-        "<|end_of_turn|>",
-        "</s>"
-      ],
+      "stop": ["<|end_of_turn|>", "</s>"],
       "add_generation_prompt": true,
       "bos_token": "<s>",
       "prompt_format": "GPT4 Correct User: {prompt}<|end_of_turn|>GPT4 Correct Assistant:"
@@ -4267,10 +4168,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -4461,10 +4359,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "pre_prompt": "<|im_start|>system\nYou are thoughtful, helpful, polite, honest, and friendly<|im_end|>\n",
       "add_generation_prompt": true,
@@ -4558,10 +4453,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "add_generation_prompt": true,
       "chat_template_name": "default"
@@ -4644,9 +4536,7 @@
         "temperature": 0.2,
         "top_p": 1,
         "max_tokens": 10,
-        "stop": [
-          "\n"
-        ]
+        "stop": ["\n"]
       }
     },
     "pricing": {
@@ -4719,10 +4609,7 @@
     "isFeaturedModel": true,
     "context_length": 32768,
     "config": {
-      "stop": [
-        "\n\n\n\n",
-        "<|endoftext|>"
-      ],
+      "stop": ["\n\n\n\n", "<|endoftext|>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -4801,10 +4688,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "[INST]\n {prompt} \n[/INST]\n\n",
-      "stop": [
-        "[INST]",
-        "\n\n"
-      ],
+      "stop": ["[INST]", "\n\n"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -4879,10 +4763,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "prompt_format": "\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "add_generation_prompt": true,
       "chat_template_name": "default"
@@ -4956,10 +4837,7 @@
     "isFeaturedModel": true,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|im_end|>",
-        "<|endoftext|>"
-      ],
+      "stop": ["<|im_end|>", "<|endoftext|>"],
       "add_generation_prompt": true,
       "chat_template_name": "default"
     },
@@ -5108,9 +4986,7 @@
     "context_length": 2048,
     "config": {
       "prompt_format": "<human>: {prompt}\n<bot>:",
-      "stop": [
-        "<human>"
-      ],
+      "stop": ["<human>"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -5328,9 +5204,7 @@
     "context_length": 2048,
     "config": {
       "prompt_format": "<human>: {prompt}\n<bot>:",
-      "stop": [
-        "<human>"
-      ],
+      "stop": ["<human>"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -5541,10 +5415,7 @@
     "isFeaturedModel": true,
     "context_length": 32768,
     "config": {
-      "stop": [
-        "###",
-        "</s>"
-      ],
+      "stop": ["###", "</s>"],
       "prompt_format": "### Instruction:\n{prompt}\n\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ bos_token + '### Instruction:\\n' + message['content'] + '\\n\\n' }}{% elif message['role'] == 'system' %}{{ '### System:\\n' + message['content'] + '\\n\\n' }}{% elif message['role'] == 'assistant' %}{{ '### Response:\\n'  + message['content'] + '\\n' }}{% endif %}{% if loop.last %}{{ '### Response:\\n' }}{% endif %}{% endfor %}"
     },
@@ -5620,10 +5491,7 @@
     "isFeaturedModel": true,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "</s>",
-        "###"
-      ],
+      "stop": ["</s>", "###"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
     },
@@ -5697,10 +5565,7 @@
     "context_length": 2048,
     "config": {
       "prompt_format": "User: {prompt}\nAssistant:",
-      "stop": [
-        "User:",
-        "</s>"
-      ],
+      "stop": ["User:", "</s>"],
       "chat_template_name": "default"
     },
     "pricing": {
@@ -5772,9 +5637,7 @@
     "isFeaturedModel": true,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "default"
     },
     "pricing": {
@@ -5847,10 +5710,7 @@
     "context_length": 2048,
     "config": {
       "prompt_format": "User: {prompt}\nAssistant:",
-      "stop": [
-        "User:",
-        "</s>"
-      ],
+      "stop": ["User:", "</s>"],
       "chat_template_name": "default"
     },
     "pricing": {
@@ -5922,9 +5782,7 @@
     "isFeaturedModel": true,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "default"
     },
     "pricing": {
@@ -5998,10 +5856,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -6149,10 +6004,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -6505,10 +6357,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "###",
-        "</s>"
-      ],
+      "stop": ["###", "</s>"],
       "prompt_format": "<s> ### User:\n{prompt}\n### Assistant:\n"
     },
     "pricing": {
@@ -6638,10 +6487,7 @@
     "isFeaturedModel": true,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "<|im_start|>",
-        "<|im_end|>"
-      ],
+      "stop": ["<|im_start|>", "<|im_end|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
       "pre_prompt": ""
     },
@@ -6910,10 +6756,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
       "add_generation_prompt": true
     },
@@ -7034,10 +6877,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
       "add_generation_prompt": true
     },
@@ -7158,10 +6998,7 @@
     "context_length": 32768,
     "config": {
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n",
-      "stop": [
-        "<|im_end|>",
-        "<|im_start|>"
-      ],
+      "stop": ["<|im_end|>", "<|im_start|>"],
       "chat_template": "{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '<|im_start|>system\nYou are a helpful assistant<|im_end|>\n' }}{% endif %}{{'<|im_start|>' + message['role'] + '\n' + message['content']}}{% if (loop.last and add_generation_prompt) or not loop.last %}{{ '<|im_end|>' + '\n'}}{% endif %}{% endfor %}{% if add_generation_prompt and messages[-1]['role'] != 'assistant' %}{{ '<|im_start|>assistant\n' }}{% endif %}",
       "add_generation_prompt": true
     },
@@ -7288,9 +7125,7 @@
     "context_length": 2048,
     "config": {
       "prompt_format": "<human>: {prompt}\n<bot>:",
-      "stop": [
-        "<human>"
-      ],
+      "stop": ["<human>"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -7324,9 +7159,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "default",
       "add_generation_prompt": true
     },
@@ -7360,9 +7193,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|im_end|>"
-      ],
+      "stop": ["<|im_end|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant",
       "chat_template_name": "default",
       "add_generation_prompt": true
@@ -7428,9 +7259,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "default"
     },
     "pricing": {
@@ -7464,9 +7293,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "USER: {prompt} GPT:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'USER: ' + message['content'] + ' ' }}{% else %}{{ 'GPT: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ 'GPT:' }}"
     },
@@ -7498,9 +7325,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -7534,9 +7359,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "### End"
-      ],
+      "stop": ["### End"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
     },
@@ -7570,9 +7393,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "### End"
-      ],
+      "stop": ["### End"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
     },
@@ -7636,9 +7457,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -7706,9 +7525,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "###"
-      ],
+      "stop": ["###"],
       "prompt_format": "### Human: {prompt} ### Assistant:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Human: ' + message['content'] + ' ' }}{% else %}{{ '### Assistant: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant:' }}"
     },
@@ -7741,10 +7558,7 @@
     "isFeaturedModel": false,
     "context_length": 512,
     "config": {
-      "stop": [
-        "###",
-        "</s>"
-      ],
+      "stop": ["###", "</s>"],
       "prompt_format": "### Human: {prompt}\n### Assistant:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Human: ' + message['content'] + '\n' }}{% else %}{{ '### Assistant: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant:' }}"
     },
@@ -7810,9 +7624,7 @@
     "isFeaturedModel": false,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "prompt_format": "<|prompter|>{prompt}<|endoftext|><|assistant|>",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '<|prompter|>' + message['content'] + '<|endoftext|>' }}{% else %}{{ '<|assistant|>' + message['content'] + '<|endoftext|>\n' }}{% endif %}{% endfor %}{{ '<|assistant|>' }}"
     },
@@ -7846,9 +7658,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -7882,9 +7692,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|im_end|>"
-      ],
+      "stop": ["<|im_end|>"],
       "prompt_format": "<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant",
       "chat_template_name": "default",
       "add_generation_prompt": true
@@ -7951,9 +7759,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "prompt_format": "<|prompter|>{prompt}<|endoftext|><|assistant|>",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '<|prompter|>' + message['content'] + '<|endoftext|>' }}{% else %}{{ '<|assistant|>' + message['content'] + '<|endoftext|>\n' }}{% endif %}{% endfor %}{{ '<|assistant|>' }}"
     },
@@ -7988,9 +7794,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "USER: {prompt}\nASSISTANT:",
       "chat_template": "{% for message in messages %}{{message['role'].toLocaleUpperCase() + ': ' + message['content'] + '\n'}}{% endfor %}{{ 'ASSISTANT:' }}"
     },
@@ -8024,10 +7828,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "### Instruction:\n{prompt}\n### Response:\n",
-      "stop": [
-        "</s>",
-        "###"
-      ],
+      "stop": ["</s>", "###"],
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
     },
     "pricing": {
@@ -8093,10 +7894,7 @@
     "isFeaturedModel": false,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "###",
-        "</s>"
-      ],
+      "stop": ["###", "</s>"],
       "prompt_format": "### Instruction:\n{prompt}\n\n### Response:\n",
       "chat_template_name": "llama",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:\n' }}"
@@ -8129,9 +7927,7 @@
     "isFeaturedModel": false,
     "context_length": 4096,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "USER: {prompt} ASSISTANT:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'USER: ' + message['content'] + ' ' }}{% else %}{{ 'ASSISTANT:' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ 'ASSISTANT:' }}"
     },
@@ -8199,9 +7995,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "USER: {prompt}\nASSISTANT:",
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template": "{% for message in messages %}{{message['role'].toLocaleUpperCase() + ': ' + message['content'] + '\n'}}{% endfor %}{{ 'ASSISTANT:' }}"
     },
     "pricing": {
@@ -8236,9 +8030,7 @@
     "context_length": 2048,
     "config": {
       "prompt_format": "<human>: {prompt}\n<bot>:",
-      "stop": [
-        "<human>"
-      ],
+      "stop": ["<human>"],
       "chat_template_name": "gpt"
     },
     "max_tokens": 995,
@@ -8273,10 +8065,7 @@
     "isFeaturedModel": false,
     "context_length": 32768,
     "config": {
-      "stop": [
-        "[INST]",
-        "</s>"
-      ],
+      "stop": ["[INST]", "</s>"],
       "prompt_format": "<s>[INST] {prompt} [INST]"
     },
     "created_at": "2023-12-15T06:08:38.925Z",
@@ -8308,9 +8097,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8344,10 +8131,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "</s>",
-        "[INST]"
-      ],
+      "stop": ["</s>", "[INST]"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8383,9 +8167,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "###"
-      ],
+      "stop": ["###"],
       "prompt_format": "### Human: {prompt} ### Assistant:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Human: ' + message['content'] + ' ' }}{% else %}{{ '### Assistant: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant:' }}"
     },
@@ -8416,9 +8198,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8454,9 +8234,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "chat_template_name": "default",
       "add_generation_prompt": true
     },
@@ -8492,10 +8270,7 @@
     "context_length": 4096,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "[/INST]",
-        "</s>"
-      ],
+      "stop": ["[/INST]", "</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8528,10 +8303,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "</s>",
-        "[INST]"
-      ],
+      "stop": ["</s>", "[INST]"],
       "chat_template_name": "llama",
       "tools_template": "{{ '<<SYS>>\\n' + systemMessage['content'] + '\\n\\nYou can access the following functions. Use them if required -\\n' + tools + '\\n<</SYS>>\\n\\n' + message['content'] }}"
     },
@@ -8565,9 +8337,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8601,9 +8371,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8640,9 +8408,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "\n\n"
-      ],
+      "stop": ["\n\n"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -8676,9 +8442,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "\n\n"
-      ],
+      "stop": ["\n\n"],
       "chat_template_name": "gpt"
     },
     "pricing": {
@@ -8774,9 +8538,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8809,9 +8571,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8845,10 +8605,7 @@
     "context_length": 16384,
     "config": {
       "prompt_format": "[INST] {prompt} [/INST]",
-      "stop": [
-        "</s>",
-        "[INST]"
-      ],
+      "stop": ["</s>", "[INST]"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -8884,9 +8641,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "USER: {prompt}\nASSISTANT:",
       "chat_template": "{% for message in messages %}{{message['role'].toLocaleUpperCase() + ': ' + message['content'] + '\n'}}{% endfor %}{{ 'ASSISTANT:' }}"
     },
@@ -8951,10 +8706,7 @@
     "isFeaturedModel": false,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|endoftext|>",
-        "<|end|>"
-      ],
+      "stop": ["<|endoftext|>", "<|end|>"],
       "prompt_format": "<|system|>\n<|end|>\n<|user|>\n{prompt}<|end|>\n<|assistant|>",
       "chat_template_name": "default"
     },
@@ -9082,9 +8834,7 @@
     "isFeaturedModel": false,
     "context_length": 16384,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "chat_template_name": "llama"
     },
     "pricing": {
@@ -9119,9 +8869,7 @@
     "isFeaturedModel": false,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|endoftext|>"
-      ],
+      "stop": ["<|endoftext|>"],
       "prompt_format": "### Instructions:\n\n{prompt}\n\n### Response:\n"
     },
     "pricing": {
@@ -9154,10 +8902,7 @@
     "isFeaturedModel": false,
     "context_length": 8192,
     "config": {
-      "stop": [
-        "<|endoftext|>",
-        "<|end|>"
-      ]
+      "stop": ["<|endoftext|>", "<|end|>"]
     },
     "pricing": {
       "input": 75,
@@ -9189,9 +8934,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "### End"
-      ],
+      "stop": ["### End"],
       "prompt_format": "### Instruction:\n{prompt}\n### Response:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Instruction:\n' + message['content'] + '\n' }}{% else %}{{ '### Response:\n' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Response:' }}"
     },
@@ -9226,9 +8969,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "###"
-      ],
+      "stop": ["###"],
       "prompt_format": "### Human: {prompt} ### Assistant:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Human: ' + message['content'] + ' ' }}{% else %}{{ '### Assistant: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant:' }}"
     },
@@ -9262,9 +9003,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "</s>"
-      ],
+      "stop": ["</s>"],
       "prompt_format": "USER: {prompt} GPT:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'USER: ' + message['content'] + ' ' }}{% else %}{{ 'GPT: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ 'GPT:' }}"
     },
@@ -9330,9 +9069,7 @@
     "isFeaturedModel": false,
     "context_length": 2048,
     "config": {
-      "stop": [
-        "###"
-      ],
+      "stop": ["###"],
       "prompt_format": "### Human: {prompt} ### Assistant:",
       "chat_template": "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### Human: ' + message['content'] + ' ' }}{% else %}{{ '### Assistant: ' + message['content'] + '\n' }}{% endif %}{% endfor %}{{ '### Assistant:' }}"
     },

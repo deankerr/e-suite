@@ -1,9 +1,10 @@
 'use client'
 
-import { Label } from '@/components/ui/Label'
+import { forwardRef } from 'react'
 import { Select } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
-import { forwardRef } from 'react'
+
+import { Label } from '@/components/ui/Label'
 import togetheraiModels from './togetheraiModels.json'
 import { TextInputAtom } from './useThread'
 

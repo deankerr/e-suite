@@ -1,7 +1,8 @@
+import { forwardRef } from 'react'
+import NextImage from 'next/image'
+
 import loaderBars from '@/assets/hola-loader-bars-sm4.svg'
 import { cn } from '@/lib/utils'
-import NextImage from 'next/image'
-import { forwardRef } from 'react'
 
 type LoaderBarsProps = {} & Partial<React.ComponentProps<typeof NextImage>>
 

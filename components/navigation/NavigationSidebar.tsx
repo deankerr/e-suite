@@ -1,13 +1,14 @@
 'use client'
 
-import { Logo } from '@/components/ui/Logo'
-import { cn } from '@/lib/utils'
+import { useEffect } from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 import { Heading } from '@radix-ui/themes'
 import { ImageIcon, MessagesSquareIcon } from 'lucide-react'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+
+import { Logo } from '@/components/ui/Logo'
+import { cn } from '@/lib/utils'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { Sidebar } from '../ui/Sidebar'
 import { useMediaQuery } from '../useMediaQuery'

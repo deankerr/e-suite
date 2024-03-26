@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils'
-import { Button as RxButton } from '@radix-ui/themes'
 import { forwardRef } from 'react'
+import { Button as RxButton } from '@radix-ui/themes'
+
+import { cn } from '@/lib/utils'
 
 export const Button = forwardRef<HTMLButtonElement, React.ComponentProps<typeof RxButton>>(
   function Button({ children, className, ...props }, forwardedRef) {

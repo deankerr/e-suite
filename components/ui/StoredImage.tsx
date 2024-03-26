@@ -1,9 +1,11 @@
-import { Id } from '@/convex/_generated/dataModel'
-import type { StoredImage as StoredImageType } from '@/convex/files/images'
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { AlertOctagonIcon } from 'lucide-react'
 import NextImage from 'next/image'
-import { forwardRef } from 'react'
+
+import { Id } from '@/convex/_generated/dataModel'
+import { cn } from '@/lib/utils'
+
+import type { StoredImage as StoredImageType } from '@/convex/files/images'
 
 type Props = {
   image: StoredImageType

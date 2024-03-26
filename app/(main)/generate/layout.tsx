@@ -1,10 +1,11 @@
 'use client'
 
+import { useQuery } from 'convex/react'
+import { useSelectedLayoutSegment } from 'next/navigation'
+
 import { TopBar } from '@/components/ui/TopBar'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { useQuery } from 'convex/react'
-import { useSelectedLayoutSegment } from 'next/navigation'
 import { GenerateSidebar } from './GenerateSidebar'
 
 export default function GenerateLayout({ children }: { children: React.ReactNode }) {

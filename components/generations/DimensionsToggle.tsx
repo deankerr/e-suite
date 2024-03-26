@@ -1,8 +1,9 @@
-import { cn } from '@/lib/utils'
+import React, { forwardRef } from 'react'
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
 import { Button } from '@radix-ui/themes'
 import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'
-import React, { forwardRef } from 'react'
+
+import { cn } from '@/lib/utils'
 
 const toggleGroupItemClasses =
   'data-[state=on]:bg-accent-3 rounded-none first:rounded-l last:rounded-r'

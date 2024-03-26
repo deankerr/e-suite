@@ -1,10 +1,11 @@
 'use client'
 
-import { Label } from '@/components/ui/Label'
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { Slider as RxSlider } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
-import { forwardRef } from 'react'
+
+import { Label } from '@/components/ui/Label'
+import { cn } from '@/lib/utils'
 import { NumberInputAtom } from '../threads/useThread'
 
 type SliderProps = {

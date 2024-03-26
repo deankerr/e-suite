@@ -1,8 +1,9 @@
-import { Label } from '@/components/ui/Label'
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { TextFieldInput } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
-import { forwardRef } from 'react'
+
+import { Label } from '@/components/ui/Label'
+import { cn } from '@/lib/utils'
 import { TextInputAtom } from '../threads/useThread'
 
 type Props = {

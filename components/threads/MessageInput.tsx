@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
 import { useAtom } from 'jotai'
 import { SendHorizonalIcon, SmileIcon } from 'lucide-react'
-import { forwardRef } from 'react'
+
+import { cn } from '@/lib/utils'
 import { Textarea } from '../ui/Textarea'
 import { UIIconButton } from '../ui/UIIconButton'
 import { TextInputAtom } from './useThread'

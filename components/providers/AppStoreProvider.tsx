@@ -1,8 +1,13 @@
 'use client'
 
-import { createAppStore, initAppStore, type AppStore } from '@/store/store'
-import { createContext, useContext, useRef, type ReactNode } from 'react'
-import { useStore, type StoreApi } from 'zustand'
+import { createContext, useContext, useRef } from 'react'
+import { useStore } from 'zustand'
+
+import { createAppStore, initAppStore } from '@/store/store'
+
+import type { AppStore } from '@/store/store'
+import type { ReactNode } from 'react'
+import type { StoreApi } from 'zustand'
 
 export const AppStoreContext = createContext<StoreApi<AppStore> | null>(null)
 

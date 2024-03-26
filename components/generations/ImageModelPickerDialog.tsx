@@ -1,8 +1,9 @@
 'use client'
 
+import { Button, Dialog } from '@radix-ui/themes'
+
 import { ImageModelCard } from '@/components/generations/ImageModelCard'
 import { ImageModel } from '@/convex/generations/imageModels'
-import { Button, Dialog } from '@radix-ui/themes'
 
 export const ImageModelPickerDialog = ({
   list,

@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils'
+import { useRef } from 'react'
 import { Heading } from '@radix-ui/themes'
 import { SquirrelIcon } from 'lucide-react'
-import { useRef } from 'react'
+
+import { cn } from '@/lib/utils'
 
 export const DebugCornerMarkers = ({
   n,

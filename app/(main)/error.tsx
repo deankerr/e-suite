@@ -1,8 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/Button'
-import { Card, Text } from '@radix-ui/themes'
 import { useEffect } from 'react'
+import { Card, Text } from '@radix-ui/themes'
+
+import { Button } from '@/components/ui/Button'
 
 export default function Error({
   error,

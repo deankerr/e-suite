@@ -1,8 +1,13 @@
 'use client'
 
-import { createCounterStore, initCounterStore, type CounterStore } from '@/store/counter-store'
-import { createContext, useContext, useRef, type ReactNode } from 'react'
-import { useStore, type StoreApi } from 'zustand'
+import { createContext, useContext, useRef } from 'react'
+import { useStore } from 'zustand'
+
+import { createCounterStore, initCounterStore } from '@/store/counter-store'
+
+import type { CounterStore } from '@/store/counter-store'
+import type { ReactNode } from 'react'
+import type { StoreApi } from 'zustand'
 
 export const CounterStoreContext = createContext<StoreApi<CounterStore> | null>(null)
 

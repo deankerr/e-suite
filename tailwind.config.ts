@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 
 import radixThemePlugin from 'radix-ui-themes-with-tailwind'
-import type { Config } from 'tailwindcss'
 import plugin from 'tailwindcss/plugin'
+
+import type { Config } from 'tailwindcss'
 
 const config: Config = {
   darkMode: 'class',

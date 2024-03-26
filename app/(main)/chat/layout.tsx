@@ -1,9 +1,10 @@
 'use client'
 
+import { useSelectedLayoutSegment } from 'next/navigation'
+
 import { useThread } from '@/components/threads/useThread'
 import { TopBar } from '@/components/ui/TopBar'
 import { Id } from '@/convex/_generated/dataModel'
-import { useSelectedLayoutSegment } from 'next/navigation'
 import { ChatSidebar } from './ChatSidebar'
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {

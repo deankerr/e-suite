@@ -1,17 +1,20 @@
-import { ClientProviders } from '@/components/providers/ClientProviders'
-import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
+import './globals.css'
+
+import { ClerkProvider } from '@clerk/nextjs'
+import { dark } from '@clerk/themes'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { Provider as JotaiProvider } from 'jotai'
-import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
-import './globals.css'
+
 import { AppStoreProvider } from '@/components/providers/AppStoreProvider'
+import { ClientProviders } from '@/components/providers/ClientProviders'
 import { CounterStoreProvider } from '@/components/providers/CounterStoreProvider'
+import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { cn } from '@/lib/utils'
-import { ClerkProvider } from '@clerk/nextjs'
-import { dark } from '@clerk/themes'
+
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'e/suite',

@@ -1,8 +1,5 @@
 {
   "node": {
-    "externalPackages": [
-      "sharp",
-      "plaiceholder"
-    ]
+    "externalPackages": ["sharp", "plaiceholder"]
   }
 }

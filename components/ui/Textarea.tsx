@@ -1,8 +1,9 @@
+import { forwardRef } from 'react'
+import { useAtom } from 'jotai'
+import TextareaAutosize from 'react-textarea-autosize'
+
 import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
-import { useAtom } from 'jotai'
-import { forwardRef } from 'react'
-import TextareaAutosize from 'react-textarea-autosize'
 import { TextInputAtom } from '../threads/useThread'
 
 type Props = {

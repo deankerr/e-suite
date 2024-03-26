@@ -1,13 +1,14 @@
 'use client'
 
+import { forwardRef } from 'react'
+import { AlertDialog } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
+import { toast } from 'sonner'
+
 import { Button } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
-import { AlertDialog } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
-import { forwardRef } from 'react'
-import { toast } from 'sonner'
 
 type RemoveThreadDialogProps = { id: Id<'threads'>; onDelete: () => void } & React.ComponentProps<
   typeof AlertDialog.Root

@@ -1,5 +1,6 @@
-import { Volume2Icon, VolumeXIcon } from 'lucide-react'
 import { forwardRef } from 'react'
+import { Volume2Icon, VolumeXIcon } from 'lucide-react'
+
 import { useAppStore } from '../providers/AppStoreProvider'
 import { UIIconButton } from '../ui/UIIconButton'
 

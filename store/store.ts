@@ -1,5 +1,6 @@
-import { Id } from '@/convex/_generated/dataModel'
 import { createStore } from 'zustand/vanilla'
+
+import { Id } from '@/convex/_generated/dataModel'
 
 export type AppState = {
   navigationSidebarOpen: boolean

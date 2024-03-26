@@ -1,12 +1,13 @@
 'use client'
 
+import { SignInButton, SignUpButton } from '@clerk/nextjs'
+import { Card, Strong } from '@radix-ui/themes'
+import { AuthLoading, Unauthenticated, useConvexAuth, useQuery } from 'convex/react'
+
 import { ChangeUsernameDialog } from '@/components/ChangeUsernameDialog'
 import { LoaderBars } from '@/components/ui/LoaderBars'
 import { TopBar } from '@/components/ui/TopBar'
 import { api } from '@/convex/_generated/api'
-import { SignInButton, SignUpButton } from '@clerk/nextjs'
-import { Card, Strong } from '@radix-ui/themes'
-import { AuthLoading, Unauthenticated, useConvexAuth, useQuery } from 'convex/react'
 import { Button } from '../../components/ui/Button'
 import { Logo } from '../../components/ui/Logo'
 
