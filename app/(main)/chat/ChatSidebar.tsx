@@ -6,11 +6,10 @@ import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { ThreadHelpers } from '@/components/threads/useThread'
 import { Button } from '@/components/ui/Button'
-import { Label } from '@/components/ui/Label'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
-import { ScrollArea, Switch, Tabs } from '@radix-ui/themes'
+import { ScrollArea, Tabs } from '@radix-ui/themes'
 import { forwardRef } from 'react'
 
 type ChatSidebarProps = {
@@ -38,7 +37,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
       <Tabs.Root defaultValue="parameters">
         <Tabs.List className="shrink-0">
           <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
-          <Tabs.Trigger value="details">Details</Tabs.Trigger>
+          <Tabs.Trigger value="details">Settings</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="parameters" asChild>
@@ -51,21 +50,6 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
 
         <Tabs.Content value="details" asChild>
           <div className="flex grow flex-col justify-center gap-4 p-4">
-            <div className="px-1">
-              {/* audio */}
-              <div className="flex-between gap-2">
-                <Label htmlFor="autoplay" className="text-sm font-medium">
-                  Play new voiceovers
-                </Label>
-                <Switch
-                  id="autoplay"
-                  size="1"
-                  // checked={voPlayer.autoplay}
-                  // onCheckedChange={voPlayer.setAutoplay}
-                />
-              </div>
-            </div>
-
             {thread && thread.owner.isViewer ? (
               <>
                 <PermissionsCard

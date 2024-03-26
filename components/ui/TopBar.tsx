@@ -37,14 +37,17 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
     const title = threadsList?.find(({ _id }) => _id === slug)?.title
     return {
       title: title ?? 'New Chat',
-      icon: <MessageSquareIcon className="size-5 shrink-0" />,
+      icon: <MessageSquareIcon className="stroke-[1.5] md:mr-1.5" />,
     }
   }
 
   const getGenerationTitle = () => {
     const generation = generationsList?.find(({ _id }) => _id === slug)
     const title = generation?.images?.[0]?.parameters?.prompt
-    return { title: title ?? 'New Generation', icon: <ImageIcon className="size-5 shrink-0" /> }
+    return {
+      title: title ?? 'New Generation',
+      icon: <ImageIcon className="stroke-[1.5] md:mr-1.5" />,
+    }
   }
 
   const { title, icon } = route.chat
@@ -72,7 +75,8 @@ export const TopBar = forwardRef<HTMLDivElement, TopBarProps>(function TopBar(
 
       {/* middle */}
       <div className="grow truncate px-1 text-center [&_>_svg]:inline">
-        {icon} {title}
+        {icon}
+        {title}
       </div>
 
       {/* end */}

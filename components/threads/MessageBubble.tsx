@@ -1,7 +1,7 @@
 import { Message } from '@/convex/threads/threads'
 import { cn } from '@/lib/utils'
 import { Heading, Text } from '@radix-ui/themes'
-import { MoreHorizontalIcon } from 'lucide-react'
+import { MoreVerticalIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
@@ -30,7 +30,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
         <div className="flex gap-2.5">
           <VoiceoverButton voiceover={message.voiceover} />
           <MessageMenu messageId={message._id}>
-            <UIIconButton icon={MoreHorizontalIcon} label="message menu" size="1" />
+            <UIIconButton icon={MoreVerticalIcon} label="message menu" size="1" />
           </MessageMenu>
         </div>
       </div>
