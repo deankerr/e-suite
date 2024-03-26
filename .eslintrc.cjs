@@ -5,6 +5,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   ignorePatterns: ['convex/_generated', '.next', 'cosmos-export'],
   rules: {
+    '@typescript-eslint/no-import-type-side-effects': 'error',
     // support unused vars during dev
     '@typescript-eslint/no-unused-vars': [
       'warn',
