@@ -1,7 +1,7 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { v } from 'convex/values'
 
-import { modelBases, modelTypes, nsfwRatings } from './constants'
+import { messageRoles, modelBases, modelTypes, nsfwRatings } from './constants'
 import { vEnum } from './util'
 
 import type { Infer } from 'convex/values'
@@ -157,6 +157,15 @@ export const threadsFields = {
   name: v.optional(v.string()),
   parameters: v.optional(inferenceParametersFields),
   permissions: permissionsFields,
+  voices: v.optional(
+    v.array(
+      v.object({
+        role: vEnum(messageRoles),
+        name: v.optional(v.string()),
+        voiceRef: v.string(),
+      }),
+    ),
+  ),
 }
 const threads = defineEnt(threadsFields)
   .edge('user')

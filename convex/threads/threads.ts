@@ -186,6 +186,20 @@ export const send = mutation({
   },
 })
 
+export const update = mutation({
+  args: {
+    id: v.id('threads'),
+    fields: v.object({
+      ...threadsFields,
+      permissions: v.optional(threadsFields.permissions),
+    }),
+  },
+  handler: async (ctx, { id, fields }) => {
+    //TODO validation
+    await ctx.table('threads').getX(id).patch(fields)
+  },
+})
+
 //* Action/Internal interface
 
 export const getMessageContext = internalQuery({

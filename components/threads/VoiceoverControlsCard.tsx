@@ -1,20 +1,55 @@
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { Card, Heading, Select, TextFieldInput } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
+import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
+import { Button } from '../ui/Button'
 import { Label } from '../ui/Label'
 
+import type { ThreadHelpers } from './useThread'
 import type { Collection } from '@/convex/types'
 import type { Voice } from '@/convex/voices'
 import type { ClassNameValue } from '@/lib/utils'
 
-type VoiceoverControlsCardProps = {} & React.ComponentProps<typeof Card>
+type VoiceoverControlsCardProps = {
+  threadHelpers: ThreadHelpers
+} & React.ComponentProps<typeof Card>
 
 export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControlsCardProps>(
-  function VoiceoverControlsCard({ className, ...props }, forwardedRef) {
+  function VoiceoverControlsCard({ threadHelpers, className, ...props }, forwardedRef) {
     const voicesList = useQuery(api.voices.list)
+
+    const threadVoices = threadHelpers.voices
+    const [currentVoices, setCurrentVoices] = useState(threadVoices)
+
+    const update = useMutation(api.threads.threads.update)
+
+    const handleUpdate = () => {
+      async function send() {
+        const id = threadHelpers.thread?._id
+        if (!id) return
+        try {
+          await update({
+            id,
+            fields: {
+              voices: currentVoices,
+            },
+          })
+          toast.success('Voices updated.')
+        } catch (err) {
+          console.error(err)
+          toast.error('Voices update failed.')
+        }
+      }
+      void send()
+    }
+
+    useEffect(() => {
+      setCurrentVoices(threadVoices)
+      console.log('update current')
+    }, [threadVoices])
 
     return (
       <Card size="1" {...props} ref={forwardedRef}>
@@ -23,20 +58,47 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
           <div className="space-y-1">
             <div className="flex-between border-b">
-              <Label className="w-1/2 font-semibold">Role</Label>
-              <Label className="w-1/2 font-semibold">Voice</Label>
-            </div>
-            <div className="flex-between">
-              <Label className="text-sm">System</Label>
-              <VoiceSelect voicesList={voicesList} />
+              <div className="w-1/2 text-sm font-semibold">Role</div>
+              <div className="w-1/2 text-sm font-semibold">Voice</div>
             </div>
             <div className="flex-between">
               <Label className="text-sm">AI</Label>
-              <VoiceSelect voicesList={voicesList} />
+              <VoiceSelect
+                voicesList={voicesList}
+                value={currentVoices.find((v) => v.role === 'assistant')?.voiceRef}
+                onValueChange={(value) => {
+                  setCurrentVoices((prev) => [
+                    ...prev.filter((v) => v.role !== 'assistant'),
+                    { role: 'assistant', voiceRef: value },
+                  ])
+                }}
+              />
             </div>
             <div className="flex-between">
               <Label className="text-sm">User</Label>
-              <VoiceSelect voicesList={voicesList} />
+              <VoiceSelect
+                voicesList={voicesList}
+                value={currentVoices.find((v) => v.role === 'user')?.voiceRef}
+                onValueChange={(value) => {
+                  setCurrentVoices((prev) => [
+                    ...prev.filter((v) => v.role !== 'user'),
+                    { role: 'user', voiceRef: value },
+                  ])
+                }}
+              />
+            </div>
+            <div className="flex-between">
+              <Label className="text-sm">System</Label>
+              <VoiceSelect
+                voicesList={voicesList}
+                value={currentVoices.find((v) => v.role === 'system')?.voiceRef}
+                onValueChange={(value) => {
+                  setCurrentVoices((prev) => [
+                    ...prev.filter((v) => v.role !== 'system'),
+                    { role: 'system', voiceRef: value },
+                  ])
+                }}
+              />
             </div>
           </div>
 
@@ -78,6 +140,14 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
             </div>
           </div>
         </div>
+
+        {threadVoices !== currentVoices && (
+          <div className="absolute right-2 top-2">
+            <Button variant="surface" onClick={handleUpdate}>
+              Confirm
+            </Button>
+          </div>
+        )}
       </Card>
     )
   },

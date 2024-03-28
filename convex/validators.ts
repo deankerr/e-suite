@@ -1,11 +1,11 @@
 import z from 'zod'
 
-import { voiceoverProviders } from './constants'
+import { messageRoles, textToSpeechProviders } from './constants'
 
 const MAX_STRING_LENGTH = 32767
 
 export const messageValidator = z.object({
-  role: z.enum(['system', 'user', 'assistant', 'tool']),
+  role: z.enum(messageRoles),
   name: z
     .string()
     .optional()
@@ -15,7 +15,7 @@ export const messageValidator = z.object({
 
 export const voiceoverValidator = z.object({
   text: z.string().transform((value) => value.slice(0, MAX_STRING_LENGTH)),
-  provider: z.enum(voiceoverProviders),
+  provider: z.enum(textToSpeechProviders),
   parameters: z.union([
     z.object({
       elevenlabs: z.object({

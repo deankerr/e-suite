@@ -1,4 +1,6 @@
-import { ConvexError, v, Validator, Value } from 'convex/values'
+import { ConvexError, v, Validator } from 'convex/values'
+
+import type { Value } from 'convex/values'
 
 export const vEnum = <const T extends ReadonlyArray<string>>(
   values: T,

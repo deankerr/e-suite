@@ -1,7 +1,8 @@
 import { query } from './functions'
 import awsVoices from './providers/aws.voices.json'
 import elabsVoices from './providers/elevenlabs.voices.json'
-import { Collection } from './types'
+
+import type { Collection } from './types'
 
 export type Voice = {
   id: string
@@ -21,7 +22,7 @@ export const list = query({
           .filter((voice) => voice.LanguageCode.startsWith('en-')) // english only for now
           .map((voice) => {
             return {
-              id: voice.Id,
+              id: `aws/${voice.Id}`,
               name: voice.Name,
               gender: voice.Gender.toLowerCase(),
               language: voice.LanguageName,
@@ -29,10 +30,10 @@ export const list = query({
           }),
       },
       {
-        id: 'elabs',
+        id: 'elevenlabs',
         name: 'ElevenLabs',
         group: elabsVoices.voices.map((voice) => ({
-          id: voice.voice_id,
+          id: `elevenlabs/${voice.voice_id}`,
           name: voice.name,
           gender: voice.labels.gender,
           language: voice.labels.accent,
