@@ -5,11 +5,14 @@ import z from 'zod'
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
+import { createSpeech, getSpeech } from '../speech'
 import { getUser } from '../users'
 import { assert } from '../util'
 import { messageValidator } from '../validators'
+import { getVoiceRefParameters } from '../voices'
 
 import type { Doc, Id } from '../_generated/dataModel'
+import type { Speech } from '../speech'
 import type { MutationCtx, QueryCtx } from '../types'
 import type { User } from '../users'
 
@@ -18,6 +21,7 @@ export type Thread = Doc<'threads'> & { messages: Message[]; owner: User }
 export type Message = Doc<'messages'> & {
   job?: Doc<'jobs'> | null
   voiceover?: Voiceover
+  speech: Speech | null
 }
 
 export type Voiceover = Doc<'voiceovers'> & { url?: string; job: Doc<'jobs'> | null }
@@ -66,6 +70,7 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
                 .first(),
             }
           : undefined,
+        speech: await getSpeech(ctx, message?.speechId),
       }
     })
 
@@ -183,6 +188,37 @@ export const send = mutation({
       })
 
     return thread._id
+  },
+})
+
+export const createTextToSpeech = mutation({
+  args: {
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    const message = await ctx.table('messages').getX(messageId)
+    assert(!message.deletionTime, 'Message is deleted')
+
+    const thread = await message.edgeX('thread')
+    assert(!thread.deletionTime, 'Thread is deleted')
+
+    const voiceRef =
+      (message.name
+        ? thread.voices?.find((voice) => voice.name === message.name)?.voiceRef
+        : thread.voices?.find((voice) => voice.role === message.role)?.voiceRef) ?? 'aws/Russell'
+
+    const existingSpeech = await getSpeech(ctx, message.speechId)
+    if (existingSpeech?.voiceRef === voiceRef) {
+      // already have matching speech
+      return
+    }
+
+    const parameters = getVoiceRefParameters(voiceRef)
+
+    const speechId = await createSpeech(ctx, { text: message.content, voiceRef, parameters })
+    await message.patch({ speechId })
+
+    return speechId
   },
 })
 

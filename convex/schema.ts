@@ -121,32 +121,33 @@ const messages = defineEnt(messagesFields)
   .edge('voiceover', { optional: true })
 
 // * Speech
+export const elevenlabsSpeechParametersFields = v.object({
+  provider: v.literal('elevenlabs'),
+  voice_id: v.string(),
+  model_id: v.string(),
+  voice_settings: v.optional(
+    v.object({
+      similarity_boost: v.optional(v.number()),
+      stability: v.optional(v.number()),
+      style: v.optional(v.number()),
+      use_speaker_boost: v.optional(v.boolean()),
+    }),
+  ),
+})
+
+export const awsSpeechParametersFields = v.object({
+  provider: v.literal('aws'),
+  VoiceId: v.string(),
+  Engine: vEnum(['neural', 'standard', 'long-form']),
+})
+
 export const speechFields = {
   text: v.string(),
   textHash: v.string(),
   storageId: v.optional(v.id('_storage')),
 
-  parameters: v.union(
-    v.object({
-      provider: v.literal('elevenlabs'),
-      voice_id: v.string(),
-      model_id: v.string(),
-      voice_settings: v.optional(
-        v.object({
-          similarity_boost: v.optional(v.number()),
-          stability: v.optional(v.number()),
-          style: v.optional(v.number()),
-          use_speaker_boost: v.optional(v.boolean()),
-        }),
-      ),
-    }),
-
-    v.object({
-      provider: v.literal('aws'),
-      VoiceId: v.string(),
-      Engine: vEnum(['neural', 'standard', 'long-form']),
-    }),
-  ),
+  voiceRef: v.string(),
+  parameters: v.union(elevenlabsSpeechParametersFields, awsSpeechParametersFields),
 }
 const speech = defineEnt(speechFields).deletion('soft').index('textHash', ['textHash'])
 
