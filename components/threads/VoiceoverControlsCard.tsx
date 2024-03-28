@@ -1,34 +1,50 @@
 import { forwardRef } from 'react'
 import { Card, Heading, Select } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Label } from '../ui/Label'
 
-const voicesListDemo = [
-  { label: 'None', value: 'none' },
-  {
-    label: 'Amazon Polly',
-    group: [
-      { label: 'Jeff', value: 'aws_jeff' },
-      { label: 'Olivia', value: 'aws_olivia' },
-      { label: 'Brian', value: 'aws_brian' },
-    ],
-  },
-  {
-    label: 'Eleven Labs',
-    group: [
-      { label: 'Charlie', value: 'el_charlie' },
-      { label: 'Dorothy', value: 'el_dorothy' },
-      { label: 'Rachel', value: 'el_rachel' },
-    ],
-  },
-]
-type VoiceList = typeof voicesListDemo
+type VoiceItem = {
+  label: string
+  value: string
+}
+
+type VoiceList = Array<
+  | {
+      label: string
+      group: VoiceItem[]
+    }
+  | VoiceItem
+>
 
 type VoiceoverControlsCardProps = {} & React.ComponentProps<typeof Card>
 
 export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControlsCardProps>(
   function VoiceoverControlsCard({ className, ...props }, forwardedRef) {
+    const voices = useQuery(api.voices.list)
+
+    const voicesList: VoiceList = voices
+      ? [
+          { label: 'None', value: 'none' },
+          {
+            label: 'Amazon Polly',
+            group: voices?.aws.map((voice) => ({
+              label: `${voice.name} (${voice.language})`,
+              value: `aws_${voice.id}`,
+            })),
+          },
+          {
+            label: 'ElevenLabs',
+            group: voices?.elevenlabs.map((voice) => ({
+              label: `${voice.name} (${voice.language})`,
+              value: `elabs_${voice.id}`,
+            })),
+          },
+        ]
+      : []
+
     return (
       <Card size="1" {...props} ref={forwardedRef}>
         <div className={cn('space-y-2', className)}>
@@ -36,35 +52,35 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
           <div className="space-y-1">
             <div className="flex-between mb-2 border-b">
-              <Label className="w-1/2 text-center">Name / Role</Label>
+              <Label className="w-1/2 text-center">Role / Name</Label>
               <Label className="w-1/2 text-center">Voice</Label>
             </div>
             <div className="flex-between">
               <Label className="text-sm">System</Label>
-              <VoiceSelect voicesList={voicesListDemo} />
+              <VoiceSelect voicesList={voicesList} />
             </div>
             <div className="flex-between">
               <Label className="text-sm">AI</Label>
-              <VoiceSelect voicesList={voicesListDemo} />
+              <VoiceSelect voicesList={voicesList} />
             </div>
             <div className="flex-between">
               <Label className="text-sm">User</Label>
-              <VoiceSelect voicesList={voicesListDemo} />
+              <VoiceSelect voicesList={voicesList} />
             </div>
 
             <div className="flex-between">
               <Label className="text-sm">William Taylor</Label>
-              <VoiceSelect voicesList={voicesListDemo} />
+              <VoiceSelect voicesList={voicesList} />
             </div>
 
             <div className="flex-between">
               <Label className="text-sm">Ava Hernandez</Label>
-              <VoiceSelect voicesList={voicesListDemo} />
+              <VoiceSelect voicesList={voicesList} />
             </div>
 
             <div className="flex-between">
               <Label className="text-sm">Isabella Rodriguez</Label>
-              <VoiceSelect voicesList={voicesListDemo} />
+              <VoiceSelect voicesList={voicesList} />
             </div>
           </div>
         </div>
@@ -84,15 +100,18 @@ export const VoiceSelect = ({ voicesList, ...props }: VoiceSelectProps) => {
       <Select.Trigger placeholder="Select voice" className="w-1/2" />
       <Select.Content>
         {voicesList?.map((item) =>
-          item.group ? (
-            <Select.Group key={item.label}>
-              <Select.Label>{item.label}</Select.Label>
-              {item.group.map((voice) => (
-                <Select.Item key={voice.value} value={voice.value}>
-                  {voice.label}
-                </Select.Item>
-              ))}
-            </Select.Group>
+          'group' in item ? (
+            <>
+              <Select.Separator />
+              <Select.Group key={item.label}>
+                <Select.Label>{item.label}</Select.Label>
+                {item.group.map((voice) => (
+                  <Select.Item key={voice.value} value={voice.value}>
+                    {voice.label}
+                  </Select.Item>
+                ))}
+              </Select.Group>
+            </>
           ) : (
             <Select.Item key={item.value} value={item.value}>
               {item.label}

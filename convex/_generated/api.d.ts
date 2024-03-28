@@ -39,6 +39,7 @@ import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as util from "../util.js";
 import type * as validators from "../validators.js";
+import type * as voices from "../voices.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -74,6 +75,7 @@ declare const fullApi: ApiFromModules<{
   users: typeof users;
   util: typeof util;
   validators: typeof validators;
+  voices: typeof voices;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
