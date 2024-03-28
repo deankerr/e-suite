@@ -144,10 +144,11 @@ export const awsSpeechParametersFields = v.object({
 export const speechFields = {
   text: v.string(),
   textHash: v.string(),
-  storageId: v.optional(v.id('_storage')),
-
-  voiceRef: v.string(),
   parameters: v.union(elevenlabsSpeechParametersFields, awsSpeechParametersFields),
+  voiceRef: v.string(),
+
+  storageId: v.optional(v.id('_storage')),
+  jobId: v.optional(v.id('_scheduled_functions')),
 }
 const speech = defineEnt(speechFields)
   .deletion('soft')

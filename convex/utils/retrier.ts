@@ -7,8 +7,10 @@
 import { makeFunctionReference } from 'convex/server'
 import { v } from 'convex/values'
 
-import { internal } from './_generated/api'
-import { internalMutation, mutation } from './_generated/server'
+import { internal } from '../_generated/api'
+import { internalMutation } from '../_generated/server'
+
+import type { MutationCtx } from '../types'
 
 const DEFAULT_WAIT_BACKOFF = 10
 const DEFAULT_RETRY_BACKOFF = 10
@@ -25,38 +27,36 @@ const DEFAULT_MAX_FAILURES = 16
  * @param [base=DEFAULT_BASE (2)] - Base of the exponential backoff.
  * @param [maxFailures=DEFAULT_MAX_FAILURES (16)] - The maximum number of times to retry the action.
  */
-export const runAction = mutation({
-  args: {
-    action: v.string(),
-    actionArgs: v.any(),
-    waitBackoff: v.optional(v.number()),
-    retryBackoff: v.optional(v.number()),
-    base: v.optional(v.number()),
-    maxFailures: v.optional(v.number()),
+export const runAction = async (
+  ctx: MutationCtx,
+  {
+    action,
+    actionArgs,
+    waitBackoff = DEFAULT_WAIT_BACKOFF,
+    retryBackoff = DEFAULT_RETRY_BACKOFF,
+    base = DEFAULT_BASE,
+    maxFailures = DEFAULT_MAX_FAILURES,
+  }: {
+    action: string
+    actionArgs: any
+    waitBackoff?: number
+    retryBackoff?: number
+    base?: number
+    maxFailures?: number
   },
-  handler: async (
-    ctx,
-    {
-      action,
-      actionArgs,
-      waitBackoff = DEFAULT_WAIT_BACKOFF,
-      retryBackoff = DEFAULT_RETRY_BACKOFF,
-      base = DEFAULT_BASE,
-      maxFailures = DEFAULT_MAX_FAILURES,
-    },
-  ) => {
-    const job = await ctx.scheduler.runAfter(0, makeFunctionReference<'action'>(action), actionArgs)
-    await ctx.scheduler.runAfter(0, internal.retrier.retry, {
-      job,
-      action,
-      actionArgs,
-      waitBackoff,
-      retryBackoff,
-      base,
-      maxFailures,
-    })
-  },
-})
+) => {
+  const jobId = await ctx.scheduler.runAfter(0, makeFunctionReference<'action'>(action), actionArgs)
+  await ctx.scheduler.runAfter(0, internal.utils.retrier.retry, {
+    job: jobId,
+    action,
+    actionArgs,
+    waitBackoff,
+    retryBackoff,
+    base,
+    maxFailures,
+  })
+  return jobId
+}
 
 export const retry = internalMutation({
   args: {
@@ -79,7 +79,7 @@ export const retry = internalMutation({
       case 'pending':
       case 'inProgress':
         console.log(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
-        await ctx.scheduler.runAfter(args.waitBackoff, internal.retrier.retry, {
+        await ctx.scheduler.runAfter(args.waitBackoff, internal.utils.retrier.retry, {
           ...args,
           waitBackoff: args.waitBackoff * args.base,
         })
@@ -96,7 +96,7 @@ export const retry = internalMutation({
           makeFunctionReference<'action'>(args.action),
           args.actionArgs,
         )
-        await ctx.scheduler.runAfter(args.retryBackoff, internal.retrier.retry, {
+        await ctx.scheduler.runAfter(args.retryBackoff, internal.utils.retrier.retry, {
           ...args,
           job: newJob,
           retryBackoff: args.retryBackoff * args.base,

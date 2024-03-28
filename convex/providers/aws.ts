@@ -2,8 +2,9 @@
 
 import { DescribeVoicesCommand, PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 import { fromEnv } from '@aws-sdk/credential-providers'
-import { ConvexError } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 
+import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
@@ -36,6 +37,39 @@ export const createTextToSpeechRequest = async ({
   const arrayBuffer = await response.AudioStream.transformToByteArray()
   return new Blob([arrayBuffer], { type: 'audio/mpeg' })
 }
+
+export const textToSpeech = internalAction({
+  args: {
+    speechId: v.id('speech'),
+  },
+  handler: async (ctx, { speechId }) => {
+    const speech = await ctx.runQuery(internal.speech.get, { id: speechId })
+    assert(speech, 'Invalid speech id')
+    assert(speech.parameters.provider === 'aws', 'Invalid parameters')
+
+    const client = new PollyClient({ region: 'us-east-1', credentials: fromEnv() })
+    const { VoiceId, Engine } = speech.parameters
+    const { text } = speech
+
+    const response = await client.send(
+      new SynthesizeSpeechCommand({
+        OutputFormat: 'mp3',
+        Text: text,
+        TextType: 'text',
+        VoiceId: VoiceId as SynthesizeSpeechCommandInput['VoiceId'],
+        Engine,
+      }),
+    )
+
+    assert(response.AudioStream, 'aws response missing AudioStream', { data: response.$metadata })
+    const arrayBuffer = await response.AudioStream.transformToByteArray()
+    const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' })
+    const storageId = await ctx.storage.store(blob)
+
+    await ctx.runMutation(internal.speech.updateStorageId, { id: speechId, storageId })
+    return 0
+  },
+})
 
 export const getVoicesList = internalAction(async () => {
   const { Voices } = await client.send(new DescribeVoicesCommand({}))

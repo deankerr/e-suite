@@ -29,7 +29,6 @@ import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_elevenlabs from "../providers/elevenlabs.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
-import type * as retrier from "../retrier.js";
 import type * as rules from "../rules.js";
 import type * as scripts from "../scripts.js";
 import type * as speech from "../speech.js";
@@ -39,6 +38,7 @@ import type * as threads_threads from "../threads/threads.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as util from "../util.js";
+import type * as utils_retrier from "../utils/retrier.js";
 import type * as validators from "../validators.js";
 import type * as voices from "../voices.js";
 
@@ -66,7 +66,6 @@ declare const fullApi: ApiFromModules<{
   "providers/elevenlabs": typeof providers_elevenlabs;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
-  retrier: typeof retrier;
   rules: typeof rules;
   scripts: typeof scripts;
   speech: typeof speech;
@@ -76,6 +75,7 @@ declare const fullApi: ApiFromModules<{
   types: typeof types;
   users: typeof users;
   util: typeof util;
+  "utils/retrier": typeof utils_retrier;
   validators: typeof validators;
   voices: typeof voices;
 }>;

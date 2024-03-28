@@ -1,8 +1,10 @@
 'use node'
 
-import { ConvexError } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import ky from 'ky'
 
+import { internal } from '../_generated/api'
+import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
 import type { Doc } from '../_generated/dataModel'
@@ -25,6 +27,7 @@ export const createTextToSpeechRequest = async ({
 
   return await ky
     .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
+      timeout: 50000,
       headers: {
         Accept: 'audio/mpeg',
         'Content-Type': 'application/json',
@@ -38,3 +41,36 @@ export const createTextToSpeechRequest = async ({
     })
     .blob()
 }
+
+export const textToSpeech = internalAction({
+  args: {
+    speechId: v.id('speech'),
+  },
+  handler: async (ctx, { speechId }) => {
+    const speech = await ctx.runQuery(internal.speech.get, { id: speechId })
+    assert(speech, 'Invalid speech id')
+    assert(speech.parameters.provider === 'elevenlabs', 'Invalid parameters')
+
+    const { voice_id, model_id } = speech.parameters
+    const { text } = speech
+
+    const blob = await ky
+      .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
+        headers: {
+          Accept: 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': getElevenlabsApiKey(),
+        },
+        json: {
+          text,
+          model_id,
+        },
+        timeout: 2 * 60 * 1000,
+      })
+      .blob()
+    const storageId = await ctx.storage.store(blob)
+
+    await ctx.runMutation(internal.speech.updateStorageId, { id: speechId, storageId })
+    return 0
+  },
+})
