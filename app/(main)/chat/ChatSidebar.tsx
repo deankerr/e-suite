@@ -7,6 +7,7 @@ import { useAppStore } from '@/components/providers/AppStoreProvider'
 import { InferenceParameterControls } from '@/components/threads/InferenceParameterControls'
 import { RemoveThreadDialog } from '@/components/threads/RemoveThreadDialog'
 import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
+import { VoiceoverControlsCard } from '@/components/threads/VoiceoverControlsCard'
 import { Button } from '@/components/ui/Button'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
 import { Sidebar } from '@/components/ui/Sidebar'
@@ -58,6 +59,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
                   permissions={thread.permissions}
                   onPermissionsChange={(permissions) => updatePermissions(permissions)}
                 />
+                <VoiceoverControlsCard />
                 <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
                   <Button>Rename</Button>
                 </RenameThreadDialog>
