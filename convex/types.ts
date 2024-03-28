@@ -13,3 +13,11 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
   typeof entDefinitions,
   TableName
 >
+
+export type CollectionItem<T extends object = {}> = { id: string; name: string } & T
+export type CollectionGroup<T extends object = {}> = {
+  id: string
+  name: string
+  group: CollectionItem<T>[]
+}
+export type Collection<T extends object = {}> = (CollectionItem<T> | CollectionGroup<T>)[]

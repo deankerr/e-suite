@@ -6,46 +6,15 @@ import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Label } from '../ui/Label'
 
+import type { Collection } from '@/convex/types'
+import type { Voice } from '@/convex/voices'
 import type { ClassNameValue } from '@/lib/utils'
-
-type VoiceItem = {
-  label: string
-  value: string
-}
-
-type VoiceList = Array<
-  | {
-      label: string
-      group: VoiceItem[]
-    }
-  | VoiceItem
->
 
 type VoiceoverControlsCardProps = {} & React.ComponentProps<typeof Card>
 
 export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControlsCardProps>(
   function VoiceoverControlsCard({ className, ...props }, forwardedRef) {
-    const voices = useQuery(api.voices.list)
-
-    const voicesList: VoiceList = voices
-      ? [
-          { label: 'None', value: 'none' },
-          {
-            label: 'Amazon Polly',
-            group: voices?.aws.map((voice) => ({
-              label: `${voice.name} (${voice.language})`,
-              value: `aws_${voice.id}`,
-            })),
-          },
-          {
-            label: 'ElevenLabs',
-            group: voices?.elevenlabs.map((voice) => ({
-              label: `${voice.name} (${voice.language})`,
-              value: `elabs_${voice.id}`,
-            })),
-          },
-        ]
-      : []
+    const voicesList = useQuery(api.voices.list)
 
     return (
       <Card size="1" {...props} ref={forwardedRef}>
@@ -115,7 +84,7 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 )
 
 type VoiceSelectProps = {
-  voicesList?: VoiceList
+  voicesList?: Collection<Voice>
   className?: ClassNameValue
 } & Partial<React.ComponentProps<typeof Select.Root>>
 
@@ -127,20 +96,17 @@ export const VoiceSelect = ({ voicesList, className, ...props }: VoiceSelectProp
       <Select.Content>
         {voicesList?.map((item) =>
           'group' in item ? (
-            <>
-              <Select.Separator />
-              <Select.Group key={item.label}>
-                <Select.Label>{item.label}</Select.Label>
-                {item.group.map((voice) => (
-                  <Select.Item key={voice.value} value={voice.value}>
-                    {voice.label}
-                  </Select.Item>
-                ))}
-              </Select.Group>
-            </>
+            <Select.Group key={item.id}>
+              <Select.Label>{item.name}</Select.Label>
+              {item.group.map((voice) => (
+                <Select.Item key={voice.id} value={voice.id}>
+                  {voice.name}
+                </Select.Item>
+              ))}
+            </Select.Group>
           ) : (
-            <Select.Item key={item.value} value={item.value}>
-              {item.label}
+            <Select.Item key={item.id} value={item.id}>
+              {item.name}
             </Select.Item>
           ),
         )}
