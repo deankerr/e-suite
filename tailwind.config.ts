@@ -11,6 +11,7 @@ const config: Config = {
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/container-queries'),
+    require('tailwindcss-animate'),
     radixThemePlugin({
       useTailwindColorNames: false,
       useTailwindRadiusNames: false,
@@ -54,12 +55,50 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // start shadcn-ui
+      colors: {
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: `var(--radius)`,
+        md: `calc(var(--radius) - 2px)`,
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      // end shadcn-ui
       borderColor: {
         DEFAULT: 'var(--gray-5)',
-      },
-      fontFamily: {
-        dot: ['var(--font-dot)'],
-        biz: ['var(--font-biz)'],
       },
       keyframes: {
         wiggle: {
@@ -70,15 +109,38 @@ const config: Config = {
           from: { top: '-4rem', opacity: '1' },
           to: { top: 'calc(100% + 4rem)', opacity: '1' },
         },
+        // start shadcn-ui
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+        // end shadcn-ui
       },
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
         wipedown: 'wipeDown 1.75s linear infinite',
+        // start shadcn-ui
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        // end shadcn-ui
       },
       containers: {
         '2xs': '16rem',
       },
     },
+    // start shadcn-ui
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
+    // end shadcn-ui
     screens: {
       sm: '520px', // Phones (landscape)
       md: '768px', // Tablets (portrait)

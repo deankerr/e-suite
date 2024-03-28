@@ -10,6 +10,9 @@ import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { VoiceoverControlsCard } from '@/components/threads/VoiceoverControlsCard'
 import { Button } from '@/components/ui/Button'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
+import { ComboboxDemo } from '@/components/ui/shadcn-ui/ComboboxDemo'
+import { ComboboxPopover } from '@/components/ui/shadcn-ui/ComboboxPopover'
+import { CommandDialogDemo } from '@/components/ui/shadcn-ui/CommandDialogDemo'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
 
@@ -37,7 +40,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
       className={cn('bg-gray-1', className)}
       ref={forwardedRef}
     >
-      <Tabs.Root defaultValue="parameters">
+      <Tabs.Root defaultValue="settings">
         <Tabs.List className="shrink-0">
           <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
           <Tabs.Trigger value="details">Settings</Tabs.Trigger>
@@ -51,7 +54,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
           </ScrollArea>
         </Tabs.Content>
 
-        <Tabs.Content value="details" asChild>
+        <Tabs.Content value="settings" asChild>
           <div className="flex grow flex-col justify-center gap-4 p-4">
             {thread && thread.owner.isViewer ? (
               <>
@@ -68,6 +71,10 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
                 </RemoveThreadDialog>
               </>
             ) : null}
+
+            <ComboboxPopover />
+            <ComboboxDemo />
+            <CommandDialogDemo />
           </div>
         </Tabs.Content>
       </Tabs.Root>
