@@ -82,7 +82,7 @@ export const NavigationSidebar = ({ className, children, ...props }: NavigationS
                   value={title}
                   className={cn(
                     'h-full w-full items-center justify-center gap-2 border-b-2 border-b-transparent text-gray-10',
-                    'hover:bg-gray-2 hover:text-gray-11 data-[state=active]:border-b-accent data-[state=active]:text-gray-12 data-[state=active]:hover:text-gray-12',
+                    'hover:bg-gray-2 hover:text-gray-11 data-[state=active]:border-b-accent-10 data-[state=active]:text-gray-12 data-[state=active]:hover:text-gray-12',
                     'hidden data-[state=active]:flex @2xs:flex',
                   )}
                 >

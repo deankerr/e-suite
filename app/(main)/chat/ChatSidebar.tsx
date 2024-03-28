@@ -11,7 +11,6 @@ import { VoiceoverControlsCard } from '@/components/threads/VoiceoverControlsCar
 import { Button } from '@/components/ui/Button'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
 import { Sidebar } from '@/components/ui/Sidebar'
-import { cn } from '@/lib/utils'
 
 import type { ThreadHelpers } from '@/components/threads/useThread'
 
@@ -20,7 +19,7 @@ type ChatSidebarProps = {
 } & React.ComponentProps<'div'>
 
 export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function ChatSidebar(
-  { threadHelpers, className, ...props },
+  { threadHelpers, ...props },
   forwardedRef,
 ) {
   const sidebarOpen = useAppStore((state) => state.sidebarOpen)
@@ -34,17 +33,16 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
       right
       open={sidebarOpen}
       onOpenChange={updateSidebarOpen}
-      className={cn('bg-gray-1', className)}
       ref={forwardedRef}
     >
-      <Tabs.Root defaultValue="settings">
+      <Tabs.Root defaultValue="settings" className="flex h-full flex-col overflow-hidden">
         <Tabs.List className="shrink-0">
           <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
           <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="parameters" asChild>
-          <ScrollArea>
+          <ScrollArea className="grow">
             <div className="mx-auto max-w-80">
               <InferenceParameterControls threadAtoms={threadAtoms} />
             </div>
@@ -52,23 +50,25 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
         </Tabs.Content>
 
         <Tabs.Content value="settings" asChild>
-          <div className="flex grow flex-col justify-center gap-4 p-4">
-            {thread && thread.owner.isViewer ? (
-              <>
-                <PermissionsCard
-                  permissions={thread.permissions}
-                  onPermissionsChange={(permissions) => updatePermissions(permissions)}
-                />
-                <VoiceoverControlsCard threadHelpers={threadHelpers} />
-                <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
-                  <Button>Rename</Button>
-                </RenameThreadDialog>
-                <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
-                  <Button color="red">Delete Chat</Button>
-                </RemoveThreadDialog>
-              </>
-            ) : null}
-          </div>
+          <ScrollArea className="grow">
+            <div className="flex flex-col gap-4 p-4">
+              {thread && thread.owner.isViewer ? (
+                <>
+                  <PermissionsCard
+                    permissions={thread.permissions}
+                    onPermissionsChange={(permissions) => updatePermissions(permissions)}
+                  />
+                  <VoiceoverControlsCard threadHelpers={threadHelpers} />
+                  <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
+                    <Button>Rename</Button>
+                  </RenameThreadDialog>
+                  <RemoveThreadDialog id={thread._id} onDelete={() => {}}>
+                    <Button color="red">Delete Chat</Button>
+                  </RemoveThreadDialog>
+                </>
+              ) : null}
+            </div>
+          </ScrollArea>
         </Tabs.Content>
       </Tabs.Root>
     </Sidebar>
