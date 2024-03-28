@@ -10,9 +10,6 @@ import { RenameThreadDialog } from '@/components/threads/RenameThreadDialog'
 import { VoiceoverControlsCard } from '@/components/threads/VoiceoverControlsCard'
 import { Button } from '@/components/ui/Button'
 import { PermissionsCard } from '@/components/ui/PermissionsCard'
-import { ComboboxDemo } from '@/components/ui/shadcn-ui/ComboboxDemo'
-import { ComboboxPopover } from '@/components/ui/shadcn-ui/ComboboxPopover'
-import { CommandDialogDemo } from '@/components/ui/shadcn-ui/CommandDialogDemo'
 import { Sidebar } from '@/components/ui/Sidebar'
 import { cn } from '@/lib/utils'
 
@@ -43,7 +40,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
       <Tabs.Root defaultValue="settings">
         <Tabs.List className="shrink-0">
           <Tabs.Trigger value="parameters">Parameters</Tabs.Trigger>
-          <Tabs.Trigger value="details">Settings</Tabs.Trigger>
+          <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="parameters" asChild>
@@ -71,10 +68,6 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
                 </RemoveThreadDialog>
               </>
             ) : null}
-
-            <ComboboxPopover />
-            <ComboboxDemo />
-            <CommandDialogDemo />
           </div>
         </Tabs.Content>
       </Tabs.Root>

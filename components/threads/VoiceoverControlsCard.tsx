@@ -1,10 +1,12 @@
 import { forwardRef } from 'react'
-import { Card, Heading, Select } from '@radix-ui/themes'
+import { Card, Heading, Select, TextFieldInput } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Label } from '../ui/Label'
+
+import type { ClassNameValue } from '@/lib/utils'
 
 type VoiceItem = {
   label: string
@@ -47,13 +49,13 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
     return (
       <Card size="1" {...props} ref={forwardedRef}>
-        <div className={cn('space-y-2', className)}>
+        <div className={cn('space-y-3', className)}>
           <Heading size="1">Voiceover</Heading>
 
           <div className="space-y-1">
-            <div className="flex-between mb-2 border-b">
-              <Label className="w-1/2 text-center">Role / Name</Label>
-              <Label className="w-1/2 text-center">Voice</Label>
+            <div className="flex-between border-b">
+              <Label className="w-1/2 font-semibold">Role</Label>
+              <Label className="w-1/2 font-semibold">Voice</Label>
             </div>
             <div className="flex-between">
               <Label className="text-sm">System</Label>
@@ -67,7 +69,13 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
               <Label className="text-sm">User</Label>
               <VoiceSelect voicesList={voicesList} />
             </div>
+          </div>
 
+          <div className="space-y-1">
+            <div className="flex-between border-b">
+              <Label className="w-1/2 font-semibold">Name</Label>
+              <Label className="w-1/2 font-semibold">Voice</Label>
+            </div>
             <div className="flex-between">
               <Label className="text-sm">William Taylor</Label>
               <VoiceSelect voicesList={voicesList} />
@@ -82,6 +90,23 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
               <Label className="text-sm">Isabella Rodriguez</Label>
               <VoiceSelect voicesList={voicesList} />
             </div>
+
+            <div className="flex-between h-10 gap-0.5">
+              <TextFieldInput
+                size={{
+                  initial: '3',
+                  md: '2',
+                }}
+                placeholder="Name"
+              />
+              <VoiceSelect
+                size={{
+                  initial: '3',
+                  md: '2',
+                }}
+                voicesList={voicesList}
+              />
+            </div>
           </div>
         </div>
       </Card>
@@ -91,13 +116,14 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
 type VoiceSelectProps = {
   voicesList?: VoiceList
+  className?: ClassNameValue
 } & Partial<React.ComponentProps<typeof Select.Root>>
 
-export const VoiceSelect = ({ voicesList, ...props }: VoiceSelectProps) => {
+export const VoiceSelect = ({ voicesList, className, ...props }: VoiceSelectProps) => {
   // VoiceSelect
   return (
-    <Select.Root size="2" {...props}>
-      <Select.Trigger placeholder="Select voice" className="w-1/2" />
+    <Select.Root {...props}>
+      <Select.Trigger placeholder="Voice" className={cn('w-1/2', className)} />
       <Select.Content>
         {voicesList?.map((item) =>
           'group' in item ? (
