@@ -1,12 +1,14 @@
 import { forwardRef, useEffect, useState } from 'react'
 import { Card, Heading, Select, TextFieldInput } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
+import { PlusCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/Button'
 import { Label } from '../ui/Label'
+import { UIIconButton } from '../ui/UIIconButton'
 
 import type { ThreadHelpers } from './useThread'
 import type { Collection } from '@/convex/types'
@@ -78,7 +80,7 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
               <Label className="text-sm">User</Label>
               <VoiceSelect
                 voicesList={voicesList}
-                value={currentVoices.find((v) => v.role === 'user')?.voiceRef}
+                value={currentVoices.find((v) => v.role === 'user' && !v.name)?.voiceRef}
                 onValueChange={(value) => {
                   setCurrentVoices((prev) => [
                     ...prev.filter((v) => v.role !== 'user'),
@@ -104,40 +106,37 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
           <div className="space-y-1">
             <div className="flex-between border-b">
-              <Label className="w-1/2 font-semibold">Name</Label>
-              <Label className="w-1/2 font-semibold">Voice</Label>
+              <div className="w-1/2 text-sm font-semibold">Name</div>
+              <div className="w-1/2 text-sm font-semibold">Voice</div>
             </div>
-            <div className="flex-between">
-              <Label className="text-sm">William Taylor</Label>
-              <VoiceSelect voicesList={voicesList} />
-            </div>
+            {currentVoices.map(({ role, name, voiceRef }) => {
+              if (role !== 'user' || !name) return null
+              return (
+                <div key={`${name}|${voiceRef}`} className="flex-between">
+                  <Label className="text-sm">{name}</Label>
+                  <VoiceSelect
+                    voicesList={voicesList}
+                    value={voiceRef}
+                    onValueChange={(value) =>
+                      setCurrentVoices((prev) => [
+                        ...prev.filter((v) => v.name !== name),
+                        { role: 'user', name, voiceRef: value },
+                      ])
+                    }
+                  />
+                </div>
+              )
+            })}
 
-            <div className="flex-between">
-              <Label className="text-sm">Ava Hernandez</Label>
-              <VoiceSelect voicesList={voicesList} />
-            </div>
-
-            <div className="flex-between">
-              <Label className="text-sm">Isabella Rodriguez</Label>
-              <VoiceSelect voicesList={voicesList} />
-            </div>
-
-            <div className="flex-between h-10 gap-0.5">
-              <TextFieldInput
-                size={{
-                  initial: '3',
-                  md: '2',
-                }}
-                placeholder="Name"
-              />
-              <VoiceSelect
-                size={{
-                  initial: '3',
-                  md: '2',
-                }}
-                voicesList={voicesList}
-              />
-            </div>
+            <NameVoiceInput
+              voicesList={voicesList}
+              onConfirm={(name, voiceRef) => {
+                setCurrentVoices((prev) => [
+                  ...prev.filter((v) => v.name !== name),
+                  { role: 'user', name, voiceRef },
+                ])
+              }}
+            />
           </div>
         </div>
 
@@ -153,13 +152,65 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
   },
 )
 
+type NameVoiceInputProps = {
+  voicesList?: Collection<Voice>
+  onConfirm: (name: string, voiceRef: string) => void
+} & React.ComponentProps<'div'>
+
+export const NameVoiceInput = ({
+  voicesList,
+  onConfirm,
+  className,
+  ...props
+}: NameVoiceInputProps) => {
+  const [name, setName] = useState('')
+  const [voiceRef, setVoiceRef] = useState('')
+
+  return (
+    <div {...props} className={cn('space-y-1 pt-1', className)}>
+      <div className="flex-between border-t pr-1 pt-2 text-sm font-semibold">
+        New
+        <UIIconButton
+          icon={PlusCircleIcon}
+          label="add voice"
+          disabled={!name || !voiceRef}
+          onClick={() => {
+            onConfirm(name, voiceRef)
+            setName('')
+            setVoiceRef('')
+          }}
+        />
+      </div>
+      <div className="flex-between gap-1">
+        <TextFieldInput
+          size={{
+            initial: '3',
+            md: '2',
+          }}
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <VoiceSelect
+          size={{
+            initial: '3',
+            md: '2',
+          }}
+          voicesList={voicesList}
+          value={voiceRef}
+          onValueChange={setVoiceRef}
+        />
+      </div>
+    </div>
+  )
+}
+
 type VoiceSelectProps = {
   voicesList?: Collection<Voice>
   className?: ClassNameValue
 } & Partial<React.ComponentProps<typeof Select.Root>>
 
-export const VoiceSelect = ({ voicesList, className, ...props }: VoiceSelectProps) => {
-  // VoiceSelect
+const VoiceSelect = ({ voicesList, className, ...props }: VoiceSelectProps) => {
   return (
     <Select.Root {...props}>
       <Select.Trigger placeholder="Voice" className={cn('w-1/2', className)} />
