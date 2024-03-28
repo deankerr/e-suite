@@ -7,9 +7,8 @@ import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
 import { createSpeech, getSpeech } from '../speech'
 import { getUser } from '../users'
-import { assert } from '../util'
+import { assert, createError } from '../util'
 import { messageValidator } from '../validators'
-import { getVoiceRefParameters } from '../voices'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type { Speech } from '../speech'
@@ -209,13 +208,10 @@ export const createTextToSpeech = mutation({
 
     const existingSpeech = await getSpeech(ctx, message.speechId)
     if (existingSpeech?.voiceRef === voiceRef) {
-      // already have matching speech
-      return
+      throw createError({ message: 'Speech already exists', isOperational: true })
     }
 
-    const parameters = getVoiceRefParameters(voiceRef)
-
-    const speechId = await createSpeech(ctx, { text: message.content, voiceRef, parameters })
+    const speechId = await createSpeech(ctx, { text: message.content, voiceRef })
     await message.patch({ speechId })
 
     return speechId

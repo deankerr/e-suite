@@ -149,7 +149,9 @@ export const speechFields = {
   voiceRef: v.string(),
   parameters: v.union(elevenlabsSpeechParametersFields, awsSpeechParametersFields),
 }
-const speech = defineEnt(speechFields).deletion('soft').index('textHash', ['textHash'])
+const speech = defineEnt(speechFields)
+  .deletion('soft')
+  .index('textHash_voiceRef', ['textHash', 'voiceRef'])
 
 // * Threads
 export const threadsFields = {
