@@ -93,7 +93,7 @@ export const imagesFields = {
   parameters: v.optional(generationParameters),
 }
 
-//* Threads
+// * Messages
 export const messageFields = {
   role: vEnum(['system', 'user', 'assistant', 'tool']),
   name: v.optional(v.string()),
@@ -113,8 +113,44 @@ export const inferenceParametersFields = v.object({
 export const messagesFields = {
   ...messageFields,
   inferenceParameters: v.optional(inferenceParametersFields),
+  speechId: v.optional(v.id('speech')),
 }
+const messages = defineEnt(messagesFields)
+  .deletion('soft')
+  .edge('thread', { field: 'threadId' })
+  .edge('voiceover', { optional: true })
 
+// * Speech
+export const speechFields = {
+  text: v.string(),
+  textHash: v.string(),
+  storageId: v.optional(v.id('_storage')),
+
+  parameters: v.union(
+    v.object({
+      provider: v.literal('elevenlabs'),
+      voice_id: v.string(),
+      model_id: v.string(),
+      voice_settings: v.optional(
+        v.object({
+          similarity_boost: v.optional(v.number()),
+          stability: v.optional(v.number()),
+          style: v.optional(v.number()),
+          use_speaker_boost: v.optional(v.boolean()),
+        }),
+      ),
+    }),
+
+    v.object({
+      provider: v.literal('aws'),
+      VoiceId: v.string(),
+      Engine: vEnum(['neural', 'standard', 'long-form']),
+    }),
+  ),
+}
+const speech = defineEnt(speechFields).deletion('soft').index('textHash', ['textHash'])
+
+// * Threads
 export const threadsFields = {
   title: v.optional(v.string()),
   systemPrompt: v.optional(v.string()),
@@ -122,7 +158,12 @@ export const threadsFields = {
   parameters: v.optional(inferenceParametersFields),
   permissions: permissionsFields,
 }
+const threads = defineEnt(threadsFields)
+  .edge('user')
+  .edges('messages', { ref: 'threadId', deletion: 'soft' })
+  .deletion('soft')
 
+// * Voiceovers
 export const voiceoversFields = {
   text: v.string(),
   textSha256: v.string(),
@@ -193,15 +234,9 @@ const schema = defineEntSchema(
       .index('imageId', ['imageId'])
       .index('voiceoverId', ['voiceoverId']),
 
-    messages: defineEnt(messagesFields)
-      .deletion('soft')
-      .edge('thread', { field: 'threadId' })
-      .edge('voiceover', { optional: true }),
-
-    threads: defineEnt(threadsFields)
-      .edge('user')
-      .edges('messages', { ref: 'threadId', deletion: 'soft' })
-      .deletion('soft'),
+    messages,
+    speech,
+    threads,
 
     users: defineEnt(usersFields)
       .deletion('soft')

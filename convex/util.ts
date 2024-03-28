@@ -1,4 +1,4 @@
-import { ConvexError, v, Validator } from 'convex/values'
+import { ConvexError, v, Validator, Value } from 'convex/values'
 
 export const vEnum = <const T extends ReadonlyArray<string>>(
   values: T,
@@ -30,4 +30,8 @@ export const generateSha256Hash = async (input: string) => {
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
   return hashHex
+}
+
+export const createError = (info: { message: string; isOperational: boolean; data?: Value }) => {
+  return new ConvexError(info)
 }
