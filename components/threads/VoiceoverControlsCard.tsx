@@ -1,14 +1,12 @@
 import { forwardRef, useEffect, useState } from 'react'
 import { Card, Heading, Select, TextFieldInput } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
-import { PlusCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/Button'
 import { Label } from '../ui/Label'
-import { UIIconButton } from '../ui/UIIconButton'
 
 import type { ThreadHelpers } from './useThread'
 import type { Collection } from '@/convex/types'
@@ -36,7 +34,7 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
           await update({
             id,
             fields: {
-              voices: currentVoices,
+              voices: currentVoices.filter((v) => v.voiceRef !== 'remove'),
             },
           })
           toast.success('Voices updated.')
@@ -56,7 +54,7 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
     return (
       <Card size="1" {...props} ref={forwardedRef}>
         <div className={cn('space-y-3', className)}>
-          <Heading size="1">Voiceover</Heading>
+          <Heading size="1">Voiceovers</Heading>
 
           <div className="space-y-1">
             <div className="flex-between border-b">
@@ -142,7 +140,7 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
         {threadVoices !== currentVoices && (
           <div className="absolute right-2 top-2">
-            <Button variant="surface" onClick={handleUpdate}>
+            <Button variant="surface" size="1" onClick={handleUpdate}>
               Confirm
             </Button>
           </div>
@@ -168,20 +166,7 @@ export const NameVoiceInput = ({
 
   return (
     <div {...props} className={cn('space-y-1 pt-1', className)}>
-      <div className="flex-between border-t pr-1 pt-2 text-sm font-semibold">
-        New
-        <UIIconButton
-          icon={PlusCircleIcon}
-          label="add voice"
-          disabled={!name || !voiceRef}
-          onClick={() => {
-            onConfirm(name, voiceRef)
-            setName('')
-            setVoiceRef('')
-          }}
-        />
-      </div>
-      <div className="flex-between gap-1">
+      <div className="flex-between gap-1 border-t pt-2">
         <TextFieldInput
           size={{
             initial: '3',
@@ -201,6 +186,19 @@ export const NameVoiceInput = ({
           onValueChange={setVoiceRef}
         />
       </div>
+      <div className="flex-end text-sm font-semibold">
+        <Button
+          size="1"
+          disabled={!name || !voiceRef}
+          onClick={() => {
+            onConfirm(name, voiceRef)
+            setName('')
+            setVoiceRef('')
+          }}
+        >
+          Add
+        </Button>
+      </div>
     </div>
   )
 }
@@ -215,6 +213,7 @@ const VoiceSelect = ({ voicesList, className, ...props }: VoiceSelectProps) => {
     <Select.Root {...props}>
       <Select.Trigger placeholder="Voice" className={cn('w-1/2', className)} />
       <Select.Content>
+        <Select.Item value="remove">None</Select.Item>
         {voicesList?.map((item) =>
           'group' in item ? (
             <Select.Group key={item.id}>
