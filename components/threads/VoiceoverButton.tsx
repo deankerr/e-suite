@@ -1,11 +1,9 @@
 import { forwardRef } from 'react'
 import {
-  AlertCircleIcon,
-  FileQuestionIcon,
+  FileWarningIcon,
   Loader2Icon,
   MoreHorizontalIcon,
   PlayIcon,
-  SnailIcon,
   SquareIcon,
 } from 'lucide-react'
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
@@ -13,53 +11,46 @@ import { useGlobalAudioPlayer } from 'react-use-audio-player'
 import { UIIconButton } from '@/components/ui/UIIconButton'
 import { useAppStore } from '../providers/AppStoreProvider'
 
-import type { Voiceover } from '@/convex/threads/threads'
+import type { Message } from '@/convex/threads/threads'
 
 type VoiceoverButtonProps = {
-  voiceover?: Voiceover
+  message: Message
 } & Partial<React.ComponentProps<typeof UIIconButton>>
 
 export const VoiceoverButton = forwardRef<HTMLButtonElement, VoiceoverButtonProps>(
-  function VoiceoverButton({ voiceover, ...props }, forwardedRef) {
-    const url = voiceover?.url
-    const job = voiceover?.job?.status
+  function VoiceoverButton({ message, ...props }, forwardedRef) {
+    const queuedIds = useAppStore((state) =>
+      state.voiceoverAutoplayQueue?.slice(state.voiceoverAutoplayIndex),
+    )
 
-    const queue = useAppStore((state) => state.voiceoverMessageQueue)
-    const voiceoverPlay = useAppStore((state) => state.voiceoverPlay)
-    const voiceoverStop = useAppStore((state) => state.voiceoverStop)
+    const play = useAppStore((state) => state.voiceoverPlay)
+    const stop = useAppStore((state) => state.voiceoverStop)
 
-    const [currentId] = queue?.find(([_, status]) => status) ?? []
-    const selfIsCurrent = currentId === voiceover?.messageId
+    const { speech } = message
+    const { isLoading, playing, src } = useGlobalAudioPlayer()
 
-    const [queuedId] = queue?.find(([id, status]) => voiceover?.messageId === id && status) ?? []
-    const selfIsQueued = queuedId === voiceover?.messageId
+    const isQueued = queuedIds?.includes(message._id)
+    const isSource = src === speech?.url
 
-    const { isLoading, playing } = useGlobalAudioPlayer()
-
-    const getVoiceoverStatus = () => {
-      if (!voiceover) return 'unknown'
-      if (job === 'error') return 'error'
-      if (job === 'pending') return 'pending'
-      if (selfIsCurrent && playing) return 'playing'
-      if (selfIsCurrent && isLoading) return 'loading'
-      if (selfIsCurrent && !playing) return 'ready'
-      if (!selfIsCurrent && selfIsQueued) return 'queued'
-      if (url) return 'available'
-
-      return 'unknown'
+    const getStatus = () => {
+      if (isSource && playing) return 'playing'
+      if (isSource && isLoading) return 'loading'
+      if (speech?.status === 'pending' || speech?.status === 'inProgress') return 'loading'
+      if (isQueued) return 'queued'
+      if (speech?.status === 'failed' || speech?.status === 'canceled') return 'error'
+      if (speech?.url) return 'ready'
+      return 'request'
     }
 
-    const status = getVoiceoverStatus()
+    const status = getStatus()
 
-    const statusIcons: Record<ReturnType<typeof getVoiceoverStatus>, React.ReactNode> = {
+    const statusIcons: Record<ReturnType<typeof getStatus>, React.ReactNode> = {
       playing: <SquareIcon />,
-      ready: <SnailIcon />,
       queued: <MoreHorizontalIcon />,
-      available: <PlayIcon />,
+      ready: <PlayIcon />,
+      request: <PlayIcon />,
       loading: <Loader2Icon className="animate-spin" />,
-      pending: <Loader2Icon className="animate-spin" />,
-      error: <AlertCircleIcon />,
-      unknown: <FileQuestionIcon />,
+      error: <FileWarningIcon />,
     }
 
     return (
@@ -67,12 +58,10 @@ export const VoiceoverButton = forwardRef<HTMLButtonElement, VoiceoverButtonProp
         {...props}
         label="play voiceover"
         ref={forwardedRef}
-        disabled={status === 'unknown'}
+        color={status === 'request' ? 'gray' : undefined}
         onClick={() => {
-          if (status === 'playing') voiceoverStop()
-          else if (voiceover?.messageId) {
-            voiceoverPlay(voiceover.messageId)
-          }
+          if (status === 'playing') stop()
+          else play(message._id)
         }}
       >
         {statusIcons[status]}

@@ -81,8 +81,8 @@ dependencies:
     specifier: ^1.10.0
     version: 1.10.0(react-dom@18.2.0)(react@18.2.0)
   convex-ents:
-    specifier: ^0.4.2
-    version: 0.4.2(convex@1.10.0)
+    specifier: ^0.4.3
+    version: 0.4.3(convex@1.10.0)
   convex-helpers:
     specifier: ^0.1.27
     version: 0.1.27(convex@1.10.0)(react@18.2.0)(zod@3.22.4)
@@ -184,6 +184,9 @@ devDependencies:
   '@next/bundle-analyzer':
     specifier: ^14.1.4
     version: 14.1.4
+  '@redux-devtools/extension':
+    specifier: ^3.3.0
+    version: 3.3.0(redux@5.0.1)
   '@swc-jotai/debug-label':
     specifier: ^0.1.0
     version: 0.1.0
@@ -3230,6 +3233,16 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
+  /@redux-devtools/extension@3.3.0(redux@5.0.1):
+    resolution: {integrity: sha512-X34S/rC8S/M1BIrkYD1mJ5f8vlH0BDqxXrs96cvxSBo4FhMdbhU+GUGsmNYov1xjSyLMHgo8NYrUG8bNX7525g==}
+    peerDependencies:
+      redux: ^3.1.0 || ^4.0.0 || ^5.0.0
+    dependencies:
+      '@babel/runtime': 7.24.1
+      immutable: 4.3.5
+      redux: 5.0.1
+    dev: true
+
   /@rushstack/eslint-patch@1.8.0:
     resolution: {integrity: sha512-0HejFckBN2W+ucM6cUOlwsByTKt9/+0tWhqUffNIcHqCXkthY/mZ7AuYPK/2IIaGWhdl0h+tICDO0ssLMd6XMQ==}
     dev: true
@@ -4669,8 +4682,8 @@ packages:
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  /convex-ents@0.4.2(convex@1.10.0):
-    resolution: {integrity: sha512-dQ9TgQn1jMfU7I9JwAmNHFV5AOBr/YhJ/RXlQMJXMVTUKCJGhfTccsMqxBsS4dceX8rDJaZydiqrMV4ExhDeWw==}
+  /convex-ents@0.4.3(convex@1.10.0):
+    resolution: {integrity: sha512-K/JHGHOue5KlmnU2Vn+TyFWTAKOWO5qKZ63xg7oa39aS+7bxbcH0am0Lp2Gn08ykkndIF1X3blDcdVRkGFaUqA==}
     peerDependencies:
       convex: ^1.8.0
     dependencies:
@@ -6061,6 +6074,10 @@ packages:
   /ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
+    dev: true
+
+  /immutable@4.3.5:
+    resolution: {integrity: sha512-8eabxkth9gZatlwl5TBuJnCsoTADlL6ftEr7A4qgdaTsPyreilDSnUk57SO+jfKcNtxPa22U5KK6DSeAYhpBJw==}
     dev: true
 
   /import-fresh@3.3.0:
@@ -7995,6 +8012,10 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+
+  /redux@5.0.1:
+    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
+    dev: true
 
   /reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}

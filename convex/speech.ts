@@ -2,24 +2,27 @@ import { v } from 'convex/values'
 import { deepEqual } from 'fast-equals'
 
 import { internalMutation, internalQuery } from './functions'
+import { getJobStatus } from './jobs'
 import { generateSha256Hash } from './util'
 import { runAction } from './utils/retrier'
 import { getVoiceRefParameters } from './voices'
 
 import type { Doc, Id } from './_generated/dataModel'
-import type { MutationCtx, QueryCtx } from './types'
+import type { JobStatus, MutationCtx, QueryCtx } from './types'
 
 export type Speech = Doc<'speech'> & {
   url: string | null
+  status: JobStatus
 }
 
-export const getSpeech = async (ctx: QueryCtx, speechId?: Id<'speech'>) => {
+export const getSpeech = async (ctx: QueryCtx, speechId?: Id<'speech'>): Promise<Speech | null> => {
   const speech = speechId ? await ctx.table('speech').get(speechId) : null
   if (!speech || speech.deletionTime) return null
 
   return {
     ...speech,
     url: speech.storageId ? await ctx.storage.getUrl(speech.storageId) : null,
+    status: await getJobStatus(ctx, speech?.jobId),
   }
 }
 

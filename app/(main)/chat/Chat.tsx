@@ -6,7 +6,6 @@ import { ScrollArea } from '@radix-ui/themes'
 import { MessageBubble } from '@/components/threads/MessageBubble'
 import { MessageInput } from '@/components/threads/MessageInput'
 import { useThread } from '@/components/threads/useThread'
-import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
 import { cn } from '@/lib/utils'
 
 import type { Id } from '@/convex/_generated/dataModel'
@@ -26,8 +25,6 @@ export const Chat = ({ threadId }: ChatProps) => {
       scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }
   }, [messages])
-
-  useVoiceoverPlayer(messages)
 
   return (
     <div className="flex grow overflow-hidden bg-gray-1">

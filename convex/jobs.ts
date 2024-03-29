@@ -3,6 +3,9 @@ import { internalMutation } from './functions'
 import { jobFields } from './schema'
 import { error } from './util'
 
+import type { Id } from './_generated/dataModel'
+import type { JobStatus, QueryCtx } from './types'
+
 export const dispatch = internalMutation({
   args: {
     type: jobFields.type,
@@ -45,3 +48,12 @@ export const event = internalMutation({
   },
   handler: async (ctx, args) => await ctx.table('jobs').insert(args),
 })
+
+export const getJobStatus = async (
+  ctx: QueryCtx,
+  jobId?: Id<'_scheduled_functions'>,
+): Promise<JobStatus> => {
+  if (!jobId) return 'unknown'
+  const job = await ctx.unsafeDb.system.get(jobId)
+  return job ? job.state.kind : 'unknown'
+}

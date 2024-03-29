@@ -1,61 +1,77 @@
 import { useEffect } from 'react'
+import { useMutation } from 'convex/react'
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
+import { toast } from 'sonner'
 
+import { api } from '@/convex/_generated/api'
 import { useAppStore } from '../providers/AppStoreProvider'
 
+import type { Id } from '@/convex/_generated/dataModel'
 import type { Message } from '@/convex/threads/threads'
 
+const useVoiceover = (message?: Message) => {
+  const textToSpeech = useMutation(api.threads.threads.textToSpeech)
+  const speechId = message?.speechId
+  const messageId = message?._id
+
+  useEffect(() => {
+    if (speechId || !messageId) return
+    async function send(messageId: Id<'messages'>) {
+      try {
+        await textToSpeech({ messageId })
+      } catch (err) {
+        console.error(err)
+        toast.error('Failed to request voiceover.')
+      }
+    }
+
+    void send(messageId)
+  }, [messageId, speechId, textToSpeech])
+
+  return message?.speech?.url
+}
+
 export const useVoiceoverPlayer = (messages?: Message[]) => {
-  const queue = useAppStore((state) => state.voiceoverMessageQueue)
-  const setQueue = useAppStore((state) => state.voiceoverSetMessageQueue)
-  const isAutoplayEnabled = useAppStore((state) => state.voiceoverIsAutoplayEnabled)
+  const messageId = useAppStore((state) => {
+    if (state.voiceoverPlayingMessageId) return state.voiceoverPlayingMessageId
+    const next = state.voiceoverAutoplayQueue?.[state.voiceoverAutoplayIndex]
+    return next
+  })
+  const message = messages?.find((message) => message._id === messageId)
 
-  const { load, src, stop, playing, isLoading } = useGlobalAudioPlayer()
+  const url = useVoiceover(message)
 
-  // "current" - first message with [Id, boolean = true]
-  const currentIndex = queue?.findIndex(([_, status]) => status) ?? -1
-  const [currentId] = queue?.[currentIndex] ?? []
-  const currentUrl = messages?.find((message) => message._id === currentId)?.voiceover?.url
-  const currentIsPlaying = playing && src === currentUrl
+  const voiceoverEnqueueMessages = useAppStore((state) => state.voiceoverEnqueueMessages)
+  const voiceoverEnded = useAppStore((state) => state.voiceoverEnded)
+  const voiceoverCleanup = useAppStore((state) => state.voiceoverCleanup)
 
-  const play = () => {
-    if (!currentId) return // nothing to play
-    if (currentIsPlaying) return // already playing
-    if (isLoading) return
-    if (!currentUrl) return // no voiceover yet (or error?)
+  const { load, stop } = useGlobalAudioPlayer()
 
-    load(currentUrl, {
+  useEffect(() => {
+    if (!url) {
+      stop()
+      return
+    }
+
+    load(url, {
       autoplay: true,
       format: 'mp3',
-      onend: () => setQueue(queue?.with(currentIndex, [currentId, false])),
+      onend: () => voiceoverEnded(),
     })
-  }
+  }, [url, load, stop, voiceoverEnded])
 
-  // stop anything playing that is no longer current, otherwise try to play something
-  if (!currentId && playing) stop()
-  else play()
-
-  // update the queue if messages have changed
   useEffect(() => {
-    const isStale = messages && messages.some(({ _id }, i) => _id !== queue?.[i]?.[0])
-    if (!isStale) return
-
-    setQueue(
-      messages.map(({ _id }) => {
-        // if queue is undefined (initial load), don't autoplay everything
-        if (!queue || !isAutoplayEnabled) return [_id, false]
-        // otherwise restore old status, or queue the new message for autoplay
-        const status = queue.find(([id]) => id === _id)?.[1] ?? true
-        return [_id, status]
-      }),
-    )
-  }, [isAutoplayEnabled, messages, queue, setQueue])
+    if (messages) {
+      voiceoverEnqueueMessages(messages?.map((message) => message._id))
+    }
+  }, [messages, url, voiceoverEnqueueMessages])
 
   // cleanup
   useEffect(() => {
     return () => {
-      setQueue(undefined)
+      console.log('cleanup')
       stop()
+      voiceoverCleanup()
     }
-  }, [setQueue, stop])
+  }, [stop, voiceoverCleanup])
 }

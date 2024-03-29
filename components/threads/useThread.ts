@@ -4,6 +4,7 @@ import { useAtomCallback } from 'jotai/utils'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
+import { useVoiceoverPlayer } from '@/components/threads/useVoiceoverPlayer'
 import { api } from '@/convex/_generated/api'
 import { createNumberInputAtom, createTextInputAtom } from '../atoms'
 
@@ -19,8 +20,10 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
   const router = useRouter()
 
   const thread = useQuery(api.threads.threads.get, { id: threadId })
-  const messages = thread?.messages
+  const messages = useMemo(() => thread?.messages, [thread?.messages])
   const voices = useMemo(() => thread?.voices ?? [], [thread?.voices])
+
+  useVoiceoverPlayer(messages)
 
   //* Parameters
   const threadAtoms = useMemo(

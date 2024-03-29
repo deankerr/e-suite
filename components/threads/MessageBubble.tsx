@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils'
 import { LoaderBars } from '../ui/LoaderBars'
 import { UIIconButton } from '../ui/UIIconButton'
 import { MessageMenu } from './MessageMenu'
-import { TextToSpeechButton } from './TextToSpeechButton'
 import { VoiceoverButton } from './VoiceoverButton'
 
 import type { Message } from '@/convex/threads/threads'
@@ -31,8 +30,7 @@ export const MessageBubble = forwardRef<HTMLDivElement, MessageBubbleProps>(func
         <Heading size="2">{message.name ?? style.role}</Heading>
 
         <div className="flex gap-2.5">
-          <TextToSpeechButton message={message} />
-          <VoiceoverButton voiceover={message.voiceover} />
+          <VoiceoverButton message={message} />
           <MessageMenu messageId={message._id}>
             <UIIconButton icon={MoreVerticalIcon} label="message menu" size="1" />
           </MessageMenu>
