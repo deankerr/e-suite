@@ -59,7 +59,7 @@ export const list = query({
           .map((voice) => {
             return {
               id: `aws/${voice.Id}`,
-              name: voice.Name,
+              name: `${voice.Name} - ${voice.LanguageName.replace(' English', '')} ${voice.Gender}`,
               gender: voice.Gender.toLowerCase(),
               language: voice.LanguageName,
             }
@@ -70,7 +70,7 @@ export const list = query({
         name: 'ElevenLabs',
         group: elabsVoices.voices.map((voice) => ({
           id: `elevenlabs/${voice.voice_id}`,
-          name: voice.name,
+          name: `${voice.name} - ${voice.labels.accent} ${voice.labels.gender}`,
           gender: voice.labels.gender,
           language: voice.labels.accent,
         })),

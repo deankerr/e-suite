@@ -48,7 +48,6 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
     useEffect(() => {
       setCurrentVoices(threadVoices)
-      console.log('update current')
     }, [threadVoices])
 
     return (

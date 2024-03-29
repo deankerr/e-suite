@@ -69,7 +69,6 @@ export const useVoiceoverPlayer = (messages?: Message[]) => {
   // cleanup
   useEffect(() => {
     return () => {
-      console.log('cleanup')
       stop()
       voiceoverCleanup()
     }

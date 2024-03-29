@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import { useAppStore } from '../providers/AppStoreProvider'
 import { Sidebar } from '../ui/Sidebar'
 import { useMediaQuery } from '../useMediaQuery'
+import { useQueryCache } from '../useQueryCache'
 import { ThemeToggle } from '../util/ThemeToggle'
 import { ChatList } from './ChatList'
 import { GenerationsList } from './GenerationsList'
@@ -19,6 +20,8 @@ import { GenerationsList } from './GenerationsList'
 type NavigationSidebarProps = {} & Partial<React.ComponentProps<typeof Sidebar>>
 
 export const NavigationSidebar = ({ className, children, ...props }: NavigationSidebarProps) => {
+  useQueryCache()
+
   const navigationSidebarOpen = useAppStore((state) => state.navigationSidebarOpen)
   const updateNavigationSidebarOpen = useAppStore((state) => state.updateNavigationSidebarOpen)
   const updateSidebarOpen = useAppStore((state) => state.updateSidebarOpen)
