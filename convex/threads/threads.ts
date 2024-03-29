@@ -1,10 +1,9 @@
 import { v } from 'convex/values'
-import { deepEqual } from 'fast-equals'
 import z from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { messagesFields, permissionsFields, threadsFields, voiceoversFields } from '../schema'
+import { messagesFields, permissionsFields, threadsFields } from '../schema'
 import { createSpeech, getSpeech } from '../speech'
 import { getUser } from '../users'
 import { assert } from '../util'
@@ -19,11 +18,8 @@ export type Thread = Doc<'threads'> & { messages: Message[]; owner: User }
 
 export type Message = Doc<'messages'> & {
   job?: Doc<'jobs'> | null
-  voiceover?: Voiceover
   speech: Speech | null
 }
-
-export type Voiceover = Doc<'voiceovers'> & { url?: string; job: Doc<'jobs'> | null }
 
 export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thread> => {
   if (!id) {
@@ -48,27 +44,13 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
     .take(20)
     .map(async (message) => {
-      const voiceover = await message.edge('voiceover')
-      const voiceOverUrl = voiceover?.storageId
-        ? (await ctx.storage.getUrl(voiceover.storageId)) ?? undefined
-        : undefined
-
       return {
         ...message,
         job: await ctx
           .table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
           .order('desc')
           .first(),
-        voiceover: voiceover
-          ? {
-              ...voiceover,
-              url: voiceOverUrl,
-              job: await ctx
-                .table('jobs', 'voiceoverId', (q) => q.eq('voiceoverId', voiceover._id))
-                .order('desc')
-                .first(),
-            }
-          : undefined,
+
         speech: await getSpeech(ctx, message?.speechId),
       }
     })
@@ -289,52 +271,6 @@ export const pushMessage = internalMutation({
       threadId: id,
     })
   },
-})
-
-export const getVoiceoverParameters = internalQuery({
-  args: {
-    voiceoverId: v.id('voiceovers'),
-  },
-  handler: async (ctx, { voiceoverId }) =>
-    await ctx.skipRules.table('voiceovers').getX(voiceoverId),
-})
-
-export const pushVoiceover = internalMutation({
-  args: {
-    messageId: v.id('messages'),
-    voiceover: v.object(voiceoversFields),
-  },
-  handler: async (ctx, { messageId, voiceover }) => {
-    // link storageId of any matching voiceover if found
-    const matches = await ctx.table('voiceovers', 'textSha256', (q) =>
-      q.eq('textSha256', voiceover.textSha256),
-    )
-
-    for (const match of matches) {
-      if (match.storageId && deepEqual(match.parameters, voiceover.parameters)) {
-        return await ctx.skipRules
-          .table('voiceovers')
-          .insert({ ...voiceover, messageId, storageId: match.storageId })
-      }
-    }
-
-    // otherwise create new voiceover
-    const voiceoverId = await ctx.skipRules.table('voiceovers').insert({ ...voiceover, messageId })
-    await ctx.scheduler.runAfter(0, internal.jobs.dispatch, {
-      type: 'voiceover',
-      voiceoverId,
-    })
-    return voiceoverId
-  },
-})
-
-export const updateVoiceoverStorageId = internalMutation({
-  args: {
-    voiceoverId: v.id('voiceovers'),
-    storageId: v.id('_storage'),
-  },
-  handler: async (ctx, { voiceoverId, storageId }) =>
-    await ctx.table('voiceovers').getX(voiceoverId).patch({ storageId }),
 })
 
 export const updateTitle = mutation({

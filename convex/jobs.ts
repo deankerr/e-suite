@@ -22,14 +22,6 @@ export const dispatch = internalMutation({
       return id
     }
 
-    if (args.type === 'voiceover' && args.voiceoverId) {
-      const id = await ctx.table('jobs').insert({ ...args, status: 'pending' })
-      await ctx.scheduler.runAfter(0, internal.threads.inference.voice, {
-        voiceoverId: args.voiceoverId,
-      })
-      return id
-    }
-
     if (args.type === 'generation' && args.imageId) {
       const id = await ctx.table('jobs').insert({ ...args, status: 'pending' })
       await ctx.scheduler.runAfter(0, internal.generations.run.generate, {

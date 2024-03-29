@@ -2,41 +2,15 @@
 
 import { DescribeVoicesCommand, PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 import { fromEnv } from '@aws-sdk/credential-providers'
-import { ConvexError, v } from 'convex/values'
+import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
-import type { Doc } from '../_generated/dataModel'
 import type { SynthesizeSpeechCommandInput } from '@aws-sdk/client-polly'
 
 const client = new PollyClient({ region: 'us-east-1', credentials: fromEnv() })
-
-export const createTextToSpeechRequest = async ({
-  text,
-  parameters,
-}: {
-  text: string
-  parameters: Doc<'voiceovers'>['parameters']
-}) => {
-  if (!('aws' in parameters)) throw new ConvexError('invalid parameters')
-  const { VoiceId, Engine } = parameters.aws
-
-  const response = await client.send(
-    new SynthesizeSpeechCommand({
-      OutputFormat: 'mp3',
-      Text: text,
-      TextType: 'text',
-      VoiceId: VoiceId as SynthesizeSpeechCommandInput['VoiceId'],
-      Engine,
-    }),
-  )
-
-  assert(response.AudioStream, 'aws response missing AudioStream', { data: response.$metadata })
-  const arrayBuffer = await response.AudioStream.transformToByteArray()
-  return new Blob([arrayBuffer], { type: 'audio/mpeg' })
-}
 
 export const textToSpeech = internalAction({
   args: {

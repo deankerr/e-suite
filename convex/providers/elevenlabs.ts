@@ -1,45 +1,16 @@
 'use node'
 
-import { ConvexError, v } from 'convex/values'
+import { v } from 'convex/values'
 import ky from 'ky'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
 import { assert } from '../util'
 
-import type { Doc } from '../_generated/dataModel'
-
 export const getElevenlabsApiKey = () => {
   const apiKey = process.env.ELEVENLABS_API_KEY
   assert(apiKey, 'ELEVENLABS_API_KEY is undefined')
   return apiKey
-}
-
-export const createTextToSpeechRequest = async ({
-  text,
-  parameters,
-}: {
-  text: string
-  parameters: Doc<'voiceovers'>['parameters']
-}) => {
-  if (!('elevenlabs' in parameters)) throw new ConvexError('invalid parameters')
-  const { voice_id, model_id, voice_settings } = parameters.elevenlabs
-
-  return await ky
-    .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
-      timeout: 50000,
-      headers: {
-        Accept: 'audio/mpeg',
-        'Content-Type': 'application/json',
-        'xi-api-key': getElevenlabsApiKey(),
-      },
-      json: {
-        text,
-        voice_settings,
-        model_id,
-      },
-    })
-    .blob()
 }
 
 export const textToSpeech = internalAction({

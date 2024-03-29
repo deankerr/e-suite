@@ -176,42 +176,6 @@ const threads = defineEnt(threadsFields)
   .edges('messages', { ref: 'threadId', deletion: 'soft' })
   .deletion('soft')
 
-// * Voiceovers
-export const voiceoversFields = {
-  text: v.string(),
-  textSha256: v.string(),
-  storageId: v.optional(v.id('_storage')),
-
-  provider: vEnum(['elevenlabs', 'aws']),
-  parameters: v.union(
-    v.object({
-      elevenlabs: v.object({
-        voice_id: v.optional(v.string()),
-        model_id: v.optional(v.string()),
-        voice_settings: v.optional(
-          v.object({
-            similarity_boost: v.optional(v.number()),
-            stability: v.optional(v.number()),
-            style: v.optional(v.number()),
-            use_speaker_boost: v.optional(v.boolean()),
-          }),
-        ),
-      }),
-    }),
-
-    v.object({
-      aws: v.object({
-        VoiceId: v.string(),
-        Engine: vEnum(['neural', 'standard', 'long-form']),
-      }),
-    }),
-  ),
-}
-const voiceovers = defineEnt(voiceoversFields)
-  .deletion('soft')
-  .edge('message')
-  .index('textSha256', ['textSha256'])
-
 const schema = defineEntSchema(
   {
     apiKeys: defineEnt({
@@ -257,8 +221,6 @@ const schema = defineEntSchema(
       .edges('threads', { ref: true })
       .edge('apiKey', { optional: true, ref: 'ownerId' })
       .field('tokenIdentifier', v.string(), { index: true }),
-
-    voiceovers,
   },
   { schemaValidation: false },
 )

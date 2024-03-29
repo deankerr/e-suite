@@ -1,9 +1,6 @@
-import { Infer } from 'convex/values'
-
 import { api, internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
-import { internalMutation, internalQuery } from '../functions'
-import { awsSpeechParametersFields, elevenlabsSpeechParametersFields } from '../schema'
+import { internalQuery } from '../functions'
 
 import type { Id } from '../_generated/dataModel'
 import type { ImageModel } from '../generations/imageModels'
@@ -76,31 +73,31 @@ export const importImageModelData = internalAction(
   },
 )
 
-export const convertVoiceoversToSpeech = internalMutation(async (ctx) => {
-  const voiceovers = await ctx.table('voiceovers').take(1000)
-  if (voiceovers.length === 0) return
+// export const convertVoiceoversToSpeech = internalMutation(async (ctx) => {
+//   const voiceovers = await ctx.table('voiceovers').take(1000)
+//   if (voiceovers.length === 0) return
 
-  voiceovers.forEach(async (vo) => {
-    const { provider, storageId, text, textSha256, messageId } = vo
-    if (storageId) {
-      const parameters = (
-        'elevenlabs' in vo.parameters
-          ? { ...vo.parameters.elevenlabs, provider: 'elevenlabs' as const }
-          : { ...vo.parameters.aws, provider: 'aws' as const }
-      ) as Infer<typeof elevenlabsSpeechParametersFields> | Infer<typeof awsSpeechParametersFields>
-      const voiceId = parameters.provider === 'aws' ? parameters.VoiceId : parameters.voice_id
-      const speechId = await ctx.table('speech').insert({
-        text,
-        textHash: textSha256,
-        storageId,
-        parameters,
-        voiceRef: `${provider}/${voiceId}`,
-      })
-      const message = await ctx.skipRules.table('messages').get(messageId)
-      if (message) await message.patch({ speechId })
-    }
-    await ctx.unsafeDb.delete(vo._id)
-  })
+//   voiceovers.forEach(async (vo) => {
+//     const { provider, storageId, text, textSha256, messageId } = vo
+//     if (storageId) {
+//       const parameters = (
+//         'elevenlabs' in vo.parameters
+//           ? { ...vo.parameters.elevenlabs, provider: 'elevenlabs' as const }
+//           : { ...vo.parameters.aws, provider: 'aws' as const }
+//       ) as Infer<typeof elevenlabsSpeechParametersFields> | Infer<typeof awsSpeechParametersFields>
+//       const voiceId = parameters.provider === 'aws' ? parameters.VoiceId : parameters.voice_id
+//       const speechId = await ctx.table('speech').insert({
+//         text,
+//         textHash: textSha256,
+//         storageId,
+//         parameters,
+//         voiceRef: `${provider}/${voiceId}`,
+//       })
+//       const message = await ctx.skipRules.table('messages').get(messageId)
+//       if (message) await message.patch({ speechId })
+//     }
+//     await ctx.unsafeDb.delete(vo._id)
+//   })
 
-  await ctx.scheduler.runAfter(2000, internal.utils.scripts.convertVoiceoversToSpeech, {})
-})
+//   await ctx.scheduler.runAfter(2000, internal.utils.scripts.convertVoiceoversToSpeech, {})
+// })

@@ -5,8 +5,7 @@ import z from 'zod'
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { clerkWebhookHandler } from './providers/clerk'
-import { generateSha256Hash } from './util'
-import { messageValidator, voiceoverValidator } from './validators'
+import { messageValidator } from './validators'
 
 import type { Id } from './_generated/dataModel'
 
@@ -45,7 +44,6 @@ const threadsMessagesPushRequestSchema = z.object({
   apiKey: z.string().length(32, 'Invalid api key'),
   threadId: zid('threads'),
   message: messageValidator,
-  voiceover: voiceoverValidator.optional(),
 })
 
 http.route({
@@ -57,7 +55,7 @@ http.route({
       console.error(parsed.error.issues)
       return new Response(parsed.error.message, { status: 400 })
     }
-    const { apiKey, threadId, message, voiceover } = parsed.data
+    const { apiKey, threadId, message } = parsed.data
 
     // authenticate access to thread
     const ownerId = await ctx.runQuery(internal.apiKeys.authorizeThreadOwner, {
@@ -68,20 +66,10 @@ http.route({
       return new Response('Unauthorized', { status: 401 })
     }
 
-    const messageId = await ctx.runMutation(internal.threads.threads.pushMessage, {
+    await ctx.runMutation(internal.threads.threads.pushMessage, {
       id: threadId,
       message,
     })
-
-    if (voiceover) {
-      await ctx.runMutation(internal.threads.threads.pushVoiceover, {
-        messageId,
-        voiceover: {
-          ...voiceover,
-          textSha256: await generateSha256Hash(voiceover.text),
-        },
-      })
-    }
 
     return new Response('OK', { status: 200 })
   }),

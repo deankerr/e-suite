@@ -6,8 +6,6 @@ import z from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../_generated/server'
-import { createTextToSpeechRequest as awsCreateTextToSpeechRequest } from '../providers/aws'
-import { createTextToSpeechRequest as elevenlabsCreateTextToSpeechRequest } from '../providers/elevenlabs'
 import { getTogetherAiApiKey } from '../providers/togetherai'
 import { assert } from '../util'
 
@@ -138,49 +136,4 @@ const responseSchema = z.object({
     })
     .array()
     .min(1),
-})
-
-export const voice = internalAction({
-  args: {
-    voiceoverId: v.id('voiceovers'),
-  },
-  handler: async (ctx, { voiceoverId }) => {
-    try {
-      const { text, provider, parameters } = await ctx.runQuery(
-        internal.threads.threads.getVoiceoverParameters,
-        {
-          voiceoverId,
-        },
-      )
-
-      const createTextToSpeechRequest = {
-        elevenlabs: elevenlabsCreateTextToSpeechRequest,
-        aws: awsCreateTextToSpeechRequest,
-      }
-
-      const blob = await createTextToSpeechRequest[provider]({ text, parameters })
-      const storageId = await ctx.storage.store(blob)
-
-      await ctx.runMutation(internal.threads.threads.updateVoiceoverStorageId, {
-        voiceoverId,
-        storageId,
-      })
-
-      await ctx.runMutation(internal.jobs.event, {
-        type: 'voiceover',
-        voiceoverId,
-        status: 'complete',
-      })
-    } catch (err) {
-      await ctx.runMutation(internal.jobs.event, {
-        type: 'voiceover',
-        voiceoverId,
-        status: 'error',
-        message: err instanceof Error ? err.message : 'Unknown error',
-        data: err instanceof Error ? JSON.stringify(err) : undefined,
-      })
-
-      throw err
-    }
-  },
 })
