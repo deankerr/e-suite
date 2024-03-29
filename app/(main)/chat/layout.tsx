@@ -8,6 +8,10 @@ import { ChatSidebar } from './ChatSidebar'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
+// export const metadata: Metadata = {
+//   title: 'e/suite / Chat',
+// }
+
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
   const slug = useSelectedLayoutSegment() as Id<'threads'> | null
 

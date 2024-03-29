@@ -9,6 +9,10 @@ import { GenerateSidebar } from './GenerateSidebar'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
+// export const metadata: Metadata = {
+//   title: 'e/suite / Generate',
+// }
+
 export default function GenerateLayout({ children }: { children: React.ReactNode }) {
   const slug = useSelectedLayoutSegment() as Id<'generations'> | null
 
