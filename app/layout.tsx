@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Provider as JotaiProvider } from 'jotai'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
@@ -53,7 +54,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </JotaiProvider>
           </ClientProviders>
         </ClerkProvider>
-        {process.env.NODE_ENV !== 'development' && <Analytics />}
+        {process.env.NODE_ENV !== 'development' && (
+          <>
+            <SpeedInsights />
+            <Analytics />
+          </>
+        )}
       </body>
     </html>
   )
