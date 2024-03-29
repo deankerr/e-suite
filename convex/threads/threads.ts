@@ -202,9 +202,9 @@ export const textToSpeech = mutation({
     assert(!thread.deletionTime, 'Thread is deleted')
 
     const voiceRef =
-      (message.name
-        ? thread.voices?.find((voice) => voice.name === message.name)?.voiceRef
-        : thread.voices?.find((voice) => voice.role === message.role)?.voiceRef) ?? 'aws/Russell'
+      thread.voices?.find((voice) => message?.name && voice?.name === message?.name)?.voiceRef ??
+      thread.voices?.find((voice) => voice.role === message.role)?.voiceRef ??
+      'aws/Russell'
 
     const existingSpeech = await getSpeech(ctx, message.speechId)
     if (existingSpeech?.voiceRef === voiceRef) {
