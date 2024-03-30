@@ -35,8 +35,9 @@ export const get = internalQuery({
 
 export const createSpeech = async (
   ctx: MutationCtx,
-  { text, voiceRef }: { text: string; voiceRef: string },
+  { text: rawText, voiceRef }: { text: string; voiceRef: string },
 ) => {
+  const text = replaceUrlText(rawText)
   const parameters = getVoiceRefParameters(voiceRef)
   const textHash = await generateSha256Hash(text)
 
@@ -81,3 +82,18 @@ export const updateStorageId = internalMutation({
   handler: async (ctx, { id, storageId }) =>
     await ctx.table('speech').getX(id).patch({ storageId }),
 })
+
+// replace url substrings with a shortened version
+const replaceUrlText = (text: string) => {
+  const urlRegex =
+    /\S([a-z]{1,2}tps?):\/\/((?:(?!(?:\/|#|\?|&))\S)+)(?:(\/(?:(?:(?:(?!(?:#|\?|&))\S)+\/))?))?(?:((?:(?!(?:\.|$|\?|#))\S)+))?(?:(\.(?:(?!(?:\?|$|#))\S)+))?(?:(\?(?:(?!(?:$|#))\S)+))?(?:(#\S+))?\S/g
+  let newText = text
+
+  const matches = newText.matchAll(urlRegex)
+  for (const match of matches) {
+    const [url, _protocol, main] = match
+    newText = newText.replace(url, `URL: ${main}`)
+  }
+
+  return newText
+}

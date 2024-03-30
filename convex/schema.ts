@@ -115,10 +115,7 @@ export const messagesFields = {
   inferenceParameters: v.optional(inferenceParametersFields),
   speechId: v.optional(v.id('speech')),
 }
-const messages = defineEnt(messagesFields)
-  .deletion('soft')
-  .edge('thread', { field: 'threadId' })
-  .edge('voiceover', { optional: true })
+const messages = defineEnt(messagesFields).deletion('soft').edge('thread', { field: 'threadId' })
 
 // * Speech
 export const elevenlabsSpeechParametersFields = v.object({
