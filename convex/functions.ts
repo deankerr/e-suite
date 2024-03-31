@@ -1,5 +1,6 @@
 import { entsTableFactory } from 'convex-ents'
 import { customCtx, customMutation, customQuery } from 'convex-helpers/server/customFunctions'
+import { ConvexError } from 'convex/values'
 
 import {
   internalMutation as baseInternalMutation,
@@ -9,7 +10,6 @@ import {
 } from './_generated/server'
 import { getEntDefinitionsWithRules, getViewerId } from './rules'
 import { entDefinitions } from './schema'
-import { error } from './util'
 
 import type { MutationCtx as BaseMutationCtx, QueryCtx as BaseQueryCtx } from './_generated/server'
 
@@ -50,7 +50,7 @@ async function queryCtx(baseCtx: BaseQueryCtx) {
 
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   const viewerIdX = () => {
-    if (viewerId === null) throw error('Expected authenticated viewer')
+    if (viewerId === null) throw new ConvexError('Expected authenticated viewer')
     return viewerId
   }
 
@@ -60,7 +60,7 @@ async function queryCtx(baseCtx: BaseQueryCtx) {
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
   const viewerX = async () => {
     const ent = await viewer()
-    if (ent === null) throw error('Expected authenticated viewer')
+    if (ent === null) throw new ConvexError('Expected authenticated viewer')
     return ent
   }
 
@@ -76,7 +76,7 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
 
   const viewerId = await getViewerId({ ...baseCtx, ...ctx })
   const viewerIdX = () => {
-    if (viewerId === null) throw error('Expected authenticated viewer')
+    if (viewerId === null) throw new ConvexError('Expected authenticated viewer')
     return viewerId
   }
 
@@ -86,7 +86,7 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
   const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
   const viewerX = async () => {
     const ent = await viewer()
-    if (ent === null) throw error('Expected authenticated viewer')
+    if (ent === null) throw new ConvexError('Expected authenticated viewer')
     return ent
   }
 

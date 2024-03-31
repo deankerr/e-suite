@@ -1,23 +1,11 @@
-import { zid } from 'convex-helpers/server/zod'
 import { httpRouter } from 'convex/server'
-import z from 'zod'
 
-import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
-import { clerkWebhookHandler } from './providers/clerk'
-import { messageValidator } from './validators'
 
 import type { Id } from './_generated/dataModel'
 
 const http = httpRouter()
 
-http.route({
-  path: '/internal/clerk/webhook/v1',
-  method: 'POST',
-  handler: clerkWebhookHandler,
-})
-
-//* Assets
 http.route({
   path: '/image',
   method: 'GET',
@@ -36,42 +24,6 @@ http.route({
         'content-disposition': `attachment; filename="${storageId}.png"`,
       },
     })
-  }),
-})
-
-//* Threads
-const threadsMessagesPushRequestSchema = z.object({
-  apiKey: z.string().length(32, 'Invalid api key'),
-  threadId: zid('threads'),
-  message: messageValidator,
-})
-
-http.route({
-  path: '/threads/messages/push',
-  method: 'POST',
-  handler: httpAction(async (ctx, request) => {
-    const parsed = threadsMessagesPushRequestSchema.safeParse(await request.json())
-    if (!parsed.success) {
-      console.error(parsed.error.issues)
-      return new Response(parsed.error.message, { status: 400 })
-    }
-    const { apiKey, threadId, message } = parsed.data
-
-    // authenticate access to thread
-    const ownerId = await ctx.runQuery(internal.apiKeys.authorizeThreadOwner, {
-      threadId,
-      apiKey,
-    })
-    if (!ownerId) {
-      return new Response('Unauthorized', { status: 401 })
-    }
-
-    await ctx.runMutation(internal.threads.threads.pushMessage, {
-      id: threadId,
-      message,
-    })
-
-    return new Response('OK', { status: 200 })
   }),
 })
 

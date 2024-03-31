@@ -1,17 +1,13 @@
 import z from 'zod'
 
-import { assert } from '../util'
-
-import type { GenerationParameters } from '../schema'
-
 const getSinkinApiKey = () => {
   const apiKey = process.env.SINKIN_API_KEY
-  assert(apiKey, 'Sinkin API key not provided')
+  if (!apiKey) throw new Error('SINKIN_API_KEY is undefined')
   return apiKey
 }
 
 export const createGenerationRequest = (
-  parameters: GenerationParameters & { model: string; width: number; height: number },
+  parameters: any & { model: string; width: number; height: number },
 ) => {
   const paramsKey: Record<string, (value: any) => [string, string]> = {
     model: (value: string) => ['model_id', value],
