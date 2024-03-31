@@ -84,3 +84,10 @@ export const authDeleted = internalMutation({
       .delete()
   },
 })
+
+export const rmUser = internalMutation({
+  args: {
+    id: v.id('users'),
+  },
+  handler: async (ctx, { id }) => await ctx.skipRules.table('users').getX(id).delete(),
+})
