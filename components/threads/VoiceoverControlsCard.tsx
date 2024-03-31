@@ -9,6 +9,7 @@ import { Button } from '../ui/Button'
 import { Label } from '../ui/Label'
 
 import type { ThreadHelpers } from './useThread'
+import type { Message } from '@/convex/threads/threads'
 import type { Collection } from '@/convex/types'
 import type { Voice } from '@/convex/voices'
 import type { ClassNameValue } from '@/lib/utils'
@@ -19,36 +20,64 @@ type VoiceoverControlsCardProps = {
 
 export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControlsCardProps>(
   function VoiceoverControlsCard({ threadHelpers, className, ...props }, forwardedRef) {
-    const voicesList = useQuery(api.voices.list)
+    const voicesAvailableList = useQuery(api.voices.list)
+    const voices = threadHelpers.voices
 
-    const threadVoices = threadHelpers.voices
-    const [currentVoices, setCurrentVoices] = useState(threadVoices)
+    const updateOpt = useMutation(api.threads.threads.update).withOptimisticUpdate(
+      (localStore, { id, fields }) => {
+        const existingThread = localStore.getQuery(api.threads.threads.get, { id })
+        if (!existingThread) return
 
-    const update = useMutation(api.threads.threads.update)
+        localStore.setQuery(
+          api.threads.threads.get,
+          { id },
+          {
+            ...existingThread,
+            ...fields,
+          },
+        )
+      },
+    )
 
-    const handleUpdate = () => {
-      async function send() {
-        const id = threadHelpers.thread?._id
-        if (!id) return
+    const handleUpdate = ({
+      role,
+      name,
+      voiceRef,
+    }: {
+      role: Message['role']
+      name?: string
+      voiceRef: string
+    }) => {
+      const threadId = threadHelpers.thread?._id
+      if (!threadId) return
+
+      const newVoices = [
+        ...voices.filter((voice) => {
+          const rem = voice.role !== role && voice.name !== name
+          console.log(voice.role, role, voice.name, name)
+          return rem
+        }),
+        { role, name, voiceRef },
+      ].filter((voice) => voice.voiceRef !== 'none')
+
+      const send = async () => {
         try {
-          await update({
-            id,
+          await updateOpt({
+            id: threadId,
             fields: {
-              voices: currentVoices.filter((v) => v.voiceRef !== 'remove'),
+              voices: newVoices,
             },
           })
-          toast.success('Voices updated.')
         } catch (err) {
           console.error(err)
-          toast.error('Voices update failed.')
+          toast.error('An error occurred while updating voices.')
         }
       }
+
       void send()
     }
 
-    useEffect(() => {
-      setCurrentVoices(threadVoices)
-    }, [threadVoices])
+    useEffect(() => console.table(voices), [voices])
 
     return (
       <Card size="1" {...props} ref={forwardedRef}>
@@ -63,40 +92,25 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
             <div className="flex-between">
               <Label className="text-sm">AI</Label>
               <VoiceSelect
-                voicesList={voicesList}
-                value={currentVoices.find((v) => v.role === 'assistant')?.voiceRef}
-                onValueChange={(value) => {
-                  setCurrentVoices((prev) => [
-                    ...prev.filter((v) => v.role !== 'assistant'),
-                    { role: 'assistant', voiceRef: value },
-                  ])
-                }}
+                voicesList={voicesAvailableList}
+                value={voices.find((voice) => voice.role === 'assistant')?.voiceRef}
+                onValueChange={(value) => handleUpdate({ role: 'assistant', voiceRef: value })}
               />
             </div>
             <div className="flex-between">
               <Label className="text-sm">User</Label>
               <VoiceSelect
-                voicesList={voicesList}
-                value={currentVoices.find((v) => v.role === 'user' && !v.name)?.voiceRef}
-                onValueChange={(value) => {
-                  setCurrentVoices((prev) => [
-                    ...prev.filter((v) => v.role !== 'user'),
-                    { role: 'user', voiceRef: value },
-                  ])
-                }}
+                voicesList={voicesAvailableList}
+                value={voices.find((voice) => voice.role === 'user' && !voice.name)?.voiceRef}
+                onValueChange={(value) => handleUpdate({ role: 'user', voiceRef: value })}
               />
             </div>
             <div className="flex-between">
               <Label className="text-sm">System</Label>
               <VoiceSelect
-                voicesList={voicesList}
-                value={currentVoices.find((v) => v.role === 'system')?.voiceRef}
-                onValueChange={(value) => {
-                  setCurrentVoices((prev) => [
-                    ...prev.filter((v) => v.role !== 'system'),
-                    { role: 'system', voiceRef: value },
-                  ])
-                }}
+                voicesList={voicesAvailableList}
+                value={voices.find((voice) => voice.role === 'system')?.voiceRef}
+                onValueChange={(value) => handleUpdate({ role: 'system', voiceRef: value })}
               />
             </div>
           </div>
@@ -106,44 +120,26 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
               <div className="w-1/2 text-sm font-semibold">Name</div>
               <div className="w-1/2 text-sm font-semibold">Voice</div>
             </div>
-            {currentVoices.map(({ role, name, voiceRef }) => {
+            {voices.map(({ role, name, voiceRef }) => {
               if (role !== 'user' || !name) return null
               return (
-                <div key={`${name}|${voiceRef}`} className="flex-between">
-                  <Label className="text-sm">{name}</Label>
+                <div key={name} className="flex-between">
+                  <Label className="truncate text-sm">{name}</Label>
                   <VoiceSelect
-                    voicesList={voicesList}
+                    voicesList={voicesAvailableList}
                     value={voiceRef}
-                    onValueChange={(value) =>
-                      setCurrentVoices((prev) => [
-                        ...prev.filter((v) => v.name !== name),
-                        { role: 'user', name, voiceRef: value },
-                      ])
-                    }
+                    onValueChange={(value) => handleUpdate({ role: 'user', name, voiceRef: value })}
                   />
                 </div>
               )
             })}
 
             <NameVoiceInput
-              voicesList={voicesList}
-              onConfirm={(name, voiceRef) => {
-                setCurrentVoices((prev) => [
-                  ...prev.filter((v) => v.name !== name),
-                  { role: 'user', name, voiceRef },
-                ])
-              }}
+              voicesList={voicesAvailableList}
+              onConfirm={(name, value) => handleUpdate({ role: 'user', name, voiceRef: value })}
             />
           </div>
         </div>
-
-        {threadVoices !== currentVoices && (
-          <div className="absolute right-2 top-2">
-            <Button variant="surface" size="1" onClick={handleUpdate}>
-              Confirm
-            </Button>
-          </div>
-        )}
       </Card>
     )
   },
@@ -151,7 +147,7 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
 
 type NameVoiceInputProps = {
   voicesList?: Collection<Voice>
-  onConfirm: (name: string, voiceRef: string) => void
+  onConfirm: (name: string, value: string) => void
 } & React.ComponentProps<'div'>
 
 export const NameVoiceInput = ({
@@ -212,7 +208,7 @@ const VoiceSelect = ({ voicesList, className, ...props }: VoiceSelectProps) => {
     <Select.Root {...props}>
       <Select.Trigger placeholder="Voice" className={cn('w-1/2', className)} />
       <Select.Content>
-        <Select.Item value="remove">None</Select.Item>
+        <Select.Item value="none">None</Select.Item>
         {voicesList?.map((item) =>
           'group' in item ? (
             <Select.Group key={item.id}>

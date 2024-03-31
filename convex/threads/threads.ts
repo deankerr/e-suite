@@ -1,7 +1,9 @@
+import { WithoutSystemFields } from 'convex/server'
 import { v } from 'convex/values'
 import z from 'zod'
 
 import { internal } from '../_generated/api'
+import { defaultSystemPrompt, defaultVoices } from '../constants'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messagesFields, permissionsFields, threadsFields } from '../schema'
 import { createSpeech, getSpeech } from '../speech'
@@ -21,6 +23,29 @@ export type Message = Doc<'messages'> & {
   speech: Speech | null
 }
 
+export const getNewThreadShape = ({
+  userId,
+}: {
+  userId: Id<'users'>
+}): WithoutSystemFields<Doc<'threads'>> => {
+  return {
+    roles: {
+      user: {
+        voice: defaultVoices.user,
+      },
+      assistant: {
+        voice: defaultVoices.assistant,
+      },
+      system: {
+        voice: defaultVoices.system,
+      },
+    },
+    systemPrompt: defaultSystemPrompt,
+    userId,
+    permissions: { private: true },
+  }
+}
+
 export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thread> => {
   if (!id) {
     // "empty" thread
@@ -28,10 +53,16 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
       _id: '' as Id<'threads'>,
       _creationTime: Date.now(),
       messages: [],
+      roles: {
+        user: {},
+        assistant: {},
+        system: {},
+      },
+      systemPrompt: defaultSystemPrompt,
       owner: await getUser(ctx, ctx.viewerIdX()),
       userId: ctx.viewerIdX(),
       permissions: { private: true },
-      title: 'New Chat',
+      title: 'Chat',
     }
   }
 
@@ -66,10 +97,7 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
 export const createThread = async (ctx: MutationCtx) => {
   return await ctx
     .table('threads')
-    .insert({
-      userId: ctx.viewerIdX(),
-      permissions: { private: true },
-    })
+    .insert(getNewThreadShape({ userId: ctx.viewerIdX() }))
     .get()
 }
 
@@ -110,11 +138,7 @@ export const createThreadFor = internalMutation({
     userId: v.id('users'),
   },
   handler: async (ctx, { userId }) => {
-    return await ctx.skipRules.table('threads').insert({
-      userId,
-      title: `thread ${new Date().toISOString()}`,
-      permissions: { private: true },
-    })
+    return await ctx.skipRules.table('threads').insert(getNewThreadShape({ userId }))
   },
 })
 

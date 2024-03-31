@@ -154,11 +154,37 @@ const speech = defineEnt(speechFields)
 // * Threads
 export const threadsFields = {
   title: v.optional(v.string()),
-  systemPrompt: v.optional(v.string()),
-  name: v.optional(v.string()),
+  systemPrompt: v.optional(v.string()), //# remove
+  prompt: v.optional(v.string()),
+  name: v.optional(v.string()), //# remove
   parameters: v.optional(inferenceParametersFields),
   permissions: permissionsFields,
+  roles: v.optional(
+    v.object({
+      user: v.object({
+        name: v.optional(v.string()),
+        voice: v.optional(v.string()),
+        voices: v.optional(
+          v.array(
+            v.object({
+              name: v.string(),
+              voice: v.string(),
+            }),
+          ),
+        ),
+      }),
+      assistant: v.object({
+        name: v.optional(v.string()),
+        voice: v.optional(v.string()),
+      }),
+      system: v.object({
+        name: v.optional(v.string()),
+        voice: v.optional(v.string()),
+      }),
+    }),
+  ),
   voices: v.optional(
+    //# remove
     v.array(
       v.object({
         role: vEnum(messageRoles),

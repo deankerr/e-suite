@@ -51,7 +51,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
 
         <Tabs.Content value="settings" asChild>
           <ScrollArea className="grow">
-            <div className="flex flex-col gap-4 p-4">
+            <div className="flex max-w-80 flex-col gap-4 overflow-hidden p-4">
               {thread && thread.owner.isViewer ? (
                 <>
                   <PermissionsCard

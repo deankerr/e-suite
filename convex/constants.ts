@@ -15,3 +15,13 @@ export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
 
 export const chatProviders = ['openai', 'openrouter', 'togetherai']
 export const textToSpeechProviders = ['elevenlabs', 'aws'] as const
+
+export const defaultSystemPrompt =
+  'You are an advanced AI assistant who can assist with any user query.'
+
+export const defaultVoices = {
+  user: 'aws/Russell',
+  assistant: 'aws/Nicole',
+  system: 'aws/Emma',
+  tool: 'aws/Geraint',
+} as const
