@@ -39,8 +39,11 @@ export const getNewThreadShape = ({
       system: {
         voice: defaultVoices.system,
       },
+      tool: {
+        voice: defaultVoices.tool,
+      },
     },
-    systemPrompt: defaultSystemPrompt,
+    prompt: defaultSystemPrompt,
     userId,
     permissions: { private: true },
   }
@@ -57,8 +60,9 @@ export const getThread = async (ctx: QueryCtx, id?: Id<'threads'>): Promise<Thre
         user: {},
         assistant: {},
         system: {},
+        tool: {},
       },
-      systemPrompt: defaultSystemPrompt,
+      prompt: defaultSystemPrompt,
       owner: await getUser(ctx, ctx.viewerIdX()),
       userId: ctx.viewerIdX(),
       permissions: { private: true },
@@ -146,14 +150,14 @@ export const send = mutation({
   args: {
     threadId: v.optional(v.id('threads')),
     messages: v.array(v.object(messagesFields)),
-    systemPrompt: v.optional(v.string()),
+    prompt: v.optional(v.string()),
     permissions: v.optional(permissionsFields),
   },
   handler: async (ctx, args) => {
     const thread = await getOrCreateThread(ctx, args.threadId)
 
-    if (args.systemPrompt && thread.systemPrompt !== args.systemPrompt) {
-      await thread.patch({ systemPrompt: args.systemPrompt })
+    if (args.prompt && thread.prompt !== args.prompt) {
+      await thread.patch({ prompt: args.prompt })
     }
 
     for (const message of args.messages) {
@@ -162,8 +166,16 @@ export const send = mutation({
         .optional()
         .transform((v) => (v ? v.slice(0, 30) : undefined))
         .parse(message.name)
-      if (message.role === 'user' && name !== undefined)
-        await ctx.table('threads').getX(thread._id).patch({ name })
+      if (message.role === 'user' && name !== undefined) {
+        const newRoles = {
+          ...thread.roles,
+          user: {
+            ...thread.roles.user,
+            name,
+          },
+        }
+        await ctx.table('threads').getX(thread._id).patch({ roles: newRoles })
+      }
 
       const content = z
         .string()
@@ -207,10 +219,11 @@ export const textToSpeech = mutation({
     const thread = await message.edgeX('thread')
     assert(!thread.deletionTime, 'Thread is deleted')
 
-    const voiceRef =
-      thread.voices?.find((voice) => message?.name && voice?.name === message?.name)?.voiceRef ??
-      thread.voices?.find((voice) => voice.role === message.role)?.voiceRef ??
-      'aws/Russell'
+    const currentVoiceRef =
+      message.role === 'user'
+        ? thread.roles.user.voices?.find((voice) => voice.name === message.name)?.voice
+        : thread.roles[message.role].voice
+    const voiceRef = currentVoiceRef ?? defaultVoices[message.role]
 
     const existingSpeech = await getSpeech(ctx, message.speechId)
     if (existingSpeech?.voiceRef === voiceRef) {
@@ -233,6 +246,7 @@ export const update = mutation({
     id: v.id('threads'),
     fields: v.object({
       ...threadsFields,
+      roles: v.optional(threadsFields.roles),
       permissions: v.optional(threadsFields.permissions),
     }),
   },
@@ -258,10 +272,10 @@ export const getMessageContext = internalQuery({
       .filter((q) => q.lte(q.field('_creationTime'), message._creationTime))
       .docs()
 
-    if (thread.systemPrompt) {
+    if (thread.prompt) {
       const systemMessage = {
         role: 'system' as const,
-        content: thread.systemPrompt,
+        content: thread.prompt,
         llmParameters: undefined,
       }
       return [systemMessage, ...messages]
@@ -328,7 +342,11 @@ export const internalGet = internalQuery({
 export const internalUpdate = internalMutation({
   args: {
     id: v.id('threads'),
-    fields: v.object(threadsFields),
+    fields: v.object({
+      ...threadsFields,
+      roles: v.optional(threadsFields.roles),
+      permissions: v.optional(threadsFields.permissions),
+    }),
   },
   handler: async (ctx, { id, fields }) =>
     await ctx.skipRules.table('threads').getX(id).patch(fields),

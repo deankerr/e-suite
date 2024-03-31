@@ -58,7 +58,7 @@ export const ChatSidebar = forwardRef<HTMLDivElement, ChatSidebarProps>(function
                     permissions={thread.permissions}
                     onPermissionsChange={(permissions) => updatePermissions(permissions)}
                   />
-                  <VoiceoverControlsCard threadHelpers={threadHelpers} />
+                  <VoiceoverControlsCard thread={thread} />
                   <RenameThreadDialog currentTitle={thread?.title} id={thread?._id}>
                     <Button>Rename</Button>
                   </RenameThreadDialog>

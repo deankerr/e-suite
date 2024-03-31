@@ -25,6 +25,10 @@ export const jobFields = {
   imageId: v.optional(v.id('images')),
   voiceoverId: v.optional(v.id('voiceovers')),
 }
+const jobs = defineEnt(jobFields)
+  .deletion('soft')
+  .index('messageId', ['messageId'])
+  .index('imageId', ['imageId'])
 
 export const usersFields = {
   username: v.string(),
@@ -95,7 +99,7 @@ export const imagesFields = {
 
 // * Messages
 export const messageFields = {
-  role: vEnum(['system', 'user', 'assistant', 'tool']),
+  role: vEnum(messageRoles),
   name: v.optional(v.string()),
   content: v.string(),
 }
@@ -154,45 +158,35 @@ const speech = defineEnt(speechFields)
 // * Threads
 export const threadsFields = {
   title: v.optional(v.string()),
-  systemPrompt: v.optional(v.string()), //# remove
   prompt: v.optional(v.string()),
-  name: v.optional(v.string()), //# remove
   parameters: v.optional(inferenceParametersFields),
   permissions: permissionsFields,
-  roles: v.optional(
-    v.object({
-      user: v.object({
-        name: v.optional(v.string()),
-        voice: v.optional(v.string()),
-        voices: v.optional(
-          v.array(
-            v.object({
-              name: v.string(),
-              voice: v.string(),
-            }),
-          ),
+  roles: v.object({
+    user: v.object({
+      name: v.optional(v.string()),
+      voice: v.optional(v.string()),
+      voices: v.optional(
+        v.array(
+          v.object({
+            name: v.string(),
+            voice: v.string(),
+          }),
         ),
-      }),
-      assistant: v.object({
-        name: v.optional(v.string()),
-        voice: v.optional(v.string()),
-      }),
-      system: v.object({
-        name: v.optional(v.string()),
-        voice: v.optional(v.string()),
-      }),
+      ),
     }),
-  ),
-  voices: v.optional(
-    //# remove
-    v.array(
-      v.object({
-        role: vEnum(messageRoles),
-        name: v.optional(v.string()),
-        voiceRef: v.string(),
-      }),
-    ),
-  ),
+    assistant: v.object({
+      name: v.optional(v.string()),
+      voice: v.optional(v.string()),
+    }),
+    system: v.object({
+      name: v.optional(v.string()),
+      voice: v.optional(v.string()),
+    }),
+    tool: v.object({
+      name: v.optional(v.string()),
+      voice: v.optional(v.string()),
+    }),
+  }),
 }
 const threads = defineEnt(threadsFields)
   .edge('user')
@@ -228,12 +222,7 @@ const schema = defineEntSchema(
       .deletion('soft')
       .field('order', v.number(), { index: true }),
 
-    jobs: defineEnt(jobFields)
-      .deletion('soft')
-      .index('messageId', ['messageId'])
-      .index('imageId', ['imageId'])
-      .index('voiceoverId', ['voiceoverId']),
-
+    jobs,
     messages,
     speech,
     threads,

@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useState } from 'react'
 import { Card, Heading, Select, TextFieldInput } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
 import { toast } from 'sonner'
@@ -8,22 +8,22 @@ import { cn } from '@/lib/utils'
 import { Button } from '../ui/Button'
 import { Label } from '../ui/Label'
 
-import type { ThreadHelpers } from './useThread'
-import type { Message } from '@/convex/threads/threads'
+import type { Message, Thread } from '@/convex/threads/threads'
 import type { Collection } from '@/convex/types'
 import type { Voice } from '@/convex/voices'
 import type { ClassNameValue } from '@/lib/utils'
 
 type VoiceoverControlsCardProps = {
-  threadHelpers: ThreadHelpers
+  thread: Thread
 } & React.ComponentProps<typeof Card>
 
 export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControlsCardProps>(
-  function VoiceoverControlsCard({ threadHelpers, className, ...props }, forwardedRef) {
+  function VoiceoverControlsCard({ thread, className, ...props }, forwardedRef) {
     const voicesAvailableList = useQuery(api.voices.list)
-    const voices = threadHelpers.voices
 
-    const updateOpt = useMutation(api.threads.threads.update).withOptimisticUpdate(
+    const roles = { ...thread.roles, tool: {} }
+
+    const updateOptimistic = useMutation(api.threads.threads.update).withOptimisticUpdate(
       (localStore, { id, fields }) => {
         const existingThread = localStore.getQuery(api.threads.threads.get, { id })
         if (!existingThread) return
@@ -39,33 +39,13 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
       },
     )
 
-    const handleUpdate = ({
-      role,
-      name,
-      voiceRef,
-    }: {
-      role: Message['role']
-      name?: string
-      voiceRef: string
-    }) => {
-      const threadId = threadHelpers.thread?._id
-      if (!threadId) return
-
-      const newVoices = [
-        ...voices.filter((voice) => {
-          const rem = voice.role !== role && voice.name !== name
-          console.log(voice.role, role, voice.name, name)
-          return rem
-        }),
-        { role, name, voiceRef },
-      ].filter((voice) => voice.voiceRef !== 'none')
-
+    const handleUpdate = (roles: Thread['roles']) => {
       const send = async () => {
         try {
-          await updateOpt({
-            id: threadId,
+          await updateOptimistic({
+            id: thread._id,
             fields: {
-              voices: newVoices,
+              roles,
             },
           })
         } catch (err) {
@@ -77,7 +57,34 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
       void send()
     }
 
-    useEffect(() => console.table(voices), [voices])
+    const handleRoleUpdate = ({ role, voiceRef }: { role: Message['role']; voiceRef: string }) => {
+      if (role === 'tool') return
+
+      const newRoles = {
+        ...roles,
+        [role]: { ...roles[role], voice: voiceRef },
+      }
+      handleUpdate(newRoles)
+    }
+
+    const handleNamedUserUpdate = ({ name, voiceRef }: { name: string; voiceRef: string }) => {
+      const userVoices = roles.user.voices ?? []
+      const index = userVoices.findIndex((voice) => voice.name === name)
+      const voices =
+        index >= 0
+          ? userVoices.with(index, { name, voice: voiceRef })
+          : [...userVoices, { name, voice: voiceRef }]
+
+      const newRoles = {
+        ...roles,
+        user: {
+          ...roles.user,
+          voices,
+        },
+      }
+
+      handleUpdate(newRoles)
+    }
 
     return (
       <Card size="1" {...props} ref={forwardedRef}>
@@ -93,24 +100,24 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
               <Label className="text-sm">AI</Label>
               <VoiceSelect
                 voicesList={voicesAvailableList}
-                value={voices.find((voice) => voice.role === 'assistant')?.voiceRef}
-                onValueChange={(value) => handleUpdate({ role: 'assistant', voiceRef: value })}
+                value={roles.assistant.voice}
+                onValueChange={(value) => handleRoleUpdate({ role: 'assistant', voiceRef: value })}
               />
             </div>
             <div className="flex-between">
               <Label className="text-sm">User</Label>
               <VoiceSelect
                 voicesList={voicesAvailableList}
-                value={voices.find((voice) => voice.role === 'user' && !voice.name)?.voiceRef}
-                onValueChange={(value) => handleUpdate({ role: 'user', voiceRef: value })}
+                value={roles.user.voice}
+                onValueChange={(value) => handleRoleUpdate({ role: 'user', voiceRef: value })}
               />
             </div>
             <div className="flex-between">
               <Label className="text-sm">System</Label>
               <VoiceSelect
                 voicesList={voicesAvailableList}
-                value={voices.find((voice) => voice.role === 'system')?.voiceRef}
-                onValueChange={(value) => handleUpdate({ role: 'system', voiceRef: value })}
+                value={roles.system.voice}
+                onValueChange={(value) => handleRoleUpdate({ role: 'system', voiceRef: value })}
               />
             </div>
           </div>
@@ -120,23 +127,20 @@ export const VoiceoverControlsCard = forwardRef<HTMLDivElement, VoiceoverControl
               <div className="w-1/2 text-sm font-semibold">Name</div>
               <div className="w-1/2 text-sm font-semibold">Voice</div>
             </div>
-            {voices.map(({ role, name, voiceRef }) => {
-              if (role !== 'user' || !name) return null
-              return (
-                <div key={name} className="flex-between">
-                  <Label className="truncate text-sm">{name}</Label>
-                  <VoiceSelect
-                    voicesList={voicesAvailableList}
-                    value={voiceRef}
-                    onValueChange={(value) => handleUpdate({ role: 'user', name, voiceRef: value })}
-                  />
-                </div>
-              )
-            })}
+            {roles.user.voices?.map(({ name, voice }) => (
+              <div key={name} className="flex-between">
+                <Label className="truncate text-sm">{name}</Label>
+                <VoiceSelect
+                  voicesList={voicesAvailableList}
+                  value={voice}
+                  onValueChange={(value) => handleNamedUserUpdate({ name, voiceRef: value })}
+                />
+              </div>
+            ))}
 
             <NameVoiceInput
               voicesList={voicesAvailableList}
-              onConfirm={(name, value) => handleUpdate({ role: 'user', name, voiceRef: value })}
+              onConfirm={(name, value) => handleNamedUserUpdate({ name, voiceRef: value })}
             />
           </div>
         </div>

@@ -21,7 +21,6 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
 
   const thread = useQuery(api.threads.threads.get, { id: threadId })
   const messages = useMemo(() => thread?.messages, [thread?.messages])
-  const voices = useMemo(() => thread?.voices ?? [], [thread?.voices])
 
   useVoiceoverPlayer(messages)
 
@@ -37,9 +36,13 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
       systemPrompt: createTextInputAtom({
         label: 'System Prompt',
         name: 'systemPrompt',
-        initialValue: thread?.systemPrompt ?? '',
+        initialValue: thread?.prompt ?? '',
       }),
-      name: createTextInputAtom({ label: 'Name', name: 'name', initialValue: thread?.name ?? '' }),
+      name: createTextInputAtom({
+        label: 'Name',
+        name: 'name',
+        initialValue: thread?.roles.user?.name ?? '',
+      }),
       model: createTextInputAtom({
         label: 'Model',
         name: 'model',
@@ -88,8 +91,8 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
     }),
     [
       threadId,
-      thread?.name,
-      thread?.systemPrompt,
+      thread?.prompt,
+      thread?.roles.user?.name,
       thread?.parameters?.model,
       thread?.parameters?.max_tokens,
       thread?.parameters?.temperature,
@@ -138,7 +141,7 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
           inferenceParameters,
         },
       ],
-      systemPrompt,
+      prompt: systemPrompt,
     })
       .then((id) => {
         console.log('sent', id)
@@ -170,7 +173,7 @@ export const useThread = ({ threadId }: { threadId?: Id<'threads'> }) => {
       })
   }
 
-  return { thread, messages, voices, send, threadAtoms, updatePermissions }
+  return { thread, messages, send, threadAtoms, updatePermissions }
 }
 
 function createThreadAtoms(threadId?: string) {
