@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "start": "next start",
-    "dev": "next dev",
-    "dev:convex": "pnpm dlx convex dev",
-    "build": "if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm build-production; else pnpm build-development; fi",
-    "build-development": "next build",
-    "build-production": "pnpm dlx convex deploy --cmd 'next build'",
+    "build": "pnpm dlx convex deploy --cmd 'next build'",
+    "dev": "pnpm run '/^dev:.*/'",
+    "dev:client": "next dev",
+    "dev:server": "convex dev",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
