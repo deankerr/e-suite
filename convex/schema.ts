@@ -1,13 +1,16 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { v } from 'convex/values'
+import { zodToConvexFields } from 'convex-helpers/server/zod'
+import z from 'zod'
 
 export const usersFields = {
-  tokenIdentifier: v.string(),
-  name: v.string(),
-  imageUrl: v.string(),
-  role: v.union(v.literal('user'), v.literal('admin')),
+  tokenIdentifier: z.string(),
+  name: z.string(),
+  imageUrl: z.string(),
+  role: z.enum(['user', 'admin']),
 }
-const users = defineEnt(usersFields).deletion('soft').index('tokenIdentifier', ['tokenIdentifier'])
+const users = defineEnt(zodToConvexFields(usersFields))
+  .deletion('soft')
+  .index('tokenIdentifier', ['tokenIdentifier'])
 
 const schema = defineEntSchema(
   {

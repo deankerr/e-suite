@@ -15,7 +15,6 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as constants from "../constants.js";
-import type * as del from "../del.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as providers_aws from "../providers/aws.js";
@@ -24,6 +23,7 @@ import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as rules from "../rules.js";
 import type * as types from "../types.js";
+import type * as users from "../users.js";
 import type * as util from "../util.js";
 import type * as utils_retrier from "../utils/retrier.js";
 import type * as validators from "../validators.js";
@@ -38,7 +38,6 @@ import type * as validators from "../validators.js";
  */
 declare const fullApi: ApiFromModules<{
   constants: typeof constants;
-  del: typeof del;
   functions: typeof functions;
   http: typeof http;
   "providers/aws": typeof providers_aws;
@@ -47,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   "providers/togetherai": typeof providers_togetherai;
   rules: typeof rules;
   types: typeof types;
+  users: typeof users;
   util: typeof util;
   "utils/retrier": typeof utils_retrier;
   validators: typeof validators;
