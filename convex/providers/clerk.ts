@@ -3,7 +3,7 @@ import { Webhook } from 'svix'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
-import { getEnv } from '../util'
+import { getEnv } from '../lib/utils'
 
 import type { WebhookEvent } from '@clerk/nextjs/server'
 

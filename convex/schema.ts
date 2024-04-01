@@ -1,6 +1,44 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
 import z from 'zod'
+
+import { messageRoles } from './constants'
+
+const permissionsSchema = z.object({
+  public: z.boolean(),
+})
+
+export const completionParametersSchema = z.object({
+  model: z.string(),
+  max_tokens: z.number().optional(),
+  stop: z.string().array().optional(),
+  temperature: z.number().optional(),
+  top_p: z.number().optional(),
+  top_k: z.number().optional(),
+  repetition_penalty: z.number().optional(),
+})
+
+export const messagesFields = {
+  role: z.enum(messageRoles),
+  name: z.string().optional(),
+  content: z.string().optional(),
+  inference: z
+    .object({
+      jobId: zid('_scheduled_functions'),
+      parameters: completionParametersSchema,
+    })
+    .optional(),
+}
+const messages = defineEnt(zodToConvexFields(messagesFields)).deletion('soft').edge('thread')
+
+export const threadsFields = {
+  title: z.string(),
+  permissions: permissionsSchema.optional(),
+}
+const threads = defineEnt(zodToConvexFields(threadsFields))
+  .deletion('soft')
+  .edges('messages', { ref: true })
+  .edge('user')
 
 export const usersFields = {
   name: z.string(),
@@ -10,9 +48,13 @@ export const usersFields = {
 const users = defineEnt(zodToConvexFields(usersFields))
   .deletion('soft')
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
+  .field('apiKey', zodToConvex(z.string().optional()), { index: true })
+  .edges('threads', { ref: true })
 
 const schema = defineEntSchema(
   {
+    messages,
+    threads,
     users,
   },
   { schemaValidation: false },

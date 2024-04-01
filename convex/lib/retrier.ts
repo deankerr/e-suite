@@ -47,7 +47,7 @@ export const runAction = async (
   },
 ) => {
   const jobId = await ctx.scheduler.runAfter(0, makeFunctionReference<'action'>(action), actionArgs)
-  await ctx.scheduler.runAfter(0, internal.utils.retrier.retry, {
+  await ctx.scheduler.runAfter(0, internal.lib.retrier.retry, {
     job: jobId,
     action,
     actionArgs,
@@ -80,7 +80,7 @@ export const retry = internalMutation({
       case 'pending':
       case 'inProgress':
         console.log(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
-        await ctx.scheduler.runAfter(args.waitBackoff, internal.utils.retrier.retry, {
+        await ctx.scheduler.runAfter(args.waitBackoff, internal.lib.retrier.retry, {
           ...args,
           waitBackoff: args.waitBackoff * args.base,
         })
@@ -97,7 +97,7 @@ export const retry = internalMutation({
           makeFunctionReference<'action'>(args.action),
           args.actionArgs,
         )
-        await ctx.scheduler.runAfter(args.retryBackoff, internal.utils.retrier.retry, {
+        await ctx.scheduler.runAfter(args.retryBackoff, internal.lib.retrier.retry, {
           ...args,
           job: newJob,
           retryBackoff: args.retryBackoff * args.base,

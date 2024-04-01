@@ -2,7 +2,7 @@
 
 import ky from 'ky'
 
-import { insist } from '../util'
+import { insist } from '../lib/utils'
 
 export const getElevenlabsApiKey = () => {
   const apiKey = process.env.ELEVENLABS_API_KEY

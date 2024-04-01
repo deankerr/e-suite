@@ -1,4 +1,5 @@
 import { ConvexError } from 'convex/values'
+import { customAlphabet } from 'nanoid'
 
 import type { Value } from 'convex/values'
 
@@ -19,4 +20,9 @@ export const generateSha256Hash = async (input: string) => {
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
   return hashHex
+}
+
+export const generateRandomString = (length: number) => {
+  const generate = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+  return generate(length)
 }

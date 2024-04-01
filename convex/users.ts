@@ -2,10 +2,17 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { internalMutation, internalQuery, query } from './functions'
+import { generateRandomString } from './lib/utils'
 import { usersFields } from './schema'
 
 const publicUserSchema = z.object(usersFields).nullable()
 
+const userBySchema = z.union([
+  z.object({ id: zid('users') }),
+  z.object({ tokenIdentifier: z.string() }),
+])
+
+//* CRUD
 export const get = internalQuery({
   args: {
     id: zid('users'),
@@ -30,7 +37,7 @@ export const create = internalMutation({
 
 export const update = internalMutation({
   args: {
-    by: z.union([z.object({ id: zid('users') }), z.object({ tokenIdentifier: z.string() })]),
+    by: userBySchema,
     fields: z.object(usersFields).partial(),
   },
   handler: async (ctx, { by, fields }) => {
@@ -41,10 +48,24 @@ export const update = internalMutation({
 
 export const remove = internalMutation({
   args: {
-    by: z.union([z.object({ id: zid('users') }), z.object({ tokenIdentifier: z.string() })]),
+    by: userBySchema,
   },
   handler: async (ctx, { by }) => {
     if ('id' in by) return await ctx.table('users').getX(by.id).delete()
     return await ctx.table('users').getX('tokenIdentifier', by.tokenIdentifier).delete()
+  },
+})
+
+//* API Key
+export const generateApiKey = internalMutation({
+  args: {
+    id: zid('users'),
+  },
+  handler: async (ctx, { id }) => {
+    const key = generateRandomString(32)
+    await ctx
+      .table('users')
+      .getX(id)
+      .patch({ apiKey: `esk_${key}` })
   },
 })
