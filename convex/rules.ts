@@ -23,6 +23,7 @@ export async function getViewerId(
   if (user === null) {
     return null
   }
+
   const viewer = await ctx.skipRules.table('users').get('tokenIdentifier', user.tokenIdentifier)
   return viewer?._id ?? null
 }

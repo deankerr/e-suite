@@ -13,3 +13,6 @@ export const defaultVoices = {
   system: 'aws/Emma',
   tool: 'aws/Geraint',
 } as const
+
+export const maxInputStringLength = 32767
+export const maxMessageNameStringLength = 32

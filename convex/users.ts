@@ -2,15 +2,29 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { internalMutation, internalQuery, query } from './functions'
-import { generateRandomString } from './lib/utils'
+import { generateRandomString, insist } from './lib/utils'
 import { usersFields } from './schema'
+import { QueryCtx } from './types'
 
-const publicUserSchema = z.object(usersFields).nullable()
+const publicUserSchema = z
+  .object({ ...usersFields })
+  .transform((user) => ({ ...user, apiKey: undefined }))
 
 const userBySchema = z.union([
   z.object({ id: zid('users') }),
   z.object({ tokenIdentifier: z.string() }),
 ])
+
+export const getCurrentUser = async (ctx: QueryCtx) => {
+  const user = await ctx.viewer()
+  return publicUserSchema.nullable().parse(user)
+}
+
+export const getCurrentUserX = async (ctx: QueryCtx) => {
+  const user = await getCurrentUser(ctx)
+  insist(user, 'Unable to get current user')
+  return user
+}
 
 //* CRUD
 export const get = internalQuery({
@@ -24,7 +38,7 @@ export const getSelf = query({
   args: {},
   handler: async (ctx) => {
     const user = await ctx.viewer()
-    return publicUserSchema.parse(user)
+    return publicUserSchema.nullable().parse(user)
   },
 })
 

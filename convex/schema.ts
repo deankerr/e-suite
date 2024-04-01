@@ -2,7 +2,7 @@ import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { messageRoles } from './constants'
+import { maxInputStringLength, maxMessageNameStringLength, messageRoles } from './constants'
 
 const permissionsSchema = z.object({
   public: z.boolean(),
@@ -20,11 +20,17 @@ export const completionParametersSchema = z.object({
 
 export const messagesFields = {
   role: z.enum(messageRoles),
-  name: z.string().optional(),
-  content: z.string().optional(),
+  name: z
+    .string()
+    .transform((value) => value.slice(0, maxMessageNameStringLength))
+    .optional(),
+  content: z
+    .string()
+    .transform((value) => value.slice(0, maxInputStringLength))
+    .optional(),
   inference: z
     .object({
-      jobId: zid('_scheduled_functions'),
+      jobId: zid('_scheduled_functions').optional(),
       parameters: completionParametersSchema,
     })
     .optional(),
@@ -32,7 +38,7 @@ export const messagesFields = {
 const messages = defineEnt(zodToConvexFields(messagesFields)).deletion('soft').edge('thread')
 
 export const threadsFields = {
-  title: z.string(),
+  title: z.string().optional(),
   permissions: permissionsSchema.optional(),
 }
 const threads = defineEnt(zodToConvexFields(threadsFields))

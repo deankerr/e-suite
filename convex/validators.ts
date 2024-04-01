@@ -1,20 +1,9 @@
 import z from 'zod'
 
-import { messageRoles, textToSpeechProviders } from './constants'
-
-const MAX_STRING_LENGTH = 32767
-
-export const messageValidator = z.object({
-  role: z.enum(messageRoles),
-  name: z
-    .string()
-    .optional()
-    .transform((value) => (value ? value.slice(0, 32) : undefined)),
-  content: z.string().transform((value) => value.slice(0, MAX_STRING_LENGTH)),
-})
+import { maxInputStringLength, textToSpeechProviders } from './constants'
 
 export const voiceoverValidator = z.object({
-  text: z.string().transform((value) => value.slice(0, MAX_STRING_LENGTH)),
+  text: z.string().transform((value) => value.slice(0, maxInputStringLength)),
   provider: z.enum(textToSpeechProviders),
   parameters: z.union([
     z.object({
