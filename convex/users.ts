@@ -13,15 +13,28 @@ export const get = query({
 
 export const create = internalMutation({
   args: {
-    fields: z.object(usersFields),
+    fields: z.object({ tokenIdentifier: z.string(), ...usersFields }),
   },
   handler: async (ctx, { fields }) => await ctx.table('users').insert(fields),
 })
 
 export const update = internalMutation({
   args: {
-    id: zid('users'),
+    by: z.union([z.object({ id: zid('users') }), z.object({ tokenIdentifier: z.string() })]),
     fields: z.object(usersFields).partial(),
   },
-  handler: async (ctx, { id, fields }) => await ctx.table('users').getX(id).patch(fields),
+  handler: async (ctx, { by, fields }) => {
+    if ('id' in by) return await ctx.table('users').getX(by.id).patch(fields)
+    return await ctx.table('users').getX('tokenIdentifier', by.tokenIdentifier).patch(fields)
+  },
+})
+
+export const remove = internalMutation({
+  args: {
+    by: z.union([z.object({ id: zid('users') }), z.object({ tokenIdentifier: z.string() })]),
+  },
+  handler: async (ctx, { by }) => {
+    if ('id' in by) return await ctx.table('users').getX(by.id).delete()
+    return await ctx.table('users').getX('tokenIdentifier', by.tokenIdentifier).delete()
+  },
 })

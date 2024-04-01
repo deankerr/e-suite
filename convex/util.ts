@@ -1,12 +1,11 @@
-import { ConvexError, v, Validator } from 'convex/values'
+import { ConvexError } from 'convex/values'
 
 import type { Value } from 'convex/values'
 
-export const vEnum = <const T extends ReadonlyArray<string>>(
-  values: T,
-): Validator<T[number], false, never> => {
-  //@ts-expect-error this should be allowed
-  return v.union(...values.map((e) => v.literal(e)))
+export const getEnv = (prop: string) => {
+  const env = process.env[prop]
+  insist(env, `Unable to get ${prop}`)
+  return env
 }
 
 export function insist<T>(condition: T, data: Value): asserts condition {

@@ -6,7 +6,14 @@ import type { Id } from './_generated/dataModel'
 import type { QueryCtx } from './types'
 
 export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions {
-  return addEntRules(entDefinitions, {})
+  return addEntRules(entDefinitions, {
+    users: {
+      write: async ({ ent: user }) => {
+        // no viewer (internal) or viewer is user
+        return !ctx.viewerId || ctx.viewerId === user?._id
+      },
+    },
+  })
 }
 
 export async function getViewerId(

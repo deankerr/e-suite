@@ -1,10 +1,17 @@
 import { httpRouter } from 'convex/server'
 
 import { httpAction } from './_generated/server'
+import { handleWebhook } from './providers/clerk'
 
 import type { Id } from './_generated/dataModel'
 
 const http = httpRouter()
+
+http.route({
+  path: '/clerk',
+  method: 'POST',
+  handler: handleWebhook,
+})
 
 http.route({
   path: '/image',
