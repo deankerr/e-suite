@@ -4,12 +4,10 @@ import { SignInButton, SignUpButton } from '@clerk/nextjs'
 import { Card, Strong } from '@radix-ui/themes'
 import { AuthLoading, Unauthenticated, useConvexAuth, useQuery } from 'convex/react'
 
-import { ChangeUsernameDialog } from '@/components/ChangeUsernameDialog'
+import { Button } from '@/components/ui/Button'
 import { LoaderBars } from '@/components/ui/LoaderBars'
-import { TopBar } from '@/components/ui/TopBar'
+import { Logo } from '@/components/ui/Logo'
 import { api } from '@/convex/_generated/api'
-import { Button } from '../../components/ui/Button'
-import { Logo } from '../../components/ui/Logo'
 
 export default function HomePage() {
   const { isAuthenticated } = useConvexAuth()
@@ -17,8 +15,6 @@ export default function HomePage() {
 
   return (
     <div className="flex w-full flex-col">
-      <TopBar />
-
       <div className="flex-col-center h-full gap-2 p-4">
         {/* title card */}
         <Card className="min-h-72">
@@ -33,9 +29,10 @@ export default function HomePage() {
                 <div className="text-lg">
                   Welcome <Strong>@{user.name}</Strong>
                 </div>
-                <ChangeUsernameDialog currentUsername={user.name}>
-                  <Button>Change username</Button>
-                </ChangeUsernameDialog>
+
+                <pre className="max-w-[80vw] overflow-y-auto bg-black p-4">
+                  {JSON.stringify(user, null, 2)}
+                </pre>
               </div>
             ) : null}
 

@@ -1,14 +1,24 @@
 import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { internalMutation, query } from './functions'
+import { internalMutation, internalQuery, query } from './functions'
 import { usersFields } from './schema'
 
-export const get = query({
+const publicUserSchema = z.object(usersFields).nullable()
+
+export const get = internalQuery({
   args: {
     id: zid('users'),
   },
   handler: async (ctx, { id }) => await ctx.table('users').get(id),
+})
+
+export const getSelf = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.viewer()
+    return publicUserSchema.parse(user)
+  },
 })
 
 export const create = internalMutation({
