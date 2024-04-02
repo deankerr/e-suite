@@ -7,15 +7,29 @@ import type { QueryCtx } from './types'
 
 export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions {
   return addEntRules(entDefinitions, {
+    messages: {
+      read: async (message) => {
+        // delegate to thread
+        return (await message.edge('thread')) !== null
+      },
+      write: async ({ operation, ent: message, value }) => {
+        if (operation === 'create') {
+          const thread = await ctx.skipRules.table('threads').get(value.threadId)
+          return thread?.userId === ctx.viewerId
+        }
+
+        return (await message.edge('thread')).userId === ctx.viewerId
+      },
+    },
     threads: {
       read: async (thread) => {
         return thread.userId === ctx.viewerId
       },
-    },
-    users: {
-      write: async ({ ent: user }) => {
-        // no viewer (internal) or viewer is user
-        return !ctx.viewerId || ctx.viewerId === user?._id
+      write: async ({ operation, ent: thread, value }) => {
+        if (operation === 'create') {
+          return ctx.viewerId === value.userId
+        }
+        return ctx.viewerId === thread?.userId
       },
     },
   })

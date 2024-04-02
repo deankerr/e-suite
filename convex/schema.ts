@@ -66,7 +66,6 @@ export const usersFields = {
 const users = defineEnt(zodToConvexFields(usersFields))
   .deletion('soft')
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
-  .field('apiKey', zodToConvex(z.string().optional()), { index: true }) //TODO remove
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true })
 

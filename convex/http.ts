@@ -4,7 +4,7 @@ import { ConvexError } from 'convex/values'
 import z from 'zod'
 import { fromZodError } from 'zod-validation-error'
 
-import { internal } from './_generated/api'
+import { api } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { handleWebhook } from './providers/clerk'
 import { messagesFields } from './schema'
@@ -60,7 +60,7 @@ http.route({
     const { threadId, messages } = parsed.data
 
     try {
-      await ctx.runMutation(internal.messages.httpCreate, {
+      await ctx.runMutation(api.messages.create, {
         apiKey,
         threadId,
         messages,

@@ -70,20 +70,6 @@ export const remove = internalMutation({
   },
 })
 
-//* API Key
-export const generateApiKey = internalMutation({
-  args: {
-    id: zid('users'),
-  },
-  handler: async (ctx, { id }) => {
-    const key = generateRandomString(32)
-    await ctx
-      .table('users')
-      .getX(id)
-      .patch({ apiKey: `esk_${key}` })
-  },
-})
-
 //* Users API Keys
 export const generateNextApiKey = mutation({
   args: {},

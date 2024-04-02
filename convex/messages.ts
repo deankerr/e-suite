@@ -1,5 +1,4 @@
 import { zid } from 'convex-helpers/server/zod'
-import { ConvexError } from 'convex/values'
 import z from 'zod'
 
 import { Id } from './_generated/dataModel'
@@ -76,24 +75,6 @@ export const list = query({
       .order('desc')
       .take(limit)
       .map((message) => publicMessageSchema.parse(message))
-  },
-})
-
-//* HTTP methods
-export const httpCreate = internalMutation({
-  args: {
-    apiKey: z.string(),
-    threadId: zid('threads'),
-    messages: z.object(messagesFields).array(),
-  },
-  handler: async (ctx, { apiKey, threadId, messages }) => {
-    const user = await ctx.skipRules
-      .table('users', 'apiKey', (q) => q.eq('apiKey', apiKey))
-      .uniqueX()
-    const thread = await ctx.table('threads').getX(threadId)
-    if (user._id !== thread.userId) throw new ConvexError({ message: 'Unauthorized', status: 401 })
-
-    return await createMessages(ctx, { threadId, messages })
   },
 })
 
