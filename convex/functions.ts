@@ -11,7 +11,7 @@ import {
   mutation as baseMutation,
   query as baseQuery,
 } from './_generated/server'
-import { getEntDefinitionsWithRules, getViewerId, getViewerIdWithApi } from './rules'
+import { getEntDefinitionsWithRules, getViewerIdFromApiKey, getViewerIdFromAuth } from './rules'
 import { entDefinitions } from './schema'
 
 import type { MutationCtx as BaseMutationCtx, QueryCtx as BaseQueryCtx } from './_generated/server'
@@ -55,7 +55,7 @@ async function queryCtx(baseCtx: BaseQueryCtx) {
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
 
-  const viewerId = await getViewerId({ ...baseCtx, ...ctx })
+  const viewerId = await getViewerIdFromAuth({ ...baseCtx, ...ctx })
 
   const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
@@ -77,7 +77,7 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
     skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
   }
 
-  const viewerId = await getViewerId({ ...baseCtx, ...ctx })
+  const viewerId = await getViewerIdFromAuth({ ...baseCtx, ...ctx })
 
   const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
   const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
@@ -101,7 +101,9 @@ export const omniQuery = zCustomQuery(baseQuery, {
       skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
     }
 
-    const viewerId = await getViewerIdWithApi({ ...baseCtx, ...ctx }, apiKey)
+    const viewerId =
+      (await getViewerIdFromAuth({ ...baseCtx, ...ctx })) ??
+      (await getViewerIdFromApiKey({ ...baseCtx, ...ctx }, apiKey))
 
     const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
     const table = entsTableFactory(baseCtx, entDefinitionsWithRules)

@@ -21,45 +21,34 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
   })
 }
 
-export async function getViewerId(
+export async function getViewerIdFromAuth(
   ctx: Omit<QueryCtx, 'table' | 'viewerId' | 'viewer' | 'viewerX'>,
 ): Promise<Id<'users'> | null> {
   const user = await ctx.auth.getUserIdentity()
-  if (user === null) {
-    return null
-  }
+  if (!user) return null
 
   const viewer = await ctx.skipRules.table('users').get('tokenIdentifier', user.tokenIdentifier)
-  return viewer?._id ?? null
+  if (!viewer) return null
+
+  console.debug(`authenticated ${viewer.role}/${viewer.name}/${viewer._id} via jwt`)
+  return viewer._id
 }
 
-export async function getViewerIdWithApi(
+export async function getViewerIdFromApiKey(
   ctx: Omit<QueryCtx, 'table' | 'viewerId' | 'viewer' | 'viewerX'>,
   apiKey?: string,
-): Promise<Id<'users'> | null> {
-  const user = await ctx.auth.getUserIdentity()
-  if (user) {
-    const viewer = await ctx.skipRules.table('users').get('tokenIdentifier', user.tokenIdentifier)
-    if (viewer) {
-      console.log(`authenticated ${viewer.name} ${viewer._id} via jwt`)
-      return viewer._id
-    }
-  }
+) {
+  if (!apiKey) return null
 
-  if (apiKey) {
-    const userApiKey = await ctx.skipRules
-      .table('users_api_keys', 'secret', (q) => q.eq('secret', apiKey))
-      .filter((q) => q.and(q.eq(q.field('valid'), true), q.eq(q.field('deletionTime'), undefined)))
-      .unique()
+  const userApiKey = await ctx.skipRules
+    .table('users_api_keys', 'secret', (q) => q.eq('secret', apiKey))
+    .filter((q) => q.and(q.eq(q.field('valid'), true), q.eq(q.field('deletionTime'), undefined)))
+    .unique()
+  if (!userApiKey) return null
 
-    if (userApiKey) {
-      const viewer = await ctx.skipRules.table('users').get(userApiKey.userId)
-      if (viewer) {
-        console.log('authenticated', viewer.name, viewer._id, 'via api key')
-        return viewer._id
-      }
-    }
-  }
+  const viewer = await ctx.skipRules.table('users').get(userApiKey.userId)
+  if (!viewer) return null
 
-  return null
+  console.debug(`authenticated ${viewer.role}/${viewer.name}/${viewer._id} via api key`)
+  return viewer._id
 }
