@@ -20,9 +20,12 @@ export const completion = internalAction({
 
     if (provider !== 'openrouter') throw new ConvexError('Provider not implemented')
 
+    console.log(messages)
     const result = await openrouter.chatCompletion({ messages, parameters })
     const { content } = result.message
     insist(content !== null, 'Failed to get completion result')
+
+    console.log('result:', result.message.content, result.finish_reason)
     await ctx.runMutation(internal.messages.updateMessageResults, { messageId, content })
   },
 })

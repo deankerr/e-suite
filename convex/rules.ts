@@ -9,8 +9,8 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
   return addEntRules(entDefinitions, {
     messages: {
       read: async (message) => {
-        // delegate to thread
-        return (await message.edge('thread')) !== null
+        const thread = await ctx.skipRules.table('threads').get(message.threadId)
+        return thread !== null && thread.userId === ctx.viewerId
       },
       write: async ({ operation, ent: message, value }) => {
         if (operation === 'create') {

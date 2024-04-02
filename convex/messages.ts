@@ -109,7 +109,7 @@ export const getCompletionContext = internalQuery({
         }
       })
 
-    return { messages: messages as ChatMessage[], ...targetMessage.inference }
+    return { messages: messages.reverse() as ChatMessage[], ...targetMessage.inference }
   },
 })
 
@@ -119,6 +119,6 @@ export const updateMessageResults = internalMutation({
     content: z.string(),
   },
   handler: async (ctx, { messageId, content }) => {
-    return await ctx.table('messages').getX(messageId).patch({ content })
+    return await ctx.skipRules.table('messages').getX(messageId).patch({ content })
   },
 })
