@@ -1,7 +1,7 @@
 import { entsTableFactory } from 'convex-ents'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomAction, zCustomMutation, zCustomQuery } from 'convex-helpers/server/zod'
-import { ConvexError } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 
 import {
   action as baseAction,
@@ -11,10 +11,10 @@ import {
   mutation as baseMutation,
   query as baseQuery,
 } from './_generated/server'
-import { getEntDefinitionsWithRules, getViewerId } from './rules'
+import { getEntDefinitionsWithRules, getViewerId, getViewerIdWithApi } from './rules'
 import { entDefinitions } from './schema'
 
-import type { MutationCtx, QueryCtx } from './_generated/server'
+import type { MutationCtx as BaseMutationCtx, QueryCtx as BaseQueryCtx } from './_generated/server'
 
 export const query = zCustomQuery(
   baseQuery,
@@ -48,7 +48,7 @@ export const action = zCustomAction(baseAction, NoOp)
 
 export const internalAction = zCustomAction(baseInternalAction, NoOp)
 
-async function queryCtx(baseCtx: QueryCtx) {
+async function queryCtx(baseCtx: BaseQueryCtx) {
   const ctx = {
     unsafeDb: baseCtx.db,
     db: undefined as unknown as typeof baseCtx.db,
@@ -70,7 +70,7 @@ async function queryCtx(baseCtx: QueryCtx) {
   return { ...ctx, table, viewer, viewerX, viewerId }
 }
 
-async function mutationCtx(baseCtx: MutationCtx) {
+async function mutationCtx(baseCtx: BaseMutationCtx) {
   const ctx = {
     unsafeDb: baseCtx.db,
     db: undefined as unknown as typeof baseCtx.db,
@@ -91,3 +91,28 @@ async function mutationCtx(baseCtx: MutationCtx) {
 
   return { ...ctx, table, viewer, viewerX, viewerId }
 }
+
+export const omniQuery = zCustomQuery(baseQuery, {
+  args: { apiKey: v.optional(v.string()) },
+  input: async (baseCtx, { apiKey }) => {
+    const ctx = {
+      unsafeDb: baseCtx.db,
+      db: undefined as unknown as typeof baseCtx.db,
+      skipRules: { table: entsTableFactory(baseCtx, entDefinitions) },
+    }
+
+    const viewerId = await getViewerIdWithApi({ ...baseCtx, ...ctx }, apiKey)
+
+    const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
+    const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
+
+    const viewer = async () => (viewerId !== null ? await table('users').get(viewerId) : null)
+    const viewerX = async () => {
+      const ent = await viewer()
+      if (ent === null) throw new ConvexError('Expected authenticated viewer')
+      return ent
+    }
+
+    return { ctx: { ...ctx, table, viewer, viewerX, viewerId }, args: {} }
+  },
+})

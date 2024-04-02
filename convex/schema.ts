@@ -71,11 +71,11 @@ const users = defineEnt(zodToConvexFields(usersFields))
   .edges('threads', { ref: true })
 
 export const usersApiKeysFields = {
-  secret: z.string().length(36),
   valid: z.boolean(),
 }
 const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
   .deletion('soft')
+  .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 
 //* Schema

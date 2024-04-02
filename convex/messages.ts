@@ -3,7 +3,7 @@ import { ConvexError } from 'convex/values'
 import z from 'zod'
 
 import { Id } from './_generated/dataModel'
-import { internalMutation, internalQuery, mutation, query } from './functions'
+import { internalMutation, internalQuery, mutation, omniQuery, query } from './functions'
 import { runAction } from './lib/retrier'
 import { insist } from './lib/utils'
 import { messagesFields } from './schema'
@@ -63,7 +63,7 @@ export const get = query({
   },
 })
 
-export const list = query({
+export const list = omniQuery({
   args: {
     threadId: zid('threads'),
     limit: z.number().gte(1).lte(100).default(20),

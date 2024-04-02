@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { mutation, query } from './functions'
+import { mutation, omniQuery, query } from './functions'
 import { createMessages } from './messages'
 import { messagesFields, threadsFields } from './schema'
 
@@ -25,7 +25,7 @@ export const create = mutation({
   },
 })
 
-export const get = query({
+export const get = omniQuery({
   args: {
     threadId: zid('threads'),
   },
