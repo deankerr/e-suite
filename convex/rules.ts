@@ -37,7 +37,7 @@ export async function getViewerIdFromAuth(
 export async function getViewerIdFromApiKey(
   ctx: Omit<QueryCtx, 'table' | 'viewerId' | 'viewer' | 'viewerX'>,
   apiKey?: string,
-) {
+): Promise<Id<'users'> | null> {
   if (!apiKey) return null
 
   const userApiKey = await ctx.skipRules

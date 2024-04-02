@@ -1,14 +1,14 @@
-import { mutation, query } from './functions'
 import { entDefinitions } from './schema'
 
 import type { TableNames } from './_generated/dataModel'
+import type { authOnlyMutation, authOnlyQuery } from './functions'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
 import type { SystemDataModel } from 'convex/server'
 import type OpenAI from 'openai'
 
-export type QueryCtx = CustomCtx<typeof query>
-export type MutationCtx = CustomCtx<typeof mutation>
+export type QueryCtx = CustomCtx<typeof authOnlyQuery>
+export type MutationCtx = CustomCtx<typeof authOnlyMutation>
 
 export type Ent<TableName extends TableNames> = GenericEnt<typeof entDefinitions, TableName>
 export type EntWriter<TableName extends TableNames> = GenericEntWriter<
