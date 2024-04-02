@@ -1,7 +1,7 @@
 export const dimensions = ['portrait', 'square', 'landscape'] as const
 export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
 
-export const chatProviders = ['openai', 'openrouter', 'togetherai'] as const
+export const completionProviders = ['openai', 'openrouter', 'togetherai'] as const
 export const textToSpeechProviders = ['elevenlabs', 'aws'] as const
 
 export const defaultSystemPrompt =

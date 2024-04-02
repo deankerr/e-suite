@@ -5,6 +5,7 @@ import type { TableNames } from './_generated/dataModel'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
 import type { SystemDataModel } from 'convex/server'
+import type OpenAI from 'openai'
 
 export type QueryCtx = CustomCtx<typeof query>
 export type MutationCtx = CustomCtx<typeof mutation>
@@ -25,3 +26,8 @@ export type CollectionGroup<T extends object = {}> = {
   group: CollectionItem<T>[]
 }
 export type Collection<T extends object = {}> = (CollectionItem<T> | CollectionGroup<T>)[]
+
+export type ChatMessage =
+  | OpenAI.ChatCompletionSystemMessageParam
+  | OpenAI.ChatCompletionAssistantMessageParam
+  | OpenAI.ChatCompletionUserMessageParam

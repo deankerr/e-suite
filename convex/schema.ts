@@ -2,7 +2,12 @@ import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { maxInputStringLength, maxMessageNameStringLength, messageRoles } from './constants'
+import {
+  completionProviders,
+  maxInputStringLength,
+  maxMessageNameStringLength,
+  messageRoles,
+} from './constants'
 
 const permissionsSchema = z.object({
   public: z.boolean(),
@@ -31,6 +36,8 @@ export const messagesFields = {
   inference: z
     .object({
       jobId: zid('_scheduled_functions').optional(),
+      provider: z.enum(completionProviders),
+      type: z.enum(['chatCompletion', 'completion']),
       parameters: completionParametersSchema,
     })
     .optional(),

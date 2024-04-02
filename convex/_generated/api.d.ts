@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as completion from "../completion.js";
 import type * as constants from "../constants.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
@@ -23,6 +24,7 @@ import type * as messages from "../messages.js";
 import type * as providers_aws from "../providers/aws.js";
 import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_elevenlabs from "../providers/elevenlabs.js";
+import type * as providers_openrouter from "../providers/openrouter.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as rules from "../rules.js";
@@ -40,6 +42,7 @@ import type * as validators from "../validators.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  completion: typeof completion;
   constants: typeof constants;
   functions: typeof functions;
   http: typeof http;
@@ -49,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   "providers/aws": typeof providers_aws;
   "providers/clerk": typeof providers_clerk;
   "providers/elevenlabs": typeof providers_elevenlabs;
+  "providers/openrouter": typeof providers_openrouter;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
   rules: typeof rules;
