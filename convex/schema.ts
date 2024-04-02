@@ -9,10 +9,12 @@ import {
   messageRoles,
 } from './constants'
 
+//* Permissions
 const permissionsSchema = z.object({
   public: z.boolean(),
 })
 
+//* Parameters
 export const completionParametersSchema = z.object({
   model: z.string(),
   max_tokens: z.number().optional(),
@@ -23,6 +25,7 @@ export const completionParametersSchema = z.object({
   repetition_penalty: z.number().optional(),
 })
 
+//* Messages
 export const messagesFields = {
   role: z.enum(messageRoles),
   name: z
@@ -44,6 +47,7 @@ export const messagesFields = {
 }
 const messages = defineEnt(zodToConvexFields(messagesFields)).deletion('soft').edge('thread')
 
+//* Threads
 export const threadsFields = {
   title: z.string().optional(),
   permissions: permissionsSchema.optional(),
@@ -53,6 +57,7 @@ const threads = defineEnt(zodToConvexFields(threadsFields))
   .edges('messages', { ref: true })
   .edge('user')
 
+//* Users
 export const usersFields = {
   name: z.string(),
   imageUrl: z.string(),
@@ -61,14 +66,25 @@ export const usersFields = {
 const users = defineEnt(zodToConvexFields(usersFields))
   .deletion('soft')
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
-  .field('apiKey', zodToConvex(z.string().optional()), { index: true })
+  .field('apiKey', zodToConvex(z.string().optional()), { index: true }) //TODO remove
+  .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true })
 
+export const usersApiKeysFields = {
+  secret: z.string().length(36),
+  valid: z.boolean(),
+}
+const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
+  .deletion('soft')
+  .edge('user')
+
+//* Schema
 const schema = defineEntSchema(
   {
     messages,
     threads,
     users,
+    users_api_keys,
   },
   { schemaValidation: false },
 )

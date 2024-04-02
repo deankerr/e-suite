@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { internalMutation, internalQuery, query } from './functions'
+import { internalMutation, internalQuery, mutation, query } from './functions'
 import { generateRandomString, insist } from './lib/utils'
 import { usersFields } from './schema'
 import { QueryCtx } from './types'
@@ -81,5 +81,23 @@ export const generateApiKey = internalMutation({
       .table('users')
       .getX(id)
       .patch({ apiKey: `esk_${key}` })
+  },
+})
+
+//* Users API Keys
+export const generateNextApiKey = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.viewerX()
+
+    const existingKeys = await ctx.table('users_api_keys', 'userId', (q) =>
+      q.eq('userId', user._id),
+    )
+    existingKeys.forEach(async (key) => key.patch({ valid: false }))
+
+    const apiKey = `esk_${generateRandomString(32)}`
+    return await ctx
+      .table('users_api_keys')
+      .insert({ secret: apiKey, valid: true, userId: user._id })
   },
 })
