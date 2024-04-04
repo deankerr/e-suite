@@ -81,12 +81,14 @@ export const getCompletionContext = internalQuery({
   handler: async (ctx, { messageId }) => {
     const targetMessage = await ctx.skipRules.table('messages').getX(messageId)
 
+    const limit = targetMessage.inference?.recentMessagesLimit ?? 50
+
     const thread = await targetMessage.edgeX('thread')
     const recentMessages = await thread
       .edgeX('messages')
       .order('desc')
       .filter((q) => q.lt(q.field('_creationTime'), targetMessage._creationTime))
-      .take(20)
+      .take(limit)
 
     const persistantMessages = await thread
       .edgeX('messages')

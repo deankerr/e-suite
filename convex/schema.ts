@@ -42,6 +42,7 @@ export const messagesFields = {
       provider: z.enum(completionProviders),
       type: z.enum(['chatCompletion', 'completion']),
       parameters: completionParametersSchema,
+      recentMessagesLimit: z.number().optional(),
     })
     .optional(),
   persistant: z.boolean().optional(),
