@@ -120,28 +120,28 @@ export const getCompletionContext = internalQuery({
     insist(targetMessage.inference, 'Parameters missing from target message')
 
     const thread = await targetMessage.edgeX('thread')
-    const messages = await thread
+    const recentMessages = await thread
       .edgeX('messages')
       .order('desc')
       .filter((q) => q.lt(q.field('_creationTime'), targetMessage._creationTime))
       .take(20)
-      .map((message) => {
-        const { role, name, content = '' } = message
-        if (role === 'user') {
-          return {
-            role,
-            content,
-            name,
-          }
-        }
 
-        return {
-          role,
-          content,
-        }
-      })
+    const persistantMessages = await thread
+      .edgeX('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('persistant'), true))
 
-    return { messages: messages.reverse() as ChatMessage[], ...targetMessage.inference }
+    const messages = [
+      ...recentMessages,
+      ...persistantMessages.filter((p) => !recentMessages.find((m) => m._id === p._id)),
+    ]
+      .map(({ role, name, content }) => ({ role, name, content }))
+      .reverse() as ChatMessage[]
+
+    const context = { messages, ...targetMessage.inference }
+
+    console.log(context)
+    return context
   },
 })
 

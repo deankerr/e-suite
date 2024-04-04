@@ -20,7 +20,6 @@ export const completion = internalAction({
 
     if (provider !== 'openrouter') throw new ConvexError('Provider not implemented')
 
-    console.log(messages)
     const result = await openrouter.chatCompletion({ messages, parameters })
     const { content } = result.message
     insist(content !== null, 'Failed to get completion result')
