@@ -2,7 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { mutation, query } from './functions'
-import { createMessages } from './messages'
+import { createMessage } from './messages'
 import { messagesFields, threadsFields } from './schema'
 
 const publicThreadsSchema = z.object({
@@ -17,10 +17,12 @@ export const create = mutation({
     ...threadsFields,
     messages: z.object(messagesFields).array().optional(),
   },
-  handler: async (ctx, { messages, ...fields }) => {
+  handler: async (ctx, { messages = [], ...fields }) => {
     const user = await ctx.viewerX()
     const threadId = await ctx.table('threads').insert({ ...fields, userId: user._id })
-    if (messages) await createMessages(ctx, { threadId, messages })
+
+    for (const message of messages) await createMessage(ctx, { threadId, message })
+
     return threadId
   },
 })

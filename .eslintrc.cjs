@@ -6,11 +6,14 @@ module.exports = {
   ignorePatterns: ['convex/_generated', '.next'],
   rules: {
     '@typescript-eslint/no-import-type-side-effects': 'error',
-    // support unused vars during dev
+
+    // downgrade unused/let vars to warning
     '@typescript-eslint/no-unused-vars': [
       'warn',
       { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
     ],
+    'prefer-const': 'warn',
+
     // allow any during dev
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unsafe-argument': 'off',
@@ -18,6 +21,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-return': 'off',
+
     // allow {} during dev (empty react props)
     '@typescript-eslint/ban-types': [
       'error',
@@ -26,6 +30,7 @@ module.exports = {
         extendDefaults: true,
       },
     ],
+
     // thanks vercel
     '@next/next/no-img-element': 'off',
 

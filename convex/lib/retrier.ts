@@ -79,7 +79,7 @@ export const retry = internalMutation({
     switch (status.state.kind) {
       case 'pending':
       case 'inProgress':
-        console.log(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
+        console.debug(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
         await ctx.scheduler.runAfter(args.waitBackoff, internal.lib.retrier.retry, {
           ...args,
           waitBackoff: args.waitBackoff * args.base,
@@ -88,10 +88,10 @@ export const retry = internalMutation({
 
       case 'failed':
         if (args.maxFailures <= 0) {
-          console.log(`Job ${job} failed too many times, not retrying.`)
+          console.error(`Job ${job} failed too many times, not retrying.`)
           break
         }
-        console.log(`Job ${job} failed, retrying in ${args.retryBackoff} ms.`)
+        console.warn(`Job ${job} failed, retrying in ${args.retryBackoff} ms.`)
         const newJob = await ctx.scheduler.runAfter(
           args.retryBackoff,
           makeFunctionReference<'action'>(args.action),

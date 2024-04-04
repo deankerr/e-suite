@@ -4,7 +4,6 @@ import z from 'zod'
 import { Id } from './_generated/dataModel'
 import { internalMutation, internalQuery, mutation, query } from './functions'
 import { runAction } from './lib/retrier'
-import { insist } from './lib/utils'
 import { messagesFields } from './schema'
 
 import type { ChatMessage, MutationCtx } from './types'
@@ -23,7 +22,7 @@ export const createMessage = async (
   { threadId, message }: { threadId: Id<'threads'>; message: z.infer<typeof messageSchema> },
 ) => {
   const parsed = z.object(messagesFields).parse(message)
-  const messageId = await ctx.table('messages').insert({ ...parsed, threadId, persistant: false })
+  const messageId = await ctx.table('messages').insert({ ...parsed, threadId })
 
   if (parsed.inference) {
     const jobId = await runAction(ctx, {
@@ -45,42 +44,6 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     return await createMessage(ctx, args)
-  },
-})
-
-export const createMessages = async (
-  ctx: MutationCtx,
-  { threadId, messages }: { threadId: Id<'threads'>; messages: z.infer<typeof messageSchema>[] },
-) => {
-  return await Promise.all(
-    messages.map(async (message) => {
-      const parsed = z.object(messagesFields).parse(message)
-      const messageId = await ctx
-        .table('messages')
-        .insert({ ...parsed, threadId, persistant: false })
-
-      if (parsed.inference) {
-        const jobId = await runAction(ctx, {
-          action: 'completion:completion',
-          actionArgs: { messageId },
-        })
-        await ctx
-          .table('messages')
-          .getX(messageId)
-          .patch({ inference: { ...parsed.inference, jobId } })
-      }
-      return messageId
-    }),
-  )
-}
-
-export const createMany = mutation({
-  args: {
-    threadId: zid('threads'),
-    messages: z.object(messagesFields).array(),
-  },
-  handler: async (ctx, args) => {
-    return await createMessages(ctx, args)
   },
 })
 
@@ -117,7 +80,6 @@ export const getCompletionContext = internalQuery({
   },
   handler: async (ctx, { messageId }) => {
     const targetMessage = await ctx.skipRules.table('messages').getX(messageId)
-    insist(targetMessage.inference, 'Parameters missing from target message')
 
     const thread = await targetMessage.edgeX('thread')
     const recentMessages = await thread
@@ -152,5 +114,28 @@ export const updateMessageResults = internalMutation({
   },
   handler: async (ctx, { messageId, content }) => {
     return await ctx.skipRules.table('messages').getX(messageId).patch({ content })
+  },
+})
+
+//* migration
+export const migrate = internalMutation({
+  args: {
+    runMigration: z.boolean(),
+  },
+  handler: async (ctx, { runMigration }) => {
+    if (!runMigration) return
+
+    const msgs = await ctx.unsafeDb
+      .query('messages')
+      .filter((q) => q.eq(q.field('persistant'), undefined))
+      .collect()
+    let count = 0
+
+    for (const msg of msgs) {
+      await ctx.unsafeDb.patch(msg._id, { persistant: false })
+      count++
+    }
+
+    return count
   },
 })

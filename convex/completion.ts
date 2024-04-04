@@ -17,6 +17,7 @@ export const completion = internalAction({
       internal.messages.getCompletionContext,
       { messageId },
     )
+    insist(parameters, 'Parameters missing from target message')
 
     if (provider !== 'openrouter') throw new ConvexError('Provider not implemented')
 
@@ -26,5 +27,7 @@ export const completion = internalAction({
 
     console.log('result:', result.message.content, result.finish_reason)
     await ctx.runMutation(internal.messages.updateMessageResults, { messageId, content })
+
+    return null
   },
 })
