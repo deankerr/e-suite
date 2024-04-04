@@ -3,14 +3,14 @@ import { customAlphabet } from 'nanoid'
 
 import type { Value } from 'convex/values'
 
-export const getEnv = (prop: string) => {
-  const env = process.env[prop]
-  insist(env, `Unable to get ${prop}`)
-  return env
+export const getEnv = (env: string) => {
+  const value = process.env[env]
+  insist(value, `Unable to get ${env}`)
+  return value
 }
 
-export function insist<T>(condition: T, data: Value): asserts condition {
-  if (!condition) throw new ConvexError(data)
+export function insist<T>(condition: T, message: string, data?: Value): asserts condition {
+  if (!condition) throw new ConvexError(data ? { message, data } : message)
 }
 
 export const generateSha256Hash = async (input: string) => {

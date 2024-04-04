@@ -12,7 +12,7 @@ export const completion = internalAction({
   args: {
     messageId: zid('messages'),
   },
-  handler: async (ctx, { messageId }) => {
+  handler: async (ctx, { messageId }): Promise<null> => {
     const { messages, provider, parameters } = await ctx.runQuery(
       internal.messages.getCompletionContext,
       { messageId },
@@ -21,13 +21,13 @@ export const completion = internalAction({
 
     if (provider !== 'openrouter') throw new ConvexError('Provider not implemented')
 
-    const result = await openrouter.chatCompletion({ messages, parameters })
-    const { content } = result.message
-    insist(content !== null, 'Failed to get completion result')
+    const completion = await openrouter.chatCompletion({ messages, parameters })
+    console.log(completion, completion.choices)
 
-    console.log('result:', result.message.content, result.finish_reason)
+    const content = completion.choices[0]?.message.content
+    insist(content, 'Failed to get completion result', completion as Record<string, any>)
+
     await ctx.runMutation(internal.messages.updateMessageResults, { messageId, content })
-
     return null
   },
 })

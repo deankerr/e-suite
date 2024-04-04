@@ -21,10 +21,9 @@ export const createMessage = async (
   ctx: MutationCtx,
   { threadId, message }: { threadId: Id<'threads'>; message: z.infer<typeof messageSchema> },
 ) => {
-  const parsed = z.object(messagesFields).parse(message)
-  const messageId = await ctx.table('messages').insert({ ...parsed, threadId })
+  const messageId = await ctx.table('messages').insert({ ...message, threadId })
 
-  if (parsed.inference) {
+  if (message.inference) {
     const jobId = await runAction(ctx, {
       action: 'completion:completion',
       actionArgs: { messageId },
@@ -32,7 +31,7 @@ export const createMessage = async (
     await ctx
       .table('messages')
       .getX(messageId)
-      .patch({ inference: { ...parsed.inference, jobId } })
+      .patch({ inference: { ...message.inference, jobId } })
   }
   return messageId
 }

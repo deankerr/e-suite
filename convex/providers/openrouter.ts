@@ -3,7 +3,7 @@
 import OpenAI from 'openai'
 import z from 'zod'
 
-import { getEnv, insist } from '../lib/utils'
+import { getEnv } from '../lib/utils'
 
 import type { completionParametersSchema } from '../schema'
 import type { ChatMessage } from '../types'
@@ -26,9 +26,7 @@ const chatCompletion = async (args: {
     stream: false,
   })
 
-  const result = completion?.choices?.[0]
-  insist(result, 'Failed to get chat completion')
-  return result
+  return completion
 }
 
 const completion = async (args: {
