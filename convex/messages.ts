@@ -18,6 +18,36 @@ const publicMessageSchema = z.object({
 })
 
 //* CRUD
+export const createMessage = async (
+  ctx: MutationCtx,
+  { threadId, message }: { threadId: Id<'threads'>; message: z.infer<typeof messageSchema> },
+) => {
+  const parsed = z.object(messagesFields).parse(message)
+  const messageId = await ctx.table('messages').insert({ ...parsed, threadId, persistant: false })
+
+  if (parsed.inference) {
+    const jobId = await runAction(ctx, {
+      action: 'completion:completion',
+      actionArgs: { messageId },
+    })
+    await ctx
+      .table('messages')
+      .getX(messageId)
+      .patch({ inference: { ...parsed.inference, jobId } })
+  }
+  return messageId
+}
+
+export const create = mutation({
+  args: {
+    threadId: zid('threads'),
+    message: z.object(messagesFields),
+  },
+  handler: async (ctx, args) => {
+    return await createMessage(ctx, args)
+  },
+})
+
 export const createMessages = async (
   ctx: MutationCtx,
   { threadId, messages }: { threadId: Id<'threads'>; messages: z.infer<typeof messageSchema>[] },
@@ -25,7 +55,9 @@ export const createMessages = async (
   return await Promise.all(
     messages.map(async (message) => {
       const parsed = z.object(messagesFields).parse(message)
-      const messageId = await ctx.table('messages').insert({ ...parsed, threadId })
+      const messageId = await ctx
+        .table('messages')
+        .insert({ ...parsed, threadId, persistant: false })
 
       if (parsed.inference) {
         const jobId = await runAction(ctx, {
@@ -42,7 +74,7 @@ export const createMessages = async (
   )
 }
 
-export const create = mutation({
+export const createMany = mutation({
   args: {
     threadId: zid('threads'),
     messages: z.object(messagesFields).array(),

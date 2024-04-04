@@ -1,5 +1,6 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 import z from 'zod'
 
 import {
@@ -45,7 +46,10 @@ export const messagesFields = {
     })
     .optional(),
 }
-const messages = defineEnt(zodToConvexFields(messagesFields)).deletion('soft').edge('thread')
+const messages = defineEnt(zodToConvexFields(messagesFields))
+  .deletion('soft')
+  .field('persistant', v.boolean(), { default: false })
+  .edge('thread')
 
 //* Threads
 export const threadsFields = {

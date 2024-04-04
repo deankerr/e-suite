@@ -60,7 +60,7 @@ http.route({
     const { threadId, messages } = parsed.data
 
     try {
-      await ctx.runMutation(api.messages.create, {
+      await ctx.runMutation(api.messages.createMany, {
         apiKey,
         threadId,
         messages,
