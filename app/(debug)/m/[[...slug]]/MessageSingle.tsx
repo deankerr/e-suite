@@ -49,15 +49,15 @@ type MessageGalleryProps = {
   className?: ClassNameValue
 }
 
-const fallbackImgUrl = '/black-noise.png'
-
 export const MessageGallery = ({ inference, fileContent, className }: MessageGalleryProps) => {
   const [title, byline] = inference.title?.split('<by>') ?? [
     'A mysterious creation',
     'by no one (nothing)',
   ]
   const files = useQuery(api.files.images.getMany, { imageIds: fileContent.map((f) => f.imageId) })
+  const fallback = [null, null, null, null]
 
+  const images = files ?? fallback
   return (
     <div id="outer-layout" className="flex-col-center min-h-full p-4 sm:p-8 lg:h-full">
       <Card className="min-h-72">
@@ -72,13 +72,15 @@ export const MessageGallery = ({ inference, fileContent, className }: MessageGal
           </div>
 
           <div className="flex grow flex-wrap justify-center overflow-hidden">
-            {files?.map((image) => image && <MImage key={image._id} image={image} />)}
+            {images?.map((image, i) => <MImage key={image?._id ?? i} image={image} />)}
           </div>
         </div>
       </Card>
     </div>
   )
 }
+
+const fallbackImgUrl = '/black-noise.png'
 
 type MImageProps = {
   image?: Ent<'images'> | null
@@ -107,7 +109,7 @@ export const MImage = ({ image, ...props }: MImageProps) => {
         width={width}
         height={height}
         blurDataURL={image?.blurDataURL}
-        className="rounded-6 border-4 border-surface"
+        className="rounded-6 border-4 border-surface "
       />
     </div>
   )
