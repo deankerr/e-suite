@@ -32,6 +32,13 @@ export const get = query({
   handler: async (ctx, { imageId }) => await ctx.table('images').get(imageId),
 })
 
+export const getMany = query({
+  args: {
+    imageIds: zid('images').array(),
+  },
+  handler: async (ctx, { imageIds }) => await ctx.table('images').getMany(imageIds),
+})
+
 export const update = internalMutation({
   args: {
     imageId: zid('images'),

@@ -79,6 +79,7 @@ export const generationInference = z.object({
     .transform((value) => value.slice(0, maxTitleStringLength))
     .optional(),
 })
+export type GenerationInference = z.infer<typeof generationInference>
 
 //* Messages
 export const messageContentSchema = z.union([

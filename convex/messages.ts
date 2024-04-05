@@ -17,6 +17,7 @@ const publicMessageSchema = z.object({
   _id: zid('messages'),
   _creationTime: z.number(),
 })
+export type Message = z.infer<typeof publicMessageSchema>
 
 //* CRUD
 export const createMessage = async (
