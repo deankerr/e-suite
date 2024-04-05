@@ -106,7 +106,7 @@ export const retry = internalMutation({
         break
 
       case 'success':
-        console.log(`Job ${job} succeeded.`)
+        console.debug(`Job ${job} succeeded.`)
         break
       case 'canceled':
         console.log(`Job ${job} was canceled. Not retrying.`)

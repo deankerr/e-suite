@@ -12,7 +12,6 @@ export const textToImage = internalAction({
     const { parameters } = await ctx.runQuery(internal.messages.generationContext, { messageId })
 
     const result = await sinkin.textToImage({ parameters })
-    console.info(result)
 
     const imageIds = await Promise.all(
       result.images.map(async (url) => {

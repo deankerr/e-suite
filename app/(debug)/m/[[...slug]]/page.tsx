@@ -25,19 +25,25 @@ export default function MessagePage({ params }: { params: { slug?: [Id<'messages
               width={image.width}
               height={image.height}
               className="aspect-square h-full object-contain"
+              blurDataURL={image.blurDataURL}
             />
           </div>
         )
       })
     : undefined
 
-  const prompt = 'A geometric, abstract, and minimalistic logo of an orange setting sun'
-  const model = "I Can't Believe It's Not Photography"
-  const author = 'lemmer'
+  if (message?.inference?.type !== 'textToImage')
+    return (
+      <div className="flex-center min-h-full w-full bg-gray-1 p-3 sm:h-full md:p-8">
+        <Card className="sm:aspect-square sm:max-h-full sm:p-4"></Card>
+      </div>
+    )
+
+  const [title, by] = getTitle(message.inference.title)
 
   return (
-    <div className="flex-center min-h-full w-full bg-gray-1 p-3 sm:h-full md:p-8">
-      <Card className="sm:aspect-square sm:max-h-full sm:p-4">
+    <div className="flex-center sm:min-h-none min-h-full w-full bg-gray-1 p-3 sm:h-full md:p-8">
+      <Card className="min-h-full sm:aspect-square sm:max-h-full sm:p-4">
         <div className="flex h-full flex-col items-center justify-center overflow-hidden">
           <div className="">
             <Heading
@@ -47,7 +53,7 @@ export default function MessagePage({ params }: { params: { slug?: [Id<'messages
               }}
               align="center"
             >
-              {prompt}
+              {title}
             </Heading>
             <Heading
               size={{
@@ -56,13 +62,21 @@ export default function MessagePage({ params }: { params: { slug?: [Id<'messages
               }}
               className="mb-3 mt-2 text-gray-11"
               align="center"
-            >{`by ${author} - (${model})`}</Heading>
+            >
+              {by}
+            </Heading>
           </div>
-          <div className="grid w-fit grow overflow-hidden rounded border-4 border-panel-translucent sm:aspect-square sm:grid-cols-2 sm:grid-rows-[50%_50%]">
+          <div className="sm:asXpect-square sm:griXd-rows-[50%_50%] grid w-fit grow overflow-hidden rounded border-4 border-panel-translucent sm:grid-cols-2">
             {images}
           </div>
         </div>
       </Card>
     </div>
   )
+}
+
+const getTitle = (title?: string) => {
+  if (!title) return ['A mysterious creation', 'by no one (nothing)']
+  const t = title.split('<by>')
+  return t
 }

@@ -16,7 +16,7 @@ export const defaultVoices = {
 } as const
 
 export const maxMessageContentStringLength = 32767
-export const maxMessageNameStringLength = 32
-export const maxTitleStringLength = 64
+export const maxMessageNameStringLength = 64
+export const maxTitleStringLength = 256
 
 export const defaultRecentMessagesLimit = 50
