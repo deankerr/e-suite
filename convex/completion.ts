@@ -13,11 +13,11 @@ export const completion = internalAction({
     messageId: zid('messages'),
   },
   handler: async (ctx, { messageId }): Promise<null> => {
-    const { messages, provider, parameters } = await ctx.runQuery(
-      internal.messages.getCompletionContext,
-      { messageId },
-    )
-    insist(parameters, 'Parameters missing from target message')
+    const { messages, inference } = await ctx.runQuery(internal.messages.getCompletionContext, {
+      messageId,
+    })
+    insist(inference, 'Inference parameters missing from target message')
+    const { provider, parameters } = inference
 
     if (provider !== 'openrouter') throw new ConvexError('Provider not implemented')
 

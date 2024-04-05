@@ -2,6 +2,7 @@ export const dimensions = ['portrait', 'square', 'landscape'] as const
 export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
 
 export const completionProviders = ['openai', 'openrouter', 'togetherai'] as const
+export const generationProviders = ['sinkin'] as const
 export const textToSpeechProviders = ['elevenlabs', 'aws'] as const
 
 export const defaultSystemPrompt =
@@ -16,3 +17,5 @@ export const defaultVoices = {
 
 export const maxInputStringLength = 32767
 export const maxMessageNameStringLength = 32
+export const maxTitleStringLength = 64
+export const defaultRecentMessagesLimit = 50

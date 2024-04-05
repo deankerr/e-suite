@@ -6,6 +6,7 @@ import {
   completionProviders,
   maxInputStringLength,
   maxMessageNameStringLength,
+  maxTitleStringLength,
   messageRoles,
 } from './constants'
 
@@ -14,7 +15,7 @@ const permissionsSchema = z.object({
   public: z.boolean(),
 })
 
-//* Parameters
+//* Chat/Completion
 export const completionParametersSchema = z.object({
   model: z.string(),
   max_tokens: z.number().optional(),
@@ -23,6 +24,42 @@ export const completionParametersSchema = z.object({
   top_p: z.number().optional(),
   top_k: z.number().optional(),
   repetition_penalty: z.number().optional(),
+  stream: z.boolean().optional(),
+})
+
+export const chatInference = z.object({
+  jobId: zid('_scheduled_functions').optional(),
+  type: z.literal('chat'),
+  provider: z.enum(completionProviders),
+  parameters: completionParametersSchema,
+
+  recentMessagesLimit: z.number().optional(),
+})
+
+//* Generation
+export const generationParametersSchema = z.object({
+  model: z.string(),
+  prompt: z.string(),
+  negativePrompt: z.string().optional(),
+  width: z.number(),
+  height: z.number(),
+  seed: z.number().optional(),
+  steps: z.string().optional(),
+  guidance: z.number().optional(),
+  lcm: z.boolean().optional(),
+  n: z.number().optional(),
+})
+
+export const generationInference = z.object({
+  jobId: zid('_scheduled_functions').optional(),
+  type: z.literal('textToImage'),
+  provider: z.enum(completionProviders),
+  parameters: generationParametersSchema,
+
+  title: z
+    .string()
+    .transform((value) => value.slice(0, maxTitleStringLength))
+    .optional(),
 })
 
 //* Messages
@@ -36,16 +73,12 @@ export const messagesFields = {
     .string()
     .transform((value) => value.slice(0, maxInputStringLength))
     .optional(),
-  inference: z
-    .object({
-      jobId: zid('_scheduled_functions').optional(),
-      provider: z.enum(completionProviders),
-      type: z.enum(['chatCompletion', 'completion']),
-      parameters: completionParametersSchema,
-      recentMessagesLimit: z.number().optional(),
-    })
-    .optional(),
+
+  inference: z.discriminatedUnion('type', [chatInference, generationInference]).optional(),
+
   persistant: z.boolean().optional(),
+
+  permissions: permissionsSchema.optional(),
 }
 const messages = defineEnt(zodToConvexFields(messagesFields))
   .deletion('soft')
@@ -54,7 +87,11 @@ const messages = defineEnt(zodToConvexFields(messagesFields))
 
 //* Threads
 export const threadsFields = {
-  title: z.string().optional(),
+  title: z
+    .string()
+    .transform((value) => value.slice(0, maxTitleStringLength))
+    .optional(),
+
   permissions: permissionsSchema.optional(),
 }
 const threads = defineEnt(zodToConvexFields(threadsFields))

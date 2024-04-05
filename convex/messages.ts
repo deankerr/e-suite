@@ -2,6 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { Id } from './_generated/dataModel'
+import { defaultRecentMessagesLimit } from './constants'
 import { internalMutation, internalQuery, mutation, query } from './functions'
 import { runAction } from './lib/retrier'
 import { messagesFields } from './schema'
@@ -80,7 +81,11 @@ export const getCompletionContext = internalQuery({
   handler: async (ctx, { messageId }) => {
     const targetMessage = await ctx.skipRules.table('messages').getX(messageId)
 
-    const limit = targetMessage.inference?.recentMessagesLimit ?? 50
+    const { inference } = targetMessage
+    const recentMessagesLimit =
+      inference?.type === 'chat' ? inference.recentMessagesLimit : undefined
+
+    const limit = recentMessagesLimit ?? defaultRecentMessagesLimit
 
     const thread = await targetMessage.edgeX('thread')
     const recentMessages = await thread
@@ -101,7 +106,7 @@ export const getCompletionContext = internalQuery({
       .map(({ role, name, content }) => ({ role, name, content }))
       .reverse() as ChatMessage[]
 
-    const context = { messages, ...targetMessage.inference }
+    const context = { messages, inference }
 
     console.log(context)
     return context
