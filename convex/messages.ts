@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { ConvexError } from 'convex/values'
 import z from 'zod'
 
 import { Id } from './_generated/dataModel'
@@ -25,14 +26,28 @@ export const createMessage = async (
   const messageId = await ctx.table('messages').insert({ ...message, threadId })
 
   if (message.inference) {
-    const jobId = await runAction(ctx, {
-      action: 'completion:completion',
-      actionArgs: { messageId },
-    })
-    await ctx
-      .table('messages')
-      .getX(messageId)
-      .patch({ inference: { ...message.inference, jobId } })
+    if (message.inference.type === 'chat') {
+      const jobId = await runAction(ctx, {
+        action: 'completion:completion',
+        actionArgs: { messageId },
+      })
+      await ctx
+        .table('messages')
+        .getX(messageId)
+        .patch({ inference: { ...message.inference, jobId } })
+    }
+
+    if (message.inference.type === 'textToImage') {
+      const jobId = await runAction(ctx, {
+        action: 'generation:textToImage',
+        actionArgs: { messageId },
+        maxFailures: 2,
+      })
+      await ctx
+        .table('messages')
+        .getX(messageId)
+        .patch({ inference: { ...message.inference, jobId } })
+    }
   }
   return messageId
 }
@@ -110,6 +125,21 @@ export const getCompletionContext = internalQuery({
 
     console.log(context)
     return context
+  },
+})
+
+export const generationContext = internalQuery({
+  args: {
+    messageId: zid('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    const { inference } = await ctx.skipRules.table('messages').getX(messageId)
+
+    if (inference && inference.type === 'textToImage') {
+      return inference
+    }
+
+    throw new ConvexError('Message has no generation inference')
   },
 })
 

@@ -17,6 +17,7 @@ import type {
 import type * as completion from "../completion.js";
 import type * as constants from "../constants.js";
 import type * as functions from "../functions.js";
+import type * as generation from "../generation.js";
 import type * as http from "../http.js";
 import type * as lib_retrier from "../lib/retrier.js";
 import type * as lib_utils from "../lib/utils.js";
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   completion: typeof completion;
   constants: typeof constants;
   functions: typeof functions;
+  generation: typeof generation;
   http: typeof http;
   "lib/retrier": typeof lib_retrier;
   "lib/utils": typeof lib_utils;

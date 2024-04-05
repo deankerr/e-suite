@@ -4,6 +4,7 @@ import z from 'zod'
 
 import {
   completionProviders,
+  generationProviders,
   maxInputStringLength,
   maxMessageNameStringLength,
   maxTitleStringLength,
@@ -53,7 +54,7 @@ export const generationParametersSchema = z.object({
 export const generationInference = z.object({
   jobId: zid('_scheduled_functions').optional(),
   type: z.literal('textToImage'),
-  provider: z.enum(completionProviders),
+  provider: z.enum(generationProviders),
   parameters: generationParametersSchema,
 
   title: z
