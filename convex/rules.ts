@@ -9,6 +9,7 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
   return addEntRules(entDefinitions, {
     messages: {
       read: async (message) => {
+        if (message.permissions?.public === true) return true
         const thread = await ctx.skipRules.table('threads').get(message.threadId)
         return thread !== null && thread.userId === ctx.viewerId
       },

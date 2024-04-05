@@ -15,7 +15,8 @@ export const defaultVoices = {
   tool: 'aws/Geraint',
 } as const
 
-export const maxInputStringLength = 32767
+export const maxMessageContentStringLength = 32767
 export const maxMessageNameStringLength = 32
 export const maxTitleStringLength = 64
+
 export const defaultRecentMessagesLimit = 50

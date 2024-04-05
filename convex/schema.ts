@@ -1,11 +1,11 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
-import z from 'zod'
+import { z } from 'zod'
 
 import {
   completionProviders,
   generationProviders,
-  maxInputStringLength,
+  maxMessageContentStringLength,
   maxMessageNameStringLength,
   maxTitleStringLength,
   messageRoles,
@@ -37,6 +37,23 @@ export const chatInference = z.object({
   recentMessagesLimit: z.number().optional(),
 })
 
+//* Images
+export const imagesFields = {
+  jobId: zid('_scheduled_functions').optional(),
+  sourceUrl: z.string(),
+  width: z.number(),
+  height: z.number(),
+
+  storageId: zid('_storage').optional(),
+  storageUrl: z.string().optional(),
+
+  blurDataURL: z.string().optional(),
+  color: z.string().optional(),
+}
+const images = defineEnt(zodToConvexFields(imagesFields))
+  .deletion('soft')
+  .index('sourceUrl', ['sourceUrl'])
+
 //* Generation
 export const generationParametersSchema = z.object({
   model: z.string(),
@@ -64,16 +81,23 @@ export const generationInference = z.object({
 })
 
 //* Messages
+export const messageContentSchema = z.union([
+  z.string().transform((value) => value.slice(0, maxMessageContentStringLength)),
+  z
+    .object({
+      type: z.literal('image'),
+      imageId: zid('images'),
+    })
+    .array(),
+])
+
 export const messagesFields = {
   role: z.enum(messageRoles),
   name: z
     .string()
     .transform((value) => value.slice(0, maxMessageNameStringLength))
     .optional(),
-  content: z
-    .string()
-    .transform((value) => value.slice(0, maxInputStringLength))
-    .optional(),
+  content: messageContentSchema.optional(),
 
   inference: z.discriminatedUnion('type', [chatInference, generationInference]).optional(),
 
@@ -123,6 +147,7 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
 //* Schema
 const schema = defineEntSchema(
   {
+    images,
     messages,
     threads,
     users,

@@ -72,6 +72,24 @@ export const get = query({
   },
 })
 
+export const getContent = query({
+  args: {
+    messageId: zid('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    const message = await ctx.table('messages').getX(messageId)
+
+    if (!Array.isArray(message.content)) return message
+
+    return {
+      ...message,
+      content: await Promise.all(
+        message.content.map(async ({ imageId }) => await ctx.table('images').getX(imageId)),
+      ),
+    }
+  },
+})
+
 export const list = query({
   args: {
     threadId: zid('threads'),
@@ -151,6 +169,15 @@ export const updateMessageResults = internalMutation({
   handler: async (ctx, { messageId, content }) => {
     return await ctx.skipRules.table('messages').getX(messageId).patch({ content })
   },
+})
+
+export const update = internalMutation({
+  args: {
+    messageId: zid('messages'),
+    fields: z.object(messagesFields).partial(),
+  },
+  handler: async (ctx, { messageId, fields }) =>
+    await ctx.skipRules.table('messages').getX(messageId).patch(fields),
 })
 
 //* migration

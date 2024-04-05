@@ -1,9 +1,9 @@
 import z from 'zod'
 
-import { maxInputStringLength, textToSpeechProviders } from './constants'
+import { maxMessageContentStringLength, textToSpeechProviders } from './constants'
 
 export const voiceoverValidator = z.object({
-  text: z.string().transform((value) => value.slice(0, maxInputStringLength)),
+  text: z.string().transform((value) => value.slice(0, maxMessageContentStringLength)),
   provider: z.enum(textToSpeechProviders),
   parameters: z.union([
     z.object({
