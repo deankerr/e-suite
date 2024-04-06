@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { CanvasRevealEffect } from './CanvasRevealEffect'
 
 type StaticImageProps = {
-  image: Ent<'images'>
+  image: Partial<Ent<'images'>>
   alt: string
 } & React.ComponentProps<'div'>
 

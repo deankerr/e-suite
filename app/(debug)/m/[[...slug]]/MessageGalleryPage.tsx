@@ -22,6 +22,8 @@ export const MessageGalleryPage = ({ inference, content, className }: MessageGal
   const imageIds = Array.isArray(content) ? content.map((f) => f.imageId) : []
   const images = useQuery(api.files.images.getMany, { imageIds })
 
+  const { n = 4, width, height } = inference.parameters
+
   return (
     <div className={cn('flex min-h-full flex-col items-center', className)}>
       <div className="space-y-2 p-4">
@@ -34,10 +36,12 @@ export const MessageGalleryPage = ({ inference, content, className }: MessageGal
       </div>
 
       <div className="flex w-fit flex-wrap justify-center gap-3">
-        {images?.map((image) =>
-          image ? (
+        {Array.from({ length: n }).map((_, i) => {
+          const image = images?.[i] ?? { width, height }
+          const key = images?.[i]?._id ?? i
+          return (
             <Card
-              key={image._id}
+              key={key}
               className={cn(
                 image.height > image.width
                   ? 'max-w-[334px]'
@@ -49,8 +53,8 @@ export const MessageGalleryPage = ({ inference, content, className }: MessageGal
             >
               <StaticImage alt="" image={image} className="h-full" />
             </Card>
-          ) : null,
-        )}
+          )
+        })}
       </div>
     </div>
   )

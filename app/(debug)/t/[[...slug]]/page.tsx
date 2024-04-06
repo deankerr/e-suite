@@ -26,6 +26,6 @@ export default function TPage({ params }: { params: { slug?: [Id<'threads'>] } }
       </div>
     )
   } else {
-    return <SunBarLoader alert />
+    return <SunBarLoader />
   }
 }
