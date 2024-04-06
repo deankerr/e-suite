@@ -20,12 +20,18 @@ export const StaticImage = forwardRef<HTMLDivElement, StaticImageProps>(function
   return (
     <div
       {...props}
-      style={{ width, height }}
       className={cn('overflow-hidden', 'flex rounded-6 border-4 border-gray-1A', className)}
       ref={forwardedRef}
     >
       {storageUrl ? (
-        <NextImage src={storageUrl} alt={alt} fill blurDataURL={blurDataURL} className={cn('')} />
+        <NextImage
+          src={storageUrl}
+          alt={alt}
+          width={width}
+          height={height}
+          blurDataURL={blurDataURL}
+          className={cn('object-contain')}
+        />
       ) : (
         <AnimatePresence>
           <CanvasRevealEffect
