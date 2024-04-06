@@ -16,6 +16,12 @@ const permissionsSchema = z.object({
   public: z.boolean(),
 })
 
+//* Callback
+const callbackFields = z.object({
+  url: z.string(),
+  refId: z.string(),
+})
+
 //* Chat/Completion
 export const completionParametersSchema = z.object({
   model: z.string(),
@@ -30,6 +36,7 @@ export const completionParametersSchema = z.object({
 
 export const chatInference = z.object({
   jobId: zid('_scheduled_functions').optional(),
+  callback: callbackFields.optional(),
   type: z.literal('chat'),
   provider: z.enum(completionProviders),
   parameters: completionParametersSchema,
@@ -65,16 +72,21 @@ export const generationParametersSchema = z.object({
   steps: z.string().optional(),
   guidance: z.number().optional(),
   lcm: z.boolean().optional(),
-  n: z.number().optional(),
+  n: z.number(),
 })
 
 export const generationInference = z.object({
   jobId: zid('_scheduled_functions').optional(),
+  callback: callbackFields.optional(),
   type: z.literal('textToImage'),
   provider: z.enum(generationProviders),
   parameters: generationParametersSchema,
 
   title: z
+    .string()
+    .transform((value) => value.slice(0, maxTitleStringLength))
+    .optional(),
+  byline: z
     .string()
     .transform((value) => value.slice(0, maxTitleStringLength))
     .optional(),
@@ -101,9 +113,7 @@ export const messagesFields = {
   content: messageContentSchema.optional(),
 
   inference: z.discriminatedUnion('type', [chatInference, generationInference]).optional(),
-
   persistant: z.boolean().optional(),
-
   permissions: permissionsSchema.optional(),
 }
 const messages = defineEnt(zodToConvexFields(messagesFields))

@@ -168,7 +168,20 @@ export const updateMessageResults = internalMutation({
     content: z.string(),
   },
   handler: async (ctx, { messageId, content }) => {
-    return await ctx.skipRules.table('messages').getX(messageId).patch({ content })
+    const message = await ctx.skipRules.table('messages').getX(messageId)
+    await message.patch({ content })
+
+    if (message.inference?.callback) {
+      const { url, refId } = message.inference.callback
+      await runAction(ctx, {
+        action: 'completion:callback',
+        actionArgs: {
+          url,
+          refId,
+          content,
+        },
+      })
+    }
   },
 })
 

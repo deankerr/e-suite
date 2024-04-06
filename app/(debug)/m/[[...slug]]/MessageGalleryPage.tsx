@@ -14,10 +14,8 @@ type MessageGalleryPageProps = {
 }
 
 export const MessageGalleryPage = ({ inference, content, className }: MessageGalleryPageProps) => {
-  const [title, byline] = inference.title?.split('<by>') ?? [
-    'A mysterious creation',
-    'by no one (nothing)',
-  ]
+  const title = inference.title ?? 'A mysterious creation'
+  const byline = inference.byline ?? 'by no-one (nothing)'
 
   const imageIds = Array.isArray(content) ? content.map((f) => f.imageId) : []
   const images = useQuery(api.files.images.getMany, { imageIds })

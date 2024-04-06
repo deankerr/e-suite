@@ -1,7 +1,10 @@
 'use node'
 
 import { zid } from 'convex-helpers/server/zod'
+import { ConvexHttpClient } from 'convex/browser'
+import { makeFunctionReference } from 'convex/server'
 import { ConvexError } from 'convex/values'
+import { z } from 'zod'
 
 import { internal } from './_generated/api'
 import { internalAction } from './functions'
@@ -28,6 +31,22 @@ export const completion = internalAction({
     insist(content, 'Failed to get completion result', completion as Record<string, any>)
 
     await ctx.runMutation(internal.messages.updateMessageResults, { messageId, content })
+
     return null
+  },
+})
+
+export const callback = internalAction({
+  args: {
+    url: z.string(),
+    refId: z.string(),
+    content: z.string(),
+  },
+  handler: async (ctx, { url, refId, content }) => {
+    const client = new ConvexHttpClient(url)
+    await client.mutation(makeFunctionReference<'mutation'>('relay:response'), {
+      refId,
+      content,
+    })
   },
 })
