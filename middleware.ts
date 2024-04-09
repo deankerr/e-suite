@@ -12,7 +12,7 @@ export default authMiddleware({
     '/debug',
     '/debug/fonts',
   ],
-  ignoredRoutes: ['/icon'],
+  ignoredRoutes: ['/icon', '/dev'],
 })
 
 export const config = {

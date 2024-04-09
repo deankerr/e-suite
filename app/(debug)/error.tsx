@@ -14,5 +14,5 @@ export default function Error({
     console.error(error)
   }, [error])
 
-  return <SunBarLoader />
+  return <SunBarLoader alert />
 }

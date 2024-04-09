@@ -10,6 +10,7 @@ import { Id } from '@/convex/_generated/dataModel'
 export default function TPage({ params }: { params: { slug?: [Id<'threads'>] } }) {
   const slug = params.slug ? params.slug[0] : undefined
   const threadId = slug && slug?.length === 32 ? slug : undefined
+
   const queryKey = threadId ? { threadId, limit: 100 } : 'skip'
   const messages = useQuery(api.messages.list, queryKey)
 

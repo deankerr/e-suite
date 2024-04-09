@@ -197,22 +197,9 @@ export const update = internalMutation({
 //* migration
 export const migrate = internalMutation({
   args: {
-    runMigration: z.boolean(),
+    runMigration: z.string(),
   },
   handler: async (ctx, { runMigration }) => {
-    if (!runMigration) return
-
-    const msgs = await ctx.unsafeDb
-      .query('messages')
-      .filter((q) => q.eq(q.field('persistant'), undefined))
-      .collect()
-    let count = 0
-
-    for (const msg of msgs) {
-      await ctx.unsafeDb.patch(msg._id, { persistant: false })
-      count++
-    }
-
-    return count
+    if (runMigration !== 'n') return
   },
 })

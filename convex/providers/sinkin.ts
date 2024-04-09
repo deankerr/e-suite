@@ -56,7 +56,7 @@ export const textToImage = async ({
     throw new ConvexError({ ...error.data })
   }
 
-  throw new ConvexError({ message: 'Invalid resposne', response: JSON.stringify(response) })
+  throw new ConvexError({ message: 'Invalid response', response: JSON.stringify(response) })
 }
 
 export const sinkin = {

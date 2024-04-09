@@ -79,7 +79,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        fanta: ['var(--font-fanta)'],
+        fantasque: ['var(--font-fantasque-sans-mono)'],
         manrope: ['var(--font-manrope)'],
         merriweather: ['var(--font-merriweather)'],
       },
