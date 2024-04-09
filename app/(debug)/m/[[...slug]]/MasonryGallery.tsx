@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Quote } from '@radix-ui/themes'
+import { Card, Quote, Separator } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import NextImage from 'next/image'
 
@@ -27,30 +27,36 @@ export const MasonryGallery = ({
   const imageIds = imageGens.map(({ imageId }) => imageId)
   const images = useQuery(api.files.images.getMany, { imageIds })
 
+  let por = 1
+  let sqr = 1
+  const lan = 1
+
   const imageFrames = imageGens.map((gen, i) => {
-    const image = images?.[i]
-    if (!image) return gen
-    return image
+    const image = images?.[i] ?? gen
+    const ratio = image.width / image.height
+    const order = ratio < 1 ? por++ : ratio > 1 ? lan : sqr++
+
+    return {
+      ...image,
+      order,
+    }
   })
 
   if (!imageFrames) return
-  // md:grid-rows-[repeat(5,_minmax(0,_150px))]
   return (
-    <div
-      {...props}
-      className={cn('flex h-full w-full flex-col items-center gap-4 px-4', className)}
-    >
-      <Card className="mt-4">
-        <div className="flex-col-center gap-2 py-2 sm:px-8">
-          <Quote className="border-b text-3xl">{title}</Quote>
-          <p className="font-merriweather">{byline}</p>
+    <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
+      <Card className="">
+        <div className="flex-col-center gap-2 py-1 sm:px-8">
+          <Quote className="text-center text-3xl">{title}</Quote>
+          <Separator size="4" />
+          <p className="font-merriweather pt-1 text-center text-sm sm:text-base">{byline}</p>
         </div>
       </Card>
 
-      <div className="grid-flow-row-dense flex-col content-start items-start gap-4 sm:grid sm:grid-cols-4 md:grid-cols-[repeat(6,_minmax(0,_150px))]">
+      <div className="grid grid-flow-row-dense grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] gap-4 py-4">
         {/* images */}
         {imageFrames.map((image, i) => (
-          <Img key={i} image={image} />
+          <Img key={i} image={image} style={{ order: image.order }} />
         ))}
       </div>
     </div>
@@ -79,9 +85,8 @@ function Img({
 
   if (!('storageUrl' in image)) {
     return (
-      <Card className={cn(gridCn, aspectCn, className)}>
+      <Card {...props} className={cn(gridCn, aspectCn, className)}>
         <CanvasRevealEffect
-          {...props}
           animationSpeed={3}
           className={cn('', className)}
           colors={[
@@ -94,7 +99,7 @@ function Img({
   }
 
   return (
-    <Card className={cn(gridCn, className)}>
+    <Card {...props} className={cn(gridCn, className)}>
       <NextImage
         key={image._id}
         alt=""
@@ -103,7 +108,7 @@ function Img({
         height={image.height}
         placeholder="blur"
         blurDataURL={image.blurDataURL}
-        className={cn('rounded border border-gray-1 object-contain')}
+        className={cn('h-full rounded border border-gray-6 object-cover object-center')}
       />
     </Card>
   )
