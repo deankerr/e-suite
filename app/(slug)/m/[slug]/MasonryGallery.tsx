@@ -2,12 +2,14 @@
 
 import { Card, Quote, Separator } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
+import dynamic from 'next/dynamic'
 import NextImage from 'next/image'
 
-import { CanvasRevealEffect } from '@/components/ui/CanvasRevealEffect'
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import { ClassNameValue, cn } from '@/lib/utils'
+
+const ImgLoader = dynamic(() => import('@/components/ui/CanvasRevealEffect'))
 
 type DimensionsOrder = { width: number; height: number; order: number }
 type Generation = (DimensionsOrder & Doc<'images'>) | null | undefined
@@ -35,7 +37,7 @@ export const MasonryGallery = ({
         <div className="flex-col-center gap-2 py-1 sm:px-8">
           <Quote className="text-center text-3xl">{title}</Quote>
           <Separator size="4" />
-          <p className="font-merriweather pt-1 text-center text-sm sm:text-base">{byline}</p>
+          <p className="pt-1 text-center font-merriweather text-sm sm:text-base">{byline}</p>
         </div>
       </Card>
 
@@ -77,7 +79,7 @@ function Img({
   if (!('storageUrl' in image)) {
     return (
       <Card {...props} className={cn(gridCn, aspectCn, className)}>
-        <CanvasRevealEffect
+        <ImgLoader
           animationSpeed={3}
           className={cn('', className)}
           colors={[

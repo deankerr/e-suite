@@ -283,3 +283,5 @@ interface ShaderProps {
   }
   maxFps?: number
 }
+
+export default CanvasRevealEffect
