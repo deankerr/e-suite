@@ -6,6 +6,7 @@ import { Id } from './_generated/dataModel'
 import { defaultRecentMessagesLimit } from './constants'
 import { internalMutation, internalQuery, mutation, query } from './functions'
 import { runAction } from './lib/retrier'
+import { getSlug } from './lib/slug'
 import { messagesFields } from './schema'
 
 import type { ChatMessage, MutationCtx } from './types'
@@ -24,7 +25,8 @@ export const createMessage = async (
   ctx: MutationCtx,
   { threadId, message }: { threadId: Id<'threads'>; message: z.infer<typeof messageSchema> },
 ) => {
-  const messageId = await ctx.table('messages').insert({ ...message, threadId })
+  const slug = await getSlug(ctx, 'messages')
+  const messageId = await ctx.table('messages').insert({ ...message, threadId, slug })
 
   if (message.inference) {
     if (message.inference.type === 'chat') {
@@ -227,6 +229,6 @@ export const migrate = internalMutation({
     runMigration: z.string(),
   },
   handler: async (ctx, { runMigration }) => {
-    if (runMigration !== 'n') return
+    if (runMigration !== 'slug') return
   },
 })

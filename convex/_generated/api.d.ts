@@ -22,6 +22,7 @@ import type * as generation from "../generation.js";
 import type * as http from "../http.js";
 import type * as lib_image from "../lib/image.js";
 import type * as lib_retrier from "../lib/retrier.js";
+import type * as lib_slug from "../lib/slug.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as messages from "../messages.js";
 import type * as providers_aws from "../providers/aws.js";
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "lib/image": typeof lib_image;
   "lib/retrier": typeof lib_retrier;
+  "lib/slug": typeof lib_slug;
   "lib/utils": typeof lib_utils;
   messages: typeof messages;
   "providers/aws": typeof providers_aws;

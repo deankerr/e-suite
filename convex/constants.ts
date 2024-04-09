@@ -20,3 +20,5 @@ export const maxMessageNameStringLength = 64
 export const maxTitleStringLength = 256
 
 export const defaultRecentMessagesLimit = 50
+
+export const slugLength = 8

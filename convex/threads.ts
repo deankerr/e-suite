@@ -2,6 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { mutation, query } from './functions'
+import { getSlug } from './lib/slug'
 import { createMessage } from './messages'
 import { messagesFields, threadsFields } from './schema'
 
@@ -19,7 +20,8 @@ export const create = mutation({
   },
   handler: async (ctx, { messages = [], ...fields }) => {
     const user = await ctx.viewerX()
-    const threadId = await ctx.table('threads').insert({ ...fields, userId: user._id })
+    const slug = await getSlug(ctx, 'threads')
+    const threadId = await ctx.table('threads').insert({ ...fields, userId: user._id, slug })
 
     for (const message of messages) await createMessage(ctx, { threadId, message })
 

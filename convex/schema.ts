@@ -125,6 +125,7 @@ const messages = defineEnt(zodToConvexFields(messagesFields))
   .deletion('soft')
   .edge('thread')
   .index('persistant', ['persistant'])
+  .field('slug', zodToConvex(z.string()), { unique: true })
 
 //* Threads
 export const threadsFields = {
@@ -139,6 +140,7 @@ const threads = defineEnt(zodToConvexFields(threadsFields))
   .deletion('soft')
   .edges('messages', { ref: true })
   .edge('user')
+  .field('slug', zodToConvex(z.string()), { unique: true })
 
 //* Users
 export const usersFields = {
