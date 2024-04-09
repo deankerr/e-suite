@@ -66,21 +66,26 @@ export const generationParametersSchema = z.object({
   model: z.string(),
   prompt: z.string(),
   negativePrompt: z.string().optional(),
-  width: z.number(),
-  height: z.number(),
   seed: z.number().optional(),
   steps: z.string().optional(),
   guidance: z.number().optional(),
   lcm: z.boolean().optional(),
+})
+
+export const generationDimensionsSchema = z.object({
+  width: z.number(),
+  height: z.number(),
   n: z.number(),
 })
 
 export const generationInference = z.object({
-  jobId: zid('_scheduled_functions').optional(),
+  jobId: z.union([zid('_scheduled_functions'), zid('_scheduled_functions').array()]).optional(),
   callback: callbackFields.optional(),
   type: z.literal('textToImage'),
   provider: z.enum(generationProviders),
   parameters: generationParametersSchema,
+
+  dimensions: generationDimensionsSchema.array(),
 
   title: z
     .string()

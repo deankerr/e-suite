@@ -34,9 +34,14 @@ export const get = query({
 
 export const getMany = query({
   args: {
-    imageIds: zid('images').array(),
+    imageIds: z.union([zid('images'), z.null()]).array(),
   },
-  handler: async (ctx, { imageIds }) => await ctx.table('images').getMany(imageIds),
+  handler: async (ctx, { imageIds }) => {
+    const images = await Promise.all(
+      imageIds.map(async (id) => (id ? await ctx.table('images').get(id) : null)),
+    )
+    return images
+  },
 })
 
 export const update = internalMutation({

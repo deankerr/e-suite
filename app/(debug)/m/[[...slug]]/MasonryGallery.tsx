@@ -9,27 +9,27 @@ import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import { ClassNameValue, cn } from '@/lib/utils'
 
-type ImageGen = { width: number; height: number }
+type ImageGen = { width: number; height: number; imageId: Id<'images'> | null }
 
 type MasonryGalleryProps = {
   title?: string
   byline?: string
-  imageIds: Id<'images'>[]
-  imageGen: ImageGen[]
+  imageGens: ImageGen[]
 } & React.ComponentProps<'div'>
 
 export const MasonryGallery = ({
   title,
   byline,
-  imageIds,
-  imageGen,
+  imageGens,
   className,
   ...props
 }: MasonryGalleryProps) => {
+  const imageIds = imageGens.map(({ imageId }) => imageId)
   const images = useQuery(api.files.images.getMany, { imageIds })
-  const imageFrames = imageGen.map((gen, i) => {
+
+  const imageFrames = imageGens.map((gen, i) => {
     const image = images?.[i]
-    if (!image) return { ...gen, _id: i }
+    if (!image) return gen
     return image
   })
 
@@ -41,16 +41,16 @@ export const MasonryGallery = ({
       className={cn('flex h-full w-full flex-col items-center gap-4 px-4', className)}
     >
       <Card className="mt-4">
-        <div className="center flex-col-center gap-2 py-2 sm:px-8">
-          <Quote className="text-3xl">{title}</Quote>
+        <div className="flex-col-center gap-2 py-2 sm:px-8">
+          <Quote className="border-b text-3xl">{title}</Quote>
           <p className="font-merriweather">{byline}</p>
         </div>
       </Card>
 
       <div className="grid-flow-row-dense flex-col content-start items-start gap-4 sm:grid sm:grid-cols-4 md:grid-cols-[repeat(6,_minmax(0,_150px))]">
         {/* images */}
-        {imageFrames.map((image) => (
-          <Img key={image._id} image={image} />
+        {imageFrames.map((image, i) => (
+          <Img key={i} image={image} />
         ))}
       </div>
     </div>

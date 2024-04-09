@@ -27,12 +27,18 @@ const translateKey = (key: string) => {
 
 export const textToImage = async ({
   parameters,
+  dimensions,
 }: {
   parameters: z.infer<typeof generationParametersSchema>
+  dimensions: { width: number; height: number; n: number }
 }) => {
   const body = new URLSearchParams()
 
   for (const [key, value] of Object.entries(parameters)) {
+    body.set(translateKey(key), String(value))
+  }
+
+  for (const [key, value] of Object.entries(dimensions)) {
     body.set(translateKey(key), String(value))
   }
 

@@ -39,15 +39,23 @@ export const createMessage = async (
     }
 
     if (message.inference.type === 'textToImage') {
-      const jobId = await runAction(ctx, {
-        action: 'generation:textToImage',
-        actionArgs: { messageId },
-        maxFailures: 2,
-      })
+      const { dimensions } = message.inference
+
+      const jobIds = await Promise.all(
+        dimensions.map(
+          async (dimensions) =>
+            await runAction(ctx, {
+              action: 'generation:textToImage',
+              actionArgs: { messageId, dimensions },
+              maxFailures: 6,
+            }),
+        ),
+      )
+
       await ctx
         .table('messages')
         .getX(messageId)
-        .patch({ inference: { ...message.inference, jobId } })
+        .patch({ inference: { ...message.inference, jobId: jobIds } })
     }
   }
   return messageId
@@ -182,6 +190,25 @@ export const updateMessageResults = internalMutation({
         },
       })
     }
+  },
+})
+
+export const appendContent = internalMutation({
+  args: {
+    messageId: zid('messages'),
+    content: z
+      .object({
+        type: z.literal('image'),
+        imageId: zid('images'),
+      })
+      .array(),
+  },
+  handler: async (ctx, { messageId, content }) => {
+    const message = await ctx.skipRules.table('messages').getX(messageId)
+    const currentContent = Array.isArray(message.content) ? message.content : []
+    await message.patch({
+      content: [...currentContent, ...content],
+    })
   },
 })
 
