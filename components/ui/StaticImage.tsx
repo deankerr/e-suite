@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { CanvasRevealEffect } from './CanvasRevealEffect'
 
 type StaticImageProps = {
-  image: Partial<Ent<'images'>>
+  image?: Partial<Ent<'images'>> | null
   alt: string
 } & React.ComponentProps<'div'>
 
@@ -15,14 +15,11 @@ export const StaticImage = forwardRef<HTMLDivElement, StaticImageProps>(function
   { image, alt, className, ...props },
   forwardedRef,
 ) {
-  const { width, height, storageUrl, blurDataURL } = image
-
+  if (!image) return null
+  const { width, height, blurDataURL } = image
+  const storageUrl = image.storageUrl
   return (
-    <div
-      {...props}
-      className={cn('overflow-hidden', 'flex rounded-6 border-4 border-gray-1A', className)}
-      ref={forwardedRef}
-    >
+    <div {...props} className={cn('overflow-hidden', '', className)} ref={forwardedRef}>
       {storageUrl ? (
         <NextImage
           src={storageUrl}
@@ -30,13 +27,13 @@ export const StaticImage = forwardRef<HTMLDivElement, StaticImageProps>(function
           width={width}
           height={height}
           blurDataURL={blurDataURL}
-          className={cn('object-contain')}
+          className={cn('rounded object-contain')}
         />
       ) : (
         <AnimatePresence>
           <CanvasRevealEffect
             animationSpeed={3}
-            containerClassName={cn('bg-orange-3')}
+            className={cn('bg-orange-3')}
             colors={[
               [255, 128, 31],
               [254, 137, 198],

@@ -21,8 +21,8 @@ export const ChatList = forwardRef<HTMLDivElement, ChatListProps>(function ChatL
   const [route, routeId] = useSelectedLayoutSegments()
   const isActive = (slug?: string) => route === 'chat' && routeId === slug
 
-  const threadsList = useQuery(api.threads.threads.list, {})
-
+  // const threadsList = useQuery(api.threads.threads.list, {})
+  const threadsList = []
   return (
     <div className="flex grow flex-col overflow-hidden">
       {/* new */}

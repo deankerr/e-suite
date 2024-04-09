@@ -19,12 +19,13 @@ export const GenerationsList = forwardRef<HTMLDivElement, GenerationsListProps>(
     const [route, routeId] = useSelectedLayoutSegments()
     const isActive = (slug?: string) => route === 'generate' && routeId === slug
 
-    const generationsList = useQuery(api.generations.do.list, {})
+    // const generationsList = useQuery(api.generations.do.list, {})
 
-    const generations = generationsList?.map((generation) => ({
-      ...generation,
-      title: generation.images ? generation.images[0]?.parameters?.prompt : '...',
-    }))
+    // const generations = generationsList?.map((generation) => ({
+    //   ...generation,
+    //   title: generation.images ? generation.images[0]?.parameters?.prompt : '...',
+    // }))
+    const generations = []
     return (
       <div className="flex grow flex-col overflow-hidden">
         {/* new */}

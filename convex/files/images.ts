@@ -47,3 +47,11 @@ export const update = internalMutation({
   handler: async (ctx, { imageId, fields }) =>
     await ctx.table('images').getX(imageId).patch(fields),
 })
+
+export const list = query({
+  args: {
+    limit: z.number().default(20),
+    order: z.enum(['asc', 'desc']).default('desc'),
+  },
+  handler: async (ctx, { limit, order }) => await ctx.table('images').order(order).take(limit),
+})

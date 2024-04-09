@@ -3,6 +3,7 @@
 import { SignInButton, SignUpButton } from '@clerk/nextjs'
 import { Card, Strong } from '@radix-ui/themes'
 import { AuthLoading, Unauthenticated, useConvexAuth, useQuery } from 'convex/react'
+import Link from 'next/link'
 
 import { Button } from '@/components/ui/Button'
 import { LoaderBars } from '@/components/ui/LoaderBars'
@@ -12,6 +13,7 @@ import { api } from '@/convex/_generated/api'
 export default function HomePage() {
   const { isAuthenticated } = useConvexAuth()
   const user = useQuery(api.users.getSelf, isAuthenticated ? {} : 'skip')
+  const threads = useQuery(api.threads.list, {})
 
   return (
     <div className="flex w-full flex-col">
@@ -30,9 +32,17 @@ export default function HomePage() {
                   Welcome <Strong>@{user.name}</Strong>
                 </div>
 
-                <pre className="max-w-[80vw] overflow-y-auto bg-black p-4">
+                <pre className="max-w-[80vw] overflow-y-auto rounded bg-gray-3 p-4">
                   {JSON.stringify(user, null, 2)}
                 </pre>
+
+                <div>
+                  {threads?.map((t, i) => (
+                    <div key={t._id}>
+                      <Link href={`/t/${t._id}`}>{t.title ?? `thread ${i}`}</Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : null}
 

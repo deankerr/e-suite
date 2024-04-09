@@ -10,9 +10,10 @@ export const CanvasRevealEffect = ({
   animationSpeed = 0.4,
   opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
   colors = [[0, 255, 255]],
-  containerClassName,
+  className,
   dotSize,
   showGradient = true,
+  ...props
 }: {
   /**
    * 0.1 - slower
@@ -21,12 +22,11 @@ export const CanvasRevealEffect = ({
   animationSpeed?: number
   opacities?: number[]
   colors?: number[][]
-  containerClassName?: string
   dotSize?: number
   showGradient?: boolean
-}) => {
+} & React.ComponentProps<'div'>) => {
   return (
-    <div className={cn('relative h-full w-full bg-white', containerClassName)}>
+    <div {...props} className={cn('relative h-full w-full', className)}>
       <div className="h-full w-full">
         <DotMatrix
           colors={colors ?? [[0, 255, 255]]}

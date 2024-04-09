@@ -23,7 +23,12 @@ export const MessageGalleryPage = ({ inference, content, className }: MessageGal
   const { n = 4, width, height } = inference.parameters
 
   return (
-    <div className={cn('flex min-h-full flex-col items-center', className)}>
+    <div
+      className={cn(
+        'flex min-h-full flex-col items-center bg-dot-[#F1F0EF] dark:bg-dot-[#222221]',
+        className,
+      )}
+    >
       <div className="space-y-2 p-4">
         <Heading size={hSize.h1} align="center">
           {title}
