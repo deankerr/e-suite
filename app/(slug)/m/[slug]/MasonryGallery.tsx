@@ -9,40 +9,26 @@ import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import { ClassNameValue, cn } from '@/lib/utils'
 
-type ImageGen = { width: number; height: number; imageId: Id<'images'> | null }
+type DimensionsOrder = { width: number; height: number; order: number }
+type Generation = (DimensionsOrder & Doc<'images'>) | null | undefined
 
 type MasonryGalleryProps = {
-  title?: string
-  byline?: string
-  imageGens: ImageGen[]
+  title: string
+  byline: string
+  dimensions: Array<{ width: number; height: number; n: number }>
+  imageIds: Id<'images'>[]
 } & React.ComponentProps<'div'>
 
 export const MasonryGallery = ({
   title,
   byline,
-  imageGens,
+  dimensions,
+  imageIds,
   className,
   ...props
 }: MasonryGalleryProps) => {
-  const imageIds = imageGens.map(({ imageId }) => imageId)
   const images = useQuery(api.files.images.getMany, { imageIds })
 
-  let por = 1
-  let sqr = 1
-  const lan = 1
-
-  const imageFrames = imageGens.map((gen, i) => {
-    const image = images?.[i] ?? gen
-    const ratio = image.width / image.height
-    const order = ratio < 1 ? por++ : ratio > 1 ? lan : sqr++
-
-    return {
-      ...image,
-      order,
-    }
-  })
-
-  if (!imageFrames) return
   return (
     <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
       <Card className="">
@@ -55,9 +41,14 @@ export const MasonryGallery = ({
 
       <div className="grid grid-flow-row-dense grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] gap-4 py-4">
         {/* images */}
-        {imageFrames.map((image, i) => (
-          <Img key={i} image={image} style={{ order: image.order }} />
-        ))}
+        {dimensions.map(({ width, height, n }, i) => {
+          const dimImages =
+            images?.filter((img) => img && img.width === width && img.height === height) ??
+            new Array(n)
+          return dimImages.map((image, j) => (
+            <Img key={`${i}|${j}`} image={image ?? { width, height }} />
+          ))
+        })}
       </div>
     </div>
   )
@@ -69,7 +60,7 @@ function Img({
   ...props
 }: {
   className?: ClassNameValue
-  image: (ImageGen | Doc<'images'>) | null | undefined
+  image: Generation
 } & React.ComponentProps<'div'>) {
   if (!image) return null
 

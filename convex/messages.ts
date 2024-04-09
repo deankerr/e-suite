@@ -17,6 +17,7 @@ const publicMessageSchema = z.object({
   ...messagesFields,
   _id: zid('messages'),
   _creationTime: z.number(),
+  slug: z.string(),
 })
 export type Message = z.infer<typeof publicMessageSchema>
 
@@ -80,6 +81,15 @@ export const get = query({
   handler: async (ctx, { messageId }) => {
     const message = await ctx.table('messages').getX(messageId)
     return publicMessageSchema.parse(message)
+  },
+})
+
+export const getBySlug = query({
+  args: {
+    slug: z.string(),
+  },
+  handler: async (ctx, { slug }) => {
+    return await ctx.table('messages', 'slug', (q) => q.eq('slug', slug)).first()
   },
 })
 

@@ -67,11 +67,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       )}
       suppressHydrationWarning
     >
-      <body className="h-full">
+      <body className="min-h-full">
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <JotaiProvider>
-              <Theme className="h-full" accentColor="orange" appearance="dark">
+              <Theme className="min-h-full" accentColor="orange" appearance="dark">
                 <AppStoreProvider>
                   {children}
                   <Toaster richColors />
