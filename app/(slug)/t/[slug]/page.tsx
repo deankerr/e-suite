@@ -2,14 +2,13 @@
 
 import { AlertDialog, Button, Card } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
-import { TrashIcon } from 'lucide-react'
+import { MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { cn } from '@/lib/utils'
 
 export default function TSlugPage({ params }: { params: { slug: string } }) {
   const thread = useQuery(api.threads.getBySlug, { slug: params.slug })
@@ -25,19 +24,31 @@ export default function TSlugPage({ params }: { params: { slug: string } }) {
       <Card className="min-h-full">
         <div className="text-lg font-semibold">textToImage messages</div>
         <div className="space-y-2 py-2">
-          {textToImageMessages?.map((msg) => {
-            if (msg.inference?.type !== 'textToImage') return null
+          {textToImageMessages?.map((message) => {
+            if (message.inference?.type !== 'textToImage') return null
             return (
-              <div key={msg._id} className="flex-center w-fit gap-2">
-                <div className="flex-center gap-2 font-code text-sm text-gray-9">
-                  <RemoveMessageDialog messageId={msg._id}>
-                    <IconButton lucideIcon={TrashIcon} color="red" />
+              <div key={message._id} className="flex gap-2">
+                <div className="flex-center shrink-0 gap-2 rounded border px-4 py-2 text-center font-code text-sm text-gray-9">
+                  <RemoveMessageDialog messageId={message._id}>
+                    <IconButton lucideIcon={Trash2Icon} color="red" />
                   </RemoveMessageDialog>
-                  [{msg.slug}]
+
+                  <div>
+                    <div>[{message.slug}]</div>
+                    <div>{message.permissions?.public ? 'public' : 'private'}</div>
+                  </div>
+
+                  <MessageSquareIcon />
                 </div>
 
-                <Link href={`/m/${msg.slug}`} className="rounded-4 border px-4 py-2">
-                  {msg.inference.title} | {msg.inference.byline}
+                <Link
+                  href={`/m/${message.slug}`}
+                  className="flex items-center rounded-4 border px-4 py-2"
+                >
+                  <div>
+                    {message.inference.title}
+                    <span className="text-gray-11"> - {message.inference.byline}</span>
+                  </div>
                 </Link>
               </div>
             )
@@ -70,8 +81,8 @@ const RemoveMessageDialog = ({ messageId, children, ...props }: RemoveMessageDia
     <AlertDialog.Root {...props}>
       <AlertDialog.Trigger>{children}</AlertDialog.Trigger>
 
-      <AlertDialog.Content className={cn('max-w-sm')}>
-        <AlertDialog.Title>Delete Chat</AlertDialog.Title>
+      <AlertDialog.Content className="max-w-xs">
+        <AlertDialog.Title>Delete message</AlertDialog.Title>
         <AlertDialog.Description size="2">
           Are you sure? This insightful yet witty exchange will be gone forever.
         </AlertDialog.Description>
