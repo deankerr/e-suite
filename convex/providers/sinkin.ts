@@ -54,11 +54,25 @@ export const textToImage = async ({
 
   const generation = textToImageResponseSchema.safeParse(response)
   if (generation.success) {
-    return generation.data
+    return {
+      result: generation.data,
+      error: null,
+    }
   }
 
   const error = textToImageErrorResponseSchema.safeParse(response)
   if (error.success) {
+    // prompt content warning
+    if (error.data.error_code === 41) {
+      return {
+        error: {
+          message: error.data.message,
+          noRetry: true,
+          data: error.data,
+        },
+        result: null,
+      }
+    }
     throw new ConvexError({ ...error.data })
   }
 
