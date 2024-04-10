@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertDialog, Button, Card, Heading } from '@radix-ui/themes'
+import { AlertDialog, Button, Card } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
 import { TrashIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -18,22 +18,27 @@ export default function TSlugPage({ params }: { params: { slug: string } }) {
     thread ? { threadId: thread?._id, limit: 100 } : 'skip',
   )
 
-  const genMsgList = messages?.filter((msg) => msg.inference?.type === 'textToImage')
+  const textToImageMessages = messages?.filter((msg) => msg.inference?.type === 'textToImage')
+
   return (
-    <div className="p-4">
+    <div className="container p-4">
       <Card className="min-h-full">
-        <Heading size="4">textToImage messages</Heading>
+        <div className="text-lg font-semibold">textToImage messages</div>
         <div className="space-y-2 py-2">
-          {genMsgList?.map((msg) => {
+          {textToImageMessages?.map((msg) => {
             if (msg.inference?.type !== 'textToImage') return null
             return (
-              <div key={msg._id} className="w-fit rounded-4 border px-2 py-1">
-                <Link href={`/m/${msg.slug}`}>
+              <div key={msg._id} className="flex-center w-fit gap-2">
+                <div className="flex-center gap-2 font-code text-sm text-gray-9">
+                  <RemoveMessageDialog messageId={msg._id}>
+                    <IconButton lucideIcon={TrashIcon} color="red" />
+                  </RemoveMessageDialog>
+                  [{msg.slug}]
+                </div>
+
+                <Link href={`/m/${msg.slug}`} className="rounded-4 border px-4 py-2">
                   {msg.inference.title} | {msg.inference.byline}
                 </Link>
-                <RemoveMessageDialog messageId={msg._id}>
-                  <IconButton lucideIcon={TrashIcon} color="red" />
-                </RemoveMessageDialog>
               </div>
             )
           })}

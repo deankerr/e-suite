@@ -7,8 +7,14 @@ import { usersFields } from './schema'
 import { QueryCtx } from './types'
 
 const publicUserSchema = z
-  .object({ ...usersFields })
+  .object({ ...usersFields, _id: zid('users') })
   .transform((user) => ({ ...user, apiKey: undefined }))
+
+const selfUserSchema = z.object({
+  ...usersFields,
+  _id: zid('users'),
+  apiKey: z.string().nullable(),
+})
 
 const userBySchema = z.union([
   z.object({ id: zid('users') }),
@@ -38,7 +44,12 @@ export const getSelf = query({
   args: {},
   handler: async (ctx) => {
     const user = await ctx.viewer()
-    return publicUserSchema.nullable().parse(user)
+    if (!user) return null
+    const userApiKey = await ctx
+      .table('users_api_keys', 'userId', (q) => q.eq('userId', user._id))
+      .filter((q) => q.eq(q.field('valid'), true))
+      .unique()
+    return selfUserSchema.parse({ ...user, apiKey: userApiKey?.secret })
   },
 })
 

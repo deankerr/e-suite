@@ -122,6 +122,7 @@ export const list = query({
       .getX(threadId)
       .edgeX('messages')
       .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(limit)
       .map((message) => publicMessageSchema.parse(message))
   },

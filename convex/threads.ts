@@ -58,6 +58,7 @@ export const list = query({
     return await ctx
       .table('threads', 'userId', (q) => q.eq('userId', user._id))
       .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(limit)
       .map((thread) => publicThreadsSchema.parse(thread))
   },
@@ -74,6 +75,7 @@ export const messages = query({
     return await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
       .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .filter((q) => (role ? q.eq(q.field('role'), role) : true))
       .take(limit)
   },

@@ -58,7 +58,12 @@ export const list = query({
     limit: z.number().default(20),
     order: z.enum(['asc', 'desc']).default('desc'),
   },
-  handler: async (ctx, { limit, order }) => await ctx.table('images').order(order).take(limit),
+  handler: async (ctx, { limit, order }) =>
+    await ctx
+      .table('images')
+      .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(limit),
 })
 
 export const remove = mutation({
