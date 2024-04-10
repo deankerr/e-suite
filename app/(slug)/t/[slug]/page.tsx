@@ -50,11 +50,7 @@ export default function TSlugPage({ params }: { params: { slug: string } }) {
 
 type RemoveMessageDialogProps = { messageId: Id<'messages'> } & React.ComponentProps<'div'>
 
-export const RemoveMessageDialog = ({
-  messageId,
-  children,
-  ...props
-}: RemoveMessageDialogProps) => {
+const RemoveMessageDialog = ({ messageId, children, ...props }: RemoveMessageDialogProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
   const send = () => {
