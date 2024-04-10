@@ -1,4 +1,4 @@
-import { entsTableFactory } from 'convex-ents'
+import { entsTableFactory, scheduledDeleteFactory } from 'convex-ents'
 import { customCtx, NoOp } from 'convex-helpers/server/customFunctions'
 import { zCustomAction, zCustomMutation, zCustomQuery } from 'convex-helpers/server/zod'
 import { ConvexError, v } from 'convex/values'
@@ -15,6 +15,8 @@ import { getEntDefinitionsWithRules, getViewerIdFromApiKey, getViewerIdFromAuth 
 import { entDefinitions } from './schema'
 
 import type { MutationCtx as BaseMutationCtx, QueryCtx as BaseQueryCtx } from './_generated/server'
+
+export const scheduledDelete = scheduledDeleteFactory(entDefinitions)
 
 export const authOnlyQuery = zCustomQuery(
   baseQuery,

@@ -252,6 +252,15 @@ export const update = internalMutation({
     await ctx.skipRules.table('messages').getX(messageId).patch(fields),
 })
 
+export const remove = mutation({
+  args: {
+    messageId: zid('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    await ctx.table('messages').getX(messageId).delete()
+  },
+})
+
 //* migration
 export const migrate = internalMutation({
   args: {

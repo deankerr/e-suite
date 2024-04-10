@@ -10,6 +10,7 @@ const publicThreadsSchema = z.object({
   ...threadsFields,
   _id: zid('threads'),
   _creationTime: z.number(),
+  slug: z.string(),
 })
 
 //* CRUD
@@ -75,5 +76,14 @@ export const messages = query({
       .order(order)
       .filter((q) => (role ? q.eq(q.field('role'), role) : true))
       .take(limit)
+  },
+})
+
+export const remove = mutation({
+  args: {
+    threadId: zid('threads'),
+  },
+  handler: async (ctx, { threadId }) => {
+    await ctx.table('threads').getX(threadId).delete()
   },
 })

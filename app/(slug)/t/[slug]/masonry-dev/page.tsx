@@ -30,7 +30,7 @@ export default function TSlugViewPage({ params }: { params: { slug: string } }) 
 
   const images = useQuery(api.files.images.getMany, { imageIds })
   const [listOption, setListOption] = useState('stable')
-
+  console.log(images)
   const [theList, setTheList] = useState(images ?? [])
   const [icList, setIcList] = useState(Array(999).fill(0))
   const [irList, setIrList] = useState(Array(999).fill(0))
@@ -165,7 +165,7 @@ export default function TSlugViewPage({ params }: { params: { slug: string } }) 
                 alt={ar.toString()}
                 width={width}
                 height={height}
-                className="h-full w-full rounded border border-transparent object-cover"
+                className="h-full w-full rounded-4 border border-transparent object-cover"
               />
             </Card>
           )
