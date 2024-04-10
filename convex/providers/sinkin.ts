@@ -44,13 +44,13 @@ export const textToImage = async ({
 
   body.set('access_token', getEnv('SINKIN_API_KEY'))
 
-  console.log(body)
+  console.log('[sinkin/textToImage] >>>', [...body.entries()])
   const response = await api
     .post('inference', {
       body,
     })
     .json()
-  console.log('[sinkin/textToImage]', response)
+  console.log('[sinkin/textToImage] <<<', response)
 
   const generation = textToImageResponseSchema.safeParse(response)
   if (generation.success) {

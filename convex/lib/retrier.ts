@@ -79,7 +79,7 @@ export const retry = internalMutation({
     switch (status.state.kind) {
       case 'pending':
       case 'inProgress':
-        console.debug(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
+        // console.debug(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
         await ctx.scheduler.runAfter(args.waitBackoff, internal.lib.retrier.retry, {
           ...args,
           waitBackoff: args.waitBackoff * args.base,
@@ -106,10 +106,10 @@ export const retry = internalMutation({
         break
 
       case 'success':
-        console.debug(`Job ${job} succeeded.`)
+        // console.debug(`Job ${job} succeeded.`)
         break
       case 'canceled':
-        console.log(`Job ${job} was canceled. Not retrying.`)
+        console.warn(`Job ${job} was canceled. Not retrying.`)
         break
     }
   },
