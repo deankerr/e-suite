@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { internalMutation, query } from '../functions'
+import { internalMutation, mutation, query } from '../functions'
 import { runAction } from '../lib/retrier'
 import { imagesFields } from '../schema'
 
@@ -58,5 +58,19 @@ export const list = query({
     limit: z.number().default(20),
     order: z.enum(['asc', 'desc']).default('desc'),
   },
-  handler: async (ctx, { limit, order }) => await ctx.table('images').order(order).take(limit),
+  handler: async (ctx, { limit, order }) =>
+    await ctx
+      .table('images')
+      .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(limit),
+})
+
+export const remove = mutation({
+  args: {
+    imageId: zid('images'),
+  },
+  handler: async (ctx, { imageId }) => {
+    await ctx.table('images').getX(imageId).delete()
+  },
 })

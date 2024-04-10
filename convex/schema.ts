@@ -11,6 +11,8 @@ import {
   messageRoles,
 } from './constants'
 
+const timeToDelete = 1000 * 60 * 60 * 24
+
 //* Permissions
 const permissionsSchema = z.object({
   public: z.boolean(),
@@ -58,7 +60,7 @@ export const imagesFields = {
   color: z.string().optional(),
 }
 const images = defineEnt(zodToConvexFields(imagesFields))
-  .deletion('soft')
+  .deletion('scheduled', { delayMs: timeToDelete })
   .index('sourceUrl', ['sourceUrl'])
 
 //* Generation
@@ -128,7 +130,7 @@ export const messagesFields = {
     .optional(),
 }
 const messages = defineEnt(zodToConvexFields(messagesFields))
-  .deletion('soft')
+  .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
   .index('persistant', ['persistant'])
   .field('slug', zodToConvex(z.string()), { index: true })
@@ -143,7 +145,7 @@ export const threadsFields = {
   permissions: permissionsSchema.optional(),
 }
 const threads = defineEnt(zodToConvexFields(threadsFields))
-  .deletion('soft')
+  .deletion('scheduled', { delayMs: timeToDelete })
   .edges('messages', { ref: true })
   .edge('user')
   .field('slug', zodToConvex(z.string()), { index: true })
@@ -155,7 +157,7 @@ export const usersFields = {
   role: z.enum(['user', 'admin']),
 }
 const users = defineEnt(zodToConvexFields(usersFields))
-  .deletion('soft')
+  .deletion('scheduled', { delayMs: timeToDelete })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true })
@@ -164,7 +166,7 @@ export const usersApiKeysFields = {
   valid: z.boolean(),
 }
 const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
-  .deletion('soft')
+  .deletion('scheduled', { delayMs: timeToDelete })
   .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 

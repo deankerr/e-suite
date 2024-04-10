@@ -10,6 +10,7 @@ const publicThreadsSchema = z.object({
   ...threadsFields,
   _id: zid('threads'),
   _creationTime: z.number(),
+  slug: z.string(),
 })
 
 //* CRUD
@@ -57,7 +58,34 @@ export const list = query({
     return await ctx
       .table('threads', 'userId', (q) => q.eq('userId', user._id))
       .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(limit)
       .map((thread) => publicThreadsSchema.parse(thread))
+  },
+})
+
+export const messages = query({
+  args: {
+    threadId: zid('threads'),
+    role: messagesFields.role.optional(),
+    limit: z.number().gte(1).lte(100).default(20),
+    order: z.enum(['asc', 'desc']).default('desc'),
+  },
+  handler: async (ctx, { threadId, role, limit, order }) => {
+    return await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
+      .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .filter((q) => (role ? q.eq(q.field('role'), role) : true))
+      .take(limit)
+  },
+})
+
+export const remove = mutation({
+  args: {
+    threadId: zid('threads'),
+  },
+  handler: async (ctx, { threadId }) => {
+    await ctx.table('threads').getX(threadId).delete()
   },
 })

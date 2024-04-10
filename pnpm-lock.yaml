@@ -162,8 +162,8 @@ dependencies:
     specifier: ^4.0.0
     version: 4.0.0
   remeda:
-    specifier: ^1.56.0
-    version: 1.56.0
+    specifier: ^1.58.0
+    version: 1.58.0
   replicate:
     specifier: ^0.29.1
     version: 0.29.1
@@ -8283,8 +8283,8 @@ packages:
       unified: 11.0.4
     dev: false
 
-  /remeda@1.56.0:
-    resolution: {integrity: sha512-ZGebbddlHYNIc4P6o6B/LRiUIZyuFvO9/aKxKpzzFjJxb9maUmYk5E72VpvAooh5uFw0rSbfygIV3rc49NW2xg==}
+  /remeda@1.58.0:
+    resolution: {integrity: sha512-YZT2U7B6fpZfOYVsT4bJT9SKXhh+jdzMmtoMX2u4+xro/bIXXaloDslnpAOHC4UHGsYegNMbi6hlXrdIzH45kA==}
     dev: false
 
   /replicate@0.29.1:

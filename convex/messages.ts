@@ -122,6 +122,7 @@ export const list = query({
       .getX(threadId)
       .edgeX('messages')
       .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(limit)
       .map((message) => publicMessageSchema.parse(message))
   },
@@ -250,6 +251,15 @@ export const update = internalMutation({
   },
   handler: async (ctx, { messageId, fields }) =>
     await ctx.skipRules.table('messages').getX(messageId).patch(fields),
+})
+
+export const remove = mutation({
+  args: {
+    messageId: zid('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    await ctx.table('messages').getX(messageId).delete()
+  },
 })
 
 //* migration
