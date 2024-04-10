@@ -44,21 +44,35 @@ export const textToImage = async ({
 
   body.set('access_token', getEnv('SINKIN_API_KEY'))
 
-  console.log(body)
+  console.log('[sinkin/textToImage] >>>', [...body.entries()])
   const response = await api
     .post('inference', {
       body,
     })
     .json()
-  console.log('[sinkin/textToImage]', response)
+  console.log('[sinkin/textToImage] <<<', response)
 
   const generation = textToImageResponseSchema.safeParse(response)
   if (generation.success) {
-    return generation.data
+    return {
+      result: generation.data,
+      error: null,
+    }
   }
 
   const error = textToImageErrorResponseSchema.safeParse(response)
   if (error.success) {
+    // prompt content warning
+    if (error.data.error_code === 41) {
+      return {
+        error: {
+          message: error.data.message,
+          noRetry: true,
+          data: error.data,
+        },
+        result: null,
+      }
+    }
     throw new ConvexError({ ...error.data })
   }
 

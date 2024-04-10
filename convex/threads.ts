@@ -39,6 +39,15 @@ export const get = query({
   },
 })
 
+export const getBySlug = query({
+  args: {
+    slug: z.string(),
+  },
+  handler: async (ctx, { slug }) => {
+    return await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
+  },
+})
+
 export const list = query({
   args: {
     limit: z.number().gte(1).lte(100).default(20),

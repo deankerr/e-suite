@@ -45,7 +45,7 @@ export async function getViewerIdFromAuth(
   const viewer = await ctx.skipRules.table('users').get('tokenIdentifier', user.tokenIdentifier)
   if (!viewer) return null
 
-  console.debug(`authenticated ${viewer.role}/${viewer.name}/${viewer._id} via jwt`)
+  // console.debug(`authenticated ${viewer.role}/${viewer.name}/${viewer._id} via jwt`)
   return viewer._id
 }
 
@@ -64,6 +64,6 @@ export async function getViewerIdFromApiKey(
   const viewer = await ctx.skipRules.table('users').get(userApiKey.userId)
   if (!viewer) return null
 
-  console.debug(`authenticated ${viewer.role}/${viewer.name}/${viewer._id} via api key`)
+  // console.debug(`authenticated ${viewer.role}/${viewer.name}/${viewer._id} via api key`)
   return viewer._id
 }

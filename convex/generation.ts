@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { ConvexError } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { internalAction } from './functions'
@@ -13,7 +14,20 @@ export const textToImage = internalAction({
   handler: async (ctx, { messageId, dimensions }) => {
     const { parameters } = await ctx.runQuery(internal.messages.generationContext, { messageId })
 
-    const result = await sinkin.textToImage({ parameters, dimensions })
+    const { result, error } = await sinkin.textToImage({ parameters, dimensions })
+
+    if (error) {
+      if (error.noRetry) {
+        console.error(error.message, 'noRetry:', error.noRetry)
+        await ctx.runMutation(internal.messages.addError, {
+          messageId,
+          error: { message: error.message },
+        })
+        return
+      }
+
+      throw new ConvexError(error)
+    }
 
     const imageIds = await Promise.all(
       result.images.map(async (url) => {

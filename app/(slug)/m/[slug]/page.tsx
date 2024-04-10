@@ -14,7 +14,7 @@ export default function MessageSlugPage({ params }: { params: { slug: string } }
   if (!message) return <SunBarLoader />
   if (message.inference?.type !== 'textToImage') return 'not supported'
 
-  const { inference } = message
+  const { inference, error } = message
   const title = inference.title ?? inference.parameters.prompt ?? 'A mysterious creation'
   const byline = inference.byline ?? 'by nobody (nothing)'
 
@@ -28,6 +28,7 @@ export default function MessageSlugPage({ params }: { params: { slug: string } }
       byline={byline}
       imageIds={imageIds as Id<'images'>[] & string}
       dimensions={inference.dimensions}
+      errorMessage={error?.message}
     />
   )
 }
