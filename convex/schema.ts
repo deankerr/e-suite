@@ -72,6 +72,9 @@ export const generationParametersSchema = z.object({
   steps: z.string().optional(),
   guidance: z.number().optional(),
   lcm: z.boolean().optional(),
+
+  // sinkin
+  use_default_neg: z.enum(['true', 'false']).optional(),
 })
 
 export const generationDimensionsSchema = z.object({
