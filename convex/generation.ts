@@ -19,6 +19,10 @@ export const textToImage = internalAction({
     if (error) {
       if (error.noRetry) {
         console.error(error.message, 'noRetry:', error.noRetry)
+        await ctx.runMutation(internal.messages.addError, {
+          messageId,
+          error: { message: error.message },
+        })
         return
       }
 

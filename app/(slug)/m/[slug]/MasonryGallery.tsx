@@ -1,7 +1,8 @@
 'use client'
 
-import { Card, Quote, Separator } from '@radix-ui/themes'
+import { Callout, Card, Quote, Separator } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
+import { AlertOctagonIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import NextImage from 'next/image'
 
@@ -19,6 +20,7 @@ type MasonryGalleryProps = {
   byline: string
   dimensions: Array<{ width: number; height: number; n: number }>
   imageIds: Id<'images'>[]
+  errorMessage?: string
 } & React.ComponentProps<'div'>
 
 export const MasonryGallery = ({
@@ -26,6 +28,7 @@ export const MasonryGallery = ({
   byline,
   dimensions,
   imageIds,
+  errorMessage,
   className,
   ...props
 }: MasonryGalleryProps) => {
@@ -52,6 +55,27 @@ export const MasonryGallery = ({
           ))
         })}
       </div>
+
+      {errorMessage ? (
+        <Card className="mx-auto hidden max-w-xs">
+          <div className="font-code">
+            <div className="">Upstream Error:</div>
+            {errorMessage}
+          </div>
+        </Card>
+      ) : null}
+
+      {errorMessage ? (
+        <Callout.Root color="red" role="alert">
+          <Callout.Icon>
+            <AlertOctagonIcon className="animate-pulse" />
+          </Callout.Icon>
+          <Callout.Text className="border-b border-red-6 pb-1">
+            (sinkin.ai) endpoint returned error:
+          </Callout.Text>
+          <Callout.Text className="">{errorMessage}</Callout.Text>
+        </Callout.Root>
+      ) : null}
     </div>
   )
 }

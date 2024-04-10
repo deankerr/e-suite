@@ -224,6 +224,25 @@ export const appendContent = internalMutation({
   },
 })
 
+export const addError = internalMutation({
+  args: {
+    messageId: zid('messages'),
+    error: z.object({
+      message: z.string(),
+    }),
+  },
+  handler: async (ctx, { messageId, error }) => {
+    const message = await ctx.skipRules.table('messages').get(messageId)
+    if (!message) {
+      console.error('Failed to add error to messageId', messageId, error)
+      return
+    }
+
+    if (message.error?.message === error.message) return
+    await message.patch({ error })
+  },
+})
+
 export const update = internalMutation({
   args: {
     messageId: zid('messages'),

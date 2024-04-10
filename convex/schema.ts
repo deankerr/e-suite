@@ -120,6 +120,12 @@ export const messagesFields = {
   inference: z.discriminatedUnion('type', [chatInference, generationInference]).optional(),
   persistant: z.boolean().optional(),
   permissions: permissionsSchema.optional(),
+
+  error: z
+    .object({
+      message: z.string(),
+    })
+    .optional(),
 }
 const messages = defineEnt(zodToConvexFields(messagesFields))
   .deletion('soft')
