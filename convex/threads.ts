@@ -61,3 +61,19 @@ export const list = query({
       .map((thread) => publicThreadsSchema.parse(thread))
   },
 })
+
+export const messages = query({
+  args: {
+    threadId: zid('threads'),
+    role: messagesFields.role.optional(),
+    limit: z.number().gte(1).lte(100).default(20),
+    order: z.enum(['asc', 'desc']).default('desc'),
+  },
+  handler: async (ctx, { threadId, role, limit, order }) => {
+    return await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
+      .order(order)
+      .filter((q) => (role ? q.eq(q.field('role'), role) : true))
+      .take(limit)
+  },
+})
