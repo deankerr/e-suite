@@ -37,13 +37,14 @@ export const MasonryGallery = ({
   // create a stable map of placeholder/complete image dimensions
   // loosely spread out each dimension with css orders
   const dimensionSlots = dimensions
+    .sort((a, b) => b.width + b.height - (a.width + a.height))
     .map(({ width, height, n }) => {
       const matchingImages =
         images?.filter((image) => image?.width === width && image?.height === height) ?? []
 
       return Array.from({ length: n }).map((_, i) => {
         const imageOrPlaceholder = matchingImages[i] ?? { width, height }
-        return { ...imageOrPlaceholder, order: i + 1 + (width === height ? 1 : 0) }
+        return { ...imageOrPlaceholder, order: i + 1 }
       })
     })
     .flat()
