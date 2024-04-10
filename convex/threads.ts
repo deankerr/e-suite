@@ -54,7 +54,8 @@ export const list = query({
     limit: z.number().gte(1).lte(100).default(20),
   },
   handler: async (ctx, { limit }) => {
-    const user = await ctx.viewerX()
+    const user = await ctx.viewer()
+    if (!user) return []
     return await ctx
       .table('threads', 'userId', (q) => q.eq('userId', user._id))
       .order('desc')
