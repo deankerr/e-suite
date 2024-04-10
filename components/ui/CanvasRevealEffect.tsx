@@ -41,7 +41,7 @@ export const CanvasRevealEffect = ({
           center={['x', 'y']}
         />
       </div>
-      {showGradient && <div className="from-gray-950 absolute inset-0 bg-gradient-to-t to-[84%]" />}
+      {showGradient && <div className="absolute inset-0 bg-gradient-to-t from-gray-1 to-[84%]" />}
     </div>
   )
 }

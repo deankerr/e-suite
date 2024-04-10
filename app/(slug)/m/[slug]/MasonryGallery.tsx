@@ -8,12 +8,12 @@ import NextImage from 'next/image'
 
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
-import { ClassNameValue, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
-const ImgLoader = dynamic(() => import('@/components/ui/CanvasRevealEffect'))
+const RevealEffect = dynamic(() => import('@/components/ui/CanvasRevealEffect'))
 
 type DimensionsOrder = { width: number; height: number; order: number }
-type Generation = (DimensionsOrder & Doc<'images'>) | null | undefined
+type Generation = DimensionsOrder | Doc<'images'>
 
 type MasonryGalleryProps = {
   title: string
@@ -34,9 +34,23 @@ export const MasonryGallery = ({
 }: MasonryGalleryProps) => {
   const images = useQuery(api.files.images.getMany, { imageIds })
 
+  // create a stable map of placeholder/complete image dimensions
+  // loosely spread out each dimension with css orders
+  const dimensionSlots = dimensions
+    .map(({ width, height, n }) => {
+      const matchingImages =
+        images?.filter((image) => image?.width === width && image?.height === height) ?? []
+
+      return Array.from({ length: n }).map((_, i) => {
+        const imageOrPlaceholder = matchingImages[i] ?? { width, height }
+        return { ...imageOrPlaceholder, order: i + 1 + (width === height ? 1 : 0) }
+      })
+    })
+    .flat()
+
   return (
     <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
-      <Card className="">
+      <Card className="mx-auto w-fit">
         <div className="flex-col-center gap-2 py-1 sm:px-8">
           <Quote className="text-center text-3xl">{title}</Quote>
           <Separator size="4" />
@@ -45,28 +59,16 @@ export const MasonryGallery = ({
       </Card>
 
       <div className="grid grid-flow-row-dense grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] gap-4 py-4">
-        {/* images */}
-        {dimensions.map(({ width, height, n }, i) => {
-          const dimImages =
-            images?.filter((img) => img && img.width === width && img.height === height) ??
-            new Array(n)
-          return dimImages.map((image, j) => (
-            <Img key={`${i}|${j}`} image={image ?? { width, height }} />
-          ))
-        })}
+        {!errorMessage
+          ? dimensionSlots.map((image, i) => {
+              const key = `${image.width}|${image.height}|${i}`
+              return <MasonryImage key={key} order={image.order} image={image} className="" />
+            })
+          : null}
       </div>
 
       {errorMessage ? (
-        <Card className="mx-auto hidden max-w-xs">
-          <div className="font-code">
-            <div className="">Upstream Error:</div>
-            {errorMessage}
-          </div>
-        </Card>
-      ) : null}
-
-      {errorMessage ? (
-        <Callout.Root color="red" role="alert">
+        <Callout.Root color="red" role="alert" className="mx-auto w-fit">
           <Callout.Icon>
             <AlertOctagonIcon className="animate-pulse" />
           </Callout.Icon>
@@ -80,53 +82,63 @@ export const MasonryGallery = ({
   )
 }
 
-function Img({
+function MasonryImage({
   image,
+  order = 0,
   className,
   ...props
 }: {
-  className?: ClassNameValue
+  order?: number
   image: Generation
 } & React.ComponentProps<'div'>) {
-  if (!image) return null
+  const styles = getImageProps(image.width, image.height)
 
-  const ratio = image.width / image.height
-  const gridCn =
-    ratio < 1
-      ? 'col-span-2 row-span-3'
-      : ratio > 1
-        ? 'col-span-3 row-span-2'
-        : 'col-span-2 row-span-2'
+  const storageUrl = 'storageUrl' in image ? image.storageUrl : undefined
+  const blurDataURL = 'blurDataURL' in image ? image.blurDataURL : undefined
 
-  const aspectCn = ratio < 1 ? 'aspect-[2/3]' : ratio > 1 ? 'aspect-[3/2]' : 'aspect-square'
-
-  if (!('storageUrl' in image)) {
-    return (
-      <Card {...props} className={cn(gridCn, aspectCn, className)}>
-        <ImgLoader
+  return (
+    <Card
+      {...props}
+      className={cn(styles.grid, styles.aspect, className)}
+      style={{ order, maxWidth: image.width }}
+    >
+      {!storageUrl ? (
+        <RevealEffect
           animationSpeed={3}
-          className={cn('', className)}
           colors={[
             [255, 128, 31],
             [254, 137, 198],
           ]}
         />
-      </Card>
-    )
-  }
-
-  return (
-    <Card {...props} className={cn(gridCn, className)}>
-      <NextImage
-        key={image._id}
-        alt=""
-        src={image.storageUrl!}
-        width={image.width}
-        height={image.height}
-        placeholder="blur"
-        blurDataURL={image.blurDataURL}
-        className={cn('h-full rounded border border-gray-6 object-cover object-center')}
-      />
+      ) : (
+        <NextImage
+          alt=""
+          src={storageUrl}
+          width={image.width}
+          height={image.height}
+          placeholder="blur"
+          blurDataURL={blurDataURL}
+          className={cn('h-full w-full rounded border border-gray-6 object-cover object-center')}
+        />
+      )}
     </Card>
   )
+}
+
+const getImageProps = (width: number, height: number) => {
+  if (width < height) {
+    return {
+      grid: 'col-span-2 row-span-3',
+      aspect: 'aspect-[2/3]',
+    }
+  }
+
+  if (width > height) {
+    return {
+      grid: 'col-span-3 row-span-2',
+      aspect: 'aspect-[3/2]',
+    }
+  }
+
+  return { grid: 'col-span-2 row-span-2', aspect: 'aspect-square' }
 }
