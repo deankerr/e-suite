@@ -6,8 +6,8 @@
     "start": "next start",
     "build": "pnpm dlx convex deploy --cmd 'next build'",
     "dev": "pnpm run '/^dev:.*/'",
-    "dev:client": "next dev --port 3333",
-    "dev:server": "convex dev",
+    "dev:next": "next dev --port 3333",
+    "dev:convex": "convex dev",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
