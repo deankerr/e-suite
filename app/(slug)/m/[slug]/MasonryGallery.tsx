@@ -51,9 +51,17 @@ export const MasonryGallery = ({
 
   return (
     <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
-      <Card className="mx-auto w-fit">
+      {/* title */}
+      <Card className="mx-auto">
         <div className="flex-col-center gap-2 py-1 sm:px-8">
-          <Quote className="text-center text-3xl">{title}</Quote>
+          <Quote
+            className={cn(
+              'line-clamp-3 break-all text-center',
+              title.length > 100 ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl',
+            )}
+          >
+            {title}
+          </Quote>
           <Separator size="4" />
           <p className="pt-1 text-center font-merriweather text-sm sm:text-base">{byline}</p>
         </div>
