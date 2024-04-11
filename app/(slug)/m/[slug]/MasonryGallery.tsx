@@ -4,8 +4,8 @@ import { Callout, Card, Quote, Separator } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { AlertOctagonIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import NextImage from 'next/image'
 
+import { Img } from '@/components/ui/Img'
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
@@ -127,7 +127,7 @@ function MasonryImage({
           )}
         />
       ) : (
-        <NextImage
+        <Img
           alt=""
           src={storageUrl}
           width={image.width}

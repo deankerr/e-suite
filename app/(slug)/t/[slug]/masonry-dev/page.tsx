@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { Button, Card, IconButton, Separator, TextField } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
-import NextImage from 'next/image'
 import * as R from 'remeda'
 
+import { Img } from '@/components/ui/Img'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
@@ -160,7 +160,7 @@ export default function TSlugViewPage({ params }: { params: { slug: string } }) 
                 </Button>
               </div>
 
-              <NextImage
+              <Img
                 src={storageUrl}
                 alt={ar.toString()}
                 width={width}
