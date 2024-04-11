@@ -52,7 +52,7 @@ export const MasonryGallery = ({
   return (
     <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
       {/* title */}
-      <Card className="mx-auto">
+      <Card className="mx-auto w-fit">
         <div className="flex-col-center gap-2 py-1 sm:px-8">
           <Quote
             className={cn(
@@ -67,7 +67,7 @@ export const MasonryGallery = ({
         </div>
       </Card>
 
-      <div className="grid grid-flow-row-dense grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] gap-4 py-4">
+      <div className="grid grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] gap-4 py-4">
         {!errorMessage
           ? dimensionSlots.map((image, i) => {
               const key = `${image.width}|${image.height}|${i}`
@@ -94,10 +94,12 @@ export const MasonryGallery = ({
 function MasonryImage({
   image,
   order = 0,
+  showLoader = false,
   className,
   ...props
 }: {
   order?: number
+  showLoader?: boolean
   image: Generation
 } & React.ComponentProps<'div'>) {
   const styles = getImageProps(image.width, image.height)
@@ -108,16 +110,21 @@ function MasonryImage({
   return (
     <Card
       {...props}
-      className={cn(styles.grid, styles.aspect, className)}
+      className={cn(styles.grid, className)}
       style={{ order, maxWidth: image.width }}
     >
-      {!storageUrl ? (
+      {!storageUrl || showLoader ? (
         <RevealEffect
           animationSpeed={3}
           colors={[
             [255, 128, 31],
             [254, 137, 198],
           ]}
+          dotSize={3}
+          className={cn(
+            'h-full w-full rounded border border-gray-6 object-cover object-center p-0.5',
+            styles.aspect,
+          )}
         />
       ) : (
         <NextImage
