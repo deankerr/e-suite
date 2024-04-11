@@ -105,6 +105,7 @@ function MasonryImage({
   const styles = getImageProps(image.width, image.height)
 
   const storageUrl = 'storageUrl' in image ? image.storageUrl : undefined
+  const optimizedUrl = 'optimizedUrl' in image ? image.optimizedUrl : undefined
   const blurDataURL = 'blurDataURL' in image ? image.blurDataURL : undefined
 
   return (
@@ -130,6 +131,7 @@ function MasonryImage({
         <Img
           alt=""
           src={storageUrl}
+          optimizedSrc={optimizedUrl}
           width={image.width}
           height={image.height}
           placeholder="blur"

@@ -30,6 +30,9 @@ export const retrieve = internalAction({
     const storageId = await ctx.storage.store(blob)
     const storageUrl = (await ctx.storage.getUrl(storageId)) ?? undefined
 
+    // todo merge these tasks into one sharp run
+    await ctx.scheduler.runAfter(0, internal.lib.process.image, { imageId })
+
     await ctx.runMutation(internal.files.images.update, {
       imageId,
       fields: {
