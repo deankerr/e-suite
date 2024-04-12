@@ -56,12 +56,11 @@ export const imagesFields = {
   storageId: zid('_storage').optional(),
   storageUrl: z.string().optional(),
 
-  url: z.string().optional(),
   sourceStorageId: z.string().optional(),
   sourceStorageUrl: z.string().optional(),
 
-  optimizedStorageId: zid('_storage').optional(),
-  optimizedUrl: z.string().optional(),
+  optimizedStorageId: zid('_storage').optional(), //todo migrate
+  optimizedUrl: z.string().optional(), //todo migrate
 
   blurDataURL: z.string().optional(),
   color: z.string().optional(),

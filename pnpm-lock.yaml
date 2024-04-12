@@ -125,9 +125,6 @@ dependencies:
   openai:
     specifier: ^4.29.2
     version: 4.29.2
-  plaiceholder:
-    specifier: ^3.0.0
-    version: 3.0.0(sharp@0.33.3)
   react:
     specifier: ^18.2.0
     version: 18.2.0

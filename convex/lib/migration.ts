@@ -1,16 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { z } from 'zod'
+
 import { internalMutation } from '../functions'
-import { getSlug } from './slug'
 
-export const migThreads = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const threads = await ctx.unsafeDb.query('threads').collect()
+export const removeOptimizedImageUrls = internalMutation({
+  args: {
+    limit: z.number(),
+  },
+  handler: async (ctx, { limit }) => {
+    const images = await ctx.skipRules
+      .table('images')
+      .order('desc')
+      .filter((q) =>
+        q.or(
+          q.neq(q.field('optimizedStorageId'), undefined),
+          q.neq(q.field('optimizedUrl'), undefined),
+        ),
+      )
 
-    for (const thread of threads) {
-      if (thread.slug) continue
-      const slug = await getSlug(ctx, 'threads')
-      await ctx.unsafeDb.patch(thread._id, { slug, permissions: { public: false } })
-    }
+    if (!images.length) console.log('no matches')
+
+    await Promise.all(
+      images.map(async (image) => {
+        image.patch({ optimizedStorageId: undefined, optimizedUrl: undefined })
+      }),
+    )
   },
 })

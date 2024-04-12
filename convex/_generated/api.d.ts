@@ -20,7 +20,6 @@ import type * as files_images from "../files/images.js";
 import type * as functions from "../functions.js";
 import type * as generation from "../generation.js";
 import type * as http from "../http.js";
-import type * as lib_image from "../lib/image.js";
 import type * as lib_migration from "../lib/migration.js";
 import type * as lib_process from "../lib/process.js";
 import type * as lib_retrier from "../lib/retrier.js";
@@ -54,7 +53,6 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   generation: typeof generation;
   http: typeof http;
-  "lib/image": typeof lib_image;
   "lib/migration": typeof lib_migration;
   "lib/process": typeof lib_process;
   "lib/retrier": typeof lib_retrier;
