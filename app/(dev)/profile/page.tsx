@@ -38,8 +38,8 @@ export default function ProfilePage() {
 
   return (
     <div className="container min-h-full p-4">
-      <Card className="m-auto">
-        <div className="space-y-8 p-8">
+      <Card>
+        <div className="space-y-8 px-8 py-4">
           <div className="flex-between gap-6">
             <div className="flex items-center gap-3">
               <Logo className="size-12" />
@@ -55,7 +55,7 @@ export default function ProfilePage() {
           </div>
 
           <Authenticated>
-            <div className="flex flex-wrap gap-4">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="rounded border p-4">
                 <Heading>
                   {user?.name ?? 'User'} ({user?.role})
@@ -71,7 +71,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="min-w-80 rounded border p-4">
+              <div className="col-span-2 rounded border p-4">
                 <Heading>Threads</Heading>
                 <div className="space-y-2 py-2">
                   <div className="flex gap-2">
