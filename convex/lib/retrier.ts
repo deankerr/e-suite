@@ -37,6 +37,7 @@ export const runAction = async (
     retryBackoff = DEFAULT_RETRY_BACKOFF,
     base = DEFAULT_BASE,
     maxFailures = DEFAULT_MAX_FAILURES,
+    initialDelay = 0,
   }: {
     action: string
     actionArgs: any
@@ -44,10 +45,15 @@ export const runAction = async (
     retryBackoff?: number
     base?: number
     maxFailures?: number
+    initialDelay?: number
   },
 ) => {
-  const jobId = await ctx.scheduler.runAfter(0, makeFunctionReference<'action'>(action), actionArgs)
-  await ctx.scheduler.runAfter(0, internal.lib.retrier.retry, {
+  const jobId = await ctx.scheduler.runAfter(
+    initialDelay,
+    makeFunctionReference<'action'>(action),
+    actionArgs,
+  )
+  await ctx.scheduler.runAfter(initialDelay, internal.lib.retrier.retry, {
     job: jobId,
     action,
     actionArgs,
@@ -56,6 +62,7 @@ export const runAction = async (
     base,
     maxFailures,
   })
+  console.debug('Job scheduled', jobId, initialDelay)
   return jobId
 }
 
@@ -79,7 +86,7 @@ export const retry = internalMutation({
     switch (status.state.kind) {
       case 'pending':
       case 'inProgress':
-        // console.debug(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
+        console.debug(`Job ${job} not yet complete, checking again in ${args.waitBackoff} ms.`)
         await ctx.scheduler.runAfter(args.waitBackoff, internal.lib.retrier.retry, {
           ...args,
           waitBackoff: args.waitBackoff * args.base,
@@ -91,7 +98,7 @@ export const retry = internalMutation({
           console.error(`Job ${job} failed too many times, not retrying.`)
           break
         }
-        console.warn(`Job ${job} failed, retrying in ${args.retryBackoff} ms.`)
+        console.debug(`Job ${job} failed, retrying in ${args.retryBackoff} ms.`)
         const newJob = await ctx.scheduler.runAfter(
           args.retryBackoff,
           makeFunctionReference<'action'>(args.action),
@@ -106,7 +113,7 @@ export const retry = internalMutation({
         break
 
       case 'success':
-        // console.debug(`Job ${job} succeeded.`)
+        console.debug(`Job ${job} succeeded.`)
         break
       case 'canceled':
         console.warn(`Job ${job} was canceled. Not retrying.`)

@@ -11,6 +11,8 @@ import { messagesFields } from './schema'
 
 import type { ChatMessage, MutationCtx } from './types'
 
+const requestDelay = 1000
+
 const messageSchema = z.object(messagesFields)
 
 const publicMessageSchema = z.object({
@@ -46,11 +48,12 @@ export const createMessage = async (
 
       const jobIds = await Promise.all(
         dimensions.map(
-          async (dimensions) =>
+          async (dimensions, i) =>
             await runAction(ctx, {
               action: 'generation:textToImage',
               actionArgs: { messageId, dimensions },
               maxFailures: 6,
+              initialDelay: requestDelay * i,
             }),
         ),
       )
