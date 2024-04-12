@@ -14,7 +14,7 @@ export const create = internalMutation({
 
     if (!image.storageId) {
       const jobId = await runAction(ctx, {
-        action: 'lib/image:retrieve',
+        action: 'lib/process:remoteImage',
         actionArgs: { imageId: image._id },
       })
 

@@ -56,6 +56,10 @@ export const imagesFields = {
   storageId: zid('_storage').optional(),
   storageUrl: z.string().optional(),
 
+  url: z.string().optional(),
+  sourceStorageId: z.string().optional(),
+  sourceStorageUrl: z.string().optional(),
+
   optimizedStorageId: zid('_storage').optional(),
   optimizedUrl: z.string().optional(),
 

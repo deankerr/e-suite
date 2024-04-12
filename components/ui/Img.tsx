@@ -3,18 +3,11 @@ import NextImage from 'next/image'
 
 const disableNextOptimization = !!process.env.NEXT_PUBLIC_IMAGE_UNOPTIMIZED
 
-type ImgProps = { optimizedSrc?: string } & React.ComponentProps<typeof NextImage>
+type ImgProps = React.ComponentProps<typeof NextImage>
 
 export const Img = forwardRef<HTMLImageElement, ImgProps>(function Img(
-  { optimizedSrc, src, ...props },
+  { src, ...props },
   forwardedRef,
 ) {
-  return (
-    <NextImage
-      unoptimized={disableNextOptimization || !!optimizedSrc}
-      src={optimizedSrc ?? src}
-      {...props}
-      ref={forwardedRef}
-    />
-  )
+  return <NextImage unoptimized={disableNextOptimization} src={src} {...props} ref={forwardedRef} />
 })

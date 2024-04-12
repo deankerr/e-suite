@@ -67,7 +67,7 @@ export const MasonryGallery = ({
         </div>
       </Card>
 
-      <div className="grid grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] grid-rows-6 gap-4 py-4">
+      <div className="grid grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] grid-rows-5 gap-4 py-4">
         {!errorMessage
           ? dimensionSlots.map((image, i) => {
               const key = `${image.width}|${image.height}|${i}`
@@ -105,7 +105,6 @@ function MasonryImage({
   const styles = getImageProps(image.width, image.height)
 
   const storageUrl = 'storageUrl' in image ? image.storageUrl : undefined
-  const optimizedUrl = 'optimizedUrl' in image ? image.optimizedUrl : undefined
   const blurDataURL = 'blurDataURL' in image ? image.blurDataURL : undefined
 
   return (
@@ -131,10 +130,9 @@ function MasonryImage({
         <Img
           alt=""
           src={storageUrl}
-          optimizedSrc={optimizedUrl}
           width={image.width}
           height={image.height}
-          placeholder="blur"
+          placeholder={blurDataURL ? 'blur' : 'empty'}
           blurDataURL={blurDataURL}
           className={cn('h-full w-full rounded border border-gray-6 object-cover object-center')}
         />

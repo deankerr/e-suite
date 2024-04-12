@@ -1,36 +1,48 @@
 'use node'
 
 import { zid } from 'convex-helpers/server/zod'
-import { ConvexError } from 'convex/values'
+import ky from 'ky'
 import sharp from 'sharp'
 
 import { api, internal } from '../_generated/api'
 import { internalAction } from '../functions'
+import { insist } from './utils'
 
-export const image = internalAction({
+export const remoteImage = internalAction({
   args: {
     imageId: zid('images'),
   },
-  handler: async (ctx, { imageId }) => {
+  handler: async (ctx, { imageId }): Promise<void> => {
     const image = await ctx.runQuery(api.files.images.get, { imageId })
-    if (!image) throw new ConvexError('invalid image id')
-    if (!image.storageId) throw new ConvexError('image lacks storage id')
+    insist(image?.sourceUrl, 'source url missing')
 
-    const blob = await ctx.storage.get(image.storageId)
-    if (!blob) throw new ConvexError('invalid storage id')
-    const arrayBuffer = await blob.arrayBuffer()
+    const imageArrayBuffer = await ky.get(image.sourceUrl).arrayBuffer()
 
-    const result = await sharp(arrayBuffer).webp().toBuffer()
-    const webpBlob = new Blob([result.buffer], { type: 'image/webp' })
+    const metadata = await sharp(imageArrayBuffer)
+      .metadata()
+      .then(({ width, height, format }) => {
+        if (!(width && height && format)) {
+          throw Error('Failed to get required image metadata')
+        }
+        return { width, height, format }
+      })
 
-    const id = await ctx.storage.store(webpBlob)
-    const url = await ctx.storage.getUrl(id)
+    const sourceBlob = new Blob([imageArrayBuffer], { type: `image/${metadata.format}` })
+    const sourceStorageId = await ctx.storage.store(sourceBlob)
+    const sourceStorageUrl = await ctx.storage.getUrl(sourceStorageId)
+
+    const imageBuffer = await sharp(imageArrayBuffer).webp().toBuffer()
+    const imageBlob = new Blob([imageBuffer], { type: 'image/webp' })
+    const imageStorageId = await ctx.storage.store(imageBlob)
+    const imageStorageUrl = await ctx.storage.getUrl(imageStorageId)
 
     await ctx.runMutation(internal.files.images.update, {
       imageId,
       fields: {
-        optimizedStorageId: id,
-        optimizedUrl: url ?? undefined,
+        storageId: imageStorageId,
+        storageUrl: imageStorageUrl ?? undefined,
+        sourceStorageId,
+        sourceStorageUrl: sourceStorageUrl ?? undefined,
       },
     })
   },
