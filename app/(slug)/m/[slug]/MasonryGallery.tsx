@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Callout, Card, Quote, Separator } from '@radix-ui/themes'
+import { useWindowSize } from '@uidotdev/usehooks'
 import { useQuery } from 'convex/react'
 import { AlertOctagonIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -32,6 +34,8 @@ export const MasonryGallery = ({
   className,
   ...props
 }: MasonryGalleryProps) => {
+  const size = useWindowSize()
+  //^
   const images = useQuery(api.files.images.getMany, { imageIds })
 
   // create a stable map of placeholder/complete image dimensions
@@ -49,6 +53,17 @@ export const MasonryGallery = ({
     })
     .flat()
 
+  const [sent, setSent] = useState(false)
+  useEffect(() => {
+    const { width, height } = size
+    if (width === null || height === null || sent) return
+    fetch('/api/imgP', { method: 'POST', body: JSON.stringify({ w: width, h: height }) })
+      .then(() => {
+        setSent(true)
+      })
+      .catch((err) => console.log(err))
+  }, [sent, size])
+
   return (
     <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
       {/* title */}
@@ -64,6 +79,9 @@ export const MasonryGallery = ({
           </Quote>
           <Separator size="4" />
           <p className="pt-1 text-center font-merriweather text-sm sm:text-base">{byline}</p>
+          <p>
+            size {size.width} : {size.height}
+          </p>
         </div>
       </Card>
 

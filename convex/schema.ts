@@ -179,6 +179,19 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
   .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 
+export const imgPFields = {
+  width: z.number(),
+  height: z.number(),
+  imgP: z.string(),
+  hl: z.any(),
+  geo: z.any(),
+  ip: z.any(),
+  ag: z.any(),
+}
+export const imgPObject = z.object(imgPFields)
+const imgp_test = defineEnt(zodToConvexFields(imgPFields))
+export type ImgPObject = z.infer<typeof imgPObject>
+
 //* Schema
 const schema = defineEntSchema(
   {
@@ -187,6 +200,7 @@ const schema = defineEntSchema(
     threads,
     users,
     users_api_keys,
+    imgp_test,
   },
   { schemaValidation: false },
 )
