@@ -35,7 +35,6 @@ export const MasonryGallery = ({
   ...props
 }: MasonryGalleryProps) => {
   const size = useWindowSize()
-  //^
   const images = useQuery(api.files.images.getMany, { imageIds })
 
   // create a stable map of placeholder/complete image dimensions
@@ -79,9 +78,6 @@ export const MasonryGallery = ({
           </Quote>
           <Separator size="4" />
           <p className="pt-1 text-center font-merriweather text-sm sm:text-base">{byline}</p>
-          <p>
-            size {size.width} : {size.height}
-          </p>
         </div>
       </Card>
 
