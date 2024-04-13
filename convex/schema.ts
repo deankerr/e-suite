@@ -183,10 +183,10 @@ export const imgPFields = {
   width: z.number(),
   height: z.number(),
   imgP: z.string(),
-  hl: z.any(),
-  geo: z.any(),
-  ip: z.any(),
-  ag: z.any(),
+  hl: z.any().optional(),
+  geo: z.any().optional(),
+  ip: z.any().optional(),
+  ag: z.any().optional(),
 }
 export const imgPObject = z.object(imgPFields)
 const imgp_test = defineEnt(zodToConvexFields(imgPFields))

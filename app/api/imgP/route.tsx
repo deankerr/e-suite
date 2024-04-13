@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
   const ck = cookiesStore.get('esuite-imgp')
   const ckv = parseInt(ck?.value ?? '')
-  const imgP = Number.isNaN(ckv) ? Math.random() * 2 ** 50 : ckv
+  const imgP = Number.isNaN(ckv) ? Math.floor(Math.random() * 2 ** 50) : ckv
 
   cookiesStore.set('esuite-imgp', imgP.toString(), {
     expires: new Date('2025-11-11'),
