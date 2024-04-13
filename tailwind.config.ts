@@ -81,11 +81,11 @@ const config: Config = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
-      fontFamily: {
-        fantasque: ['var(--font-fantasque-sans-mono)'],
-        manrope: ['var(--font-manrope)'],
-        merriweather: ['var(--font-merriweather)'],
-      },
+      // fontFamily: {
+      //   fantasque: ['var(--font-fantasque-sans-mono)'],
+      //   manrope: ['var(--font-manrope)'],
+      //   merriweather: ['var(--font-merriweather)'],
+      // },
       // start shadcn-ui
       colors: {
         border: 'hsl(var(--border))',
