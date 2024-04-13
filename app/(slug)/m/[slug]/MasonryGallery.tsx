@@ -77,7 +77,7 @@ export const MasonryGallery = ({
             {title}
           </Quote>
           <Separator size="4" />
-          <p className="pt-1 text-center font-merriweather text-sm sm:text-base">{byline}</p>
+          <p className="pt-1 text-center font-em text-sm sm:text-base">{byline}</p>
         </div>
       </Card>
 

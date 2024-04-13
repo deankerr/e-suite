@@ -6,7 +6,7 @@ import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Provider as JotaiProvider } from 'jotai'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono, Merriweather } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { AppStoreProvider } from '@/components/providers/AppStoreProvider'
@@ -14,11 +14,16 @@ import { ClientProviders } from '@/components/providers/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { cn } from '@/lib/utils'
 
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
   title: 'e/suite',
   description: "it's the e/suite",
+}
+
+export const viewport: Viewport = {
+  themeColor: '#111110',
+  colorScheme: 'dark',
 }
 
 const inter = Inter({
@@ -33,12 +38,12 @@ const jetBrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 })
 
-// const merriweather = Merriweather({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   weight: '400',
-//   variable: '--font-merriweather',
-// })
+const merriweather = Merriweather({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: '400',
+  variable: '--font-merriweather',
+})
 
 // const manrope = Manrope({
 //   subsets: ['latin'],
@@ -56,7 +61,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
+      className={cn(
+        `overscroll-none`,
+        inter.variable,
+        jetBrainsMono.variable,
+        merriweather.variable,
+      )}
       suppressHydrationWarning
     >
       <body className="min-h-full">
