@@ -12,7 +12,7 @@ export const Logo = forwardRef<HTMLImageElement, Partial<React.ComponentProps<ty
         ref={forwardedRef}
         src={sunLogoSvg}
         alt="e/suite sun logo"
-        className={cn('', className)}
+        className={cn('size-8', className)}
       />
     )
   },
