@@ -43,12 +43,11 @@ export const get = query({
 export const getBySlug = query({
   args: {
     slug: z.string(),
-    isMetadataRequest: z.boolean()
+    isMetadataRequest: z.boolean().default(false),
   },
   handler: async (ctx, { slug, isMetadataRequest }) => {
     if (isMetadataRequest) console.log('metadata request')
     const thread = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
-    console.log(slug, thread?._id)
     return publicThreadsSchema.parse(thread)
   },
 })
