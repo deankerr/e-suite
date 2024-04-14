@@ -105,6 +105,8 @@ export const MasonryGallery = ({
   )
 }
 
+const OPTIMIZED = true
+
 function MasonryImage({
   image,
   order = 0,
@@ -118,8 +120,10 @@ function MasonryImage({
 } & React.ComponentProps<'div'>) {
   const styles = getImageProps(image.width, image.height)
 
-  const storageUrl = 'storageUrl' in image ? image.storageUrl : undefined
   const blurDataURL = 'blurDataURL' in image ? image.blurDataURL : undefined
+  const storageUrl = 'storageUrl' in image ? image.storageUrl : undefined
+  const sourceStorageUrl = 'sourceStorageUrl' in image ? image.sourceStorageUrl : undefined
+  const url = OPTIMIZED ? storageUrl : sourceStorageUrl
 
   return (
     <Card
@@ -127,7 +131,7 @@ function MasonryImage({
       className={cn(styles.grid, className)}
       style={{ order, maxWidth: image.width }}
     >
-      {!storageUrl || showLoader ? (
+      {!url || showLoader ? (
         <RevealEffect
           animationSpeed={3}
           colors={[
@@ -143,7 +147,7 @@ function MasonryImage({
       ) : (
         <Img
           alt=""
-          src={storageUrl}
+          src={url}
           width={image.width}
           height={image.height}
           placeholder={blurDataURL ? 'blur' : 'empty'}
