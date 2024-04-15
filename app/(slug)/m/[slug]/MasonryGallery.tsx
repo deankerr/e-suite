@@ -64,13 +64,13 @@ export const MasonryGallery = ({
   }, [sent, size])
 
   return (
-    <div {...props} className={cn('mx-auto max-w-7xl px-4 py-4', className)}>
+    <div {...props} className={cn('mx-auto max-w-7xl p-3 sm:px-4 sm:py-4', className)}>
       {/* title */}
       <Card className="mx-auto w-fit">
         <div className="flex-col-center gap-2 py-1 sm:px-8">
           <Quote
             className={cn(
-              'line-clamp-3 break-all text-center',
+              'line-clamp-3 break-words text-center',
               title.length > 100 ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl',
             )}
           >
@@ -81,7 +81,7 @@ export const MasonryGallery = ({
         </div>
       </Card>
 
-      <div className="grid grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] grid-rows-5 gap-4 py-4">
+      <div className="sm:grid space-y-3 sm:space-y-0 grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] grid-rows-5 gap-4 py-4">
         {!errorMessage
           ? dimensionSlots.map((image, i) => {
               const key = `${image.width}|${image.height}|${i}`
@@ -152,7 +152,7 @@ function MasonryImage({
           height={image.height}
           placeholder={blurDataURL ? 'blur' : 'empty'}
           blurDataURL={blurDataURL}
-          className={cn('h-full w-full rounded border border-gray-6 object-cover object-center')}
+          className={cn('h-full w-full rounded border border-gray-6 object-cover')}
         />
       )}
     </Card>
