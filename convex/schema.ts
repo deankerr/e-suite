@@ -24,6 +24,59 @@ const callbackFields = z.object({
   refId: z.string(),
 })
 
+//* New Generations/Images
+const generatedImagesFields = {
+  width: z.number(),
+  height: z.number(),
+
+  sourceUrl: z.string(),
+  sourceFileId: zid('_storage'),
+
+  blurDataUrl: z.string(),
+  color: z.string(),
+
+  webpFileId: zid('_storage'),
+}
+
+export const generated_images = defineEnt(zodToConvexFields(generatedImagesFields))
+  .deletion('scheduled', {
+    delayMs: timeToDelete,
+  })
+  .edge('generation')
+
+const generationFields = {
+  provider: z.enum(generationProviders),
+  metadata: z.tuple([z.string(), z.string()]).array(),
+
+  // common
+  model_id: z.string(),
+  prompt: z.string(),
+  seed: z.number(),
+
+  width: z.number(),
+  height: z.number(),
+  n: z.number(),
+
+  // common optional
+  negative_prompt: z.string().optional(),
+  guidance_scale: z.number().optional(),
+  num_inference_steps: z.number().optional(),
+
+  // sinkin
+  lcm: z.boolean().optional(),
+  use_default_neg: z.boolean().optional(),
+
+  // fal
+  enable_safety_checker: z.boolean().optional(),
+}
+
+export const generations = defineEnt(zodToConvexFields(generationFields))
+  .deletion('scheduled', {
+    delayMs: timeToDelete,
+  })
+  .edge('message')
+  .edges('generated_images', { ref: true })
+
 //* Chat/Completion
 export const completionParametersSchema = z.object({
   model: z.string(),
@@ -141,6 +194,7 @@ export const messagesFields = {
 const messages = defineEnt(zodToConvexFields(messagesFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
+  .edges('generations', { ref: true })
   .index('persistant', ['persistant'])
   .field('slug', zodToConvex(z.string()), { index: true })
 
@@ -195,6 +249,9 @@ export type ImgPObject = z.infer<typeof imgPObject>
 //* Schema
 const schema = defineEntSchema(
   {
+    generations,
+    generated_images,
+
     images,
     messages,
     threads,
