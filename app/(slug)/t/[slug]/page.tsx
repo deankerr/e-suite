@@ -1,4 +1,4 @@
-import { fetchQuery, preloadedQueryResult, preloadQuery } from 'convex/nextjs'
+import { fetchQuery } from 'convex/nextjs'
 import { Metadata } from 'next'
 
 import { api } from '@/convex/_generated/api'
@@ -19,31 +19,13 @@ export async function generateMetadata({
   )
 
   return {
-    title: `e/suite / Thread / ${thread.title ?? 'Untitled Thread'}`,
+    title: `e/suite / Thread / ${thread?.title ?? 'Untitled Thread'}`,
   }
 }
 
 export default async function TSlugPage({ params: { slug } }: { params: { slug: string } }) {
-  const token = await getAuthToken()
-  const preloadedThread = await preloadQuery(
-    api.threads.getBySlug,
-    {
-      slug: slug,
-      isMetadataRequest: false,
-    },
-    { token },
+  
+  return (
+    <ThreadView slug={slug} />
   )
-
-  const thread = preloadedQueryResult(preloadedThread)
-
-  const preloadedMessages = await preloadQuery(
-    api.messages.list,
-    {
-      threadId: thread._id,
-      limit: 20,
-    },
-    { token },
-  )
-
-  return <ThreadView preloadedThread={preloadedThread} preloadedMessages={preloadedMessages} />
 }

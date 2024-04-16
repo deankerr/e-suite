@@ -24,6 +24,7 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
     },
     threads: {
       read: async (thread) => {
+        // console.debug('read thread', thread.slug, thread.userId)
         return thread.userId === ctx.viewerId
       },
       write: async ({ operation, ent: thread, value }) => {

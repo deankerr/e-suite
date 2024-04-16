@@ -1,13 +1,18 @@
 'use client'
 
-import { AlertDialog, AspectRatio, Button, Separator, Table } from '@radix-ui/themes'
-import { Preloaded, useMutation, usePreloadedQuery, useQuery } from 'convex/react'
+import { AlertDialog, AspectRatio, Separator, Table } from '@radix-ui/themes'
+import {
+  useMutation,
+  usePaginatedQuery,
+  useQuery,
+} from 'convex/react'
 import {
   ChevronLeftIcon,
   EyeIcon,
   EyeOffIcon,
   ImagesIcon,
   InfoIcon,
+  Loader2Icon,
   MessageSquareIcon,
   MessagesSquareIcon,
   Trash2Icon,
@@ -17,38 +22,50 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/ui/IconButton'
+
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Message } from '@/convex/messages'
 import { GenerationInference } from '@/convex/schema'
 import { cn } from '@/lib/utils'
+import { Skeleton } from "@/components/ui/Skeleton"
+import { Button } from '@/components/ui/Button'
 
 const thumbnailHeightRem = 14
 
 type ThreadViewProps = {
-  slug?: string
-  preloadedThread: Preloaded<typeof api.threads.getBySlug>
-  preloadedMessages: Preloaded<typeof api.messages.list>
+  slug: string
 } & React.ComponentProps<'div'>
 
-export const ThreadView = ({ preloadedThread, preloadedMessages, ...props }: ThreadViewProps) => {
-  const thread = usePreloadedQuery(preloadedThread)
-  const title = thread.title ?? 'Untitled Thread'
+export const ThreadView = ({
+  slug,
+  ...props
+}: ThreadViewProps) => {
+  const thread = useQuery(api.threads.getBySlug, {slug})
+  const title = thread?.title ?? 'Untitled Thread'
 
-  const messages = usePreloadedQuery(preloadedMessages)
-  const textToImageMessages = messages?.filter((msg) => msg.inference?.type === 'textToImage')
+  const {
+    results: messages,
+    isLoading,
+    status,
+    loadMore,
+  } = usePaginatedQuery(api.threads.getSuper, { slug }, { initialNumItems: 5 })
 
   return (
     <div className={cn('', props.className)}>
       {/* header */}
-      <div className="flex gap-2 px-2 py-4">
-        <Link href={'/profile'}>
-          <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
-        </Link>
-
-        <MessagesSquareIcon />
-        <h2 className="text-lg font-semibold">{title}</h2>
-      </div>
+      <header className="grid grid-cols-2 px-2 py-4">
+        {/* title */}
+        <div className="flex-start shrink-0 gap-2">
+          <IconButton variant="ghost" asChild>
+            <Link href={'/profile'}>
+              <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
+            </Link>
+          </IconButton>
+          <MessagesSquareIcon />
+          {thread ? <h2 className="text-lg font-semibold">{title}</h2> : null} 
+        </div>
+      </header>
 
       <div className="px-3">
         <Separator size="4" />
@@ -70,15 +87,12 @@ export const ThreadView = ({ preloadedThread, preloadedMessages, ...props }: Thr
           </Table.Header>
 
           <Table.Body>
-            {textToImageMessages.map((message) => {
-              if (
-                !message.content ||
-                typeof message.content === 'string' ||
-                message.inference?.type !== 'textToImage'
-              )
-                return null
-              const imageIds = message.content.map(({ imageId }) => imageId)
-              const generation = message.inference
+            {messages.map((message) => {
+              const imageIds = Array.isArray(message.content)
+                ? message.content.map(({ imageId }) => imageId)
+                : []
+              const generation =
+                message.inference?.type === 'textToImage' ? message.inference : undefined
               return (
                 <MessageDetailRow
                   key={message._id}
@@ -90,6 +104,12 @@ export const ThreadView = ({ preloadedThread, preloadedMessages, ...props }: Thr
             })}
           </Table.Body>
         </Table.Root>
+
+        <div className={cn('py-4 px-4 grid', status === 'LoadingFirstPage' && 'hidden')}>
+          <Button size='4' color='orange' disabled={status !== 'CanLoadMore'} onClick={() => loadMore(20)}>
+            {isLoading ? <Loader2Icon className='animate-spin' />  :  status === 'Exhausted' ? 'Exhausted' : 'Load More'}
+          </Button>
+          </div>
       </div>
     </div>
   )
@@ -97,26 +117,39 @@ export const ThreadView = ({ preloadedThread, preloadedMessages, ...props }: Thr
 
 type MessageDetailRowProps = {
   message: Message
-  generation: GenerationInference
+  generation?: GenerationInference
   imageIds: Id<'images'>[]
 }
 
 export const MessageDetailRow = ({ message, generation, imageIds }: MessageDetailRowProps) => {
   const images = useQuery(api.files.images.getMany, { imageIds })
 
+  const messageText = typeof message.content === 'string' ? message.content : undefined
+  const messageAuthor = message?.name ?? message.role
+
   return (
     <>
       <Table.Row>
         <Table.RowHeaderCell>
           <Link href={`/m/${message.slug}`} className="flex-center mx-auto h-full gap-2">
-            <MessageSquareIcon className="size-5 stroke-[1.5]" />
-            <ImagesIcon className="size-5 stroke-[1.5]" />
+            {generation ? (
+              <ImagesIcon className="size-5 stroke-[1.5]" />
+            ) : (
+              <MessageSquareIcon className="size-5 stroke-[1.5]" />
+            )}
           </Link>
         </Table.RowHeaderCell>
         <Table.Cell>
-          <Link href={`/m/${message.slug}`}>{generation.title}</Link>
+          <div className="flex-start h-full">
+            <Link href={`/m/${message.slug}`}>
+              {generation?.title}
+              {messageText}
+            </Link>
+          </div>
         </Table.Cell>
-        <Table.Cell>{generation.byline}</Table.Cell>
+        <Table.Cell>
+          <div className="flex-start h-full">{generation?.byline ?? messageAuthor}</div>
+        </Table.Cell>
         <Table.Cell>
           <div className="flex gap-2">
             <IconButton color="grass" size="2" variant="surface">
@@ -137,53 +170,68 @@ export const MessageDetailRow = ({ message, generation, imageIds }: MessageDetai
         <Table.Cell></Table.Cell>
       </Table.Row>
 
-      <Table.Row>
-        <Table.Cell colSpan={5}>
-          <div className="flex items-center gap-1">
-            {images?.map((image, i) => {
-              if (!image)
+      {generation && (
+        <Table.Row>
+          <Table.Cell colSpan={5}>
+            <div className="flex items-center gap-1">
+              {/* skeleton */}
+              {!images || images.length < 1 ?
+                <>
+                  <Skeleton className="h-[14rem] w-[7rem] bg-gray-3 rounded-lg border border-gray-6" />
+                  <Skeleton className="h-[14rem] w-[7rem] bg-gray-3 rounded-lg border border-gray-6" />
+                  <Skeleton className="h-[14rem] w-[14rem] bg-gray-3 rounded-lg border border-gray-6" /> 
+                  <Skeleton className="h-[14rem] w-[14rem] bg-gray-3 rounded-lg border border-gray-6" /> 
+                  <Skeleton className="h-[14rem] w-[21rem] bg-gray-3 rounded-lg border border-gray-6" />
+                  <Skeleton className="h-[14rem] w-[21rem] bg-gray-3 rounded-lg border border-gray-6" />
+                </>: null
+              }
+              
+
+              {images?.map((image, i) => {
+                if (!image)
+                  return (
+                    <div key={i} className="h-10 w-10 bg-red-5">
+                      ?
+                    </div>
+                  )
+
+                const { width, height, storageUrl, blurDataURL } = image
+
+                const heightRatio = thumbnailHeightRem / height
+                const adjustedWidth = heightRatio * width
+
+                const url =
+                  storageUrl ??
+                  `https://placehold.co/${Math.floor(width / 2)}x${Math.floor(height / 2)}/222221/?text=e%2Fsuite&font=raleway`
                 return (
-                  <div key={i} className="h-10 w-10 bg-red-5">
-                    ?
+                  <div
+                    key={image?._id}
+                    className={cn(
+                      'overflow-hidden rounded-lg border border-gold-7 hover:border-gold-8',
+                    )}
+                    style={{ width: `${adjustedWidth}rem` }}
+                  >
+                    <AspectRatio ratio={width / height}>
+                      {url && (
+                        <NextImage
+                          unoptimized
+                          src={url}
+                          alt=""
+                          placeholder={blurDataURL ? 'blur' : 'empty'}
+                          blurDataURL={blurDataURL}
+                          width={width}
+                          height={height}
+                          className="object-cover"
+                        />
+                      )}
+                    </AspectRatio>
                   </div>
                 )
-
-              const { width, height, storageUrl, blurDataURL } = image
-
-              const heightRatio = thumbnailHeightRem / height
-              const adjustedWidth = heightRatio * width
-
-              const url =
-                storageUrl ??
-                `https://placehold.co/${Math.floor(width / 2)}x${Math.floor(height / 2)}?text=esuite`
-              return (
-                <div
-                  key={image?._id}
-                  className={cn(
-                    'overflow-hidden rounded-lg border border-gold-7 hover:border-gold-8',
-                  )}
-                  style={{ width: `${adjustedWidth}rem` }}
-                >
-                  <AspectRatio ratio={width / height}>
-                    {url && (
-                      <NextImage
-                        unoptimized
-                        src={url}
-                        alt=""
-                        placeholder={blurDataURL ? 'blur' : 'empty'}
-                        blurDataURL={blurDataURL}
-                        width={width}
-                        height={height}
-                        className="object-cover"
-                      />
-                    )}
-                  </AspectRatio>
-                </div>
-              )
-            })}
-          </div>
-        </Table.Cell>
-      </Table.Row>
+              })}
+            </div>
+          </Table.Cell>
+        </Table.Row>
+      )}
     </>
   )
 }

@@ -1,5 +1,6 @@
 import { ConvexError } from 'convex/values'
 import { customAlphabet } from 'nanoid'
+import { z } from 'zod'
 
 import type { Value } from 'convex/values'
 
@@ -25,4 +26,26 @@ export const generateSha256Hash = async (input: string) => {
 export const generateRandomString = (length: number) => {
   const generate = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
   return generate(length)
+}
+
+export const paginationOptions = z.object({
+  numItems: z.number(),
+  cursor: z.union([z.string(), z.null()]),
+  endCursor: z.optional(z.union([z.string(), z.null()])),
+  id: z.optional(z.number()),
+  maximumRowsRead: z.optional(z.number()),
+  maximumBytesRead: z.optional(z.number()),
+})
+
+// https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
+export function emptyPage() {
+  return {
+    page: [],
+    isDone: false,
+    continueCursor: "",
+    // This is a little hack around usePaginatedQuery,
+    // which will lead to permanent loading state,
+    // until a different result is returned
+    pageStatus: "SplitRequired" as const,
+  };
 }

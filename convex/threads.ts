@@ -3,15 +3,18 @@ import z from 'zod'
 
 import { mutation, query } from './functions'
 import { getSlug } from './lib/slug'
+import { emptyPage, insist, paginationOptions } from './lib/utils'
 import { createMessage } from './messages'
 import { messagesFields, threadsFields } from './schema'
 
-const publicThreadsSchema = z.object({
-  ...threadsFields,
-  _id: zid('threads'),
-  _creationTime: z.number(),
-  slug: z.string(),
-})
+const publicThreadsSchema = z
+  .object({
+    ...threadsFields,
+    _id: zid('threads'),
+    _creationTime: z.number(),
+    slug: z.string(),
+  })
+  .nullable()
 
 //* CRUD
 export const create = mutation({
@@ -49,6 +52,28 @@ export const getBySlug = query({
     if (isMetadataRequest) console.log('metadata request')
     const thread = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
     return publicThreadsSchema.parse(thread)
+  },
+})
+
+
+
+export const getSuper = query({
+  args: {
+    slug: z.string(),
+    paginationOpts: paginationOptions,
+  },
+  handler: async (ctx, { slug, paginationOpts }) => {
+    const thread = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
+    // insist(thread, 'invalid thread slug')
+    if (!thread) return emptyPage()
+
+    const messages = await thread
+      .edgeX('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
+
+    return messages
   },
 })
 
