@@ -40,7 +40,7 @@ export default async function TSlugPage({ params: { slug } }: { params: { slug: 
     api.messages.list,
     {
       threadId: thread._id,
-      limit: 50,
+      limit: 20,
     },
     { token },
   )
