@@ -95,8 +95,9 @@ export default function ProfilePage() {
                       </Button>
                     </div>
                   </div>
-                  {threads?.map((thread) => (
-                    <div key={thread._id} className="flex gap-2">
+                  {threads?.map((thread) => {
+                      if(!thread) return null
+                    return <div key={thread._id} className="flex gap-2">
                       <div className="flex-center shrink-0 gap-2 rounded border px-4 py-2 text-center font-code text-sm text-gray-9">
                         <RemoveThreadDialog threadId={thread._id}>
                           <IconButton lucideIcon={Trash2Icon} color="red" />
@@ -114,10 +115,10 @@ export default function ProfilePage() {
                         href={`/t/${thread.slug}`}
                         className="flex w-full items-center rounded-4 border px-4 py-2"
                       >
-                        {thread.title ?? 'untitled thread'}
+                        {thread?.title ?? 'untitled thread'}
                       </Link>
                     </div>
-                  ))}
+                  })}
                 </div>
               </div>
             </div>
