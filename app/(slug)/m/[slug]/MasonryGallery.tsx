@@ -81,7 +81,7 @@ export const MasonryGallery = ({
         </div>
       </Card>
 
-      <div className="sm:grid space-y-3 sm:space-y-0 grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] grid-rows-5 gap-4 py-4">
+      <div className="grid-flow-row-dense auto-rows-[160px] grid-cols-[repeat(auto-fit,_minmax(128px,_1fr))] grid-rows-5 gap-4 space-y-3 py-4 sm:grid sm:space-y-0">
         {!errorMessage
           ? dimensionSlots.map((image, i) => {
               const key = `${image.width}|${image.height}|${i}`

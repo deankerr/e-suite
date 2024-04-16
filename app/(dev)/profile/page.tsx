@@ -96,28 +96,30 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   {threads?.map((thread) => {
-                      if(!thread) return null
-                    return <div key={thread._id} className="flex gap-2">
-                      <div className="flex-center shrink-0 gap-2 rounded border px-4 py-2 text-center font-code text-sm text-gray-9">
-                        <RemoveThreadDialog threadId={thread._id}>
-                          <IconButton lucideIcon={Trash2Icon} color="red" />
-                        </RemoveThreadDialog>
+                    if (!thread) return null
+                    return (
+                      <div key={thread._id} className="flex gap-2">
+                        <div className="flex-center shrink-0 gap-2 rounded border px-4 py-2 text-center font-code text-sm text-gray-9">
+                          <RemoveThreadDialog threadId={thread._id}>
+                            <IconButton lucideIcon={Trash2Icon} color="red" />
+                          </RemoveThreadDialog>
 
-                        <div>
-                          <div>[{thread.slug}]</div>
-                          <div>{thread.permissions?.public ? 'public' : 'private'}</div>
+                          <div>
+                            <div>[{thread.slug}]</div>
+                            <div>{thread.permissions?.public ? 'public' : 'private'}</div>
+                          </div>
+
+                          <BookTextIcon />
                         </div>
 
-                        <BookTextIcon />
+                        <Link
+                          href={`/t/${thread.slug}`}
+                          className="flex w-full items-center rounded-4 border px-4 py-2"
+                        >
+                          {thread?.title ?? 'untitled thread'}
+                        </Link>
                       </div>
-
-                      <Link
-                        href={`/t/${thread.slug}`}
-                        className="flex w-full items-center rounded-4 border px-4 py-2"
-                      >
-                        {thread?.title ?? 'untitled thread'}
-                      </Link>
-                    </div>
+                    )
                   })}
                 </div>
               </div>

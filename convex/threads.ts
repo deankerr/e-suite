@@ -3,7 +3,7 @@ import z from 'zod'
 
 import { mutation, query } from './functions'
 import { getSlug } from './lib/slug'
-import { emptyPage, insist, paginationOptions } from './lib/utils'
+import { emptyPage, paginationOptions } from './lib/utils'
 import { createMessage } from './messages'
 import { messagesFields, threadsFields } from './schema'
 
@@ -54,8 +54,6 @@ export const getBySlug = query({
     return publicThreadsSchema.parse(thread)
   },
 })
-
-
 
 export const getSuper = query({
   args: {

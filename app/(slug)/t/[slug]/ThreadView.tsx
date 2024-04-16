@@ -1,12 +1,9 @@
 'use client'
 
-import { AlertDialog, AspectRatio, Separator, Table } from '@radix-ui/themes'
+import { AlertDialog, AspectRatio, Callout, Separator, Table } from '@radix-ui/themes'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import {
-  useMutation,
-  usePaginatedQuery,
-  useQuery,
-} from 'convex/react'
-import {
+  AlertOctagonIcon,
   ChevronLeftIcon,
   EyeIcon,
   EyeOffIcon,
@@ -21,15 +18,14 @@ import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
-
+import { Skeleton } from '@/components/ui/Skeleton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Message } from '@/convex/messages'
 import { GenerationInference } from '@/convex/schema'
 import { cn } from '@/lib/utils'
-import { Skeleton } from "@/components/ui/Skeleton"
-import { Button } from '@/components/ui/Button'
 
 const thumbnailHeightRem = 14
 
@@ -37,11 +33,8 @@ type ThreadViewProps = {
   slug: string
 } & React.ComponentProps<'div'>
 
-export const ThreadView = ({
-  slug,
-  ...props
-}: ThreadViewProps) => {
-  const thread = useQuery(api.threads.getBySlug, {slug})
+export const ThreadView = ({ slug, ...props }: ThreadViewProps) => {
+  const thread = useQuery(api.threads.getBySlug, { slug })
   const title = thread?.title ?? 'Untitled Thread'
 
   const {
@@ -63,7 +56,7 @@ export const ThreadView = ({
             </Link>
           </IconButton>
           <MessagesSquareIcon />
-          {thread ? <h2 className="text-lg font-semibold">{title}</h2> : null} 
+          {thread ? <h2 className="text-lg font-semibold">{title}</h2> : null}
         </div>
       </header>
 
@@ -105,11 +98,22 @@ export const ThreadView = ({
           </Table.Body>
         </Table.Root>
 
-        <div className={cn('py-4 px-4 grid', status === 'LoadingFirstPage' && 'hidden')}>
-          <Button size='4' color='orange' disabled={status !== 'CanLoadMore'} onClick={() => loadMore(20)}>
-            {isLoading ? <Loader2Icon className='animate-spin' />  :  status === 'Exhausted' ? 'Exhausted' : 'Load More'}
+        <div className={cn('grid px-4 py-4', status === 'LoadingFirstPage' && 'hidden')}>
+          <Button
+            size="4"
+            color="orange"
+            disabled={status !== 'CanLoadMore'}
+            onClick={() => loadMore(20)}
+          >
+            {isLoading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : status === 'Exhausted' ? (
+              'Exhausted'
+            ) : (
+              'Load More'
+            )}
           </Button>
-          </div>
+        </div>
       </div>
     </div>
   )
@@ -174,18 +178,26 @@ export const MessageDetailRow = ({ message, generation, imageIds }: MessageDetai
         <Table.Row>
           <Table.Cell colSpan={5}>
             <div className="flex items-center gap-1">
-              {/* skeleton */}
-              {!images || images.length < 1 ?
+              {message.error ? (
+                <Callout.Root color="red" role="alert" className="w-[95vw]">
+                  <Callout.Icon>
+                    <AlertOctagonIcon className="animate-pulse" />
+                  </Callout.Icon>
+                  <Callout.Text className="border-b border-red-6 pb-1">
+                    (sinkin.ai) endpoint returned error:
+                  </Callout.Text>
+                  <Callout.Text>{message.error.message}</Callout.Text>
+                </Callout.Root>
+              ) : !images || images.length < 1 ? (
                 <>
-                  <Skeleton className="h-[14rem] w-[7rem] bg-gray-3 rounded-lg border border-gray-6" />
-                  <Skeleton className="h-[14rem] w-[7rem] bg-gray-3 rounded-lg border border-gray-6" />
-                  <Skeleton className="h-[14rem] w-[14rem] bg-gray-3 rounded-lg border border-gray-6" /> 
-                  <Skeleton className="h-[14rem] w-[14rem] bg-gray-3 rounded-lg border border-gray-6" /> 
-                  <Skeleton className="h-[14rem] w-[21rem] bg-gray-3 rounded-lg border border-gray-6" />
-                  <Skeleton className="h-[14rem] w-[21rem] bg-gray-3 rounded-lg border border-gray-6" />
-                </>: null
-              }
-              
+                  <Skeleton className="h-[14rem] w-[7rem] rounded-lg border border-gray-6 bg-lime-3" />
+                  <Skeleton className="h-[14rem] w-[7rem] rounded-lg border border-gray-6 bg-gray-3" />
+                  <Skeleton className="h-[14rem] w-[14rem] rounded-lg border border-gray-6 bg-gray-3" />
+                  <Skeleton className="h-[14rem] w-[14rem] rounded-lg border border-gray-6 bg-gray-3" />
+                  <Skeleton className="h-[14rem] w-[21rem] rounded-lg border border-gray-6 bg-gray-3" />
+                  <Skeleton className="h-[14rem] w-[21rem] rounded-lg border border-gray-6 bg-gray-3" />
+                </>
+              ) : null}
 
               {images?.map((image, i) => {
                 if (!image)
@@ -202,7 +214,7 @@ export const MessageDetailRow = ({ message, generation, imageIds }: MessageDetai
 
                 const url =
                   storageUrl ??
-                  `https://placehold.co/${Math.floor(width / 2)}x${Math.floor(height / 2)}/222221/?text=e%2Fsuite&font=raleway`
+                  `https://placehold.co/${Math.floor(width / 2)}x${Math.floor(height / 2)}/222221/31312E/?text=e%2Fsuite&font=raleway`
                 return (
                   <div
                     key={image?._id}

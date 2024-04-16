@@ -24,8 +24,5 @@ export async function generateMetadata({
 }
 
 export default async function TSlugPage({ params: { slug } }: { params: { slug: string } }) {
-  
-  return (
-    <ThreadView slug={slug} />
-  )
+  return <ThreadView slug={slug} />
 }
