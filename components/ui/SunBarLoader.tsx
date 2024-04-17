@@ -15,7 +15,7 @@ export const SunBarLoader = ({
   return (
     <div
       className={cn(
-        'bg-gradient-radial absolute inset-0 from-orange-2 to-[84%] transition-all duration-1000 *:opacity-40',
+        'absolute inset-0 h-screen bg-gradient-radial from-orange-2 to-[84%] transition-all duration-1000 *:opacity-40',
         alert && 'from-red-2 *:-hue-rotate-[30deg] *:saturate-[1.2]',
       )}
     >
@@ -37,3 +37,4 @@ export const SunBarLoader = ({
     </div>
   )
 }
+// #F9F9FB #FFFFFF
