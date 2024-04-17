@@ -29,30 +29,6 @@ const config: Config = {
         p: { textWrap: 'pretty' },
       })
     }),
-    // main grid stacked pile layout
-    plugin(({ addComponents }) => {
-      addComponents({
-        '.grid-pile': {
-          '&>*': { gridArea: '1 / 1' },
-        },
-      })
-    }),
-    // radix-ui Card border customization (use css color vars)
-    plugin(function ({ matchUtilities }) {
-      matchUtilities(
-        {
-          'card-border': (value: string) => ({
-            'box-shadow': `0 0 0 1px var(--${value});`,
-            '@supports (box-shadow: 0 0 0 1px color-mix(in oklab, white, black))': {
-              'box-shadow': `0 0 0 1px color-mix(in oklab, var(--${colorToAlpha(
-                value,
-              )}), var(--${value}) 25%);`,
-            },
-          }),
-        },
-        { type: 'any' },
-      )
-    }),
     plugin(function ({ matchUtilities }) {
       matchUtilities(
         {
@@ -226,14 +202,6 @@ const config: Config = {
       'rx-9': 'var(--space-9)',
     },
   },
-}
-
-const colorToAlpha = (rxColor: string) => {
-  const split = rxColor.split('-')
-  const name = split[0]
-  const num = split[1]
-  if (!name || !num) return rxColor
-  return `${name}-a${num}`
 }
 
 export default config

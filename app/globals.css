@@ -88,13 +88,6 @@
 }
 /* end shadcn/ui */
 
-@layer base {
-  :root {
-    --e-top-h: 3.5rem;
-    --e-bottom-h: 4rem;
-  }
-}
-
 @tailwind utilities;
 
 @layer components {

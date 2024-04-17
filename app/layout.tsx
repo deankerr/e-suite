@@ -5,11 +5,9 @@ import { dark } from '@clerk/themes'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Provider as JotaiProvider } from 'jotai'
 import { Inter, JetBrains_Mono, Merriweather } from 'next/font/google'
 import { Toaster } from 'sonner'
 
-import { AppStoreProvider } from '@/components/providers/AppStoreProvider'
 import { ClientProviders } from '@/components/providers/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { cn } from '@/lib/utils'
@@ -72,15 +70,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full">
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <JotaiProvider>
-              <Theme className="min-h-full" accentColor="orange" appearance="dark">
-                <AppStoreProvider>
-                  {children}
-                  <Toaster richColors />
-                  <TailwindBreakpointIndicator />
-                </AppStoreProvider>
-              </Theme>
-            </JotaiProvider>
+            <Theme className="min-h-full" accentColor="orange" appearance="dark">
+              {children}
+              <Toaster richColors />
+              <TailwindBreakpointIndicator />
+            </Theme>
           </ClientProviders>
         </ClerkProvider>
         {process.env.NODE_ENV !== 'development' && (

@@ -38,12 +38,6 @@ const config = (phase) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     return {
       images,
-      // experimental: {
-      //   swcPlugins: [
-      //     ['@swc-jotai/react-refresh', {}],
-      //     ['@swc-jotai/debug-label', {}],
-      //   ],
-      // },
     }
   }
 

@@ -1,9 +1,7 @@
 import { httpRouter } from 'convex/server'
 
-import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { handleWebhook } from './providers/clerk'
-import { imgPObject } from './schema'
 
 import type { Id } from './_generated/dataModel'
 
@@ -33,18 +31,6 @@ http.route({
         'content-disposition': `attachment; filename="${storageId}.png"`,
       },
     })
-  }),
-})
-
-http.route({
-  path: '/imgp',
-  method: 'POST',
-  handler: httpAction(async (ctx, request) => {
-    const req = imgPObject.parse(await request.json())
-
-    await ctx.runMutation(internal.lib.imgP.add, { data: req })
-
-    return new Response()
   }),
 })
 
