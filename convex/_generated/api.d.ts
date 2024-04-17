@@ -14,25 +14,18 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as completion from "../completion.js";
 import type * as constants from "../constants.js";
-import type * as files_images from "../files/images.js";
 import type * as functions from "../functions.js";
-import type * as generation from "../generation.js";
 import type * as http from "../http.js";
-import type * as lib_process from "../lib/process.js";
 import type * as lib_retrier from "../lib/retrier.js";
 import type * as lib_slug from "../lib/slug.js";
 import type * as lib_utils from "../lib/utils.js";
-import type * as messages from "../messages.js";
 import type * as providers_aws from "../providers/aws.js";
 import type * as providers_clerk from "../providers/clerk.js";
-import type * as providers_elevenlabs from "../providers/elevenlabs.js";
 import type * as providers_openrouter from "../providers/openrouter.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as rules from "../rules.js";
-import type * as threads from "../threads.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as validators from "../validators.js";
@@ -46,25 +39,18 @@ import type * as validators from "../validators.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  completion: typeof completion;
   constants: typeof constants;
-  "files/images": typeof files_images;
   functions: typeof functions;
-  generation: typeof generation;
   http: typeof http;
-  "lib/process": typeof lib_process;
   "lib/retrier": typeof lib_retrier;
   "lib/slug": typeof lib_slug;
   "lib/utils": typeof lib_utils;
-  messages: typeof messages;
   "providers/aws": typeof providers_aws;
   "providers/clerk": typeof providers_clerk;
-  "providers/elevenlabs": typeof providers_elevenlabs;
   "providers/openrouter": typeof providers_openrouter;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
   rules: typeof rules;
-  threads: typeof threads;
   types: typeof types;
   users: typeof users;
   validators: typeof validators;

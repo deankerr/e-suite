@@ -5,7 +5,6 @@ import { z } from 'zod'
 import {
   completionProviders,
   generationProviders,
-  maxMessageContentStringLength,
   maxMessageNameStringLength,
   maxTitleStringLength,
   messageRoles,
@@ -18,12 +17,6 @@ const permissionsSchema = z.object({
   public: z.boolean(),
 })
 
-//* Callback
-const callbackFields = z.object({
-  url: z.string(),
-  refId: z.string(),
-})
-
 //* New Generations/Images
 const generatedImagesFields = {
   width: z.number(),
@@ -32,10 +25,11 @@ const generatedImagesFields = {
   sourceUrl: z.string(),
   sourceFileId: zid('_storage'),
 
+  // optimized
+  fileId: zid('_storage'),
+
   blurDataUrl: z.string(),
   color: z.string(),
-
-  webpFileId: zid('_storage'),
 }
 
 export const generated_images = defineEnt(zodToConvexFields(generatedImagesFields))
@@ -90,112 +84,25 @@ export const completionParametersSchema = z.object({
 })
 
 export const chatInference = z.object({
-  jobId: zid('_scheduled_functions').optional(),
-  callback: callbackFields.optional(),
-  type: z.literal('chat'),
   provider: z.enum(completionProviders),
   parameters: completionParametersSchema,
-
-  recentMessagesLimit: z.number().optional(),
 })
-
-//* Images
-export const imagesFields = {
-  jobId: zid('_scheduled_functions').optional(),
-  sourceUrl: z.string(),
-  width: z.number(),
-  height: z.number(),
-
-  storageId: zid('_storage').optional(),
-  storageUrl: z.string().optional(),
-
-  sourceStorageId: z.string().optional(),
-  sourceStorageUrl: z.string().optional(),
-
-  optimizedStorageId: zid('_storage').optional(), //todo migrate
-  optimizedUrl: z.string().optional(), //todo migrate
-
-  blurDataURL: z.string().optional(),
-  color: z.string().optional(),
-}
-const images = defineEnt(zodToConvexFields(imagesFields))
-  .deletion('scheduled', { delayMs: timeToDelete })
-  .index('sourceUrl', ['sourceUrl'])
-
-//* Generation
-export const generationParametersSchema = z.object({
-  model: z.string(),
-  prompt: z.string(),
-  negativePrompt: z.string().optional(),
-  seed: z.number().optional(),
-  steps: z.string().optional(),
-  guidance: z.number().optional(),
-  lcm: z.boolean().optional(),
-
-  // sinkin
-  use_default_neg: z.enum(['true', 'false']).optional(),
-})
-
-export const generationDimensionsSchema = z.object({
-  width: z.number(),
-  height: z.number(),
-  n: z.number(),
-})
-
-export const generationInference = z.object({
-  jobId: z.union([zid('_scheduled_functions'), zid('_scheduled_functions').array()]).optional(),
-  callback: callbackFields.optional(),
-  type: z.literal('textToImage'),
-  provider: z.enum(generationProviders),
-  parameters: generationParametersSchema,
-
-  dimensions: generationDimensionsSchema.array(),
-
-  title: z
-    .string()
-    .transform((value) => value.slice(0, maxTitleStringLength))
-    .optional(),
-  byline: z
-    .string()
-    .transform((value) => value.slice(0, maxTitleStringLength))
-    .optional(),
-})
-export type GenerationInference = z.infer<typeof generationInference>
 
 //* Messages
-export const messageContentSchema = z.union([
-  z.string().transform((value) => value.slice(0, maxMessageContentStringLength)),
-  z
-    .object({
-      type: z.literal('image'),
-      imageId: zid('images'),
-    })
-    .array(),
-])
-
-export const messagesFields = {
+export const messageFields = {
   role: z.enum(messageRoles),
   name: z
     .string()
     .transform((value) => value.slice(0, maxMessageNameStringLength))
     .optional(),
-  content: messageContentSchema.optional(),
+  content: z.string().optional(),
 
-  inference: z.discriminatedUnion('type', [chatInference, generationInference]).optional(),
-  persistant: z.boolean().optional(),
   permissions: permissionsSchema.optional(),
-
-  error: z
-    .object({
-      message: z.string(),
-    })
-    .optional(),
 }
-const messages = defineEnt(zodToConvexFields(messagesFields))
+const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
   .edges('generations', { ref: true })
-  .index('persistant', ['persistant'])
   .field('slug', zodToConvex(z.string()), { index: true })
 
 //* Threads
@@ -211,15 +118,15 @@ const threads = defineEnt(zodToConvexFields(threadsFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edges('messages', { ref: true })
   .edge('user')
-  .field('slug', zodToConvex(z.string()), { index: true })
+  .field('slug', zodToConvex(z.string()), { unique: true })
 
 //* Users
-export const usersFields = {
+export const userFields = {
   name: z.string(),
   imageUrl: z.string(),
   role: z.enum(['user', 'admin']),
 }
-const users = defineEnt(zodToConvexFields(usersFields))
+const users = defineEnt(zodToConvexFields(userFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
@@ -233,31 +140,16 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
   .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 
-export const imgPFields = {
-  width: z.number(),
-  height: z.number(),
-  imgP: z.string(),
-  hl: z.any().optional(),
-  geo: z.any().optional(),
-  ip: z.any().optional(),
-  ag: z.any().optional(),
-}
-export const imgPObject = z.object(imgPFields)
-const imgp_test = defineEnt(zodToConvexFields(imgPFields))
-export type ImgPObject = z.infer<typeof imgPObject>
-
 //* Schema
 const schema = defineEntSchema(
   {
     generations,
     generated_images,
 
-    images,
     messages,
     threads,
     users,
     users_api_keys,
-    imgp_test,
   },
   { schemaValidation: false },
 )

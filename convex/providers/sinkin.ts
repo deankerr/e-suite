@@ -4,8 +4,6 @@ import { z } from 'zod'
 
 import { getEnv } from '../lib/utils'
 
-import type { generationParametersSchema } from '../schema'
-
 const api = ky.extend({
   prefixUrl: 'https://sinkin.ai/m',
   timeout: 1000 * 60 * 5,
@@ -29,7 +27,7 @@ export const textToImage = async ({
   parameters,
   dimensions,
 }: {
-  parameters: z.infer<typeof generationParametersSchema>
+  parameters: Record<string, string>
   dimensions: { width: number; height: number; n: number }
 }) => {
   const body = new URLSearchParams()

@@ -6,7 +6,6 @@ import z from 'zod'
 import { getEnv } from '../lib/utils'
 
 import type { completionParametersSchema } from '../schema'
-import type { ChatMessage } from '../types'
 
 const openAI = () =>
   new OpenAI({
@@ -15,7 +14,7 @@ const openAI = () =>
   })
 
 const chatCompletion = async (args: {
-  messages: ChatMessage[]
+  messages: any[] // TODO type
   parameters: z.infer<typeof completionParametersSchema>
 }) => {
   const client = openAI()

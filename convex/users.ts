@@ -3,15 +3,15 @@ import z from 'zod'
 
 import { internalMutation, internalQuery, mutation, query } from './functions'
 import { generateRandomString, insist } from './lib/utils'
-import { usersFields } from './schema'
+import { userFields } from './schema'
 import { QueryCtx } from './types'
 
 const publicUserSchema = z
-  .object({ ...usersFields, _id: zid('users') })
+  .object({ ...userFields, _id: zid('users') })
   .transform((user) => ({ ...user, apiKey: undefined }))
 
 const selfUserSchema = z.object({
-  ...usersFields,
+  ...userFields,
   _id: zid('users'),
   apiKey: z.string().nullable(),
 })
@@ -55,7 +55,7 @@ export const getSelf = query({
 
 export const create = internalMutation({
   args: {
-    fields: z.object({ tokenIdentifier: z.string(), ...usersFields }),
+    fields: z.object({ tokenIdentifier: z.string(), ...userFields }),
   },
   handler: async (ctx, { fields }) => await ctx.table('users').insert(fields),
 })
@@ -63,7 +63,7 @@ export const create = internalMutation({
 export const update = internalMutation({
   args: {
     by: userBySchema,
-    fields: z.object(usersFields).partial(),
+    fields: z.object(userFields).partial(),
   },
   handler: async (ctx, { by, fields }) => {
     if ('id' in by) return await ctx.table('users').getX(by.id).patch(fields)
