@@ -190,7 +190,7 @@ export const MessageDetailRow = ({ message, generation, imageIds }: MessageDetai
                 </Callout.Root>
               ) : !images || images.length < 1 ? (
                 <>
-                  <Skeleton className="h-[14rem] w-[7rem] rounded-lg border border-gray-6 bg-lime-3" />
+                  <Skeleton className="h-[14rem] w-[7rem] rounded-lg border border-gray-6 bg-gray-3" />
                   <Skeleton className="h-[14rem] w-[7rem] rounded-lg border border-gray-6 bg-gray-3" />
                   <Skeleton className="h-[14rem] w-[14rem] rounded-lg border border-gray-6 bg-gray-3" />
                   <Skeleton className="h-[14rem] w-[14rem] rounded-lg border border-gray-6 bg-gray-3" />

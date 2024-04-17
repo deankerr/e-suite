@@ -46,10 +46,8 @@ export const get = query({
 export const getBySlug = query({
   args: {
     slug: z.string(),
-    isMetadataRequest: z.boolean().default(false),
   },
-  handler: async (ctx, { slug, isMetadataRequest }) => {
-    if (isMetadataRequest) console.log('metadata request')
+  handler: async (ctx, { slug }) => {
     const thread = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
     return publicThreadsSchema.parse(thread)
   },
@@ -62,7 +60,6 @@ export const getSuper = query({
   },
   handler: async (ctx, { slug, paginationOpts }) => {
     const thread = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
-    // insist(thread, 'invalid thread slug')
     if (!thread) return emptyPage()
 
     const messages = await thread

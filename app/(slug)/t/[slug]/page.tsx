@@ -12,11 +12,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const token = await getAuthToken()
   const slug = params.slug
-  const thread = await fetchQuery(
-    api.threads.getBySlug,
-    { slug, isMetadataRequest: true },
-    { token },
-  )
+  const thread = await fetchQuery(api.threads.getBySlug, { slug }, { token })
 
   return {
     title: `e/suite / Thread / ${thread?.title ?? 'Untitled Thread'}`,
