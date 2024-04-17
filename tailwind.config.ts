@@ -10,7 +10,6 @@ const config: Config = {
   darkMode: 'class',
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   plugins: [
-    require('@tailwindcss/typography'),
     require('@tailwindcss/container-queries'),
     require('tailwindcss-animate'),
     radixThemePlugin({

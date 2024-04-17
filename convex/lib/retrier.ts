@@ -99,6 +99,7 @@ export const retry = internalMutation({
           break
         }
         console.debug(`Job ${job} failed, retrying in ${args.retryBackoff} ms.`)
+        // eslint-disable-next-line no-case-declarations
         const newJob = await ctx.scheduler.runAfter(
           args.retryBackoff,
           makeFunctionReference<'action'>(args.action),

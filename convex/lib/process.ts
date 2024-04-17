@@ -11,6 +11,7 @@ import { insist } from './utils'
 
 import type { FormatEnum } from 'sharp'
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 const BLUR_FORMAT = 'png' as const
 const BLUR_SIZE = 8
 const BLUR_BRIGHTNESS = 1.4

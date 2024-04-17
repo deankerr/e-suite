@@ -19,13 +19,13 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
 export type ScheduledFunction = SystemDataModel['_scheduled_functions']['document']
 export type JobStatus = ScheduledFunction['state']['kind'] | 'unknown'
 
-export type CollectionItem<T extends object = {}> = { id: string; name: string } & T
-export type CollectionGroup<T extends object = {}> = {
+export type CollectionItem<T extends object> = { id: string; name: string } & T
+export type CollectionGroup<T extends object> = {
   id: string
   name: string
   group: CollectionItem<T>[]
 }
-export type Collection<T extends object = {}> = (CollectionItem<T> | CollectionGroup<T>)[]
+export type Collection<T extends object> = (CollectionItem<T> | CollectionGroup<T>)[]
 
 export type ChatMessage =
   | OpenAI.ChatCompletionSystemMessageParam

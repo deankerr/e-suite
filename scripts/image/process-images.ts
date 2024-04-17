@@ -31,5 +31,5 @@ async function processDir(opts?: any) {
   }
 }
 
-processDir()
+await processDir()
 // for (const opt of optionList) processDir(opt)

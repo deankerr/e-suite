@@ -90,7 +90,8 @@ export const generateNextApiKey = mutation({
     const existingKeys = await ctx.table('users_api_keys', 'userId', (q) =>
       q.eq('userId', user._id),
     )
-    existingKeys.forEach(async (key) => key.patch({ valid: false }))
+
+    existingKeys.forEach((key) => void key.patch({ valid: false }))
 
     const apiKey = `esk_${generateRandomString(32)}`
     return await ctx

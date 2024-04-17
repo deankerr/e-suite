@@ -264,13 +264,3 @@ export const remove = mutation({
     await ctx.table('messages').getX(messageId).delete()
   },
 })
-
-//* migration
-export const migrate = internalMutation({
-  args: {
-    runMigration: z.string(),
-  },
-  handler: async (ctx, { runMigration }) => {
-    if (runMigration !== 'slug') return
-  },
-})

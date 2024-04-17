@@ -4,7 +4,7 @@ import bundleAnalyzer from '@next/bundle-analyzer'
 import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js'
 
 const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
+  enabled: import.meta.env?.ANALYZE === 'true',
 })
 
 const images = {

@@ -1,9 +1,14 @@
 /* eslint-env node */
 module.exports = {
   root: true,
-  extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended'],
+  extends: ['next/core-web-vitals', 'plugin:@typescript-eslint/recommended-type-checked'],
+  plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
-  ignorePatterns: ['convex/_generated', '.next'],
+  parserOptions: {
+    project: true,
+    tsconfigRootDir: __dirname,
+  },
+  // ignorePatterns: ['convex/_generated', '.next'],
   rules: {
     '@typescript-eslint/no-import-type-side-effects': 'error',
 
@@ -22,20 +27,10 @@ module.exports = {
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-return': 'off',
 
-    // allow {} during dev (empty react props)
-    '@typescript-eslint/ban-types': [
-      'error',
-      {
-        types: { '{}': false },
-        extendDefaults: true,
-      },
-    ],
-
     // thanks vercel
     '@next/next/no-img-element': 'off',
 
     // type checked
     //'@typescript-eslint/require-await': 'off', // convex support
-    //'@typescript-eslint/no-misused-promises': 'off',
   },
 }

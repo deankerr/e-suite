@@ -23,10 +23,11 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
       },
     },
     threads: {
+      // eslint-disable-next-line @typescript-eslint/require-await
       read: async (thread) => {
-        // console.debug('read thread', thread.slug, thread.userId)
         return thread.userId === ctx.viewerId
       },
+      // eslint-disable-next-line @typescript-eslint/require-await
       write: async ({ operation, ent: thread, value }) => {
         if (operation === 'create') {
           return ctx.viewerId === value.userId
