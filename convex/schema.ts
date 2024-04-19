@@ -37,6 +37,7 @@ export const generated_images = defineEnt(zodToConvexFields(generatedImagesField
     delayMs: timeToDelete,
   })
   .edge('generation')
+  .field('slugId', zodToConvex(z.string()), { index: true })
 
 const generationFields = {
   provider: z.enum(generationProviders),
@@ -103,10 +104,11 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
   .edges('generations', { ref: true })
-  .field('slug', zodToConvex(z.string()), { index: true })
+  .field('slug', zodToConvex(z.string()), { index: true }) // todo migrate
+  .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
 
 //* Threads
-export const threadsFields = {
+export const threadFields = {
   title: z
     .string()
     .transform((value) => value.slice(0, maxTitleStringLength))
@@ -114,11 +116,12 @@ export const threadsFields = {
 
   permissions: permissionsSchema.optional(),
 }
-const threads = defineEnt(zodToConvexFields(threadsFields))
+const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edges('messages', { ref: true })
   .edge('user')
-  .field('slug', zodToConvex(z.string()), { unique: true })
+  .field('slug', zodToConvex(z.string()), { unique: true }) // todo migrate
+  .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
 
 //* Users
 export const userFields = {

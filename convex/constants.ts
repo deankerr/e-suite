@@ -22,3 +22,4 @@ export const maxTitleStringLength = 256
 export const defaultRecentMessagesLimit = 50
 
 export const slugLength = 8
+export const slugIdLength = 8

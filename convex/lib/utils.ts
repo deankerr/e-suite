@@ -28,7 +28,7 @@ export const generateRandomString = (length: number) => {
   return generate(length)
 }
 
-export const paginationOptions = z.object({
+export const zPaginationOptValidator = z.object({
   numItems: z.number(),
   cursor: z.union([z.string(), z.null()]),
   endCursor: z.optional(z.union([z.string(), z.null()])),
@@ -42,10 +42,10 @@ export function emptyPage() {
   return {
     page: [],
     isDone: false,
-    continueCursor: "",
+    continueCursor: '',
     // This is a little hack around usePaginatedQuery,
     // which will lead to permanent loading state,
     // until a different result is returned
-    pageStatus: "SplitRequired" as const,
-  };
+    pageStatus: 'SplitRequired' as const,
+  }
 }
