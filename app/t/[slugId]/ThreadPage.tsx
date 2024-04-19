@@ -3,7 +3,16 @@
 import { useMemo } from 'react'
 import { UserButton } from '@clerk/nextjs'
 import { PlusIcon } from '@radix-ui/react-icons'
-import { AspectRatio, Card, Heading, Inset, Select, Separator, TextField } from '@radix-ui/themes'
+import {
+  AspectRatio,
+  Button,
+  Card,
+  Heading,
+  Inset,
+  Select,
+  Separator,
+  TextField,
+} from '@radix-ui/themes'
 import { useMutation, usePaginatedQuery, useQueries, useQuery } from 'convex/react'
 import {
   ChevronLeftIcon,
@@ -16,7 +25,6 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 import { generatedImagesFields, generationFields } from '@/convex/schema'
@@ -141,7 +149,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
       <header className="grid h-14 grid-cols-2 px-2">
         {/* title */}
         <div className="flex items-center gap-2 font-medium">
-          <IconButton variant="ghost" asChild>
+          <IconButton label="back to dashboard" variant="ghost" asChild>
             <Link href={'/dashboard'}>
               <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
             </Link>
@@ -180,7 +188,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
 
             <TextField.Root placeholder="name" className="" id="name" name="name" />
             <TextField.Root placeholder="content" className="grow" id="content" name="content" />
-            <IconButton>
+            <IconButton label="add message">
               <PlusIcon />
             </IconButton>
           </form>
@@ -208,7 +216,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
             </div>
 
             <div>
-              <Button>Send</Button>
+              <Button variant="surface">Send</Button>
             </div>
           </form>
         </Card>
@@ -240,6 +248,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                             {latestStatus} {genJobs?.length}
                           </div>
                           <IconButton
+                            label="remove message"
                             color="red"
                             size="1"
                             onClick={() => {

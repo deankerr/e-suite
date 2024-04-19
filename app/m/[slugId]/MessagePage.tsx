@@ -35,7 +35,7 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
       <header className="grid h-14 grid-cols-2 px-2">
         {/* title */}
         <div className="flex items-center gap-2 font-medium">
-          <IconButton variant="ghost" asChild>
+          <IconButton label="" variant="ghost" asChild>
             <Link href={'/dashboard'}>
               <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
             </Link>

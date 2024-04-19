@@ -1,27 +1,17 @@
 import { forwardRef } from 'react'
-import { IconButton as RxIconButton } from '@radix-ui/themes'
-
-import { cn } from '@/lib/utils'
-
-import type { LucideIcon } from 'lucide-react'
+import { AccessibleIcon, IconButton as RadixIconButton } from '@radix-ui/themes'
 
 type Props = {
-  lucideIcon?: LucideIcon
+  label: string
 }
 
 export const IconButton = forwardRef<
   HTMLButtonElement,
-  Props & React.ComponentProps<typeof RxIconButton>
->(function IconButton({ lucideIcon, children, className, ...props }, forwardedRef) {
-  const LIcon = lucideIcon
+  Props & React.ComponentProps<typeof RadixIconButton>
+>(function IconButton({ label, children, ...props }, forwardedRef) {
   return (
-    <RxIconButton
-      variant="surface"
-      {...props}
-      className={cn('cursor-pointer disabled:cursor-not-allowed', className)}
-      ref={forwardedRef}
-    >
-      {LIcon ? <LIcon className="stroke-1" /> : children}
-    </RxIconButton>
+    <RadixIconButton variant="surface" {...props} ref={forwardedRef}>
+      {label ? <AccessibleIcon label={label}>{children}</AccessibleIcon> : children}
+    </RadixIconButton>
   )
 })

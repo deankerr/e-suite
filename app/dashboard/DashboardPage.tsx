@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { UserButton } from '@clerk/nextjs'
-import { Card, Heading, Separator, Table, TextField } from '@radix-ui/themes'
+import { Button, Card, Heading, Separator, Table, TextField } from '@radix-ui/themes'
 import { Authenticated, useMutation, useQuery } from 'convex/react'
 import {
   ChevronLeftIcon,
@@ -16,7 +16,6 @@ import {
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 
@@ -39,7 +38,7 @@ export const DashboardPage = ({}: DashboardPageProps) => {
       <header className="grid h-14 grid-cols-2 px-2">
         {/* title */}
         <div className="flex items-center gap-2">
-          <IconButton variant="ghost" asChild>
+          <IconButton label="back to dashboard" variant="ghost" asChild>
             <Link href={'/dashboard'}>
               <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
             </Link>
@@ -104,7 +103,7 @@ export const DashboardPage = ({}: DashboardPageProps) => {
                   </Table.Cell>
 
                   <Table.Cell>
-                    <IconButton color="grass" size="2" variant="surface">
+                    <IconButton label="toggle visibility" color="grass" size="2" variant="surface">
                       {thread.permissions?.public ? (
                         <EyeIcon className="mx-auto size-5 stroke-[1.5]" />
                       ) : (
@@ -112,6 +111,7 @@ export const DashboardPage = ({}: DashboardPageProps) => {
                       )}
                     </IconButton>
                     <IconButton
+                      label="remove thread"
                       color="red"
                       size="2"
                       variant="surface"
