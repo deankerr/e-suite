@@ -1,27 +1,41 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
+import { internal } from './_generated/api'
 import { slugIdLength } from './constants'
 import { mutation, query } from './functions'
 import { generateRandomString, zPaginationOptValidator } from './lib/utils'
-import { messageFields } from './schema'
+import { generationFields, messageFields } from './schema'
+import { runWithRetries } from './utils'
 
 import type { MutationCtx } from './types'
 
-const generateslugId = async (ctx: MutationCtx): Promise<string> => {
+const generateSlugId = async (ctx: MutationCtx): Promise<string> => {
   const slugId = generateRandomString(slugIdLength)
   const existing = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-  return existing ? generateslugId(ctx) : slugId
+  return existing ? generateSlugId(ctx) : slugId
 }
 
 export const create = mutation({
   args: {
     threadId: zid('threads'),
     message: z.object(messageFields),
+    generation: z.object(generationFields).optional(),
   },
-  handler: async (ctx, { threadId, message }) => {
-    const slugId = await generateslugId(ctx)
-    await ctx.table('messages').insert({ threadId, ...message, slugId, slug: slugId })
+  handler: async (ctx, { threadId, message, generation }) => {
+    const slugId = await generateSlugId(ctx)
+    const messageId = await ctx.table('messages').insert({ threadId, ...message, slugId })
+
+    if (generation) {
+      const generationId = await ctx.table('generations').insert({
+        ...generation,
+        messageId,
+      })
+
+      await runWithRetries(ctx, internal.generation.textToImage, { generationId })
+    }
+
+    return messageId
   },
 })
 

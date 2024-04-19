@@ -4,6 +4,7 @@ import type { TableNames } from './_generated/dataModel'
 import type { authOnlyMutation, authOnlyQuery } from './functions'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
+import type { SystemDataModel } from 'convex/server'
 
 export type QueryCtx = CustomCtx<typeof authOnlyQuery>
 export type MutationCtx = CustomCtx<typeof authOnlyMutation>

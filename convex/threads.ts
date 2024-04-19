@@ -21,9 +21,7 @@ export const create = mutation({
   handler: async (ctx, { title }) => {
     const user = await ctx.viewerX()
     const slugId = await generateSlugid(ctx)
-    const threadId = await ctx
-      .table('threads')
-      .insert({ title, userId: user._id, slugId, slug: slugId })
+    const threadId = await ctx.table('threads').insert({ title, userId: user._id, slugId })
     return threadId
   },
 })

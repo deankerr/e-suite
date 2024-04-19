@@ -8,6 +8,7 @@ import { ChevronLeftIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 
@@ -17,16 +18,54 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
   const messages = usePaginatedQuery(api.messages.list, queryKey, { initialNumItems: 10 })
 
   const createMessage = useMutation(api.messages.create)
-  const formSubmit = (formdata: FormData) => {
+  const createMessageFormAction = (formData: FormData) => {
     if (!thread) return
 
-    const role = formdata.get('role') as 'system' | 'assistant' | 'user'
-    const name = formdata.get('name') ? String(formdata.get('name')) : undefined
-    const content = formdata.get('content') ? String(formdata.get('content')) : ''
+    const role = formData.get('role') as 'system' | 'assistant' | 'user'
+    const name = formData.get('name') ? String(formData.get('name')) : undefined
+    const content = formData.get('content') ? String(formData.get('content')) : ''
     console.log(role, name, content)
 
     createMessage({ threadId: thread?._id, message: { role, name, content } })
       .then(() => toast.success('Message created'))
+      .catch((err) => {
+        if (err instanceof Error) toast.error(err.message)
+        else toast.error('Unknown error')
+      })
+  }
+
+  const createGenerationFormAction = (formData: FormData) => {
+    if (!thread) return
+
+    const prompt = String(formData.get('prompt'))
+    const negative_prompt = formData.get('negative_prompt')
+      ? String(formData.get('negative_prompt'))
+      : undefined
+    const model_id = String(formData.get('model_id'))
+    const width = Number(formData.get('width'))
+    const height = Number(formData.get('height'))
+    const n = Number(formData.get('amount'))
+    const seed = formData.get('seed')
+      ? Number(formData.get('amount'))
+      : Math.floor(Math.random() * 10000000)
+
+    createMessage({
+      threadId: thread._id,
+      message: {
+        role: 'assistant',
+      },
+      generation: {
+        provider: 'sinkin',
+        prompt,
+        negative_prompt,
+        model_id,
+        width,
+        height,
+        n,
+        seed,
+      },
+    })
+      .then(() => toast.success('Generation created'))
       .catch((err) => {
         if (err instanceof Error) toast.error(err.message)
         else toast.error('Unknown error')
@@ -64,7 +103,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
           <Heading size="2" className="mb-2">
             Create Message
           </Heading>
-          <form className="flex gap-2" action={formSubmit}>
+          <form className="flex gap-2" action={createMessageFormAction}>
             <Select.Root defaultValue="user" name="role">
               <Select.Trigger className="w-24" />
               <Select.Content>
@@ -82,6 +121,33 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
             <IconButton>
               <PlusIcon />
             </IconButton>
+          </form>
+        </Card>
+
+        <Card className="max-w-sm">
+          <Heading size="2" className="mb-2">
+            Create generation
+          </Heading>
+
+          <form className="space-y-2" action={createGenerationFormAction}>
+            <TextField.Root placeholder="prompt" id="prompt" name="prompt" />
+            <TextField.Root
+              placeholder="negative prompt"
+              id="negative_prompt"
+              name="negative_prompt"
+            />
+            <TextField.Root placeholder="model id" id="model_id" name="model_id" />
+            <TextField.Root placeholder="seed" id="seed" name="seed" />
+
+            <div className="flex gap-2">
+              <TextField.Root placeholder="width" id="width" name="width" />
+              <TextField.Root placeholder="height" id="height" name="height" />
+              <TextField.Root placeholder="amount" id="amount" name="amount" />
+            </div>
+
+            <div>
+              <Button>Send</Button>
+            </div>
           </form>
         </Card>
 

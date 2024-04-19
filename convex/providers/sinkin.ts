@@ -27,7 +27,7 @@ export const textToImage = async ({
   parameters,
   dimensions,
 }: {
-  parameters: Record<string, string>
+  parameters: Record<string, any>
   dimensions: { width: number; height: number; n: number }
 }) => {
   const body = new URLSearchParams()
