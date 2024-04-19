@@ -67,10 +67,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       )}
       suppressHydrationWarning
     >
-      <body className="min-h-full">
+      <body className="min-h-screen">
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <Theme className="min-h-full" accentColor="orange" appearance="dark">
+            <Theme className="min-h-screen" accentColor="orange" appearance="dark">
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />

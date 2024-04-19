@@ -92,8 +92,10 @@ const config: Config = {
         },
 
         accent: generateRadixScale('orange'),
-        orange: generateRadixScale('orange'),
         gray: generateRadixScale('gray'),
+        grayA: generateRadixScaleAlpha('gray'),
+
+        orange: generateRadixScale('orange'),
         red: generateRadixScale('red'),
         green: generateRadixScale('green'),
         blue: generateRadixScale('blue'),
@@ -167,5 +169,11 @@ export default config
 function generateRadixScale(name: string) {
   return Object.fromEntries(
     Array.from({ length: 12 }).map((_, i) => [i + 1, `var(--${name}-${i + 1})`]),
+  )
+}
+
+function generateRadixScaleAlpha(name: string) {
+  return Object.fromEntries(
+    Array.from({ length: 12 }).map((_, i) => [i + 1, `var(--${name}-a${i + 1})`]),
   )
 }
