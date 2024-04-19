@@ -40,13 +40,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
+      className={cn('overscroll-none', inter.variable, jetBrainsMono.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-screen">
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <Theme className="min-h-screen" accentColor="orange" appearance="dark">
+            <Theme
+              className="min-h-screen"
+              accentColor="orange"
+              appearance="dark"
+              panelBackground="translucent"
+            >
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />
