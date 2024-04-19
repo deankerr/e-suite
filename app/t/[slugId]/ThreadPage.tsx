@@ -16,6 +16,8 @@ import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 import { generatedImagesFields, generationFields } from '@/convex/schema'
 
+import type { ScheduledFunction } from '@/convex/types'
+
 const thumbnailHeightRem = 14
 
 const generationResponseSchema = z.record(
@@ -33,8 +35,8 @@ const generationResponseSchema = z.record(
 
 export default function ThreadPage({ slugId }: { slugId: string }) {
   const thread = useQuery(api.threads.getBySlugId, { slugId })
-  const queryKey = thread ? { threadId: thread._id } : 'skip'
-  const messages = usePaginatedQuery(api.messages.list, queryKey, { initialNumItems: 10 })
+  const queryKey = thread ? { threadId: thread._id, order: 'desc' as const } : 'skip'
+  const messages = usePaginatedQuery(api.messages.list, queryKey, { initialNumItems: 5 })
 
   const generationQueryKeys = useMemo(
     () =>
@@ -52,6 +54,24 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
 
   const generationQueries = useQueries(generationQueryKeys)
   const generations = generationResponseSchema.parse(generationQueries)
+
+  const jobsQueryKeys = useMemo(
+    () =>
+      Object.fromEntries(
+        messages.results.map((message) => [
+          message._id,
+          {
+            query: api.jobs.getByMessageId,
+            args: { messageId: message._id },
+          },
+        ]),
+      ),
+    [messages.results],
+  )
+
+  const jobsQueries = useQueries(jobsQueryKeys)
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-redundant-type-constituents
+  const jobs = jobsQueries as Record<string, ScheduledFunction[] | null | undefined>
 
   const createMessage = useMutation(api.messages.create)
   const createMessageFormAction = (formData: FormData) => {
@@ -109,6 +129,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
   }
 
   const removeMessage = useMutation(api.messages.remove)
+
   return (
     <div>
       {/* header */}
@@ -191,54 +212,75 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
         <div className="space-y-1">
           {messages.results.map((message) => {
             const generation = generations[message._id]
+            const genJobs = jobs[message._id]
+            const latestJob = Array.isArray(genJobs) ? genJobs.at(-1) : undefined
+            const latestStatus = latestJob?.state.kind ?? 'unknown'
             return (
-              <Card key={message._id} className="max-w-4xl">
-                <IconButton
-                  color="red"
-                  className="float-right"
-                  onClick={() => {
-                    removeMessage({ messageId: message._id })
-                      .then(() => toast.success('Message removed'))
-                      .catch((err) => {
-                        if (err instanceof Error) toast.error(err.message)
-                        else toast.error('Unknown error')
-                      })
-                  }}
-                >
-                  <Trash2Icon className="size-5 stroke-[1.5]" />
-                </IconButton>
-                {/* text */}
-                {message.name ?? message.role}: {message.content}
-                {/* generated images */}
-                <div className="flex items-center gap-1 overflow-x-auto">
-                  {generation?.generated_images.map((image) => {
-                    const { width, height, blurDataUrl } = image
-                    const heightRatio = thumbnailHeightRem / height
-                    const adjustedWidth = heightRatio * width
-                    const url = getImageUrl(image.slugId)
-                    return (
-                      <div
-                        key={image._id}
-                        className="border-gold-7 shrink-0 overflow-hidden rounded-lg border"
-                        style={{ width: `${adjustedWidth}rem` }}
-                      >
-                        <AspectRatio ratio={width / height}>
-                          {url && (
-                            <NextImage
-                              unoptimized
-                              src={url}
-                              alt=""
-                              placeholder={blurDataUrl ? 'blur' : 'empty'}
-                              blurDataURL={blurDataUrl}
-                              width={width}
-                              height={height}
-                              className="object-cover"
-                            />
-                          )}
-                        </AspectRatio>
+              <Card key={message._id} className="max-w-5xl">
+                <div className="space-y-3">
+                  {/* top bar */}
+                  <div className="flex-between items-end border-b bg-gray-2 pb-2">
+                    <div className="text-sm">
+                      {message.name && <span>{message.name} </span>}
+                      <span className="font-mono text-gray-11">{message.role}</span>
+                    </div>
+
+                    <div className="flex-end gap-2 text-gray-11">
+                      <div className="font-mono text-xs">
+                        {latestStatus} {genJobs?.length}
                       </div>
-                    )
-                  })}
+                      <IconButton
+                        color="red"
+                        size="1"
+                        onClick={() => {
+                          removeMessage({ messageId: message._id })
+                            .then(() => toast.success('Message removed'))
+                            .catch((err) => {
+                              if (err instanceof Error) toast.error(err.message)
+                              else toast.error('Unknown error')
+                            })
+                        }}
+                      >
+                        <Trash2Icon className="size-4 stroke-[1.5]" />
+                      </IconButton>
+                    </div>
+                  </div>
+
+                  {/* content */}
+                  <div className="flex items-center gap-1 overflow-x-auto">
+                    {/* text */}
+                    {message.content}
+
+                    {/* generated images */}
+                    {generation?.generated_images.map((image) => {
+                      const { width, height, blurDataUrl } = image
+                      const heightRatio = thumbnailHeightRem / height
+                      const adjustedWidth = heightRatio * width
+                      const url = getImageUrl(image.slugId)
+                      return (
+                        <div
+                          key={image._id}
+                          className="border-gold-7 shrink-0 overflow-hidden rounded-lg border"
+                          style={{ width: `${adjustedWidth}rem` }}
+                        >
+                          <AspectRatio ratio={width / height}>
+                            {url && (
+                              <NextImage
+                                unoptimized
+                                src={url}
+                                alt=""
+                                placeholder={blurDataUrl ? 'blur' : 'empty'}
+                                blurDataURL={blurDataUrl}
+                                width={width}
+                                height={height}
+                                className="object-cover"
+                              />
+                            )}
+                          </AspectRatio>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               </Card>
             )
@@ -256,3 +298,21 @@ const getImageUrl = (fileId: string) => {
 
   return url.toString()
 }
+
+/*
+[
+  {
+    action: "generation:textToImage",
+    actionArgs: {
+      generationId: "p5721vrfnk7eydrj9c795vf1bs6qhatv",
+    },
+    base: 2,
+    job: "3c1d9qytys307eh94b12xars9nw6ezg",
+    maxFailures: 1,
+    retryBackoff: 3276800,
+    waitBackoff: 102400,
+  },
+]
+
+
+*/

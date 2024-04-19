@@ -26,7 +26,7 @@ type SharpProcessOptions = {
   blur: Partial<BlurOptions>
 }
 
-export const processGenerationUrl = internalAction({
+export const generationFromUrl = internalAction({
   args: {
     sourceUrl: z.string(),
     generationId: zid('generations'),

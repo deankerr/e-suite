@@ -38,7 +38,7 @@ export const createFromUrl = internalMutation({
     generationId: zid('generations'),
   },
   handler: async (ctx, args) => {
-    await runWithRetries(ctx, internal.lib.sharp.processGenerationUrl, args)
+    await runWithRetries(ctx, internal.lib.sharp.generationFromUrl, args)
   },
 })
 

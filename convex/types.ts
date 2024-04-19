@@ -15,7 +15,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
   TableName
 >
 
-// export type ScheduledFunction = SystemDataModel['_scheduled_functions']['document']
+export type ScheduledFunction = SystemDataModel['_scheduled_functions']['document']
 // export type JobStatus = ScheduledFunction['state']['kind'] | 'unknown'
 
 export type CollectionItem<T extends object> = { id: string; name: string } & T
