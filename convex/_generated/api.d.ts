@@ -19,6 +19,7 @@ import type * as functions from "../functions.js";
 import type * as generated_images from "../generated_images.js";
 import type * as generation from "../generation.js";
 import type * as http from "../http.js";
+import type * as lib_sharp from "../lib/sharp.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as messages from "../messages.js";
 import type * as providers_aws from "../providers/aws.js";
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   generated_images: typeof generated_images;
   generation: typeof generation;
   http: typeof http;
+  "lib/sharp": typeof lib_sharp;
   "lib/utils": typeof lib_utils;
   messages: typeof messages;
   "providers/aws": typeof providers_aws;

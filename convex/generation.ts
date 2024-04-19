@@ -1,6 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
 import { ConvexError } from 'convex/values'
-import ky from 'ky'
 
 import { api, internal } from './_generated/api'
 import { internalAction, query } from './functions'
@@ -42,7 +41,7 @@ export const textToImage = internalAction({
       _id,
       _creationTime,
       metadata: _meta,
-      provider: __prov,
+      provider: _prov,
       width,
       height,
       n,
@@ -60,23 +59,14 @@ export const textToImage = internalAction({
 
     console.log('result', result)
 
-    // TODO move to seperate action
     await Promise.all(
-      result.images.map(async (sourceUrl) => {
-        const sourceBlob = await ky.get(sourceUrl).blob()
-        const sourceFileId = await ctx.storage.store(sourceBlob)
-
-        await ctx.runMutation(internal.generated_images.create, {
-          width,
-          height,
-          blurDataUrl: '',
-          color: '',
-          sourceFileId,
-          fileId: sourceFileId,
-          sourceUrl,
-          generationId: generation._id,
-        })
-      }),
+      result.images.map(
+        async (sourceUrl) =>
+          await ctx.runMutation(internal.generated_images.createFromUrl, {
+            sourceUrl,
+            generationId,
+          }),
+      ),
     )
   },
 })

@@ -212,7 +212,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                 {/* generated images */}
                 <div className="flex items-center gap-1 overflow-x-auto">
                   {generation?.generated_images.map((image) => {
-                    const { width, height } = image
+                    const { width, height, blurDataUrl } = image
                     const heightRatio = thumbnailHeightRem / height
                     const adjustedWidth = heightRatio * width
                     const url = getImageUrl(image.slugId)
@@ -228,6 +228,8 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                               unoptimized
                               src={url}
                               alt=""
+                              placeholder={blurDataUrl ? 'blur' : 'empty'}
+                              blurDataURL={blurDataUrl}
                               width={width}
                               height={height}
                               className="object-cover"
