@@ -13,6 +13,24 @@ export const get = query({
   handler: async (ctx, { generationId }) => await ctx.table('generations').getX(generationId),
 })
 
+export const getByMessageId = query({
+  args: {
+    messageId: zid('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    const generation = await ctx
+      .table('generations', 'messageId', (q) => q.eq('messageId', messageId))
+      .first()
+    if (!generation) return null
+
+    const generated_images = await generation.edge('generated_images')
+    return {
+      generation,
+      generated_images,
+    }
+  },
+})
+
 export const textToImage = internalAction({
   args: {
     generationId: zid('generations'),

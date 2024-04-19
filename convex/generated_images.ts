@@ -1,7 +1,8 @@
 import { zid } from 'convex-helpers/server/zod'
+import { z } from 'zod'
 
 import { slugIdLength } from './constants'
-import { internalMutation } from './functions'
+import { internalMutation, query } from './functions'
 import { generateRandomString } from './lib/utils'
 import { generatedImagesFields } from './schema'
 
@@ -26,5 +27,17 @@ export const create = internalMutation({
       ...args,
       slugId,
     })
+  },
+})
+
+export const getBySlugId = query({
+  args: {
+    slugId: z.string(),
+  },
+  handler: async (ctx, { slugId }) => {
+    const image = await ctx
+      .table('generated_images', 'slugId', (q) => q.eq('slugId', slugId))
+      .firstX()
+    return image
   },
 })

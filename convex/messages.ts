@@ -54,8 +54,8 @@ export const getBySlugId = query({
     slugId: z.string(),
   },
   handler: async (ctx, { slugId }) => {
-    const thread = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).firstX()
-    return thread
+    const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).firstX()
+    return message
   },
 })
 

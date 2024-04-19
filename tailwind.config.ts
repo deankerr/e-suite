@@ -99,6 +99,8 @@ const config: Config = {
         blue: generateRadixScale('blue'),
         yellow: generateRadixScale('yellow'),
         amber: generateRadixScale('amber'),
+        gold: generateRadixScale('gold'),
+        bronze: generateRadixScale('bronze'),
       },
       borderRadius: {
         lg: `var(--radius)`,

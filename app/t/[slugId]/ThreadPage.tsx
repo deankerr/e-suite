@@ -1,21 +1,57 @@
 'use client'
 
+import { useMemo } from 'react'
 import { UserButton } from '@clerk/nextjs'
 import { PlusIcon } from '@radix-ui/react-icons'
-import { Card, Heading, Select, Separator, TextField } from '@radix-ui/themes'
-import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { AspectRatio, Card, Heading, Select, Separator, TextField } from '@radix-ui/themes'
+import { useMutation, usePaginatedQuery, useQueries, useQuery } from 'convex/react'
 import { ChevronLeftIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
+import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
+import { generatedImagesFields, generationFields } from '@/convex/schema'
+
+const thumbnailHeightRem = 14
+
+const generationResponseSchema = z.record(
+  z.string(),
+  z
+    .object({
+      generation: z.object(generationFields).merge(z.object({ _id: z.string() })),
+      generated_images: z
+        .object(generatedImagesFields)
+        .merge(z.object({ _id: z.string(), slugId: z.string() }))
+        .array(),
+    })
+    .nullish(),
+)
 
 export default function ThreadPage({ slugId }: { slugId: string }) {
   const thread = useQuery(api.threads.getBySlugId, { slugId })
   const queryKey = thread ? { threadId: thread._id } : 'skip'
   const messages = usePaginatedQuery(api.messages.list, queryKey, { initialNumItems: 10 })
+
+  const generationQueryKeys = useMemo(
+    () =>
+      Object.fromEntries(
+        messages.results.map((message) => [
+          message._id,
+          {
+            query: api.generation.getByMessageId,
+            args: { messageId: message._id },
+          },
+        ]),
+      ),
+    [messages.results],
+  )
+
+  const generationQueries = useQueries(generationQueryKeys)
+  const generations = generationResponseSchema.parse(generationQueries)
 
   const createMessage = useMutation(api.messages.create)
   const createMessageFormAction = (formData: FormData) => {
@@ -154,9 +190,9 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
         {/* messages list */}
         <div className="space-y-1">
           {messages.results.map((message) => {
+            const generation = generations[message._id]
             return (
-              <Card key={message._id} className="max-w-2xl">
-                {message.name ?? message.role}: {JSON.stringify(message.content)}
+              <Card key={message._id} className="max-w-4xl">
                 <IconButton
                   color="red"
                   className="float-right"
@@ -171,6 +207,37 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                 >
                   <Trash2Icon className="size-5 stroke-[1.5]" />
                 </IconButton>
+                {/* text */}
+                {message.name ?? message.role}: {message.content}
+                {/* generated images */}
+                <div className="flex items-center gap-1 overflow-x-auto">
+                  {generation?.generated_images.map((image) => {
+                    const { width, height } = image
+                    const heightRatio = thumbnailHeightRem / height
+                    const adjustedWidth = heightRatio * width
+                    const url = getImageUrl(image.slugId)
+                    return (
+                      <div
+                        key={image._id}
+                        className="border-gold-7 shrink-0 overflow-hidden rounded-lg border"
+                        style={{ width: `${adjustedWidth}rem` }}
+                      >
+                        <AspectRatio ratio={width / height}>
+                          {url && (
+                            <NextImage
+                              unoptimized
+                              src={url}
+                              alt=""
+                              width={width}
+                              height={height}
+                              className="object-cover"
+                            />
+                          )}
+                        </AspectRatio>
+                      </div>
+                    )
+                  })}
+                </div>
               </Card>
             )
           })}
@@ -178,4 +245,12 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
       </div>
     </div>
   )
+}
+
+const getImageUrl = (fileId: string) => {
+  const siteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace('.cloud', '.site')
+  const url = new URL('i', siteUrl)
+  url.searchParams.set('id', fileId)
+
+  return url.toString()
 }
