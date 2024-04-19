@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 import svgToDataUri from 'mini-svg-data-uri'
+import { fontFamily } from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
 
 import type { Config } from 'tailwindcss'
@@ -50,11 +51,10 @@ const config: Config = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
-      // fontFamily: {
-      //   fantasque: ['var(--font-fantasque-sans-mono)'],
-      //   manrope: ['var(--font-manrope)'],
-      //   merriweather: ['var(--font-merriweather)'],
-      // },
+      fontFamily: {
+        sans: ['var(--font-inter)', ...fontFamily.sans],
+        mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
+      },
       // start shadcn-ui
       colors: {
         border: 'hsl(var(--border))',

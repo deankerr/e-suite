@@ -5,7 +5,7 @@ import { dark } from '@clerk/themes'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Inter, JetBrains_Mono, Merriweather } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ClientProviders } from '@/components/providers/ClientProviders'
@@ -36,35 +36,11 @@ const jetBrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 })
 
-const merriweather = Merriweather({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: '400',
-  variable: '--font-merriweather',
-})
-
-// const manrope = Manrope({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   variable: '--font-manrope',
-// })
-
-// const fantasqueSansMono = localFont({
-//   src: '../assets/fonts/FantasqueSansMono-Regular.woff2',
-//   display: 'swap',
-//   variable: '--font-fantasque-sans-mono',
-// })
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn(
-        `overscroll-none`,
-        inter.variable,
-        jetBrainsMono.variable,
-        merriweather.variable,
-      )}
+      className={cn(`overscroll-none`, inter.variable, jetBrainsMono.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-screen">
