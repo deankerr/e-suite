@@ -11,7 +11,6 @@ const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   plugins: [
     require('@tailwindcss/container-queries'),
-    require('tailwindcss-animate'),
     // css reset
     plugin(({ addBase }) => {
       addBase({
@@ -21,6 +20,58 @@ const config: Config = {
         h3: { textWrap: 'balance' },
         h4: { textWrap: 'balance' },
         p: { textWrap: 'pretty' },
+      })
+    }),
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.flex-start': {
+          display: 'flex',
+          'flex-direction': 'row',
+          'justify-content': 'flex-start',
+          'align-items': 'center',
+        },
+        '.flex-center': {
+          display: 'flex',
+          'flex-direction': 'row',
+          'justify-content': 'center',
+          'align-items': 'center',
+        },
+        '.flex-end': {
+          display: 'flex',
+          'flex-direction': 'row',
+          'justify-content': 'flex-end',
+          'align-items': 'center',
+        },
+        '.flex-between': {
+          display: 'flex',
+          'flex-direction': 'row',
+          'justify-content': 'space-between',
+          'align-items': 'center',
+        },
+        '.flex-col-start': {
+          display: 'flex',
+          'flex-direction': 'column',
+          'justify-content': 'flex-start',
+          'align-items': 'center',
+        },
+        '.flex-col-center': {
+          display: 'flex',
+          'flex-direction': 'column',
+          'justify-content': 'center',
+          'align-items': 'center',
+        },
+        '.flex-col-end': {
+          display: 'flex',
+          'flex-direction': 'column',
+          'justify-content': 'flex-end',
+          'align-items': 'center',
+        },
+        '.flex-col-between': {
+          display: 'flex',
+          'flex-direction': 'column',
+          'justify-content': 'space-between',
+          'align-items': 'center',
+        },
       })
     }),
     plugin(function ({ matchUtilities }) {
@@ -55,46 +106,10 @@ const config: Config = {
         sans: ['var(--font-inter)', ...fontFamily.sans],
         mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
       },
-      // start shadcn-ui
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        // accent: {
-        //   DEFAULT: 'hsl(var(--accent))',
-        //   foreground: 'hsl(var(--accent-foreground))',
-        // },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-
         accent: generateRadixScale('orange'),
         gray: generateRadixScale('gray'),
         grayA: generateRadixScaleAlpha('gray'),
-
         orange: generateRadixScale('orange'),
         red: generateRadixScale('red'),
         green: generateRadixScale('green'),
@@ -104,48 +119,13 @@ const config: Config = {
         gold: generateRadixScale('gold'),
         bronze: generateRadixScale('bronze'),
       },
-      borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
-        sm: 'calc(var(--radius) - 4px)',
-      },
-      // end shadcn-ui
       borderColor: {
         DEFAULT: 'var(--gray-5)',
-      },
-      keyframes: {
-        wiggle: {
-          '0%, 100%': { transform: 'rotate(-3deg)' },
-          '50%': { transform: 'rotate(3deg)' },
-        },
-        wipeDown: {
-          from: { top: '-4rem', opacity: '1' },
-          to: { top: 'calc(100% + 4rem)', opacity: '1' },
-        },
-        // start shadcn-ui
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        // end shadcn-ui
-      },
-      animation: {
-        wiggle: 'wiggle 1s ease-in-out infinite',
-        wipedown: 'wipeDown 1.75s linear infinite',
-        // start shadcn-ui
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        // end shadcn-ui
       },
       containers: {
         '2xs': '16rem',
       },
     },
-    // start shadcn-ui
     container: {
       center: true,
       padding: '2rem',
@@ -153,7 +133,7 @@ const config: Config = {
         '2xl': '1400px',
       },
     },
-    // end shadcn-ui
+    // radix themes breakpoints
     screens: {
       sm: '520px', // Phones (landscape)
       md: '768px', // Tablets (portrait)
