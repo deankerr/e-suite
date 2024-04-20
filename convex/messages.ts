@@ -8,7 +8,7 @@ import { generateRandomString, zPaginationOptValidator } from './lib/utils'
 import { generationFields, messageFields } from './schema'
 import { runWithRetries } from './utils'
 
-import type { MutationCtx } from './types'
+import type { MutationCtx, QueryCtx } from './types'
 
 const generateSlugId = async (ctx: MutationCtx): Promise<string> => {
   const slugId = generateRandomString(slugIdLength)
@@ -49,14 +49,22 @@ export const get = query({
   },
 })
 
+const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }) => {
+  const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).firstX()
+  const thread = await message.edge('thread')
+  const generations = await message.edge('generations').map(async (generation) => ({
+    ...generation,
+    generated_images: await generation.edge('generated_images'),
+  }))
+
+  return { message, thread, generations }
+}
+
 export const getBySlugId = query({
   args: {
     slugId: z.string(),
   },
-  handler: async (ctx, { slugId }) => {
-    const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-    return message
-  },
+  handler: async (ctx, args) => await getMessageWithEdges(ctx, args),
 })
 
 export const list = query({

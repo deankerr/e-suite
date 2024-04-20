@@ -1,33 +1,27 @@
 'use client'
 
 import { AspectRatio, Card, Code, DataList } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
 import NextImage from 'next/image'
-import { z } from 'zod'
 
-import { api } from '@/convex/_generated/api'
-import { generationFields } from '@/convex/schema'
 import { useMessageQuery } from './queries'
 
 const thumbnailHeightRem = 32
 
-const generationSchema = z.object(generationFields).nullish()
-
 type MessagePageProps = { slugId: string }
 
 export const MessagePage = ({ slugId }: MessagePageProps) => {
-  const message = useMessageQuery({ slugId })
+  const result = useMessageQuery({ slugId })
 
-  const generationQuery = useQuery(
-    api.generation.getByMessageId,
-    message?._id ? { messageId: message?._id } : 'skip',
-  )
-  const generation = generationSchema.parse(generationQuery?.generation)
-  const generationDataList = generation ? [...Object.entries(generation)] : []
+  const message = result?.message
 
-  const generated_images = generationQuery?.generated_images
-  const model = generationQuery?.model
+  const generation = result?.generations[0]
+  const generationDataList = generation
+    ? Object.entries(generation).filter(([key]) => key !== 'generated_images')
+    : []
 
+  const generated_images = result?.generations
+    .map(({ generated_images }) => generated_images)
+    .flat()
   return (
     <div>
       {message?.content && <Card variant="classic">{message.content}</Card>}
@@ -73,8 +67,8 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
                 <DataList.Item>
                   <DataList.Label>model id</DataList.Label>
                   <DataList.Value>
-                    {/* <Code color="gray">{generation.model_id}</Code> */}
-                    {model?.name}
+                    <Code color="gray">{generation.model_id}</Code>
+                    {/* {generation.model?.name} */}
                   </DataList.Value>
                 </DataList.Item>
 
@@ -97,7 +91,7 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
                   return (
                     <DataList.Item key={key}>
                       <DataList.Label>{key}</DataList.Label>
-                      <DataList.Value>{value}</DataList.Value>
+                      <DataList.Value>{String(value)}</DataList.Value>
                     </DataList.Item>
                   )
                 })}
