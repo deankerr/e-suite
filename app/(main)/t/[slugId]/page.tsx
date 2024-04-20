@@ -15,7 +15,7 @@ export async function generateMetadata({
   const thread = await fetchQuery(api.threads.getBySlugId, { slugId }, { token })
 
   return {
-    title: `e/suite / Thread / ${thread?.title ?? 'Untitled Thread'}`,
+    title: `Thread / ${thread?.title ?? 'Untitled Thread'}`,
   }
 }
 

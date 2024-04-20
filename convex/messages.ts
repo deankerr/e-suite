@@ -50,15 +50,39 @@ export const get = query({
 })
 
 const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }) => {
-  const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).firstX()
+  const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
+  if (!message) return null
+
   const thread = await message.edge('thread')
   const generations = await message.edge('generations').map(async (generation) => ({
     ...generation,
     generated_images: await generation.edge('generated_images'),
   }))
 
-  return { message, thread, generations }
+  const title = generations[0]?.prompt
+    ? generations[0]?.prompt
+    : `Message from ${message?.name ?? message.role}`
+
+  return { message, thread, generations, title }
 }
+
+export const getMetadata = query({
+  args: {
+    slugId: z.string(),
+  },
+  handler: async (ctx, { slugId }) => {
+    const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
+    if (!message) return null
+
+    const generations = await message.edge('generations')
+
+    const title = generations[0]?.prompt
+      ? generations[0]?.prompt
+      : `Message from ${message?.name ?? message.role}`
+
+    return { title }
+  },
+})
 
 export const getBySlugId = query({
   args: {
@@ -81,10 +105,10 @@ export const list = query({
       .paginate(paginationOpts)
       .map(async (message) => ({
         ...message,
-        generations: await message.edge("generations").map(async (generation) => ({
+        generations: await message.edge('generations').map(async (generation) => ({
           ...generation,
           generated_images: await generation.edge('generated_images'),
-        }))
+        })),
       }))
 
     return messages

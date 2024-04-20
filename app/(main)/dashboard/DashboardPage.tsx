@@ -3,12 +3,20 @@
 import { useState } from 'react'
 import { Button, Card, Heading, Table, TextField } from '@radix-ui/themes'
 import { Authenticated, useMutation, useQuery } from 'convex/react'
-import { EyeIcon, EyeOffIcon, InfoIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
+import {
+  ActivitySquareIcon,
+  EyeIcon,
+  EyeOffIcon,
+  InfoIcon,
+  MessagesSquareIcon,
+  Trash2Icon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
+import { PageHeader } from '../PageHeader'
 
 type DashboardPageProps = {
   props?: unknown
@@ -25,6 +33,8 @@ export const DashboardPage = ({}: DashboardPageProps) => {
 
   return (
     <div>
+      <PageHeader icon={<ActivitySquareIcon />} title={'Dashboard'} />
+
       <Authenticated>
         <div className="space-y-4 p-1 sm:p-4">
           {/* user info */}

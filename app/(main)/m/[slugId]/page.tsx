@@ -1,7 +1,23 @@
+import { fetchQuery } from 'convex/nextjs'
+
+import { api } from '@/convex/_generated/api'
+import { getAuthToken } from '@/lib/auth'
 import { MessagePage } from './MessagePage'
 
-export const metadata = {
-  title: 'e/suite / Message',
+import type { Metadata } from 'next'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slugId: string }
+}): Promise<Metadata> {
+  const token = await getAuthToken()
+  const slugId = params.slugId
+  const thread = await fetchQuery(api.messages.getMetadata, { slugId }, { token })
+
+  return {
+    title: `Message / ${thread?.title ?? ''}`,
+  }
 }
 
 export default function MessageSlugIdPage({ params: { slugId } }: { params: { slugId: string } }) {

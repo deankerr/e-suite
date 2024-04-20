@@ -15,7 +15,10 @@ import { cn } from '@/lib/utils'
 import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
-  title: 'e/suite',
+  title: {
+    template: 'e/suite / %s',
+    default: 'e/suite',
+  },
   description: "it's the e/suite",
 }
 

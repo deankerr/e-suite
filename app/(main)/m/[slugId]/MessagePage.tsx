@@ -1,8 +1,10 @@
 'use client'
 
 import { AspectRatio, Card, Code, DataList } from '@radix-ui/themes'
+import { MessageSquareIcon } from 'lucide-react'
 import NextImage from 'next/image'
 
+import { PageHeader } from '../../PageHeader'
 import { useMessageQuery } from './queries'
 
 const thumbnailHeightRem = 32
@@ -22,14 +24,21 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
   const generated_images = result?.generations
     .map(({ generated_images }) => generated_images)
     .flat()
+
   return (
     <div>
+      <PageHeader
+        icon={<MessageSquareIcon />}
+        title={result?.title ?? ''}
+        backNav={`/t/${result?.thread.slugId ?? ''}`}
+      />
+
       {message?.content && <Card variant="classic">{message.content}</Card>}
 
       {generated_images && (
         <div className="grid gap-4 p-1 sm:grid-cols-[1fr_240px] sm:p-4">
           {/* images */}
-          <div className="mx-auto grid w-fit gap-4 sm:grid-cols-2">
+          <div className="mx-auto grid h-fit w-fit gap-4 sm:grid-cols-2">
             {generated_images?.map((image) => {
               const { width, height, blurDataUrl } = image
               const heightRatio = thumbnailHeightRem / height

@@ -2,13 +2,14 @@
 
 import { AspectRatio, Button, Card, Heading, Inset, Select, TextField } from '@radix-ui/themes'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
-import { MessageSquareShareIcon, Trash2Icon } from 'lucide-react'
+import { MessageSquareShareIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
+import { PageHeader } from '../../PageHeader'
 
 const thumbnailHeightRem = 16
 
@@ -74,8 +75,10 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
 
   const removeMessage = useMutation(api.messages.remove)
 
+  const title = `Thread: ${thread?.title ?? 'Untitled'}`
   return (
     <div>
+      <PageHeader icon={<MessagesSquareIcon />} title={title} backNav="/dashboard" />
       <div className="grid gap-4 p-1 sm:grid-cols-[320px_1fr] sm:p-4">
         {/* quick create message */}
         <Card className="h-fit max-w-sm">
