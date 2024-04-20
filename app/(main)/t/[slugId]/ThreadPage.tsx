@@ -1,74 +1,21 @@
 'use client'
 
-import { useMemo } from 'react'
 import { AspectRatio, Button, Card, Heading, Inset, Select, TextField } from '@radix-ui/themes'
-import { useMutation, usePaginatedQuery, useQueries, useQuery } from 'convex/react'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { MessageSquareShareIcon, Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
-import { generatedImagesFields, generationFields } from '@/convex/schema'
-
-import type { ScheduledFunction } from '@/convex/types'
 
 const thumbnailHeightRem = 16
-
-const generationResponseSchema = z.record(
-  z.string(),
-  z
-    .object({
-      generation: z.object(generationFields).merge(z.object({ _id: z.string() })),
-      generated_images: z
-        .object(generatedImagesFields)
-        .merge(z.object({ _id: z.string(), slugId: z.string() }))
-        .array(),
-    })
-    .nullish(),
-)
 
 export default function ThreadPage({ slugId }: { slugId: string }) {
   const thread = useQuery(api.threads.getBySlugId, { slugId })
   const queryKey = thread ? { threadId: thread._id, order: 'desc' as const } : 'skip'
   const messages = usePaginatedQuery(api.messages.list, queryKey, { initialNumItems: 10 })
-
-  const generationQueryKeys = useMemo(
-    () =>
-      Object.fromEntries(
-        messages.results.map((message) => [
-          message._id,
-          {
-            query: api.generation.getByMessageId,
-            args: { messageId: message._id },
-          },
-        ]),
-      ),
-    [messages.results],
-  )
-
-  const generationQueries = useQueries(generationQueryKeys)
-  const generations = generationResponseSchema.parse(generationQueries)
-
-  const jobsQueryKeys = useMemo(
-    () =>
-      Object.fromEntries(
-        messages.results.map((message) => [
-          message._id,
-          {
-            query: api.jobs.getByMessageId,
-            args: { messageId: message._id },
-          },
-        ]),
-      ),
-    [messages.results],
-  )
-
-  const jobsQueries = useQueries(jobsQueryKeys)
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-redundant-type-constituents
-  const jobs = jobsQueries as Record<string, ScheduledFunction[] | null | undefined>
 
   const createMessage = useMutation(api.messages.create)
   const createMessageFormAction = (formData: FormData) => {
@@ -188,10 +135,10 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
         {/* messages list */}
         <div className="space-y-4">
           {messages.results.map((message) => {
-            const generation = generations[message._id]
-            const genJobs = jobs[message._id]
-            const latestJob = Array.isArray(genJobs) ? genJobs.at(-1) : undefined
-            const latestStatus = latestJob?.state.kind ?? 'unknown'
+            // const generation = generations[message._id]
+            // const genJobs = jobs[message._id]
+            // const latestJob = Array.isArray(genJobs) ? genJobs.at(-1) : undefined
+            // const latestStatus = latestJob?.state.kind ?? 'unknown'
             return (
               <div key={message._id} className="flex gap-4">
                 <Card variant="classic" className="w-full max-w-5xl">
@@ -209,7 +156,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
 
                         <div className="gap-2 text-gray-11 flex-end">
                           <div className="font-mono text-xs">
-                            {latestStatus} {genJobs?.length}
+                            {/* {latestStatus} {genJobs?.length} */}
                           </div>
                           <IconButton
                             label="remove message"
@@ -236,34 +183,36 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                       {message.content}
 
                       {/* generated images */}
-                      {generation?.generated_images.map((image) => {
-                        const { width, height, blurDataUrl } = image
-                        const heightRatio = thumbnailHeightRem / height
-                        const adjustedWidth = heightRatio * width
-                        const url = getImageUrl(image.slugId)
-                        return (
-                          <div
-                            key={image._id}
-                            className="shrink-0 overflow-hidden rounded-lg border border-gold-7"
-                            style={{ width: `${adjustedWidth}rem` }}
-                          >
-                            <AspectRatio ratio={width / height}>
-                              {url && (
-                                <NextImage
-                                  unoptimized
-                                  src={url}
-                                  alt=""
-                                  placeholder={blurDataUrl ? 'blur' : 'empty'}
-                                  blurDataURL={blurDataUrl}
-                                  width={width}
-                                  height={height}
-                                  className="object-cover"
-                                />
-                              )}
-                            </AspectRatio>
-                          </div>
-                        )
-                      })}
+                      {message.generations.map((generation) =>
+                        generation.generated_images.map((image) => {
+                          const { width, height, blurDataUrl } = image
+                          const heightRatio = thumbnailHeightRem / height
+                          const adjustedWidth = heightRatio * width
+                          const url = getImageUrl(image.slugId)
+                          return (
+                            <div
+                              key={image._id}
+                              className="shrink-0 overflow-hidden rounded-lg border border-gold-7"
+                              style={{ width: `${adjustedWidth}rem` }}
+                            >
+                              <AspectRatio ratio={width / height}>
+                                {url && (
+                                  <NextImage
+                                    unoptimized
+                                    src={url}
+                                    alt=""
+                                    placeholder={blurDataUrl ? 'blur' : 'empty'}
+                                    blurDataURL={blurDataUrl}
+                                    width={width}
+                                    height={height}
+                                    className="object-cover"
+                                  />
+                                )}
+                              </AspectRatio>
+                            </div>
+                          )
+                        }),
+                      )}
                     </div>
                   </div>
                 </Card>

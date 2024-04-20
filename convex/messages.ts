@@ -79,6 +79,13 @@ export const list = query({
       .order(order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
+      .map(async (message) => ({
+        ...message,
+        generations: await message.edge("generations").map(async (generation) => ({
+          ...generation,
+          generated_images: await generation.edge('generated_images'),
+        }))
+      }))
 
     return messages
   },
