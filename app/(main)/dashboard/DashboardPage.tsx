@@ -1,18 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { UserButton } from '@clerk/nextjs'
-import { Button, Card, Heading, Separator, Table, TextField } from '@radix-ui/themes'
+import { Button, Card, Heading, Table, TextField } from '@radix-ui/themes'
 import { Authenticated, useMutation, useQuery } from 'convex/react'
-import {
-  ChevronLeftIcon,
-  EyeIcon,
-  EyeOffIcon,
-  InfoIcon,
-  LayoutDashboardIcon,
-  MessagesSquareIcon,
-  Trash2Icon,
-} from 'lucide-react'
+import { EyeIcon, EyeOffIcon, InfoIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
@@ -34,28 +25,6 @@ export const DashboardPage = ({}: DashboardPageProps) => {
 
   return (
     <div>
-      {/* header */}
-      <header className="grid h-14 grid-cols-2 px-2">
-        {/* title */}
-        <div className="flex items-center gap-2">
-          <IconButton label="back to dashboard" variant="ghost" asChild>
-            <Link href={'/dashboard'}>
-              <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
-            </Link>
-          </IconButton>
-          <LayoutDashboardIcon className="stroke-[1.5]" />
-          Dashboard
-        </div>
-
-        <div className="flex items-center justify-end gap-2 pr-2">
-          <UserButton />
-        </div>
-      </header>
-
-      <div className="px-3">
-        <Separator size="4" />
-      </div>
-
       <Authenticated>
         <div className="space-y-4 p-1 sm:p-4">
           {/* user info */}

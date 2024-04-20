@@ -1,16 +1,13 @@
 'use client'
 
-import { UserButton } from '@clerk/nextjs'
-import { AspectRatio, Card, Code, DataList, Separator } from '@radix-ui/themes'
+import { AspectRatio, Card, Code, DataList } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
-import { ChevronLeftIcon, MessageSquareIcon } from 'lucide-react'
 import NextImage from 'next/image'
-import Link from 'next/link'
 import { z } from 'zod'
 
-import { IconButton } from '@/components/ui/IconButton'
 import { api } from '@/convex/_generated/api'
 import { generationFields } from '@/convex/schema'
+import { useMessageQuery } from './queries'
 
 const thumbnailHeightRem = 32
 
@@ -19,7 +16,8 @@ const generationSchema = z.object(generationFields).nullish()
 type MessagePageProps = { slugId: string }
 
 export const MessagePage = ({ slugId }: MessagePageProps) => {
-  const message = useQuery(api.messages.getBySlugId, { slugId })
+  const message = useMessageQuery({ slugId })
+
   const generationQuery = useQuery(
     api.generation.getByMessageId,
     message?._id ? { messageId: message?._id } : 'skip',
@@ -32,29 +30,6 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
 
   return (
     <div>
-      {/* header */}
-      <header className="grid h-14 grid-cols-2 px-2">
-        {/* title */}
-        <div className="flex items-center gap-2 font-medium">
-          <IconButton label="" variant="ghost" asChild>
-            <Link href={'/dashboard'}>
-              <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
-            </Link>
-          </IconButton>
-          <MessageSquareIcon className="stroke-[1.5]" />
-          {message?.name && <span>{message.name} </span>}
-          {message?.role}
-        </div>
-
-        <div className="flex items-center justify-end gap-2 pr-2">
-          <UserButton />
-        </div>
-      </header>
-
-      <div className="px-3">
-        <Separator size="4" />
-      </div>
-
       {message?.content && <Card variant="classic">{message.content}</Card>}
 
       {generated_images && (

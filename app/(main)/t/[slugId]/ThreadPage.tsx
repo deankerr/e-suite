@@ -1,24 +1,9 @@
 'use client'
 
 import { useMemo } from 'react'
-import { UserButton } from '@clerk/nextjs'
-import {
-  AspectRatio,
-  Button,
-  Card,
-  Heading,
-  Inset,
-  Select,
-  Separator,
-  TextField,
-} from '@radix-ui/themes'
+import { AspectRatio, Button, Card, Heading, Inset, Select, TextField } from '@radix-ui/themes'
 import { useMutation, usePaginatedQuery, useQueries, useQuery } from 'convex/react'
-import {
-  ChevronLeftIcon,
-  MessageSquareShareIcon,
-  MessagesSquareIcon,
-  Trash2Icon,
-} from 'lucide-react'
+import { MessageSquareShareIcon, Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -144,28 +129,6 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
 
   return (
     <div>
-      {/* header */}
-      <header className="grid h-14 grid-cols-2 px-2">
-        {/* title */}
-        <div className="flex items-center gap-2 font-medium">
-          <IconButton label="back to dashboard" variant="ghost" asChild>
-            <Link href={'/dashboard'}>
-              <ChevronLeftIcon className="stroke-[1.5] text-gray-11" />
-            </Link>
-          </IconButton>
-          <MessagesSquareIcon className="stroke-[1.5]" />
-          {thread ? thread?.title ?? 'Untitled thread' : '...'}
-        </div>
-
-        <div className="flex items-center justify-end gap-2 pr-2">
-          <UserButton />
-        </div>
-      </header>
-
-      <div className="px-3">
-        <Separator size="4" />
-      </div>
-
       <div className="grid gap-4 p-1 sm:grid-cols-[320px_1fr] sm:p-4">
         {/* quick create message */}
         <Card className="h-fit max-w-sm">
