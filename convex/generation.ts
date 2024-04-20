@@ -4,6 +4,9 @@ import { ConvexError } from 'convex/values'
 import { api, internal } from './_generated/api'
 import { internalAction, query } from './functions'
 import { sinkin } from './providers/sinkin'
+import sinkinModels from './providers/sinkin.models.json'
+
+export const textToImageModels = sinkinModels.models
 
 export const get = query({
   args: {
@@ -23,9 +26,12 @@ export const getByMessageId = query({
     if (!generation) return null
 
     const generated_images = await generation.edge('generated_images')
+    const model = textToImageModels.find((model) => model.id === generation.model_id)
+
     return {
       generation,
       generated_images,
+      model,
     }
   },
 })

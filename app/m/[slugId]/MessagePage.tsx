@@ -28,6 +28,7 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
   const generationDataList = generation ? [...Object.entries(generation)] : []
 
   const generated_images = generationQuery?.generated_images
+  const model = generationQuery?.model
 
   return (
     <div>
@@ -59,7 +60,7 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
       {generated_images && (
         <div className="grid gap-4 p-1 sm:grid-cols-[1fr_240px] sm:p-4">
           {/* images */}
-          <div className="flex-center flex-wrap gap-4">
+          <div className="mx-auto grid w-fit gap-4 sm:grid-cols-2">
             {generated_images?.map((image) => {
               const { width, height, blurDataUrl } = image
               const heightRatio = thumbnailHeightRem / height
@@ -68,7 +69,7 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
               return (
                 <div
                   key={image._id}
-                  className="border-gold-7 max-w-full shrink-0 overflow-hidden rounded-lg border"
+                  className="max-w-full shrink-0 overflow-hidden rounded-lg border border-gold-7"
                   style={{ width: `${adjustedWidth}rem` }}
                 >
                   <AspectRatio ratio={width / height}>
@@ -97,7 +98,8 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
                 <DataList.Item>
                   <DataList.Label>model id</DataList.Label>
                   <DataList.Value>
-                    <Code color="gold">{generation.model_id}</Code>
+                    {/* <Code color="gray">{generation.model_id}</Code> */}
+                    {model?.name}
                   </DataList.Value>
                 </DataList.Item>
 
@@ -109,7 +111,7 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
                 <DataList.Item>
                   <DataList.Label>dimensions</DataList.Label>
                   <DataList.Value>
-                    <Code color="gray" variant="ghost">
+                    <Code color="gold" variant="ghost">
                       {generation.width} x {generation.height}
                     </Code>
                   </DataList.Value>

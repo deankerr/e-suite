@@ -1,17 +1,24 @@
+'use client'
+
+import { useWindowSize } from '@uidotdev/usehooks'
+
 import { cn } from '@/lib/utils'
 
 export function TailwindBreakpointIndicator() {
-  if (process.env.NODE_ENV !== 'development') return null
-
+  const size = useWindowSize()
   const content =
-    "after:content-['xs'] sm:after:content-['sm'] md:after:content-['md'] lg:after:content-['lg'] xl:after:content-['xl'] 2xl:after:content-['2xl']"
-
+    "before:content-['xs'] sm:before:content-['sm'] md:before:content-['md'] lg:before:content-['lg'] xl:before:content-['xl'] 2xl:before:content-['2xl']"
+  if (process.env.NODE_ENV !== 'development') return null
   return (
     <div
       className={cn(
-        'fixed top-0 z-50 flex place-items-center bg-overlay text-xs text-gray',
+        'fixed left-0 top-0 z-[99999] bg-[#111111] text-[0.5rem] text-[#BBBBBB]',
         content,
       )}
-    />
+    >
+      <span className="">
+        ⋅{size.width}x{size.height}
+      </span>
+    </div>
   )
 }

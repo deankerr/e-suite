@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react'
 import { UserButton } from '@clerk/nextjs'
-import { PlusIcon } from '@radix-ui/react-icons'
 import {
   AspectRatio,
   Button,
@@ -31,7 +30,7 @@ import { generatedImagesFields, generationFields } from '@/convex/schema'
 
 import type { ScheduledFunction } from '@/convex/types'
 
-const thumbnailHeightRem = 14
+const thumbnailHeightRem = 16
 
 const generationResponseSchema = z.record(
   z.string(),
@@ -167,35 +166,37 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
         <Separator size="4" />
       </div>
 
-      <div className="flex flex-wrap gap-4 p-1 sm:p-4">
+      <div className="grid gap-4 p-1 sm:grid-cols-[320px_1fr] sm:p-4">
         {/* quick create message */}
-        <Card className="max-w-sm">
+        <Card className="h-fit max-w-sm">
           <Heading size="2" className="mb-2">
             Create Message
           </Heading>
-          <form className="flex gap-2" action={createMessageFormAction}>
-            <Select.Root defaultValue="user" name="role">
-              <Select.Trigger className="w-24" />
-              <Select.Content>
-                <Select.Group>
-                  <Select.Label>Role</Select.Label>
-                  <Select.Item value="user">User</Select.Item>
-                  <Select.Item value="assistant">AI</Select.Item>
-                  <Select.Item value="system">System</Select.Item>
-                </Select.Group>
-              </Select.Content>
-            </Select.Root>
+          <form className="space-y-2" action={createMessageFormAction}>
+            <div className="grid grid-cols-2">
+              <Select.Root defaultValue="user" name="role">
+                <Select.Trigger />
+                <Select.Content>
+                  <Select.Group>
+                    <Select.Label>Role</Select.Label>
+                    <Select.Item value="user">User</Select.Item>
+                    <Select.Item value="assistant">AI</Select.Item>
+                    <Select.Item value="system">System</Select.Item>
+                  </Select.Group>
+                </Select.Content>
+              </Select.Root>
 
-            <TextField.Root placeholder="name" className="" id="name" name="name" />
+              <TextField.Root placeholder="name" className="" id="name" name="name" />
+            </div>
+
             <TextField.Root placeholder="content" className="grow" id="content" name="content" />
-            <IconButton label="add message">
-              <PlusIcon />
-            </IconButton>
-          </form>
-        </Card>
 
-        <Card className="max-w-sm">
-          <Heading size="2" className="mb-2">
+            <div className="flex-end">
+              <Button variant="surface">Send</Button>
+            </div>
+          </form>
+
+          <Heading size="2" className="mb-2 mt-3">
             Create generation
           </Heading>
 
@@ -215,7 +216,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
               <TextField.Root placeholder="amount" id="amount" name="amount" />
             </div>
 
-            <div>
+            <div className="flex-end">
               <Button variant="surface">Send</Button>
             </div>
           </form>
@@ -230,12 +231,12 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
             const latestStatus = latestJob?.state.kind ?? 'unknown'
             return (
               <div key={message._id} className="flex gap-4">
-                <Card variant="classic" className="w-full max-w-3xl">
+                <Card variant="classic" className="w-full max-w-5xl">
                   <div className="space-y-3">
                     {/* top bar */}
                     <Inset side="top">
-                      <div className="flex-between bg-grayA-2 items-end border-b border-gray-6 p-2.5">
-                        <div className="flex-start gap-2 text-sm">
+                      <div className="items-end border-b border-gray-6 bg-grayA-2 p-2.5 flex-between">
+                        <div className="gap-2 text-sm flex-start">
                           <Link href={`/m/${message.slugId}`}>
                             <MessageSquareShareIcon className="size-5" />
                           </Link>
@@ -243,7 +244,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                           <span className="font-mono font-medium text-gray-11">{message.role}</span>
                         </div>
 
-                        <div className="flex-end gap-2 text-gray-11">
+                        <div className="gap-2 text-gray-11 flex-end">
                           <div className="font-mono text-xs">
                             {latestStatus} {genJobs?.length}
                           </div>
@@ -267,7 +268,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                     </Inset>
 
                     {/* content */}
-                    <div className="flex items-center gap-1 overflow-x-auto">
+                    <div className="flex items-center gap-1 overflow-x-auto py-2">
                       {/* text */}
                       {message.content}
 
@@ -280,7 +281,7 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
                         return (
                           <div
                             key={image._id}
-                            className="border-gold-7 shrink-0 overflow-hidden rounded-lg border"
+                            className="shrink-0 overflow-hidden rounded-lg border border-gold-7"
                             style={{ width: `${adjustedWidth}rem` }}
                           >
                             <AspectRatio ratio={width / height}>
