@@ -43,12 +43,20 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
       ? String(formData.get('negative_prompt'))
       : undefined
     const model_id = String(formData.get('model_id'))
-    const width = Number(formData.get('width'))
-    const height = Number(formData.get('height'))
-    const n = Number(formData.get('amount'))
     const seed = formData.get('seed')
       ? Number(formData.get('amount'))
       : Math.floor(Math.random() * 10000000)
+
+    const dimensions = String(formData.get('dimensions'))
+      .split(' ')
+      .map((str) => {
+        const [width, height, n] = str.split(',')
+        return {
+          width: Number(width),
+          height: Number(height),
+          n: Number(n),
+        }
+      })
 
     createMessage({
       threadId: thread._id,
@@ -56,14 +64,14 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
         role: 'assistant',
       },
       generation: {
-        provider: 'sinkin',
-        prompt,
-        negative_prompt,
-        model_id,
-        width,
-        height,
-        n,
-        seed,
+        parameters: {
+          provider: 'sinkin',
+          prompt,
+          negative_prompt,
+          model_id,
+          seed,
+        },
+        dimensions,
       },
     })
       .then(() => toast.success('Generation created'))
@@ -124,10 +132,11 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
             <TextField.Root placeholder="seed" id="seed" name="seed" />
 
             <div className="flex gap-2">
-              <TextField.Root placeholder="width" id="width" name="width" />
+              {/* <TextField.Root placeholder="width" id="width" name="width" />
               <TextField.Root placeholder="height" id="height" name="height" />
-              <TextField.Root placeholder="amount" id="amount" name="amount" />
+              <TextField.Root placeholder="amount" id="amount" name="amount" /> */}
             </div>
+            <TextField.Root placeholder="w,h,n w,h,n ..." id="dimensions" name="dimensions" />
 
             <div className="flex-end">
               <Button variant="surface">Send</Button>

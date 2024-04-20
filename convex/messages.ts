@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { internal } from './_generated/api'
 import { slugIdLength } from './constants'
 import { mutation, query } from './functions'
+import { textToImageModels } from './generation'
 import { generateRandomString, zPaginationOptValidator } from './lib/utils'
 import { generationFields, messageFields } from './schema'
 import { runWithRetries } from './utils'
@@ -16,23 +17,36 @@ const generateSlugId = async (ctx: MutationCtx): Promise<string> => {
   return existing ? generateSlugId(ctx) : slugId
 }
 
+const { width, height, n, ...parameters } = generationFields
+const generationArgs = z.object({
+  parameters: z.object(parameters),
+  dimensions: z
+    .object({ width, height, n: n.min(1).max(4) })
+    .array()
+    .min(1)
+    .max(4),
+})
+
 export const create = mutation({
   args: {
     threadId: zid('threads'),
     message: z.object(messageFields),
-    generation: z.object(generationFields).optional(),
+    generation: generationArgs.optional(),
   },
   handler: async (ctx, { threadId, message, generation }) => {
     const slugId = await generateSlugId(ctx)
     const messageId = await ctx.table('messages').insert({ threadId, ...message, slugId })
 
     if (generation) {
-      const generationId = await ctx.table('generations').insert({
-        ...generation,
-        messageId,
-      })
+      await Promise.all(
+        generation.dimensions.map(async (dimension) => {
+          const generationId = await ctx
+            .table('generations')
+            .insert({ ...generation.parameters, ...dimension, messageId })
 
-      await runWithRetries(ctx, internal.generation.textToImage, { generationId })
+          await runWithRetries(ctx, internal.generation.textToImage, { generationId })
+        }),
+      )
     }
 
     return messageId
@@ -56,6 +70,7 @@ const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }
   const thread = await message.edge('thread')
   const generations = await message.edge('generations').map(async (generation) => ({
     ...generation,
+    model: textToImageModels.find((model) => model.id === generation.model_id)?.name,
     generated_images: await generation.edge('generated_images'),
   }))
 
@@ -107,6 +122,7 @@ export const list = query({
         ...message,
         generations: await message.edge('generations').map(async (generation) => ({
           ...generation,
+          model: textToImageModels.find((model) => model.id === generation.model_id)?.name,
           generated_images: await generation.edge('generated_images'),
         })),
       }))
