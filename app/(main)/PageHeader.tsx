@@ -24,7 +24,7 @@ export const PageHeader = ({ backNav, icon, title }: PageHeaderProps) => {
         <div>{icon}</div>
       </div>
 
-      <Heading size="4" className="grow truncate px-2">
+      <Heading size="3" className="grow truncate px-2">
         {title}
       </Heading>
 

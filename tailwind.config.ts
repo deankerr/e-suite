@@ -118,6 +118,11 @@ const config: Config = {
         amber: generateRadixScale('amber'),
         gold: generateRadixScale('gold'),
         bronze: generateRadixScale('bronze'),
+
+        surface: 'var(--color-surface)',
+        overlay: 'var(--color-overlay)',
+        'panel-solid': 'var(--color-panel-solid)',
+        'panel-translucent': 'var(--color-panel-translucent)',
       },
       borderColor: {
         DEFAULT: 'var(--gray-5)',

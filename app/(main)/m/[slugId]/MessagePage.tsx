@@ -2,16 +2,20 @@
 
 import { AspectRatio, Card, Code, DataList } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import NextImage from 'next/image'
 
+import { cn } from '@/lib/utils'
 import { PageHeader } from '../../PageHeader'
 import { useMessageQuery } from './queries'
 
+const RevealEffect = dynamic(() => import('@/components/ui/CanvasRevealEffect'))
+
 const thumbnailHeightRem = 32
 
-type MessagePageProps = { slugId: string }
+type MessagePageProps = { slugId: string; showLoader?: boolean }
 
-export const MessagePage = ({ slugId }: MessagePageProps) => {
+export const MessagePage = ({ slugId, showLoader = false }: MessagePageProps) => {
   const result = useMessageQuery({ slugId })
 
   const message = result?.message
@@ -36,7 +40,18 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
       {message?.content && <Card variant="classic">{message.content}</Card>}
 
       {generated_images && (
-        <div className="grid gap-4 p-1 sm:grid-cols-[1fr_240px] sm:p-4">
+        <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
+          {/* loading effect */}
+          {showLoader && (
+            <RevealEffect
+              animationSpeed={5}
+              colors={[[151, 131, 101]]}
+              opacities={[0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 1]}
+              dotSize={2}
+              className={cn('absolute inset-0 -z-30')}
+            />
+          )}
+
           {/* images */}
           <div className="mx-auto grid h-fit w-fit gap-4 sm:grid-cols-2">
             {generated_images?.map((image) => {
@@ -70,21 +85,23 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
           </div>
 
           {/* details */}
-          <div className="h-fit border-l pl-3">
+          <div className="h-fit rounded-lg border bg-panel-solid p-4">
             {generation && (
-              <DataList.Root orientation="vertical" size="2" className="bg-grayA-1">
+              <DataList.Root orientation="vertical" size="2" className="overflow-hidden">
                 <DataList.Item>
                   <DataList.Label>model id</DataList.Label>
                   <DataList.Value>
-                    <Code color="gray">{generation.model_id}</Code>
-                    {/* {generation.model?.name} */}
+                    {generation.model}
+                    <Code color="gold" className="mx-1">
+                      {generation.model_id}
+                    </Code>
                   </DataList.Value>
                 </DataList.Item>
 
-                {/* <DataList.Item>
+                <DataList.Item>
                   <DataList.Label>prompt</DataList.Label>
                   <DataList.Value>{generation.prompt}</DataList.Value>
-                </DataList.Item> */}
+                </DataList.Item>
 
                 <DataList.Item>
                   <DataList.Label>dimensions</DataList.Label>
@@ -96,7 +113,19 @@ export const MessagePage = ({ slugId }: MessagePageProps) => {
                 </DataList.Item>
 
                 {generationDataList.map(([key, value]) => {
-                  if (['model_id', 'width', 'height'].includes(key)) return null
+                  if (
+                    [
+                      'model_id',
+                      'model',
+                      'prompt',
+                      'width',
+                      'height',
+                      '_id',
+                      '_creationTime',
+                      'messageId',
+                    ].includes(key)
+                  )
+                    return null
                   return (
                     <DataList.Item key={key}>
                       <DataList.Label>{key}</DataList.Label>
