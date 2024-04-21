@@ -4,6 +4,7 @@ import { AspectRatio, Card, Code, DataList } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import NextImage from 'next/image'
+import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 import { PageHeader } from '../../PageHeader'
@@ -60,26 +61,27 @@ export const MessagePage = ({ slugId, showLoader = false }: MessagePageProps) =>
               const adjustedWidth = heightRatio * width
               const url = getImageUrl(image.slugId)
               return (
-                <div
-                  key={image._id}
-                  className="max-w-full shrink-0 overflow-hidden rounded-lg border border-gold-7"
-                  style={{ width: `${adjustedWidth}rem` }}
-                >
-                  <AspectRatio ratio={width / height}>
-                    {url && (
-                      <NextImage
-                        unoptimized
-                        src={url}
-                        alt=""
-                        placeholder={blurDataUrl ? 'blur' : 'empty'}
-                        blurDataURL={blurDataUrl}
-                        width={width}
-                        height={height}
-                        className="object-cover"
-                      />
-                    )}
-                  </AspectRatio>
-                </div>
+                <Link key={image._id} href={`/i/${image.slugId}`}>
+                  <div
+                    className="max-w-full shrink-0 overflow-hidden rounded-lg border border-gold-7"
+                    style={{ width: `${adjustedWidth}rem` }}
+                  >
+                    <AspectRatio ratio={width / height}>
+                      {url && (
+                        <NextImage
+                          unoptimized
+                          src={url}
+                          alt=""
+                          placeholder={blurDataUrl ? 'blur' : 'empty'}
+                          blurDataURL={blurDataUrl}
+                          width={width}
+                          height={height}
+                          className="object-cover"
+                        />
+                      )}
+                    </AspectRatio>
+                  </div>
+                </Link>
               )
             })}
           </div>

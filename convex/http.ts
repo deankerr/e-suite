@@ -18,9 +18,9 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     const { searchParams } = new URL(request.url)
     const slugId = searchParams.get('id') as string
-    const image = await ctx.runQuery(api.generated_images.getBySlugId, { slugId })
+    const result = await ctx.runQuery(api.generated_images.getBySlugId, { slugId })
 
-    const blob = await ctx.storage.get(image.fileId)
+    const blob = result?.image ? await ctx.storage.get(result.image.fileId) : null
 
     if (blob === null) {
       return new Response('Invalid image id', {

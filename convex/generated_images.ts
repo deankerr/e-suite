@@ -49,7 +49,9 @@ export const getBySlugId = query({
   handler: async (ctx, { slugId }) => {
     const image = await ctx
       .table('generated_images', 'slugId', (q) => q.eq('slugId', slugId))
-      .firstX()
-    return image
+      .first()
+    if (!image) return null
+    const generation = await image.edge('generation')
+    return { image, generation }
   },
 })
