@@ -31,7 +31,7 @@ export const MessagePage = ({ slugId, showLoader = false }: MessagePageProps) =>
     .flat()
 
   return (
-    <div>
+    <div className="mx-auto max-w-7xl">
       <PageHeader
         icon={<MessageSquareIcon />}
         title={result?.title ?? ''}

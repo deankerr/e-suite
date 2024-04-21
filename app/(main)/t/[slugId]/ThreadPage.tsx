@@ -8,10 +8,19 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/ui/IconButton'
+import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
+import sinkinModels from '@/convex/providers/sinkin.models.json'
 import { PageHeader } from '../../PageHeader'
 
 const thumbnailHeightRem = 16
+
+const models = sinkinModels.models.map(({ id, name }) => ({
+  label: name,
+  value: id,
+}))
+
+const dimAmounts = [{ value: '0' }, { value: '1' }, { value: '2' }, { value: '3' }, { value: '4' }]
 
 export default function ThreadPage({ slugId }: { slugId: string }) {
   const thread = useQuery(api.threads.getBySlugId, { slugId })
@@ -47,16 +56,15 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
       ? Number(formData.get('amount'))
       : Math.floor(Math.random() * 10000000)
 
-    const dimensions = String(formData.get('dimensions'))
-      .split(' ')
-      .map((str) => {
-        const [width, height, n] = str.split(',')
-        return {
-          width: Number(width),
-          height: Number(height),
-          n: Number(n),
-        }
-      })
+    const square = Number(formData.get('square'))
+    const portrait = Number(formData.get('portrait'))
+    const landscape = Number(formData.get('landscape'))
+
+    const dimensions = [
+      { width: 512, height: 512, n: square },
+      { width: 512, height: 768, n: portrait },
+      { width: 768, height: 512, n: landscape },
+    ].filter(({ n }) => n)
 
     createMessage({
       threadId: thread._id,
@@ -128,15 +136,28 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
               id="negative_prompt"
               name="negative_prompt"
             />
-            <TextField.Root placeholder="model id" id="model_id" name="model_id" />
+
+            <SelectList items={models} name="model_id" placeholder="Model" />
             <TextField.Root placeholder="seed" id="seed" name="seed" />
 
-            <div className="flex gap-2">
-              {/* <TextField.Root placeholder="width" id="width" name="width" />
-              <TextField.Root placeholder="height" id="height" name="height" />
-              <TextField.Root placeholder="amount" id="amount" name="amount" /> */}
+            <div className="flex items-center gap-2">
+              <div className="shrink-0">512x512</div>
+              <div className="">
+                <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="square" />
+              </div>
             </div>
-            <TextField.Root placeholder="w,h,n w,h,n ..." id="dimensions" name="dimensions" />
+            <div className="flex items-center gap-2">
+              <div className="shrink-0">512x768</div>
+              <div className="">
+                <SelectList items={dimAmounts} defaultValue="0" name="portrait" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="shrink-0">768x512</div>
+              <div className="">
+                <SelectList items={dimAmounts} defaultValue="0" name="landscape" />
+              </div>
+            </div>
 
             <div className="flex-end">
               <Button variant="surface">Send</Button>
