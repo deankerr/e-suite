@@ -9,7 +9,7 @@ import { ImageThumb } from '@/components/ImageThumb'
 import { api } from '@/convex/_generated/api'
 
 export default function Page() {
-  const pager = usePaginatedQuery(api.threads.feed, {}, { initialNumItems: 10 })
+  const pager = usePaginatedQuery(api.threads.imagefeed, {}, { initialNumItems: 10 })
 
   return (
     <div className="">

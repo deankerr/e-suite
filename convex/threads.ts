@@ -3,7 +3,8 @@ import { z } from 'zod'
 
 import { slugIdLength } from './constants'
 import { mutation, query } from './functions'
-import { generateRandomString, zPaginationOptValidator } from './lib/utils'
+import { textToImageModels } from './generation'
+import { emptyPage, generateRandomString, zPaginationOptValidator } from './lib/utils'
 import { threadFields } from './schema'
 
 import type { MutationCtx } from './types'
@@ -71,7 +72,7 @@ export const remove = mutation({
   },
 })
 
-export const feed = query({
+export const imagefeed = query({
   args: {
     paginationOpts: zPaginationOptValidator,
   },
@@ -87,5 +88,32 @@ export const feed = query({
       }))
 
     return gen
+  },
+})
+
+export const pageFeed = query({
+  args: {
+    slugId: z.string(),
+    paginationOpts: zPaginationOptValidator,
+  },
+  handler: async (ctx, { slugId, paginationOpts }) => {
+    const thread = await ctx.table('threads', 'slugId', (q) => q.eq('slugId', slugId)).first()
+    if (!thread) return emptyPage()
+
+    const pager = await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
+      .map(async (message) => ({
+        message,
+        generations: await message.edge('generations').map(async (generation) => ({
+          generation,
+          model: textToImageModels.find((model) => model.id === generation.model_id),
+          generated_images: await generation.edge('generated_images'),
+        })),
+      }))
+
+    return pager
   },
 })

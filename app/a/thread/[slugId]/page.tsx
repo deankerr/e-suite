@@ -13,8 +13,7 @@ const showLoader = false
 
 export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: string } }) {
   const thread = useQuery(api.threads.getBySlugId, { slugId })
-  const queryKey = thread ? { threadId: thread._id, order: 'desc' as const } : 'skip'
-  const pager = usePaginatedQuery(api.messages.listEdges, queryKey, { initialNumItems: 5 })
+  const pager = usePaginatedQuery(api.threads.pageFeed, { slugId }, { initialNumItems: 5 })
 
   return (
     <div>
