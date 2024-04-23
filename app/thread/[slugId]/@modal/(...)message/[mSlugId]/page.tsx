@@ -2,8 +2,8 @@
 
 import { useQuery } from 'convex/react'
 
-import { MessagePageView } from '@/app/components/MessagePageView'
-import { ModalPageView } from '@/app/components/ModalPageView'
+import { MessagePageView } from '@/components/pages/MessagePageView'
+import { ModalPageView } from '@/components/pages/ModalPageView'
 import { api } from '@/convex/_generated/api'
 
 export default function MessageViewModalPage({

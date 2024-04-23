@@ -2,8 +2,8 @@
 
 import { useQuery } from 'convex/react'
 
+import { MessagePageView } from '@/components/pages/MessagePageView'
 import { api } from '@/convex/_generated/api'
-import { MessagePageView } from '../../components/MessagePageView'
 
 export default function MessagePage({
   params: { mSlugId: slugId },

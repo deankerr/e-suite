@@ -4,8 +4,8 @@ import { Button } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
 import { PageHeader } from '@/app/alpha/PageHeader'
-import { MessageGallery } from '@/app/components/ThreadMessage'
 import { useThreadFeed } from '@/app/queries'
+import { MessageGallery } from '@/components/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
 
 const forceLoadingState = false
