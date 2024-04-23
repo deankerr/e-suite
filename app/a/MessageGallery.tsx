@@ -76,11 +76,11 @@ export const MessageGallery = ({ message, generations, eager = false }: MessageG
         {type.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className={cn('h-64 gap-2 overflow-x-auto flex-start')}>
-              {images.map((image, i) => (
+              {images.map((image) => (
                 <ImageThumb
                   key={image._id}
                   style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
-                  loading={eager || i === 0 ? 'eager' : 'lazy'}
+                  loading={eager ? 'eager' : 'lazy'}
                   image={image}
                 />
               ))}

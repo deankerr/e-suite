@@ -28,8 +28,13 @@ export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: 
           </>
         )}
 
-        {pager.results.map(({ message, generations }) => (
-          <MessageGallery key={message._id} message={message} generations={generations} />
+        {pager.results.map(({ message, generations }, i) => (
+          <MessageGallery
+            key={message._id}
+            message={message}
+            generations={generations}
+            eager={i === 0}
+          />
         ))}
       </div>
 
