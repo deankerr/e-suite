@@ -10,13 +10,13 @@ import { toast } from 'sonner'
 import { IconButton } from '@/components/ui/IconButton'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
-import sinkinModels from '@/convex/providers/sinkin.models.json'
+import SinkinModels from '@/convex/providers/sinkin.models.json'
 import { cn } from '@/lib/utils'
 import { PageHeader } from '../../PageHeader'
 
 const thumbnailHeightRem = 16
 
-const models = sinkinModels.models.map(({ id, name }) => ({
+const models = SinkinModels.map(({ id, name }) => ({
   label: name,
   value: id,
 }))

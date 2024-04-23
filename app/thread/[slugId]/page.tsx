@@ -3,10 +3,10 @@
 import { Button } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
-import { PageHeader } from '@/app/(main)/PageHeader'
+import { PageHeader } from '@/app/alpha/PageHeader'
+import { MessageGallery } from '@/app/components/ThreadMessage'
+import { useThreadFeed } from '@/app/queries'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { MessageGallery } from '../../components/ThreadMessage'
-import { useThreadFeed } from '../../queries'
 
 const forceLoadingState = false
 
@@ -23,10 +23,12 @@ export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: 
         {shouldShowLoader && <LoadingSkeleton />}
 
         {!shouldShowLoader &&
+          thread &&
           pager.results.map(({ message, generations }, i) => (
             <MessageGallery
               key={message._id}
               message={message}
+              thread={thread}
               generations={generations}
               priority={i < 3}
             />
@@ -45,6 +47,8 @@ export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: 
           </Button>
         </div>
       )}
+
+      {/* <ModalView>{popMsg ? <MessagePageView {...popMsg} /> : 'wait'}</ModalView> */}
     </div>
   )
 }

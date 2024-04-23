@@ -1,6 +1,7 @@
 import { Card, Heading, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { ImageThumb } from '@/components/ImageThumb'
@@ -9,7 +10,7 @@ import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
 import type { Doc } from '@/convex/_generated/dataModel'
-import type SinkinInfo from '@/convex/providers/sinkin.models.json'
+import type SinkinModels from '@/convex/providers/sinkin.models.json'
 
 const thumbnailHeightRem = 16
 
@@ -17,9 +18,10 @@ type MessageGalleryProps = {
   message: Doc<'messages'>
   generations: {
     generation: Doc<'generations'>
-    model?: (typeof SinkinInfo.models)[number]
+    model?: (typeof SinkinModels)[number]
     generated_images: Doc<'generated_images'>[]
   }[]
+  thread: Doc<'threads'>
   priority?: boolean
 }
 
@@ -56,11 +58,10 @@ export const MessageGallery = ({ message, generations, priority = false }: Messa
             <div className="shrink-0">{icon}</div>
 
             <Heading size="3" className="grow truncate">
-              {title}
+              <Link href={`/message/${message.slugId}`}>{title}</Link>
             </Heading>
 
             <div className="shrink-0">
-              {}
               <IconButton
                 color="red"
                 size="1"

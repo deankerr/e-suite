@@ -4,9 +4,9 @@ import { ConvexError } from 'convex/values'
 import { api, internal } from './_generated/api'
 import { internalAction, query } from './functions'
 import { sinkin } from './providers/sinkin'
-import sinkinModels from './providers/sinkin.models.json'
+import SinkinModels from './providers/sinkin.models.json'
 
-export const textToImageModels = sinkinModels.models
+export const textToImageModels = SinkinModels
 
 export const get = query({
   args: {

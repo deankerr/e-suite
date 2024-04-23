@@ -21,11 +21,7 @@ export default function Page() {
               className="block w-1/3 px-2 py-2"
               href={`/a/image/${gen.image.slugId}`}
             >
-              <ImageThumb
-                image={gen.image}
-                generation={gen.generation}
-                loading={i === 0 ? 'eager' : 'lazy'}
-              />
+              <ImageThumb image={gen.image} generation={gen.generation} />
             </Link>
           )
         })}
