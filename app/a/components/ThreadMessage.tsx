@@ -1,9 +1,10 @@
-import { Card, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
+import { Card, Heading, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { ImageThumb } from '@/components/ImageThumb'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
@@ -19,22 +20,21 @@ type MessageGalleryProps = {
     model?: (typeof SinkinInfo.models)[number]
     generated_images: Doc<'generated_images'>[]
   }[]
-  eager?: boolean
+  priority?: boolean
 }
 
-export const MessageGallery = ({ message, generations, eager = false }: MessageGalleryProps) => {
-  const images = generations.map(({ generated_images }) => generated_images).flat()
+export const MessageGallery = ({ message, generations, priority = false }: MessageGalleryProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
-  const type = {
+  const viewType = {
     text: generations.length === 0,
     image: generations.length > 0,
   }
 
   const icon = generations.length ? (
-    <ImageIcon className="mr-1 size-5" />
+    <ImageIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
   ) : (
-    <MessageSquareIcon className="mr-1 size-5" />
+    <MessageSquareIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
   )
 
   const firstGeneration = generations.at(0)
@@ -42,16 +42,25 @@ export const MessageGallery = ({ message, generations, eager = false }: MessageG
     ? firstGeneration.generation.prompt
     : message?.name ?? getRole(message.role)
 
+  const imageList = generations.flatMap(({ generation, generated_images }) => {
+    return Array.from({ length: generation.n }).map((_, i) => {
+      const image = generated_images[i]
+      return image ? image : { width: generation.width, height: generation.height, skeleton: true }
+    })
+  })
   return (
-    <Card className="">
+    <Card>
       <div className="space-y-3">
         <Inset side="top">
           <div className="h-10 bg-gray-3 p-2 flex-between">
             <div className="shrink-0">{icon}</div>
 
-            <div className="grow truncate">{title}</div>
+            <Heading size="3" className="grow truncate">
+              {title}
+            </Heading>
 
             <div className="shrink-0">
+              {}
               <IconButton
                 color="red"
                 size="1"
@@ -71,19 +80,27 @@ export const MessageGallery = ({ message, generations, eager = false }: MessageG
           </div>
         </Inset>
 
-        {message.content && <div className="min-h-6">{message.content}</div>}
+        {viewType.text && <div className="min-h-6">{message.content}</div>}
 
-        {type.image && (
+        {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
-            <div className={cn('h-64 gap-2 overflow-x-auto flex-start')}>
-              {images.map((image) => (
-                <ImageThumb
-                  key={image._id}
-                  style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
-                  loading={eager ? 'eager' : 'lazy'}
-                  image={image}
-                />
-              ))}
+            <div className={cn('h-64 gap-2 flex-start')}>
+              {imageList.map((image, i) =>
+                'skeleton' in image ? (
+                  <Skeleton
+                    key={i}
+                    className="h-full bg-gold-3"
+                    style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
+                  />
+                ) : (
+                  <ImageThumb
+                    key={image._id}
+                    style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
+                    priority={priority}
+                    image={image}
+                  />
+                ),
+              )}
             </div>
           </ScrollArea>
         )}

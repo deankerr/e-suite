@@ -9,11 +9,11 @@ import type { Doc } from '@/convex/_generated/dataModel'
 type ImageThumbProps = {
   image: Doc<'generated_images'>
   generation?: Doc<'generations'>
-  loading?: 'eager' | 'lazy'
+  priority?: boolean
 } & React.ComponentProps<'div'>
 
 export const ImageThumb = forwardRef<HTMLDivElement, ImageThumbProps>(function ImageThumb(
-  { image, loading = 'lazy', className, ...props },
+  { image, priority = false, className, ...props },
   forwardedRef,
 ) {
   return (
@@ -30,7 +30,7 @@ export const ImageThumb = forwardRef<HTMLDivElement, ImageThumbProps>(function I
           unoptimized
           src={getImageUrl(image.slugId)}
           alt=""
-          loading={loading}
+          priority={priority}
           placeholder={image.blurDataUrl ? 'blur' : 'empty'}
           blurDataURL={image.blurDataUrl}
           width={image.width}

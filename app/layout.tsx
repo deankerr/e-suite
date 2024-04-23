@@ -41,20 +41,11 @@ const jetBrainsMono = JetBrains_Mono({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={cn('overscroll-none', inter.variable, jetBrainsMono.variable)}
-      suppressHydrationWarning
-    >
-      <body className="min-h-screen">
+    <html lang="en" className={cn('overscroll-none', inter.variable, jetBrainsMono.variable)}>
+      <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <Theme
-              className="min-h-screen"
-              accentColor="orange"
-              appearance="dark"
-              panelBackground="translucent"
-            >
+            <Theme accentColor="orange" appearance="dark" panelBackground="translucent">
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />
