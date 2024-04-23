@@ -9,6 +9,8 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { api } from '@/convex/_generated/api'
 import { MessageGallery } from '../../MessageGallery'
 
+const showLoader = false
+
 export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: string } }) {
   const thread = useQuery(api.threads.getBySlugId, { slugId })
   const queryKey = thread ? { threadId: thread._id, order: 'desc' as const } : 'skip'
@@ -19,7 +21,7 @@ export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: 
       <PageHeader title={thread?.title ?? ''} icon={<MessageSquareIcon />} />
 
       <div className="space-y-4 p-1 sm:p-4">
-        {pager.status === 'LoadingFirstPage' && (
+        {(showLoader || pager.status === 'LoadingFirstPage') && (
           <>
             <MsgSkele />
             <MsgSkele />
@@ -49,8 +51,14 @@ export default function TSlugIdPage({ params: { slugId } }: { params: { slugId: 
 }
 
 const MsgSkele = () => (
-  <Skeleton className="pb-3">
-    <Skeleton className="h-10 rounded-none rounded-t-md bg-gold-4"></Skeleton>
-    <Skeleton className="h-64 bg-gold-2"></Skeleton>
+  <Skeleton className="space-y-3 border border-gray-3">
+    <Skeleton className="h-10 rounded-none rounded-t-md bg-gray-3"></Skeleton>
+    <Skeleton className="h-64 gap-2 bg-gray-2 p-3 pt-0 flex-start">
+      <Skeleton className="h-full w-64 bg-gray-3" />
+      <Skeleton className="h-full w-64 bg-gray-3" />
+      <Skeleton className="h-full w-64 bg-gray-3" />
+      <Skeleton className="h-full w-64 bg-gray-3" />
+      <Skeleton className="h-full w-64 bg-gray-3" />
+    </Skeleton>
   </Skeleton>
 )

@@ -19,9 +19,10 @@ type MessageGalleryProps = {
     model?: (typeof SinkinInfo.models)[number]
     generated_images: Doc<'generated_images'>[]
   }[]
+  eager?: boolean
 }
 
-export const MessageGallery = ({ message, generations }: MessageGalleryProps) => {
+export const MessageGallery = ({ message, generations, eager = false }: MessageGalleryProps) => {
   const images = generations.map(({ generated_images }) => generated_images).flat()
   const removeMessage = useMutation(api.messages.remove)
 
@@ -79,7 +80,7 @@ export const MessageGallery = ({ message, generations }: MessageGalleryProps) =>
                 <ImageThumb
                   key={image._id}
                   style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
-                  loading={i === 0 ? 'eager' : 'lazy'}
+                  loading={eager || i === 0 ? 'eager' : 'lazy'}
                   image={image}
                 />
               ))}

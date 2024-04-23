@@ -117,6 +117,7 @@ const config: Config = {
         yellow: generateRadixScale('yellow'),
         amber: generateRadixScale('amber'),
         gold: generateRadixScale('gold'),
+        goldA: generateRadixScaleAlpha('gold'),
         bronze: generateRadixScale('bronze'),
 
         surface: 'var(--color-surface)',
