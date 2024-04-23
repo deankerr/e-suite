@@ -77,7 +77,10 @@ export const DashboardPage = ({}: DashboardPageProps) => {
 
                   <Table.Cell>
                     <div className="flex h-full items-center">
-                      <Link href={`/t/${thread.slugId}`}>{thread.title ?? 'Untitled thread'}</Link>
+                      {/* <Link href={`/t/${thread.slugId}`}>{thread.title ?? 'Untitled thread'}</Link> */}
+                      <Link href={`/a/thread/${thread.slugId}`}>
+                        {thread.title ?? 'Untitled thread'}
+                      </Link>
                     </div>
                   </Table.Cell>
 

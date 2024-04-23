@@ -11,6 +11,7 @@ import { IconButton } from '@/components/ui/IconButton'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
 import sinkinModels from '@/convex/providers/sinkin.models.json'
+import { cn } from '@/lib/utils'
 import { PageHeader } from '../../PageHeader'
 
 const thumbnailHeightRem = 16
@@ -252,6 +253,12 @@ export default function ThreadPage({ slugId }: { slugId: string }) {
               </div>
             )
           })}
+        </div>
+
+        <div className={cn('hidden', messages.status === 'CanLoadMore' && 'flex')}>
+          <Button variant="surface" onClick={() => messages.loadMore(10)}>
+            Load more
+          </Button>
         </div>
       </div>
     </div>

@@ -10,7 +10,8 @@ import {
   messageRoles,
 } from './constants'
 
-const timeToDelete = 1000 * 60 * 60 * 24
+// const timeToDelete = 1000 * 60 * 60 * 24
+const timeToDelete = 5000
 
 //* Permissions
 const permissionsSchema = z.object({

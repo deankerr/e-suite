@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { slugIdLength } from './constants'
 import { mutation, query } from './functions'
-import { generateRandomString } from './lib/utils'
+import { generateRandomString, zPaginationOptValidator } from './lib/utils'
 import { threadFields } from './schema'
 
 import type { MutationCtx } from './types'
@@ -68,5 +68,24 @@ export const remove = mutation({
   },
   handler: async (ctx, { threadId }) => {
     await ctx.table('threads').getX(threadId).delete()
+  },
+})
+
+export const feed = query({
+  args: {
+    paginationOpts: zPaginationOptValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    const gen = await ctx
+      .table('generated_images')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
+      .map(async (gen) => ({
+        image: gen,
+        generation: await gen.edgeX('generation'),
+      }))
+
+    return gen
   },
 })

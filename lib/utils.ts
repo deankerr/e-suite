@@ -29,3 +29,11 @@ export const stringToJsonSchema = z
       return z.NEVER
     }
   })
+
+export const getImageUrl = (fileId: string) => {
+  const siteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace('.cloud', '.site')
+  const url = new URL('i', siteUrl)
+  url.searchParams.set('id', fileId)
+
+  return url.toString()
+}

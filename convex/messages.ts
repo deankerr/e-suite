@@ -131,6 +131,31 @@ export const list = query({
   },
 })
 
+export const listEdges = query({
+  args: {
+    threadId: zid('threads'),
+    order: z.enum(['asc', 'desc']).default('asc'),
+    paginationOpts: zPaginationOptValidator,
+  },
+  handler: async (ctx, { threadId, order, paginationOpts }) => {
+    const messages = await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
+      .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
+      .map(async (message) => ({
+        message,
+        generations: await message.edge('generations').map(async (generation) => ({
+          generation,
+          model: textToImageModels.find((model) => model.id === generation.model_id),
+          generated_images: await generation.edge('generated_images'),
+        })),
+      }))
+
+    return messages
+  },
+})
+
 export const remove = mutation({
   args: {
     messageId: zid('messages'),
