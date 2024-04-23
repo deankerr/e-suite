@@ -14,8 +14,10 @@ export const GenerationDataList = ({ generation, model }: GenerationDataListProp
       <DataList.Item>
         <DataList.Label>model id</DataList.Label>
         <DataList.Value>
-          {model.name}
-          <Code color="gold">{model_id}</Code>
+          <div className="flex-start">
+            {model.name}
+            <Code color="gold">{model_id}</Code>
+          </div>
         </DataList.Value>
       </DataList.Item>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { MessageSquareIcon } from 'lucide-react'
+import { Masonry } from 'react-plock'
 
 import { ImageThumb } from '@/components/ImageThumb'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -8,13 +9,13 @@ import { GenerationDataList } from '../GenerationDataList'
 import { PageWrapper } from './PageWrapper'
 
 import type { Doc } from '@/convex/_generated/dataModel'
-import type SinkinModels from '@/convex/providers/sinkin.models.json'
+import type { ImageModel } from '@/convex/types'
 
 type MessagePageViewProps = {
   message: Doc<'messages'>
   generations: {
     generation: Doc<'generations'>
-    model?: (typeof SinkinModels)[number]
+    model?: ImageModel
     generated_images: Doc<'generated_images'>[]
   }[]
   title: string
@@ -34,20 +35,23 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
-        {/* images */}
-        <div className="space-y-4">
-          {imageList.map((image, i) =>
-            'skeleton' in image ? (
-              <Skeleton key={i} className="h-full bg-gold-3" style={{ width: `${30}rem` }} />
-            ) : (
-              <ImageThumb
-                key={image._id}
-                style={{ width: `${30}rem` }}
-                priority={true}
-                image={image}
-              />
-            ),
-          )}
+        <div className="w-full">
+          {/* masonry */}
+          <Masonry
+            items={imageList}
+            config={{
+              columns: [1, 2, 3],
+              gap: [12, 12, 12],
+              media: [520, 768, 1024],
+            }}
+            render={(image, idx) =>
+              'skeleton' in image ? (
+                <Skeleton key={idx} className="h-full bg-gold-3" />
+              ) : (
+                <ImageThumb key={image._id} priority={true} image={image} />
+              )
+            }
+          />
         </div>
 
         {/* details */}

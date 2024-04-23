@@ -10,7 +10,7 @@ import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
 import type { Doc } from '@/convex/_generated/dataModel'
-import type SinkinModels from '@/convex/providers/sinkin.models.json'
+import type { ImageModel } from '@/convex/types'
 
 const thumbnailHeightRem = 16
 
@@ -18,7 +18,7 @@ type ThreadMessageProps = {
   message: Doc<'messages'>
   generations: {
     generation: Doc<'generations'>
-    model?: (typeof SinkinModels)[number]
+    model?: ImageModel
     generated_images: Doc<'generated_images'>[]
   }[]
   thread: Doc<'threads'>
