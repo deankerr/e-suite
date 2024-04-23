@@ -1,6 +1,7 @@
 'use client'
 
-import { Dialog } from '@radix-ui/themes'
+import * as Dialog from '@radix-ui/react-dialog'
+import { Theme } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 type ModalPageViewProps = { children?: React.ReactNode }
@@ -9,10 +10,14 @@ export const ModalPageView = ({ children }: ModalPageViewProps) => {
   const router = useRouter()
 
   return (
-    <Dialog.Root defaultOpen onOpenChange={(open) => !open && router.back()}>
-      <Dialog.Content size="1" maxWidth="90vw" style={{ width: '90vw', height: '90vh' }}>
-        {children}
-      </Dialog.Content>
+    <Dialog.Root defaultOpen onOpenChange={(open) => !open && router.back()} modal>
+      <Dialog.Portal>
+        <Theme>
+          <Dialog.Overlay className="fixed inset-0 grid place-items-center overflow-y-auto bg-overlay">
+            <Dialog.Content className="w-full rounded bg-gray-1">{children}</Dialog.Content>
+          </Dialog.Overlay>
+        </Theme>
+      </Dialog.Portal>
     </Dialog.Root>
   )
 }

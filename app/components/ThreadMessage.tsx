@@ -50,6 +50,7 @@ export const MessageGallery = ({ message, generations, priority = false }: Messa
       return image ? image : { width: generation.width, height: generation.height, skeleton: true }
     })
   })
+
   return (
     <Card>
       <div className="space-y-3">
@@ -120,17 +121,3 @@ const getRole = (role: string) => {
 
   return roles[role] ?? role
 }
-
-// className={cn(
-//   'w-1/4 px-1 py-1',
-//   image.width > image.height && 'w-1/2',
-//   image.width < image.height && 'w-1/4',
-// )}
-
-/* <Masonry>
-            {images.map((image) => (
-              <div key={image._id} className={cn('mx-auto w-full p-1 sm:w-1/2 md:w-1/3 lg:w-1/4')}>
-                <ImageThumb className="" image={image} />
-              </div>
-            ))}
-          </Masonry> */
