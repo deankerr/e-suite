@@ -14,7 +14,7 @@ import type SinkinModels from '@/convex/providers/sinkin.models.json'
 
 const thumbnailHeightRem = 16
 
-type MessageGalleryProps = {
+type ThreadMessageProps = {
   message: Doc<'messages'>
   generations: {
     generation: Doc<'generations'>
@@ -25,7 +25,7 @@ type MessageGalleryProps = {
   priority?: boolean
 }
 
-export const MessageGallery = ({ message, generations, priority = false }: MessageGalleryProps) => {
+export const ThreadMessage = ({ message, generations, priority = false }: ThreadMessageProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
   const viewType = {

@@ -1,8 +1,10 @@
+'use client'
+
 import { MessageSquareIcon } from 'lucide-react'
 
-import { PageHeader } from '@/app/alpha/PageHeader'
 import { ImageThumb } from '@/components/ImageThumb'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { PageWrapper } from './PageWrapper'
 
 import type { Doc } from '@/convex/_generated/dataModel'
 import type SinkinModels from '@/convex/providers/sinkin.models.json'
@@ -25,10 +27,9 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
       return image ? image : { width: generation.width, height: generation.height, skeleton: true }
     })
   })
-  return (
-    <div>
-      <PageHeader icon={<MessageSquareIcon />} title={title} />
 
+  return (
+    <PageWrapper icon={<MessageSquareIcon />} title={title}>
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
         {/* images */}
         <div className="space-y-4">
@@ -49,6 +50,6 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
         {/* details */}
         <div className="h-fit min-h-32 rounded-lg border bg-panel-solid p-4">deets</div>
       </div>
-    </div>
+    </PageWrapper>
   )
 }
