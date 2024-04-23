@@ -25,3 +25,10 @@ export type CollectionGroup<T extends object> = {
   group: CollectionItem<T>[]
 }
 export type Collection<T extends object> = (CollectionItem<T> | CollectionGroup<T>)[]
+
+export type ImageModel = {
+  id: string
+  name: string
+  link: string
+  civitai_model_id?: number
+}

@@ -1,17 +1,27 @@
 'use client'
 
-import { useQuery } from 'convex/react'
-
+import { useMessageQuery } from '@/app/queries'
 import { MessagePageView } from '@/components/pages/MessagePageView'
 import { ModalPageView } from '@/components/pages/ModalPageView'
-import { api } from '@/convex/_generated/api'
 
 export default function MessageViewModalPage({
   params: { mSlugId: slugId },
 }: {
   params: { mSlugId: string }
 }) {
-  const m = useQuery(api.messages.getBySlugIdBeta, { slugId })
+  const result = useMessageQuery({ slugId })
 
-  return <ModalPageView>{m ? <MessagePageView {...m} /> : 'none'}</ModalPageView>
+  return (
+    <ModalPageView>
+      {result ? (
+        <MessagePageView {...result} />
+      ) : result === null ? (
+        <div>Error :(</div>
+      ) : (
+        <div>
+          <span className="ds-loading bg-orange-9"></span>
+        </div>
+      )}
+    </ModalPageView>
+  )
 }

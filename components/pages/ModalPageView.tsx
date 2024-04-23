@@ -14,7 +14,7 @@ export const ModalPageView = ({ children }: ModalPageViewProps) => {
       <Dialog.Portal>
         <Theme>
           <Dialog.Overlay className="fixed inset-0 grid place-items-center overflow-y-auto bg-overlay">
-            <Dialog.Content className="w-full rounded bg-gray-1">{children}</Dialog.Content>
+            <Dialog.Content className="w-full">{children}</Dialog.Content>
           </Dialog.Overlay>
         </Theme>
       </Dialog.Portal>

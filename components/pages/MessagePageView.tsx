@@ -4,6 +4,7 @@ import { MessageSquareIcon } from 'lucide-react'
 
 import { ImageThumb } from '@/components/ImageThumb'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { GenerationDataList } from '../GenerationDataList'
 import { PageWrapper } from './PageWrapper'
 
 import type { Doc } from '@/convex/_generated/dataModel'
@@ -28,6 +29,8 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
     })
   })
 
+  const dataGeneration = generations[0]
+
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
@@ -48,7 +51,14 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
         </div>
 
         {/* details */}
-        <div className="h-fit min-h-32 rounded-lg border bg-panel-solid p-4">deets</div>
+        <div className="h-fit min-h-32 overflow-hidden rounded-lg border bg-panel-solid p-4">
+          {dataGeneration && (
+            <GenerationDataList
+              generation={dataGeneration.generation}
+              model={dataGeneration.model!}
+            />
+          )}
+        </div>
       </div>
     </PageWrapper>
   )
