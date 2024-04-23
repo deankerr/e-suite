@@ -7,6 +7,7 @@ import { useThreadFeed } from '@/app/queries'
 import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ThreadMessage } from '@/components/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { CreateMessageControlsAlpha } from '../CreateMessageControlsAlpha'
 
 const forceLoadingState = false
 
@@ -21,6 +22,8 @@ export const ThreadPageView = ({ slugId }: ThreadPageViewProps) => {
     <PageWrapper icon={<MessagesSquareIcon />} title={thread?.title ?? ''}>
       <div className="space-y-4 p-1 sm:p-4">
         {shouldShowLoader && <LoadingSkeleton />}
+
+        {thread && <CreateMessageControlsAlpha threadId={thread._id} />}
 
         {!shouldShowLoader &&
           thread &&
