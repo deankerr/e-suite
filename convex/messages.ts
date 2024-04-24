@@ -45,30 +45,30 @@ export const create = mutation({
   },
 })
 
-export const get = query({
-  args: {
-    messageId: zid('messages'),
-  },
-  handler: async (ctx, { messageId }) => {
-    const message = await ctx.table('messages').getX(messageId)
-    return message
-  },
-})
+// export const get = query({
+//   args: {
+//     messageId: zid('messages'),
+//   },
+//   handler: async (ctx, { messageId }) => {
+//     const message = await ctx.table('messages').getX(messageId)
+//     return message
+//   },
+// })
 
-const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }) => {
-  const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-  if (!message) return null
+// const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }) => {
+//   const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
+//   if (!message) return null
 
-  const thread = await message.edge('thread')
+//   const thread = await message.edge('thread')
 
-  const generation = await message.edge('generation')
-  const model = textToImageModels.find((model) => model.id === generation?.model_id)?.name
-  const generated_images = generation ? await generation.edge('generated_images') : []
+//   const generation = await message.edge('generation')
+//   const model = textToImageModels.find((model) => model.id === generation?.model_id)?.name
+//   const generated_images = generation ? await generation.edge('generated_images') : []
 
-  const title = generation ? generation.prompt : `Message from ${message?.name ?? message.role}`
+//   const title = generation ? generation.prompt : `Message from ${message?.name ?? message.role}`
 
-  return { message, thread, generation, title }
-}
+//   return { message, thread, generation, title }
+// }
 
 // export const getMetadata = query({
 //   args: {
@@ -88,12 +88,12 @@ const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }
 //   },
 // })
 
-export const getBySlugId = query({
-  args: {
-    slugId: z.string(),
-  },
-  handler: async (ctx, args) => await getMessageWithEdges(ctx, args),
-})
+// export const getBySlugId = query({
+//   args: {
+//     slugId: z.string(),
+//   },
+//   handler: async (ctx, args) => await getMessageWithEdges(ctx, args),
+// })
 
 export const getMessageEdges = async (ctx: QueryCtx, { message }: { message: Ent<'messages'> }) => {
   const thread = await message.edge('thread')

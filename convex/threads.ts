@@ -29,15 +29,15 @@ export const create = mutation({
   },
 })
 
-export const get = query({
-  args: {
-    threadId: zid('threads'),
-  },
-  handler: async (ctx, { threadId }) => {
-    const thread = await ctx.table('threads').get(threadId)
-    return thread
-  },
-})
+// export const get = query({
+//   args: {
+//     threadId: zid('threads'),
+//   },
+//   handler: async (ctx, { threadId }) => {
+//     const thread = await ctx.table('threads').get(threadId)
+//     return thread
+//   },
+// })
 
 export const getBySlugId = query({
   args: {
@@ -74,24 +74,24 @@ export const remove = mutation({
   },
 })
 
-export const imagefeed = query({
-  args: {
-    paginationOpts: zPaginationOptValidator,
-  },
-  handler: async (ctx, { paginationOpts }) => {
-    const gen = await ctx
-      .table('generated_images')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .paginate(paginationOpts)
-      .map(async (gen) => ({
-        image: gen,
-        generation: await gen.edgeX('generation'),
-      }))
+// export const imagefeed = query({
+//   args: {
+//     paginationOpts: zPaginationOptValidator,
+//   },
+//   handler: async (ctx, { paginationOpts }) => {
+//     const gen = await ctx
+//       .table('generated_images')
+//       .order('desc')
+//       .filter((q) => q.eq(q.field('deletionTime'), undefined))
+//       .paginate(paginationOpts)
+//       .map(async (gen) => ({
+//         image: gen,
+//         generation: await gen.edgeX('generation'),
+//       }))
 
-    return gen
-  },
-})
+//     return gen
+//   },
+// })
 
 export const pageFeed = query({
   args: {
