@@ -8,13 +8,15 @@ import {
   maxMessageNameStringLength,
   maxTitleStringLength,
   messageRoles,
+  ridLength,
 } from './constants'
 
 // const timeToDelete = 1000 * 60 * 60 * 24
 const timeToDelete = 5000
 
-//* New Generations/Images
-export const generatedImagesFields = {
+export const ridField = z.string().length(ridLength)
+
+export const generatedImageFields = {
   width: z.number(),
   height: z.number(),
 
@@ -27,14 +29,14 @@ export const generatedImagesFields = {
   blurDataUrl: z.string(),
   color: z.string(),
 }
-const generated_images = defineEnt(zodToConvexFields(generatedImagesFields))
+const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
+  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('private', zodToConvex(z.boolean()), { index: true })
   .edge('generation')
   .edge('message')
-  .field('slugId', zodToConvex(z.string()), { index: true })
-  .field('private', zodToConvex(z.boolean()), { index: true })
 
 export const generationFields = {
   provider: z.enum(generationProviders),
@@ -64,9 +66,7 @@ export const generationFields = {
   enable_safety_checker: z.boolean().optional(),
 }
 export const generations = defineEnt(zodToConvexFields(generationFields))
-  .deletion('scheduled', {
-    delayMs: timeToDelete,
-  })
+  .deletion('scheduled', { delayMs: timeToDelete })
   .edge('message', { field: 'messageId' })
   .edges('generated_images', { ref: true })
 
@@ -94,16 +94,16 @@ export const messageFields = {
     .string()
     .transform((value) => value.slice(0, maxMessageNameStringLength))
     .optional(),
-  content: z.string().optional(),
+  text: z.string().optional(),
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('thread')
-  .edge('generation', { optional: true, ref: 'messageId' })
-  .edges('generated_images', { ref: true })
-  .edge('user')
-  .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
+  .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
+  .edges('generated_images', { ref: true })
+  .edge('generation', { optional: true, ref: 'messageId' })
+  .edge('thread')
+  .edge('user')
 
 //* Threads
 export const threadFields = {
@@ -114,10 +114,10 @@ export const threadFields = {
 }
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
+  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('messages', { ref: true })
   .edge('user')
-  .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
-  .field('private', zodToConvex(z.boolean()), { index: true })
 
 //* Users
 export const userFields = {
@@ -127,6 +127,7 @@ export const userFields = {
 }
 const users = defineEnt(zodToConvexFields(userFields))
   .deletion('scheduled', { delayMs: timeToDelete })
+  .field('rid', zodToConvex(ridField), { unique: true })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true })

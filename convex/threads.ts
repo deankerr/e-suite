@@ -1,19 +1,10 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { slugIdLength } from './constants'
+import { external } from './external'
 import { mutation, query } from './functions'
-import { emptyPage, generateRandomString, zPaginationOptValidator } from './lib/utils'
-import { getMessageEdges } from './messages'
-import { threadFields } from './schema'
-
-import type { MutationCtx } from './types'
-
-const generateSlugid = async (ctx: MutationCtx): Promise<string> => {
-  const slugId = generateRandomString(slugIdLength)
-  const existing = await ctx.table('threads', 'slugId', (q) => q.eq('slugId', slugId)).first()
-  return existing ? generateSlugid(ctx) : slugId
-}
+import { ridField, threadFields } from './schema'
+import { generateRid, zPaginationOptValidator } from './utils'
 
 export const create = mutation({
   args: {
@@ -21,31 +12,30 @@ export const create = mutation({
   },
   handler: async (ctx, { title }) => {
     const user = await ctx.viewerX()
-    const slugId = await generateSlugid(ctx)
+    const rid = await generateRid(ctx, 'threads')
     const threadId = await ctx
       .table('threads')
-      .insert({ title, userId: user._id, slugId, private: true })
+      .insert({ title, userId: user._id, rid, private: true })
     return threadId
   },
 })
 
-// export const get = query({
-//   args: {
-//     threadId: zid('threads'),
-//   },
-//   handler: async (ctx, { threadId }) => {
-//     const thread = await ctx.table('threads').get(threadId)
-//     return thread
-//   },
-// })
-
-export const getBySlugId = query({
+export const remove = mutation({
   args: {
-    slugId: z.string(),
+    threadId: zid('threads'),
   },
-  handler: async (ctx, { slugId }) => {
-    const thread = await ctx.table('threads', 'slugId', (q) => q.eq('slugId', slugId)).first()
-    return thread
+  handler: async (ctx, { threadId }) => {
+    await ctx.table('threads').getX(threadId).delete()
+  },
+})
+
+export const get = query({
+  args: {
+    rid: ridField,
+  },
+  handler: async (ctx, { rid }) => {
+    const thread = await ctx.table('threads', 'rid', (q) => q.eq('rid', rid)).firstX()
+    return external.unit.thread.parse(thread)
   },
 })
 
@@ -65,50 +55,39 @@ export const list = query({
   },
 })
 
-export const remove = mutation({
+export const messages = query({
   args: {
-    threadId: zid('threads'),
-  },
-  handler: async (ctx, { threadId }) => {
-    await ctx.table('threads').getX(threadId).delete()
-  },
-})
-
-// export const imagefeed = query({
-//   args: {
-//     paginationOpts: zPaginationOptValidator,
-//   },
-//   handler: async (ctx, { paginationOpts }) => {
-//     const gen = await ctx
-//       .table('generated_images')
-//       .order('desc')
-//       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-//       .paginate(paginationOpts)
-//       .map(async (gen) => ({
-//         image: gen,
-//         generation: await gen.edgeX('generation'),
-//       }))
-
-//     return gen
-//   },
-// })
-
-export const pageFeed = query({
-  args: {
-    slugId: z.string(),
+    threadRid: ridField,
+    order: z.enum(['asc', 'desc']).default('desc'),
     paginationOpts: zPaginationOptValidator,
   },
-  handler: async (ctx, { slugId, paginationOpts }) => {
-    const thread = await ctx.table('threads', 'slugId', (q) => q.eq('slugId', slugId)).first()
-    if (!thread) return emptyPage()
+  handler: async (ctx, { threadRid, order, paginationOpts }) => {
+    const thread = await ctx.table('threads', 'rid', (q) => q.eq('rid', threadRid)).firstX()
 
     const pager = await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
-      .order('desc')
+      .order(order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
-      .map(async (message) => await getMessageEdges(ctx, { message }))
+      .map(async (message) => {
+        const generation = await ctx
+          .table('generations', 'messageId', (q) => q.eq('messageId', message._id))
+          .first()
 
-    return pager
+        const generated_images = generation
+          ? await ctx.table('generated_images', 'messageId', (q) => q.eq('messageId', message._id))
+          : null
+
+        return {
+          data: message,
+          generation,
+          generated_images,
+        }
+      })
+
+    return {
+      ...pager,
+      page: external.xl.message.array().parse(pager.page),
+    }
   },
 })

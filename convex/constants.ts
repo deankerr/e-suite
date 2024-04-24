@@ -1,4 +1,3 @@
-export const dimensions = ['portrait', 'square', 'landscape'] as const
 export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
 
 export const completionProviders = ['openai', 'openrouter', 'togetherai'] as const
@@ -19,7 +18,4 @@ export const maxMessageContentStringLength = 32767
 export const maxMessageNameStringLength = 64
 export const maxTitleStringLength = 256
 
-export const defaultRecentMessagesLimit = 50
-
-export const slugLength = 8
-export const slugIdLength = 8
+export const ridLength = 6

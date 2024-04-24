@@ -3,7 +3,7 @@
 import OpenAI from 'openai'
 import z from 'zod'
 
-import { getEnv } from '../lib/utils'
+import { getEnv } from '../utils'
 
 import type { completionParametersSchema } from '../schema'
 

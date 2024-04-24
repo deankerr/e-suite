@@ -17,10 +17,10 @@ http.route({
   method: 'GET',
   handler: httpAction(async (ctx, request) => {
     const { searchParams } = new URL(request.url)
-    const slugId = searchParams.get('id') as string
-    const result = await ctx.runQuery(api.generated_images.getBySlugId, { slugId })
+    const rid = searchParams.get('id') as string
+    const result = await ctx.runQuery(api.generated_images.get, { rid })
 
-    const blob = result?.image ? await ctx.storage.get(result.image.fileId) : null
+    const blob = result ? await ctx.storage.get(result.fileId) : null
 
     if (blob === null) {
       return new Response('Invalid image id', {

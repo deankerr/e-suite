@@ -2,7 +2,7 @@ import { ConvexError } from 'convex/values'
 import ky from 'ky'
 import { z } from 'zod'
 
-import { getEnv } from '../lib/utils'
+import { getEnv } from '../utils'
 
 const api = ky.extend({
   prefixUrl: 'https://sinkin.ai/m',

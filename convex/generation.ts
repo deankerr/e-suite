@@ -2,39 +2,19 @@ import { zid } from 'convex-helpers/server/zod'
 import { ConvexError } from 'convex/values'
 import { z } from 'zod'
 
-import { api, internal } from './_generated/api'
-import { internalAction, query } from './functions'
+import { internal } from './_generated/api'
+import { internalAction, internalQuery } from './functions'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
+import { insist } from './utils'
 
 export const textToImageModels = SinkinModels
 
-export const get = query({
+export const getI = internalQuery({
   args: {
     generationId: zid('generations'),
   },
-  handler: async (ctx, { generationId }) => await ctx.table('generations').getX(generationId),
-})
-
-export const getByMessageId = query({
-  args: {
-    messageId: zid('messages'),
-  },
-  handler: async (ctx, { messageId }) => {
-    const generation = await ctx
-      .table('generations', 'messageId', (q) => q.eq('messageId', messageId))
-      .first()
-    if (!generation) return null
-
-    const generated_images = await generation.edge('generated_images')
-    const model = textToImageModels.find((model) => model.id === generation.model_id)
-
-    return {
-      generation,
-      generated_images,
-      model,
-    }
-  },
+  handler: async (ctx, { generationId }) => await ctx.table('generations').get(generationId),
 })
 
 export const textToImage = internalAction({
@@ -42,8 +22,9 @@ export const textToImage = internalAction({
     generationId: zid('generations'),
     dimensions: z.object({ width: z.number(), height: z.number(), n: z.number() }),
   },
-  handler: async (ctx, { generationId, dimensions }) => {
-    const generation = await ctx.runQuery(api.generation.get, { generationId })
+  handler: async (ctx, { generationId, dimensions }): Promise<void> => {
+    const generation = await ctx.runQuery(internal.generation.getI, { generationId })
+    insist(generation, 'invalid generation id')
 
     const {
       _id,

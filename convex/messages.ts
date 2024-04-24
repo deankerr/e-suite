@@ -2,20 +2,10 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { slugIdLength } from './constants'
+import { external } from './external'
 import { mutation, query } from './functions'
-import { textToImageModels } from './generation'
-import { generateRandomString, zPaginationOptValidator } from './lib/utils'
-import { generationFields, messageFields } from './schema'
-import { runWithRetries } from './utils'
-
-import type { Ent, MutationCtx, QueryCtx } from './types'
-
-const generateSlugId = async (ctx: MutationCtx): Promise<string> => {
-  const slugId = generateRandomString(slugIdLength)
-  const existing = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-  return existing ? generateSlugId(ctx) : slugId
-}
+import { generationFields, messageFields, ridField } from './schema'
+import { generateRid, runWithRetries, zPaginationOptValidator } from './utils'
 
 export const create = mutation({
   args: {
@@ -24,11 +14,11 @@ export const create = mutation({
     generation: z.object(generationFields).optional(),
   },
   handler: async (ctx, { threadId, message, generation }) => {
-    const slugId = await generateSlugId(ctx)
+    const rid = await generateRid(ctx, 'messages')
     const user = await ctx.viewerX()
     const messageId = await ctx
       .table('messages')
-      .insert({ threadId, ...message, slugId, userId: user._id, private: true })
+      .insert({ threadId, ...message, rid, userId: user._id, private: true })
 
     if (generation) {
       const generationId = await ctx.table('generations').insert({ ...generation, messageId })
@@ -45,139 +35,70 @@ export const create = mutation({
   },
 })
 
-// export const get = query({
-//   args: {
-//     messageId: zid('messages'),
-//   },
-//   handler: async (ctx, { messageId }) => {
-//     const message = await ctx.table('messages').getX(messageId)
-//     return message
-//   },
-// })
-
-// const getMessageWithEdges = async (ctx: QueryCtx, { slugId }: { slugId: string }) => {
-//   const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-//   if (!message) return null
-
-//   const thread = await message.edge('thread')
-
-//   const generation = await message.edge('generation')
-//   const model = textToImageModels.find((model) => model.id === generation?.model_id)?.name
-//   const generated_images = generation ? await generation.edge('generated_images') : []
-
-//   const title = generation ? generation.prompt : `Message from ${message?.name ?? message.role}`
-
-//   return { message, thread, generation, title }
-// }
-
-// export const getMetadata = query({
-//   args: {
-//     slugId: z.string(),
-//   },
-//   handler: async (ctx, { slugId }) => {
-//     const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-//     if (!message) return null
-
-//     const generations = await message.edge('generations')
-
-//     const title = generations[0]?.prompt
-//       ? generations[0]?.prompt
-//       : `Message from ${message?.name ?? message.role}`
-
-//     return { title }
-//   },
-// })
-
-// export const getBySlugId = query({
-//   args: {
-//     slugId: z.string(),
-//   },
-//   handler: async (ctx, args) => await getMessageWithEdges(ctx, args),
-// })
-
-export const getMessageEdges = async (ctx: QueryCtx, { message }: { message: Ent<'messages'> }) => {
-  const thread = await message.edge('thread')
-
-  // TODO temporary compatibility
-  const generation = await message.edge('generation')
-  const model = textToImageModels.find((model) => model.id === generation?.model_id)
-  const generated_images = generation ? await generation.edge('generated_images') : []
-
-  const firstPrompt = generation?.prompt
-  const title = firstPrompt ?? `Message from ${message?.name ?? message.role}`
-
-  const generations = generation ? { generation, model, generated_images } : undefined
-
-  return { message, thread, generations, title }
-}
-
-export const getBySlugIdBeta = query({
-  args: {
-    slugId: z.string(),
-  },
-  handler: async (ctx, { slugId }) => {
-    const message = await ctx.table('messages', 'slugId', (q) => q.eq('slugId', slugId)).first()
-    if (!message) return null
-
-    return await getMessageEdges(ctx, { message })
-  },
-})
-
-// export const list = query({
-//   args: {
-//     threadId: zid('threads'),
-//     order: z.enum(['asc', 'desc']).default('asc'),
-//     paginationOpts: zPaginationOptValidator,
-//   },
-//   handler: async (ctx, { threadId, order, paginationOpts }) => {
-//     const messages = await ctx
-//       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
-//       .order(order)
-//       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-//       .paginate(paginationOpts)
-//       .map(async (message) => ({
-//         ...message,
-//         generations: await message.edge('generations').map(async (generation) => ({
-//           ...generation,
-//           model: textToImageModels.find((model) => model.id === generation.model_id)?.name,
-//           generated_images: await generation.edge('generated_images'),
-//         })),
-//       }))
-
-//     return messages
-//   },
-// })
-
-// export const listEdges = query({
-//   args: {
-//     threadId: zid('threads'),
-//     order: z.enum(['asc', 'desc']).default('asc'),
-//     paginationOpts: zPaginationOptValidator,
-//   },
-//   handler: async (ctx, { threadId, order, paginationOpts }) => {
-//     const messages = await ctx
-//       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
-//       .order(order)
-//       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-//       .paginate(paginationOpts)
-//       .map(async (message) => ({
-//         message,
-//         generations: await message.edge('generations').map(async (generation) => ({
-//           generation,
-//           model: textToImageModels.find((model) => model.id === generation.model_id),
-//           generated_images: await generation.edge('generated_images'),
-//         })),
-//       }))
-
-//     return messages
-//   },
-// })
-
 export const remove = mutation({
   args: {
     messageId: zid('messages'),
   },
   handler: async (ctx, { messageId }) => {
     await ctx.table('messages').getX(messageId).delete()
+  },
+})
+
+export const get = query({
+  args: {
+    rid: ridField,
+  },
+  handler: async (ctx, { rid }) => {
+    const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).firstX()
+
+    const generation = await ctx
+      .table('generations', 'messageId', (q) => q.eq('messageId', message._id))
+      .first()
+
+    const generated_images = generation
+      ? await ctx.table('generated_images', 'messageId', (q) => q.eq('messageId', message._id))
+      : null
+
+    const xl = {
+      data: message,
+      generation,
+      generated_images,
+    }
+
+    return external.xl.message.parse(xl)
+  },
+})
+
+export const list = query({
+  args: {
+    order: z.enum(['asc', 'desc']).default('desc'),
+    paginationOpts: zPaginationOptValidator,
+  },
+  handler: async (ctx, { order, paginationOpts }) => {
+    const pager = await ctx
+      .table('messages')
+      .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
+      .map(async (message) => {
+        const generation = await ctx
+          .table('generations', 'messageId', (q) => q.eq('messageId', message._id))
+          .first()
+
+        const generated_images = generation
+          ? await ctx.table('generated_images', 'messageId', (q) => q.eq('messageId', message._id))
+          : null
+
+        return {
+          data: message,
+          generation,
+          generated_images,
+        }
+      })
+
+    return {
+      ...pager,
+      page: external.xl.message.array().parse(pager.page),
+    }
   },
 })

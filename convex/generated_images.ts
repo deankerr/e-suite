@@ -2,34 +2,23 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { slugIdLength } from './constants'
+import { external } from './external'
 import { internalMutation, query } from './functions'
-import { generateRandomString } from './lib/utils'
-import { generatedImagesFields } from './schema'
-import { runWithRetries } from './utils'
-
-import type { MutationCtx } from './types'
-
-const generateSlugId = async (ctx: MutationCtx): Promise<string> => {
-  const slugId = generateRandomString(slugIdLength)
-  const existing = await ctx
-    .table('generated_images', 'slugId', (q) => q.eq('slugId', slugId))
-    .first()
-  return existing ? generateSlugId(ctx) : slugId
-}
+import { generatedImageFields, ridField } from './schema'
+import { generateRid, runWithRetries } from './utils'
 
 export const create = internalMutation({
   args: {
-    ...generatedImagesFields,
+    ...generatedImageFields,
     generationId: zid('generations'),
   },
   handler: async (ctx, args) => {
-    const slugId = await generateSlugId(ctx)
+    const rid = await generateRid(ctx, 'generated_images')
     const message = await ctx.table('generations').getX(args.generationId).edgeX('message')
 
     return await ctx.table('generated_images').insert({
       ...args,
-      slugId,
+      rid,
       messageId: message._id,
       private: true,
     })
@@ -46,16 +35,15 @@ export const createFromUrl = internalMutation({
   },
 })
 
-export const getBySlugId = query({
+export const get = query({
   args: {
-    slugId: z.string(),
+    rid: ridField,
   },
-  handler: async (ctx, { slugId }) => {
+  handler: async (ctx, { rid }) => {
     const image = await ctx
-      .table('generated_images', 'slugId', (q) => q.eq('slugId', slugId))
-      .first()
-    if (!image) return null
-    const generation = await image.edge('generation')
-    return { image, generation }
+      .table('generated_images', 'rid', (q) => q.eq('rid', rid))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .firstX()
+    return external.unit.generated_image.parse(image)
   },
 })

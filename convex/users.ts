@@ -2,9 +2,9 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { internalMutation, internalQuery, mutation, query } from './functions'
-import { generateRandomString, insist } from './lib/utils'
 import { userFields } from './schema'
 import { QueryCtx } from './types'
+import { generateRandomString, generateRid, insist } from './utils'
 
 const publicUserSchema = z
   .object({ ...userFields, _id: zid('users') })
@@ -57,7 +57,8 @@ export const create = internalMutation({
   args: {
     fields: z.object({ tokenIdentifier: z.string(), ...userFields }),
   },
-  handler: async (ctx, { fields }) => await ctx.table('users').insert(fields),
+  handler: async (ctx, { fields }) =>
+    await ctx.table('users').insert({ ...fields, rid: await generateRid(ctx, 'users') }),
 })
 
 export const update = internalMutation({
