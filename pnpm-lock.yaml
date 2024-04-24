@@ -95,6 +95,9 @@ importers:
       framer-motion:
         specifier: ^11.1.2
         version: 11.1.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      itty-time:
+        specifier: ^1.0.6
+        version: 1.0.6
       jotai:
         specifier: ^2.8.0
         version: 2.8.0(@types/react@18.2.79)(react@18.2.0)
@@ -3093,6 +3096,9 @@ packages:
     resolution: {integrity: sha512-fXtDA0X0t0eBYAGLVM5YsgJGsJ5jEmqZEPrGbzdf5awjv0xE7nqv3TVnvtUF060Tkes15DbDAKW/I48vsb6SyA==}
     peerDependencies:
       react: '>=18.0'
+
+  itty-time@1.0.6:
+    resolution: {integrity: sha512-+P8IZaLLBtFv8hCkIjcymZOp4UJ+xW6bSlQsXGqrkmJh7vSiMFSlNne0mCYagEE0N7HDNR5jJBRxwN0oYv61Rw==}
 
   jackspeak@2.3.6:
     resolution: {integrity: sha512-N3yCS/NegsOBokc8GAdM8UcmfsKiSS8cipheD/nivzr700H+nsMOxJjQnvwOcRYVuFkdH0wGUvW2WbXGmrZGbQ==}
@@ -7950,6 +7956,8 @@ snapshots:
     dependencies:
       '@types/react-reconciler': 0.28.8
       react: 18.2.0
+
+  itty-time@1.0.6: {}
 
   jackspeak@2.3.6:
     dependencies:

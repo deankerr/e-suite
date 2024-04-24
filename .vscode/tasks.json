@@ -10,7 +10,7 @@
         "panel": "dedicated"
       },
       "runOptions": {
-        "runOn": "default"
+        "runOn": "folderOpen"
       },
       "problemMatcher": []
     },
@@ -23,7 +23,7 @@
         "panel": "dedicated"
       },
       "runOptions": {
-        "runOn": "default"
+        "runOn": "folderOpen"
       },
       "problemMatcher": []
     }

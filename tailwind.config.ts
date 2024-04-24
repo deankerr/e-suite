@@ -108,8 +108,8 @@ const config: Config = {
       },
       colors: {
         accent: generateRadixScale('orange'),
-        gray: generateRadixScale('gray'),
-        grayA: generateRadixScaleAlpha('gray'),
+        gray: generateRadixScale('sand'),
+        grayA: generateRadixScaleAlpha('sand'),
         orange: generateRadixScale('orange'),
         red: generateRadixScale('red'),
         green: generateRadixScale('green'),

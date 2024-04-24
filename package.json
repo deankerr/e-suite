@@ -41,6 +41,7 @@
     "convex-helpers": "^0.1.32",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.1.2",
+    "itty-time": "^1.0.6",
     "jotai": "^2.8.0",
     "ky": "^1.2.3",
     "lucide-react": "^0.363.0",
