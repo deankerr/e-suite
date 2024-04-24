@@ -31,6 +31,7 @@ export const create = internalMutation({
       ...args,
       slugId,
       messageId: message._id,
+      private: true,
     })
   },
 })

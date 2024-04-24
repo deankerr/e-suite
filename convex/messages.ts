@@ -38,7 +38,7 @@ export const create = mutation({
     const user = await ctx.viewerX()
     const messageId = await ctx
       .table('messages')
-      .insert({ threadId, ...message, slugId, userId: user._id })
+      .insert({ threadId, ...message, slugId, userId: user._id, private: true })
 
     if (generation) {
       await Promise.all(

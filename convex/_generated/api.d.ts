@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as constants from "../constants.js";
+import type * as dal from "../dal.js";
 import type * as functions from "../functions.js";
 import type * as generated_images from "../generated_images.js";
 import type * as generation from "../generation.js";
@@ -45,6 +46,7 @@ import type * as validators from "../validators.js";
  */
 declare const fullApi: ApiFromModules<{
   constants: typeof constants;
+  dal: typeof dal;
   functions: typeof functions;
   generated_images: typeof generated_images;
   generation: typeof generation;
