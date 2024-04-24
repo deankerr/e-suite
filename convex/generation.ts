@@ -1,5 +1,6 @@
 import { zid } from 'convex-helpers/server/zod'
 import { ConvexError } from 'convex/values'
+import { z } from 'zod'
 
 import { api, internal } from './_generated/api'
 import { internalAction, query } from './functions'
@@ -39,8 +40,9 @@ export const getByMessageId = query({
 export const textToImage = internalAction({
   args: {
     generationId: zid('generations'),
+    dimensions: z.object({ width: z.number(), height: z.number(), n: z.number() }),
   },
-  handler: async (ctx, { generationId }) => {
+  handler: async (ctx, { generationId, dimensions }) => {
     const generation = await ctx.runQuery(api.generation.get, { generationId })
 
     const {
@@ -48,15 +50,13 @@ export const textToImage = internalAction({
       _creationTime,
       metadata: _meta,
       provider: _prov,
-      width,
-      height,
-      n,
+      dimensions: _dimensions,
       ...parameters
     } = generation
 
     const { result, error } = await sinkin.textToImage({
       parameters,
-      dimensions: { width, height, n },
+      dimensions,
     })
 
     if (error) {

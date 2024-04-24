@@ -40,14 +40,16 @@ export const generationFields = {
   provider: z.enum(generationProviders),
   metadata: z.tuple([z.string(), z.string()]).array().optional(),
 
+  dimensions: z
+    .object({ width: z.number(), height: z.number(), n: z.number().min(1).max(8) })
+    .array()
+    .min(1)
+    .max(8),
+
   // common
   model_id: z.string(),
   prompt: z.string(),
   seed: z.number(),
-
-  width: z.number(),
-  height: z.number(),
-  n: z.number(),
 
   // common optional
   negative_prompt: z.string().optional(),
@@ -65,7 +67,7 @@ export const generations = defineEnt(zodToConvexFields(generationFields))
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
-  .edge('message')
+  .edge('message', { field: 'messageId' })
   .edges('generated_images', { ref: true })
 
 //* Chat/Completion
@@ -97,7 +99,7 @@ export const messageFields = {
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
-  .edges('generations', { ref: true })
+  .edge('generation', { optional: true, ref: 'messageId' })
   .edges('generated_images', { ref: true })
   .edge('user')
   .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
