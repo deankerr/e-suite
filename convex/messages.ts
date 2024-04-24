@@ -35,7 +35,10 @@ export const create = mutation({
   },
   handler: async (ctx, { threadId, message, generation }) => {
     const slugId = await generateSlugId(ctx)
-    const messageId = await ctx.table('messages').insert({ threadId, ...message, slugId })
+    const user = await ctx.viewerX()
+    const messageId = await ctx
+      .table('messages')
+      .insert({ threadId, ...message, slugId, userId: user._id })
 
     if (generation) {
       await Promise.all(

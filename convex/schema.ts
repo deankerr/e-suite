@@ -103,6 +103,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
   .edges('generations', { ref: true })
+  .edge('user')
   .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
 
 //* Threads
@@ -131,6 +132,7 @@ const users = defineEnt(zodToConvexFields(userFields))
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true })
+  .edges('messages', { ref: true })
 
 export const usersApiKeysFields = {
   valid: z.boolean(),
