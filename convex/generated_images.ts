@@ -25,9 +25,12 @@ export const create = internalMutation({
   },
   handler: async (ctx, args) => {
     const slugId = await generateSlugId(ctx)
+    const message = await ctx.table('generations').getX(args.generationId).edgeX('message')
+
     return await ctx.table('generated_images').insert({
       ...args,
       slugId,
+      messageId: message._id,
     })
   },
 })

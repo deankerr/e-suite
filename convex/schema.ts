@@ -37,6 +37,7 @@ const generated_images = defineEnt(zodToConvexFields(generatedImagesFields))
     delayMs: timeToDelete,
   })
   .edge('generation')
+  .edge('message')
   .field('slugId', zodToConvex(z.string()), { index: true })
 
 export const generationFields = {
@@ -103,6 +104,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('thread')
   .edges('generations', { ref: true })
+  .edges('generated_images', { ref: true })
   .edge('user')
   .field('slugId', zodToConvex(z.string()), { index: true }) // todo unique
 
