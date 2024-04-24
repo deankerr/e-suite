@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { PageHeader } from '../../PageHeader'
 import { useMessageQuery } from './queries'
 
-const RevealEffect = dynamic(() => import('@/components/ui/CanvasRevealEffect'))
+const RevealEffect = dynamic(() => import('@/components/canvas/CanvasRevealEffect'))
 
 const thumbnailHeightRem = 32
 
