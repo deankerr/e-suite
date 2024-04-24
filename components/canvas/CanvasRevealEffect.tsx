@@ -13,6 +13,7 @@ export const CanvasRevealEffect = ({
   className,
   dotSize,
   showGradient = true,
+  maxFps,
   ...props
 }: {
   /**
@@ -24,6 +25,7 @@ export const CanvasRevealEffect = ({
   colors?: number[][]
   dotSize?: number
   showGradient?: boolean
+  maxFps?: number
 } & React.ComponentProps<'div'>) => {
   useEffect(() => {
     console.log('canvas effect up')
@@ -43,6 +45,7 @@ export const CanvasRevealEffect = ({
               opacity *= clamp((1.0 - step(intro_offset + 0.1, u_time * animation_speed_factor)) * 1.25, 1.0, 1.25);
             `}
           center={['x', 'y']}
+          maxFps={maxFps}
         />
       </div>
       {showGradient && <div className="absolute inset-0 bg-gradient-to-t from-gray-1 to-[84%]" />}
@@ -57,6 +60,7 @@ interface DotMatrixProps {
   dotSize?: number
   shader?: string
   center?: ('x' | 'y')[]
+  maxFps?: number
 }
 
 const DotMatrix: React.FC<DotMatrixProps> = ({
@@ -66,6 +70,7 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
   dotSize = 2,
   shader = '',
   center = ['x', 'y'],
+  maxFps = 30,
 }) => {
   const uniforms = React.useMemo(() => {
     let colorsArray = [colors[0], colors[0], colors[0], colors[0], colors[0], colors[0]]
@@ -152,7 +157,7 @@ const DotMatrix: React.FC<DotMatrixProps> = ({
       fragColor.rgb *= fragColor.a;
         }`}
       uniforms={uniforms}
-      maxFps={60}
+      maxFps={maxFps}
     />
   )
 }
@@ -166,7 +171,7 @@ type Uniforms = {
 const ShaderMaterial = ({
   source,
   uniforms,
-  maxFps = 60,
+  maxFps = 30,
 }: {
   source: string
   hovered?: boolean

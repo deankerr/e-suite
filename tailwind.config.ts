@@ -102,9 +102,8 @@ const config: Config = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
-      fontFamily: {
-        sans: ['var(--font-inter)', ...fontFamily.sans],
-        mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
+      borderColor: {
+        DEFAULT: 'var(--gray-6)',
       },
       colors: {
         accent: generateRadixScale('orange'),
@@ -119,17 +118,17 @@ const config: Config = {
         gold: generateRadixScale('gold'),
         goldA: generateRadixScaleAlpha('gold'),
         bronze: generateRadixScale('bronze'),
-
         surface: 'var(--color-surface)',
         overlay: 'var(--color-overlay)',
         'panel-solid': 'var(--color-panel-solid)',
         'panel-translucent': 'var(--color-panel-translucent)',
       },
-      borderColor: {
-        DEFAULT: 'var(--gray-5)',
-      },
       containers: {
         '2xs': '16rem',
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', ...fontFamily.sans],
+        mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
       },
     },
     container: {
@@ -139,6 +138,7 @@ const config: Config = {
         '2xl': '1400px',
       },
     },
+
     // radix themes breakpoints
     screens: {
       sm: '520px', // Phones (landscape)

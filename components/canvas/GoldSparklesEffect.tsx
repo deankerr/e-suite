@@ -13,6 +13,8 @@ export const GoldSparklesEffect = ({ className, ...props }: CanvasGoldSparklesPr
       colors={[[151, 131, 101]]}
       opacities={[0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 1]}
       dotSize={2}
+      maxFps={60}
+      showGradient={false}
       {...props}
       className={cn('absolute inset-0', className)}
     />
