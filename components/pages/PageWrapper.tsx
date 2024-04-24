@@ -1,5 +1,6 @@
-import { UserButton } from '@clerk/nextjs'
-import { Heading } from '@radix-ui/themes'
+import { SignInButton, UserButton } from '@clerk/nextjs'
+import { Button, Heading } from '@radix-ui/themes'
+import { Unauthenticated } from 'convex/react'
 
 type PageHeaderProps = {
   icon?: React.ReactNode
@@ -19,6 +20,12 @@ export const PageWrapper = ({ icon, title, children }: PageHeaderProps) => {
 
         <div className="shrink-0 flex-end">
           <UserButton />
+
+          <Unauthenticated>
+            <SignInButton>
+              <Button>Sign In</Button>
+            </SignInButton>
+          </Unauthenticated>
         </div>
       </header>
 

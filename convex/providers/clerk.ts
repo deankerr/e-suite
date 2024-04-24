@@ -30,7 +30,8 @@ export const handleWebhook = httpAction(async (ctx, request) => {
         await ctx.runMutation(internal.users.create, {
           fields: {
             tokenIdentifier: `${issuerDomain}|${event.data.id}`,
-            name: event.data.username ?? event.data.first_name,
+            // TODO proper name fallback
+            name: event.data.username ?? event.data.first_name ?? event.data.created_at.toString(),
             imageUrl: event.data.image_url,
             role: 'user',
           },
@@ -42,7 +43,8 @@ export const handleWebhook = httpAction(async (ctx, request) => {
             tokenIdentifier: `${issuerDomain}|${event.data.id}`,
           },
           fields: {
-            name: event.data.username ?? event.data.first_name,
+            // TODO proper name fallback
+            name: event.data.username ?? event.data.first_name ?? event.data.created_at.toString(),
             imageUrl: event.data.image_url,
             role: 'user',
           },
