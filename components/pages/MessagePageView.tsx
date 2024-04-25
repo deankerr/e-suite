@@ -11,30 +11,25 @@ import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 import { GenerationDataList } from '../GenerationDataList'
 import { PageWrapper } from './PageWrapper'
 
-import type { Doc } from '@/convex/_generated/dataModel'
-import type { ImageModel } from '@/convex/types'
+import type { MessageContent } from '@/convex/external'
 
 type MessagePageViewProps = {
-  message: Doc<'messages'>
-  generations: {
-    generation: Doc<'generations'>
-    model?: ImageModel
-    generated_images: Doc<'generated_images'>[]
-  }[]
-  title: string
-  thread: Doc<'threads'>
+  content: MessageContent
 }
 
-export const MessagePageView = ({ generations, title }: MessagePageViewProps) => {
-  const imageList = generations.flatMap(({ generation, generated_images }) => {
-    return Array.from({ length: generation.n }).map((_, i) => {
-      const image = generated_images[i]
-      return image ? image : { width: generation.width, height: generation.height, skeleton: true }
-    })
-  })
+export const MessagePageView = ({ content }: MessagePageViewProps) => {
+  const imageList = content.generated_images ?? []
+  // TODO restore generation effect
+  // const imageList = generations.flatMap(({ generation, generated_images }) => {
+  //   return Array.from({ length: generation.n }).map((_, i) => {
+  //     const image = generated_images[i]
+  //     return image ? image : { width: generation.width, height: generation.height, skeleton: true }
+  //   })
+  // })
 
-  const dataGeneration = generations[0]
   const [showSparkles, setShowSparkles] = useState(false)
+  const title =
+    content.generation?.prompt ?? `Message from ${content.data.name ?? content.data.role}`
 
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
@@ -53,7 +48,7 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
               'skeleton' in image ? (
                 <Skeleton key={idx} className="h-full bg-gold-3" />
               ) : (
-                <ImageThumb key={image._id} priority={true} image={image} />
+                <ImageThumb key={image.rid} priority={true} image={image} />
               )
             }
           />
@@ -68,12 +63,7 @@ export const MessagePageView = ({ generations, title }: MessagePageViewProps) =>
           >
             S
           </Button>
-          {dataGeneration && (
-            <GenerationDataList
-              generation={dataGeneration.generation}
-              model={dataGeneration.model!}
-            />
-          )}
+          {content.generation && <GenerationDataList generation={content.generation} />}
         </div>
       </div>
     </PageWrapper>

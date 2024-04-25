@@ -57,12 +57,12 @@ export const list = query({
 
 export const messages = query({
   args: {
-    threadRid: ridField,
+    rid: ridField,
     order: z.enum(['asc', 'desc']).default('desc'),
     paginationOpts: zPaginationOptValidator,
   },
-  handler: async (ctx, { threadRid, order, paginationOpts }) => {
-    const thread = await ctx.table('threads', 'rid', (q) => q.eq('rid', threadRid)).firstX()
+  handler: async (ctx, { rid, order, paginationOpts }) => {
+    const thread = await ctx.table('threads', 'rid', (q) => q.eq('rid', rid)).firstX()
 
     const pager = await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', thread._id))

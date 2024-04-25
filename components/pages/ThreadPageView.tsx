@@ -9,12 +9,12 @@ import { ThreadMessage } from '@/components/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { CreateMessageControlsAlpha } from '../CreateMessageControlsAlpha'
 
+import type { Id } from '@/convex/_generated/dataModel'
+
 const forceLoadingState = false
 
-type ThreadPageViewProps = { slugId: string }
-
-export const ThreadPageView = ({ slugId }: ThreadPageViewProps) => {
-  const { thread, pager } = useThreadFeed({ slugId })
+export const ThreadPageView = ({ rid }: { rid: string }) => {
+  const { thread, pager } = useThreadFeed({ rid })
 
   const shouldShowLoader = forceLoadingState || pager.status === 'LoadingFirstPage'
 
@@ -23,18 +23,12 @@ export const ThreadPageView = ({ slugId }: ThreadPageViewProps) => {
       <div className="space-y-4 p-1 sm:p-4">
         {shouldShowLoader && <LoadingSkeleton />}
 
-        {thread && <CreateMessageControlsAlpha threadId={thread._id} />}
+        {thread && <CreateMessageControlsAlpha threadId={thread._id as Id<'threads'>} />}
 
         {!shouldShowLoader &&
           thread &&
-          pager.results.map(({ message, generations }, i) => (
-            <ThreadMessage
-              key={message._id}
-              message={message}
-              thread={thread}
-              generations={generations}
-              priority={i < 3}
-            />
+          pager.results.map((message, i) => (
+            <ThreadMessage key={message.data._id} {...message} thread={thread} priority={i < 3} />
           ))}
       </div>
 

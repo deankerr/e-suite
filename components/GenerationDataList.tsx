@@ -1,21 +1,23 @@
 import { Code, DataList } from '@radix-ui/themes'
 
-import type { Doc } from '@/convex/_generated/dataModel'
-import type { ImageModel } from '@/convex/types'
+import SinkinModels from '@/convex/providers/sinkin.models.json'
 
-type GenerationDataListProps = { generation: Doc<'generations'>; model: ImageModel }
+import type { MessageContent } from '@/convex/external'
 
-export const GenerationDataList = ({ generation, model }: GenerationDataListProps) => {
-  const { model_id, prompt, width, height, n, _creationTime, ...rest } = generation
+type GenerationDataListProps = { generation: NonNullable<MessageContent['generation']> }
+
+export const GenerationDataList = ({ generation }: GenerationDataListProps) => {
+  const { model_id, prompt, dimensions, _creationTime, _id, ...rest } = generation
   const unordered = Object.entries(rest)
 
+  const model = SinkinModels.find((model) => model.id === model_id)
   return (
     <DataList.Root orientation="vertical">
       <DataList.Item>
         <DataList.Label>model id</DataList.Label>
         <DataList.Value>
           <div className="flex-start">
-            {model.name}
+            {model?.name}
             <Code color="gold">{model_id}</Code>
           </div>
         </DataList.Value>
@@ -24,9 +26,13 @@ export const GenerationDataList = ({ generation, model }: GenerationDataListProp
       <DataList.Item>
         <DataList.Label>dimensions</DataList.Label>
         <DataList.Value>
-          <Code color="gold">
-            {width} x {height} ({n})
-          </Code>
+          <div className="grid gap-0.5">
+            {dimensions.map(({ width, height, n }, i) => (
+              <Code key={i} color="gold">
+                {width}x{height} {n}
+              </Code>
+            ))}
+          </div>
         </DataList.Value>
       </DataList.Item>
 

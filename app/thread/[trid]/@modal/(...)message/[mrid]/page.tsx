@@ -5,16 +5,16 @@ import { MessagePageView } from '@/components/pages/MessagePageView'
 import { ModalPageView } from '@/components/pages/ModalPageView'
 
 export default function MessageViewModalPage({
-  params: { mSlugId: slugId },
+  params: { mrid: rid },
 }: {
-  params: { mSlugId: string }
+  params: { mrid: string }
 }) {
-  const result = useMessageQuery({ slugId })
+  const result = useMessageQuery({ rid })
 
   return (
     <ModalPageView>
       {result ? (
-        <MessagePageView {...result} />
+        <MessagePageView content={result} />
       ) : result === null ? (
         <div>Error :(</div>
       ) : (

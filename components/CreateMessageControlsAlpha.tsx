@@ -23,7 +23,7 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
     const content = formData.get('content') ? String(formData.get('content')) : ''
     console.log(role, name, content)
 
-    createMessage({ threadId, message: { role, name, content } })
+    createMessage({ threadId, message: { role, name, text: content } })
       .then(() => toast.success('Message created'))
       .catch((err) => {
         if (err instanceof Error) toast.error(err.message)
@@ -57,13 +57,11 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
         role: 'assistant',
       },
       generation: {
-        parameters: {
-          provider: 'sinkin',
-          prompt,
-          negative_prompt,
-          model_id,
-          seed,
-        },
+        provider: 'sinkin',
+        prompt,
+        negative_prompt,
+        model_id,
+        seed,
         dimensions,
       },
     })

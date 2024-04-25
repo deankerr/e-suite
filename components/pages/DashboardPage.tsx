@@ -84,11 +84,11 @@ export const DashboardPage = ({}: DashboardPageProps) => {
 
                 {threads.map((thread) => (
                   <div key={thread._id} className="gap-2 py-2 flex-between">
-                    <Link href={`/thread/${thread.slugId}`}>
+                    <Link href={`/thread/${thread.rid}`}>
                       <MessagesSquareIcon className="size-6" />
                     </Link>
 
-                    <Link href={`/thread/${thread.slugId}`} className="grow truncate">
+                    <Link href={`/thread/${thread.rid}`} className="grow truncate">
                       {thread?.title ?? 'Untitled thread'}
                     </Link>
 

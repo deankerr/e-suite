@@ -9,47 +9,44 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
-import type { Doc } from '@/convex/_generated/dataModel'
-import type { ImageModel } from '@/convex/types'
+import type { Id } from '@/convex/_generated/dataModel'
+import type { MessageContent, Thread } from '@/convex/external'
 
 const thumbnailHeightRem = 16
 
 type ThreadMessageProps = {
-  message: Doc<'messages'>
-  generations: {
-    generation: Doc<'generations'>
-    model?: ImageModel
-    generated_images: Doc<'generated_images'>[]
-  }[]
-  thread: Doc<'threads'>
+  thread: Thread
   priority?: boolean
-}
+} & MessageContent
 
-export const ThreadMessage = ({ message, generations, priority = false }: ThreadMessageProps) => {
+export const ThreadMessage = ({
+  data: message,
+  generation,
+  generated_images,
+  priority = false,
+}: ThreadMessageProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
   const viewType = {
-    text: generations.length === 0,
-    image: generations.length > 0,
+    text: !generation,
+    image: !!generation,
   }
 
-  const icon = generations.length ? (
+  const icon = viewType.image ? (
     <ImageIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
   ) : (
     <MessageSquareIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
   )
 
-  const firstGeneration = generations.at(0)
-  const title = firstGeneration
-    ? firstGeneration.generation.prompt
-    : message?.name ?? getRole(message.role)
+  const title = generation ? generation.prompt : message?.name ?? getRole(message.role)
 
-  const imageList = generations.flatMap(({ generation, generated_images }) => {
-    return Array.from({ length: generation.n }).map((_, i) => {
-      const image = generated_images[i]
-      return image ? image : { width: generation.width, height: generation.height, skeleton: true }
-    })
-  })
+  const imageList = generated_images ?? []
+  // const imageList = generations.flatMap(({ generation, generated_images }) => {
+  //   return Array.from({ length: generation.n }).map((_, i) => {
+  //     const image = generated_images[i]
+  //     return image ? image : { width: generation.width, height: generation.height, skeleton: true }
+  //   })
+  // })
 
   return (
     <Card>
@@ -59,7 +56,7 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
             <div className="shrink-0">{icon}</div>
 
             <Heading size="3" className="grow truncate">
-              <Link href={`/message/${message.slugId}`}>{title}</Link>
+              <Link href={`/message/${message.rid}`}>{title}</Link>
             </Heading>
 
             <div className="shrink-0">
@@ -68,7 +65,7 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
                 size="1"
                 variant="surface"
                 onClick={() => {
-                  removeMessage({ messageId: message._id })
+                  removeMessage({ messageId: message._id as Id<'messages'> })
                     .then(() => toast.success('Message removed'))
                     .catch((err) => {
                       if (err instanceof Error) toast.error(err.message)
@@ -82,7 +79,7 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
           </div>
         </Inset>
 
-        {viewType.text && <div className="min-h-6">{message.content}</div>}
+        {viewType.text && <div className="min-h-6">{message.text}</div>}
 
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">

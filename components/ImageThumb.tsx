@@ -4,11 +4,10 @@ import NextImage from 'next/image'
 
 import { cn, getImageUrl } from '@/lib/utils'
 
-import type { Doc } from '@/convex/_generated/dataModel'
+import type { GeneratedImage } from '@/convex/external'
 
 type ImageThumbProps = {
-  image: Doc<'generated_images'>
-  generation?: Doc<'generations'>
+  image: GeneratedImage
   priority?: boolean
 } & React.ComponentProps<'div'>
 
@@ -28,7 +27,7 @@ export const ImageThumb = forwardRef<HTMLDivElement, ImageThumbProps>(function I
       <AspectRatio ratio={image.width / image.height}>
         <NextImage
           unoptimized
-          src={getImageUrl(image.slugId)}
+          src={getImageUrl(image.rid)}
           alt=""
           priority={priority}
           placeholder={image.blurDataUrl ? 'blur' : 'empty'}

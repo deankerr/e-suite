@@ -20,7 +20,7 @@ type RidTables = 'messages' | 'generated_images' | 'threads' | 'users'
 
 export const generateRid = async (ctx: MutationCtx, table: RidTables): Promise<string> => {
   const rid = generateRandomString(ridLength)
-  const existing = await ctx.table(table, 'rid', (q) => q.eq('rid', rid))
+  const existing = await ctx.table(table, 'rid', (q) => q.eq('rid', rid)).first()
   return existing ? generateRid(ctx, table) : rid
 }
 
