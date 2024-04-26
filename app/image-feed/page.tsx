@@ -13,7 +13,7 @@ export default function Page() {
   const images = useQuery(api.generated_images._list, { limit: 100 })
   const [itemsPerRow, setItemsPerRow] = useState(3)
   return (
-    <div className="">
+    <div className="p-4">
       <div className="flex p-4">
         <TextField.Root
           value={itemsPerRow}
@@ -27,6 +27,7 @@ export default function Page() {
         itemsPerRow={itemsPerRow}
         render={({ rid, width, height, blurDataUrl }, commonHeight) => (
           <div
+            key={rid}
             className="overflow-hidden rounded-lg border"
             style={{ aspectRatio: width / height, height: commonHeight }}
           >

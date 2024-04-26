@@ -20,7 +20,10 @@ export const JustifiedRowGrid = <Item extends { width: number; height: number }>
   const itemRows = chunk(items, itemsPerRow)
 
   return (
-    <div ref={widthRef} className="grid" style={{ gap }}>
+    <div className="grid" style={{ gap }}>
+      <div ref={widthRef} className="absolute h-0 w-full">
+        {/* measure */}
+      </div>
       {itemRows.map((row, i) => {
         // sum aspect ratios of each row item
         const totalAspectRatio = row.reduce(
