@@ -50,3 +50,16 @@ export const get = query({
     return external.unit.generated_image.parse(image)
   },
 })
+
+export const _list = query({
+  args: {
+    limit: z.number().default(20),
+  },
+  handler: async (ctx, { limit }) => {
+    return await ctx
+      .table('generated_images')
+      .order('desc')
+      .take(limit)
+      .map((image) => external.unit.generated_image.parse(image))
+  },
+})

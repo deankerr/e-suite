@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { Button } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
-import { Masonry } from 'react-plock'
+import NextImage from 'next/image'
 
-import { ImageThumb } from '@/components/ImageThumb'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { getImageUrl } from '@/lib/utils'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 import { GenerationDataList } from '../GenerationDataList'
+import { JustifiedRowGrid } from '../JustifiedRowGrid'
 import { PageWrapper } from './PageWrapper'
 
 import type { MessageContent } from '@/convex/external'
@@ -36,21 +36,26 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
       {showSparkles && <GoldSparklesEffect />}
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
         <div className="w-full">
-          {/* masonry */}
-          <Masonry
+          <JustifiedRowGrid
+            gap={10}
             items={imageList}
-            config={{
-              columns: [1, 2],
-              gap: [12, 12],
-              media: [520, 768],
-            }}
-            render={(image, idx) =>
-              'skeleton' in image ? (
-                <Skeleton key={idx} className="h-full bg-gold-3" />
-              ) : (
-                <ImageThumb key={image.rid} priority={true} image={image} />
-              )
-            }
+            render={({ rid, width, height, blurDataUrl }, commonHeight) => (
+              <div
+                className="overflow-hidden rounded-lg border"
+                style={{ aspectRatio: width / height, height: commonHeight }}
+              >
+                <NextImage
+                  unoptimized
+                  src={getImageUrl(rid)}
+                  width={width}
+                  height={height}
+                  placeholder={blurDataUrl ? 'blur' : 'empty'}
+                  blurDataURL={blurDataUrl}
+                  className="h-full w-full object-cover"
+                  alt=""
+                />
+              </div>
+            )}
           />
         </div>
 
@@ -69,3 +74,23 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
     </PageWrapper>
   )
 }
+
+/*
+
+  {/* <Masonry
+    items={imageList}
+    config={{
+      columns: [1, 2],
+      gap: [12, 12],
+      media: [520, 768],
+    }}
+    render={(image, idx) =>
+      'skeleton' in image ? (
+        <Skeleton key={idx} className="h-full bg-gold-3" />
+      ) : (
+        <ImageThumb key={image.rid} priority={true} image={image} />
+      )
+    }
+  />
+
+*/
