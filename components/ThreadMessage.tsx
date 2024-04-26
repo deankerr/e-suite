@@ -4,10 +4,9 @@ import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { ImageThumb } from '@/components/ImageThumb'
-import { Skeleton } from '@/components/ui/Skeleton'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
+import { ImageFile } from './images/ImageFile'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import type { MessageContent, Thread } from '@/convex/external'
@@ -84,22 +83,17 @@ export const ThreadMessage = ({
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className={cn('h-64 gap-2 flex-start')}>
-              {imageList.map((image, i) =>
-                'skeleton' in image ? (
-                  <Skeleton
-                    key={i}
-                    className="h-full bg-gold-3"
-                    style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
-                  />
-                ) : (
-                  <ImageThumb
-                    key={image._id}
-                    style={{ width: `${(thumbnailHeightRem / image.height) * image.width}rem` }}
-                    priority={priority}
-                    image={image}
-                  />
-                ),
-              )}
+              {imageList.map(({ rid, width, height, blurDataUrl }) => (
+                <ImageFile
+                  key={rid}
+                  rid={rid}
+                  width={width}
+                  height={height}
+                  blurDataUrl={blurDataUrl}
+                  priority={priority}
+                  style={{ width: `${(thumbnailHeightRem / height) * width}rem` }}
+                />
+              ))}
             </div>
           </ScrollArea>
         )}

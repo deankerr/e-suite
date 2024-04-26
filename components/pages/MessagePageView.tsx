@@ -3,12 +3,11 @@
 import { useState } from 'react'
 import { Button } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
-import NextImage from 'next/image'
 
-import { getImageUrl } from '@/lib/utils'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 import { GenerationDataList } from '../GenerationDataList'
-import { JustifiedRowGrid } from '../JustifiedRowGrid'
+import { ImageFile } from '../images/ImageFile'
+import { JustifiedRowGrid } from '../images/JustifiedRowGrid'
 import { PageWrapper } from './PageWrapper'
 
 import type { MessageContent } from '@/convex/external'
@@ -40,21 +39,13 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
             gap={10}
             items={imageList}
             render={({ rid, width, height, blurDataUrl }, commonHeight) => (
-              <div
-                className="overflow-hidden rounded-lg border"
-                style={{ aspectRatio: width / height, height: commonHeight }}
-              >
-                <NextImage
-                  unoptimized
-                  src={getImageUrl(rid)}
-                  width={width}
-                  height={height}
-                  placeholder={blurDataUrl ? 'blur' : 'empty'}
-                  blurDataURL={blurDataUrl}
-                  className="h-full w-full object-cover"
-                  alt=""
-                />
-              </div>
+              <ImageFile
+                rid={rid}
+                width={width}
+                height={height}
+                blurDataUrl={blurDataUrl}
+                style={{ height: `${commonHeight}px` }}
+              />
             )}
           />
         </div>
