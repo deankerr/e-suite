@@ -11,7 +11,7 @@ import { getImageUrl } from '@/lib/utils'
 
 export default function Page() {
   const images = useQuery(api.generated_images._list, { limit: 100 })
-  const [itemsPerRow, setItemsPerRow] = useState(3)
+  const [itemsPerRow, setItemsPerRow] = useState(0)
   return (
     <div className="p-4">
       <div className="flex p-4">
@@ -24,7 +24,7 @@ export default function Page() {
       <JustifiedRowGrid
         items={images}
         gap={8}
-        itemsPerRow={itemsPerRow}
+        itemsPerRow={itemsPerRow ?? undefined}
         render={({ rid, width, height, blurDataUrl }, commonHeight) => (
           <div
             key={rid}

@@ -35,7 +35,7 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
       {showSparkles && <GoldSparklesEffect />}
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
-        <div className="w-full">
+        <div>
           <JustifiedRowGrid
             gap={10}
             items={imageList}

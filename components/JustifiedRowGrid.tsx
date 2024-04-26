@@ -4,31 +4,38 @@ import { chunk } from 'remeda'
 export const JustifiedRowGrid = <Item extends { width: number; height: number }>({
   items = [],
   render,
-  itemsPerRow = 3,
   gap = 0,
+  itemsPerRow: staticRowSize,
+  breakpoints = [520, 768, 1024, 1280],
 }: {
   items?: Item[]
-  render: (item: Item, commonHeight: number) => React.ReactNode
+  render: (item: Item, commonHeight?: number) => React.ReactNode
   itemsPerRow?: number
   gap?: number
+  breakpoints?: number[]
 }) => {
-  const [widthRef, { width }] = useMeasure()
+  const [widthRef, size] = useMeasure()
 
   if (!items.length) return null
 
-  const rowWidth = width ?? 320
-  const itemRows = chunk(items, itemsPerRow)
+  const rowWidth = size.width ?? 520
+  const breakpointRowSize =
+    breakpoints.findIndex((width) => rowWidth < width) + 1 || breakpoints.length
 
+  const rowSize = Math.max(1, staticRowSize || breakpointRowSize)
+  const itemRows = chunk(items, rowSize)
   return (
     <div className="grid" style={{ gap }}>
-      <div ref={widthRef} className="absolute h-0 w-full">
+      <div ref={widthRef} className="absolute w-full">
         {/* measure */}
       </div>
+
       {itemRows.map((row, i) => {
+        if (row.length <= 1) return row.map((item) => render(item))
         // sum aspect ratios of each row item
         const totalAspectRatio = row.reduce(
           (acc, curr) => acc + curr.width / curr.height,
-          itemsPerRow - row.length, // init. value - remainder row roughly increased
+          rowSize - row.length, // init. value - remainder row roughly increased
         )
         const commonHeight = rowWidth / totalAspectRatio
         return (
