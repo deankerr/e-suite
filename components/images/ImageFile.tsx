@@ -11,7 +11,7 @@ type ImageFileProps = {
 } & Partial<React.ComponentProps<typeof NextImage>>
 
 export const ImageFile = ({ rid, width, height, blurDataUrl, style, ...props }: ImageFileProps) => {
-  if (rid === '*generating') {
+  if (rid?.startsWith('*generating*')) {
     return (
       <div
         className="overflow-hidden rounded-lg border"

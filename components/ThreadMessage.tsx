@@ -40,10 +40,10 @@ export const ThreadMessage = ({
   const title = generation ? generation.prompt : message?.name ?? getRole(message.role)
 
   let count = 0
-  const imageList = generation?.dimensions.flatMap(({ width, height, n }) => {
-    return Array.from({ length: n }).map((_) => {
+  const imageList = generation?.dimensions.flatMap(({ width, height, n }, i) => {
+    return Array.from({ length: n }).map((_, j) => {
       const image = generated_images?.[count++]
-      return image ? image : { width, height, rid: '*generating', blurDataUrl: '' }
+      return image ? image : { width, height, rid: `*generating*${i}+${j}`, blurDataUrl: '' }
     })
   })
 

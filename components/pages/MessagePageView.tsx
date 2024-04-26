@@ -18,10 +18,10 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
   const { generation, generated_images } = content
 
   let count = 0
-  const imageList = generation?.dimensions.flatMap(({ width, height, n }) => {
-    return Array.from({ length: n }).map((_) => {
+  const imageList = generation?.dimensions.flatMap(({ width, height, n }, i) => {
+    return Array.from({ length: n }).map((_, j) => {
       const image = generated_images?.[count++]
-      return image ? image : { width, height, rid: '*generating', blurDataUrl: '' }
+      return image ? image : { width, height, rid: `*generating*${i}+${j}`, blurDataUrl: '' }
     })
   })
 
@@ -38,6 +38,7 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
             items={imageList}
             render={({ rid, width, height, blurDataUrl }, commonHeight) => (
               <ImageFile
+                key={rid}
                 rid={rid}
                 width={width}
                 height={height}

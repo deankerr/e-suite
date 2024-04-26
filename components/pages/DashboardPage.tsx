@@ -1,5 +1,6 @@
 'use client'
 
+import { useUser } from '@clerk/nextjs'
 import {
   Badge,
   Button,
@@ -25,6 +26,8 @@ export const DashboardPage = ({}: DashboardPageProps) => {
   const threads = useQuery(api.threads.list, {})
   const createThread = useMutation(api.threads.create)
   const removeThread = useMutation(api.threads.remove)
+
+  const auth = useUser()
 
   return (
     <PageWrapper icon={<LayoutGridIcon />} title={'Dashboard'}>
@@ -54,6 +57,12 @@ export const DashboardPage = ({}: DashboardPageProps) => {
                   <DataList.Label minWidth="64px">API Key</DataList.Label>
                   <DataList.Value>
                     <Code>{user.apiKey}</Code>
+                  </DataList.Value>
+                </DataList.Item>
+                <DataList.Item>
+                  <DataList.Label minWidth="64px">Clerk</DataList.Label>
+                  <DataList.Value>
+                    <Code>{JSON.stringify(auth.user?.publicMetadata, null, 2)}</Code>
                   </DataList.Value>
                 </DataList.Item>
               </DataList.Root>
