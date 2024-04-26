@@ -1,11 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
 import { useTitle } from '@/app/hooks'
-import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 import { GenerationDataList } from '../GenerationDataList'
 import { ImageFile } from '../images/ImageFile'
 import { JustifiedRowGrid } from '../images/JustifiedRowGrid'
@@ -18,23 +15,22 @@ type MessagePageViewProps = {
 }
 
 export const MessagePageView = ({ content }: MessagePageViewProps) => {
-  const imageList = content.generated_images ?? []
-  // TODO restore generation effect
-  // const imageList = generations.flatMap(({ generation, generated_images }) => {
-  //   return Array.from({ length: generation.n }).map((_, i) => {
-  //     const image = generated_images[i]
-  //     return image ? image : { width: generation.width, height: generation.height, skeleton: true }
-  //   })
-  // })
+  const { generation, generated_images } = content
 
-  const [showSparkles, setShowSparkles] = useState(false)
+  let count = 0
+  const imageList = generation?.dimensions.flatMap(({ width, height, n }) => {
+    return Array.from({ length: n }).map((_) => {
+      const image = generated_images?.[count++]
+      return image ? image : { width, height, rid: '*generating', blurDataUrl: '' }
+    })
+  })
+
   const title =
     content.generation?.prompt ?? `Message from ${content.data.name ?? content.data.role}`
-
   useTitle(title)
+
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
-      {showSparkles && <GoldSparklesEffect />}
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
         <div>
           <JustifiedRowGrid
@@ -54,13 +50,6 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
 
         {/* details */}
         <div className="h-fit min-h-32 overflow-hidden rounded-lg border bg-panel-solid p-4">
-          <Button
-            variant="soft"
-            color={showSparkles ? 'sky' : 'amber'}
-            onClick={() => setShowSparkles(!showSparkles)}
-          >
-            S
-          </Button>
           {content.generation && <GenerationDataList generation={content.generation} />}
         </div>
       </div>

@@ -39,13 +39,13 @@ export const ThreadMessage = ({
 
   const title = generation ? generation.prompt : message?.name ?? getRole(message.role)
 
-  const imageList = generated_images ?? []
-  // const imageList = generations.flatMap(({ generation, generated_images }) => {
-  //   return Array.from({ length: generation.n }).map((_, i) => {
-  //     const image = generated_images[i]
-  //     return image ? image : { width: generation.width, height: generation.height, skeleton: true }
-  //   })
-  // })
+  let count = 0
+  const imageList = generation?.dimensions.flatMap(({ width, height, n }) => {
+    return Array.from({ length: n }).map((_) => {
+      const image = generated_images?.[count++]
+      return image ? image : { width, height, rid: '*generating', blurDataUrl: '' }
+    })
+  })
 
   return (
     <Card>
@@ -83,7 +83,7 @@ export const ThreadMessage = ({
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className={cn('h-64 gap-2 flex-start')}>
-              {imageList.map(({ rid, width, height, blurDataUrl }) => (
+              {imageList?.map(({ rid, width, height, blurDataUrl }) => (
                 <ImageFile
                   key={rid}
                   rid={rid}

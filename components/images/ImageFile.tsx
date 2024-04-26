@@ -1,6 +1,7 @@
 import NextImage from 'next/image'
 
 import { getImageUrl } from '@/lib/utils'
+import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 
 type ImageFileProps = {
   rid?: string
@@ -10,6 +11,18 @@ type ImageFileProps = {
 } & Partial<React.ComponentProps<typeof NextImage>>
 
 export const ImageFile = ({ rid, width, height, blurDataUrl, style, ...props }: ImageFileProps) => {
+  if (rid === '*generating') {
+    return (
+      <div
+        className="overflow-hidden rounded-lg border"
+        style={{ aspectRatio: width / height, ...style }}
+      >
+        <div className="animate-shimmer h-full w-full rounded-lg bg-gradient-to-r from-gold-3 via-gray-1 to-gold-3 bg-[length:400%_100%]"></div>
+        <GoldSparklesEffect />
+      </div>
+    )
+  }
+
   const src = rid ? getImageUrl(rid) : `https://placehold.co/${width}x${height}`
 
   return (

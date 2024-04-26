@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -27,10 +27,6 @@ export const CanvasRevealEffect = ({
   showGradient?: boolean
   maxFps?: number
 } & React.ComponentProps<'div'>) => {
-  useEffect(() => {
-    console.log('canvas effect up')
-  }, [])
-
   return (
     <div {...props} className={cn('h-auto max-w-full', className)}>
       <div className="h-full w-full">
