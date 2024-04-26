@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
+import { useTitle } from '@/app/hooks'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 import { GenerationDataList } from '../GenerationDataList'
 import { ImageFile } from '../images/ImageFile'
@@ -30,6 +31,7 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
   const title =
     content.generation?.prompt ?? `Message from ${content.data.name ?? content.data.role}`
 
+  useTitle(title)
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
       {showSparkles && <GoldSparklesEffect />}

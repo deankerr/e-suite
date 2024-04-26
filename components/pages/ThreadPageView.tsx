@@ -3,6 +3,7 @@
 import { Button } from '@radix-ui/themes'
 import { MessagesSquareIcon } from 'lucide-react'
 
+import { useTitle } from '@/app/hooks'
 import { useThreadFeed } from '@/app/queries'
 import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ThreadMessage } from '@/components/ThreadMessage'
@@ -18,13 +19,15 @@ export const ThreadPageView = ({ rid }: { rid: string }) => {
 
   const shouldShowLoader = forceLoadingState || pager.status === 'LoadingFirstPage'
 
+  const title = thread?.title ?? 'Thread'
+  useTitle(title)
+
   return (
-    <PageWrapper icon={<MessagesSquareIcon />} title={thread?.title ?? ''}>
+    <PageWrapper icon={<MessagesSquareIcon />} title={title}>
       <div className="space-y-4 p-1 sm:p-4">
         {shouldShowLoader && <LoadingSkeleton />}
 
         {thread && <CreateMessageControlsAlpha threadId={thread._id as Id<'threads'>} />}
-
         {!shouldShowLoader &&
           thread &&
           pager.results.map((message, i) => (
