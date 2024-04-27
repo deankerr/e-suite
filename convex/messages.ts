@@ -1,37 +1,31 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { internal } from './_generated/api'
 import { external } from './external'
 import { mutation, query } from './functions'
-import { generationFields, messageFields, ridField } from './schema'
-import { generateRid, runWithRetries, zPaginationOptValidator } from './utils'
+import { runGenerationInference } from './generation'
+import { messageFields, ridField } from './schema'
+import { generateRid, zPaginationOptValidator } from './utils'
+
+import type { Ent, QueryCtx } from './types'
 
 export const create = mutation({
   args: {
     threadId: zid('threads'),
     message: z.object(messageFields),
-    generation: z.object(generationFields).optional(),
   },
-  handler: async (ctx, { threadId, message, generation }) => {
+  handler: async (ctx, { threadId, message: messageFields }) => {
     const rid = await generateRid(ctx, 'messages')
     const user = await ctx.viewerX()
-    const messageId = await ctx
+
+    const message = await ctx
       .table('messages')
-      .insert({ threadId, ...message, rid, userId: user._id, private: true })
+      .insert({ threadId, ...messageFields, rid, userId: user._id, private: true })
+      .get()
 
-    if (generation) {
-      const generationId = await ctx.table('generations').insert({ ...generation, messageId })
+    if (message.inference?.generation) await runGenerationInference(ctx, message)
 
-      // schedule one job per dimension
-      await Promise.all(
-        generation.dimensions.map(async (dimensions) => {
-          await runWithRetries(ctx, internal.generation.textToImage, { generationId, dimensions })
-        }),
-      )
-    }
-
-    return messageId
+    return message._id
   },
 })
 
@@ -44,28 +38,27 @@ export const remove = mutation({
   },
 })
 
+export const getMessageEntXL = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const generations = await message.edge('generations').map(async (generation) => ({
+    ...generation,
+    image: await generation.edge('generated_image'),
+  }))
+
+  const xl = {
+    message,
+    generations: generations.length ? generations : null,
+  }
+
+  return external.xl.message.parse(xl)
+}
+
 export const get = query({
   args: {
     rid: ridField,
   },
   handler: async (ctx, { rid }) => {
     const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).firstX()
-
-    const generation = await ctx
-      .table('generations', 'messageId', (q) => q.eq('messageId', message._id))
-      .first()
-
-    const generated_images = generation
-      ? await ctx.table('generated_images', 'messageId', (q) => q.eq('messageId', message._id))
-      : null
-
-    const xl = {
-      data: message,
-      generation,
-      generated_images,
-    }
-
-    return external.xl.message.parse(xl)
+    return await getMessageEntXL(ctx, message)
   },
 })
 
@@ -80,25 +73,8 @@ export const list = query({
       .order(order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
-      .map(async (message) => {
-        const generation = await ctx
-          .table('generations', 'messageId', (q) => q.eq('messageId', message._id))
-          .first()
+      .map(async (message) => await getMessageEntXL(ctx, message))
 
-        const generated_images = generation
-          ? await ctx.table('generated_images', 'messageId', (q) => q.eq('messageId', message._id))
-          : null
-
-        return {
-          data: message,
-          generation,
-          generated_images,
-        }
-      })
-
-    return {
-      ...pager,
-      page: external.xl.message.array().parse(pager.page),
-    }
+    return pager
   },
 })

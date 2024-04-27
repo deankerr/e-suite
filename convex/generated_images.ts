@@ -14,15 +14,10 @@ export const create = internalMutation({
   },
   handler: async (ctx, args) => {
     const rid = await generateRid(ctx, 'generated_images')
-    const message = await ctx.skipRules
-      .table('generations')
-      .getX(args.generationId)
-      .edgeX('message')
 
     return await ctx.table('generated_images').insert({
       ...args,
       rid,
-      messageId: message._id,
       private: true,
     })
   },

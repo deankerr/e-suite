@@ -35,21 +35,23 @@ const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
   })
   .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
-  .edge('generation')
-  .edge('message')
+  .edge('generation', { field: 'generationId' })
+
+export const generationResultField = z.object({
+  type: z.enum(['url', 'error']),
+  message: z.string(),
+})
 
 export const generationFields = {
+  result: generationResultField.optional(),
+
   provider: z.enum(generationProviders),
   metadata: z.tuple([z.string(), z.string()]).array().optional(),
 
-  dimensions: z
-    .object({ width: z.number(), height: z.number(), n: z.number().min(1).max(8) })
-    .array()
-    .min(1)
-    .max(8),
-
   // common
   model_id: z.string(),
+  width: z.number().min(512).max(2048),
+  height: z.number().min(512).max(2048),
   prompt: z.string(),
   seed: z.number(),
 
@@ -67,8 +69,10 @@ export const generationFields = {
 }
 export const generations = defineEnt(zodToConvexFields(generationFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('message', { field: 'messageId' })
-  .edges('generated_images', { ref: true })
+  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('private', zodToConvex(z.boolean()), { index: true })
+  .edge('message')
+  .edge('generated_image', { optional: true, ref: 'generationId' })
 
 //* Chat/Completion
 export const completionParametersSchema = z.object({
@@ -88,6 +92,19 @@ export const chatInference = z.object({
 })
 
 //* Messages
+export const generationInferenceParamsSchema = z.object({
+  parameters: z.object(generationFields).omit({ result: true, width: true, height: true }),
+  dimensions: z
+    .object({
+      width: z.number().min(512).max(2048),
+      height: z.number().min(512).max(2048),
+      n: z.number().min(1).max(8),
+    })
+    .array()
+    .min(1)
+    .max(8),
+})
+
 export const messageFields = {
   role: z.enum(messageRoles),
   name: z
@@ -95,13 +112,18 @@ export const messageFields = {
     .transform((value) => value.slice(0, maxMessageNameStringLength))
     .optional(),
   text: z.string().optional(),
+
+  inference: z
+    .object({
+      generation: generationInferenceParamsSchema.optional(),
+    })
+    .optional(),
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
-  .edges('generated_images', { ref: true })
-  .edge('generation', { optional: true, ref: 'messageId' })
+  .edges('generations', { ref: true })
   .edge('thread')
   .edge('user')
 

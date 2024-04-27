@@ -1,14 +1,50 @@
 import { zid } from 'convex-helpers/server/zod'
-import { ConvexError } from 'convex/values'
+import * as R from 'remeda'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { internalAction, internalQuery } from './functions'
+import { internalAction, internalMutation, internalQuery } from './functions'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
-import { insist } from './utils'
+import { generationFields, generationResultField } from './schema'
+import { generateRid, insist, runWithRetries } from './utils'
+
+import type { Ent, MutationCtx } from './types'
 
 export const textToImageModels = SinkinModels
+
+export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'messages'>) => {
+  const inference = message.inference?.generation
+  insist(inference, 'message lacks generation parameters')
+
+  await Promise.all(
+    inference.dimensions.map(async ({ width, height, n }) => {
+      const parameters = {
+        ...inference.parameters,
+        width,
+        height,
+      }
+
+      const generationIds = await Promise.all(
+        [...Array(n)].map(async (_) => {
+          const generation = {
+            ...parameters,
+            rid: await generateRid(ctx, 'generations'),
+            private: true,
+            messageId: message._id,
+            status: 'pending' as const,
+          }
+          return await ctx.table('generations').insert(generation)
+        }),
+      )
+
+      await runWithRetries(ctx, internal.generation.textToImage, {
+        generationIds,
+        parameters,
+      })
+    }),
+  )
+}
 
 export const getI = internalQuery({
   args: {
@@ -17,41 +53,61 @@ export const getI = internalQuery({
   handler: async (ctx, { generationId }) => await ctx.table('generations').get(generationId),
 })
 
-export const textToImage = internalAction({
+export const getManyI = internalQuery({
+  args: {
+    generationIds: zid('generations').array(),
+  },
+  handler: async (ctx, { generationIds }) => await ctx.table('generations').getManyX(generationIds),
+})
+
+export const result = internalMutation({
   args: {
     generationId: zid('generations'),
-    dimensions: z.object({ width: z.number(), height: z.number(), n: z.number() }),
+    result: generationResultField,
   },
-  handler: async (ctx, { generationId, dimensions }): Promise<void> => {
-    const generation = await ctx.runQuery(internal.generation.getI, { generationId })
-    insist(generation, 'invalid generation id')
+  handler: async (ctx, { generationId, result }) => {
+    await ctx.table('generations').getX(generationId).patch({ result })
 
-    const {
-      _id,
-      _creationTime,
-      metadata: _meta,
-      provider: _prov,
-      dimensions: _dimensions,
-      ...parameters
-    } = generation
+    if (result.type === 'url')
+      await runWithRetries(ctx, internal.lib.sharp.generationFromUrl, {
+        sourceUrl: result.message,
+        generationId,
+      })
+  },
+})
 
+export const textToImage = internalAction({
+  args: {
+    generationIds: zid('generations').array(),
+    parameters: z.object(generationFields),
+  },
+  handler: async (ctx, { generationIds, parameters }) => {
     const { result, error } = await sinkin.textToImage({
       parameters,
-      dimensions,
+      n: generationIds.length,
     })
 
+    // returned error = task failed successfully (no retry)
     if (error) {
-      throw new ConvexError(error)
+      await Promise.all(
+        generationIds.map(
+          async (generationId) =>
+            await ctx.runMutation(internal.generation.result, {
+              generationId,
+              result: { type: 'error', message: error.message },
+            }),
+        ),
+      )
+      return
     }
 
-    console.log('result', result)
-
+    const pairs = R.zip(generationIds, result.images)
     await Promise.all(
-      result.images.map(
-        async (sourceUrl) =>
-          await ctx.runMutation(internal.generated_images.createFromUrl, {
-            sourceUrl,
+      pairs.map(
+        async ([generationId, url]) =>
+          await ctx.runMutation(internal.generation.result, {
             generationId,
+            result: { type: 'url', message: url },
           }),
       ),
     )

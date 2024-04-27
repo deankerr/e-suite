@@ -24,7 +24,14 @@ const units = {
     .object({ ...generatedImageFields, ...ridFields, ...baseFields })
     .omit({ sourceUrl: true, sourceFileId: true })
     .describe('external'),
-  generation: z.object({ ...generationFields, ...baseFields }).describe('external'),
+  generation: z
+    .object({
+      ...generationFields,
+      ...ridFields,
+      ...baseFields,
+      status: z.enum(['pending', 'complete', 'failed']),
+    })
+    .describe('external generation'),
   message: z.object({ ...messageFields, ...ridFields, ...baseFields }).describe('external'),
   thread: z.object({ ...threadFields, ...ridFields, ...baseFields }).describe('external'),
   user: z.object({ ...userFields, rid: z.string(), ...baseFields }).describe('external'),
@@ -32,9 +39,15 @@ const units = {
 
 const messageXL = z
   .object({
-    data: units.message,
-    generation: units.generation.nullable(),
-    generated_images: units.generated_image.array().nullable(),
+    message: units.message,
+    generations: units.generation
+      .merge(
+        z.object({
+          image: units.generated_image.optional(),
+        }),
+      )
+      .array()
+      .nullable(),
   })
   .describe('external')
 

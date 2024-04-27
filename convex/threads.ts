@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { external } from './external'
 import { mutation, query } from './functions'
+import { getMessageEntXL } from './messages'
 import { ridField, threadFields } from './schema'
 import { generateRid, zPaginationOptValidator } from './utils'
 
@@ -69,25 +70,8 @@ export const messages = query({
       .order(order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
-      .map(async (message) => {
-        const generation = await ctx
-          .table('generations', 'messageId', (q) => q.eq('messageId', message._id))
-          .first()
+      .map(async (message) => await getMessageEntXL(ctx, message))
 
-        const generated_images = generation
-          ? await ctx.table('generated_images', 'messageId', (q) => q.eq('messageId', message._id))
-          : null
-
-        return {
-          data: message,
-          generation,
-          generated_images,
-        }
-      })
-
-    return {
-      ...pager,
-      page: external.xl.message.array().parse(pager.page),
-    }
+    return pager
   },
 })

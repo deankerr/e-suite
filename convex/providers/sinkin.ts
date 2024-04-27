@@ -25,20 +25,17 @@ const translateKey = (key: string) => {
 
 export const textToImage = async ({
   parameters,
-  dimensions,
+  n,
 }: {
   parameters: Record<string, any>
-  dimensions: { width: number; height: number; n: number }
+  n: number
 }) => {
   const body = new URLSearchParams()
 
   for (const [key, value] of Object.entries(parameters)) {
     body.set(translateKey(key), String(value))
   }
-
-  for (const [key, value] of Object.entries(dimensions)) {
-    body.set(translateKey(key), String(value))
-  }
+  body.set(translateKey('n'), String(n))
 
   body.set('access_token', getEnv('SINKIN_API_KEY'))
 
@@ -71,6 +68,7 @@ export const textToImage = async ({
         result: null,
       }
     }
+
     throw new ConvexError({ ...error.data })
   }
 
