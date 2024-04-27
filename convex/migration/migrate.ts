@@ -9,46 +9,8 @@ import type { ProdImage, ProdMessage } from './prodschema'
 
 /*
   restore:
-  - strict table names
   - unique rids
 */
-
-export const migrate1 = internalMutation(async (ctx) => {
-  // delete imageModels
-  const imageModels = await ctx.unsafeDb.query('imageModels').collect()
-  await asyncMap(imageModels, async (im) => await ctx.unsafeDb.delete(im._id))
-
-  // delete imgp_test
-  const imgp_test = await ctx.unsafeDb.query('imgp_test').collect()
-  await asyncMap(imgp_test, async (im) => await ctx.unsafeDb.delete(im._id))
-
-  // delete clerkWebhookEvents
-  const clerkWebhookEvents = await ctx.unsafeDb.query('clerkWebhookEvents').collect()
-  await asyncMap(clerkWebhookEvents, async (im) => await ctx.unsafeDb.delete(im._id))
-
-  // patch users
-  const users = await ctx.table('users')
-
-  for (const user of users) {
-    const rid = await generateRid(ctx, 'users')
-    await user.patch({ rid, role: 'user' })
-  }
-
-  // patch threads
-  await ctx.table('threads').map(async (thread) => {
-    const rid = await generateRid(ctx, 'threads')
-
-    await thread.patch({
-      rid,
-      private: true,
-      parameters: undefined,
-      permissions: undefined,
-      prompt: undefined,
-      roles: undefined,
-      slug: undefined,
-    })
-  })
-})
 
 export const migrateMessages = internalMutation({
   args: {
@@ -57,6 +19,7 @@ export const migrateMessages = internalMutation({
   handler: async (ctx, { limit }) => {
     const messages = await ctx
       .table('messages')
+      .order('desc')
       .filter((q) => q.eq(q.field('rid'), undefined))
       .take(limit)
 
@@ -96,7 +59,7 @@ export const migrateMessages = internalMutation({
           return
         }
 
-        const images = await asyncMap(imageIds, async (id) => await ctx.unsafeDb.get(id))
+        const images = await ctx.table('images').getManyX(imageIds)
 
         await asyncMap(images, async (image) => {
           const prodImg = image as unknown as ProdImage
@@ -131,6 +94,8 @@ export const migrateMessages = internalMutation({
             private: false,
             generationId,
           })
+
+          await ctx.table('images').getX(image._id).delete()
         })
 
         await ctx

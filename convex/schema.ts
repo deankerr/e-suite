@@ -18,10 +18,7 @@ const timeToDelete = ms('1 day')
 export const ridField = z.string().length(ridLength)
 
 // temp migration ents
-const imageModels = defineEnt({ a: v.any() })
-const imgp_test = defineEnt({ a: v.any() })
-const clerkWebhookEvents = defineEnt({ a: v.any() })
-const images = defineEnt({ a: v.any() })
+const images = defineEnt({ a: v.any() }).deletion('scheduled', { delayMs: timeToDelete })
 
 export const generatedImageFields = {
   width: z.number(),
@@ -190,9 +187,6 @@ const schema = defineEntSchema(
     users_api_keys,
 
     // temp
-    imageModels,
-    imgp_test,
-    clerkWebhookEvents,
     images,
   },
   {
