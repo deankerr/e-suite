@@ -17,8 +17,27 @@ const timeToDelete = ms('1 day')
 
 export const ridField = z.string().length(ridLength)
 
-// temp migration ents
-const images = defineEnt({ a: v.any() }).deletion('scheduled', { delayMs: timeToDelete })
+// TODO migrate
+const speech = defineEnt({
+  jobId: v.optional(v.id('_scheduled_functions')),
+  parameters: v.object({
+    Engine: v.optional(v.string()),
+    VoiceId: v.optional(v.string()),
+    model_id: v.optional(v.string()),
+    provider: v.string(),
+    voice_id: v.optional(v.string()),
+    voice_settings: v.optional(
+      v.object({
+        similarity_boost: v.float64(),
+        stability: v.float64(),
+      }),
+    ),
+  }),
+  storageId: v.id('_storage'),
+  text: v.string(),
+  textHash: v.string(),
+  voiceRef: v.string(),
+})
 
 export const generatedImageFields = {
   width: z.number(),
@@ -122,6 +141,9 @@ export const messageFields = {
       generation: generationInferenceParamsSchema.optional(),
     })
     .optional(),
+
+  metadata: z.string().array().array().optional(),
+  speechId: zid('speech').optional(),
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -137,13 +159,6 @@ export const threadFields = {
     .string()
     .transform((value) => value.slice(0, maxTitleStringLength))
     .optional(),
-
-  // TODO temp
-  parameters: z.any().optional(),
-  permissions: z.any().optional(),
-  prompt: z.any().optional(),
-  roles: z.any().optional(),
-  slug: z.any().optional(),
 }
 
 const threads = defineEnt(zodToConvexFields(threadFields))
@@ -186,8 +201,8 @@ const schema = defineEntSchema(
     users,
     users_api_keys,
 
-    // temp
-    images,
+    // TODO migrate
+    speech,
   },
   {
     schemaValidation: false,
