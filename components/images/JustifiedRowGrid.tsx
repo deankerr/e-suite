@@ -31,7 +31,7 @@ export const JustifiedRowGrid = <Item extends { width: number; height: number }>
       </div>
 
       {itemRows.map((row, i) => {
-        if (row.length <= 1) return row.map((item) => render(item))
+        if (rowSize <= 1) return row.map((item) => render(item))
         // sum aspect ratios of each row item
         const totalAspectRatio = row.reduce(
           (acc, curr) => acc + curr.width / curr.height,

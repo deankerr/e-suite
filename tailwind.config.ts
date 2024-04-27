@@ -130,6 +130,9 @@ const config: Config = {
         sans: ['var(--font-inter)', ...fontFamily.sans],
         mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
       },
+      maxWidth: {
+        '8xl': '96rem',
+      },
     },
     container: {
       center: true,

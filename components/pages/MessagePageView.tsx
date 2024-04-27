@@ -18,17 +18,19 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
   const { generation, generated_images } = content
 
   let count = 0
-  const imageList = generation?.dimensions.flatMap(({ width, height, n }, i) => {
-    return Array.from({ length: n }).map((_, j) => {
-      const image = generated_images?.[count++]
-      return image ? image : { width, height, rid: `*generating*${i}+${j}`, blurDataUrl: '' }
-    })
-  })
+  const imageList =
+    generation?.dimensions.flatMap(({ width, height, n }, i) => {
+      return Array.from({ length: n }).map((_, j) => {
+        const image = generated_images?.[count++]
+        return image ? image : { width, height, rid: `*generating*${i}+${j}`, blurDataUrl: '' }
+      })
+    }) ?? []
 
   const title =
     content.generation?.prompt ?? `Message from ${content.data.name ?? content.data.role}`
   useTitle(title)
 
+  const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 768, 1024]
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
@@ -36,6 +38,7 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
           <JustifiedRowGrid
             gap={10}
             items={imageList}
+            breakpoints={breakpoints}
             render={({ rid, width, height, blurDataUrl }, commonHeight) => (
               <ImageFile
                 key={rid}

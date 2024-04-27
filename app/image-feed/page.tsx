@@ -7,8 +7,10 @@ import { useQuery } from 'convex/react'
 import { ImageFile } from '@/components/images/ImageFile'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import { api } from '@/convex/_generated/api'
+import { useTitle } from '../hooks'
 
 export default function Page() {
+  useTitle('image feed')
   const images = useQuery(api.generated_images._list, { limit: 50 })
   const [itemsPerRow, setItemsPerRow] = useState(0)
   return (
