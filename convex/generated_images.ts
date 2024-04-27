@@ -14,11 +14,12 @@ export const create = internalMutation({
   },
   handler: async (ctx, args) => {
     const rid = await generateRid(ctx, 'generated_images')
+    const generation = await ctx.table('generations').getX(args.generationId)
 
     return await ctx.table('generated_images').insert({
       ...args,
       rid,
-      private: true,
+      private: generation.private,
     })
   },
 })

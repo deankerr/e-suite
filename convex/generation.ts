@@ -30,7 +30,7 @@ export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'mes
           const generation = {
             ...parameters,
             rid: await generateRid(ctx, 'generations'),
-            private: true,
+            private: message.private,
             messageId: message._id,
           }
           return await ctx.table('generations').insert(generation)

@@ -13,14 +13,15 @@ export const create = mutation({
   args: {
     threadId: zid('threads'),
     message: z.object(messageFields),
+    private: z.boolean().default(true),
   },
-  handler: async (ctx, { threadId, message: messageFields }) => {
+  handler: async (ctx, { threadId, message: messageFields, ...args }) => {
     const rid = await generateRid(ctx, 'messages')
     const user = await ctx.viewerX()
 
     const message = await ctx
       .table('messages')
-      .insert({ threadId, ...messageFields, rid, userId: user._id, private: true })
+      .insert({ threadId, ...messageFields, rid, userId: user._id, private: args.private })
       .get()
 
     if (message.inference?.generation) await runGenerationInference(ctx, message)
