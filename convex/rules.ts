@@ -13,6 +13,24 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return key.userId === ctx.viewerId
       },
     },
+
+    generations: {
+      read: async (generation) => {
+        return !generation.deletionTime
+      },
+    },
+
+    threads: {
+      read: async (thread) => {
+        return !thread.deletionTime
+      },
+    },
+
+    messages: {
+      read: async (message) => {
+        return !message.deletionTime
+      },
+    },
     // messages: {
     //   read: async (message) => {
     //     // if (message.private) return false
