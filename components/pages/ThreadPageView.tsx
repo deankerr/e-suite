@@ -29,27 +29,32 @@ export const ThreadPageView = ({ rid }: { rid: string }) => {
         {shouldShowLoader && <LoadingSkeleton />}
 
         {thread && <CreateMessageControlsAlpha threadId={thread._id as Id<'threads'>} />}
-        {!shouldShowLoader &&
-          thread &&
-          pager.results.map((result, i) => (
-            <ThreadMessage key={result.message._id} {...result} thread={thread} priority={i < 3} />
-          ))}
+        {!shouldShowLoader && thread && (
+          <>
+            {pager.results.map((result, i) => (
+              <ThreadMessage
+                key={result.message._id}
+                {...result}
+                thread={thread}
+                priority={i < 3}
+              />
+            ))}
+            <InfiniteScroll
+              hasMore={pager.status === 'CanLoadMore'}
+              isLoading={pager.isLoading}
+              next={() => pager.loadMore(10)}
+              threshold={1}
+            >
+              {pager.status !== 'Exhausted' && (
+                <div className="mx-auto text-center">
+                  <Spinner className="size-8" />
+                  {pager.status}
+                </div>
+              )}
+            </InfiniteScroll>
+          </>
+        )}
       </div>
-
-      {!shouldShowLoader && (
-        <InfiniteScroll
-          hasMore={pager.status === 'CanLoadMore'}
-          isLoading={pager.isLoading}
-          next={() => pager.loadMore(10)}
-          threshold={1}
-        >
-          {pager.status !== 'Exhausted' && (
-            <div className="mx-auto text-center">
-              <Spinner className="size-8" />
-            </div>
-          )}
-        </InfiniteScroll>
-      )}
     </PageWrapper>
   )
 }

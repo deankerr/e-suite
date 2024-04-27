@@ -161,6 +161,8 @@ function createRadixColors() {
     Object.fromEntries([...Array(12)].map((_, i) => [i + 1, `var(--${key}${i + 1})`]))
 
   return {
+    accent: scale('orange-'),
+    accentA: scale('orange-a'),
     gray: scale('sand-'),
     grayA: scale('sand-a'),
     gold: scale('gold-'),
