@@ -22,6 +22,8 @@ import type * as generation from "../generation.js";
 import type * as http from "../http.js";
 import type * as lib_sharp from "../lib/sharp.js";
 import type * as messages from "../messages.js";
+import type * as migration_migrate from "../migration/migrate.js";
+import type * as migration_prodschema from "../migration/prodschema.js";
 import type * as providers_aws from "../providers/aws.js";
 import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_openrouter from "../providers/openrouter.js";
@@ -51,6 +53,8 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "lib/sharp": typeof lib_sharp;
   messages: typeof messages;
+  "migration/migrate": typeof migration_migrate;
+  "migration/prodschema": typeof migration_prodschema;
   "providers/aws": typeof providers_aws;
   "providers/clerk": typeof providers_clerk;
   "providers/openrouter": typeof providers_openrouter;

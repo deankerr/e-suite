@@ -1,5 +1,7 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
+import { ms } from 'itty-time'
 import { z } from 'zod'
 
 import {
@@ -11,10 +13,15 @@ import {
   ridLength,
 } from './constants'
 
-// const timeToDelete = 1000 * 60 * 60 * 24
-const timeToDelete = 5000
+const timeToDelete = ms('1 day')
 
 export const ridField = z.string().length(ridLength)
+
+// temp migration ents
+const imageModels = defineEnt({ a: v.any() })
+const imgp_test = defineEnt({ a: v.any() })
+const clerkWebhookEvents = defineEnt({ a: v.any() })
+const images = defineEnt({ a: v.any() })
 
 export const generatedImageFields = {
   width: z.number(),
@@ -121,7 +128,7 @@ export const messageFields = {
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('rid', zodToConvex(ridField), { index: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('generations', { ref: true })
   .edge('thread')
@@ -133,10 +140,18 @@ export const threadFields = {
     .string()
     .transform((value) => value.slice(0, maxTitleStringLength))
     .optional(),
+
+  // TODO temp
+  parameters: z.any().optional(),
+  permissions: z.any().optional(),
+  prompt: z.any().optional(),
+  roles: z.any().optional(),
+  slug: z.any().optional(),
 }
+
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('rid', zodToConvex(ridField), { index: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('messages', { ref: true })
   .edge('user')
@@ -149,7 +164,7 @@ export const userFields = {
 }
 const users = defineEnt(zodToConvexFields(userFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('rid', zodToConvex(ridField), { index: true })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true })
@@ -173,8 +188,16 @@ const schema = defineEntSchema(
     threads,
     users,
     users_api_keys,
+
+    // temp
+    imageModels,
+    imgp_test,
+    clerkWebhookEvents,
+    images,
   },
-  { schemaValidation: false },
+  {
+    schemaValidation: false,
+  },
 )
 
 export default schema
