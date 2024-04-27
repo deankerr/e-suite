@@ -1,6 +1,5 @@
 import NextImage from 'next/image'
 
-import { getImageUrl } from '@/lib/utils'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 
 type ImageFileProps = {
@@ -23,7 +22,7 @@ export const ImageFile = ({ rid, width, height, blurDataUrl, style, ...props }: 
     )
   }
 
-  const src = rid ? getImageUrl(rid) : `https://placehold.co/${width}x${height}`
+  const src = rid ? `/i/${rid}` : `https://placehold.co/${width}x${height}`
 
   return (
     <div
