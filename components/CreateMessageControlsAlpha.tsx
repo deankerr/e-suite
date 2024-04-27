@@ -1,4 +1,4 @@
-import { Button, Card, Heading, Select, TextField } from '@radix-ui/themes'
+import { Button, Card, Checkbox, Heading, Select, TextField } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
@@ -38,8 +38,13 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
       : undefined
     const model_id = String(formData.get('model_id'))
     const seed = formData.get('seed')
-      ? Number(formData.get('amount'))
+      ? Number(formData.get('seed'))
       : Math.floor(Math.random() * 10000000)
+
+    const use_default_neg = formData.get('use_default_neg') ? true : false
+    const guidance_scale = formData.get('guidance_scale')
+      ? Number(formData.get('guidance_scale'))
+      : undefined
 
     const square = Number(formData.get('square'))
     const portrait = Number(formData.get('portrait'))
@@ -63,12 +68,13 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
               negative_prompt,
               model_id,
               seed,
+              use_default_neg,
+              guidance_scale,
             },
             dimensions,
-          }
-        }
+          },
+        },
       },
-
     })
       .then(() => toast.success('Generation created'))
       .catch((err) => {
@@ -138,6 +144,16 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
             <div className="">
               <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="landscape" />
             </div>
+          </div>
+
+          <div className="grid gap-1">
+            <label>guidance_scale</label>
+            <TextField.Root placeholder="7.5" name="guidance_scale" type="number" />
+          </div>
+
+          <div className="gap-3 flex-start">
+            <Checkbox name="use_default_neg" defaultChecked />
+            <label>use_default_neg</label>
           </div>
 
           <div className="flex-end">

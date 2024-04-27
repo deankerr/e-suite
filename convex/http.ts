@@ -17,7 +17,8 @@ http.route({
   method: 'GET',
   handler: httpAction(async (ctx, request) => {
     const { pathname } = new URL(request.url)
-    const rid = pathname.split('/')[2] as string
+    const path = pathname.split('/')[2] as string
+    const rid = path.slice(0, 6)
     const result = await ctx.runQuery(api.generated_images.get, { rid })
 
     const blob = result ? await ctx.storage.get(result.fileId) : null

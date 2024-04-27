@@ -22,7 +22,7 @@ export const ImageFile = ({ rid, width, height, blurDataUrl, style, ...props }: 
     )
   }
 
-  const src = rid ? `/i/${rid}` : `https://placehold.co/${width}x${height}`
+  const src = rid ? `/i/${rid}.webp` : `https://placehold.co/${width}x${height}`
 
   return (
     <div
