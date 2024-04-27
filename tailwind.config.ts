@@ -6,11 +6,14 @@ import plugin from 'tailwindcss/plugin'
 
 import type { Config } from 'tailwindcss'
 
+const radixColors = createRadixColors()
+
 const config: Config = {
   darkMode: 'class',
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   plugins: [
     require('@tailwindcss/container-queries'),
+    require('tailwindcss-animated'),
     // css reset
     plugin(({ addBase }) => {
       addBase({
@@ -106,18 +109,7 @@ const config: Config = {
         DEFAULT: 'var(--gray-6)',
       },
       colors: {
-        accent: generateRadixScale('orange'),
-        gray: generateRadixScale('sand'),
-        grayA: generateRadixScaleAlpha('sand'),
-        orange: generateRadixScale('orange'),
-        red: generateRadixScale('red'),
-        green: generateRadixScale('green'),
-        blue: generateRadixScale('blue'),
-        yellow: generateRadixScale('yellow'),
-        amber: generateRadixScale('amber'),
-        gold: generateRadixScale('gold'),
-        goldA: generateRadixScaleAlpha('gold'),
-        bronze: generateRadixScale('bronze'),
+        ...radixColors,
         surface: 'var(--color-surface)',
         overlay: 'var(--color-overlay)',
         'panel-solid': 'var(--color-panel-solid)',
@@ -133,6 +125,15 @@ const config: Config = {
       maxWidth: {
         '8xl': '96rem',
       },
+      keyframes: {
+        shimmer: {
+          from: { backgroundPosition: '200% 0' },
+          to: { backgroundPosition: '-200% 0' },
+        },
+      },
+      animation: {
+        shimmer: 'shimmer 8s ease-in-out infinite',
+      },
     },
     container: {
       center: true,
@@ -140,16 +141,6 @@ const config: Config = {
       screens: {
         '2xl': '1400px',
       },
-    },
-
-    keyframes: {
-      shimmer: {
-        from: { backgroundPosition: '200% 0' },
-        to: { backgroundPosition: '-200% 0' },
-      },
-    },
-    animation: {
-      shimmer: 'shimmer 8s ease-in-out infinite',
     },
 
     // radix themes breakpoints
@@ -165,14 +156,62 @@ const config: Config = {
 
 export default config
 
-function generateRadixScale(name: string) {
-  return Object.fromEntries(
-    Array.from({ length: 12 }).map((_, i) => [i + 1, `var(--${name}-${i + 1})`]),
-  )
-}
+function createRadixColors() {
+  const scale = (key: string) =>
+    Object.fromEntries([...Array(12)].map((_, i) => [i + 1, `var(--${key}${i + 1})`]))
 
-function generateRadixScaleAlpha(name: string) {
-  return Object.fromEntries(
-    Array.from({ length: 12 }).map((_, i) => [i + 1, `var(--${name}-a${i + 1})`]),
-  )
+  return {
+    gray: scale('sand-'),
+    grayA: scale('sand-a'),
+    gold: scale('gold-'),
+    goldA: scale('gold-a'),
+    bronze: scale('bronze-'),
+    bronzeA: scale('bronze-a'),
+    brown: scale('brown-'),
+    brownA: scale('brown-a'),
+    yellow: scale('yellow-'),
+    yellowA: scale('yellow-a'),
+    amber: scale('amber-'),
+    amberA: scale('amber-a'),
+    orange: scale('orange-'),
+    orangeA: scale('orange-a'),
+    tomato: scale('tomato-'),
+    tomatoA: scale('tomato-a'),
+    red: scale('red-'),
+    redA: scale('red-a'),
+    ruby: scale('ruby-'),
+    rubyA: scale('ruby-a'),
+    crimson: scale('crimson-'),
+    crimsonA: scale('crimson-a'),
+    pink: scale('pink-'),
+    pinkA: scale('pink-a'),
+    plum: scale('plum-'),
+    plumA: scale('plum-a'),
+    purple: scale('purple-'),
+    purpleA: scale('purple-a'),
+    violet: scale('violet-'),
+    violetA: scale('violet-a'),
+    iris: scale('iris-'),
+    irisA: scale('iris-a'),
+    indigo: scale('indigo-'),
+    indigoA: scale('indigo-a'),
+    blue: scale('blue-'),
+    blueA: scale('blue-a'),
+    cyan: scale('cyan-'),
+    cyanA: scale('cyan-a'),
+    teal: scale('teal-'),
+    tealA: scale('teal-a'),
+    jade: scale('jade-'),
+    jadeA: scale('jade-a'),
+    green: scale('green-'),
+    greenA: scale('green-a'),
+    grass: scale('grass-'),
+    grassA: scale('grass-a'),
+    lime: scale('lime-'),
+    limeA: scale('lime-a'),
+    mint: scale('mint-'),
+    mintA: scale('mint-a'),
+    sky: scale('sky-'),
+    skyA: scale('sky-a'),
+  }
 }

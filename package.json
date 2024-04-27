@@ -62,6 +62,7 @@
     "svix": "^1.21.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-animated": "^1.0.1",
     "tailwindcss-radix-colors": "^1.2.0",
     "three": "^0.163.0",
     "zod": "^3.23.4",
