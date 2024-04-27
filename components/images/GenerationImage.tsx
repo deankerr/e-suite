@@ -1,6 +1,11 @@
 import { forwardRef } from 'react'
+import { IconButton } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
+import { SkullIcon, SquirrelIcon, ThumbsDownIcon, ThumbsUpIcon, Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
+import { toast } from 'sonner'
 
+import { api } from '@/convex/_generated/api'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 
 import type { Generation } from '@/convex/external'
@@ -23,6 +28,7 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
     const isGenerating = !image && generation.result?.type !== 'error'
 
+    const removeGeneration = useMutation(api.generation.remove)
     return (
       <div
         className="overflow-hidden rounded-lg border"
@@ -49,6 +55,44 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
             <GoldSparklesEffect />
           </>
         )}
+
+        {/* info */}
+        <div className="absolute inset-0 flex-col-between">
+          <div className="self-end rounded-lg bg-overlay p-2 flex-end">
+            <IconButton
+              color="red"
+              size="2"
+              onClick={() => {
+                removeGeneration({ generationId: generation._id })
+                  .then(() => toast.success('Generation removed'))
+                  .catch((err) => {
+                    if (err instanceof Error) toast.error(err.message)
+                    else toast.error('Unknown error')
+                  })
+              }}
+            >
+              <Trash2Icon className="size-5 stroke-[1.5]" />
+            </IconButton>
+          </div>
+
+          <div className="gap-5 rounded-lg bg-overlay p-2 px-4 flex-center">
+            <IconButton>
+              <ThumbsUpIcon />
+            </IconButton>
+
+            <IconButton>
+              <ThumbsDownIcon />
+            </IconButton>
+
+            <IconButton>
+              <SkullIcon />
+            </IconButton>
+
+            <IconButton>
+              <SquirrelIcon />
+            </IconButton>
+          </div>
+        </div>
       </div>
     )
   },

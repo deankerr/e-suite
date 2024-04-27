@@ -1,3 +1,4 @@
+import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import {
@@ -9,11 +10,6 @@ import {
   userFields,
 } from './schema'
 
-const baseFields = {
-  _id: z.string(),
-  _creationTime: z.number(),
-}
-
 const ridFields = {
   rid: ridField,
   private: z.boolean(),
@@ -21,19 +17,31 @@ const ridFields = {
 
 const units = {
   generated_image: z
-    .object({ ...generatedImageFields, ...ridFields, ...baseFields })
+    .object({
+      ...generatedImageFields,
+      ...ridFields,
+      _creationTime: z.number(),
+      _id: zid('generated_images'),
+    })
     .omit({ sourceUrl: true, sourceFileId: true })
     .describe('external'),
   generation: z
     .object({
       ...generationFields,
       ...ridFields,
-      ...baseFields,
+      _creationTime: z.number(),
+      _id: zid('generations'),
     })
     .describe('external generation'),
-  message: z.object({ ...messageFields, ...ridFields, ...baseFields }).describe('external'),
-  thread: z.object({ ...threadFields, ...ridFields, ...baseFields }).describe('external'),
-  user: z.object({ ...userFields, rid: z.string(), ...baseFields }).describe('external'),
+  message: z
+    .object({ ...messageFields, ...ridFields, _creationTime: z.number(), _id: zid('messages') })
+    .describe('external'),
+  thread: z
+    .object({ ...threadFields, ...ridFields, _creationTime: z.number(), _id: zid('threads') })
+    .describe('external'),
+  user: z
+    .object({ ...userFields, rid: z.string(), _creationTime: z.number(), _id: zid('users') })
+    .describe('external'),
 }
 
 const generationWithImage = units.generation.merge(

@@ -3,7 +3,7 @@ import * as R from 'remeda'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { internalAction, internalMutation, internalQuery, query } from './functions'
+import { internalAction, internalMutation, internalQuery, mutation, query } from './functions'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
 import { generationFields, generationResultField } from './schema'
@@ -45,6 +45,7 @@ export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'mes
   )
 }
 
+//* queries
 export const getI = internalQuery({
   args: {
     generationId: zid('generations'),
@@ -73,6 +74,16 @@ export const _list = query({
         ...generation,
         image: await generation.edge('generated_image'),
       }))
+  },
+})
+
+//* mutations
+export const remove = mutation({
+  args: {
+    generationId: zid('generations'),
+  },
+  handler: async (ctx, { generationId }) => {
+    return await ctx.table('generations').getX(generationId).delete()
   },
 })
 

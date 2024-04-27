@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils'
 import { GenerationImage } from './images/GenerationImage'
 import { ErrorCallout } from './ui/Callouts'
 
-import type { Id } from '@/convex/_generated/dataModel'
 import type { MessageContent, Thread } from '@/convex/external'
 
 const thumbnailHeightPx = 256
@@ -57,7 +56,7 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
                 size="1"
                 variant="surface"
                 onClick={() => {
-                  removeMessage({ messageId: message._id as Id<'messages'> })
+                  removeMessage({ messageId: message._id })
                     .then(() => toast.success('Message removed'))
                     .catch((err) => {
                       if (err instanceof Error) toast.error(err.message)
