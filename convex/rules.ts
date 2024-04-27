@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { addEntRules } from 'convex-ents'
 
 import { entDefinitions } from './schema'
@@ -7,34 +8,39 @@ import type { QueryCtx } from './types'
 
 export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions {
   return addEntRules(entDefinitions, {
-    messages: {
-      read: async (message) => {
-        // if (message.private) return false
-        const thread = await ctx.skipRules.table('threads').get(message.threadId)
-        return thread !== null && thread.userId === ctx.viewerId
+    users_api_keys: {
+      read: async (key) => {
+        return key.userId === ctx.viewerId
       },
-      write: async ({ operation, ent: message, value }) => {
-        if (operation === 'create') {
-          const thread = await ctx.skipRules.table('threads').get(value.threadId)
-          return thread?.userId === ctx.viewerId
-        }
+    },
+    // messages: {
+    //   read: async (message) => {
+    //     // if (message.private) return false
+    //     const thread = await ctx.skipRules.table('threads').get(message.threadId)
+    //     return thread !== null && thread.userId === ctx.viewerId
+    //   },
+    //   write: async ({ operation, ent: message, value }) => {
+    //     if (operation === 'create') {
+    //       const thread = await ctx.skipRules.table('threads').get(value.threadId)
+    //       return thread?.userId === ctx.viewerId
+    //     }
 
-        return (await message.edge('thread')).userId === ctx.viewerId
-      },
-    },
-    threads: {
-      // eslint-disable-next-line @typescript-eslint/require-await
-      read: async (thread) => {
-        return thread.userId === ctx.viewerId
-      },
-      // eslint-disable-next-line @typescript-eslint/require-await
-      write: async ({ operation, ent: thread, value }) => {
-        if (operation === 'create') {
-          return ctx.viewerId === value.userId
-        }
-        return ctx.viewerId === thread?.userId
-      },
-    },
+    //     return (await message.edge('thread')).userId === ctx.viewerId
+    //   },
+    // },
+    // threads: {
+    //   // eslint-disable-next-line @typescript-eslint/require-await
+    //   read: async (thread) => {
+    //     return thread.userId === ctx.viewerId
+    //   },
+    //   // eslint-disable-next-line @typescript-eslint/require-await
+    //   write: async ({ operation, ent: thread, value }) => {
+    //     if (operation === 'create') {
+    //       return ctx.viewerId === value.userId
+    //     }
+    //     return ctx.viewerId === thread?.userId
+    //   },
+    // },
   })
 }
 

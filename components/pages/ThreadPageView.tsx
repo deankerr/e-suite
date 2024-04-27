@@ -42,13 +42,12 @@ export const ThreadPageView = ({ rid }: { rid: string }) => {
             <InfiniteScroll
               hasMore={pager.status === 'CanLoadMore'}
               isLoading={pager.isLoading}
-              next={() => pager.loadMore(10)}
+              next={() => pager.loadMore(8)}
               threshold={1}
             >
               {pager.status !== 'Exhausted' && (
                 <div className="mx-auto text-center">
                   <Spinner className="size-8" />
-                  {pager.status}
                 </div>
               )}
             </InfiniteScroll>
