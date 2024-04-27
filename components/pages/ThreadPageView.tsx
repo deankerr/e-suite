@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@radix-ui/themes'
 import { MessagesSquareIcon } from 'lucide-react'
 
 import { useTitle } from '@/app/hooks'
@@ -9,6 +8,8 @@ import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ThreadMessage } from '@/components/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { CreateMessageControlsAlpha } from '../CreateMessageControlsAlpha'
+import InfiniteScroll from '../ui/InfiniteScroll'
+import { Spinner } from '../ui/Spinner'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
@@ -36,16 +37,18 @@ export const ThreadPageView = ({ rid }: { rid: string }) => {
       </div>
 
       {!shouldShowLoader && (
-        <div className="pb-4 flex-center">
-          <Button
-            variant="surface"
-            className="w-1/2"
-            disabled={pager.status !== 'CanLoadMore'}
-            onClick={() => pager.loadMore(10)}
-          >
-            load more {pager.status}
-          </Button>
-        </div>
+        <InfiniteScroll
+          hasMore={pager.status === 'CanLoadMore'}
+          isLoading={pager.isLoading}
+          next={() => pager.loadMore(10)}
+          threshold={1}
+        >
+          {pager.status !== 'Exhausted' && (
+            <div className="mx-auto text-center">
+              <Spinner className="size-8" />
+            </div>
+          )}
+        </InfiniteScroll>
       )}
     </PageWrapper>
   )
