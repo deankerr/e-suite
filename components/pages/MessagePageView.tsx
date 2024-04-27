@@ -31,52 +31,50 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
 
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
-      <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
-        <div>
-          {[...errors].map((message) => (
-            <ErrorCallout
-              key={message}
-              title="(sinkin.ai) endpoint returned error:"
-              message={message}
-            />
-          ))}
-          <JustifiedRowGrid
-            gap={10}
-            items={imageList}
-            breakpoints={breakpoints}
-            render={(generation, commonHeight) => {
-              if (generation.image) {
-                const { _id, rid, width, height, blurDataUrl } = generation.image
-                return (
-                  <ImageFile
-                    key={_id}
-                    rid={rid}
-                    width={width}
-                    height={height}
-                    blurDataUrl={blurDataUrl}
-                    style={{ height: `${commonHeight}px` }}
-                  />
-                )
-              }
-
-              const { _id, width, height } = generation
+      <div className="py-4">
+        {[...errors].map((message) => (
+          <ErrorCallout
+            key={message}
+            title="(sinkin.ai) endpoint returned error:"
+            message={message}
+          />
+        ))}
+        <JustifiedRowGrid
+          gap={10}
+          items={imageList}
+          breakpoints={breakpoints}
+          render={(generation, commonHeight) => {
+            if (generation.image) {
+              const { _id, rid, width, height, blurDataUrl } = generation.image
               return (
                 <ImageFile
                   key={_id}
-                  rid={'*generating*'}
+                  rid={rid}
                   width={width}
                   height={height}
+                  blurDataUrl={blurDataUrl}
                   style={{ height: `${commonHeight}px` }}
                 />
               )
-            }}
-          />
-        </div>
+            }
 
-        {/* details */}
-        <div className="h-fit min-h-32 overflow-hidden rounded-lg border bg-panel-solid p-4">
-          {generations?.[0] && <GenerationDataList generations={generations} />}
-        </div>
+            const { _id, width, height } = generation
+            return (
+              <ImageFile
+                key={_id}
+                rid={'*generating*'}
+                width={width}
+                height={height}
+                style={{ height: `${commonHeight}px` }}
+              />
+            )
+          }}
+        />
+      </div>
+
+      {/* details */}
+      <div className="h-fit min-h-32 overflow-hidden rounded-lg border bg-panel-solid p-4">
+        {generations?.[0] && <GenerationDataList generations={generations} />}
       </div>
     </PageWrapper>
   )
