@@ -3,11 +3,11 @@ import * as R from 'remeda'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { internalAction, internalMutation, internalQuery } from './functions'
+import { internalAction, internalMutation, internalQuery, query } from './functions'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
 import { generationFields, generationResultField } from './schema'
-import { generateRid, insist, runWithRetries } from './utils'
+import { generateRid, insist, runWithRetries, zPaginationOptValidator } from './utils'
 
 import type { Ent, MutationCtx } from './types'
 
@@ -57,6 +57,23 @@ export const getManyI = internalQuery({
     generationIds: zid('generations').array(),
   },
   handler: async (ctx, { generationIds }) => await ctx.table('generations').getManyX(generationIds),
+})
+
+export const _list = query({
+  args: {
+    paginationOpts: zPaginationOptValidator,
+    order: z.enum(['asc', 'desc']).default('desc'),
+  },
+  handler: async (ctx, { paginationOpts, order }) => {
+    return await ctx
+      .table('generations')
+      .order(order)
+      .paginate(paginationOpts)
+      .map(async (generation) => ({
+        ...generation,
+        image: await generation.edge('generated_image'),
+      }))
+  },
 })
 
 export const result = internalMutation({

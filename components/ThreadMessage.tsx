@@ -6,13 +6,13 @@ import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
-import { ImageFile } from './images/ImageFile'
+import { GenerationImage } from './images/GenerationImage'
 import { ErrorCallout } from './ui/Callouts'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import type { MessageContent, Thread } from '@/convex/external'
 
-const thumbnailHeightRem = 16
+const thumbnailHeightPx = 256
 
 type ThreadMessageProps = {
   thread: Thread
@@ -85,30 +85,12 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
               ))}
               {generations?.map((generation) => {
                 if (generation.result?.type === 'error') return null
-
-                if (generation.image) {
-                  const { _id, rid, width, height, blurDataUrl } = generation.image
-                  return (
-                    <ImageFile
-                      key={_id}
-                      rid={rid}
-                      width={width}
-                      height={height}
-                      blurDataUrl={blurDataUrl}
-                      priority={priority}
-                      style={{ width: `${(thumbnailHeightRem / height) * width}rem` }}
-                    />
-                  )
-                }
-
-                const { _id, width, height } = generation
                 return (
-                  <ImageFile
-                    key={_id}
-                    rid={'*generating*'}
-                    width={width}
-                    height={height}
-                    style={{ width: `${(thumbnailHeightRem / height) * width}rem` }}
+                  <GenerationImage
+                    key={generation._id}
+                    generation={generation}
+                    containerHeight={thumbnailHeightPx}
+                    imageProps={{ priority }}
                   />
                 )
               })}

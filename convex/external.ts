@@ -36,17 +36,16 @@ const units = {
   user: z.object({ ...userFields, rid: z.string(), ...baseFields }).describe('external'),
 }
 
+const generationWithImage = units.generation.merge(
+  z.object({
+    image: units.generated_image.nullable(),
+  }),
+)
+
 const messageXL = z
   .object({
     message: units.message,
-    generations: units.generation
-      .merge(
-        z.object({
-          image: units.generated_image.nullable(),
-        }),
-      )
-      .array()
-      .nullable(),
+    generations: generationWithImage.array().nullable(),
   })
   .describe('external')
 
@@ -58,5 +57,6 @@ export const external = {
 }
 
 export type Thread = z.infer<typeof units.thread>
-export type GeneratedImage = z.infer<typeof units.generated_image>
 export type MessageContent = z.infer<typeof messageXL>
+export type Generation = z.infer<typeof generationWithImage>
+export type GeneratedImage = z.infer<typeof units.generated_image>

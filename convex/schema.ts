@@ -69,7 +69,7 @@ export const generationFields = {
   result: generationResultField.optional(),
 
   provider: z.enum(generationProviders),
-  metadata: z.tuple([z.string(), z.string()]).array().optional(),
+  metadata: z.string().array().array().optional(),
 
   // common
   model_id: z.string(),

@@ -5,7 +5,7 @@ import { MessageSquareIcon } from 'lucide-react'
 
 import { useTitle } from '@/app/hooks'
 import { GenerationDataList } from '../GenerationDataList'
-import { ImageFile } from '../images/ImageFile'
+import { GenerationImage } from '../images/GenerationImage'
 import { JustifiedRowGrid } from '../images/JustifiedRowGrid'
 import { ErrorCallout } from '../ui/Callouts'
 import { PageWrapper } from './PageWrapper'
@@ -44,32 +44,14 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
           gap={10}
           items={imageList}
           breakpoints={breakpoints}
-          render={(generation, commonHeight) => {
-            if (generation.image) {
-              const { _id, rid, width, height, blurDataUrl } = generation.image
-              return (
-                <ImageFile
-                  key={_id}
-                  rid={rid}
-                  width={width}
-                  height={height}
-                  blurDataUrl={blurDataUrl}
-                  style={{ height: `${commonHeight}px` }}
-                />
-              )
-            }
-
-            const { _id, width, height } = generation
-            return (
-              <ImageFile
-                key={_id}
-                rid={'*generating*'}
-                width={width}
-                height={height}
-                style={{ height: `${commonHeight}px` }}
-              />
-            )
-          }}
+          render={(generation, commonHeight) => (
+            <GenerationImage
+              key={generation._id}
+              generation={generation}
+              containerHeight={commonHeight}
+              imageProps={{ priority: true }}
+            />
+          )}
         />
       </div>
 
