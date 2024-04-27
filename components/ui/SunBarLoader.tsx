@@ -15,20 +15,20 @@ export const SunBarLoader = ({
   return (
     <div
       className={cn(
-        'absolute inset-0 h-screen bg-gradient-radial from-orange-2 to-[84%] transition-all duration-1000 *:opacity-40',
+        'absolute inset-0 h-screen bg-gradient-radial from-orange-2 to-[84%] transition-all duration-1000 *:opacity-30',
         alert && 'from-red-2 *:-hue-rotate-[30deg] *:saturate-[1.2]',
       )}
     >
       <div className={cn('mx-auto grid h-full w-2/3 grid-rows-3')}>
         <div></div>
         <div className="flex-center">
-          <NextImage src={SunLarge} alt="" className="h-[125%]" width={500} height={500} priority />
+          <NextImage unoptimized alt="loading" src={SunLarge} width={500} height={500} />
         </div>
-        <div className="flex-center items-end py-2">
+        <div className="items-end py-2 flex-center">
           <NextImage
             src={alert ? BarsFlash : BarsProgress}
             alt=""
-            className={cn('h-[20%]', hideBars && 'hidden')}
+            className={cn('', hideBars && 'hidden')}
             width={500}
             height={100}
           />

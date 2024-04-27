@@ -1,5 +1,6 @@
 'use client'
 
+import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
 import { useTitle } from '@/app/hooks'
@@ -73,9 +74,9 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
       </div>
 
       {/* details */}
-      <div className="h-fit min-h-32 overflow-hidden rounded-lg border bg-panel-solid p-4">
+      <Card className="overflow-hidden">
         {generations?.[0] && <GenerationDataList generations={generations} />}
-      </div>
+      </Card>
     </PageWrapper>
   )
 }

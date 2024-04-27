@@ -43,7 +43,7 @@ export const Spinner = ({
   const maskImage = variants[variant] ?? variants['default']
   return (
     <span
-      className={cn('pointer-events-none inline-block aspect-square w-6 bg-accent-11', className)}
+      className={cn('pointer-events-none inline-block aspect-square w-6 bg-accent-9', className)}
       style={{
         maskSize: '100%',
         maskRepeat: 'no-repeat',
