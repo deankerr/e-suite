@@ -31,8 +31,8 @@ export const ThreadPageView = ({ rid }: { rid: string }) => {
         {thread && <CreateMessageControlsAlpha threadId={thread._id as Id<'threads'>} />}
         {!shouldShowLoader &&
           thread &&
-          pager.results.map((message, i) => (
-            <ThreadMessage key={message.data._id} {...message} thread={thread} priority={i < 3} />
+          pager.results.map((result, i) => (
+            <ThreadMessage key={result.message._id} {...result} thread={thread} priority={i < 3} />
           ))}
       </div>
 

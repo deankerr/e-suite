@@ -1,15 +1,28 @@
 import { Code, DataList } from '@radix-ui/themes'
+import * as R from 'remeda'
+import { z } from 'zod'
 
 import SinkinModels from '@/convex/providers/sinkin.models.json'
+import { generationFields } from '@/convex/schema'
 
 import type { MessageContent } from '@/convex/external'
 
-type GenerationDataListProps = { generation: NonNullable<MessageContent['generation']> }
+type GenerationDataListProps = { generations: NonNullable<MessageContent['generations']> }
 
-export const GenerationDataList = ({ generation }: GenerationDataListProps) => {
-  const { model_id, prompt, dimensions, _creationTime, _id, ...rest } = generation
-  const unordered = Object.entries(rest)
+const om = R.mapToObj(
+  ['result', 'metadata', 'model_id', 'width', 'height', 'prompt'] as const,
+  (key) => [key, true as const],
+)
+const params = z.object(generationFields).omit(om)
 
+export const GenerationDataList = ({ generations }: GenerationDataListProps) => {
+  const first = generations[0]
+  if (!first) return null
+  const { model_id, prompt, _creationTime, _id, ...rest } = first
+
+  const dimensions = R.groupBy(generations, ({ width, height }) => `${width} x ${height}`)
+
+  const unordered = Object.entries(params.parse(rest))
   const model = SinkinModels.find((model) => model.id === model_id)
   return (
     <DataList.Root orientation="vertical">
@@ -18,7 +31,7 @@ export const GenerationDataList = ({ generation }: GenerationDataListProps) => {
         <DataList.Value>
           <div className="flex-start">
             {model?.name}
-            <Code color="gold">{model_id}</Code>
+            <Code color="gray">{model_id}</Code>
           </div>
         </DataList.Value>
       </DataList.Item>
@@ -27,10 +40,8 @@ export const GenerationDataList = ({ generation }: GenerationDataListProps) => {
         <DataList.Label>dimensions</DataList.Label>
         <DataList.Value>
           <div className="grid gap-0.5">
-            {dimensions.map(({ width, height, n }, i) => (
-              <Code key={i} color="gold">
-                {width}x{height} {n}
-              </Code>
+            {Object.entries(dimensions).map(([key, values]) => (
+              <Code key={key} color="gold">{`${key} (${values.length})`}</Code>
             ))}
           </div>
         </DataList.Value>

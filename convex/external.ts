@@ -29,7 +29,6 @@ const units = {
       ...generationFields,
       ...ridFields,
       ...baseFields,
-      status: z.enum(['pending', 'complete', 'failed']),
     })
     .describe('external generation'),
   message: z.object({ ...messageFields, ...ridFields, ...baseFields }).describe('external'),
@@ -43,7 +42,7 @@ const messageXL = z
     generations: units.generation
       .merge(
         z.object({
-          image: units.generated_image.optional(),
+          image: units.generated_image.nullable(),
         }),
       )
       .array()

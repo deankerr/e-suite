@@ -55,15 +55,20 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
       threadId,
       message: {
         role: 'assistant',
+        inference: {
+          generation: {
+            parameters: {
+              provider: 'sinkin',
+              prompt,
+              negative_prompt,
+              model_id,
+              seed,
+            },
+            dimensions,
+          }
+        }
       },
-      generation: {
-        provider: 'sinkin',
-        prompt,
-        negative_prompt,
-        model_id,
-        seed,
-        dimensions,
-      },
+
     })
       .then(() => toast.success('Generation created'))
       .catch((err) => {

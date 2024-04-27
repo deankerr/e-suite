@@ -6,6 +6,7 @@ import { useTitle } from '@/app/hooks'
 import { GenerationDataList } from '../GenerationDataList'
 import { ImageFile } from '../images/ImageFile'
 import { JustifiedRowGrid } from '../images/JustifiedRowGrid'
+import { ErrorCallout } from '../ui/Callouts'
 import { PageWrapper } from './PageWrapper'
 
 import type { MessageContent } from '@/convex/external'
@@ -15,46 +16,66 @@ type MessagePageViewProps = {
 }
 
 export const MessagePageView = ({ content }: MessagePageViewProps) => {
-  const { generation, generated_images } = content
+  const { message, generations } = content
 
-  let count = 0
-  const imageList =
-    generation?.dimensions.flatMap(({ width, height, n }, i) => {
-      return Array.from({ length: n }).map((_, j) => {
-        const image = generated_images?.[count++]
-        return image ? image : { width, height, rid: `*generating*${i}+${j}`, blurDataUrl: '' }
-      })
-    }) ?? []
+  const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
+  const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 768, 1024]
+  const errors = new Set(
+    generations
+      ?.filter((generation) => generation.result?.type === 'error')
+      .map((generation) => generation.result!.message),
+  )
 
-  const title =
-    content.generation?.prompt ?? `Message from ${content.data.name ?? content.data.role}`
+  const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
   useTitle(title)
 
-  const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 768, 1024]
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
       <div className="grid gap-4 px-4 py-6 sm:grid-cols-[1fr_240px]">
         <div>
+          {[...errors].map((message) => (
+            <ErrorCallout
+              key={message}
+              title="(sinkin.ai) endpoint returned error:"
+              message={message}
+            />
+          ))}
           <JustifiedRowGrid
             gap={10}
             items={imageList}
             breakpoints={breakpoints}
-            render={({ rid, width, height, blurDataUrl }, commonHeight) => (
-              <ImageFile
-                key={rid}
-                rid={rid}
-                width={width}
-                height={height}
-                blurDataUrl={blurDataUrl}
-                style={{ height: `${commonHeight}px` }}
-              />
-            )}
+            render={(generation, commonHeight) => {
+              if (generation.image) {
+                const { _id, rid, width, height, blurDataUrl } = generation.image
+                return (
+                  <ImageFile
+                    key={_id}
+                    rid={rid}
+                    width={width}
+                    height={height}
+                    blurDataUrl={blurDataUrl}
+                    style={{ height: `${commonHeight}px` }}
+                  />
+                )
+              }
+
+              const { _id, width, height } = generation
+              return (
+                <ImageFile
+                  key={_id}
+                  rid={'*generating*'}
+                  width={width}
+                  height={height}
+                  style={{ height: `${commonHeight}px` }}
+                />
+              )
+            }}
           />
         </div>
 
         {/* details */}
         <div className="h-fit min-h-32 overflow-hidden rounded-lg border bg-panel-solid p-4">
-          {content.generation && <GenerationDataList generation={content.generation} />}
+          {generations?.[0] && <GenerationDataList generations={generations} />}
         </div>
       </div>
     </PageWrapper>

@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { ImageFile } from './images/ImageFile'
+import { ErrorCallout } from './ui/Callouts'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import type { MessageContent, Thread } from '@/convex/external'
@@ -18,17 +19,12 @@ type ThreadMessageProps = {
   priority?: boolean
 } & MessageContent
 
-export const ThreadMessage = ({
-  data: message,
-  generation,
-  generated_images,
-  priority = false,
-}: ThreadMessageProps) => {
+export const ThreadMessage = ({ message, generations, priority = false }: ThreadMessageProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
   const viewType = {
-    text: !generation,
-    image: !!generation,
+    text: !generations,
+    image: !!generations,
   }
 
   const icon = viewType.image ? (
@@ -37,16 +33,13 @@ export const ThreadMessage = ({
     <MessageSquareIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
   )
 
-  const title = generation ? generation.prompt : message?.name ?? getRole(message.role)
+  const title = generations?.[0] ? generations?.[0].prompt : message?.name ?? getRole(message.role)
 
-  let count = 0
-  const imageList = generation?.dimensions.flatMap(({ width, height, n }, i) => {
-    return Array.from({ length: n }).map((_, j) => {
-      const image = generated_images?.[count++]
-      return image ? image : { width, height, rid: `*generating*${i}+${j}`, blurDataUrl: '' }
-    })
-  })
-
+  const errors = new Set(
+    generations
+      ?.filter((generation) => generation.result?.type === 'error')
+      .map((generation) => generation.result!.message),
+  )
   return (
     <Card>
       <div className="space-y-3">
@@ -83,17 +76,42 @@ export const ThreadMessage = ({
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className={cn('h-64 gap-2 flex-start')}>
-              {imageList?.map(({ rid, width, height, blurDataUrl }) => (
-                <ImageFile
-                  key={rid}
-                  rid={rid}
-                  width={width}
-                  height={height}
-                  blurDataUrl={blurDataUrl}
-                  priority={priority}
-                  style={{ width: `${(thumbnailHeightRem / height) * width}rem` }}
+              {[...errors].map((message) => (
+                <ErrorCallout
+                  key={message}
+                  title="(sinkin.ai) endpoint returned error:"
+                  message={message}
                 />
               ))}
+              {generations?.map((generation) => {
+                if (generation.result?.type === 'error') return null
+
+                if (generation.image) {
+                  const { _id, rid, width, height, blurDataUrl } = generation.image
+                  return (
+                    <ImageFile
+                      key={_id}
+                      rid={rid}
+                      width={width}
+                      height={height}
+                      blurDataUrl={blurDataUrl}
+                      priority={priority}
+                      style={{ width: `${(thumbnailHeightRem / height) * width}rem` }}
+                    />
+                  )
+                }
+
+                const { _id, width, height } = generation
+                return (
+                  <ImageFile
+                    key={_id}
+                    rid={'*generating*'}
+                    width={width}
+                    height={height}
+                    style={{ width: `${(thumbnailHeightRem / height) * width}rem` }}
+                  />
+                )
+              })}
             </div>
           </ScrollArea>
         )}
