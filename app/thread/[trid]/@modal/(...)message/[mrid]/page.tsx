@@ -3,6 +3,7 @@
 import { useMessageQuery } from '@/app/queries'
 import { MessagePageView } from '@/components/pages/MessagePageView'
 import { ModalPageView } from '@/components/pages/ModalPageView'
+import { Spinner } from '@/components/ui/Spinner'
 
 export default function MessageViewModalPage({
   params: { mrid: rid },
@@ -18,8 +19,8 @@ export default function MessageViewModalPage({
       ) : result === null ? (
         <div>Error :(</div>
       ) : (
-        <div>
-          <span className="ds-loading bg-orange-9"></span>
+        <div className="absolute inset-0 grid place-content-center">
+          <Spinner />
         </div>
       )}
     </ModalPageView>

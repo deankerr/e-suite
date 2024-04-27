@@ -12,14 +12,14 @@ type PageHeaderProps = {
 export const PageWrapper = ({ icon, title, children }: PageHeaderProps) => {
   return (
     <div className="max-w-8xl mx-auto min-h-screen w-full bg-gray-1 px-1 sm:px-4">
-      <header className="flex h-14 items-center border-b border-gold-6">
+      <header className="flex h-14 items-center border-b border-gold-6 px-1">
         <div className="shrink-0 flex-start">{icon}</div>
 
         <Heading size="3" className="grow truncate px-2">
           {title}
         </Heading>
 
-        <div className="px-2">
+        <div className="shrink-0 px-2">
           <SignedIn>
             <Button variant="ghost" asChild>
               <Link href="/dashboard">

@@ -31,7 +31,7 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
 
   return (
     <PageWrapper icon={<MessageSquareIcon />} title={title}>
-      <div className="py-4">
+      <div className="px-1 py-4">
         {[...errors].map((message) => (
           <ErrorCallout
             key={message}
