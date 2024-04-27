@@ -13,26 +13,6 @@ http.route({
 })
 
 http.route({
-  path: '/ddddi',
-  method: 'GET',
-  handler: httpAction(async (ctx, request) => {
-    const { searchParams } = new URL(request.url)
-    const rid = searchParams.get('id') as string
-    const result = await ctx.runQuery(api.generated_images.get, { rid })
-
-    const blob = result ? await ctx.storage.get(result.fileId) : null
-
-    if (blob === null) {
-      return new Response('Invalid image id', {
-        status: 400,
-      })
-    }
-
-    return new Response(blob)
-  }),
-})
-
-http.route({
   pathPrefix: '/i/',
   method: 'GET',
   handler: httpAction(async (ctx, request) => {
