@@ -2,16 +2,16 @@
 
 import { forwardRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
-import { SpriteIcon } from '../ui/SpriteIcon'
+import { VoteButtonPanel } from './VoteButtonPanel'
 
-import type { Generation, GenerationVoteNames } from '@/convex/external'
+import type { Generation } from '@/convex/external'
 
 type GenerationImageProps = {
   generation: Generation
@@ -32,25 +32,11 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
     const removeGeneration = useMutation(api.generation.remove)
 
-    const sendVote = (vote: GenerationVoteNames) => {
-      if (!image) return
-      const body = JSON.stringify({ vote, generationId: generation._id })
-      console.log('send', body)
-      fetch('/api/vote', {
-        method: 'POST',
-        body,
-      })
-        .then(() => {
-          console.log('voted :)')
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-    }
+    const votes = useQuery(api.generation.getVotes, { generationId: generation._id })
 
     return (
       <div
-        className="overflow-hidden rounded-lg border"
+        className="group overflow-hidden rounded-lg border"
         style={{ aspectRatio: width / height, width: containerWidth, height: containerHeight }}
         ref={forwardedRef}
       >
@@ -70,47 +56,33 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
         {isGenerating && (
           <>
-            <div className="animate-shimmer h-full w-full rounded-lg bg-gradient-to-r from-gold-3 via-gray-1 to-gold-3 bg-[length:400%_100%]"></div>
+            <div className="h-full w-full animate-shimmer rounded-lg bg-gradient-to-r from-gold-3 via-gray-1 to-gold-3 bg-[length:400%_100%]"></div>
             <GoldSparklesEffect />
           </>
         )}
 
-        {/* info */}
-        <div className="absolute inset-0 flex-col-between">
-          <div className="self-end rounded-lg bg-overlay p-2 flex-end">
-            <IconButton
-              color="red"
-              size="3"
-              onClick={() => {
-                removeGeneration({ generationId: generation._id })
-                  .then(() => toast.success('Generation removed'))
-                  .catch((err) => {
-                    if (err instanceof Error) toast.error(err.message)
-                    else toast.error('Unknown error')
-                  })
-              }}
-            >
-              <Trash2Icon className="" />
-            </IconButton>
-          </div>
+        {/* panels */}
+        {/* options */}
+        <div className="absolute self-end rounded-lg bg-overlay p-2 flex-end">
+          <IconButton
+            color="red"
+            size="3"
+            onClick={() => {
+              removeGeneration({ generationId: generation._id })
+                .then(() => toast.success('Generation removed'))
+                .catch((err) => {
+                  if (err instanceof Error) toast.error(err.message)
+                  else toast.error('Unknown error')
+                })
+            }}
+          >
+            <Trash2Icon className="" />
+          </IconButton>
+        </div>
 
-          <div className="gap-5 rounded-lg bg-overlay px-3 py-2 flex-between">
-            <IconButton variant="solid" size="3" color="red" onClick={() => sendVote('bad')}>
-              <SpriteIcon icon="game-icons-skull-crossed-bones" />
-            </IconButton>
-
-            <IconButton variant="solid" size="3" color="amber" onClick={() => sendVote('poor')}>
-              <SpriteIcon icon="game-icons-thumb-down" className="text-white" />
-            </IconButton>
-
-            <IconButton variant="solid" size="3" color="grass" onClick={() => sendVote('good')}>
-              <SpriteIcon icon="game-icons-thumb-up" />
-            </IconButton>
-
-            <IconButton variant="solid" size="3" color="cyan" onClick={() => sendVote('best')}>
-              <SpriteIcon icon="game-icons-laurels-trophy" />
-            </IconButton>
-          </div>
+        {/* votes */}
+        <div className="absolute inset-x-0 bottom-1 opacity-100 transition-all group-hover:opacity-100">
+          <VoteButtonPanel generationId={generation._id} votes={votes} />
         </div>
       </div>
     )

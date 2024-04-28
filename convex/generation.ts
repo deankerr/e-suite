@@ -160,7 +160,7 @@ export const vote = mutation({
       const first = existingVotes[0]!
 
       await first.replace({
-        vote,
+        vote: first.vote === vote ? 'none' : vote,
         generationId,
         ip,
         userId,
@@ -169,5 +169,25 @@ export const vote = mutation({
     } else {
       await ctx.table('generation_votes').insert({ generationId, ip, userId, details, vote })
     }
+  },
+})
+
+export const getVotes = query({
+  args: {
+    generationId: zid('generations'),
+  },
+  handler: async (ctx, { generationId }) => {
+    const votes =
+      (await ctx.table('generation_votes', 'generationId', (q) =>
+        q.eq('generationId', generationId),
+      )) ?? []
+
+    const tally = R.pipe(
+      votes,
+      R.groupBy.strict((v) => v.vote),
+      R.omit(['none']),
+      R.mapValues((value) => value?.length ?? 0),
+    )
+    return tally
   },
 })

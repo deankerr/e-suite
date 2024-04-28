@@ -98,8 +98,8 @@ export const generations = defineEnt(zodToConvexFields(generationFields))
   .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edge('message')
-  .edge('generated_image', { optional: true, ref: 'generationId' })
-  .edges('generation_votes', { ref: true })
+  .edge('generated_image', { optional: true, ref: 'generationId', deletion: 'soft' })
+  .edges('generation_votes', { ref: true, deletion: 'soft' })
 
 //* Votes
 export const generationVoteFields = {
@@ -114,6 +114,7 @@ export const generationVoteFields = {
   }),
 }
 const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
+  .deletion('scheduled', { delayMs: timeToDelete })
   .edge('generation')
   .index('userId', ['userId'])
   .index('ip', ['ip'])
@@ -170,7 +171,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { index: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
-  .edges('generations', { ref: true })
+  .edges('generations', { ref: true, deletion: 'soft' })
   .edge('thread')
   .edge('user')
 
@@ -186,7 +187,7 @@ const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { index: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
-  .edges('messages', { ref: true })
+  .edges('messages', { ref: true, deletion: 'soft' })
   .edge('user')
 
 //* Users
@@ -200,7 +201,7 @@ const users = defineEnt(zodToConvexFields(userFields))
   .field('rid', zodToConvex(ridField), { index: true })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
-  .edges('threads', { ref: true })
+  .edges('threads', { ref: true, deletion: 'soft' })
   .edges('messages', { ref: true })
 
 //* API Keys
