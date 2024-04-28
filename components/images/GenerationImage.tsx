@@ -1,3 +1,5 @@
+'use client'
+
 import { forwardRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
@@ -9,7 +11,7 @@ import { api } from '@/convex/_generated/api'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
 import { SpriteIcon } from '../ui/SpriteIcon'
 
-import type { Generation } from '@/convex/external'
+import type { Generation, GenerationVoteNames } from '@/convex/external'
 
 type GenerationImageProps = {
   generation: Generation
@@ -26,10 +28,26 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
     const { image } = generation
     const width = image?.width ?? generation.width
     const height = image?.height ?? generation.height
-
     const isGenerating = !image && generation.result?.type !== 'error'
 
     const removeGeneration = useMutation(api.generation.remove)
+
+    const sendVote = (vote: GenerationVoteNames) => {
+      if (!image) return
+      const body = JSON.stringify({ vote, generationId: generation._id })
+      console.log('send', body)
+      fetch('/api/vote', {
+        method: 'POST',
+        body,
+      })
+        .then(() => {
+          console.log('voted :)')
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    }
+
     return (
       <div
         className="overflow-hidden rounded-lg border"
@@ -77,19 +95,19 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
           </div>
 
           <div className="gap-5 rounded-lg bg-overlay px-3 py-2 flex-between">
-            <IconButton variant="solid" size="3" color="red">
+            <IconButton variant="solid" size="3" color="red" onClick={() => sendVote('bad')}>
               <SpriteIcon icon="game-icons-skull-crossed-bones" />
             </IconButton>
 
-            <IconButton variant="solid" size="3" color="amber" className="text-white">
-              <SpriteIcon icon="game-icons-thumb-down" />
+            <IconButton variant="solid" size="3" color="amber" onClick={() => sendVote('poor')}>
+              <SpriteIcon icon="game-icons-thumb-down" className="text-white" />
             </IconButton>
 
-            <IconButton variant="solid" size="3" color="grass">
+            <IconButton variant="solid" size="3" color="grass" onClick={() => sendVote('good')}>
               <SpriteIcon icon="game-icons-thumb-up" />
             </IconButton>
 
-            <IconButton variant="solid" size="3" color="cyan">
+            <IconButton variant="solid" size="3" color="cyan" onClick={() => sendVote('best')}>
               <SpriteIcon icon="game-icons-laurels-trophy" />
             </IconButton>
           </div>

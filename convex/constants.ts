@@ -19,3 +19,5 @@ export const maxMessageNameStringLength = 64
 export const maxTitleStringLength = 256
 
 export const ridLength = 6
+
+export const generationVoteNames = ['best', 'good', 'poor', 'bad', 'none'] as const

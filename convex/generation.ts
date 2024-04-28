@@ -6,44 +6,12 @@ import { internal } from './_generated/api'
 import { internalAction, internalMutation, internalQuery, mutation, query } from './functions'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
-import { generationFields, generationResultField } from './schema'
+import { generationFields, generationResultField, generationVoteFields } from './schema'
 import { generateRid, insist, runWithRetries, zPaginationOptValidator } from './utils'
 
 import type { Ent, MutationCtx } from './types'
 
 export const textToImageModels = SinkinModels
-
-export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'messages'>) => {
-  const inference = message.inference?.generation
-  insist(inference, 'message lacks generation parameters')
-
-  await Promise.all(
-    inference.dimensions.map(async ({ width, height, n }) => {
-      const parameters = {
-        ...inference.parameters,
-        width,
-        height,
-      }
-
-      const generationIds = await Promise.all(
-        [...Array(n)].map(async (_) => {
-          const generation = {
-            ...parameters,
-            rid: await generateRid(ctx, 'generations'),
-            private: message.private,
-            messageId: message._id,
-          }
-          return await ctx.table('generations').insert(generation)
-        }),
-      )
-
-      await runWithRetries(ctx, internal.generation.textToImage, {
-        generationIds,
-        parameters,
-      })
-    }),
-  )
-}
 
 //* queries
 export const getI = internalQuery({
@@ -103,6 +71,41 @@ export const result = internalMutation({
   },
 })
 
+//* Inference
+// Helper
+export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'messages'>) => {
+  const inference = message.inference?.generation
+  insist(inference, 'message lacks generation parameters')
+
+  await Promise.all(
+    inference.dimensions.map(async ({ width, height, n }) => {
+      const parameters = {
+        ...inference.parameters,
+        width,
+        height,
+      }
+
+      const generationIds = await Promise.all(
+        [...Array(n)].map(async (_) => {
+          const generation = {
+            ...parameters,
+            rid: await generateRid(ctx, 'generations'),
+            private: message.private,
+            messageId: message._id,
+          }
+          return await ctx.table('generations').insert(generation)
+        }),
+      )
+
+      await runWithRetries(ctx, internal.generation.textToImage, {
+        generationIds,
+        parameters,
+      })
+    }),
+  )
+}
+
+//* Action
 export const textToImage = internalAction({
   args: {
     generationIds: zid('generations').array(),
@@ -138,5 +141,33 @@ export const textToImage = internalAction({
           }),
       ),
     )
+  },
+})
+
+//* Votes
+export const vote = mutation({
+  args: {
+    generationId: zid('generations'),
+    ...generationVoteFields,
+  },
+  handler: async (ctx, { generationId, ip, userId, details, vote }) => {
+    const existingVotes = await ctx
+      .table('generation_votes', 'generationId', (q) => q.eq('generationId', generationId))
+      .filter((q) => q.or(q.eq(q.field('userId'), userId), q.eq(q.field('ip'), ip)))
+
+    if (existingVotes.length > 0) {
+      if (existingVotes.length > 1) console.warn('multiple ip votes', existingVotes)
+      const first = existingVotes[0]!
+
+      await first.replace({
+        vote,
+        generationId,
+        ip,
+        userId,
+        details,
+      })
+    } else {
+      await ctx.table('generation_votes').insert({ generationId, ip, userId, details, vote })
+    }
   },
 })

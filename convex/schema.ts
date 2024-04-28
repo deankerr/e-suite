@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {
   completionProviders,
   generationProviders,
+  generationVoteNames,
   maxMessageNameStringLength,
   maxTitleStringLength,
   messageRoles,
@@ -39,6 +40,7 @@ const speech = defineEnt({
   voiceRef: v.string(),
 })
 
+//* Generated Images
 export const generatedImageFields = {
   width: z.number(),
   height: z.number(),
@@ -60,6 +62,7 @@ const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edge('generation', { field: 'generationId' })
 
+//* Generations
 export const generationResultField = z.object({
   type: z.enum(['url', 'error']),
   message: z.string(),
@@ -96,6 +99,24 @@ export const generations = defineEnt(zodToConvexFields(generationFields))
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edge('message')
   .edge('generated_image', { optional: true, ref: 'generationId' })
+  .edges('generation_votes', { ref: true })
+
+//* Votes
+export const generationVoteFields = {
+  vote: z.enum(generationVoteNames),
+
+  userId: zid('users').optional(),
+  ip: z.string(),
+  details: z.object({
+    geo: z.any().optional(),
+    ua: z.any().optional(),
+    ck: z.any().optional(),
+  }),
+}
+const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
+  .edge('generation')
+  .index('userId', ['userId'])
+  .index('ip', ['ip'])
 
 //* Chat/Completion
 export const completionParametersSchema = z.object({
@@ -182,6 +203,7 @@ const users = defineEnt(zodToConvexFields(userFields))
   .edges('threads', { ref: true })
   .edges('messages', { ref: true })
 
+//* API Keys
 export const usersApiKeysFields = {
   valid: z.boolean(),
 }
@@ -195,6 +217,7 @@ const schema = defineEntSchema(
   {
     generations,
     generated_images,
+    generation_votes,
 
     messages,
     threads,

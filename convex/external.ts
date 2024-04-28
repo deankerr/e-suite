@@ -10,6 +10,8 @@ import {
   userFields,
 } from './schema'
 
+import type { generationVoteNames } from './constants'
+
 const ridFields = {
   rid: ridField,
   private: z.boolean(),
@@ -68,3 +70,4 @@ export type Thread = z.infer<typeof units.thread>
 export type MessageContent = z.infer<typeof messageXL>
 export type Generation = z.infer<typeof generationWithImage>
 export type GeneratedImage = z.infer<typeof units.generated_image>
+export type GenerationVoteNames = (typeof generationVoteNames)[number]
