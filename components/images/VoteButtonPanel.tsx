@@ -43,42 +43,44 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
   const currentVote = ownVoteCache[generationId]
 
   return (
-    <div className="mx-auto w-fit scale-75 gap-5 rounded-lg bg-overlay px-3 py-2 transition-all flex-between hover:scale-100">
-      <VoteButton
-        color="red"
-        active={currentVote === 'bad'}
-        count={votes?.bad}
-        onClick={() => void tryVote('bad')}
-      >
-        <SpriteIcon icon="game-icons-skull-crossed-bones" />
-      </VoteButton>
+    <div className="absolute inset-x-0 bottom-0 translate-y-full transition-all group-hover:translate-y-0 ">
+      <div className="mx-auto w-fit translate-y-0 scale-100 gap-1 rounded bg-overlay px-1 py-1 opacity-50 transition-all flex-between hover:-translate-y-1.5 hover:scale-150 hover:opacity-100">
+        <VoteButton
+          color="red"
+          active={currentVote === 'bad'}
+          count={votes?.bad}
+          onClick={() => void tryVote('bad')}
+        >
+          <SpriteIcon icon="game-icons-skull-crossed-bones" />
+        </VoteButton>
 
-      <VoteButton
-        color="amber"
-        active={currentVote === 'poor'}
-        count={votes?.poor}
-        onClick={() => void tryVote('poor')}
-      >
-        <SpriteIcon icon="game-icons-thumb-down" className="text-white" />
-      </VoteButton>
+        <VoteButton
+          color="amber"
+          active={currentVote === 'poor'}
+          count={votes?.poor}
+          onClick={() => void tryVote('poor')}
+        >
+          <SpriteIcon icon="game-icons-thumb-down" className="" />
+        </VoteButton>
 
-      <VoteButton
-        color="grass"
-        active={currentVote === 'good'}
-        count={votes?.good}
-        onClick={() => void tryVote('good')}
-      >
-        <SpriteIcon icon="game-icons-thumb-up" />
-      </VoteButton>
+        <VoteButton
+          color="grass"
+          active={currentVote === 'good'}
+          count={votes?.good}
+          onClick={() => void tryVote('good')}
+        >
+          <SpriteIcon icon="game-icons-thumb-up" />
+        </VoteButton>
 
-      <VoteButton
-        color="cyan"
-        active={currentVote === 'best'}
-        count={votes?.best}
-        onClick={() => void tryVote('best')}
-      >
-        <SpriteIcon icon="game-icons-laurels-trophy" />
-      </VoteButton>
+        <VoteButton
+          color="cyan"
+          active={currentVote === 'best'}
+          count={votes?.best}
+          onClick={() => void tryVote('best')}
+        >
+          <SpriteIcon icon="game-icons-diamond-trophy" />
+        </VoteButton>
+      </div>
     </div>
   )
 }
@@ -87,20 +89,26 @@ type VoteButtonProps = { active?: boolean; count?: number } & Partial<
   React.ComponentProps<typeof IconButton>
 >
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const VoteButton = ({ active, count, children, className, ...props }: VoteButtonProps) => {
   return (
     <IconButton
       {...props}
       variant="surface"
-      size="3"
+      size="1"
       className={cn(
-        'relative scale-100 brightness-75 hover:scale-110 hover:brightness-90',
-        active && 'scale-125 animate-jump brightness-100',
+        'overflow-hidden p-0.5 opacity-80 hover:opacity-90',
+        active && 'opacity-100',
         className,
       )}
     >
       {children}
-      <div
+    </IconButton>
+  )
+}
+
+/*
+<div
         className={cn(
           'absolute -right-2 -top-2.5 rounded-full bg-orange-9 px-1.5 text-sm font-bold text-gray-12',
           !count && 'hidden',
@@ -108,6 +116,4 @@ export const VoteButton = ({ active, count, children, className, ...props }: Vot
       >
         {count}
       </div>
-    </IconButton>
-  )
-}
+*/

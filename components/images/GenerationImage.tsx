@@ -63,10 +63,12 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
         {/* panels */}
         {/* options */}
-        <div className="absolute self-end rounded-lg bg-overlay p-2 flex-end">
+        <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100">
           <IconButton
+            variant="surface"
             color="red"
-            size="3"
+            size="1"
+            className="opacity-75 hover:opacity-100"
             onClick={() => {
               removeGeneration({ generationId: generation._id })
                 .then(() => toast.success('Generation removed'))
@@ -76,14 +78,12 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
                 })
             }}
           >
-            <Trash2Icon className="" />
+            <Trash2Icon className="size-5" />
           </IconButton>
         </div>
 
         {/* votes */}
-        <div className="absolute inset-x-0 bottom-1 opacity-100 transition-all group-hover:opacity-100">
-          <VoteButtonPanel generationId={generation._id} votes={votes} />
-        </div>
+        <VoteButtonPanel generationId={generation._id} votes={votes} />
       </div>
     )
   },
