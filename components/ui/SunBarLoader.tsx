@@ -15,26 +15,21 @@ export const SunBarLoader = ({
   return (
     <div
       className={cn(
-        'absolute inset-0 h-screen bg-gradient-radial from-orange-2 to-[84%] transition-all duration-1000 *:opacity-30',
+        'absolute inset-0 grid h-screen place-content-center p-8 transition-all duration-1000 *:opacity-30',
         alert && 'from-red-2 *:-hue-rotate-[30deg] *:saturate-[1.2]',
       )}
     >
-      <div className={cn('mx-auto grid h-full w-2/3 grid-rows-3')}>
-        <div></div>
-        <div className="flex-center">
-          <NextImage unoptimized alt="loading" src={SunLarge} width={500} height={500} />
-        </div>
-        <div className="items-end py-2 flex-center">
-          <NextImage
-            src={alert ? BarsFlash : BarsProgress}
-            alt=""
-            className={cn('', hideBars && 'hidden')}
-            width={500}
-            height={100}
-          />
-        </div>
+      <NextImage unoptimized alt="loading" src={SunLarge} width={500} height={500} priority />
+
+      <div className="fixed inset-x-1/4 bottom-0 h-16">
+        <NextImage
+          unoptimized
+          src={alert ? BarsFlash : BarsProgress}
+          alt=""
+          className={cn('', hideBars && 'hidden')}
+          fill
+        />
       </div>
     </div>
   )
 }
-// #F9F9FB #FFFFFF

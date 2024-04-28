@@ -45,7 +45,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <Theme accentColor="orange" appearance="dark" panelBackground="translucent">
+            <Theme
+              accentColor="orange"
+              appearance="dark"
+              panelBackground="translucent"
+              className="bg-gradient-radial from-orange-2 to-[84%]"
+            >
               {children}
               <Toaster richColors />
               <TailwindBreakpointIndicator />
