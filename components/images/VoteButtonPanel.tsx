@@ -1,7 +1,7 @@
 import { Badge, IconButton } from '@radix-ui/themes'
-import { useLocalStorage } from '@uidotdev/usehooks'
 
 import { api } from '@/convex/_generated/api'
+import { useLocalOwnVotesCache } from '@/lib/hooks'
 import { useSingleFlight } from '@/lib/useSingleFlight'
 import { cn } from '@/lib/utils'
 import { SpriteIcon } from '../ui/SpriteIcon'
@@ -23,9 +23,7 @@ type VoteButtonPanelProps = {
 }
 
 export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) => {
-  const [ownVoteCache, setOwnVoteCache] = useLocalStorage<
-    Record<Id<'generations'>, GenerationVoteNames>
-  >('votes', {})
+  const [ownVoteCache, setOwnVoteCache] = useLocalOwnVotesCache()
 
   const sendVote = async (vote: GenerationVoteNames) => {
     try {
@@ -48,7 +46,11 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
   if (!votes) return null
 
   return (
-    <div className="tXranslate-y-full absolute inset-x-0 bottom-0 transition-all group-hover:translate-y-0">
+    <div
+      className={cn(
+        'absolute inset-x-0 bottom-0 translate-y-full transition-all group-hover:translate-y-0',
+      )}
+    >
       <div className="mx-auto w-fit translate-y-0 scale-100 gap-1 rounded bg-overlay px-1 py-1 opacity-50 transition-all flex-between hover:-translate-y-1.5 hover:scale-150 hover:opacity-100">
         {voteClasses.map(({ name, color, icon }) => {
           const isSelected = ownVoteCache[generationId] === name
