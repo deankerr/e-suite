@@ -8,18 +8,21 @@ export const useTitle = (subtitle?: string) => {
   useDocumentTitle(`e/suite${subtitle ? ` / ${subtitle}` : ''}`)
 }
 
+type VoteCache = {
+  constituent?: string
+  votes: Record<Id<'generations'>, GenerationVoteNames>
+}
+
 export const useLocalOwnVotesCache = () => {
-  const [ownVotesCache, setOwnVotesCache] = useLocalStorage<
-    Record<Id<'generations'>, GenerationVoteNames>
-  >('votes', {})
+  const [voteCache, setVoteCache] = useLocalStorage<VoteCache>('voteCache', { votes: {} })
 
-  const debugcache = JSON.stringify(ownVotesCache, null, 2)
+  const debugcache = JSON.stringify(voteCache)
 
-  const [_, set] = useControls('cache', () => ({
+  const [{ cache }, set] = useControls('cache', () => ({
     cache: { value: debugcache, rows: 5, editable: false },
-    purge: button(() => setOwnVotesCache({})),
+    purge: button(() => setVoteCache({ votes: {} })),
   }))
-  set({ cache: debugcache })
+  if (debugcache !== cache) set({ cache })
 
-  return [ownVotesCache, setOwnVotesCache] as const
+  return [voteCache, setVoteCache] as const
 }

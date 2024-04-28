@@ -106,18 +106,16 @@ export const generationVoteFields = {
   vote: z.enum(generationVoteNames),
 
   userId: zid('users').optional(),
-  ip: z.string(),
-  details: z.object({
-    geo: z.any().optional(),
-    ua: z.any().optional(),
-    ck: z.any().optional(),
-  }),
+  ip: z.string().optional(),
+  constituent: z.string().length(21),
+  metadata: z.any().optional(),
 }
 const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('generation')
   .index('userId', ['userId'])
   .index('ip', ['ip'])
+  .index('constituant_vote', ['constituent', 'generationId'])
 
 //* Chat/Completion
 export const completionParametersSchema = z.object({

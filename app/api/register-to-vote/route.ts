@@ -29,7 +29,8 @@ export async function POST(request: NextRequest) {
     const body = {
       ...vote,
       ip: request.ip ?? '(missing)',
-      details: {
+      constituent,
+      metadata: {
         geo: request.geo,
         ua: userAgent(request),
         ck: constituent,
@@ -40,9 +41,9 @@ export async function POST(request: NextRequest) {
     if (!address) throw new Error('NEXT_PUBLIC_CONVEX_URL is not set')
 
     const client = new ConvexHttpClient(address)
-    await client.mutation(api.generation.vote, body)
+    await client.mutation(api.generation.register, body)
 
-    return new Response()
+    return Response.json({ constituent })
   } catch (err) {
     console.error(err)
     return new Response(null, { status: 500 })

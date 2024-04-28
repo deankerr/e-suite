@@ -148,27 +148,47 @@ export const textToImage = internalAction({
 export const vote = mutation({
   args: {
     generationId: zid('generations'),
-    ...generationVoteFields,
+    vote: generationVoteFields.vote,
+    constituent: generationVoteFields.constituent,
   },
-  handler: async (ctx, { generationId, ip, userId, details, vote }) => {
-    const existingVotes = await ctx
-      .table('generation_votes', 'generationId', (q) => q.eq('generationId', generationId))
-      .filter((q) => q.or(q.eq(q.field('userId'), userId), q.eq(q.field('ip'), ip)))
+  handler: async (ctx, { generationId, vote, constituent }) => {
+    const existingVote = await ctx
+      .table('generation_votes', 'constituant_vote', (q) =>
+        q.eq('constituent', constituent).eq('generationId', generationId),
+      )
+      .unique()
 
-    if (existingVotes.length > 0) {
-      if (existingVotes.length > 1) console.warn('multiple ip votes', existingVotes)
-      const first = existingVotes[0]!
-
-      await first.replace({
-        vote: first.vote === vote ? 'none' : vote,
-        generationId,
-        ip,
-        userId,
-        details,
-      })
-    } else {
-      await ctx.table('generation_votes').insert({ generationId, ip, userId, details, vote })
+    if (existingVote) {
+      if (existingVote.vote === vote) return null
+      return await existingVote.patch({ vote })
     }
+
+    return await ctx.table('generation_votes').insert({ generationId, vote, constituent })
+  },
+})
+
+export const register = mutation({
+  args: {
+    generationId: zid('generations'),
+    vote: generationVoteFields.vote,
+    constituent: generationVoteFields.constituent,
+    ip: z.string(),
+    metadata: z.any().optional(),
+  },
+  handler: async (ctx, { generationId, vote, constituent, ip, metadata }) => {
+    const existingVote = await ctx
+      .table('generation_votes', 'constituant_vote', (q) =>
+        q.eq('constituent', constituent).eq('generationId', generationId),
+      )
+      .unique()
+
+    if (existingVote) {
+      return await existingVote.patch({ vote, ip, metadata })
+    }
+
+    return await ctx
+      .table('generation_votes')
+      .insert({ generationId, vote, constituent, ip, metadata })
   },
 })
 

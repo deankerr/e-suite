@@ -1,4 +1,6 @@
 import { Badge, IconButton } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
+import { z } from 'zod'
 
 import { api } from '@/convex/_generated/api'
 import { useLocalOwnVotesCache } from '@/lib/hooks'
@@ -22,21 +24,35 @@ type VoteButtonPanelProps = {
   votes?: FunctionReturnType<typeof api.generation.getVotes>
 }
 
+const registerResponseSchema = z.object({ constituent: z.string() })
+
 export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) => {
-  const [ownVoteCache, setOwnVoteCache] = useLocalOwnVotesCache()
+  const [voteCache, setVoteCache] = useLocalOwnVotesCache()
+  const voteMutation = useMutation(api.generation.vote)
 
   const sendVote = async (vote: GenerationVoteNames) => {
     try {
       if (!votes) return
-      setOwnVoteCache({ ...ownVoteCache, [generationId]: vote })
 
-      const body = JSON.stringify({ vote, generationId })
-      console.log('START', body)
+      if (!voteCache.constituent) {
+        const body = JSON.stringify({ vote, generationId })
+        console.log('START', body)
 
-      await fetch('/api/vote', {
-        method: 'POST',
-        body,
-      })
+        const response = await fetch('/api/register-to-vote', {
+          method: 'POST',
+          body,
+        })
+
+        const { constituent } = registerResponseSchema.parse(await response.json())
+        setVoteCache(({ votes }) => ({ constituent, votes: { ...votes, [generationId]: vote } }))
+        console.log('got constituent', constituent)
+        return
+      }
+
+      const { constituent } = voteCache
+      await voteMutation({ constituent, vote, generationId })
+      setVoteCache(({ votes }) => ({ constituent, votes: { ...votes, [generationId]: vote } }))
+
       console.log('END')
     } catch (err) {
       console.error(err)
@@ -53,8 +69,8 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
     >
       <div className="mx-auto w-fit translate-y-0 scale-100 gap-1 rounded bg-overlay px-1 py-1 opacity-50 transition-all flex-between hover:-translate-y-1.5 hover:scale-150 hover:opacity-100">
         {voteClasses.map(({ name, color, icon }) => {
-          const isSelected = ownVoteCache[generationId] === name
-          const hasVoted = !!ownVoteCache[generationId]
+          const isSelected = voteCache.votes[generationId] === name
+          const hasVoted = !!voteCache.votes[generationId]
           const count = votes[name]
 
           return (

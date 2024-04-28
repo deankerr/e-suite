@@ -16,10 +16,6 @@ http.route({
   pathPrefix: '/i/',
   method: 'GET',
   handler: httpAction(async (ctx, request) => {
-    const hd: any[] = []
-    request.headers.forEach((value, key) => hd.push(`${key}: ${value}`))
-    console.log(hd)
-
     const { pathname } = new URL(request.url)
     const path = pathname.split('/')[2] as string
     const rid = path.slice(0, 6)
