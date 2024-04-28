@@ -1,7 +1,7 @@
 'use client'
 
-import { useMessageQuery } from '@/app/queries'
 import { MessagePageView } from '@/components/pages/MessagePageView'
+import { useMessageQuery } from '@/lib/queries'
 
 export default function MessagePage({ params: { mrid: rid } }: { params: { mrid: string } }) {
   const result = useMessageQuery({ rid })

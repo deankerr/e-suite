@@ -1,9 +1,9 @@
 'use client'
 
-import { useMessageQuery } from '@/app/queries'
 import { MessagePageView } from '@/components/pages/MessagePageView'
 import { ModalPageView } from '@/components/pages/ModalPageView'
 import { Spinner } from '@/components/ui/Spinner'
+import { useMessageQuery } from '@/lib/queries'
 
 export default function MessageViewModalPage({
   params: { mrid: rid },

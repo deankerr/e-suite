@@ -2,11 +2,11 @@
 
 import { MessagesSquareIcon } from 'lucide-react'
 
-import { useTitle } from '@/app/hooks'
-import { useThreadFeed } from '@/app/queries'
 import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ThreadMessage } from '@/components/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useTitle } from '@/lib/hooks'
+import { useThreadFeed } from '@/lib/queries'
 import { CreateMessageControlsAlpha } from '../CreateMessageControlsAlpha'
 import InfiniteScroll from '../ui/InfiniteScroll'
 import { Spinner } from '../ui/Spinner'

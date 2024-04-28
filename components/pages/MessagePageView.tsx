@@ -3,7 +3,7 @@
 import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
-import { useTitle } from '@/app/hooks'
+import { useTitle } from '@/lib/hooks'
 import { GenerationDataList } from '../GenerationDataList'
 import { GenerationImage } from '../images/GenerationImage'
 import { JustifiedRowGrid } from '../images/JustifiedRowGrid'
