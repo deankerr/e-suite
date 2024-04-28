@@ -15,13 +15,13 @@ export const Client = ({}: ClientProps) => {
     <>
       <Card>
         <Heading size="4">useAuth()</Heading>
-        <pre className="m-2 border">{JSON.stringify(auth, null, 2)}</pre>
-        <pre className="m-2 border">{JSON.stringify(token, null, 2)}</pre>
+        <pre className="m-2 overflow-auto border">{JSON.stringify(auth, null, 2)}</pre>
+        <pre className="m-2 overflow-auto border">{JSON.stringify(token, null, 2)}</pre>
       </Card>
 
       <Card>
         <Heading size="4">useUser()</Heading>
-        <pre className="m-2 border">{JSON.stringify(user, null, 2)}</pre>
+        <pre className="m-2 overflow-auto border">{JSON.stringify(user, null, 2)}</pre>
       </Card>
     </>
   )

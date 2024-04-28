@@ -10,17 +10,17 @@ export default async function Page() {
   const cuser = await currentUser()
 
   return (
-    <div className="gap-2 p-4 flex-center">
+    <div className="gap-2 space-y-4 p-4">
       <Card>
         <Heading size="4">auth()</Heading>
-        <pre className="m-2 border">{JSON.stringify(sauth, null, 2)}</pre>
+        <pre className="m-2 overflow-auto border">{JSON.stringify(sauth, null, 2)}</pre>
 
-        <pre className="m-2 border">{JSON.stringify(token, null, 2)}</pre>
+        <pre className="m-2 overflow-auto border">{JSON.stringify(token, null, 2)}</pre>
       </Card>
 
       <Card>
         <Heading size="4">currentUser()</Heading>
-        <pre className="m-2 border">{JSON.stringify(cuser, null, 2)}</pre>
+        <pre className="m-2 overflow-auto border">{JSON.stringify(cuser, null, 2)}</pre>
       </Card>
 
       <Client />
