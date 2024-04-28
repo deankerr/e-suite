@@ -6,6 +6,8 @@ import { usePaginatedQuery } from 'convex/react'
 
 import { GenerationImage } from '@/components/images/GenerationImage'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
+import InfiniteScroll from '@/components/ui/InfiniteScroll'
+import { Spinner } from '@/components/ui/Spinner'
 import { api } from '@/convex/_generated/api'
 import { useTitle } from '../hooks'
 
@@ -14,7 +16,7 @@ const initial = 10
 export default function Page() {
   useTitle('image feed')
 
-  const images = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
+  const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
   const [itemsPerRow, setItemsPerRow] = useState(0)
   let count = 0
   return (
@@ -27,7 +29,7 @@ export default function Page() {
         />
       </div>
       <JustifiedRowGrid
-        items={images.results}
+        items={pager.results}
         gap={8}
         itemsPerRow={itemsPerRow ?? undefined}
         render={(generation, commonHeight) => (
@@ -39,6 +41,19 @@ export default function Page() {
           />
         )}
       />
+
+      <InfiniteScroll
+        hasMore={pager.status === 'CanLoadMore'}
+        isLoading={pager.isLoading}
+        next={() => pager.loadMore(16)}
+        threshold={1}
+      >
+        {pager.status !== 'Exhausted' && (
+          <div className="mx-auto text-center">
+            <Spinner className="size-8" />
+          </div>
+        )}
+      </InfiniteScroll>
     </div>
   )
 }

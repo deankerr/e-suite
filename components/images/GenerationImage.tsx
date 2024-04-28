@@ -1,12 +1,13 @@
 import { forwardRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
-import { SkullIcon, SquirrelIcon, ThumbsDownIcon, ThumbsUpIcon, Trash2Icon } from 'lucide-react'
+import { Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
+import { SpriteIcon } from '../ui/SpriteIcon'
 
 import type { Generation } from '@/convex/external'
 
@@ -61,7 +62,7 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
           <div className="self-end rounded-lg bg-overlay p-2 flex-end">
             <IconButton
               color="red"
-              size="2"
+              size="3"
               onClick={() => {
                 removeGeneration({ generationId: generation._id })
                   .then(() => toast.success('Generation removed'))
@@ -71,25 +72,25 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
                   })
               }}
             >
-              <Trash2Icon className="size-5 stroke-[1.5]" />
+              <Trash2Icon className="" />
             </IconButton>
           </div>
 
-          <div className="gap-5 rounded-lg bg-overlay p-2 px-4 flex-center">
-            <IconButton>
-              <ThumbsUpIcon />
+          <div className="gap-5 rounded-lg bg-overlay px-3 py-2 flex-between">
+            <IconButton variant="solid" size="3" color="red">
+              <SpriteIcon icon="game-icons-skull-crossed-bones" />
             </IconButton>
 
-            <IconButton>
-              <ThumbsDownIcon />
+            <IconButton variant="solid" size="3" color="amber" className="text-white">
+              <SpriteIcon icon="game-icons-thumb-down" />
             </IconButton>
 
-            <IconButton>
-              <SkullIcon />
+            <IconButton variant="solid" size="3" color="grass">
+              <SpriteIcon icon="game-icons-thumb-up" />
             </IconButton>
 
-            <IconButton>
-              <SquirrelIcon />
+            <IconButton variant="solid" size="3" color="cyan">
+              <SpriteIcon icon="game-icons-laurels-trophy" />
             </IconButton>
           </div>
         </div>

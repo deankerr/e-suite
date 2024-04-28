@@ -20,7 +20,7 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
   const { message, generations } = content
 
   const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
-  const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 768, 1024]
+  const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 900, 1024]
   const errors = new Set(
     generations
       ?.filter((generation) => generation.result?.type === 'error')
