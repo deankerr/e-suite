@@ -1,5 +1,6 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { Button, Heading } from '@radix-ui/themes'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { HomeIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
@@ -43,6 +44,9 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
               </Link>
             </Button>
           </SignedIn>
+          <Authenticated>Authenticated</Authenticated>
+          <AuthLoading>AuthLoading</AuthLoading>
+          <Unauthenticated>Unauthenticated</Unauthenticated>
         </div>
 
         <div className="shrink-0 flex-end">
