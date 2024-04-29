@@ -90,7 +90,9 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
         )}
 
         {/* votes */}
-        <VoteButtonPanel generationId={generation._id} votes={generation.votes} />
+        {!isGenerating && (
+          <VoteButtonPanel generationId={generation._id} votes={generation.votes} />
+        )}
       </div>
     )
   },
