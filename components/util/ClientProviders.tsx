@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { useKeyStroke } from '@react-hooks-library/core'
 import { ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
+import { Provider as Jotai } from 'jotai'
 import { Leva, useControls } from 'leva'
 
 import { environment } from '@/lib/utils'
@@ -20,14 +21,16 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
   useControls({ environment: { value: environment, editable: false, order: -1 } })
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-      {children}
-      <Leva
-        collapsed
-        hidden={hideLeva}
-        titleBar={{
-          position: { x: 0, y: 48 },
-        }}
-      />
+      <Jotai>
+        {children}
+        <Leva
+          collapsed
+          hidden={hideLeva}
+          titleBar={{
+            position: { x: 0, y: 48 },
+          }}
+        />
+      </Jotai>
     </ConvexProviderWithClerk>
   )
 }

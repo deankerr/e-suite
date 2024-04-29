@@ -9,8 +9,7 @@ import { cn } from '@/lib/utils'
 import { SpriteIcon } from '../ui/SpriteIcon'
 
 import type { Id } from '@/convex/_generated/dataModel'
-import type { GenerationVoteNames } from '@/convex/external'
-import type { FunctionReturnType } from 'convex/server'
+import type { Generation, GenerationVoteNames } from '@/convex/external'
 
 const voteClasses = [
   { name: 'bad', color: 'red', icon: 'game-icons-skull-crossed-bones' },
@@ -21,7 +20,7 @@ const voteClasses = [
 
 type VoteButtonPanelProps = {
   generationId: Id<'generations'>
-  votes?: FunctionReturnType<typeof api.generation.getVotes>
+  votes?: Generation['votes']
 }
 
 const registerResponseSchema = z.object({ constituent: z.string() })
@@ -44,7 +43,6 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
 
         const { constituent } = registerResponseSchema.parse(await response.json())
         setVoteCache(({ votes }) => ({ constituent, votes: { ...votes, [generationId]: vote } }))
-        console.log('got constituent', constituent)
       } else {
         const { constituent } = voteCache
         await voteMutation({ constituent, vote, generationId })
@@ -63,7 +61,7 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
         'absolute inset-x-0 bottom-0 translate-y-full transition-all group-hover:translate-y-0',
       )}
     >
-      <div className="mx-auto w-fit translate-y-0 scale-100 gap-1 rounded bg-overlay px-1 py-1 opacity-50 transition-all flex-between hover:-translate-y-1.5 hover:scale-150 hover:opacity-100">
+      <div className="mx-auto w-fit translate-y-0 scale-100 gap-1 rounded bg-overlay px-1 py-1 opacity-80 transition-all flex-between hover:-translate-y-1.5 hover:scale-150 hover:opacity-100">
         {voteClasses.map(({ name, color, icon }) => {
           const isSelected = voteCache.votes[generationId] === name
           const hasVoted = !!voteCache.votes[generationId]
@@ -76,20 +74,21 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
                 variant={isSelected ? 'solid' : 'surface'}
                 size="1"
                 className={cn(
-                  'relative overflow-hidden p-0.5 opacity-80 hover:opacity-90',
-                  hasVoted && !isSelected && 'grayscale-[.8]',
+                  'relative overflow-hidden p-0.5',
+                  hasVoted && !isSelected && 'grayscale',
                 )}
                 onClick={() => void tryVote(name)}
               >
                 <SpriteIcon icon={icon} />
               </IconButton>
+
               <Badge
                 color={color}
                 variant={isSelected ? 'solid' : 'surface'}
                 size="1"
                 radius="large"
                 className={cn(
-                  'absolute -right-1.5 -top-2 scale-75 px-1 py-0 shadow',
+                  'invisible absolute -right-1.5 -top-2 scale-75 px-1 py-0 shadow group-hover:visible',
                   !count && 'hidden',
                 )}
               >

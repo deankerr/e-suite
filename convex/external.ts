@@ -31,6 +31,7 @@ const units = {
     .object({
       ...generationFields,
       ...ridFields,
+      votes: z.record(z.string(), z.number()),
       _creationTime: z.number(),
       _id: zid('generations'),
     })

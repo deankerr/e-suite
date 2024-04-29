@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { external } from './external'
 import { mutation, query } from './functions'
-import { runGenerationInference } from './generation'
+import { getGenerationXL, runGenerationInference } from './generation'
 import { messageFields, ridField } from './schema'
 import { generateRid, zPaginationOptValidator } from './utils'
 
@@ -40,10 +40,9 @@ export const remove = mutation({
 })
 
 export const getMessageEntXL = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const generations = await message.edge('generations').map(async (generation) => ({
-    ...generation,
-    image: await generation.edge('generated_image'),
-  }))
+  const generations = await message
+    .edge('generations')
+    .map(async (generation) => await getGenerationXL(ctx, generation))
 
   const xl = {
     message,

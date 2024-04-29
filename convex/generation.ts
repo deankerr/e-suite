@@ -29,10 +29,18 @@ export const getManyI = internalQuery({
   handler: async (ctx, { generationIds }) => await ctx.table('generations').getManyX(generationIds),
 })
 
-export const getGenerationImage = async (ctx: QueryCtx, generation: Ent<'generations'>) => {
+export const getGenerationXL = async (ctx: QueryCtx, generation: Ent<'generations'>) => {
+  const votes = await generation.edge('generation_votes')
+  const tally = R.pipe(
+    votes,
+    R.groupBy.strict(({ vote }) => (vote === 'none' ? undefined : vote)),
+    R.mapValues((value) => value?.length ?? 0),
+  )
+
   const generationXL = {
     ...generation,
     image: await generation.edge('generated_image'),
+    votes: tally,
   }
 
   return external.xl.generation.parse(generationXL)
@@ -44,7 +52,7 @@ export const get = query({
   },
   handler: async (ctx, { rid }) => {
     const generation = await ctx.table('generations', 'rid', (q) => q.eq('rid', rid)).firstX()
-    return await getGenerationImage(ctx, generation)
+    return await getGenerationXL(ctx, generation)
   },
 })
 
@@ -58,10 +66,7 @@ export const _list = query({
       .table('generations')
       .order(order)
       .paginate(paginationOpts)
-      .map(async (generation) => ({
-        ...generation,
-        image: await generation.edge('generated_image'),
-      }))
+      .map(async (generation) => await getGenerationXL(ctx, generation))
   },
 })
 
@@ -212,22 +217,36 @@ export const register = mutation({
   },
 })
 
-export const getVotes = query({
-  args: {
-    generationId: zid('generations'),
-  },
-  handler: async (ctx, { generationId }) => {
-    const votes =
-      (await ctx.table('generation_votes', 'generationId', (q) =>
-        q.eq('generationId', generationId),
-      )) ?? []
+export const _generateFakeVotes = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const generations = await ctx.table('generations')
 
-    const tally = R.pipe(
-      votes,
-      R.groupBy.strict((v) => v.vote),
-      R.omit(['none']),
-      R.mapValues((value) => value?.length ?? 0),
-    )
-    return tally
+    const tovote = generations.flatMap(({ _id }) => {
+      const best = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
+        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        vote: 'best' as const,
+        generationId: _id,
+      }))
+      const good = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
+        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        vote: 'good' as const,
+        generationId: _id,
+      }))
+      const poor = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
+        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        vote: 'poor' as const,
+        generationId: _id,
+      }))
+      const bad = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
+        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        vote: 'bad' as const,
+        generationId: _id,
+      }))
+      return [...best, ...good, ...poor, ...bad]
+    })
+
+    await ctx.table('generation_votes').insertMany(tovote)
+    console.log('created votes:', tovote.length)
   },
 })

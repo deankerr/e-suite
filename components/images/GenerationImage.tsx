@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
 import { toast } from 'sonner'
@@ -31,8 +31,6 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
     const isGenerating = !image && generation.result?.type !== 'error'
 
     const removeGeneration = useMutation(api.generation.remove)
-
-    const votes = useQuery(api.generation.getVotes, { generationId: generation._id })
 
     return (
       <div
@@ -83,7 +81,7 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
         </div>
 
         {/* votes */}
-        <VoteButtonPanel generationId={generation._id} votes={votes} />
+        <VoteButtonPanel generationId={generation._id} votes={generation.votes} />
       </div>
     )
   },
