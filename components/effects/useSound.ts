@@ -8,7 +8,7 @@ const sounds = {
   boo: '/audio/sc2k-boo.mp3',
 } as const
 
-export const useSoundEffect = () => {
+export const useSound = () => {
   const { load, cleanup } = useAudioPlayer()
 
   const playSound = (key: keyof typeof sounds) => {
@@ -22,9 +22,7 @@ export const useSoundEffect = () => {
   })
 
   useEffect(() => {
-    console.log('audio player loaded')
     return () => {
-      console.log('audio player cleanup')
       cleanup()
     }
   }, [cleanup])

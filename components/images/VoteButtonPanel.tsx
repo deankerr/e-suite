@@ -5,6 +5,8 @@ import { useMutation, useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { useSingleFlight } from '@/lib/useSingleFlight'
 import { cn } from '@/lib/utils'
+import { useConfetti } from '../effects/useConfetti'
+import { useSound } from '../effects/useSound'
 import { SpriteIcon } from '../ui/SpriteIcon'
 
 import type { Id } from '@/convex/_generated/dataModel'
@@ -26,14 +28,25 @@ const ckey = crypto.randomUUID()
 
 export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) => {
   const [constituent] = useLocalStorage('e-constituent', ckey)
-
   const myVote = useQuery(api.generation.getMyVote, { generationId, constituent })
   const voteMutation = useMutation(api.generation.vote)
+
+  const { playConfetti } = useConfetti()
+  const { playSound } = useSound()
 
   const sendVote = async (vote: GenerationVoteNames) => {
     try {
       if (!myVote || !constituent) return
       await voteMutation({ vote, constituent, generationId })
+
+      if (vote === 'best') {
+        playConfetti()
+        playSound('yay')
+      }
+
+      if (vote !== 'best' && myVote === 'best') {
+        playSound('boo')
+      }
     } catch (err) {
       console.error(err)
     }
