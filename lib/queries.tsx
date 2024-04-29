@@ -14,3 +14,9 @@ export const useMessageQuery = ({ rid }: { rid: string }) => {
 
   return result
 }
+
+export const useGeneration = ({ rid }: { rid: string }) => {
+  const result = useQuery(api.generation.get, { rid })
+
+  return result
+}

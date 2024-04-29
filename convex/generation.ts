@@ -3,13 +3,14 @@ import * as R from 'remeda'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
+import { external } from './external'
 import { internalAction, internalMutation, internalQuery, mutation, query } from './functions'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
 import { generationFields, generationResultField, generationVoteFields } from './schema'
 import { generateRid, insist, runWithRetries, zPaginationOptValidator } from './utils'
 
-import type { Ent, MutationCtx } from './types'
+import type { Ent, MutationCtx, QueryCtx } from './types'
 
 export const textToImageModels = SinkinModels
 
@@ -26,6 +27,25 @@ export const getManyI = internalQuery({
     generationIds: zid('generations').array(),
   },
   handler: async (ctx, { generationIds }) => await ctx.table('generations').getManyX(generationIds),
+})
+
+export const getGenerationImage = async (ctx: QueryCtx, generation: Ent<'generations'>) => {
+  const generationXL = {
+    ...generation,
+    image: await generation.edge('generated_image'),
+  }
+
+  return external.xl.generation.parse(generationXL)
+}
+
+export const get = query({
+  args: {
+    rid: z.string(),
+  },
+  handler: async (ctx, { rid }) => {
+    const generation = await ctx.table('generations', 'rid', (q) => q.eq('rid', rid)).firstX()
+    return await getGenerationImage(ctx, generation)
+  },
 })
 
 export const _list = query({

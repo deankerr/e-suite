@@ -2,6 +2,7 @@
 
 import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
+import Link from 'next/link'
 
 import { useTitle } from '@/lib/hooks'
 import { GenerationDataList } from '../GenerationDataList'
@@ -45,12 +46,14 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
           items={imageList}
           breakpoints={breakpoints}
           render={(generation, commonHeight) => (
-            <GenerationImage
-              key={generation._id}
-              generation={generation}
-              containerHeight={commonHeight}
-              imageProps={{ priority: true }}
-            />
+            <Link href={`/image/${generation.rid}`}>
+              <GenerationImage
+                key={generation._id}
+                generation={generation}
+                containerHeight={commonHeight}
+                imageProps={{ priority: true }}
+              />
+            </Link>
           )}
         />
       </div>

@@ -63,6 +63,7 @@ export const external = {
   unit: units,
   xl: {
     message: messageXL,
+    generation: generationWithImage,
   },
 }
 
