@@ -39,6 +39,17 @@ export const remove = mutation({
   },
 })
 
+export const getById = query({
+  args: {
+    messageId: zid('messages'),
+  },
+
+  handler: async (ctx, { messageId }) => {
+    const message = await ctx.table('messages').getX(messageId)
+    return external.unit.message.parse(message)
+  },
+})
+
 export const getMessageEntXL = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   const generations = await message
     .edge('generations')

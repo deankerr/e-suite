@@ -79,7 +79,7 @@ export const generationFields = {
   width: z.number().min(512).max(2048),
   height: z.number().min(512).max(2048),
   prompt: z.string(),
-  seed: z.number(),
+  seed: z.number().optional(),
 
   // common optional
   negative_prompt: z.string().optional(),
