@@ -15,16 +15,20 @@ export const PartyBoy = () => {
     confetti: button(() => playConfetti()),
   })
 
-  return confettiInstances.map(({ id, onComplete }) => (
-    <ReactConfetti
-      key={id}
-      width={window.width || undefined}
-      height={window.height || undefined}
-      recycle={false}
-      gravity={0.4}
-      numberOfPieces={400}
-      tweenDuration={6000}
-      onConfettiComplete={onComplete}
-    />
-  ))
+  return (
+    <div className="pointer-events-none fixed inset-0">
+      {confettiInstances.map(({ id, onComplete }) => (
+        <ReactConfetti
+          key={id}
+          width={window.width || undefined}
+          height={window.height || undefined}
+          recycle={false}
+          gravity={0.4}
+          numberOfPieces={400}
+          tweenDuration={6000}
+          onConfettiComplete={onComplete}
+        />
+      ))}
+    </div>
+  )
 }

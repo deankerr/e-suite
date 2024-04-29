@@ -36,7 +36,7 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
     return (
       <div
-        className="group overflow-hidden rounded-lg border"
+        className="group overflow-hidden rounded-xl"
         style={{ aspectRatio: width / height, width: containerWidth, height: containerHeight }}
         ref={forwardedRef}
       >
