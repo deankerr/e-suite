@@ -18,10 +18,14 @@ export const useLocalOwnVotesCache = () => {
 
   const debugcache = JSON.stringify(voteCache)
 
-  const [{ cache }, set] = useControls('cache', () => ({
-    cache: { value: debugcache, rows: 5, editable: false },
-    purge: button(() => setVoteCache({ votes: {} })),
-  }))
+  const [{ cache }, set] = useControls(
+    'voteCache',
+    () => ({
+      cache: { value: debugcache, rows: 5, editable: false },
+      purge: button(() => setVoteCache({ votes: {} })),
+    }),
+    { collapsed: true },
+  )
   if (debugcache !== cache) set({ cache })
 
   return [voteCache, setVoteCache] as const

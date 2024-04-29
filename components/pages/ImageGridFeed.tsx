@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { usePaginatedQuery } from 'convex/react'
 import { useControls } from 'leva'
 
@@ -15,11 +16,21 @@ type ImageGridFeedProps = { props?: unknown }
 const initial = 10
 export const ImageGridFeed = ({}: ImageGridFeedProps) => {
   useTitle('image feed')
-  const gridDebug = useControls('image-grid', {
-    infinite: true,
-  })
 
   const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
+
+  const [{ infinite, status }, set] = useControls('ImageGridFeed', () => ({
+    infinite: true,
+    status: pager.status,
+  }))
+
+  useEffect(() => {
+    if (status !== pager.status) {
+      set({
+        status: pager.status,
+      })
+    }
+  }, [pager.status, set, status])
 
   let count = 0
   return (
@@ -37,11 +48,14 @@ export const ImageGridFeed = ({}: ImageGridFeedProps) => {
         )}
       />
 
-      {gridDebug.infinite && (
+      {infinite && (
         <InfiniteScroll
           hasMore={pager.status === 'CanLoadMore'}
           isLoading={pager.isLoading}
-          next={() => pager.loadMore(16)}
+          next={() => {
+            console.log('load more()', 'current', pager.results.length)
+            pager.loadMore(16)
+          }}
           threshold={1}
         >
           {pager.status !== 'Exhausted' && (
