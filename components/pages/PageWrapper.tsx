@@ -37,7 +37,9 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
 
           <SignedOut>
             <SignInButton>
-              <Button>Sign In</Button>
+              <Button variant="soft" size="1">
+                Sign In
+              </Button>
             </SignInButton>
           </SignedOut>
         </div>

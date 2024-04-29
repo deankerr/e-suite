@@ -1,6 +1,7 @@
 'use client'
 
 import { forwardRef } from 'react'
+import { useUser } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
@@ -34,6 +35,8 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
     const removeGeneration = useMutation(api.generation.remove)
 
+    const { user } = useUser()
+    const isAdmin = user?.publicMetadata.role === 'admin'
     return (
       <div
         className="group overflow-hidden rounded-xl"
@@ -65,24 +68,26 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
 
         {/* panels */}
         {/* options */}
-        <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100">
-          <IconButton
-            variant="surface"
-            color="red"
-            size="1"
-            className="opacity-75 hover:opacity-100"
-            onClick={() => {
-              removeGeneration({ generationId: generation._id })
-                .then(() => toast.success('Generation removed'))
-                .catch((err) => {
-                  if (err instanceof Error) toast.error(err.message)
-                  else toast.error('Unknown error')
-                })
-            }}
-          >
-            <Trash2Icon className="size-5" />
-          </IconButton>
-        </div>
+        {isAdmin && (
+          <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100">
+            <IconButton
+              variant="surface"
+              color="red"
+              size="1"
+              className="opacity-75 hover:opacity-100"
+              onClick={() => {
+                removeGeneration({ generationId: generation._id })
+                  .then(() => toast.success('Generation removed'))
+                  .catch((err) => {
+                    if (err instanceof Error) toast.error(err.message)
+                    else toast.error('Unknown error')
+                  })
+              }}
+            >
+              <Trash2Icon className="size-5" />
+            </IconButton>
+          </div>
+        )}
 
         {/* votes */}
         <VoteButtonPanel generationId={generation._id} votes={generation.votes} />
