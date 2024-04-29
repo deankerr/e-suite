@@ -177,6 +177,8 @@ export const vote = mutation({
     constituent: generationVoteFields.constituent,
   },
   handler: async (ctx, { generationId, vote, constituent }) => {
+    const userId = ctx.viewerId ?? undefined
+
     const existingVote = await ctx
       .table('generation_votes', 'constituant_vote', (q) =>
         q.eq('constituent', constituent).eq('generationId', generationId),
@@ -184,36 +186,29 @@ export const vote = mutation({
       .unique()
 
     if (existingVote) {
-      if (existingVote.vote === vote) return null
-      return await existingVote.patch({ vote })
+      if (existingVote.vote === vote) return null // repeat vote
+      const hasAnonVoterLoggedIn = userId && !existingVote.userId
+      const args = hasAnonVoterLoggedIn ? { vote, userId } : { vote }
+      return await existingVote.patch(args)
     }
 
-    return await ctx.table('generation_votes').insert({ generationId, vote, constituent })
+    return await ctx.table('generation_votes').insert({ generationId, vote, constituent, userId })
   },
 })
 
-export const register = mutation({
+export const getMyVote = query({
   args: {
     generationId: zid('generations'),
-    vote: generationVoteFields.vote,
     constituent: generationVoteFields.constituent,
-    ip: z.string(),
-    metadata: z.any().optional(),
   },
-  handler: async (ctx, { generationId, vote, constituent, ip, metadata }) => {
-    const existingVote = await ctx
+  handler: async (ctx, { generationId, constituent }) => {
+    const vote = await ctx
       .table('generation_votes', 'constituant_vote', (q) =>
         q.eq('constituent', constituent).eq('generationId', generationId),
       )
       .unique()
 
-    if (existingVote) {
-      return await existingVote.patch({ vote, ip, metadata })
-    }
-
-    return await ctx
-      .table('generation_votes')
-      .insert({ generationId, vote, constituent, ip, metadata })
+    return vote ? vote.vote : 'none'
   },
 })
 
@@ -221,27 +216,28 @@ export const _generateFakeVotes = internalMutation({
   args: {},
   handler: async (ctx) => {
     const generations = await ctx.table('generations')
+    const constituent = crypto.randomUUID()
 
-    const tovote = generations.flatMap(({ _id }) => {
+    const tovote = generations.flatMap(({ _id: generationId }) => {
       const best = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
-        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        constituent,
         vote: 'best' as const,
-        generationId: _id,
+        generationId,
       }))
       const good = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
-        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        constituent,
         vote: 'good' as const,
-        generationId: _id,
+        generationId,
       }))
       const poor = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
-        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        constituent,
         vote: 'poor' as const,
-        generationId: _id,
+        generationId,
       }))
       const bad = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
-        constituent: 'aaaaaaaaaaaaaaaaaaaa',
+        constituent,
         vote: 'bad' as const,
-        generationId: _id,
+        generationId,
       }))
       return [...best, ...good, ...poor, ...bad]
     })

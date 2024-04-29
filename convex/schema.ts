@@ -107,7 +107,7 @@ export const generationVoteFields = {
 
   userId: zid('users').optional(),
   ip: z.string().optional(),
-  constituent: z.string().length(21),
+  constituent: z.string().uuid(),
   metadata: z.any().optional(),
 }
 const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
