@@ -56,6 +56,9 @@ importers:
       '@radix-ui/themes':
         specifier: ^3.0.2
         version: 3.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.3.0))(react@18.3.0)
+      '@react-hooks-library/core':
+        specifier: ^0.6.2
+        version: 0.6.2(react@18.3.0)
       '@react-three/fiber':
         specifier: ^8.16.2
         version: 8.16.2(react-dom@18.2.0(react@18.3.0))(react@18.3.0)(three@0.163.0)
@@ -1561,6 +1564,14 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  '@react-hooks-library/core@0.6.2':
+    resolution: {integrity: sha512-Ca6ccj9mfUiQ0hbDJV0hzUaweZU7D0E5Xwtp3ba5oT6/yWj1tzoPe0y3AwGQyUSUKA5G6OADylU2fwEqZwrpNA==}
+    peerDependencies:
+      react: '>=16.9.0'
+
+  '@react-hooks-library/shared@0.6.2':
+    resolution: {integrity: sha512-tasvVgcoRhnHYZSVfQjDK7VDviVrO9BqqS/yEvjJ4/QRTVFQTNmt5Jfj3ym0Uju2B63Dc9892DuLhb9V9oysWA==}
 
   '@react-three/fiber@8.16.2':
     resolution: {integrity: sha512-3Z5FW8mxzomBbrw2iF0lNOAlNBr2OK6HR0NM416PzcTs0UcSoPj/nD4eqmrV5Kut6kvCc/TJua5LyeoPE7vSmw==}
@@ -6225,6 +6236,13 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.0
       '@types/react-dom': 18.3.0
+
+  '@react-hooks-library/core@0.6.2(react@18.3.0)':
+    dependencies:
+      '@react-hooks-library/shared': 0.6.2
+      react: 18.3.0
+
+  '@react-hooks-library/shared@0.6.2': {}
 
   '@react-three/fiber@8.16.2(react-dom@18.2.0(react@18.3.0))(react@18.3.0)(three@0.163.0)':
     dependencies:

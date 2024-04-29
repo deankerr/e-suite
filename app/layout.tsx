@@ -9,7 +9,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { PartyBoy } from '@/components/effects/PartyBoy'
-import { ClientProviders } from '@/components/providers/ClientProviders'
+import { ClientProviders } from '@/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { cn } from '@/lib/utils'
 

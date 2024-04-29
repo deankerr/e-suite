@@ -11,9 +11,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 function getEnvironment() {
-  const prev = process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
-  const dev = process.env.NODE_ENV === 'development'
-  return dev ? 'dev' : prev ? 'prev' : 'prod'
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return 'prod'
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return 'prev'
+  if (process.env.NODE_ENV === 'development') return 'dev'
+  return 'prod'
 }
 export const environment = getEnvironment()
 
