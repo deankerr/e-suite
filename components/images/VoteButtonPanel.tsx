@@ -32,8 +32,8 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
 
   const sendVote = async (vote: GenerationVoteNames) => {
     try {
-      if (!votes || !constituent) return
-      await voteMutation({ constituent, vote, generationId })
+      if (!myVote || !constituent) return
+      await voteMutation({ vote, constituent, generationId })
     } catch (err) {
       console.error(err)
     }
@@ -44,10 +44,10 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
   return (
     <div
       className={cn(
-        'absolute inset-x-0 bottom-0 translate-y-full transition-all group-hover:translate-y-0',
+        'absolute inset-x-0 bottom-0 flex translate-y-full transition-all group-hover:translate-y-0',
       )}
     >
-      <div className="mx-auto w-fit translate-y-0 scale-100 gap-1 rounded bg-overlay px-1 py-1 opacity-80 transition-all flex-between hover:-translate-y-1.5 hover:scale-150 hover:opacity-100">
+      <div className="mx-auto mt-auto w-fit gap-4 rounded bg-overlay px-2 py-1 opacity-80 transition-all flex-between hover:opacity-100">
         {voteClasses.map(({ name, color, icon }) => {
           const isSelected = myVote === name
           const hasVoted = myVote !== 'none'
@@ -58,12 +58,12 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
               <IconButton
                 color={color}
                 variant={isSelected ? 'solid' : 'surface'}
-                size="1"
+                size="2"
                 className={cn(
                   'relative overflow-hidden p-0.5',
                   hasVoted && !isSelected && 'grayscale',
                 )}
-                onClick={() => void tryVote(name)}
+                onClick={() => void tryVote(isSelected ? 'none' : name)}
               >
                 <SpriteIcon icon={icon} />
               </IconButton>
@@ -71,10 +71,10 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
               <Badge
                 color={color}
                 variant={isSelected ? 'solid' : 'surface'}
-                size="1"
+                size="2"
                 radius="large"
                 className={cn(
-                  'invisible absolute -right-1.5 -top-2 scale-75 px-1 py-0 shadow group-hover:visible',
+                  'invisible absolute -right-1.5 -top-2 px-1 py-0 shadow group-hover:visible',
                   !count && 'hidden',
                 )}
               >

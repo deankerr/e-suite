@@ -46,14 +46,12 @@ export const MessagePageView = ({ content }: MessagePageViewProps) => {
           items={imageList}
           breakpoints={breakpoints}
           render={(generation, commonHeight) => (
-            <Link href={`/image/${generation.rid}`}>
-              <GenerationImage
-                key={generation._id}
-                generation={generation}
-                containerHeight={commonHeight}
-                imageProps={{ priority: true }}
-              />
-            </Link>
+            <GenerationImage
+              key={generation._id}
+              generation={generation}
+              containerHeight={commonHeight}
+              imageProps={{ priority: true }}
+            />
           )}
         />
       </div>

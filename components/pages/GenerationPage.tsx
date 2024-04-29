@@ -23,7 +23,7 @@ export const GenerationPage = ({ rid }: ImagePageProps) => {
     <PageWrapper icon={<ImageIcon />} title={title}>
       <div className="grid min-h-[calc(100vh-3.5rem)] gap-4 p-4 bg-dot-[#331E0B] md:grid-cols-[1fr_320px]">
         <div className="grid content-start justify-items-center">
-          {generation && <GenerationImage generation={generation} />}
+          {generation && <GenerationImage enablePageLink={false} generation={generation} />}
         </div>
 
         <div>

@@ -5,6 +5,7 @@ import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
+import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
@@ -18,11 +19,12 @@ type GenerationImageProps = {
   imageProps?: Partial<React.ComponentProps<typeof NextImage>>
   containerWidth?: number
   containerHeight?: number
+  enablePageLink?: boolean
 }
 
 export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
   function GenerationImage(
-    { generation, imageProps, containerWidth, containerHeight },
+    { generation, imageProps, containerWidth, containerHeight, enablePageLink = true },
     forwardedRef,
   ) {
     const { image } = generation
@@ -39,17 +41,19 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
         ref={forwardedRef}
       >
         {image && (
-          <NextImage
-            unoptimized
-            src={image.rid ? `/i/${image.rid}.webp` : `https://placehold.co/${width}x${height}`}
-            width={width}
-            height={height}
-            placeholder={image.blurDataUrl ? 'blur' : 'empty'}
-            blurDataURL={image.blurDataUrl}
-            className="h-full w-full object-cover"
-            alt=""
-            {...imageProps}
-          />
+          <OptionalLink enabled={enablePageLink} href={`/image/${generation.rid}`}>
+            <NextImage
+              unoptimized
+              src={image.rid ? `/i/${image.rid}.webp` : `https://placehold.co/${width}x${height}`}
+              width={width}
+              height={height}
+              placeholder={image.blurDataUrl ? 'blur' : 'empty'}
+              blurDataURL={image.blurDataUrl}
+              className="h-full w-full object-cover"
+              alt=""
+              {...imageProps}
+            />
+          </OptionalLink>
         )}
 
         {isGenerating && (
@@ -86,3 +90,10 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
     )
   },
 )
+
+const OptionalLink = ({
+  enabled,
+  ...props
+}: { enabled: boolean } & React.ComponentProps<typeof Link>) => {
+  return enabled ? <Link {...props} /> : props.children
+}
