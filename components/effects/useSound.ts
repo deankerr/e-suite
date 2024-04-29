@@ -14,6 +14,7 @@ export const useSound = () => {
   const playSound = (key: keyof typeof sounds) => {
     load(sounds[key], {
       autoplay: true,
+      initialVolume: 0.3,
     })
   }
 

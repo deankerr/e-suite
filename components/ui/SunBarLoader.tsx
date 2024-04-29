@@ -14,7 +14,7 @@ export const SunBarLoader = ({
   return (
     <div
       className={cn(
-        'absolute inset-0 grid h-screen place-content-center p-8 transition-all duration-1000 bg-sun-large-[#331E0B] *:opacity-30',
+        'absolute inset-0 grid h-screen place-content-center bg-[length:70%] p-8 transition-all duration-1000 bg-sun-large-[#331E0B] *:opacity-30 sm:bg-auto',
         alert && 'from-red-2 *:-hue-rotate-[30deg] *:saturate-[1.2]',
       )}
     >

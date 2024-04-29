@@ -29,7 +29,7 @@ export const GenerationDataList = ({ generations }: GenerationDataListProps) => 
       <DataList.Item>
         <DataList.Label>model id</DataList.Label>
         <DataList.Value>
-          <div className="flex-start">
+          <div className="gap-2 flex-start">
             {model?.name}
             <Code color="gray">{model_id}</Code>
           </div>

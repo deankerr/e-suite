@@ -1,6 +1,5 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { Button, Heading } from '@radix-ui/themes'
-import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { HomeIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -13,7 +12,7 @@ type PageHeaderProps = {
 
 export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) => {
   return (
-    <div className="mx-auto min-h-screen w-full max-w-8xl px-1 bg-sun-large-[#1E160F] sm:px-4">
+    <div className="mx-auto min-h-screen w-full max-w-8xl bg-[length:70%] px-1 bg-sun-large-[#1E160F] sm:bg-auto sm:px-4">
       <header className="flex h-14 items-center border-b border-gold-6 px-1">
         <div className="shrink-0 flex-start">{icon}</div>
 
@@ -21,10 +20,7 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
           {title}
         </Heading>
 
-        <div className="shrink-0 gap-2 px-2 flex-between">
-          <EnvDebug />
-          {topBar}
-        </div>
+        <div className="shrink-0 gap-2 px-2 flex-between">{topBar}</div>
 
         <div className="shrink-0 px-2">
           <SignedIn>
@@ -34,9 +30,6 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
               </Link>
             </Button>
           </SignedIn>
-          <Authenticated>Authenticated</Authenticated>
-          <AuthLoading>AuthLoading</AuthLoading>
-          <Unauthenticated>Unauthenticated</Unauthenticated>
         </div>
 
         <div className="shrink-0 flex-end">
@@ -50,22 +43,6 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
         </div>
       </header>
       {children}
-    </div>
-  )
-}
-
-const EnvDebug = () => {
-  const isDev = process.env.NODE_ENV === 'development'
-  const isProd = process.env.NODE_ENV === 'production'
-  const isTest = process.env.NODE_ENV === 'test'
-
-  const vercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV
-  return (
-    <div className="gap-2 font-mono text-xs flex-start">
-      {isDev && <span>{'isDev'}</span>}
-      {isProd && <span>{'isProd'}</span>}
-      {isTest && <span>{'isTest'}</span>}
-      {vercelEnv && <span>VERCEL: {vercelEnv}</span>}
     </div>
   )
 }
