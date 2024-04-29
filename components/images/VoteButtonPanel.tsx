@@ -36,7 +36,6 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
 
       if (!voteCache.constituent) {
         const body = JSON.stringify({ vote, generationId })
-        console.log('START', body)
 
         const response = await fetch('/api/register-to-vote', {
           method: 'POST',
@@ -46,14 +45,11 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
         const { constituent } = registerResponseSchema.parse(await response.json())
         setVoteCache(({ votes }) => ({ constituent, votes: { ...votes, [generationId]: vote } }))
         console.log('got constituent', constituent)
-        return
+      } else {
+        const { constituent } = voteCache
+        await voteMutation({ constituent, vote, generationId })
+        setVoteCache(({ votes }) => ({ constituent, votes: { ...votes, [generationId]: vote } }))
       }
-
-      const { constituent } = voteCache
-      await voteMutation({ constituent, vote, generationId })
-      setVoteCache(({ votes }) => ({ constituent, votes: { ...votes, [generationId]: vote } }))
-
-      console.log('END')
     } catch (err) {
       console.error(err)
     }

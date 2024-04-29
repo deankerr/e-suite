@@ -13,7 +13,7 @@ export const ModalPageView = ({ children }: ModalPageViewProps) => {
     <Dialog.Root defaultOpen onOpenChange={(open) => !open && router.back()} modal>
       <Dialog.Portal>
         <Theme>
-          <Dialog.Overlay className="fixed inset-0 grid place-items-center overflow-y-auto bg-overlay">
+          <Dialog.Overlay className="fixed inset-0 grid place-items-center overflow-y-auto bg-gray-1">
             <Dialog.Content className="w-full">{children}</Dialog.Content>
           </Dialog.Overlay>
         </Theme>

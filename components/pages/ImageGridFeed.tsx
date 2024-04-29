@@ -9,6 +9,7 @@ import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { Spinner } from '@/components/ui/Spinner'
 import { api } from '@/convex/_generated/api'
 import { useTitle } from '@/lib/hooks'
+import { ConfettiDropper } from '../effects/ConfettiDrop'
 import { PageWrapper } from './PageWrapper'
 
 type ImageGridFeedProps = { props?: unknown }
@@ -24,6 +25,7 @@ export const ImageGridFeed = ({}: ImageGridFeedProps) => {
   let count = 0
   return (
     <PageWrapper title="feed">
+      <ConfettiDropper />
       <JustifiedRowGrid
         items={pager.results}
         gap={8}

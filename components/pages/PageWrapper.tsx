@@ -13,7 +13,7 @@ type PageHeaderProps = {
 
 export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) => {
   return (
-    <div className="bg-sun-large-[#1E160F] mx-auto min-h-screen w-full max-w-8xl px-1 sm:px-4">
+    <div className="mx-auto min-h-screen w-full max-w-8xl px-1 bg-sun-large-[#1E160F] sm:px-4">
       <header className="flex h-14 items-center border-b border-gold-6 px-1">
         <div className="shrink-0 flex-start">{icon}</div>
 
@@ -46,7 +46,6 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
           </SignedOut>
         </div>
       </header>
-
       {children}
     </div>
   )
