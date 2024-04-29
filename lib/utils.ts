@@ -10,8 +10,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// zod_utilz
-// https://github.com/JacobWeisenburger/zod_utilz
+function getEnvironment() {
+  const prev = process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
+  const dev = process.env.NODE_ENV === 'development'
+  return dev ? 'dev' : prev ? 'prev' : 'prod'
+}
+export const environment = getEnvironment()
+
+// see https://github.com/JacobWeisenburger/zod_utilz
 const jsonLiteralSchema = z.union([z.string(), z.number(), z.boolean(), z.null()])
 type JsonLiteral = z.infer<typeof jsonLiteralSchema>
 type Json = JsonLiteral | { [key: string]: Json } | Json[]
