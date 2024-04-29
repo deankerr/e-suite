@@ -21,14 +21,24 @@ export const GenerationPage = ({ rid }: ImagePageProps) => {
 
   return (
     <PageWrapper icon={<ImageIcon />} title={title}>
-      <div className="grid min-h-[calc(100vh-3.5rem)] gap-4 p-4 bg-dot-[#331E0B] md:grid-cols-[1fr_320px]">
-        <div className="grid content-start justify-items-center">
-          {generation && <GenerationImage enablePageLink={false} generation={generation} />}
-        </div>
+      <div className="grid min-h-[calc(100vh-3.5rem)] grid-rows-[1fr_auto] gap-4 p-4 bg-dot-[#331E0B] md:grid-cols-[1fr_320px]">
+        {generation && (
+          <>
+            <div className="grid content-start justify-items-center">
+              <GenerationImage
+                enablePageLink={false}
+                generation={generation}
+                imageProps={{ priority: true }}
+              />
+            </div>
 
-        <div>
-          <Card>{generation && <GenerationDataList generations={[generation]} />}</Card>
-        </div>
+            <div>
+              <Card>
+                <GenerationDataList generations={[generation]} />
+              </Card>
+            </div>
+          </>
+        )}
       </div>
     </PageWrapper>
   )

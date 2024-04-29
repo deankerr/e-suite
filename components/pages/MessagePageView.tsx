@@ -2,7 +2,6 @@
 
 import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
-import Link from 'next/link'
 
 import { useTitle } from '@/lib/hooks'
 import { GenerationDataList } from '../GenerationDataList'
