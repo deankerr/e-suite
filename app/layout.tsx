@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
+import { PartyBoy } from '@/components/effects/PartyBoy'
 import { ClientProviders } from '@/components/providers/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { cn } from '@/lib/utils'
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               className="bg-gradient-radial from-orange-2 to-[84%]"
             >
               {children}
+              <PartyBoy />
               <Toaster richColors />
               <TailwindBreakpointIndicator />
             </Theme>
