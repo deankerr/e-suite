@@ -8,7 +8,7 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
-  // ignorePatterns: ['convex/_generated', '.next'],
+  ignorePatterns: ['.cosmos'],
   rules: {
     '@typescript-eslint/no-import-type-side-effects': 'error',
 

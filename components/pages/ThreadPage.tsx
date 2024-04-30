@@ -6,6 +6,7 @@ import { CreateMessageControlsAlpha } from '@/components/threads/CreateMessageCo
 import { ThreadMessage } from '@/components/threads/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useThreadFeed } from '@/lib/queries'
+import { CommandMenu } from '../command/CommandMenu'
 import InfiniteScroll from '../ui/InfiniteScroll'
 import { Spinner } from '../ui/Spinner'
 import { PageHeader } from './PageHeader'
@@ -50,6 +51,10 @@ export const ThreadPage = ({ rid }: { rid: string }) => {
                 </div>
               )}
             </InfiniteScroll>
+
+            <div className="fixed inset-x-0 bottom-16">
+              <CommandMenu />
+            </div>
           </>
         )}
       </div>
