@@ -7,8 +7,7 @@ import { GenerationDataList } from '@/components/images/GenerationDataList'
 import { GenerationImage } from '@/components/images/GenerationImage'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import { ErrorCallout } from '@/components/ui/Callouts'
-import { useTitle } from '@/lib/hooks'
-import { PageWrapper } from './PageWrapper'
+import { PageHeader } from './PageHeader'
 
 import type { MessageContent } from '@/convex/external'
 
@@ -28,10 +27,10 @@ export const MessagePage = ({ content }: MessagePageProps) => {
   )
 
   const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
-  useTitle(title)
 
   return (
-    <PageWrapper icon={<MessageSquareIcon />} title={title}>
+    <>
+      <PageHeader icon={<MessageSquareIcon className="size-5 stroke-[1.5]" />} title={title} />
       <div className="px-1 py-4">
         {[...errors].map((message) => (
           <ErrorCallout
@@ -59,7 +58,7 @@ export const MessagePage = ({ content }: MessagePageProps) => {
       <Card className="overflow-hidden">
         {generations?.[0] && <GenerationDataList generations={generations} />}
       </Card>
-    </PageWrapper>
+    </>
   )
 }
 

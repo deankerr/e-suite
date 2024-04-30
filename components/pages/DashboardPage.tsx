@@ -11,18 +11,19 @@ import {
   TextField,
 } from '@radix-ui/themes'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
-import { LayoutGridIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
+import { MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { useCurrentUserThreads } from '@/lib/queries'
-import { PageWrapper } from './PageWrapper'
+import { PageHeader } from './PageHeader'
 
 export const DashboardPage = () => {
   const { self, threads, createThread, removeThread, userAuth } = useCurrentUserThreads()
 
   return (
-    <PageWrapper icon={<LayoutGridIcon />} title={'Dashboard'}>
+    <>
+      <PageHeader title="Dashboard" />
       <div className="flex flex-wrap gap-2 py-4">
         <AuthLoading>
           <Card className="h-fit w-80">Auth loading...</Card>
@@ -117,6 +118,6 @@ export const DashboardPage = () => {
           )}
         </Authenticated>
       </div>
-    </PageWrapper>
+    </>
   )
 }

@@ -9,6 +9,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { PartyBoy } from '@/components/effects/PartyBoy'
+import { AppLayout } from '@/components/layouts/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { LevaControls } from '@/components/util/LevaControls'
 import { cn, environment } from '@/lib/utils'
@@ -46,13 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <Theme
-              accentColor="orange"
-              appearance="dark"
-              panelBackground="translucent"
-              className="bg-gradient-radial from-orange-2 to-[84%]"
-            >
-              {children}
+            <Theme accentColor="orange" appearance="dark" panelBackground="translucent">
+              <AppLayout>{children}</AppLayout>
               <PartyBoy />
               <Toaster richColors />
               <LevaControls />

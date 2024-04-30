@@ -2,14 +2,13 @@
 
 import { MessagesSquareIcon } from 'lucide-react'
 
-import { PageWrapper } from '@/components/pages/PageWrapper'
 import { CreateMessageControlsAlpha } from '@/components/threads/CreateMessageControlsAlpha'
 import { ThreadMessage } from '@/components/threads/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { useTitle } from '@/lib/hooks'
 import { useThreadFeed } from '@/lib/queries'
 import InfiniteScroll from '../ui/InfiniteScroll'
 import { Spinner } from '../ui/Spinner'
+import { PageHeader } from './PageHeader'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
@@ -20,11 +19,11 @@ export const ThreadPage = ({ rid }: { rid: string }) => {
 
   const shouldShowLoader = forceLoadingState || pager.status === 'LoadingFirstPage'
 
-  const title = thread?.title ?? 'Thread'
-  useTitle(title)
+  const title = thread?.title
 
   return (
-    <PageWrapper icon={<MessagesSquareIcon />} title={title}>
+    <>
+      <PageHeader icon={<MessagesSquareIcon className="size-5 stroke-[1.5]" />} title={title} />
       <div className="space-y-4 p-1 sm:p-4">
         {shouldShowLoader && <LoadingSkeleton />}
 
@@ -54,7 +53,7 @@ export const ThreadPage = ({ rid }: { rid: string }) => {
           </>
         )}
       </div>
-    </PageWrapper>
+    </>
   )
 }
 
