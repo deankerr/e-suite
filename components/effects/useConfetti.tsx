@@ -22,7 +22,7 @@ export const useConfetti = () => {
     }
   }, [setConfettiInstances])
 
-  const playConfetti = () => {
+  const dropConfetti = () => {
     const newInstance: ConfettiInstance = {
       id: Date.now(),
       onComplete: () => {
@@ -36,5 +36,5 @@ export const useConfetti = () => {
     setConfettiInstances((prevInstances) => [...prevInstances, newInstance])
   }
 
-  return { playConfetti, confettiInstances }
+  return { dropConfetti, confettiInstances }
 }

@@ -1,9 +1,8 @@
 import { useEffect } from 'react'
-import { buttonGroup, useControls } from 'leva'
 import { useAudioPlayer } from 'react-use-audio-player'
 import * as R from 'remeda'
 
-const sounds = {
+const soundsSrc = {
   yay: '/audio/sc2k-yay.mp3',
   boo: '/audio/sc2k-boo.mp3',
 } as const
@@ -11,16 +10,14 @@ const sounds = {
 export const useSound = () => {
   const { load, cleanup } = useAudioPlayer()
 
-  const playSound = (key: keyof typeof sounds) => {
-    load(sounds[key], {
+  const play = (key: keyof typeof soundsSrc) => {
+    load(soundsSrc[key], {
       autoplay: true,
       initialVolume: 0.3,
     })
   }
 
-  useControls('partyboy', {
-    sounds: buttonGroup(R.mapValues(sounds, (_, key) => () => playSound(key))),
-  })
+  const playSound = R.mapValues(soundsSrc, (_, key) => () => play(key))
 
   useEffect(() => {
     return () => {

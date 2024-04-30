@@ -31,7 +31,7 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
   const myVote = useQuery(api.generation.getMyVote, { generationId, constituent })
   const voteMutation = useMutation(api.generation.vote)
 
-  const { playConfetti } = useConfetti()
+  const { dropConfetti } = useConfetti()
   const { playSound } = useSound()
 
   const sendVote = async (vote: GenerationVoteNames) => {
@@ -40,12 +40,12 @@ export const VoteButtonPanel = ({ generationId, votes }: VoteButtonPanelProps) =
       await voteMutation({ vote, constituent, generationId })
 
       if (vote === 'best') {
-        playConfetti()
-        playSound('yay')
+        dropConfetti()
+        playSound.yay()
       }
 
       if (vote !== 'best' && myVote === 'best') {
-        playSound('boo')
+        playSound.boo()
       }
     } catch (err) {
       console.error(err)
