@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
-import { GoldSparklesEffect } from '../canvas/GoldSparklesEffect'
+import { GoldSparkles } from '../effects/GoldSparkles'
 import { VoteButtonPanel } from './VoteButtonPanel'
 
 import type { Generation } from '@/convex/external'
@@ -62,7 +62,7 @@ export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
         {isGenerating && (
           <>
             <div className="h-full w-full animate-shimmer rounded-lg bg-gradient-to-r from-gold-3 via-gray-1 to-gold-3 bg-[length:400%_100%]"></div>
-            <GoldSparklesEffect />
+            <GoldSparkles />
           </>
         )}
 

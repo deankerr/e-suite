@@ -4,11 +4,11 @@ import dynamic from 'next/dynamic'
 
 import { cn } from '@/lib/utils'
 
-const CanvasEffect = dynamic(() => import('@/components/canvas/CanvasRevealEffect'))
+const CanvasEffect = dynamic(() => import('@/components/effects/CanvasRevealEffect'))
 
 type CanvasGoldSparklesProps = { props?: unknown } & React.ComponentProps<'div'>
 
-export const GoldSparklesEffect = ({ className, ...props }: CanvasGoldSparklesProps) => {
+export const GoldSparkles = ({ className, ...props }: CanvasGoldSparklesProps) => {
   return (
     <CanvasEffect
       animationSpeed={5}
