@@ -10,8 +10,8 @@ import { Toaster } from 'sonner'
 
 import { PartyBoy } from '@/components/effects/PartyBoy'
 import { ClientProviders } from '@/components/util/ClientProviders'
-import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
-import { cn } from '@/lib/utils'
+import { LevaControls } from '@/components/util/LevaControls'
+import { cn, environment } from '@/lib/utils'
 
 import type { Metadata, Viewport } from 'next'
 
@@ -55,11 +55,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <PartyBoy />
               <Toaster richColors />
-              <TailwindBreakpointIndicator />
+              <LevaControls />
             </Theme>
           </ClientProviders>
         </ClerkProvider>
-        {process.env.NODE_ENV !== 'development' && (
+        {environment === 'prod' && (
           <>
             <SpeedInsights />
             <Analytics />

@@ -22,8 +22,11 @@ export const PageWrapper = ({ icon, title, topBar, children }: PageHeaderProps) 
 
         <div className="shrink-0 gap-2 px-2 flex-between">{topBar}</div>
 
-        <div className="shrink-0 px-2">
+        <div className="shrink-0 gap-2 px-2 flex-start">
           <SignedIn>
+            <Link href="/image-feed" className="font-mono text-xs">
+              image-feed
+            </Link>
             <Button variant="ghost" asChild>
               <Link href="/dashboard">
                 <HomeIcon />
