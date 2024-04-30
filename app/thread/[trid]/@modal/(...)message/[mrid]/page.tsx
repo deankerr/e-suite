@@ -1,21 +1,17 @@
 'use client'
 
-import { MessagePageView } from '@/components/pages/MessagePageView'
-import { ModalPageView } from '@/components/pages/ModalPageView'
+import { MessagePage } from '@/components/pages/MessagePage'
+import { ModalPage } from '@/components/pages/ModalPage'
 import { Spinner } from '@/components/ui/Spinner'
 import { useMessageQuery } from '@/lib/queries'
 
-export default function MessageViewModalPage({
-  params: { mrid: rid },
-}: {
-  params: { mrid: string }
-}) {
+export default function Page({ params: { mrid: rid } }: { params: { mrid: string } }) {
   const result = useMessageQuery({ rid })
 
   return (
-    <ModalPageView>
+    <ModalPage>
       {result ? (
-        <MessagePageView content={result} />
+        <MessagePage content={result} />
       ) : result === null ? (
         <div>Error :(</div>
       ) : (
@@ -23,6 +19,6 @@ export default function MessageViewModalPage({
           <Spinner />
         </div>
       )}
-    </ModalPageView>
+    </ModalPage>
   )
 }

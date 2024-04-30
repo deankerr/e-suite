@@ -4,9 +4,9 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { Theme } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
-type ModalPageViewProps = { children?: React.ReactNode }
+type ModalPageProps = { children?: React.ReactNode }
 
-export const ModalPageView = ({ children }: ModalPageViewProps) => {
+export const ModalPage = ({ children }: ModalPageProps) => {
   const router = useRouter()
 
   return (

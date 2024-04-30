@@ -12,9 +12,9 @@ import { api } from '@/convex/_generated/api'
 import { useTitle } from '@/lib/hooks'
 import { PageWrapper } from './PageWrapper'
 
-type ImageGridFeedProps = { props?: unknown }
 const initial = 10
-export const ImageGridFeed = ({}: ImageGridFeedProps) => {
+
+export const ImageGridPage = () => {
   useTitle('image feed')
 
   const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })

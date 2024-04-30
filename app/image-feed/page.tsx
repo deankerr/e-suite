@@ -1,5 +1,5 @@
-import { ImageGridFeed } from '@/components/pages/ImageGridFeed'
+import { ImageGridPage } from '@/components/pages/ImageGridPage'
 
 export default function Page() {
-  return <ImageGridFeed />
+  return <ImageGridPage />
 }

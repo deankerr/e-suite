@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 
 import { SunBarLoader } from '@/components/ui/SunBarLoader'
 
-export default function HomePage() {
+export default function Page() {
   const { isAuthenticated } = useConvexAuth()
   const router = useRouter()
 

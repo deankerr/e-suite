@@ -4,10 +4,10 @@ import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { GenerationImage } from '@/components/images/GenerationImage'
+import { ErrorCallout } from '@/components/ui/Callouts'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
-import { GenerationImage } from './images/GenerationImage'
-import { ErrorCallout } from './ui/Callouts'
 
 import type { MessageContent, Thread } from '@/convex/external'
 

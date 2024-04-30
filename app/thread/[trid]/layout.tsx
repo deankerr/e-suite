@@ -1,4 +1,4 @@
-export default function ThreadIdLayout({
+export default function Layout({
   children,
   modal,
 }: {

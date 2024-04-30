@@ -3,10 +3,10 @@
 import { Card } from '@radix-ui/themes'
 import { ImageIcon } from 'lucide-react'
 
+import { GenerationDataList } from '@/components/images/GenerationDataList'
+import { GenerationImage } from '@/components/images/GenerationImage'
 import { useTitle } from '@/lib/hooks'
 import { useGeneration } from '@/lib/queries'
-import { GenerationDataList } from '../GenerationDataList'
-import { GenerationImage } from '../images/GenerationImage'
 import { PageWrapper } from './PageWrapper'
 
 type ImagePageProps = {

@@ -3,11 +3,11 @@
 import { MessagesSquareIcon } from 'lucide-react'
 
 import { PageWrapper } from '@/components/pages/PageWrapper'
-import { ThreadMessage } from '@/components/ThreadMessage'
+import { CreateMessageControlsAlpha } from '@/components/threads/CreateMessageControlsAlpha'
+import { ThreadMessage } from '@/components/threads/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useTitle } from '@/lib/hooks'
 import { useThreadFeed } from '@/lib/queries'
-import { CreateMessageControlsAlpha } from '../CreateMessageControlsAlpha'
 import InfiniteScroll from '../ui/InfiniteScroll'
 import { Spinner } from '../ui/Spinner'
 
@@ -15,7 +15,7 @@ import type { Id } from '@/convex/_generated/dataModel'
 
 const forceLoadingState = false
 
-export const ThreadPageView = ({ rid }: { rid: string }) => {
+export const ThreadPage = ({ rid }: { rid: string }) => {
   const { thread, pager } = useThreadFeed({ rid })
 
   const shouldShowLoader = forceLoadingState || pager.status === 'LoadingFirstPage'

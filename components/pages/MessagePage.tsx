@@ -3,20 +3,20 @@
 import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
+import { GenerationDataList } from '@/components/images/GenerationDataList'
+import { GenerationImage } from '@/components/images/GenerationImage'
+import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
+import { ErrorCallout } from '@/components/ui/Callouts'
 import { useTitle } from '@/lib/hooks'
-import { GenerationDataList } from '../GenerationDataList'
-import { GenerationImage } from '../images/GenerationImage'
-import { JustifiedRowGrid } from '../images/JustifiedRowGrid'
-import { ErrorCallout } from '../ui/Callouts'
 import { PageWrapper } from './PageWrapper'
 
 import type { MessageContent } from '@/convex/external'
 
-type MessagePageViewProps = {
+type MessagePageProps = {
   content: MessageContent
 }
 
-export const MessagePageView = ({ content }: MessagePageViewProps) => {
+export const MessagePage = ({ content }: MessagePageProps) => {
   const { message, generations } = content
 
   const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
