@@ -1,6 +1,5 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
 import {
   Badge,
   Button,
@@ -11,23 +10,16 @@ import {
   IconButton,
   TextField,
 } from '@radix-ui/themes'
-import { Authenticated, AuthLoading, Unauthenticated, useMutation, useQuery } from 'convex/react'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { LayoutGridIcon, MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { api } from '@/convex/_generated/api'
+import { useCurrentUserThreads } from '@/lib/queries'
 import { PageWrapper } from './PageWrapper'
 
-type DashboardPageProps = { props?: unknown }
-
-export const DashboardPage = ({}: DashboardPageProps) => {
-  const user = useQuery(api.users.getSelf, {})
-  const threads = useQuery(api.threads.list, {})
-  const createThread = useMutation(api.threads.create)
-  const removeThread = useMutation(api.threads.remove)
-
-  const auth = useUser()
+export const DashboardPage = () => {
+  const { self, threads, createThread, removeThread, userAuth } = useCurrentUserThreads()
 
   return (
     <PageWrapper icon={<LayoutGridIcon />} title={'Dashboard'}>
@@ -41,28 +33,28 @@ export const DashboardPage = ({}: DashboardPageProps) => {
         </Unauthenticated>
 
         <Authenticated>
-          {user && (
+          {self && (
             <Card className="h-fit w-80">
               <Heading size="4" mb="4">
-                {user.name}
+                {self.name}
               </Heading>
               <DataList.Root orientation="horizontal">
                 <DataList.Item>
                   <DataList.Label minWidth="64px">Role</DataList.Label>
                   <DataList.Value>
-                    <Badge>{user.role}</Badge>
+                    <Badge>{self.role}</Badge>
                   </DataList.Value>
                 </DataList.Item>
                 <DataList.Item>
                   <DataList.Label minWidth="64px">API Key</DataList.Label>
                   <DataList.Value>
-                    <Code>{user.apiKey}</Code>
+                    <Code>{self.apiKey}</Code>
                   </DataList.Value>
                 </DataList.Item>
                 <DataList.Item>
                   <DataList.Label minWidth="64px">Clerk</DataList.Label>
                   <DataList.Value>
-                    <Code>{JSON.stringify(auth.user?.publicMetadata, null, 2)}</Code>
+                    <Code>{JSON.stringify(userAuth.user?.publicMetadata, null, 2)}</Code>
                   </DataList.Value>
                 </DataList.Item>
               </DataList.Root>

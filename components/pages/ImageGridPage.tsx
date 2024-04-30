@@ -1,23 +1,20 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePaginatedQuery } from 'convex/react'
 import { useControls } from 'leva'
 
 import { GenerationImage } from '@/components/images/GenerationImage'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { Spinner } from '@/components/ui/Spinner'
-import { api } from '@/convex/_generated/api'
 import { useTitle } from '@/lib/hooks'
+import { useInsecureDemoOnlyGeneraitonList } from '@/lib/queries'
 import { PageWrapper } from './PageWrapper'
-
-const initial = 10
 
 export const ImageGridPage = () => {
   useTitle('image feed')
 
-  const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
+  const pager = useInsecureDemoOnlyGeneraitonList()
 
   const [{ infinite, status }, set] = useControls('ImageGridFeed', () => ({
     infinite: true,
@@ -42,7 +39,7 @@ export const ImageGridPage = () => {
           <GenerationImage
             key={generation._id}
             generation={generation}
-            imageProps={{ priority: count++ < initial }}
+            imageProps={{ priority: count++ < 10 }}
             containerHeight={commonHeight}
           />
         )}
