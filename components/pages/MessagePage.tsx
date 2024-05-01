@@ -28,6 +28,8 @@ export const MessagePage = ({ content }: MessagePageProps) => {
 
   const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
 
+  const single = generations?.[0]
+  const dataCardOrientation = imageList.length <= 1 ? 'horizontal' : 'vertical'
   return (
     <>
       <PageHeader icon={<MessageSquareIcon className="size-5 stroke-[1.5]" />} title={title} />
@@ -39,24 +41,34 @@ export const MessagePage = ({ content }: MessagePageProps) => {
             message={message}
           />
         ))}
-        <JustifiedRowGrid
-          gap={10}
-          items={imageList}
-          breakpoints={breakpoints}
-          render={(generation, commonHeight) => (
-            <GenerationImage
-              key={generation._id}
-              generation={generation}
-              containerHeight={commonHeight}
-              imageProps={{ priority: true }}
-            />
-          )}
-        />
+        {!single && (
+          <JustifiedRowGrid
+            gap={10}
+            items={imageList}
+            breakpoints={breakpoints}
+            render={(generation, commonHeight) => (
+              <GenerationImage
+                key={generation._id}
+                generation={generation}
+                containerHeight={commonHeight}
+                imageProps={{ priority: true }}
+              />
+            )}
+          />
+        )}
+
+        {single && (
+          <div className="mx-auto max-w-[880px]">
+            <GenerationImage key={single._id} generation={single} imageProps={{ priority: true }} />
+          </div>
+        )}
       </div>
 
       {/* details */}
       <Card className="overflow-hidden">
-        {generations?.[0] && <GenerationDataList generations={generations} />}
+        {generations?.[0] && (
+          <GenerationDataList generations={generations} orientation={dataCardOrientation} />
+        )}
       </Card>
     </>
   )

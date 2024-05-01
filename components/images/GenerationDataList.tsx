@@ -7,7 +7,10 @@ import { generationFields } from '@/convex/schema'
 
 import type { MessageContent } from '@/convex/external'
 
-type GenerationDataListProps = { generations: NonNullable<MessageContent['generations']> }
+type GenerationDataListProps = {
+  generations: NonNullable<MessageContent['generations']>
+  orientation?: 'horizontal' | 'vertical'
+}
 
 const om = R.mapToObj(
   ['result', 'metadata', 'model_id', 'width', 'height', 'prompt'] as const,
@@ -15,7 +18,10 @@ const om = R.mapToObj(
 )
 const params = z.object(generationFields).omit(om)
 
-export const GenerationDataList = ({ generations }: GenerationDataListProps) => {
+export const GenerationDataList = ({
+  generations,
+  orientation = 'vertical',
+}: GenerationDataListProps) => {
   const first = generations[0]
   if (!first) return null
   const { model_id, prompt, _creationTime, _id, ...rest } = first
@@ -25,7 +31,7 @@ export const GenerationDataList = ({ generations }: GenerationDataListProps) => 
   const unordered = Object.entries(params.parse(rest))
   const model = SinkinModels.find((model) => model.id === model_id)
   return (
-    <DataList.Root orientation="vertical">
+    <DataList.Root orientation={orientation}>
       <DataList.Item>
         <DataList.Label>model id</DataList.Label>
         <DataList.Value>
