@@ -1,8 +1,10 @@
-import { ConvexError } from 'convex/values'
 import ky from 'ky'
 import { z } from 'zod'
 
 import { getEnv } from '../utils'
+
+import type { GenerationInputParams } from '../schema'
+import type { TextToImageHandler } from './types'
 
 const api = ky.extend({
   prefixUrl: 'https://sinkin.ai/m',
@@ -23,11 +25,11 @@ const translateKey = (key: string) => {
   }
 }
 
-export const textToImage = async ({
+export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: Record<string, any>
+  parameters: GenerationInputParams
   n: number
 }) => {
   const body = new URLSearchParams()
@@ -47,48 +49,62 @@ export const textToImage = async ({
     .json()
   console.log('[sinkin/textToImage] <<<', response)
 
-  const generation = textToImageResponseSchema.safeParse(response)
-  if (generation.success) {
+  const parsedResponse = textToImageResponseSchema.safeParse(response)
+  if (!parsedResponse.success) {
     return {
-      result: generation.data,
+      error: {
+        message: 'response validation failed',
+        data: parsedResponse.error.issues,
+      },
+      result: null,
+    }
+  }
+
+  if ('images' in parsedResponse.data) {
+    const { images, ...rest } = parsedResponse.data
+    return {
+      result: { ...rest, urls: images },
       error: null,
     }
   }
 
-  const error = textToImageErrorResponseSchema.safeParse(response)
-  if (error.success) {
-    // prompt content warning
-    if (error.data.error_code === 41) {
-      return {
-        error: {
-          message: error.data.message,
-          noRetry: true,
-          data: error.data,
-        },
-        result: null,
-      }
+  // prompt rejection error
+  if (parsedResponse.data.error_code === 41) {
+    return {
+      error: {
+        message: parsedResponse.data.message,
+        noRetry: true,
+        data: parsedResponse.data,
+      },
+      result: null,
     }
-
-    throw new ConvexError({ ...error.data })
   }
 
-  throw new ConvexError({ message: 'Invalid response', response: JSON.stringify(response) })
+  return {
+    error: {
+      message: 'endpoint returned error',
+      response: JSON.stringify(response),
+    },
+    result: null,
+  }
 }
 
 export const sinkin = {
   textToImage,
 }
 
-const textToImageResponseSchema = z.object({
-  inf_id: z.string(),
-  credit_cost: z.number(),
-  images: z.string().array(),
-})
-
-const textToImageErrorResponseSchema = z.object({
-  error_code: z.number(),
-  message: z.string(),
-})
+const textToImageResponseSchema = z.union([
+  z.object({
+    inf_id: z.string(),
+    credit_cost: z.number(),
+    error_code: z.number(),
+    images: z.string().array(),
+  }),
+  z.object({
+    error_code: z.number(),
+    message: z.string(),
+  }),
+])
 
 // const apiGetModelsResponseSchema = z.object({
 //   error_code: z.number(),

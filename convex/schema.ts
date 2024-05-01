@@ -14,6 +14,8 @@ import {
   ridLength,
 } from './constants'
 
+export type GenerationInputParams = z.infer<typeof parametersInputSchema>
+
 const timeToDelete = ms('1 day')
 
 export const ridField = z.string().length(ridLength)
@@ -135,8 +137,9 @@ export const chatInference = z.object({
 })
 
 //* Messages
+const parametersInputSchema = z.object(generationFields).omit({ result: true })
 export const generationInferenceParamsSchema = z.object({
-  parameters: z.object(generationFields).omit({ result: true, width: true, height: true }),
+  parameters: parametersInputSchema.omit({ width: true, height: true }),
   dimensions: z
     .object({
       width: z.number().min(512).max(2048),

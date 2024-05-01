@@ -122,17 +122,10 @@ export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'mes
           return await ctx.table('generations').insert(generation)
         }),
       )
-      if (parameters.provider === 'fal') {
-        await runWithRetries(ctx, internal.providers.fal.faltextToImage, {
-          generationIds,
-          parameters,
-        })
-      } else {
-        await runWithRetries(ctx, internal.generation.textToImage, {
-          generationIds,
-          parameters,
-        })
-      }
+      await runWithRetries(ctx, internal.generation.textToImage, {
+        generationIds,
+        parameters,
+      })
     }),
   )
 }
@@ -168,7 +161,7 @@ export const textToImage = internalAction({
       return
     }
 
-    const pairs = R.zip(generationIds, result.images)
+    const pairs = R.zip(generationIds, result.urls)
     await Promise.all(
       pairs.map(
         async ([generationId, url]) =>
