@@ -37,7 +37,7 @@ export const textToImage: TextToImageHandler = async ({
   n: number
 }) => {
   try {
-    const { model_id } = parameters
+    const { model_id, width, height } = parameters
     if (!(model_id in textToImageModels))
       throw new ConvexError({ message: 'unsupported model', model_id })
 
@@ -48,7 +48,13 @@ export const textToImage: TextToImageHandler = async ({
       'num_inference_steps',
     )
 
-    const parsedInput = parsers.body.safeParse(translated)
+    const parsedInput = parsers.body.safeParse({
+      ...translated,
+      image_size: { width, height },
+      num_images: n,
+      enable_safety_checker: false,
+      expand_prompt: true,
+    })
     if (!parsedInput.success) {
       return {
         error: {
@@ -60,7 +66,7 @@ export const textToImage: TextToImageHandler = async ({
       }
     }
 
-    const input = { ...parsedInput.data, num_images: n }
+    const input = parsedInput.data
     console.log('[fal/textToImage] >>>', input)
 
     const response = await falClient.subscribe('fal-ai/hyper-sdxl', {

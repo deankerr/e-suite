@@ -1,14 +1,20 @@
+import { useState } from 'react'
 import { Button, Card, Checkbox, Heading, Select, TextField } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
-import SinkinModels from '@/convex/providers/sinkin.models.json'
+import { textToImageModels } from '@/convex/models'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
-const models = SinkinModels.map(({ id, name }) => ({
+const sinkinModels = textToImageModels.sinkin.map(({ id, name }) => ({
+  label: name,
+  value: id,
+}))
+
+const falModels = textToImageModels.fal.map(({ id, name }) => ({
   label: name,
   value: id,
 }))
@@ -16,6 +22,8 @@ const models = SinkinModels.map(({ id, name }) => ({
 type CreateMessageControlsAlphaProps = { threadId: Id<'threads'> }
 
 export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAlphaProps) => {
+  const [currentProvider, setCurrentProvider] = useState<'sinkin' | 'fal'>('fal')
+
   const createMessage = useMutation(api.messages.create)
   const createMessageFormAction = (formData: FormData) => {
     const role = formData.get('role') as 'system' | 'assistant' | 'user'
@@ -36,10 +44,9 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
     const negative_prompt = formData.get('negative_prompt')
       ? String(formData.get('negative_prompt'))
       : undefined
+
     const model_id = String(formData.get('model_id'))
-    const seed = formData.get('seed')
-      ? Number(formData.get('seed'))
-      : Math.floor(Math.random() * 10000000)
+    const seed = formData.get('seed') ? Number(formData.get('seed')) : undefined
 
     const use_default_neg = formData.get('use_default_neg') ? true : false
     const guidance_scale = formData.get('guidance_scale')
@@ -49,14 +56,30 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
     const steps = formData.get('steps') ? Number(formData.get('steps')) : undefined
 
     const square = Number(formData.get('square'))
-    const portrait = Number(formData.get('portrait'))
-    const landscape = Number(formData.get('landscape'))
+    const square_hd = Number(formData.get('square_hd'))
+    const portrait_3_4 = Number(formData.get('portrait_3_4'))
+    const portrait_9_16 = Number(formData.get('portrait_9_16'))
+    const landscape_4_3 = Number(formData.get('landscape_4_3'))
+    const landscape_16_9 = Number(formData.get('landscape_16_9'))
 
-    const dimensions = [
+    const falDimensions = [
       { width: 512, height: 512, n: square },
-      { width: 512, height: 768, n: portrait },
-      { width: 768, height: 512, n: landscape },
-    ].filter(({ n }) => n)
+      { width: 1024, height: 1024, n: square_hd },
+      { width: 768, height: 1024, n: portrait_3_4 },
+      { width: 576, height: 1024, n: portrait_9_16 },
+      { width: 1024, height: 768, n: landscape_4_3 },
+      { width: 1024, height: 576, n: landscape_16_9 },
+    ]
+
+    const sinkinDimensions = [
+      { width: 512, height: 512, n: square },
+      { width: 512, height: 768, n: portrait_3_4 },
+      { width: 768, height: 512, n: landscape_4_3 },
+    ]
+
+    const dimensions = (currentProvider === 'sinkin' ? sinkinDimensions : falDimensions).filter(
+      ({ n }) => n,
+    )
 
     createMessage({
       threadId,
@@ -65,8 +88,7 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
         inference: {
           generation: {
             parameters: {
-              // provider: 'sinkin',
-              provider: 'fal',
+              provider: currentProvider,
               prompt,
               negative_prompt,
               model_id,
@@ -89,7 +111,7 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
 
   return (
     <Card>
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div className="flex gap-4 ">
         <form className="space-y-2" action={createMessageFormAction}>
           <Heading size="2" className="mb-2">
             Create Message
@@ -117,56 +139,100 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
           </div>
         </form>
 
-        <form className="space-y-2" action={createGenerationFormAction}>
-          <Heading size="2" className="mb-2">
-            Create generation
-          </Heading>
-          <TextField.Root placeholder="prompt" id="prompt" name="prompt" />
-          <TextField.Root
-            placeholder="negative prompt"
-            id="negative_prompt"
-            name="negative_prompt"
-          />
+        <form className="flex gap-2" action={createGenerationFormAction}>
+          {/* left */}
+          <div className="min-w-80">
+            <Heading size="2" className="mb-2">
+              Create generation
+            </Heading>
+            <TextField.Root placeholder="prompt" id="prompt" name="prompt" />
+            <TextField.Root
+              placeholder="negative prompt"
+              id="negative_prompt"
+              name="negative_prompt"
+            />
 
-          <SelectList items={models} name="model_id" placeholder="Model" />
-          <TextField.Root placeholder="seed" id="seed" name="seed" />
+            <SelectList
+              items={['sinkin', 'fal']}
+              name="provider"
+              value={currentProvider}
+              onValueChange={(v) => setCurrentProvider(v as 'sinkin' | 'fal')}
+            />
+            <SelectList
+              items={currentProvider === 'sinkin' ? sinkinModels : falModels}
+              name="model_id"
+              placeholder="Model"
+            />
 
-          <div className="flex items-center gap-2">
-            <div className="shrink-0">512x512</div>
-            <div className="">
-              <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="square" />
+            {/* left end */}
+          </div>
+
+          {/* right */}
+          <div className="min-w-80 space-y-2">
+            <div className="flex gap-1">
+              <TextField.Root placeholder="guidance_scale" name="guidance_scale" type="number" />
+              <TextField.Root name="steps" placeholder="steps" type="number" />
+              <TextField.Root placeholder="seed" id="seed" name="seed" />
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="shrink-0">512x768</div>
-            <div className="">
-              <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="portrait" />
+
+            <div className="flex gap-2">
+              {/* sizes 1 */}
+              <div className="grid justify-items-end gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="shrink-0">Square</div>
+                  <div>
+                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="square" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="shrink-0">Portrait 3:4</div>
+                  <div>
+                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="portrait_3_4" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="shrink-0">Landscape 4:3</div>
+                  <div>
+                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="landscape_4_3" />
+                  </div>
+                </div>
+              </div>
+
+              {/* sizes 2 */}
+              <div className="grid justify-items-end gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="shrink-0">Square HD</div>
+                  <div>
+                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="square_hd" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="shrink-0">Portrait 9:16</div>
+                  <div>
+                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="portrait_9_16" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="shrink-0">Landscape 16:9</div>
+                  <div>
+                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="landscape_16_9" />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="shrink-0">768x512</div>
-            <div className="">
-              <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="landscape" />
+
+            <div className="gap-3 flex-start">
+              <Checkbox name="use_default_neg" defaultChecked />
+              <label>use_default_neg</label>
             </div>
-          </div>
 
-          <div className="grid gap-1">
-            <label>guidance_scale</label>
-            <TextField.Root placeholder="7.5" name="guidance_scale" type="number" />
-          </div>
-
-          <div className="grid gap-1">
-            <label>steps</label>
-            <TextField.Root name="steps" type="number" />
-          </div>
-
-          <div className="gap-3 flex-start">
-            <Checkbox name="use_default_neg" defaultChecked />
-            <label>use_default_neg</label>
-          </div>
-
-          <div className="flex-end">
-            <Button variant="surface">Send</Button>
+            <div className="flex-end">
+              <Button variant="surface">Send</Button>
+            </div>
           </div>
         </form>
       </div>
