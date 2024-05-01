@@ -9,7 +9,8 @@
     "dev:next": "next dev --port 3333",
     "dev:convex": "convex dev",
     "lint": "next lint && tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate-schemas": "pnpm orval --config scripts/openapi-to-zod/orval.config.ts"
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.565.0",
@@ -81,6 +82,7 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.3",
+    "orval": "^6.28.2",
     "postcss": "^8.4.38",
     "postcss-import": "^16.1.0",
     "postcss-simple-vars": "^7.0.1",

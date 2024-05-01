@@ -35,5 +35,5 @@
     "**/*.tsx",
     "**/*.js"
   ],
-  "exclude": ["node_modules", ".next", "scripts", ".cosmos"]
+  "exclude": ["node_modules", ".next", ".cosmos"]
 }
