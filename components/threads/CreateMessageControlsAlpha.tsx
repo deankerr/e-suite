@@ -46,6 +46,8 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
       ? Number(formData.get('guidance_scale'))
       : undefined
 
+    const steps = formData.get('steps') ? Number(formData.get('steps')) : undefined
+
     const square = Number(formData.get('square'))
     const portrait = Number(formData.get('portrait'))
     const landscape = Number(formData.get('landscape'))
@@ -63,13 +65,15 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
         inference: {
           generation: {
             parameters: {
-              provider: 'sinkin',
+              // provider: 'sinkin',
+              provider: 'fal',
               prompt,
               negative_prompt,
               model_id,
               seed,
               use_default_neg,
               guidance_scale,
+              steps,
             },
             dimensions,
           },
@@ -149,6 +153,11 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
           <div className="grid gap-1">
             <label>guidance_scale</label>
             <TextField.Root placeholder="7.5" name="guidance_scale" type="number" />
+          </div>
+
+          <div className="grid gap-1">
+            <label>steps</label>
+            <TextField.Root name="steps" type="number" />
           </div>
 
           <div className="gap-3 flex-start">

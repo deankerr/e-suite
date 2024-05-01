@@ -84,7 +84,7 @@ export const generationFields = {
   // common optional
   negative_prompt: z.string().optional(),
   guidance_scale: z.number().optional(),
-  num_inference_steps: z.number().optional(),
+  steps: z.number().optional(),
 
   // sinkin
   lcm: z.boolean().optional(),

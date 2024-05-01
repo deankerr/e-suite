@@ -24,6 +24,7 @@ import type * as lib_sharp from "../lib/sharp.js";
 import type * as messages from "../messages.js";
 import type * as providers_aws from "../providers/aws.js";
 import type * as providers_clerk from "../providers/clerk.js";
+import type * as providers_fal from "../providers/fal.js";
 import type * as providers_openrouter from "../providers/openrouter.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   messages: typeof messages;
   "providers/aws": typeof providers_aws;
   "providers/clerk": typeof providers_clerk;
+  "providers/fal": typeof providers_fal;
   "providers/openrouter": typeof providers_openrouter;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;

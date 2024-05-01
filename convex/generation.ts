@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { internal } from './_generated/api'
 import { external } from './external'
 import { internalAction, internalMutation, internalQuery, mutation, query } from './functions'
+import { fal } from './providers/fal'
 import { sinkin } from './providers/sinkin'
 import SinkinModels from './providers/sinkin.models.json'
 import { generationFields, generationResultField, generationVoteFields } from './schema'
@@ -121,11 +122,17 @@ export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'mes
           return await ctx.table('generations').insert(generation)
         }),
       )
-
-      await runWithRetries(ctx, internal.generation.textToImage, {
-        generationIds,
-        parameters,
-      })
+      if (parameters.provider === 'fal') {
+        await runWithRetries(ctx, internal.providers.fal.faltextToImage, {
+          generationIds,
+          parameters,
+        })
+      } else {
+        await runWithRetries(ctx, internal.generation.textToImage, {
+          generationIds,
+          parameters,
+        })
+      }
     }),
   )
 }
@@ -137,10 +144,15 @@ export const textToImage = internalAction({
     parameters: z.object(generationFields),
   },
   handler: async (ctx, { generationIds, parameters }) => {
-    const { result, error } = await sinkin.textToImage({
+    const input = {
       parameters,
       n: generationIds.length,
-    })
+    }
+
+    const { result, error } =
+      parameters.provider === 'sinkin'
+        ? await sinkin.textToImage(input)
+        : await fal.textToImage(input)
 
     // returned error = task failed successfully (no retry)
     if (error) {

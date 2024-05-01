@@ -1,7 +1,7 @@
 export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
 
 export const completionProviders = ['openai', 'openrouter', 'togetherai'] as const
-export const generationProviders = ['sinkin'] as const
+export const generationProviders = ['sinkin', 'fal'] as const
 export const textToSpeechProviders = ['elevenlabs', 'aws'] as const
 
 export const defaultSystemPrompt =
