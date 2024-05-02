@@ -42,7 +42,7 @@ export const MessagePage = ({ content }: MessagePageProps) => {
       ))}
 
       {!single && (
-        <div className="px-1 py-4">
+        <div className="space-y-4 px-1 py-4">
           <JustifiedRowGrid
             gap={10}
             items={imageList}
