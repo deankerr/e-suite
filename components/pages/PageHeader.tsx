@@ -21,7 +21,7 @@ export const PageHeader = ({ icon, title }: { icon?: React.ReactNode; title?: st
         </div>
       </Link>
 
-      <h2 className="line-clamp-2 max-h-full grow gap-2 font-mono tracking-tight [&>svg]:mr-1.5 [&>svg]:inline">
+      <h2 className="line-clamp-2 max-h-full gap-2 font-mono tracking-tight [&>svg]:mr-1.5 [&>svg]:inline">
         / {icon}
         {title}
       </h2>

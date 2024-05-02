@@ -20,10 +20,6 @@ const config: Config = {
     plugin(({ addBase }) => {
       addBase({
         '*': { boxSizing: 'border-box', position: 'relative', minWidth: '0' },
-        h1: { textWrap: 'balance' },
-        h2: { textWrap: 'balance' },
-        h3: { textWrap: 'balance' },
-        h4: { textWrap: 'balance' },
         p: { textWrap: 'pretty' },
       })
     }),
