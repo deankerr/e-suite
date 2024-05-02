@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { ConvexError } from 'convex/values'
 import * as R from 'remeda'
 import { z } from 'zod'
 
@@ -147,18 +148,21 @@ export const textToImage = internalAction({
         ? await sinkin.textToImage(input)
         : await fal.textToImage(input)
 
-    // returned error = task failed successfully (no retry)
     if (error) {
-      await Promise.all(
-        generationIds.map(
-          async (generationId) =>
-            await ctx.runMutation(internal.generation.result, {
-              generationId,
-              result: { type: 'error', message: error.message },
-            }),
-        ),
-      )
-      return
+      if (error.noRetry) {
+        await Promise.all(
+          generationIds.map(
+            async (generationId) =>
+              await ctx.runMutation(internal.generation.result, {
+                generationId,
+                result: { type: 'error', message: error.message },
+              }),
+          ),
+        )
+        return
+      }
+
+      throw new ConvexError({ ...error })
     }
 
     const pairs = R.zip(generationIds, result.urls)
