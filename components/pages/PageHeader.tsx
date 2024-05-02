@@ -28,8 +28,9 @@ export const PageHeader = ({
         </div>
       </Link>
 
+      <div className="flex-none font-mono">/</div>
       <h2 className="line-clamp-2 max-h-full grow gap-2 font-mono tracking-tight [&>svg]:mr-1.5 [&>svg]:inline">
-        / {icon}
+        {icon}
         {title}
       </h2>
 

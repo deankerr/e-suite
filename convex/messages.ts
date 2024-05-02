@@ -98,7 +98,7 @@ export const getPageMetadata = query({
     const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).firstX()
     const generations = await message.edge('generations')
     const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
-    const icon = generations.length ? ' 🌠' : ''
+    const icon = generations.length ? ' ✴️' : ''
     const description = `it's the e/suite -${icon} ${title}`
 
     return {

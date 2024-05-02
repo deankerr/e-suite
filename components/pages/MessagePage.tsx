@@ -28,7 +28,9 @@ export const MessagePage = ({ rid }: MessagePageProps) => {
       .map((generation) => generation.result!.message),
   )
 
-  const title = generations?.[0]?.prompt ?? `Message from ${message?.name ?? message?.role}`
+  const title = message
+    ? generations?.[0]?.prompt ?? `Message from ${message?.name ?? message?.role}`
+    : undefined
   const single = generations?.length === 1 ? generations?.[0] : undefined
 
   return (
