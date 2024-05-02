@@ -29,7 +29,7 @@ export const GenerationDataList = ({
   const dimensions = R.groupBy(generations, ({ width, height }) => `${width} x ${height}`)
 
   const unordered = Object.entries(params.parse(rest))
-  const model = SinkinModels.find((model) => model.id === model_id)
+  const model = SinkinModels.find((model) => model.model_id === model_id)
   return (
     <DataList.Root orientation={orientation}>
       <DataList.Item>

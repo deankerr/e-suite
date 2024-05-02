@@ -5,19 +5,18 @@ import { toast } from 'sonner'
 
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
-import { textToImageModels } from '@/convex/models'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
-const sinkinModels = textToImageModels.sinkin.map(({ id, name }) => ({
-  label: name,
-  value: id,
-}))
+// const sinkinModels = textToImageModels.sinkin.map(({ model_id, name }) => ({
+//   label: name,
+//   value: model_id,
+// }))
 
-const falModels = textToImageModels.fal.map(({ id, name }) => ({
-  label: name,
-  value: id,
-}))
+// const falModels = textToImageModels.fal.map(({ model_id, name }) => ({
+//   label: name,
+//   value: model_id,
+// }))
 
 type CreateMessageControlsAlphaProps = { threadId: Id<'threads'> }
 
@@ -158,11 +157,11 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
               value={currentProvider}
               onValueChange={(v) => setCurrentProvider(v as 'sinkin' | 'fal')}
             />
-            <SelectList
+            {/* <SelectList
               items={currentProvider === 'sinkin' ? sinkinModels : falModels}
               name="model_id"
               placeholder="Model"
-            />
+            /> */}
 
             {/* left end */}
           </div>

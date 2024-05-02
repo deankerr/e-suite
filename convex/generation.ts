@@ -8,13 +8,10 @@ import { external } from './external'
 import { internalAction, internalMutation, internalQuery, mutation, query } from './functions'
 import { fal } from './providers/fal'
 import { sinkin } from './providers/sinkin'
-import SinkinModels from './providers/sinkin.models.json'
 import { generationFields, generationResultField, generationVoteFields } from './schema'
 import { generateRid, insist, runWithRetries, zPaginationOptValidator } from './utils'
 
 import type { Ent, MutationCtx, QueryCtx } from './types'
-
-export const textToImageModels = SinkinModels
 
 //* queries
 export const getI = internalQuery({
