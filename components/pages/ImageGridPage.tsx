@@ -8,13 +8,10 @@ import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { Spinner } from '@/components/ui/Spinner'
-import { useTitle } from '@/lib/hooks'
 import { useInsecureDemoOnlyGeneraitonList } from '@/lib/queries'
 import { PageHeader } from './PageHeader'
 
 export const ImageGridPage = () => {
-  useTitle('image feed')
-
   const pager = useInsecureDemoOnlyGeneraitonList()
 
   const [{ infinite, status }, set] = useControls('ImageGridFeed', () => ({

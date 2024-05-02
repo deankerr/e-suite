@@ -1,10 +1,20 @@
-'use client'
+import { fetchQuery } from 'convex/nextjs'
 
 import { MessagePage } from '@/components/pages/MessagePage'
-import { useMessageQuery } from '@/lib/queries'
+import { api } from '@/convex/_generated/api'
+
+export async function generateMetadata({ params: { mrid: rid } }: { params: { mrid: string } }) {
+  try {
+    const result = await fetchQuery(api.messages.getPageMetadata, { rid })
+    return {
+      title: result.title,
+      description: result.description,
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 export default function Page({ params: { mrid: rid } }: { params: { mrid: string } }) {
-  const result = useMessageQuery({ rid })
-  if (!result) return null
-  return <MessagePage content={result} />
+  return <MessagePage rid={rid} />
 }

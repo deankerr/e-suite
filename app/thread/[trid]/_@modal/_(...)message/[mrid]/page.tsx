@@ -1,6 +1,6 @@
 'use client'
 
-import { MessagePage } from '@/components/pages/MessagePage'
+// import { MessagePage } from '@/components/pages/MessagePage'
 import { ModalPage } from '@/components/pages/ModalPage'
 import { Spinner } from '@/components/ui/Spinner'
 import { useMessageQuery } from '@/lib/queries'
@@ -11,7 +11,7 @@ export default function Page({ params: { mrid: rid } }: { params: { mrid: string
   return (
     <ModalPage>
       {result ? (
-        <MessagePage content={result} />
+        '<MessagePage content={result} />'
       ) : result === null ? (
         <div>Error :(</div>
       ) : (

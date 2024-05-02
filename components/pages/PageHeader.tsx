@@ -1,19 +1,26 @@
 import { SignInButton, UserButton } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
+import { useDocumentTitle } from '@uidotdev/usehooks'
 import { Authenticated, Unauthenticated } from 'convex/react'
 import { HomeIcon, ImagesIcon, UserIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 
 import LogoSunset from '@/assets/logo-sunset.svg'
-import { useTitle } from '@/lib/hooks'
 
-export const PageHeader = ({ icon, title }: { icon?: React.ReactNode; title?: string }) => {
-  useTitle(title)
-
+export const PageHeader = ({
+  icon,
+  title,
+  setPageTitle = true,
+}: {
+  icon?: React.ReactNode
+  title?: string
+  setPageTitle?: boolean
+}) => {
   return (
     <header className="h-12 gap-2 border-b px-1 flex-between">
       {/* logo / page titles */}
+      {setPageTitle ? <DocumentTitle subtitle={title} /> : null}
       <Link href="/" className="shrink-0 gap-1 flex-start">
         <div className="gap-1 flex-start">
           <NextImage src={LogoSunset} alt="" className="size-7 shrink-0" priority />
@@ -21,7 +28,7 @@ export const PageHeader = ({ icon, title }: { icon?: React.ReactNode; title?: st
         </div>
       </Link>
 
-      <h2 className="line-clamp-2 max-h-full gap-2 font-mono tracking-tight [&>svg]:mr-1.5 [&>svg]:inline">
+      <h2 className="line-clamp-2 max-h-full grow gap-2 font-mono tracking-tight [&>svg]:mr-1.5 [&>svg]:inline">
         / {icon}
         {title}
       </h2>
@@ -55,4 +62,10 @@ export const PageHeader = ({ icon, title }: { icon?: React.ReactNode; title?: st
       </div>
     </header>
   )
+}
+
+const DocumentTitle = ({ subtitle }: { subtitle?: string }) => {
+  const title = `e/suite${subtitle ? ` / ${subtitle}` : ''}`
+  useDocumentTitle(title)
+  return null
 }

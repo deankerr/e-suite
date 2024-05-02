@@ -7,17 +7,18 @@ import { GenerationDataList } from '@/components/generation/GenerationDataList'
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import { ErrorCallout } from '@/components/ui/Callouts'
+import { useMessageQuery } from '@/lib/queries'
 import { GenerationView } from '../generation/GenerationView'
 import { PageHeader } from './PageHeader'
 
-import type { MessageContent } from '@/convex/external'
-
 type MessagePageProps = {
-  content: MessageContent
+  rid: string
 }
 
-export const MessagePage = ({ content }: MessagePageProps) => {
-  const { message, generations } = content
+export const MessagePage = ({ rid }: MessagePageProps) => {
+  const result = useMessageQuery({ rid })
+  const message = result?.message
+  const generations = result?.generations
 
   const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
   const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 900, 1024]
@@ -27,12 +28,16 @@ export const MessagePage = ({ content }: MessagePageProps) => {
       .map((generation) => generation.result!.message),
   )
 
-  const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
+  const title = generations?.[0]?.prompt ?? `Message from ${message?.name ?? message?.role}`
   const single = generations?.length === 1 ? generations?.[0] : undefined
 
   return (
     <>
-      <PageHeader icon={<MessageSquareIcon className="size-5 stroke-[1.5]" />} title={title} />
+      <PageHeader
+        icon={<MessageSquareIcon className="size-5 stroke-[1.5]" />}
+        title={title}
+        setPageTitle={false}
+      />
       {[...errors].map((message) => (
         <ErrorCallout
           key={message}
