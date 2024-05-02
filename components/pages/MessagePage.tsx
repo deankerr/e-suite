@@ -63,10 +63,12 @@ export const MessagePage = ({ rid }: MessagePageProps) => {
               />
             )}
           />
-          {/* details */}
-          <Card className="overflow-hidden">
-            {generations?.[0] && <GenerationDataList generations={generations} />}
-          </Card>
+
+          {generations && generations?.length >= 0 && (
+            <Card className="overflow-hidden">
+              <GenerationDataList generations={generations} />
+            </Card>
+          )}
         </div>
       )}
 
