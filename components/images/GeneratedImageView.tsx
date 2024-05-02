@@ -15,7 +15,7 @@ import { VoteButtonPanel } from './VoteButtonPanel'
 
 import type { Generation } from '@/convex/external'
 
-type GenerationImageProps = {
+type GeneratedImageViewProps = {
   generation: Generation
   imageProps?: Partial<React.ComponentProps<typeof NextImage>>
   containerWidth?: number
@@ -23,8 +23,8 @@ type GenerationImageProps = {
   enablePageLink?: boolean
 }
 
-export const GenerationImage = forwardRef<HTMLDivElement, GenerationImageProps>(
-  function GenerationImage(
+export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewProps>(
+  function GeneratedImageView(
     { generation, imageProps, containerWidth, containerHeight, enablePageLink = true },
     forwardedRef,
   ) {

@@ -3,10 +3,11 @@
 import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
-import { GenerationDataList } from '@/components/images/GenerationDataList'
-import { GenerationImage } from '@/components/images/GenerationImage'
+import { GenerationDataList } from '@/components/generation/GenerationDataList'
+import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import { ErrorCallout } from '@/components/ui/Callouts'
+import { GenerationView } from '../generation/GenerationView'
 import { PageHeader } from './PageHeader'
 
 import type { MessageContent } from '@/convex/external'
@@ -27,27 +28,27 @@ export const MessagePage = ({ content }: MessagePageProps) => {
   )
 
   const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
+  const single = generations?.length === 1 ? generations?.[0] : undefined
 
-  const single = generations?.[0]
-  const dataCardOrientation = imageList.length <= 1 ? 'horizontal' : 'vertical'
   return (
     <>
       <PageHeader icon={<MessageSquareIcon className="size-5 stroke-[1.5]" />} title={title} />
-      <div className="px-1 py-4">
-        {[...errors].map((message) => (
-          <ErrorCallout
-            key={message}
-            title="(sinkin.ai) endpoint returned error:"
-            message={message}
-          />
-        ))}
-        {!single && (
+      {[...errors].map((message) => (
+        <ErrorCallout
+          key={message}
+          title="(sinkin.ai) endpoint returned error:"
+          message={message}
+        />
+      ))}
+
+      {!single && (
+        <div className="px-1 py-4">
           <JustifiedRowGrid
             gap={10}
             items={imageList}
             breakpoints={breakpoints}
             render={(generation, commonHeight) => (
-              <GenerationImage
+              <GeneratedImageView
                 key={generation._id}
                 generation={generation}
                 containerHeight={commonHeight}
@@ -55,21 +56,14 @@ export const MessagePage = ({ content }: MessagePageProps) => {
               />
             )}
           />
-        )}
+          {/* details */}
+          <Card className="overflow-hidden">
+            {generations?.[0] && <GenerationDataList generations={generations} />}
+          </Card>
+        </div>
+      )}
 
-        {single && (
-          <div className="mx-auto max-w-[880px]">
-            <GenerationImage key={single._id} generation={single} imageProps={{ priority: true }} />
-          </div>
-        )}
-      </div>
-
-      {/* details */}
-      <Card className="overflow-hidden">
-        {generations?.[0] && (
-          <GenerationDataList generations={generations} orientation={dataCardOrientation} />
-        )}
-      </Card>
+      {single && <GenerationView generation={single} />}
     </>
   )
 }

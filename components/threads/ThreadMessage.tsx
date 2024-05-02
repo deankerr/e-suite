@@ -4,7 +4,7 @@ import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { GenerationImage } from '@/components/images/GenerationImage'
+import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { ErrorCallout } from '@/components/ui/Callouts'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
@@ -85,7 +85,7 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
               {generations?.map((generation) => {
                 if (generation.result?.type === 'error') return null
                 return (
-                  <GenerationImage
+                  <GeneratedImageView
                     key={generation._id}
                     generation={generation}
                     containerHeight={thumbnailHeightPx}

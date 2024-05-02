@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useControls } from 'leva'
 import { ImagesIcon } from 'lucide-react'
 
-import { GenerationImage } from '@/components/images/GenerationImage'
+import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { Spinner } from '@/components/ui/Spinner'
@@ -39,7 +39,7 @@ export const ImageGridPage = () => {
           items={pager.results}
           gap={8}
           render={(generation, commonHeight) => (
-            <GenerationImage
+            <GeneratedImageView
               key={generation._id}
               generation={generation}
               imageProps={{ priority: count++ < 10 }}
