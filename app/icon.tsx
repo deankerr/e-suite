@@ -1,7 +1,8 @@
 import svgToDataUri from 'mini-svg-data-uri'
 import { ImageResponse } from 'next/og'
 
-// Route segment config
+import { environment } from '@/lib/utils'
+
 export const runtime = 'edge'
 
 // Image metadata
@@ -12,9 +13,10 @@ export const size = {
 export const contentType = 'image/png'
 
 const orange = '#fa7214'
+const amber = '#FFC53D'
 const gold = '#8C7A5E'
 
-const color = process.env.NODE_ENV === 'development' ? gold : orange
+const color = environment === 'prod' ? orange : environment === 'prev' ? amber : gold
 
 const sun = svgToDataUri(`<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
 <g fill="${color}" transform="matrix(1.5624768733978271, 0, 0, 1.5624768733978271, -149.993896484375, -128.97093200683594)">
