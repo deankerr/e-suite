@@ -17,6 +17,10 @@ const nextConfig = {
       destination: `${backendUrl}/i/:slug`,
     },
   ],
+  images: {
+    loader: 'custom',
+    loaderFile: './lib/image-loader.ts',
+  },
 }
 
 const withBundleAnalyzer = bundleAnalyzer({

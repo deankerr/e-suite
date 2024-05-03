@@ -2,14 +2,14 @@
 
 import { forwardRef } from 'react'
 import { useUser } from '@clerk/nextjs'
-import { IconButton } from '@radix-ui/themes'
+import { IconButton, Link } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
-import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
+import { cn } from '../../lib/utils'
 import { GoldSparkles } from '../effects/GoldSparkles'
 import { VoteButtonPanel } from './VoteButtonPanel'
 
@@ -37,26 +37,33 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
 
     const { user } = useUser()
     const isAdmin = user?.publicMetadata.role === 'admin'
+
+    const sizes = containerWidth
+      ? `${containerWidth}px`
+      : containerHeight
+        ? `${Math.round((containerHeight / height) * width)}px`
+        : `(min-width: 768px) 80vw, 100vw`
+
     return (
       <div
-        className="group overflow-hidden rounded-xl"
+        className={cn(
+          'group overflow-hidden rounded-xl',
+          !(containerWidth || containerHeight) && 'w-full',
+        )}
         style={{ aspectRatio: width / height, width: containerWidth, height: containerHeight }}
         ref={forwardedRef}
       >
         {image && (
-          <OptionalLink enabled={enablePageLink} href={`/image/${generation.rid}`}>
-            <NextImage
-              unoptimized
-              src={image.rid ? `/i/${image.rid}.webp` : `https://placehold.co/${width}x${height}`}
-              width={width}
-              height={height}
-              placeholder={image.blurDataUrl ? 'blur' : 'empty'}
-              blurDataURL={image.blurDataUrl}
-              className="h-full w-full object-cover"
-              alt=""
-              {...imageProps}
-            />
-          </OptionalLink>
+          <NextImage
+            src={image.rid ? `/i/${image.rid}.webp` : `https://placehold.co/${width}x${height}`}
+            fill
+            sizes={sizes}
+            placeholder={image.blurDataUrl ? 'blur' : 'empty'}
+            blurDataURL={image.blurDataUrl}
+            className="h-full w-full object-cover"
+            alt=""
+            {...imageProps}
+          />
         )}
 
         {isGenerating && (
@@ -65,6 +72,9 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
             <GoldSparkles />
           </>
         )}
+
+        {/* link */}
+        {enablePageLink && <Link href={`/image/${generation.rid}`} className="absolute inset-0" />}
 
         {/* panels */}
         {/* options */}
@@ -97,10 +107,3 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
     )
   },
 )
-
-const OptionalLink = ({
-  enabled,
-  ...props
-}: { enabled: boolean } & React.ComponentProps<typeof Link>) => {
-  return enabled ? <Link {...props} /> : props.children
-}

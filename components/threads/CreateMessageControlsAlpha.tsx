@@ -45,7 +45,7 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
       : undefined
 
     // const model_id = String(formData.get('model_id'))
-    const model_id = '4zdwGOB'
+    const model_id = currentProvider === 'fal' ? 'fal-ai/hyper-sdxl' : '4zdwGOB'
     const seed = formData.get('seed') ? Number(formData.get('seed')) : undefined
 
     const use_default_neg = formData.get('use_default_neg') ? true : false

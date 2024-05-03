@@ -43,7 +43,7 @@ const jetBrainsMono = JetBrains_Mono({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn('overscroll-none', inter.variable, jetBrainsMono.variable)}>
+    <html lang="en" className={cn('', inter.variable, jetBrainsMono.variable)}>
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>

@@ -6,7 +6,7 @@ export const JustifiedRowGrid = <Item extends { width: number; height: number }>
   render,
   gap = 0,
   itemsPerRow: staticRowSize,
-  breakpoints = [520, 768, 1024, 1280],
+  breakpoints = [520, 768, 1024, 1280, 1700],
 }: {
   items?: Item[]
   render: (item: Item, commonHeight?: number) => React.ReactNode
