@@ -4,6 +4,7 @@ import * as R from 'remeda'
 
 import * as FastLightningSdxl from './fal/fast_lightning_sdxl'
 import * as HyperSdxl from './fal/hyper_sdxl'
+import * as SDLora from './fal/lora'
 import * as PixartSigma from './fal/pixart_sigma'
 
 import type { GenerationInputParams } from '../schema'
@@ -22,6 +23,10 @@ const textToImageModels = {
   'fal-ai/pixart-sigma': {
     body: PixartSigma.generateImagePostBody,
     response: PixartSigma.generateImagePostResponse,
+  },
+  'fal-ai/lora': {
+    body: SDLora.textToImagePostBody,
+    response: SDLora.textToImagePostResponse,
   },
 } as const
 

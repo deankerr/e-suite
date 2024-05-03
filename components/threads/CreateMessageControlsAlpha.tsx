@@ -44,7 +44,8 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
       ? String(formData.get('negative_prompt'))
       : undefined
 
-    const model_id = String(formData.get('model_id'))
+    // const model_id = String(formData.get('model_id'))
+    const model_id = '4zdwGOB'
     const seed = formData.get('seed') ? Number(formData.get('seed')) : undefined
 
     const use_default_neg = formData.get('use_default_neg') ? true : false
@@ -180,7 +181,7 @@ export const CreateMessageControlsAlpha = ({ threadId }: CreateMessageControlsAl
                 <div className="flex items-center gap-2">
                   <div className="shrink-0">Square</div>
                   <div>
-                    <SelectList items={[0, 1, 2, 3, 4]} defaultValue="0" name="square" />
+                    <SelectList items={[0, 1, 2, 3, 4, 10]} defaultValue="0" name="square" />
                   </div>
                 </div>
 

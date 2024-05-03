@@ -20,6 +20,7 @@ import type * as functions from "../functions.js";
 import type * as generated_images from "../generated_images.js";
 import type * as generation from "../generation.js";
 import type * as http from "../http.js";
+import type * as inferenceSchema from "../inferenceSchema.js";
 import type * as lib_sharp from "../lib/sharp.js";
 import type * as messages from "../messages.js";
 import type * as models from "../models.js";
@@ -140,6 +141,7 @@ declare const fullApi: ApiFromModules<{
   generated_images: typeof generated_images;
   generation: typeof generation;
   http: typeof http;
+  inferenceSchema: typeof inferenceSchema;
   "lib/sharp": typeof lib_sharp;
   messages: typeof messages;
   models: typeof models;

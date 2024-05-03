@@ -27,7 +27,7 @@
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/sd-loras.jpeg",
     "description": "Run Any Stable Diffusion model with customizable LoRA weights.",
     "link": "https://fal.ai/models/sd-loras",
-    "model_id": "fal-ai/sd-loras",
+    "model_id": "fal-ai/lora",
     "name": "Stable Diffusion with LoRAs",
     "tags": "text-to-image inference loras"
   },
@@ -35,7 +35,7 @@
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/sd-loras.jpeg",
     "description": "Run Any Stable Diffusion model with customizable LoRA weights.",
     "link": "https://fal.ai/models/sd-loras/image-to-image",
-    "model_id": "fal-ai/sd-loras/image-to-image",
+    "model_id": "fal-ai/lora/image-to-image",
     "name": "Stable Diffusion with LoRAs",
     "tags": "image-to-image inference loras"
   },
@@ -126,6 +126,7 @@
     "tags": "text-to-image real-time"
   },
   {
+    "cover_image": "https://fal.media/files/kangaroo/LM0fy_9qT_8FlKrWhR7Zt.jpeg",
     "description": "Hyper-charge SDXL's performance and creativity.",
     "link": "https://fal.ai/models/hyper-sdxl",
     "model_id": "fal-ai/hyper-sdxl",
