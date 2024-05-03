@@ -8,7 +8,7 @@ import type { TextToImageHandler } from './types'
 
 const api = ky.extend({
   prefixUrl: 'https://sinkin.ai/m',
-  timeout: 1000 * 60 * 5,
+  timeout: 1000 * 60,
   retry: 0,
 })
 
