@@ -90,6 +90,7 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
                     generation={generation}
                     containerHeight={thumbnailHeightPx}
                     imageProps={{ priority }}
+                    enablePageLink
                   />
                 )
               })}

@@ -2,8 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { external } from './external'
-import { internalMutation, query } from './functions'
+import { internalMutation, internalQuery } from './functions'
 import { generatedImageFields, ridField, srcsetField } from './schema'
 import { generateRid, runWithRetries } from './utils'
 
@@ -49,7 +48,23 @@ export const updateSrcset = internalMutation({
   },
 })
 
-export const get = query({
+export const checkSrcset = internalMutation({
+  args: {
+    generatedImageId: zid('generated_images'),
+  },
+  handler: async (ctx, { generatedImageId }) => {
+    const image = await ctx.table('generated_images').getX(generatedImageId)
+    if (!image.srcset) {
+      await runWithRetries(ctx, internal.lib.sharp.generatedImageSrcset, {
+        fileId: image.fileId,
+        generatedImageId: image._id,
+      })
+      console.log('checkSrcset:', image._id)
+    }
+  },
+})
+
+export const getI = internalQuery({
   args: {
     rid: ridField,
   },
@@ -57,20 +72,8 @@ export const get = query({
     const image = await ctx
       .table('generated_images', 'rid', (q) => q.eq('rid', rid))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .firstX()
-    return external.unit.generated_image.parse(image)
-  },
-})
+      .first()
 
-export const _list = query({
-  args: {
-    limit: z.number().default(20),
-  },
-  handler: async (ctx, { limit }) => {
-    return await ctx
-      .table('generated_images')
-      .order('desc')
-      .take(limit)
-      .map((image) => external.unit.generated_image.parse(image))
+    return image
   },
 })

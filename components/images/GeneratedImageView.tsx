@@ -2,10 +2,11 @@
 
 import { forwardRef } from 'react'
 import { useUser } from '@clerk/nextjs'
-import { IconButton, Link } from '@radix-ui/themes'
+import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
 import NextImage from 'next/image'
+import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
@@ -54,16 +55,22 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
         ref={forwardedRef}
       >
         {image && (
-          <NextImage
-            src={image.rid ? `/i/${image.rid}.webp` : `https://placehold.co/${width}x${height}`}
-            fill
-            sizes={sizes}
-            placeholder={image.blurDataUrl ? 'blur' : 'empty'}
-            blurDataURL={image.blurDataUrl}
-            className="h-full w-full object-cover"
-            alt=""
-            {...imageProps}
-          />
+          <OptionalLink
+            enabled={enablePageLink}
+            href={`/image/${generation.rid}`}
+            className="block h-full w-full"
+          >
+            <NextImage
+              src={`/i/${image.rid}.webp`}
+              fill
+              sizes={sizes}
+              placeholder={image.blurDataUrl ? 'blur' : 'empty'}
+              blurDataURL={image.blurDataUrl}
+              className={'h-full w-full object-cover'}
+              alt="generated image"
+              {...imageProps}
+            />
+          </OptionalLink>
         )}
 
         {isGenerating && (
@@ -72,9 +79,6 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
             <GoldSparkles />
           </>
         )}
-
-        {/* link */}
-        {enablePageLink && <Link href={`/image/${generation.rid}`} className="absolute inset-0" />}
 
         {/* panels */}
         {/* options */}
@@ -107,3 +111,11 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
     )
   },
 )
+
+const OptionalLink = ({
+  enabled,
+  ...props
+}: { enabled?: boolean } & React.ComponentProps<typeof Link>) => {
+  if (!enabled) return props.children
+  return <Link {...props} />
+}
