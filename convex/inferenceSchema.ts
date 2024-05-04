@@ -33,6 +33,14 @@ const zSize = (max?: number) =>
     .max(max ?? constants.size.max)
     .multipleOf(8)
 
+export const simpleSchema = {
+  prompt: zPrompt(),
+  negative_prompt: zPrompt().optional(),
+  seed: zSeed().optional(),
+  steps: zSteps().optional(),
+  scheduler: z.enum(['DPMSolverMultistep', 'K_EULER_ANCESTRAL', 'DDIM', 'K_EULER', 'PNDM', 'KLMS']),
+}
+
 const sinkinLocalSchema = {
   textToImage: z.object({
     model_id: z.string(),
@@ -48,12 +56,13 @@ const sinkinLocalSchema = {
       .optional(),
     seed: zSeed().optional(),
     steps: zSteps().optional(),
+    scale: zIntBetween(1, 20),
 
     lcm: z.boolean().optional(),
     use_default_neg: z.boolean().optional(),
     version: z.string().optional(), //? per model
 
-    lora: z.string().optional(),
+    lora: z.string().optional(), //? sinkin loras
     lora_scale: z.number().min(0).max(1),
   }),
 } as const
@@ -169,5 +178,3 @@ export const localSchema = {
   fal: falLocalSchema,
   sinkin: sinkinLocalSchema,
 } as const
-
-export const a = falLocalSchema['fal-ai/hyper-sdxl'].shape.steps.unwrap()

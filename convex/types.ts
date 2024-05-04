@@ -1,6 +1,7 @@
 import { entDefinitions } from './schema'
 
 import type { TableNames } from './_generated/dataModel'
+import type { generationProviders } from './constants'
 import type { authOnlyMutation, authOnlyQuery } from './functions'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
@@ -32,3 +33,5 @@ export type ImageModel = {
   link: string
   civitai_model_id?: number
 }
+
+export type GenerationProvider = (typeof generationProviders)[number]

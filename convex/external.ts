@@ -18,6 +18,15 @@ const ridFields = {
 }
 
 const units = {
+  appImage: z.object({
+    _id: zid('app_images'),
+    _creationTime: z.number(),
+    width: z.number(),
+    height: z.number(),
+    blurDataUrl: z.string(),
+    color: z.string(),
+  }),
+
   generated_image: z
     .object({
       ...generatedImageFields,
@@ -39,6 +48,12 @@ const units = {
   message: z
     .object({ ...messageFields, ...ridFields, _creationTime: z.number(), _id: zid('messages') })
     .describe('external'),
+  models: z.object({
+    model_id: z.string(),
+    name: z.string(),
+    provider: z.string(),
+    resId: z.string(),
+  }),
   thread: z
     .object({ ...threadFields, ...ridFields, _creationTime: z.number(), _id: zid('threads') })
     .describe('external'),
@@ -53,6 +68,12 @@ const generationWithImage = units.generation.merge(
   }),
 )
 
+const modelXL = units.models.merge(
+  z.object({
+    image: units.appImage.nullable(),
+  }),
+)
+
 const messageXL = z
   .object({
     message: units.message,
@@ -63,13 +84,17 @@ const messageXL = z
 export const external = {
   unit: units,
   xl: {
-    message: messageXL,
     generation: generationWithImage,
+    model: modelXL,
+    message: messageXL,
   },
 }
 
-export type Thread = z.infer<typeof units.thread>
-export type MessageContent = z.infer<typeof messageXL>
+export type AppImage = z.infer<typeof units.appImage>
 export type Generation = z.infer<typeof generationWithImage>
 export type GeneratedImage = z.infer<typeof units.generated_image>
 export type GenerationVoteNames = (typeof generationVoteNames)[number]
+export type MessageContent = z.infer<typeof messageXL>
+export type Model = z.infer<typeof units.models>
+export type ModelContent = z.infer<typeof modelXL>
+export type Thread = z.infer<typeof units.thread>

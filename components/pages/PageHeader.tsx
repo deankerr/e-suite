@@ -23,7 +23,7 @@ export const PageHeader = ({
       {setPageTitle ? <DocumentTitle subtitle={title} /> : null}
       <Link href="/" className="shrink-0 gap-1 flex-start">
         <div className="gap-1 flex-start">
-          <NextImage src={LogoSunset} alt="" className="size-7 shrink-0" priority />
+          <NextImage src={LogoSunset} alt="" className="size-7 shrink-0" priority unoptimized />
           <h1 className="text-lg font-semibold tracking-tight">e/suite</h1>
         </div>
       </Link>

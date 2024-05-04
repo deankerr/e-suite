@@ -1,18 +1,17 @@
 import { useState } from 'react'
-import { Card, Inset, ScrollArea, TextField } from '@radix-ui/themes'
+import { ScrollArea, TextField } from '@radix-ui/themes'
+import { useAtom } from 'jotai'
 import { SearchIcon } from 'lucide-react'
-import NextImage from 'next/image'
 
+import { ModelCard } from '@/components/command-bar/ModelCard'
+import { cn } from '@/lib/utils'
 import { useModelList } from '../../lib/queries'
-import { cn } from '../../lib/utils'
-
-import type { api } from '../../convex/_generated/api'
-import type { FunctionReturnType } from 'convex/server'
+import { modelSelectedAtom } from './atoms'
 
 export const ModelBrowserCard = () => {
   const models = useModelList() ?? []
   const [searchValue, setSearchValue] = useState('')
-  const [selectedModel, setSelectedModel] = useState('')
+  const [modelSelected, setModelSelected] = useAtom(modelSelectedAtom)
 
   const searchResults = models.filter((model) =>
     model.name.toLowerCase().includes(searchValue.toLowerCase()),
@@ -36,45 +35,20 @@ export const ModelBrowserCard = () => {
       <ScrollArea>
         <div className="flex flex-wrap justify-center gap-2 p-1">
           {searchResults.map((model) => (
-            <ModelMiniCard
+            <ModelCard
               key={model.model_id}
               model={model}
-              isSelected={selectedModel === model.model_id}
-              onClick={() => setSelectedModel(model.model_id)}
+              className={cn(
+                'cursor-pointer border border-gold-7',
+                modelSelected === model.resId
+                  ? 'border-grass-9 brightness-125'
+                  : 'brightness-110 hover:border-gold-8',
+              )}
+              onClick={() => setModelSelected(`${model.provider}:${model.model_id}`)}
             />
           ))}
         </div>
       </ScrollArea>
     </div>
-  )
-}
-
-const ModelMiniCard = ({
-  model,
-  isSelected = false,
-  ...props
-}: {
-  model: FunctionReturnType<typeof api.models.list>[number]
-  isSelected?: boolean
-} & React.ComponentProps<typeof Card>) => {
-  const { appImage, name } = model
-
-  return (
-    <Card {...props} className={cn('h-60 w-40 flex-none cursor-pointer')}>
-      <div className={cn('absolute inset-0', isSelected && 'bg-grassA-7')}></div>
-      <Inset side="top" className="h-40 overflow-hidden">
-        <NextImage
-          src={`/i/${appImage?._id}`}
-          alt={model.name}
-          sizes="160px"
-          className="h-full w-full object-contain"
-          fill
-          draggable={false}
-        />
-      </Inset>
-      <div className="flex h-20">
-        <div className="m-auto text-center text-sm font-medium">{name}</div>
-      </div>
-    </Card>
   )
 }

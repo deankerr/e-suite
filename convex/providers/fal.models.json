@@ -342,10 +342,11 @@
     "tags": "image-to-image inference utility"
   },
   {
-    "description": "Zero shot personalization.",
-    "link": "https://fal.ai/models/zero-shot-personalization",
-    "model_id": "fal-ai/zero-shot-personalization",
-    "name": "Zero Shot Personalization",
+    "cover_image": "https://fal.media/files/tiger/fM1msKxGhFY7BO3J_vNiE.png",
+    "description": "Tuning free ID customization.",
+    "link": "https://fal.ai/models/pulid",
+    "model_id": "fal-ai/pulid",
+    "name": "PuLID",
     "tags": "image-to-image inference utility"
   },
   {

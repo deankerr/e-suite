@@ -1,108 +1,84 @@
-import { forwardRef, useState } from 'react'
-import { Checkbox, SegmentedControl } from '@radix-ui/themes'
+import { forwardRef } from 'react'
+import { Button } from '@radix-ui/themes'
+import { useAtom } from 'jotai'
 
-import {
-  FormControl,
-  FormInputInteger,
-  FormInputTextarea,
-} from '@/components/command-bar/form/Controls'
-import { SelectList } from '@/components/ui/SelectList'
-import { generationProviders } from '@/convex/constants'
+import { getInput, schemaGenericInputsData } from '@/components/command-bar/form/Controls'
+import { DimensionsControl } from '@/components/command-bar/form/DimensionsControl'
+import { QuantityControl } from '@/components/command-bar/form/QuantityControl'
+import { ModelCard } from '@/components/command-bar/ModelCard'
 import { localSchema } from '@/convex/inferenceSchema'
-import { modelsList } from '@/convex/models'
 import { cn } from '@/lib/utils'
-
-import type { ForwardRefExoticComponent } from 'react'
+import { modelSelectedAtom } from './atoms'
 
 type GenericGenerationInputProps = { props?: unknown } & React.ComponentProps<'form'>
 
-const gproviders = {
-  sinkin: 'sinkin',
-  fal: 'fal',
-} as const
-
-type Provider = keyof typeof gproviders
-
 export const GenericGenerationInput = forwardRef<HTMLFormElement, GenericGenerationInputProps>(
   function GenericGenerationInput({ className, ...props }, forwardedRef) {
-    const [provider, setProvider] = useState<(typeof generationProviders)[number]>('sinkin')
-    const [model, setModel] = useState('')
+    const [modelSelected] = useAtom(modelSelectedAtom)
+    const [provider, model] = modelSelected.split(':')
 
-    const schema = getSchema(provider, model)
-
+    const schema = provider && model ? getSchema(provider, model) : undefined
     const schemaKeys = schema ? Object.keys(schema?.shape ?? {}) : []
 
     return (
-      <form {...props} className={cn('', className)} ref={forwardedRef}>
-        <FormControl>
-          provider
-          <SegmentedControl.Root
-            value={provider}
-            onValueChange={(v) => setProvider(v === 'fal' ? gproviders.fal : gproviders.sinkin)}
-          >
-            <SegmentedControl.Item value="sinkin">sinkin</SegmentedControl.Item>
-            <SegmentedControl.Item value="fal">fal</SegmentedControl.Item>
-          </SegmentedControl.Root>
-        </FormControl>
+      <form
+        {...props}
+        className={cn('grid grid-cols-[auto_1fr] gap-2 p-1 @container', className)}
+        ref={forwardedRef}
+      >
+        <div className="gap-2 flex-col-start">
+          <ModelCard variant="nano" resId={modelSelected} className="" />
+          <ModelCard variant="nano" resId={modelSelected} className="" />
+          <ModelCard variant="nano" resId={modelSelected} className="" />
+        </div>
 
-        <FormControl>
-          <SelectList
-            items={modelsList
-              .filter((m) => m.provider === provider)
-              .map(({ model_id, name }) => ({
-                label: name,
-                value: model_id,
-              }))}
-            value={model}
-            onValueChange={(v) => setModel(v)}
-          />
-        </FormControl>
+        <div className="flex flex-col justify-between gap-2">
+          <div className="grow space-y-2">
+            {schemaGenericInputsData.full.map((data) => {
+              if (!schemaKeys.includes(data.key)) return null
+              return getInput(data.input, data)
+            })}
+          </div>
 
-        {schemaKeys.map((key) => {
-          const Control = controls[key]
+          <div className="flex gap-2">
+            {schemaGenericInputsData.checks.map((data) => {
+              if (!schemaKeys.includes(data.key)) return null
+              return getInput(data.input, data)
+            })}
+          </div>
 
-          if (Control)
-            return (
-              <FormControl key={key}>
-                {key}
-                <Control />
-              </FormControl>
-            )
-          return (
-            <span className="font-mono text-xs text-tomato-9" key={key}>
-              {key}?{' '}
-            </span>
-          )
-        })}
+          {/* <div className="flex flex-wrap gap-2">
+            {schemaGenericInputsData.fields.map((data) => {
+              if (!schemaKeys.includes(data.key)) return null
+              return getInput(data.input, data)
+            })}
+          </div> */}
+          <div className="gap-2 flex-between">
+            <DimensionsControl provider={provider} className="h-full" />
+            <div className="h-full grow gap-1 flex-col-between">
+              <QuantityControl />
+              <Button variant="soft" color="gray" className="h-9">
+                Save
+              </Button>
+              <Button variant="surface" className="h-9 w-3/4">
+                Run
+              </Button>
+            </div>
+          </div>
+        </div>
 
-        {/* {provider} */}
-        {/* {model} */}
-        {/* {schemaKeys.map((k) => `${k}, `)} */}
-        {/* {modelsList.map(({ name }) => `${name} `)} */}
+        <div className="absolute right-0 font-mono text-xs text-gold-9">
+          {provider} {model}
+        </div>
       </form>
     )
   },
 )
 
-const getSchema = (provider: Provider, model_id: string) => {
+const getSchema = (provider: string, model_id: string) => {
   if (provider === 'sinkin') return localSchema.sinkin.textToImage
 
   return model_id in localSchema.fal
     ? localSchema.fal[model_id as keyof typeof localSchema.fal]
     : undefined
-}
-
-const controls: Record<string, ForwardRefExoticComponent<any>> = {
-  prompt: FormInputTextarea,
-  negative_prompt: FormInputTextarea,
-
-  seed: FormInputInteger,
-  steps: FormInputInteger,
-  guidance_scale: FormInputInteger,
-  num_inference_steps: FormInputInteger,
-
-  lcm: Checkbox,
-  use_default_neg: Checkbox,
-  enable_safety_checker: Checkbox,
-  expand_prompt: Checkbox,
 }

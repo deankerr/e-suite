@@ -37,7 +37,7 @@ export const useInsecureDemoOnlyGeneraitonList = () => {
   return pager
 }
 
-export const useModelList = () => {
-  const models = useQuery(api.models.list, {})
-  return models
+export const useModelList = (skip?: 'skip') => {
+  const models = useQuery(api.models.list, skip ?? {})
+  return models ?? []
 }
