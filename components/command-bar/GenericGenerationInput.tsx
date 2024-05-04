@@ -2,13 +2,13 @@ import { forwardRef } from 'react'
 import { Button } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
 
-import { getInput, schemaGenericInputsData } from '@/components/command-bar/form/Controls'
+import { FormCheckbox, FormPrompt, FormSelect } from '@/components/command-bar/form/Controls'
 import { DimensionsControl } from '@/components/command-bar/form/DimensionsControl'
 import { QuantityControl } from '@/components/command-bar/form/QuantityControl'
 import { ModelCard } from '@/components/command-bar/ModelCard'
 import { localSchema } from '@/convex/inferenceSchema'
 import { cn } from '@/lib/utils'
-import { modelSelectedAtom } from './atoms'
+import { modelSelectedAtom, useReadForm } from './atoms'
 
 type GenericGenerationInputProps = { props?: unknown } & React.ComponentProps<'form'>
 
@@ -18,11 +18,18 @@ export const GenericGenerationInput = forwardRef<HTMLFormElement, GenericGenerat
     const [provider, model] = modelSelected.split(':')
 
     const schema = provider && model ? getSchema(provider, model) : undefined
-    const schemaKeys = schema ? Object.keys(schema?.shape ?? {}) : []
+    const keys = schema ? Object.keys(schema.shape ?? {}).concat(['dimensions', 'quantity']) : []
+
+    const readForm = useReadForm(keys)
+    const handleSubmit = () => {
+      const inputs = readForm()
+      console.log(inputs)
+    }
 
     return (
       <form
         {...props}
+        action={handleSubmit}
         className={cn('grid grid-cols-[auto_1fr] gap-2 p-1 @container', className)}
         ref={forwardedRef}
       >
@@ -34,30 +41,23 @@ export const GenericGenerationInput = forwardRef<HTMLFormElement, GenericGenerat
 
         <div className="flex flex-col justify-between gap-2">
           <div className="grow space-y-2">
-            {schemaGenericInputsData.full.map((data) => {
-              if (!schemaKeys.includes(data.key)) return null
-              return getInput(data.input, data)
-            })}
+            <FormPrompt name="prompt" keys={keys} />
+            <FormPrompt name="negative_prompt" keys={keys} />
+            <FormSelect name="style" itemsKey="style" keys={keys} />
           </div>
 
           <div className="flex gap-2">
-            {schemaGenericInputsData.checks.map((data) => {
-              if (!schemaKeys.includes(data.key)) return null
-              return getInput(data.input, data)
-            })}
+            <FormCheckbox name="lcm" keys={keys} />
+            <FormCheckbox name="use_default_neg" keys={keys} />
+            <FormCheckbox name="enable_safety_checker" keys={keys} />
+            <FormCheckbox name="expand_prompt" keys={keys} />
           </div>
 
-          {/* <div className="flex flex-wrap gap-2">
-            {schemaGenericInputsData.fields.map((data) => {
-              if (!schemaKeys.includes(data.key)) return null
-              return getInput(data.input, data)
-            })}
-          </div> */}
           <div className="gap-2 flex-between">
-            <DimensionsControl provider={provider} className="h-full" />
+            <DimensionsControl />
             <div className="h-full grow gap-1 flex-col-between">
               <QuantityControl />
-              <Button variant="soft" color="gray" className="h-9">
+              <Button type="button" variant="soft" color="gray" className="h-9">
                 Save
               </Button>
               <Button variant="surface" className="h-9 w-3/4">

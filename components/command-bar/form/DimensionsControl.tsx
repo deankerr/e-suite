@@ -1,6 +1,7 @@
 import { CheckboxCards } from '@radix-ui/themes'
 import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'
 
+import { useFormAtom, useSelectedModel } from '@/components/command-bar/atoms'
 import { FormLabel } from '@/components/command-bar/form/Controls'
 import { cn } from '@/lib/utils'
 
@@ -42,12 +43,14 @@ const sizes = [
     hd: true,
   },
 ]
-type DimensionsControlProps = { provider?: string } & React.ComponentProps<'div'>
 
-export const DimensionsControl = ({ provider, className, ...props }: DimensionsControlProps) => {
+export const DimensionsControl = () => {
+  const { provider } = useSelectedModel()
   const enableHdSizes = provider === 'fal'
+
+  const { value, set } = useFormAtom('dimensions', ['square'])
   return (
-    <div {...props} className={cn('grid h-fit max-w-80 gap-1 font-mono text-xs', className)}>
+    <div className={cn('grid max-w-80 gap-1 font-mono text-xs')}>
       <FormLabel htmlFor="dimensions">dimensions</FormLabel>
       <CheckboxCards.Root
         id="dimensions"
@@ -55,6 +58,8 @@ export const DimensionsControl = ({ provider, className, ...props }: DimensionsC
         gap="2"
         columns="2"
         style={{ gridTemplateColumns: '1fr auto' }}
+        value={value}
+        onValueChange={set}
       >
         {sizes.map((size) => (
           <CheckboxCards.Item

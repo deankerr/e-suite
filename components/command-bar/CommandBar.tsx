@@ -16,14 +16,12 @@ import { environment } from '@/lib/utils'
 import { useModelList } from '../../lib/queries'
 import { Glass } from '../ui/Glass'
 import { modelSelectedAtom } from './atoms'
-import { SchemaPanel } from './SchemaPanel'
 
 const tabs = {
   gen0: GenerationInputCard,
   gen1: GenericGenerationInput,
   gen2: GenericGenerationInput2,
   models: ModelBrowserCard,
-  schema: SchemaPanel,
 } as const
 
 type CommandBarProps = { props?: unknown }

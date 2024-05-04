@@ -19,7 +19,7 @@ export const GenericGenerationInput2 = ({}: GenericGenerationInput2Props) => {
         <ModelCard variant="nano" resId={modelSelected} className="" />
       </div>
       <div className="grid h-40 max-w-3xl gap-2 @lg:grid-cols-[2fr_1fr]">
-        <DimensionsControl provider={'fal'} />
+        <DimensionsControl />
         <div className="grid h-full grid-rows-3 items-center">
           <QuantityControl />
           <div className="flex-center">

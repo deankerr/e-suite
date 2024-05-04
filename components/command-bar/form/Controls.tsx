@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import { Label } from '@radix-ui/react-label'
 import { Checkbox, Select, TextArea, TextField } from '@radix-ui/themes'
 
+import { useFormAtom } from '@/components/command-bar/atoms'
 import { cn } from '@/lib/utils'
 
 export const FormLabel = ({
@@ -129,24 +130,93 @@ export const getInput = (control: string, props: InputProps) => {
   return input ? input(props) : <div>{control}?</div>
 }
 
-// type FormTextareaProps = { name: string; label?: string; placeholder?: string }
+export const FormPrompt = ({
+  name,
+  label,
+  defaultValue = '',
+  keys,
+}: {
+  name: string
+  label?: string
+  required?: boolean
+  defaultValue?: string
+  keys: string[]
+}) => {
+  const { value, set } = useFormAtom(name, defaultValue)
+  if (!keys.includes(name)) return null
 
-// export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
-//   function FormTextarea({ className, ...props }, forwardedRef) {
-//     return (
-//       <div {...props} className={cn('', className)} ref={forwardedRef}>
-//         <p>FormTextarea</p>
-//       </div>
-//     )
-//   },
-// )
+  return (
+    <FormControl>
+      {label ?? name}
+      <FormInputTextarea value={value} onChange={(e) => set(e.target.value)} />
+    </FormControl>
+  )
+}
 
-/*
- Log file: /Users/dean/Library/Application Support/Code/logs/20240503T050831/window1/exthost/vscode.typescript-language-features/tsserver-log-ZtX6Hv/tsserver.log
-2024-05-03 18:40:48.464 [info] <syntax> Trace directory: /Users/dean/Library/Application Support/Code/logs/20240503T050831/window1/exthost/vscode.typescript-language-features/tsserver-log-lLWyoB
-2024-05-03 18:40:48.464 [info] <syntax> Forking...
-2024-05-03 18:40:48.464 [info] <syntax> Starting...
-2024-05-03 18:40:48.464 [info] <semantic> Log file: /Users/dean/Library/Application Support/Code/logs/20240503T050831/window1/exthost/vscode.typescript-language-features/tsserver-log-yHnUC8/tsserver.log
-2024-05-03 18:40:48.465 [info] <semantic> Trace directory: /Users/dean/Library/Application Support/Code/logs/20240503T050831/window1/exthost/vscode.typescript-language-features/tsserver-log-GtMUf2
+export const FormCheckbox = ({
+  name,
+  label,
+  defaultValue = false,
+  keys,
+}: {
+  name: string
+  label?: string
+  required?: boolean
+  defaultValue?: boolean
+  keys: string[]
+}) => {
+  const { value, set } = useFormAtom(name, defaultValue)
+  if (!keys.includes(name)) return null
 
-*/
+  return (
+    <FormControl className="max-w-48 grid-cols-[2em_auto]">
+      <Checkbox checked={value} onCheckedChange={set} />
+      {label ?? name}
+    </FormControl>
+  )
+}
+
+export const FormSelect = ({
+  name,
+  label,
+  defaultValue = '',
+  itemsKey,
+  keys,
+}: {
+  name: string
+  label?: string
+  required?: boolean
+  defaultValue?: string
+  itemsKey: keyof typeof formItems
+  keys: string[]
+}) => {
+  const { value, set } = useFormAtom(name, defaultValue)
+  if (!keys.includes(name)) return null
+
+  return (
+    <FormControl className="max-w-60">
+      {label ?? name}
+      <FormInputSelect
+        value={value}
+        onValueChange={set}
+        defaultValue={defaultValue}
+        items={formItems[itemsKey]}
+      />
+    </FormControl>
+  )
+}
+
+const formItems = {
+  style: [
+    '(No style)',
+    'Cinematic',
+    'Photographic',
+    'Anime',
+    'Manga',
+    'Digital Art',
+    'Pixel art',
+    'Fantasy art',
+    'Neonpunk',
+    '3D Model',
+  ],
+}

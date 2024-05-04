@@ -1,16 +1,17 @@
 import { SegmentedControl } from '@radix-ui/themes'
 
+import { useFormAtom } from '@/components/command-bar/atoms'
 import { FormLabel } from '@/components/command-bar/form/Controls'
 
-type QuantityControlProps = { props?: unknown }
+export const QuantityControl = () => {
+  const { set, value } = useFormAtom('quantity', '2')
 
-export const QuantityControl = ({}: QuantityControlProps) => {
   return (
     <div className="grid h-fit gap-1 font-mono text-xs">
       <FormLabel htmlFor="quantity" className="">
         quantity
       </FormLabel>
-      <SegmentedControl.Root id="quantity" defaultValue="2">
+      <SegmentedControl.Root id="quantity" defaultValue="2" value={value} onValueChange={set}>
         <SegmentedControl.Item value="1" className="font-mono">
           1
         </SegmentedControl.Item>
