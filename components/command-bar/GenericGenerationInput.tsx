@@ -1,19 +1,29 @@
 import { forwardRef } from 'react'
 import { Button } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
+import { toast } from 'sonner'
 
 import { FormCheckbox, FormPrompt, FormSelect } from '@/components/command-bar/form/Controls'
 import { DimensionsControl } from '@/components/command-bar/form/DimensionsControl'
 import { QuantityControl } from '@/components/command-bar/form/QuantityControl'
 import { ModelCard } from '@/components/command-bar/ModelCard'
+import { api } from '@/convex/_generated/api'
 import { localSchema } from '@/convex/inferenceSchema'
 import { cn } from '@/lib/utils'
-import { modelSelectedAtom, useReadForm } from './atoms'
+import { modelSelectedAtom, threadIdAtom, useReadForm } from './atoms'
 
-type GenericGenerationInputProps = { props?: unknown } & React.ComponentProps<'form'>
+import type { Id } from '@/convex/_generated/dataModel'
+import type { GenerationInputParams } from '@/convex/schema'
+import type { GenerationProvider } from '@/convex/types'
+
+type GenericGenerationInputProps = { threadId?: Id<'threads'> } & React.ComponentProps<'form'>
 
 export const GenericGenerationInput = forwardRef<HTMLFormElement, GenericGenerationInputProps>(
   function GenericGenerationInput({ className, ...props }, forwardedRef) {
+    const send = useMutation(api.messages.create)
+    const [threadId] = useAtom(threadIdAtom)
+
     const [modelSelected] = useAtom(modelSelectedAtom)
     const [provider, model] = modelSelected.split(':')
 
@@ -22,8 +32,52 @@ export const GenericGenerationInput = forwardRef<HTMLFormElement, GenericGenerat
 
     const readForm = useReadForm(keys)
     const handleSubmit = () => {
-      const inputs = readForm()
-      console.log(inputs)
+      if (!threadId) {
+        toast.error('missing threadId')
+        return
+      }
+
+      const inputs = readForm().filter((input) => input.value !== '')
+      const quantity = inputs.find((input) => input.name === 'quantity')
+      const dimensions = inputs.find((input) => input.name === 'dimensions')
+
+      if (!(Number(quantity?.value) && Array.isArray(dimensions?.value)))
+        throw new Error('missing values')
+
+      const bulk = dimensions.value.map((d) => getDim(d, Number(quantity?.value)))
+
+      const params = Object.fromEntries(
+        inputs
+          .filter(
+            (input) =>
+              !['dimensions', 'quantity', 'expand_prompt', 'enable_safety_checker'].includes(
+                input.name,
+              ),
+          )
+          .map((input) => [input.name, input.value]),
+      ) as unknown as GenerationInputParams
+
+      console.log(bulk, inputs)
+      send({
+        threadId,
+        message: {
+          role: 'assistant',
+          inference: {
+            generation: {
+              parameters: {
+                ...params,
+                provider: provider as GenerationProvider,
+                model_id: model as string,
+              },
+              dimensions: bulk,
+            },
+          },
+        },
+      })
+        .then(() => toast.success('Generation created'))
+        .catch((err) => {
+          toast.error(err.message)
+        })
     }
 
     return (
@@ -81,4 +135,23 @@ const getSchema = (provider: string, model_id: string) => {
   return model_id in localSchema.fal
     ? localSchema.fal[model_id as keyof typeof localSchema.fal]
     : undefined
+}
+
+const getDim = (dim: unknown, n: number) => {
+  if (typeof dim !== 'string') throw new Error('invalid dim')
+  switch (dim) {
+    case 'square':
+      return { width: 512, height: 512, n }
+    case 'square_hd':
+      return { width: 1024, height: 1024, n }
+    case 'portrait_4_3':
+      return { width: 512, height: 768, n }
+    case 'portrait_16_9':
+      return { width: 768, height: 1024, n }
+    case 'landscape_4_3':
+      return { width: 768, height: 512, n }
+    case 'landscape_16_9':
+      return { width: 1024, height: 768, n }
+  }
+  throw new Error('invalid dim')
 }
