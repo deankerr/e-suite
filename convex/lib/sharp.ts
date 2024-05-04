@@ -6,8 +6,11 @@ import sharp from 'sharp'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
+import { imageSrcsetWidths } from '../constants'
 import { internalAction } from '../functions'
+import { insist } from '../utils'
 
+import type { Id } from '../_generated/dataModel'
 import type { FormatEnum } from 'sharp'
 
 const BLUR_FORMAT: keyof FormatEnum = 'png'
@@ -66,7 +69,7 @@ export const processImage = async (input: Blob, options?: Partial<SharpProcessOp
     .metadata()
     .then(({ width, height, format }) => {
       if (!(width && height && format)) {
-        throw Error('Failed to get required image metadata')
+        throw new Error('Failed to get required image metadata')
       }
       return { width, height, format }
     })
@@ -97,4 +100,49 @@ export const processImage = async (input: Blob, options?: Partial<SharpProcessOp
   const blurBlob = new Blob([blur.data], { type: `image/${blurOptions.format}` })
 
   return { input, metadata, webpBlob, blurBlob, blurDataUrl, color }
+}
+
+export const generatedImageSrcset = internalAction({
+  args: {
+    fileId: zid('_storage'),
+    generatedImageId: zid('generated_images'),
+  },
+  handler: async (ctx, { fileId, generatedImageId }) => {
+    const input = await ctx.storage.get(fileId)
+    insist(input, 'invalid file id')
+    const srcsetBlobs = await processImageSrcset(input, imageSrcsetWidths)
+
+    const srcset: { width: number; fileId: Id<'_storage'> }[] = []
+    for (const { width, blob } of srcsetBlobs) {
+      const resizedFileId = await ctx.storage.store(blob)
+      srcset.push({ width, fileId: resizedFileId })
+    }
+
+    await ctx.runMutation(internal.generated_images.updateSrcset, { generatedImageId, srcset })
+  },
+})
+
+export const processImageSrcset = async (input: Blob, widths: Readonly<number[]>) => {
+  const arrBuffer = await input.arrayBuffer()
+  const metadata = await sharp(arrBuffer)
+    .metadata()
+    .then(({ width, height, format }) => {
+      if (!(width && height && format)) {
+        throw new Error('Failed to get required image metadata')
+      }
+      return { width, height, format }
+    })
+
+  const pipeline = sharp(arrBuffer)
+  const srcset: { width: number; blob: Blob }[] = []
+
+  for (const width of widths) {
+    if (width >= metadata.width) continue
+
+    const resizedBuffer = await pipeline.clone().resize({ width }).toBuffer()
+    const resizedBlob = new Blob([resizedBuffer], { type: input.type })
+    srcset.push({ width, blob: resizedBlob })
+  }
+
+  return srcset
 }

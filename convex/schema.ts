@@ -8,6 +8,7 @@ import {
   completionProviders,
   generationProviders,
   generationVoteNames,
+  imageSrcsetWidths,
   maxMessageNameStringLength,
   maxTitleStringLength,
   messageRoles,
@@ -43,6 +44,13 @@ const speech = defineEnt({
 })
 
 //* Generated Images
+export const srcsetField = z
+  .object({
+    width: z.number().refine((val) => imageSrcsetWidths.some((width) => width === val)),
+    fileId: zid('_storage'),
+  })
+  .array()
+
 export const generatedImageFields = {
   width: z.number(),
   height: z.number(),
@@ -52,6 +60,7 @@ export const generatedImageFields = {
 
   // optimized
   fileId: zid('_storage'),
+  srcset: srcsetField.optional(),
 
   blurDataUrl: z.string(),
   color: z.string(),

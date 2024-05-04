@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { internal } from './_generated/api'
 import { external } from './external'
 import { internalMutation, query } from './functions'
-import { generatedImageFields, ridField } from './schema'
+import { generatedImageFields, ridField, srcsetField } from './schema'
 import { generateRid, runWithRetries } from './utils'
 
 export const create = internalMutation({
@@ -16,10 +16,15 @@ export const create = internalMutation({
     const rid = await generateRid(ctx, 'generated_images')
     const generation = await ctx.table('generations').getX(args.generationId)
 
-    return await ctx.table('generated_images').insert({
+    const generatedImageId = await ctx.table('generated_images').insert({
       ...args,
       rid,
       private: generation.private,
+    })
+
+    await runWithRetries(ctx, internal.lib.sharp.generatedImageSrcset, {
+      fileId: args.fileId,
+      generatedImageId,
     })
   },
 })
@@ -31,6 +36,16 @@ export const createFromUrl = internalMutation({
   },
   handler: async (ctx, args) => {
     await runWithRetries(ctx, internal.lib.sharp.generationFromUrl, args)
+  },
+})
+
+export const updateSrcset = internalMutation({
+  args: {
+    generatedImageId: zid('generated_images'),
+    srcset: srcsetField,
+  },
+  handler: async (ctx, { generatedImageId, srcset }) => {
+    return await ctx.table('generated_images').getX(generatedImageId).patch({ srcset })
   },
 })
 
