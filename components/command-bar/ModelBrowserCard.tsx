@@ -1,19 +1,23 @@
 import { useState } from 'react'
 import { Card, Inset, ScrollArea, TextField } from '@radix-ui/themes'
 import { SearchIcon } from 'lucide-react'
+import NextImage from 'next/image'
 
-import { modelsList } from '@/convex/models'
+import { useModelList } from '../../lib/queries'
 import { cn } from '../../lib/utils'
 
-type ModelRecord = (typeof modelsList)[number]
+import type { api } from '../../convex/_generated/api'
+import type { FunctionReturnType } from 'convex/server'
 
 export const ModelBrowserCard = () => {
+  const models = useModelList() ?? []
   const [searchValue, setSearchValue] = useState('')
   const [selectedModel, setSelectedModel] = useState('')
 
-  const searchResults = modelsList.filter((model) =>
+  const searchResults = models.filter((model) =>
     model.name.toLowerCase().includes(searchValue.toLowerCase()),
   )
+
   return (
     <div className="flex h-full flex-col overflow-hidden shadow-inner">
       <div className="shrink-0 p-3">
@@ -49,14 +53,24 @@ const ModelMiniCard = ({
   model,
   isSelected = false,
   ...props
-}: { model: ModelRecord; isSelected?: boolean } & React.ComponentProps<typeof Card>) => {
-  const { cover_image, name } = model
+}: {
+  model: FunctionReturnType<typeof api.models.list>[number]
+  isSelected?: boolean
+} & React.ComponentProps<typeof Card>) => {
+  const { appImage, name } = model
 
   return (
     <Card {...props} className={cn('h-60 w-40 flex-none cursor-pointer')}>
       <div className={cn('absolute inset-0', isSelected && 'bg-grassA-7')}></div>
       <Inset side="top" className="h-40 overflow-hidden">
-        {cover_image ? <img src={cover_image} alt="" className="" draggable={false} /> : null}
+        <NextImage
+          src={`/i/${appImage?._id}`}
+          alt={model.name}
+          sizes="160px"
+          className="h-full w-full object-contain"
+          fill
+          draggable={false}
+        />
       </Inset>
       <div className="flex h-20">
         <div className="m-auto text-center text-sm font-medium">{name}</div>

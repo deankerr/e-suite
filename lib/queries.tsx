@@ -36,3 +36,8 @@ export const useInsecureDemoOnlyGeneraitonList = () => {
   const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
   return pager
 }
+
+export const useModelList = () => {
+  const models = useQuery(api.models.list, {})
+  return models
+}

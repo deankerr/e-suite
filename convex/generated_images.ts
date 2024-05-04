@@ -50,10 +50,13 @@ export const updateSrcset = internalMutation({
 
 export const checkSrcset = internalMutation({
   args: {
-    generatedImageId: zid('generated_images'),
+    generatedImageId: z.string(),
   },
   handler: async (ctx, { generatedImageId }) => {
-    const image = await ctx.table('generated_images').getX(generatedImageId)
+    const id = ctx.unsafeDb.normalizeId('generated_images', generatedImageId)
+    if (!id) return
+
+    const image = await ctx.table('generated_images').getX(id)
     if (!image.srcset) {
       await runWithRetries(ctx, internal.lib.sharp.generatedImageSrcset, {
         fileId: image.fileId,

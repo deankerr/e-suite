@@ -21,9 +21,12 @@ http.route({
   method: 'GET',
   handler: httpAction(async (ctx, request) => {
     const { pathname, searchParams } = new URL(request.url)
+
     const path = pathname.split('/')[2] as string
-    const rid = path.slice(0, 6)
-    const result = await ctx.runQuery(internal.generated_images.getI, { rid })
+    const result =
+      path.length === 32
+        ? await ctx.runQuery(internal.app_images.get, { appImageId: path as Id<'app_images'> })
+        : await ctx.runQuery(internal.generated_images.getI, { rid: path.slice(0, 6) })
 
     if (!result) {
       return new Response('Invalid image id', {

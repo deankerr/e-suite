@@ -27,8 +27,10 @@ type BlurOptions = {
 
 type SharpProcessOptions = {
   blur: Partial<BlurOptions>
+  resizeWidths?: number[]
 }
 
+//* Actions
 export const generationFromUrl = internalAction({
   args: {
     sourceUrl: z.string(),
@@ -55,6 +57,59 @@ export const generationFromUrl = internalAction({
   },
 })
 
+export const generatedImageSrcset = internalAction({
+  args: {
+    fileId: zid('_storage'),
+    generatedImageId: zid('generated_images'),
+  },
+  handler: async (ctx, { fileId, generatedImageId }) => {
+    const input = await ctx.storage.get(fileId)
+    insist(input, 'invalid file id')
+    const srcsetBlobs = await processImageSrcset(input, imageSrcsetWidths)
+
+    const srcset: { width: number; fileId: Id<'_storage'> }[] = []
+    for (const { width, blob } of srcsetBlobs) {
+      const resizedFileId = await ctx.storage.store(blob)
+      srcset.push({ width, fileId: resizedFileId })
+    }
+
+    await ctx.runMutation(internal.generated_images.updateSrcset, { generatedImageId, srcset })
+  },
+})
+
+export const createAppImageFromUrl = internalAction({
+  args: {
+    sourceUrl: z.string(),
+  },
+  handler: async (ctx, { sourceUrl }) => {
+    const inputBlob = await ky.get(sourceUrl).blob()
+
+    const { metadata, webpBlob, blurDataUrl, color } = await processImage(inputBlob)
+    const sourceBlob = new Blob([inputBlob], { type: `image/${metadata.format}` })
+    const sourceFileId = await ctx.storage.store(sourceBlob)
+    const webpStorageId = await ctx.storage.store(webpBlob)
+
+    const srcsetBlobs = await processImageSrcset(inputBlob, imageSrcsetWidths)
+    const srcset: { width: number; fileId: Id<'_storage'> }[] = []
+    for (const { width, blob } of srcsetBlobs) {
+      const resizedFileId = await ctx.storage.store(blob)
+      srcset.push({ width, fileId: resizedFileId })
+    }
+
+    await ctx.runMutation(internal.app_images.create, {
+      width: metadata.width,
+      height: metadata.height,
+      sourceUrl,
+      sourceFileId,
+      fileId: webpStorageId,
+      blurDataUrl,
+      color,
+      srcset,
+    })
+  },
+})
+
+//* Implementations
 export const processImage = async (input: Blob, options?: Partial<SharpProcessOptions>) => {
   const blurOptions = {
     format: BLUR_FORMAT,
@@ -101,26 +156,6 @@ export const processImage = async (input: Blob, options?: Partial<SharpProcessOp
 
   return { input, metadata, webpBlob, blurBlob, blurDataUrl, color }
 }
-
-export const generatedImageSrcset = internalAction({
-  args: {
-    fileId: zid('_storage'),
-    generatedImageId: zid('generated_images'),
-  },
-  handler: async (ctx, { fileId, generatedImageId }) => {
-    const input = await ctx.storage.get(fileId)
-    insist(input, 'invalid file id')
-    const srcsetBlobs = await processImageSrcset(input, imageSrcsetWidths)
-
-    const srcset: { width: number; fileId: Id<'_storage'> }[] = []
-    for (const { width, blob } of srcsetBlobs) {
-      const resizedFileId = await ctx.storage.store(blob)
-      srcset.push({ width, fileId: resizedFileId })
-    }
-
-    await ctx.runMutation(internal.generated_images.updateSrcset, { generatedImageId, srcset })
-  },
-})
 
 export const processImageSrcset = async (input: Blob, widths: Readonly<number[]>) => {
   const arrBuffer = await input.arrayBuffer()

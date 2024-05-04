@@ -43,7 +43,7 @@ const speech = defineEnt({
   voiceRef: v.string(),
 })
 
-//* Generated Images
+//* Images
 export const srcsetField = z
   .object({
     width: z.number().refine((val) => imageSrcsetWidths.some((width) => width === val)),
@@ -51,7 +51,7 @@ export const srcsetField = z
   })
   .array()
 
-export const generatedImageFields = {
+const sharedImageFields = {
   width: z.number(),
   height: z.number(),
 
@@ -60,10 +60,19 @@ export const generatedImageFields = {
 
   // optimized
   fileId: zid('_storage'),
-  srcset: srcsetField.optional(),
 
   blurDataUrl: z.string(),
   color: z.string(),
+}
+
+//* App Images
+export const appImageFields = { ...sharedImageFields, srcset: srcsetField }
+const app_images = defineEnt(zodToConvexFields(appImageFields)).index('sourceUrl', ['sourceUrl'])
+
+//* Generated Images
+export const generatedImageFields = {
+  ...sharedImageFields,
+  srcset: srcsetField.optional(),
 }
 const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
   .deletion('scheduled', {
@@ -226,6 +235,8 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
 //* Schema
 const schema = defineEntSchema(
   {
+    app_images,
+
     generations,
     generated_images,
     generation_votes,
