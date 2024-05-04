@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import { ScrollArea, TextField } from '@radix-ui/themes'
-import { useAtom } from 'jotai'
 import { SearchIcon } from 'lucide-react'
 
+import { useFormResource } from '@/components/command-bar/atoms'
 import { ModelCard } from '@/components/command-bar/ModelCard'
 import { cn } from '@/lib/utils'
 import { useModelList } from '../../lib/queries'
-import { modelSelectedAtom } from './atoms'
 
 export const ModelBrowserCard = () => {
   const models = useModelList() ?? []
   const [searchValue, setSearchValue] = useState('')
-  const [modelSelected, setModelSelected] = useAtom(modelSelectedAtom)
+  const { resId, set } = useFormResource()
 
   const searchResults = models.filter((model) =>
     model.name.toLowerCase().includes(searchValue.toLowerCase()),
@@ -40,11 +39,11 @@ export const ModelBrowserCard = () => {
               model={model}
               className={cn(
                 'cursor-pointer border border-gold-7',
-                modelSelected === model.resId
+                resId === model.resId
                   ? 'border-grass-9 brightness-125'
                   : 'brightness-110 hover:border-gold-8',
               )}
-              onClick={() => setModelSelected(`${model.provider}:${model.model_id}`)}
+              onClick={() => set(model)}
             />
           ))}
         </div>

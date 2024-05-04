@@ -1,6 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
+import { generationProviders } from './constants'
 import {
   generatedImageFields,
   generationFields,
@@ -51,7 +52,7 @@ const units = {
   models: z.object({
     model_id: z.string(),
     name: z.string(),
-    provider: z.string(),
+    provider: z.enum(generationProviders),
     resId: z.string(),
   }),
   thread: z

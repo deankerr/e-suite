@@ -1,7 +1,17 @@
 import { useUser } from '@clerk/nextjs'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { useSelectedLayoutSegments } from 'next/navigation'
 
 import { api } from '@/convex/_generated/api'
+
+export const useThreadCtx = () => {
+  const segments = useSelectedLayoutSegments()
+  const [route, rid] = segments
+  const queryKey = route === 'thread' && rid ? { rid } : 'skip'
+  const thread = useQuery(api.threads.get, queryKey)
+
+  return thread
+}
 
 export const useThreadFeed = ({ rid }: { rid: string }) => {
   const thread = useQuery(api.threads.get, { rid })

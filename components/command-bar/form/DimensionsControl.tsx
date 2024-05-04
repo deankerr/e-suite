@@ -1,7 +1,7 @@
 import { CheckboxCards } from '@radix-ui/themes'
 import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'
 
-import { useFormAtom, useSelectedModel } from '@/components/command-bar/atoms'
+import { useFormAtom, useFormResource } from '@/components/command-bar/atoms'
 import { FormLabel } from '@/components/command-bar/form/Controls'
 import { cn } from '@/lib/utils'
 
@@ -45,7 +45,7 @@ const sizes = [
 ]
 
 export const DimensionsControl = () => {
-  const { provider } = useSelectedModel()
+  const { provider } = useFormResource()
   const enableHdSizes = provider === 'fal'
 
   const { value, set } = useFormAtom('dimensions', ['square'])

@@ -43,7 +43,7 @@ export const importCoverImages = internalMutation({
   args: {},
   handler: async (ctx) => {
     for (const model of modelsList) {
-      await ctx.scheduler.runAfter(0, internal.app_images.importUrl, { url: model.cover_image! })
+      await ctx.scheduler.runAfter(0, internal.app_images.importUrl, { url: model.cover_image })
     }
   },
 })

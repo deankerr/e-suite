@@ -4,23 +4,18 @@ import { useState } from 'react'
 import { Button, IconButton } from '@radix-ui/themes'
 import { useWindowSize } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useAtom } from 'jotai'
 import { useControls } from 'leva'
 import { MenuIcon } from 'lucide-react'
 
-import { GenerationInputCard } from '@/components/command-bar/GenerationInputCard'
-import { GenericGenerationInput } from '@/components/command-bar/GenericGenerationInput'
-import { GenericGenerationInput2 } from '@/components/command-bar/GenericGenerationInput2'
+import { GenerationInputPanel } from '@/components/command-bar/GenerationInputPanel'
 import { ModelBrowserCard } from '@/components/command-bar/ModelBrowserCard'
+import { Monitor } from '@/components/command-bar/Monitor'
 import { environment } from '@/lib/utils'
 import { useModelList } from '../../lib/queries'
 import { Glass } from '../ui/Glass'
-import { modelSelectedAtom } from './atoms'
 
 const tabs = {
-  gen0: GenerationInputCard,
-  gen1: GenericGenerationInput,
-  gen2: GenericGenerationInput2,
+  gen1: GenerationInputPanel,
   models: ModelBrowserCard,
 } as const
 
@@ -54,8 +49,6 @@ export const CommandBar = ({}: CommandBarProps) => {
       bottom: 0,
     },
   }
-
-  const [modelSelected] = useAtom(modelSelectedAtom)
 
   // watch
   useModelList()
@@ -131,41 +124,23 @@ export const CommandBar = ({}: CommandBarProps) => {
 
             <Button
               variant="surface"
-              color="bronze"
-              className="h-full rounded-lg font-mono"
-              onClick={() => setTab('gen0')}
-            >
-              Generate 0
-            </Button>
-
-            <Button
-              variant="surface"
               color="orange"
               className="h-full rounded-lg font-mono"
               onClick={() => setTab('gen1')}
             >
-              Generate 1
+              Generate
             </Button>
 
             <Button
               variant="surface"
-              color="indigo"
-              className="h-full rounded-lg font-mono"
-              onClick={() => setTab('gen2')}
-            >
-              Generate 2
-            </Button>
-
-            <Button
-              variant="surface"
-              color="cyan"
+              color="bronze"
               className="h-full rounded-lg font-mono"
               onClick={() => setTab('models')}
             >
               Models
             </Button>
 
-            <div className="font-mono text-xs">m:{modelSelected}</div>
+            <Monitor />
           </div>
         </motion.div>
       </motion.div>

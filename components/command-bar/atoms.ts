@@ -2,17 +2,16 @@ import { useCallback } from 'react'
 import { atom, useAtom } from 'jotai'
 import { atomFamily, useAtomCallback } from 'jotai/utils'
 
-import { Id } from '@/convex/_generated/dataModel'
+import type { ModelContent } from '@/convex/external'
 
-export const threadIdAtom = atom<Id<'threads'>>('n97bc500cszh8m2w8rny0aky716qtrhe' as Id<'threads'>)
-export const modelSelectedAtom = atom('sinkin:4zdwGOB')
-export const useSelectedModel = () => {
-  const [value, set] = useAtom(modelSelectedAtom)
-  const [provider, model] = value.split(':')
+type Resource = ModelContent
+
+const formResourceAtom = atom<Resource | undefined>(undefined)
+export const useFormResource = () => {
+  const [value, set] = useAtom(formResourceAtom)
+
   return {
-    resId: value,
-    provider,
-    model,
+    ...value,
     set,
   }
 }
