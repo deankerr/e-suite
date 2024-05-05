@@ -1,29 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button, IconButton } from '@radix-ui/themes'
 import { useWindowSize } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useControls } from 'leva'
 import { MenuIcon } from 'lucide-react'
 
-import { GenerationInputPanel } from '@/components/command-bar/GenerationInputPanel'
-import { ModelBrowserCard } from '@/components/command-bar/ModelBrowserCard'
+import { usePanelsAtom } from '@/components/command-bar/atoms'
 import { Monitor } from '@/components/command-bar/Monitor'
 import { environment } from '@/lib/utils'
 import { useModelList } from '../../lib/queries'
 import { Glass } from '../ui/Glass'
 
-const tabs = {
-  gen1: GenerationInputPanel,
-  models: ModelBrowserCard,
-} as const
-
-type CommandBarProps = { props?: unknown }
-
-export const CommandBar = ({}: CommandBarProps) => {
-  const [ctab, setTab] = useState<keyof typeof tabs>('gen1')
-
+export const CommandBar = () => {
   const [leva, set, get] = useControls('command bar', () => ({
     mount: environment !== 'prod',
     open: true,
@@ -53,8 +43,16 @@ export const CommandBar = ({}: CommandBarProps) => {
   // watch
   useModelList()
 
+  const panelRefs = useRef<{ [id: string]: HTMLDivElement | null }>({})
+  const [panels] = usePanelsAtom()
+  const [moveIndex, setMoveIndex] = useState(0)
+
+  const movePanels = (x: number) => {
+    setMoveIndex((c) => c + x)
+  }
+
   if (!leva.mount) return null
-  const Current = tabs[ctab]
+
   return (
     <div className="height-[512] fixed inset-x-0 bottom-8 flex justify-center">
       <Glass
@@ -71,7 +69,7 @@ export const CommandBar = ({}: CommandBarProps) => {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         style={openClose.containers}
-        className="overflow-hidden border"
+        className=" border"
       >
         <AnimatePresence>
           {leva.open && (
@@ -92,7 +90,22 @@ export const CommandBar = ({}: CommandBarProps) => {
                 insetInline: 0,
               }}
             >
-              <Current />
+              {panels.map((panel, i) => (
+                <motion.div
+                  key={panel.panelId}
+                  className="h-full w-full"
+                  style={{ position: 'absolute', top: 0, left: 0 }}
+                  // style={{ position: 'absolute', top: 0, left: i * 740 }}
+                  animate={{ x: i * 740 + moveIndex * 740 }}
+                >
+                  <panel.el
+                    ref={(ref) => {
+                      panelRefs.current[panel.panelId] = ref
+                    }}
+                    name={panel.name}
+                  />
+                </motion.div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
@@ -122,24 +135,14 @@ export const CommandBar = ({}: CommandBarProps) => {
               <MenuIcon />
             </IconButton>
 
-            <Button
-              variant="surface"
-              color="orange"
-              className="h-full rounded-lg font-mono"
-              onClick={() => setTab('gen1')}
-            >
-              Generate
-            </Button>
+            {panels.map((panel) => (
+              <Button key={panel.panelId} {...panel.buttonProps}>
+                {panel.name}
+              </Button>
+            ))}
 
-            <Button
-              variant="surface"
-              color="bronze"
-              className="h-full rounded-lg font-mono"
-              onClick={() => setTab('models')}
-            >
-              Models
-            </Button>
-
+            <Button onClick={() => movePanels(-1)}>-</Button>
+            <Button onClick={() => movePanels(1)}>+</Button>
             <Monitor />
           </div>
         </motion.div>
