@@ -42,7 +42,7 @@ http.route({
       return await getFileResponse(ctx, result.fileId)
     }
 
-    if (widthParam && result.width >= Number(widthParam)) {
+    if (widthParam && result.width <= Number(widthParam)) {
       // requested width is larger than original, return original
       return await getFileResponse(ctx, result.fileId)
     }
