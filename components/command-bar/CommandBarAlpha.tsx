@@ -3,12 +3,16 @@
 import { forwardRef } from 'react'
 import { Button, IconButton } from '@radix-ui/themes'
 import { motion } from 'framer-motion'
-import { MenuIcon, MicrowaveIcon } from 'lucide-react'
+import { MenuIcon } from 'lucide-react'
 
-import { useCmbLayoutAtom } from '@/components/command-bar/alphaAtoms'
+import { useCmbLayoutAtom, useCmbrPanelsAtom } from '@/components/command-bar/alphaAtoms'
+import { helloPanelDef } from '@/components/command-bar/HelloPanel'
+import { logsPanelDef } from '@/components/command-bar/LogPanel'
+import { modelBrowserPanelDef } from '@/components/command-bar/ModelBrowserPanel'
 import { Glass } from '@/components/ui/Glass'
-import { Spinner } from '@/components/ui/Spinner'
 import { cn } from '@/lib/utils'
+
+const panelConfig = [helloPanelDef, modelBrowserPanelDef, logsPanelDef]
 
 type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
 
@@ -27,6 +31,8 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
         y: panelHeight - cmbRailHeight - bounceRoom,
       },
     }
+
+    const [{ index }, setPanels] = useCmbrPanelsAtom()
 
     return (
       <div
@@ -50,44 +56,51 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
             borderRadius={16}
             className="absolute inset-0 rounded-2xl border border-gold-5"
           />
-          <div
-            className={cn(
-              'h-full rounded-lg border bg-gray-2',
-              'gap-4 flex-col-center',
-              !panelOpen && 'invisible',
-            )}
-          >
-            <div className="mx-auto font-mono">
-              image generation in progress <Spinner className="-mb-1.5" variant="ping" />
-            </div>
+
+          <div className="h-full w-full overflow-hidden rounded-lg border">
+            <motion.div className="flex h-full" animate={{ x: `-${index * 100}%` }}>
+              {panelConfig.map((panel) => (
+                <panel.element key={panel.id} />
+              ))}
+            </motion.div>
           </div>
         </motion.div>
 
-        <div className="m-4 h-14 rounded-lg border bg-gray-2 p-2">
-          <ButtonRailInner />
+        <div className="m-4 h-14 rounded-lg border bg-gray-2 p-2 font-mono text-xs">
+          <div className="flex-between">
+            <div className="flex gap-2">
+              <IconButton variant="surface" size="3">
+                <MenuIcon />
+              </IconButton>
+
+              <Button variant="surface" size="3" className="font-mono text-sm">
+                Chat
+              </Button>
+              <Button variant="surface" size="3" className="font-mono text-sm">
+                Generate
+              </Button>
+            </div>
+
+            <div className="flex-center">
+              <IconButton
+                variant="surface"
+                size="3"
+                onClick={() => setPanels((o) => ({ ...o, index: index - 1 }))}
+              >
+                -
+              </IconButton>
+              <div className="px-2">{index}</div>
+              <IconButton
+                variant="surface"
+                size="3"
+                onClick={() => setPanels((o) => ({ ...o, index: index + 1 }))}
+              >
+                +
+              </IconButton>
+            </div>
+          </div>
         </div>
       </div>
     )
   },
-)
-
-const ButtonRailInner = () => (
-  <div className="h-full flex-between">
-    <div className="flex gap-2">
-      <IconButton variant="surface" size="3">
-        <MenuIcon />
-      </IconButton>
-
-      <Button variant="surface" size="3" className="font-mono text-sm">
-        Chat
-      </Button>
-      <Button variant="surface" size="3" className="font-mono text-sm">
-        Generate
-      </Button>
-    </div>
-
-    <IconButton variant="surface" size="3">
-      <MicrowaveIcon />
-    </IconButton>
-  </div>
 )

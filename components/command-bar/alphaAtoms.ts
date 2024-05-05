@@ -11,3 +11,8 @@ cmbLayoutAtom.debugLabel = 'cmbLayoutAtom'
 export const useCmbLayoutAtom = () => {
   return useAtom(cmbLayoutAtom)
 }
+
+const cmbrPanelsAtom = atom({ index: 0 })
+export const useCmbrPanelsAtom = () => {
+  return useAtom(cmbrPanelsAtom)
+}
