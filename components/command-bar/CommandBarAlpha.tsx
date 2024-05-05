@@ -3,30 +3,28 @@
 import { forwardRef } from 'react'
 import { Button, IconButton } from '@radix-ui/themes'
 import { motion } from 'framer-motion'
-import { useAtom } from 'jotai'
 import { MenuIcon, MicrowaveIcon } from 'lucide-react'
-import { useMeasure } from 'react-use'
 
-import { cmbHeightAtom, cmbOpenAtom, cmbTotalHeightAtom } from '@/components/command-bar/alphaAtoms'
+import { useCmbLayoutAtom } from '@/components/command-bar/alphaAtoms'
 import { Glass } from '@/components/ui/Glass'
+import { Spinner } from '@/components/ui/Spinner'
 import { cn } from '@/lib/utils'
 
 type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
 
 export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
   function CommandBarAlpha(props, forwardedRef) {
-    const [ref, { width, height }] = useMeasure<HTMLDivElement>()
+    const cmbRailHeight = 80
+    const bounceRoom = 18
 
-    const [cmbOpen] = useAtom(cmbOpenAtom)
-    const [cmbHeight] = useAtom(cmbHeightAtom)
-    const [cmbTotalHeight] = useAtom(cmbTotalHeightAtom)
+    const [{ containerHeightPc, panelHeight, panelOpen, rounded }] = useCmbLayoutAtom()
 
     const variants = {
       open: {
-        y: '0%',
+        y: 0,
       },
       closed: {
-        y: '100%',
+        y: panelHeight - cmbRailHeight - bounceRoom,
       },
     }
 
@@ -35,57 +33,61 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
         {...props}
         id="home"
         className={cn(
-          'fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end',
+          'fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end overflow-hidden',
+          rounded && 'rounded-xl',
         )}
         ref={forwardedRef}
-        style={{ height: `${cmbTotalHeight}%` }}
+        style={{ height: `${containerHeightPc}%` }}
       >
-        {/* feature */}
-        {/* tpanel masking container */}
-        <div className="flex grow flex-col justify-end overflow-hidden">
-          {/* motion div */}
-          <motion.div
-            variants={variants}
-            animate={cmbOpen ? 'open' : 'closed'}
-            style={{ height: cmbHeight }}
-            className="p-4"
+        <motion.div
+          className="absolute w-full p-4 pb-24 pt-6"
+          style={{ height: panelHeight }}
+          variants={variants}
+          animate={panelOpen ? 'open' : 'closed'}
+        >
+          <Glass
+            barWidth={1}
+            borderRadius={16}
+            className="absolute inset-0 rounded-2xl border border-gold-5"
+          />
+          <div
+            className={cn(
+              'h-full rounded-lg border bg-gray-2',
+              'gap-4 flex-col-center',
+              !panelOpen && 'invisible',
+            )}
           >
-            {/* glass bg */}
-            <Glass borderRadius={12} barWidth={1} className="absolute inset-0 rounded-xl border" />
-            {/* content */}
-            <div className="h-full rounded-lg border border-gold-4 bg-gray-2 p-2 flex-between"></div>
-          </motion.div>
-        </div>
-
-        {/* button rail */}
-        <div className={cn('flex-none p-3', !cmbOpen && '')}>
-          {/* glass bg */}
-          <Glass borderRadius={12} barWidth={1} className="absolute inset-0 rounded-xl border" />
-          <div className="rounded-lg border border-gold-4 bg-gray-2 p-1.5 flex-between">
-            <div className="flex gap-2">
-              <IconButton variant="surface" size="3">
-                <MenuIcon />
-              </IconButton>
-
-              <Button variant="surface" size="3" className="font-mono text-sm">
-                Chat
-              </Button>
-              <Button variant="surface" size="3" className="font-mono text-sm">
-                Generate
-              </Button>
+            <div className="mx-auto font-mono">
+              image generation in progress <Spinner className="-mb-1.5" variant="ping" />
             </div>
-
-            <IconButton variant="surface" size="3">
-              <MicrowaveIcon />
-            </IconButton>
           </div>
-        </div>
+        </motion.div>
 
-        {/* util */}
-        <div ref={ref} className="absolute inset-0 font-mono text-xs text-gold-8">
-          {width} {height}
+        <div className="m-4 h-14 rounded-lg border bg-gray-2 p-2">
+          <ButtonRailInner />
         </div>
       </div>
     )
   },
+)
+
+const ButtonRailInner = () => (
+  <div className="h-full flex-between">
+    <div className="flex gap-2">
+      <IconButton variant="surface" size="3">
+        <MenuIcon />
+      </IconButton>
+
+      <Button variant="surface" size="3" className="font-mono text-sm">
+        Chat
+      </Button>
+      <Button variant="surface" size="3" className="font-mono text-sm">
+        Generate
+      </Button>
+    </div>
+
+    <IconButton variant="surface" size="3">
+      <MicrowaveIcon />
+    </IconButton>
+  </div>
 )

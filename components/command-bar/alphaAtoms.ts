@@ -1,10 +1,13 @@
-import { atom } from 'jotai'
+import { atom, useAtom } from 'jotai'
 
-export const cmbOpenAtom = atom(true)
-cmbOpenAtom.debugLabel = 'commandBarOpenAtom'
+export const cmbLayoutAtom = atom({
+  containerHeightPc: 85,
+  panelHeight: 512,
+  panelOpen: true,
+  rounded: false,
+})
+cmbLayoutAtom.debugLabel = 'cmbLayoutAtom'
 
-export const cmbHeightAtom = atom(474)
-cmbHeightAtom.debugLabel = 'cmbHeightAtom'
-
-export const cmbTotalHeightAtom = atom(85)
-cmbTotalHeightAtom.debugLabel = 'cmbTotalHeightAtom'
+export const useCmbLayoutAtom = () => {
+  return useAtom(cmbLayoutAtom)
+}
