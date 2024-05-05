@@ -8,6 +8,7 @@ import { MenuIcon, MicrowaveIcon } from 'lucide-react'
 import { useMeasure } from 'react-use'
 
 import { cmbHeightAtom, cmbOpenAtom, cmbTotalHeightAtom } from '@/components/command-bar/alphaAtoms'
+import { Glass } from '@/components/ui/Glass'
 import { cn } from '@/lib/utils'
 
 type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
@@ -47,15 +48,19 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
             variants={variants}
             animate={cmbOpen ? 'open' : 'closed'}
             style={{ height: cmbHeight }}
-            className="rounded-t-xl bg-goldA-4 p-3"
+            className="p-4"
           >
+            {/* glass bg */}
+            <Glass borderRadius={12} barWidth={1} className="absolute inset-0 rounded-xl border" />
             {/* content */}
             <div className="h-full rounded-lg border border-gold-4 bg-gray-2 p-2 flex-between"></div>
           </motion.div>
         </div>
 
         {/* button rail */}
-        <div className={cn('flex-none rounded-b-xl bg-goldA-4 p-3', !cmbOpen && 'rounded-t-xl')}>
+        <div className={cn('flex-none p-3', !cmbOpen && '')}>
+          {/* glass bg */}
+          <Glass borderRadius={12} barWidth={1} className="absolute inset-0 rounded-xl border" />
           <div className="rounded-lg border border-gold-4 bg-gray-2 p-1.5 flex-between">
             <div className="flex gap-2">
               <IconButton variant="surface" size="3">
