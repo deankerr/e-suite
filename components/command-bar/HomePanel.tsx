@@ -11,7 +11,8 @@ export const HomePanel = forwardRef<HTMLDivElement, HomePanelProps>(function Hom
   return (
     <div
       {...props}
-      className={cn('h-full border-2 border-cyan-6 bg-cyan-2 transition-all', className)}
+      id="home"
+      className={cn('h-full w-full border-2 border-cyan-6 bg-cyan-2', className)}
       ref={forwardedRef}
     >
       <p>{name}</p>

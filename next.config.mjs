@@ -21,6 +21,7 @@ const nextConfig = {
     loader: 'custom',
     loaderFile: './lib/image-loader.ts',
   },
+  transpilePackages: ['jotai-devtools'],
 }
 
 const withBundleAnalyzer = bundleAnalyzer({

@@ -22,11 +22,9 @@ export const ModelBrowserPanel = forwardRef<HTMLDivElement, ModelBrowserPanelPro
     return (
       <div
         {...props}
-        className={cn(
-          'flex h-full flex-col overflow-hidden border-2 border-mint-6 bg-mint-2 shadow-inner transition-all',
-          className,
-        )}
+        className={cn('flex h-full w-full flex-col overflow-hidden shadow-inner', className)}
         ref={forwardedRef}
+        id="modelbrowser"
       >
         <div className="shrink-0 p-3">
           <TextField.Root

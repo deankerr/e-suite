@@ -9,23 +9,26 @@ import { MenuIcon } from 'lucide-react'
 
 import { usePanelsAtom } from '@/components/command-bar/atoms'
 import { Monitor } from '@/components/command-bar/Monitor'
-import { environment } from '@/lib/utils'
 import { useModelList } from '../../lib/queries'
 import { Glass } from '../ui/Glass'
 
 export const CommandBar = () => {
-  const [leva, set, get] = useControls('command bar', () => ({
-    mount: environment !== 'prod',
-    open: true,
-    mobile_width: false,
-    full_height: false,
-    width: {
-      value: 768,
-      min: 320,
-      max: 1200,
-      step: 8,
-    },
-  }))
+  const [leva, set, get] = useControls(
+    'command bar',
+    () => ({
+      mount: false,
+      open: true,
+      mobile_width: false,
+      full_height: false,
+      width: {
+        value: 768,
+        min: 320,
+        max: 1200,
+        step: 8,
+      },
+    }),
+    { collapsed: true },
+  )
   const size = useWindowSize()
 
   const cmdBarHeight = leva.full_height && size.height ? size.height - 50 : 512
@@ -90,22 +93,22 @@ export const CommandBar = () => {
                 insetInline: 0,
               }}
             >
-              {panels.map((panel, i) => (
-                <motion.div
-                  key={panel.panelId}
-                  className="h-full w-full"
-                  style={{ position: 'absolute', top: 0, left: 0 }}
-                  // style={{ position: 'absolute', top: 0, left: i * 740 }}
-                  animate={{ x: i * 740 + moveIndex * 740 }}
-                >
+              <motion.div
+                style={{ height: '100%' }}
+                animate={{ x: moveIndex * 740 }}
+                className="border border-pink-9"
+              >
+                {panels.map((panel, i) => (
                   <panel.el
+                    key={panel.panelId}
                     ref={(ref) => {
                       panelRefs.current[panel.panelId] = ref
                     }}
                     name={panel.name}
+                    style={{ position: 'absolute', top: 0, bottom: 0, left: i * 740 }}
                   />
-                </motion.div>
-              ))}
+                ))}
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -83,30 +83,12 @@ export const GenerationInputPanel = forwardRef<HTMLDivElement, GenerationInputPa
         })
     }
 
-    if (!resId)
-      return (
-        <div
-          className="grid h-full place-content-center border-2 border-tomato-6 bg-tomato-2 font-mono transition-all"
-          ref={forwardedRef}
-        >
-          no resource selected
-        </div>
-      )
-    if (!thread)
-      return (
-        <div
-          className="grid h-full place-content-center border-2 border-tomato-6 bg-tomato-2 font-mono transition-all"
-          ref={forwardedRef}
-        >
-          no thread selected
-        </div>
-      )
-
     return (
       <div
         {...props}
+        id="gen"
         className={cn(
-          ' h-full border-2 border-tomato-6 bg-tomato-2 p-1 transition-all ',
+          'h-full w-full border-2 border-tomato-6 bg-tomato-2 p-1 transition-all ',
           className,
         )}
         ref={forwardedRef}
@@ -119,6 +101,8 @@ export const GenerationInputPanel = forwardRef<HTMLDivElement, GenerationInputPa
           </div>
 
           <div className="flex flex-col justify-between gap-2">
+            {!resId && <div className="h-60 flex-col-center">no resource selected</div>}
+            {!thread && <div className="h-60 flex-col-center">no thread selected</div>}
             <div className="grow space-y-2">
               <FormPrompt name="prompt" keys={keys} />
               <FormPrompt name="negative_prompt" keys={keys} />
@@ -132,7 +116,7 @@ export const GenerationInputPanel = forwardRef<HTMLDivElement, GenerationInputPa
               <FormCheckbox name="expand_prompt" keys={keys} />
             </div>
 
-            <div className="gap-2 flex-between">
+            <div className={cn('gap-2 flex-between', (!resId || !thread) && 'invisible')}>
               <DimensionsControl />
               <div className="h-full grow gap-1 flex-col-between">
                 <QuantityControl />

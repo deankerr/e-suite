@@ -8,7 +8,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const bgDots = 'bg-dot-[#3B1219]'
 
   return (
-    <div className={cn('min-h-screen max-w-8xl px-1 sm:px-4', bgSun)}>
+    <div className={cn('min-h-screen max-w-8xl', bgSun)}>
       <div className={cn('min-h-screen', bgDots)}>
         {children}
         <CommandBar />
