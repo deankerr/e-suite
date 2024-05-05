@@ -1,6 +1,6 @@
 import { Button, Checkbox, Slider } from '@radix-ui/themes'
 
-import { useCmbLayoutAtom } from '@/components/command-bar/alphaAtoms'
+import { useCmbrLayoutAtom } from '@/components/command-bar/alphaAtoms'
 import { cn } from '@/lib/utils'
 
 type CmbDebugProps = { props?: unknown }
@@ -8,7 +8,7 @@ type CmbDebugProps = { props?: unknown }
 const HIDE = false
 
 export const CmbDebug = ({}: CmbDebugProps) => {
-  const [{ containerHeightPc, panelHeight, panelOpen, rounded }, set] = useCmbLayoutAtom()
+  const [{ containerHeightPc, panelHeight, panelOpen, rounded }, set] = useCmbrLayoutAtom()
 
   return (
     <div

@@ -5,12 +5,14 @@ import { Button, IconButton } from '@radix-ui/themes'
 import { motion } from 'framer-motion'
 import { MenuIcon } from 'lucide-react'
 
-import { useCmbLayoutAtom, useCmbrPanelsAtom } from '@/components/command-bar/alphaAtoms'
+import { useCmbrLayoutAtom, useCmbrPanelsAtom } from '@/components/command-bar/alphaAtoms'
 import { helloPanelDef } from '@/components/command-bar/HelloPanel'
 import { logsPanelDef } from '@/components/command-bar/LogPanel'
 import { modelBrowserPanelDef } from '@/components/command-bar/ModelBrowserPanel'
 import { Glass } from '@/components/ui/Glass'
 import { cn } from '@/lib/utils'
+
+import type { ButtonProps } from '@radix-ui/themes'
 
 const panelConfig = [helloPanelDef, modelBrowserPanelDef, logsPanelDef]
 
@@ -21,7 +23,7 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
     const cmbRailHeight = 80
     const bounceRoom = 18
 
-    const [{ containerHeightPc, panelHeight, panelOpen, rounded }] = useCmbLayoutAtom()
+    const [{ containerHeightPc, panelHeight, panelOpen, rounded }] = useCmbrLayoutAtom()
 
     const variants = {
       open: {
@@ -73,12 +75,17 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
                 <MenuIcon />
               </IconButton>
 
-              <Button variant="surface" size="3" className="font-mono text-sm">
-                Chat
-              </Button>
-              <Button variant="surface" size="3" className="font-mono text-sm">
-                Generate
-              </Button>
+              {panelConfig.map((panel) => (
+                <Button
+                  key={panel.id}
+                  variant="surface"
+                  size="3"
+                  color={panel.buttonColor as ButtonProps['color']}
+                  className="font-mono text-sm"
+                >
+                  {panel.name}
+                </Button>
+              ))}
             </div>
 
             <div className="flex-center">

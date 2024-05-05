@@ -87,10 +87,7 @@ export const GenerationInputPanel = forwardRef<HTMLDivElement, GenerationInputPa
       <div
         {...props}
         id="gen"
-        className={cn(
-          'h-full w-full border-2 border-tomato-6 bg-tomato-2 p-1 transition-all ',
-          className,
-        )}
+        className={cn('h-full w-full p-1 transition-all ', className)}
         ref={forwardedRef}
       >
         <form className="grid grid-cols-[auto_1fr] gap-2 @container " action={handleSubmit}>

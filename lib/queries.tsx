@@ -49,5 +49,5 @@ export const useInsecureDemoOnlyGeneraitonList = () => {
 
 export const useModelList = (skip?: 'skip') => {
   const models = useQuery(api.models.list, skip ?? {})
-  return models ?? []
+  return models
 }
