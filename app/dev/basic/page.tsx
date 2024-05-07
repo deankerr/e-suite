@@ -3,7 +3,7 @@
 import { Suspense } from 'react'
 
 import { CmdBarDev } from '@/app/dev/basic/ErrorBoundary'
-import { CmbDebug } from '@/components/command-bar/CmbDebug'
+import { CmbrDebug } from '@/components/command-bar/CmbrDebug'
 import { PageHeader } from '@/components/pages/PageHeader'
 
 export default function Page() {
@@ -19,7 +19,7 @@ export default function Page() {
         <CmdBarDev />
       </Suspense>
       <PageHeader title="Basic Page" />
-      <CmbDebug />
+      <CmbrDebug />
     </>
   )
 }

@@ -1,24 +1,22 @@
 import { useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
+import { atomWithStorage, RESET } from 'jotai/utils'
 
 import type { ModelContent } from '@/convex/external'
 
-export const cmbrLayoutAtom = atomWithStorage('cmbr-layout', {
+const cmbrDefaults = {
   containerHeightPc: 85,
   panelHeight: 512,
-  panelOpen: true,
-  rounded: false,
-})
-cmbrLayoutAtom.debugLabel = 'cmbr-layout'
-
-export const useCmbrLayoutAtom = () => {
-  return useAtom(cmbrLayoutAtom)
+  panelIndex: 0,
+  isOpen: false,
+  isVisible: true,
 }
 
-const cmbrPanelsAtom = atomWithStorage('cmbr-panels', { index: 0 })
-cmbrPanelsAtom.debugLabel = 'cmbr-panels'
-export const useCmbrPanelsAtom = () => {
-  return useAtom(cmbrPanelsAtom)
+const cmbrAtom = atomWithStorage('cmbr', cmbrDefaults)
+cmbrAtom.debugLabel = 'cmbr'
+export const useCmbr = () => {
+  const [values, set] = useAtom(cmbrAtom)
+  const reset = () => set(RESET)
+  return { values, set, reset }
 }
 
 // generation
