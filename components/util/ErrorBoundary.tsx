@@ -3,8 +3,6 @@
 import { Button } from '@radix-ui/themes'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { CommandBarAlpha } from '@/components/command-bar/CommandBarAlpha'
-
 import type { FallbackProps } from 'react-error-boundary'
 
 function Fallback({ error, resetErrorBoundary }: FallbackProps) {
@@ -21,7 +19,7 @@ function Fallback({ error, resetErrorBoundary }: FallbackProps) {
   )
 }
 
-export const CmdBarDev = () => (
+export const ErrBoundary = ({ children }: { children?: React.ReactNode }) => (
   <ErrorBoundary
     FallbackComponent={Fallback}
     onReset={(details) => {
@@ -29,6 +27,6 @@ export const CmdBarDev = () => (
       console.warn(details)
     }}
   >
-    <CommandBarAlpha />
+    {children}
   </ErrorBoundary>
 )

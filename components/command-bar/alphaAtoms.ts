@@ -4,8 +4,8 @@ import { atomWithStorage, RESET } from 'jotai/utils'
 import type { ModelContent } from '@/convex/external'
 
 const cmbrDefaults = {
-  containerHeightPc: 85,
-  panelHeight: 512,
+  containerHeightPc: 90,
+  panelHeight: 560,
   panelIndex: 0,
   isOpen: false,
   isVisible: true,

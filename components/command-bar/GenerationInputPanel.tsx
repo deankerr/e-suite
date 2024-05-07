@@ -4,15 +4,17 @@ import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { useCurrentModelAtom } from '@/components/command-bar/alphaAtoms'
 import { FormCheckbox, FormPrompt, FormSelect } from '@/components/command-bar/form/Controls'
 import { DimensionsControl } from '@/components/command-bar/form/DimensionsControl'
 import { QuantityControl } from '@/components/command-bar/form/QuantityControl'
 import { ModelCard } from '@/components/command-bar/ModelCard'
+import { PanelShell } from '@/components/command-bar/PanelShell'
 import { api } from '@/convex/_generated/api'
 import { localSchema } from '@/convex/inferenceSchema'
 import { useThreadCtx } from '@/lib/queries'
 import { cn } from '@/lib/utils'
-import { useFormResource, useReadForm } from './atoms'
+import { useReadForm } from './atoms'
 
 import type { GenerationInputParams } from '@/convex/schema'
 
@@ -23,8 +25,10 @@ export const GenerationInputPanel = forwardRef<HTMLDivElement, GenerationInputPa
     const thread = useThreadCtx()
     const send = useMutation(api.messages.create)
 
-    const resource = useFormResource()
-    const { provider, model_id, resId } = resource
+    const [currentModel] = useCurrentModelAtom()
+    const provider = currentModel?.provider
+    const model_id = currentModel?.model_id
+    const resId = currentModel?.resId
 
     const schema = getSchema(provider, model_id)
     const keys = schema ? Object.keys(schema.shape ?? {}).concat(['dimensions', 'quantity']) : []
@@ -84,50 +88,52 @@ export const GenerationInputPanel = forwardRef<HTMLDivElement, GenerationInputPa
     }
 
     return (
-      <div
-        {...props}
-        id="gen"
-        className={cn('h-full w-full p-1 transition-all ', className)}
-        ref={forwardedRef}
-      >
-        <form className="grid grid-cols-[auto_1fr] gap-2 @container " action={handleSubmit}>
-          <div className="gap-2 flex-col-start">
-            <ModelCard variant="nano" resId={resId} className="" />
-            <ModelCard variant="nano" resId={resId} className="" />
-            <ModelCard variant="nano" resId={resId} className="" />
-          </div>
-
-          <div className="flex flex-col justify-between gap-2">
-            {!resId && <div className="h-60 flex-col-center">no resource selected</div>}
-            {!thread && <div className="h-60 flex-col-center">no thread selected</div>}
-            <div className="grow space-y-2">
-              <FormPrompt name="prompt" keys={keys} />
-              <FormPrompt name="negative_prompt" keys={keys} />
-              <FormSelect name="style" itemsKey="style" keys={keys} />
+      <PanelShell>
+        <div
+          {...props}
+          id="gen"
+          className={cn('h-full w-full p-1 transition-all', className)}
+          ref={forwardedRef}
+        >
+          <form className="grid grid-cols-[auto_1fr] gap-2 @container" action={handleSubmit}>
+            <div className="gap-2 flex-col-start">
+              <ModelCard variant="nano" resId={resId} className="" />
+              <ModelCard variant="nano" resId={resId} className="" />
+              <ModelCard variant="nano" resId={resId} className="" />
             </div>
 
-            <div className="flex gap-2">
-              <FormCheckbox name="lcm" keys={keys} />
-              <FormCheckbox name="use_default_neg" keys={keys} />
-              <FormCheckbox name="enable_safety_checker" keys={keys} />
-              <FormCheckbox name="expand_prompt" keys={keys} />
-            </div>
+            <div className="flex flex-col justify-between gap-2">
+              {!resId && <div className="h-60 flex-col-center">no resource selected</div>}
+              {!thread && <div className="h-60 flex-col-center">no thread selected</div>}
+              <div className="grow space-y-2">
+                <FormPrompt name="prompt" keys={keys} />
+                <FormPrompt name="negative_prompt" keys={keys} />
+                <FormSelect name="style" itemsKey="style" keys={keys} />
+              </div>
 
-            <div className={cn('gap-2 flex-between', (!resId || !thread) && 'invisible')}>
-              <DimensionsControl />
-              <div className="h-full grow gap-1 flex-col-between">
-                <QuantityControl />
-                <Button type="button" variant="soft" color="gray" className="h-9">
-                  Save
-                </Button>
-                <Button variant="surface" className="h-9 w-3/4" disabled={!thread}>
-                  Run
-                </Button>
+              <div className="flex gap-2">
+                <FormCheckbox name="lcm" keys={keys} />
+                <FormCheckbox name="use_default_neg" keys={keys} />
+                <FormCheckbox name="enable_safety_checker" keys={keys} />
+                <FormCheckbox name="expand_prompt" keys={keys} />
+              </div>
+
+              <div className={cn('gap-2 flex-between', (!resId || !thread) && 'invisible')}>
+                <DimensionsControl />
+                <div className="h-full grow gap-1 flex-col-between">
+                  <QuantityControl />
+                  <Button type="button" variant="soft" color="gray" className="h-9">
+                    Save
+                  </Button>
+                  <Button variant="surface" className="h-9 w-3/4" disabled={!thread}>
+                    Run
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </PanelShell>
     )
   },
 )
@@ -159,4 +165,11 @@ const getDim = (dim: unknown, n: number) => {
       return { width: 1024, height: 768, n }
   }
   throw new Error('invalid dim')
+}
+
+export const generationInputPanelDef = {
+  id: 'generate',
+  name: 'Generate',
+  buttonColor: 'orange',
+  element: GenerationInputPanel,
 }

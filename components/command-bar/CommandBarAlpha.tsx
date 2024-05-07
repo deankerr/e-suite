@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { MenuIcon } from 'lucide-react'
 
 import { useCmbr } from '@/components/command-bar/alphaAtoms'
+import { generationInputPanelDef } from '@/components/command-bar/GenerationInputPanel'
 import { helloPanelDef } from '@/components/command-bar/HelloPanel'
 import { logsPanelDef } from '@/components/command-bar/LogPanel'
 import { modelBrowserPanelDef } from '@/components/command-bar/ModelBrowserPanel'
@@ -14,7 +15,7 @@ import { cn } from '@/lib/utils'
 
 import type { ButtonProps } from '@radix-ui/themes'
 
-const panelConfig = [helloPanelDef, modelBrowserPanelDef, logsPanelDef]
+const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationInputPanelDef, logsPanelDef]
 
 type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
 
@@ -40,7 +41,7 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
         {...props}
         id="home"
         className={cn(
-          'fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end',
+          'pointer-events-none fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end',
           !cmbr.values.isVisible && 'hidden',
         )}
         ref={forwardedRef}
@@ -48,7 +49,7 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
       >
         <div className="flex h-full flex-col justify-end overflow-hidden">
           <motion.div
-            className={cn('absolute w-full p-4')}
+            className={cn('pointer-events-auto absolute w-full p-4')}
             style={{ height: cmbr.values.panelHeight }}
             variants={variants}
             animate={cmbr.values.isOpen ? 'open' : 'closed'}
@@ -76,7 +77,7 @@ export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
           </motion.div>
         </div>
 
-        <div className="">
+        <div className="pointer-events-auto">
           <Glass
             barWidth={1}
             borderBottomLeftRadius={16}
