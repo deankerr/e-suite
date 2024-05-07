@@ -10,6 +10,10 @@ type RefractionProps = {
   backgroundColor?: string
   type: 'linear' | 'radial'
   borderRadius?: number
+  borderTopLeftRadius?: number
+  borderTopRightRadius?: number
+  borderBottomLeftRadius?: number
+  borderBottomRightRadius?: number
 }
 
 const Refraction = ({
@@ -22,6 +26,10 @@ const Refraction = ({
   backgroundColor,
   type,
   borderRadius,
+  borderTopLeftRadius,
+  borderTopRightRadius,
+  borderBottomLeftRadius,
+  borderBottomRightRadius,
 }: RefractionProps) => {
   const backdropFilter = `saturate(${saturate}%) brightness(${brightness}%) blur(${blur}px)`
   const startOffset = position * width
@@ -49,7 +57,10 @@ const Refraction = ({
         WebkitMaskImage: maskImage,
         backgroundColor,
         borderRadius,
-        // border: "1px solid rgba(255,255,255,.3)",
+        borderTopLeftRadius,
+        borderTopRightRadius,
+        borderBottomLeftRadius,
+        borderBottomRightRadius,
       }}
     />
   )
@@ -59,9 +70,22 @@ type GlassProps = {
   type?: 'linear' | 'radial'
   barWidth?: number
   borderRadius?: number
+  borderTopLeftRadius?: number
+  borderTopRightRadius?: number
+  borderBottomLeftRadius?: number
+  borderBottomRightRadius?: number
 } & React.ComponentProps<typeof motion.div>
 
-export const Glass = ({ type = 'linear', barWidth = 1.5, borderRadius, ...props }: GlassProps) => {
+export const Glass = ({
+  type = 'linear',
+  barWidth = 1.5,
+  borderRadius,
+  borderTopLeftRadius,
+  borderTopRightRadius,
+  borderBottomLeftRadius,
+  borderBottomRightRadius,
+  ...props
+}: GlassProps) => {
   return (
     <motion.div layout {...props}>
       <Refraction
@@ -73,6 +97,10 @@ export const Glass = ({ type = 'linear', barWidth = 1.5, borderRadius, ...props 
         total={3}
         position={0}
         borderRadius={borderRadius}
+        borderTopLeftRadius={borderTopLeftRadius}
+        borderTopRightRadius={borderTopRightRadius}
+        borderBottomLeftRadius={borderBottomLeftRadius}
+        borderBottomRightRadius={borderBottomRightRadius}
       />
       <Refraction
         blur={2}
@@ -83,6 +111,10 @@ export const Glass = ({ type = 'linear', barWidth = 1.5, borderRadius, ...props 
         total={3}
         position={1}
         borderRadius={borderRadius}
+        borderTopLeftRadius={borderTopLeftRadius}
+        borderTopRightRadius={borderTopRightRadius}
+        borderBottomLeftRadius={borderBottomLeftRadius}
+        borderBottomRightRadius={borderBottomRightRadius}
       />
       <Refraction
         blur={1}
@@ -93,6 +125,10 @@ export const Glass = ({ type = 'linear', barWidth = 1.5, borderRadius, ...props 
         total={3}
         position={2}
         borderRadius={borderRadius}
+        borderTopLeftRadius={borderTopLeftRadius}
+        borderTopRightRadius={borderTopRightRadius}
+        borderBottomLeftRadius={borderBottomLeftRadius}
+        borderBottomRightRadius={borderBottomRightRadius}
         backgroundColor="rgba(255, 255, 255, 0.1)"
       />
     </motion.div>
