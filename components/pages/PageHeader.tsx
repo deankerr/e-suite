@@ -2,7 +2,7 @@ import { SignInButton, UserButton } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
 import { useDocumentTitle } from '@uidotdev/usehooks'
 import { Authenticated, Unauthenticated } from 'convex/react'
-import { BaselineIcon, HomeIcon, ImagesIcon, UserIcon } from 'lucide-react'
+import { HomeIcon, ImagesIcon, UserIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 
@@ -37,11 +37,6 @@ export const PageHeader = ({
       <div className="shrink-0 gap-2 flex-end">
         {/* quick nav */}
         <Authenticated>
-          <IconButton variant="ghost" asChild>
-            <Link href="/dev/basic">
-              <BaselineIcon className="stroke-[1.5]" />
-            </Link>
-          </IconButton>
           <IconButton variant="ghost" asChild>
             <Link href="/">
               <HomeIcon className="stroke-[1.5]" />
