@@ -1,5 +1,4 @@
 import './globals.css'
-import 'jotai-devtools/styles.css'
 
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
