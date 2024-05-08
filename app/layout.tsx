@@ -11,7 +11,6 @@ import { Toaster } from 'sonner'
 import { PartyBoy } from '@/components/effects/PartyBoy'
 import { AppLayout } from '@/components/layouts/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
-import { LevaControls } from '@/components/util/LevaControls'
 import { cn, environment } from '@/lib/utils'
 
 import type { Metadata, Viewport } from 'next'
@@ -51,7 +50,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <AppLayout>{children}</AppLayout>
               <PartyBoy />
               <Toaster richColors />
-              <LevaControls />
             </Theme>
           </ClientProviders>
         </ClerkProvider>
