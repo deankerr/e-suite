@@ -36,6 +36,20 @@ export const get = query({
   },
 })
 
+// agent
+export const getById = query({
+  args: {
+    messageId: zid('messages'),
+  },
+
+  handler: async (ctx, { messageId }) => {
+    const message = await ctx.table('messages').getX(messageId)
+    if (message.deletionTime) return null
+    return external.unit.message.parse(message)
+  },
+})
+
+// next.js page title/description
 export const getPageMetadata = query({
   args: {
     rid: ridField,
