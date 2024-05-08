@@ -23,6 +23,9 @@ importers:
       '@fal-ai/serverless-client':
         specifier: ^0.9.3
         version: 0.9.3
+      '@formkit/auto-animate':
+        specifier: ^0.8.2
+        version: 0.8.2
       '@radix-ui/react-accessible-icon':
         specifier: ^1.0.3
         version: 1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -862,6 +865,9 @@ packages:
 
   '@floating-ui/utils@0.2.2':
     resolution: {integrity: sha512-J4yDIIthosAsRZ5CPYP/jQvUAQtlZTTD/4suA08/FEnlxqW3sKS9iAhgsa9VYLZ6vDHn/ixJgIqRQPotoBjxIw==}
+
+  '@formkit/auto-animate@0.8.2':
+    resolution: {integrity: sha512-SwPWfeRa5veb1hOIBMdzI+73te5puUBHmqqaF1Bu7FjvxlYSz/kJcZKSa9Cg60zL0uRNeJL2SbRxV6Jp6Q1nFQ==}
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -5990,6 +5996,8 @@ snapshots:
       tabbable: 6.2.0
 
   '@floating-ui/utils@0.2.2': {}
+
+  '@formkit/auto-animate@0.8.2': {}
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:

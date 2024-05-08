@@ -1,13 +1,23 @@
+'use client'
+
 import { SignInButton, UserButton } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
 import { useDocumentTitle } from '@uidotdev/usehooks'
 import { Unauthenticated } from 'convex/react'
-import { HomeIcon, ImagesIcon, UserIcon } from 'lucide-react'
-import NextImage from 'next/image'
+import { HomeIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
 
-import LogoSunset from '@/assets/logo-sunset.svg'
+import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
+import { useTwMediaQuery } from '@/lib/hooks'
+
+const hideTextWhenTitleLength = 55
+
+const useShowAppTitle = (titleLength = 0) => {
+  const twSizes = useTwMediaQuery()
+  if (twSizes.md) return true
+  return titleLength < hideTextWhenTitleLength
+}
 
 export const PageHeader = ({
   icon,
@@ -18,35 +28,28 @@ export const PageHeader = ({
   title?: string
   setPageTitle?: boolean
 }) => {
-  return (
-    <header className="h-12 gap-2 border-b px-1 flex-between">
-      {/* logo / page titles */}
-      {setPageTitle ? <DocumentTitle subtitle={title} /> : null}
-      <Link href="/" className="shrink-0 gap-1 flex-start">
-        <div className="gap-1 flex-start">
-          <NextImage src={LogoSunset} alt="" className="size-7 shrink-0" priority unoptimized />
-          <h1 className="text-lg font-semibold tracking-tight">e/suite</h1>
-        </div>
-      </Link>
+  const showAppTitle = useShowAppTitle(title?.length)
 
-      <div className="flex-none font-mono">/</div>
-      <h2 className="line-clamp-2 max-h-full grow gap-2 font-mono tracking-tight [&>svg]:mr-1.5 [&>svg]:inline">
-        {icon}
+  return (
+    <header className="h-10 gap-0.5 border-b px-1 flex-between md:h-12 md:gap-2">
+      {setPageTitle ? <DocumentTitle subtitle={title} /> : null}
+
+      <AppLogoTitle showText={showAppTitle} />
+
+      {(title || icon) && <div className="flex-none font-mono text-sm md:text-base">/</div>}
+      {icon && <div className="flex-none [&>svg]:size-4 md:[&>svg]:size-5">{icon}</div>}
+
+      {/* page title */}
+      <h2 className="line-clamp-2 max-h-full grow font-mono text-sm tracking-tight md:text-base">
         {title}
       </h2>
 
-      <div className="shrink-0 gap-2 flex-end">
+      <div className="flex-none gap-2 flex-end">
         {/* quick nav */}
         <NonSecureAdminRoleOnly>
           <IconButton variant="ghost" asChild>
             <Link href="/">
-              <HomeIcon className="stroke-[1.5]" />
-            </Link>
-          </IconButton>
-
-          <IconButton variant="ghost" asChild>
-            <Link href="/image-feed">
-              <ImagesIcon className="stroke-[1.5]" />
+              <HomeIcon />
             </Link>
           </IconButton>
         </NonSecureAdminRoleOnly>
@@ -55,7 +58,7 @@ export const PageHeader = ({
         <Unauthenticated>
           <SignInButton>
             <IconButton variant="surface" radius="large">
-              <UserIcon className="stroke-[1.5]" />
+              <UserIcon />
             </IconButton>
           </SignInButton>
         </Unauthenticated>
