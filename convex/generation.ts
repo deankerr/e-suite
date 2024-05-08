@@ -13,21 +13,7 @@ import { generateRid, insist, runWithRetries, zPaginationOptValidator } from './
 
 import type { Ent, MutationCtx, QueryCtx } from './types'
 
-//* queries
-export const getI = internalQuery({
-  args: {
-    generationId: zid('generations'),
-  },
-  handler: async (ctx, { generationId }) => await ctx.table('generations').get(generationId),
-})
-
-export const getManyI = internalQuery({
-  args: {
-    generationIds: zid('generations').array(),
-  },
-  handler: async (ctx, { generationIds }) => await ctx.table('generations').getManyX(generationIds),
-})
-
+// *** public queries ***
 export const getGenerationXL = async (ctx: QueryCtx, generation: Ent<'generations'>) => {
   const votes = await generation.edge('generation_votes')
   const tally = R.pipe(
@@ -51,7 +37,9 @@ export const get = query({
   },
   handler: async (ctx, { rid }) => {
     const generation = await ctx.table('generations', 'rid', (q) => q.eq('rid', rid)).unique()
-    return generation ? await getGenerationXL(ctx, generation) : null
+    if (!generation || generation.deletionTime) return null
+
+    return await getGenerationXL(ctx, generation)
   },
 })
 
@@ -64,9 +52,25 @@ export const _list = query({
     return await ctx
       .table('generations')
       .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
       .map(async (generation) => await getGenerationXL(ctx, generation))
   },
+})
+// *** end public queries ***
+
+export const getI = internalQuery({
+  args: {
+    generationId: zid('generations'),
+  },
+  handler: async (ctx, { generationId }) => await ctx.table('generations').get(generationId),
+})
+
+export const getManyI = internalQuery({
+  args: {
+    generationIds: zid('generations').array(),
+  },
+  handler: async (ctx, { generationIds }) => await ctx.table('generations').getManyX(generationIds),
 })
 
 //* mutations

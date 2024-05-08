@@ -6,6 +6,24 @@ import { internalMutation, internalQuery } from './functions'
 import { generatedImageFields, ridField, srcsetField } from './schema'
 import { generateRid, runWithRetries } from './utils'
 
+// *** public queries ***
+
+export const getHttp = internalQuery({
+  args: {
+    rid: ridField,
+  },
+  handler: async (ctx, { rid }) => {
+    const generated_image = await ctx
+      .table('generated_images', 'rid', (q) => q.eq('rid', rid))
+      .unique()
+    if (!generated_image || generated_image.deletionTime) return null
+
+    return generated_image
+  },
+})
+
+// *** end public queries ***
+
 export const create = internalMutation({
   args: {
     ...generatedImageFields,
@@ -64,19 +82,5 @@ export const checkSrcset = internalMutation({
       })
       console.log('checkSrcset:', image._id)
     }
-  },
-})
-
-export const getI = internalQuery({
-  args: {
-    rid: ridField,
-  },
-  handler: async (ctx, { rid }) => {
-    const image = await ctx
-      .table('generated_images', 'rid', (q) => q.eq('rid', rid))
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .first()
-
-    return image
   },
 })

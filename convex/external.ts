@@ -34,6 +34,7 @@ const units = {
     .object({
       ...generatedImageFields,
       ...ridFields,
+      deletionTime: z.undefined().optional(),
       _creationTime: z.number(),
       _id: zid('generated_images'),
     })
@@ -44,6 +45,7 @@ const units = {
     .object({
       ...generationFields,
       ...ridFields,
+      deletionTime: z.undefined().optional(),
       votes: z.record(z.string(), z.number()),
       _creationTime: z.number(),
       _id: zid('generations'),
@@ -51,7 +53,13 @@ const units = {
     .describe('external'),
 
   message: z
-    .object({ ...messageFields, ...ridFields, _creationTime: z.number(), _id: zid('messages') })
+    .object({
+      ...messageFields,
+      ...ridFields,
+      _creationTime: z.number(),
+      _id: zid('messages'),
+      deletionTime: z.undefined().optional(),
+    })
     .describe('external'),
 
   models: z
@@ -64,11 +72,23 @@ const units = {
     .describe('external'),
 
   thread: z
-    .object({ ...threadFields, ...ridFields, _creationTime: z.number(), _id: zid('threads') })
+    .object({
+      ...threadFields,
+      ...ridFields,
+      _creationTime: z.number(),
+      _id: zid('threads'),
+      deletionTime: z.undefined().optional(),
+    })
     .describe('external'),
 
   user: z
-    .object({ ...userFields, rid: z.string(), _creationTime: z.number(), _id: zid('users') })
+    .object({
+      ...userFields,
+      rid: z.string(),
+      _creationTime: z.number(),
+      _id: zid('users'),
+      deletionTime: z.undefined().optional(),
+    })
     .describe('external'),
 }
 

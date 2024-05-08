@@ -26,7 +26,7 @@ http.route({
     const result =
       path.length === 32
         ? await ctx.runQuery(internal.app_images.get, { appImageId: path as Id<'app_images'> })
-        : await ctx.runQuery(internal.generated_images.getI, { rid: path.slice(0, 6) })
+        : await ctx.runQuery(internal.generated_images.getHttp, { rid: path.slice(0, 6) })
 
     if (!result) {
       return new Response('Invalid image id', {

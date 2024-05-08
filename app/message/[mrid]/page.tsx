@@ -6,12 +6,15 @@ import { api } from '@/convex/_generated/api'
 export async function generateMetadata({ params: { mrid: rid } }: { params: { mrid: string } }) {
   try {
     const result = await fetchQuery(api.messages.getPageMetadata, { rid })
+    if (!result) return {}
+
     return {
       title: result.title,
       description: result.description,
     }
   } catch (err) {
     console.error(err)
+    return {}
   }
 }
 
