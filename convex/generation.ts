@@ -50,8 +50,8 @@ export const get = query({
     rid: z.string(),
   },
   handler: async (ctx, { rid }) => {
-    const generation = await ctx.table('generations', 'rid', (q) => q.eq('rid', rid)).firstX()
-    return await getGenerationXL(ctx, generation)
+    const generation = await ctx.table('generations', 'rid', (q) => q.eq('rid', rid)).unique()
+    return generation ? await getGenerationXL(ctx, generation) : null
   },
 })
 

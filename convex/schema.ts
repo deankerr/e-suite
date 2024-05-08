@@ -188,7 +188,7 @@ export const messageFields = {
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { index: true })
+  .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('generations', { ref: true, deletion: 'soft' })
   .edge('thread')
@@ -204,7 +204,7 @@ export const threadFields = {
 
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { index: true })
+  .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edge('user')
@@ -217,7 +217,7 @@ export const userFields = {
 }
 const users = defineEnt(zodToConvexFields(userFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { index: true })
+  .field('rid', zodToConvex(ridField), { unique: true })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true, deletion: 'soft' })

@@ -35,8 +35,8 @@ export const get = query({
     rid: ridField,
   },
   handler: async (ctx, { rid }) => {
-    const thread = await ctx.table('threads', 'rid', (q) => q.eq('rid', rid)).firstX()
-    return external.unit.thread.parse(thread)
+    const thread = await ctx.table('threads', 'rid', (q) => q.eq('rid', rid)).unique()
+    return thread ? external.unit.thread.parse(thread) : null
   },
 })
 

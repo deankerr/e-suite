@@ -19,14 +19,16 @@ const ridFields = {
 }
 
 const units = {
-  appImage: z.object({
-    _id: zid('app_images'),
-    _creationTime: z.number(),
-    width: z.number(),
-    height: z.number(),
-    blurDataUrl: z.string(),
-    color: z.string(),
-  }),
+  appImage: z
+    .object({
+      _id: zid('app_images'),
+      _creationTime: z.number(),
+      width: z.number(),
+      height: z.number(),
+      blurDataUrl: z.string(),
+      color: z.string(),
+    })
+    .describe('external'),
 
   generated_image: z
     .object({
@@ -37,6 +39,7 @@ const units = {
     })
     .omit({ sourceUrl: true, sourceFileId: true })
     .describe('external'),
+
   generation: z
     .object({
       ...generationFields,
@@ -45,42 +48,52 @@ const units = {
       _creationTime: z.number(),
       _id: zid('generations'),
     })
-    .describe('external generation'),
+    .describe('external'),
+
   message: z
     .object({ ...messageFields, ...ridFields, _creationTime: z.number(), _id: zid('messages') })
     .describe('external'),
-  models: z.object({
-    model_id: z.string(),
-    name: z.string(),
-    provider: z.enum(generationProviders),
-    resId: z.string(),
-  }),
+
+  models: z
+    .object({
+      model_id: z.string(),
+      name: z.string(),
+      provider: z.enum(generationProviders),
+      resId: z.string(),
+    })
+    .describe('external'),
+
   thread: z
     .object({ ...threadFields, ...ridFields, _creationTime: z.number(), _id: zid('threads') })
     .describe('external'),
+
   user: z
     .object({ ...userFields, rid: z.string(), _creationTime: z.number(), _id: zid('users') })
     .describe('external'),
 }
 
-const generationWithImage = units.generation.merge(
-  z.object({
-    image: units.generated_image.nullable(),
-  }),
-)
+const generationWithImage = units.generation
+  .merge(
+    z.object({
+      image: units.generated_image.nullable(),
+    }),
+  )
+  .describe('external xl')
 
-const modelXL = units.models.merge(
-  z.object({
-    image: units.appImage.nullable(),
-  }),
-)
+const modelXL = units.models
+  .merge(
+    z.object({
+      image: units.appImage.nullable(),
+    }),
+  )
+  .describe('external xl')
 
 const messageXL = z
   .object({
     message: units.message,
     generations: generationWithImage.array().nullable(),
   })
-  .describe('external')
+  .describe('external xl')
 
 export const external = {
   unit: units,

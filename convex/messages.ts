@@ -68,8 +68,8 @@ export const get = query({
     rid: ridField,
   },
   handler: async (ctx, { rid }) => {
-    const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).firstX()
-    return await getMessageEntXL(ctx, message)
+    const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).unique()
+    return message ? await getMessageEntXL(ctx, message) : null
   },
 })
 
