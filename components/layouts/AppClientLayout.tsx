@@ -2,13 +2,16 @@
 
 import { CommandBarAlpha } from '@/components/command-bar/CommandBarAlpha'
 import { ErrBoundary } from '@/components/util/ErrorBoundary'
+import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 
 export const AppClientLayout = () => {
   return (
     <>
-      <ErrBoundary>
-        <CommandBarAlpha />
-      </ErrBoundary>
+      <NonSecureAdminRoleOnly>
+        <ErrBoundary>
+          <CommandBarAlpha />
+        </ErrBoundary>
+      </NonSecureAdminRoleOnly>
     </>
   )
 }

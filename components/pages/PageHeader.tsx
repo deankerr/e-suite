@@ -1,12 +1,13 @@
 import { SignInButton, UserButton } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
 import { useDocumentTitle } from '@uidotdev/usehooks'
-import { Authenticated, Unauthenticated } from 'convex/react'
+import { Unauthenticated } from 'convex/react'
 import { HomeIcon, ImagesIcon, UserIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 
 import LogoSunset from '@/assets/logo-sunset.svg'
+import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 
 export const PageHeader = ({
   icon,
@@ -36,7 +37,7 @@ export const PageHeader = ({
 
       <div className="shrink-0 gap-2 flex-end">
         {/* quick nav */}
-        <Authenticated>
+        <NonSecureAdminRoleOnly>
           <IconButton variant="ghost" asChild>
             <Link href="/">
               <HomeIcon className="stroke-[1.5]" />
@@ -48,7 +49,7 @@ export const PageHeader = ({
               <ImagesIcon className="stroke-[1.5]" />
             </Link>
           </IconButton>
-        </Authenticated>
+        </NonSecureAdminRoleOnly>
 
         {/* user buttons */}
         <Unauthenticated>

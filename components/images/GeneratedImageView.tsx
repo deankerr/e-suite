@@ -1,7 +1,6 @@
 'use client'
 
 import { forwardRef } from 'react'
-import { useUser } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { Trash2Icon } from 'lucide-react'
@@ -9,6 +8,7 @@ import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { api } from '@/convex/_generated/api'
 import { cn } from '../../lib/utils'
 import { GoldSparkles } from '../effects/GoldSparkles'
@@ -35,9 +35,6 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
     const isGenerating = !image && generation.result?.type !== 'error'
 
     const removeGeneration = useMutation(api.generation.remove)
-
-    const { user } = useUser()
-    const isAdmin = user?.publicMetadata.role === 'admin'
 
     const sizes = containerWidth
       ? `${containerWidth}px`
@@ -82,7 +79,7 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
 
         {/* panels */}
         {/* options */}
-        {isAdmin && (
+        <NonSecureAdminRoleOnly>
           <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100">
             <IconButton
               variant="surface"
@@ -101,7 +98,7 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
               <Trash2Icon className="size-5" />
             </IconButton>
           </div>
-        )}
+        </NonSecureAdminRoleOnly>
 
         {/* votes */}
         {!isGenerating && (
