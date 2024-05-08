@@ -14,23 +14,6 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
       },
     },
 
-    generations: {
-      read: async (generation) => {
-        return !generation.deletionTime || Date.now() - generation.deletionTime < 1000
-      },
-    },
-
-    threads: {
-      read: async (thread) => {
-        return !thread.deletionTime || Date.now() - thread.deletionTime < 1000
-      },
-    },
-
-    messages: {
-      read: async (message) => {
-        return !message.deletionTime || Date.now() - message.deletionTime < 1000
-      },
-    },
     // messages: {
     //   read: async (message) => {
     //     // if (message.private) return false
