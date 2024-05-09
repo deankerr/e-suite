@@ -1,6 +1,6 @@
 'use client'
 
-import { CommandBarAlpha } from '@/components/command-bar/CommandBarAlpha'
+import { CommandBar } from '@/components/command-bar/CommandBar'
 import { ErrBoundary } from '@/components/util/ErrorBoundary'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 
@@ -9,7 +9,7 @@ export const AppClientLayout = () => {
     <>
       <NonSecureAdminRoleOnly>
         <ErrBoundary>
-          <CommandBarAlpha />
+          <CommandBar />
         </ErrBoundary>
       </NonSecureAdminRoleOnly>
     </>

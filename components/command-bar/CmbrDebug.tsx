@@ -1,6 +1,6 @@
 import { Button, Checkbox, Slider } from '@radix-ui/themes'
 
-import { useCmbr } from '@/components/command-bar/alphaAtoms'
+import { useCmbr } from '@/components/command-bar/atoms'
 import { cn } from '@/lib/utils'
 
 type CmbDebugProps = { props?: unknown }

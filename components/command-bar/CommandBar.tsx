@@ -5,7 +5,7 @@ import { Button, IconButton } from '@radix-ui/themes'
 import { motion } from 'framer-motion'
 import { MenuIcon } from 'lucide-react'
 
-import { useCmbr } from '@/components/command-bar/alphaAtoms'
+import { useCmbr } from '@/components/command-bar/atoms'
 import { generationPanelDef } from '@/components/command-bar/GenerationPanel'
 import { helloPanelDef } from '@/components/command-bar/HelloPanel'
 import { logsPanelDef } from '@/components/command-bar/LogPanel'
@@ -17,9 +17,7 @@ import type { ButtonProps } from '@radix-ui/themes'
 
 const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationPanelDef, logsPanelDef]
 
-type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
-
-export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
+export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(
   function CommandBarAlpha(props, forwardedRef) {
     const openOffset = 64
     const closedOffset = -202

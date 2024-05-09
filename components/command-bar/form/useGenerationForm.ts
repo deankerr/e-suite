@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { zfd } from 'zod-form-data'
 
-import { useCurrentModelAtom, useGenerationQuantity } from '@/components/command-bar/alphaAtoms'
+import { useCurrentModelAtom, useGenerationQuantity } from '@/components/command-bar/atoms'
 import { api } from '@/convex/_generated/api'
 import { imageGenerationSizesMap } from '@/convex/constants'
 import { useThreadCtx } from '@/lib/queries'
