@@ -7,6 +7,10 @@ const commandBarAtom = atomWithStorage('command-bar', {
   containerHeight: 850,
   isHidden: false,
   isOpen: true,
+  layout: {
+    railInnerHeight: 56,
+    panelInnerHeight: 512,
+  },
 })
 commandBarAtom.debugLabel = 'commandBar'
 export const useCommandBar = () => {

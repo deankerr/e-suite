@@ -6,16 +6,14 @@ import { cn } from '@/lib/utils'
 
 import type { Variants } from 'framer-motion'
 
-export const CommandBarShell = () => {
+export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.ReactNode }) => {
   const cmbr = useCommandBar()
 
   const marginGlass = 16
 
-  const railInnerHeight = 56
-  const railTotalHeight = railInnerHeight + marginGlass
+  const railTotalHeight = cmbr.layout.railInnerHeight + marginGlass
 
-  const panelInnerHeight = 512
-  const panelTotalHeight = panelInnerHeight + marginGlass * 2
+  const panelTotalHeight = cmbr.layout.panelInnerHeight + marginGlass * 2
 
   const variants: Variants = {
     open: {
@@ -61,12 +59,12 @@ export const CommandBarShell = () => {
           />
           <Glass
             barWidth={1}
-            style={{ width: '100%', height: panelInnerHeight + marginGlass * 3 }}
+            style={{ width: '100%', height: cmbr.layout.panelInnerHeight + marginGlass * 3 }}
             id="cmbr-panel-glass-main"
           />
 
-          <div className="absolute rounded-lg bg-green-2" style={{ inset: marginGlass }}>
-            panel
+          <div className="absolute grid" style={{ inset: marginGlass }}>
+            {props.panels}
           </div>
         </motion.div>
       </div>
@@ -81,11 +79,15 @@ export const CommandBarShell = () => {
         />
 
         <div
-          className="absolute rounded-lg bg-cyan-2"
+          className="absolute grid"
           id="cmbr-rail"
-          style={{ insetBlockStart: 0, insetBlockEnd: marginGlass, insetInline: marginGlass }}
+          style={{
+            insetBlockStart: 0,
+            insetBlockEnd: marginGlass,
+            insetInline: marginGlass,
+          }}
         >
-          rail
+          {props.rail}
         </div>
       </div>
     </div>
