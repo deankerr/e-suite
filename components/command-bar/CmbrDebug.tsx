@@ -13,7 +13,7 @@ export const CmbrDebug = ({}: CmbDebugProps) => {
   return (
     <div
       className={cn(
-        'fixed left-1/2 top-0 flex -translate-x-1/2 gap-2 bg-bronze-2 p-2 font-mono text-xs',
+        'fixed right-1 top-0 flex gap-2 bg-bronze-2 p-2 font-mono text-xs',
         HIDE && 'hidden',
       )}
     >

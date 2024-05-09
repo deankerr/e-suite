@@ -36,11 +36,15 @@
 .lucide {
   stroke-width: 1.5px;
 }
-
+/*
 #cmbr-container {
   border: red solid 1px;
 }
 
-#cmbr-panel-container-m {
-  /* border: green solid 1px; */
+#cmbr-panel-mask {
+  border: blue solid 1px;
 }
+
+#cmbr-panel-container-m {
+  border: green solid 1px;
+} */

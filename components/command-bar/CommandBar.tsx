@@ -10,6 +10,7 @@ import { generationPanelDef } from '@/components/command-bar/GenerationPanel'
 import { helloPanelDef } from '@/components/command-bar/HelloPanel'
 import { logsPanelDef } from '@/components/command-bar/LogPanel'
 import { modelBrowserPanelDef } from '@/components/command-bar/ModelBrowserPanel'
+import { PanelShell } from '@/components/command-bar/PanelShell'
 import { Glass } from '@/components/ui/Glass'
 import { cn } from '@/lib/utils'
 
@@ -21,14 +22,18 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
   function CommandBarAlpha(props, forwardedRef) {
     const cmbr = useCmbr()
 
+    const containerHeight = 650
+
     const panelHeight = 512
+    const railHeight = 56
+    const glassMargins = 16
 
     const variants = {
       open: {
         y: 0,
       },
       closed: {
-        y: panelHeight,
+        y: panelHeight + railHeight,
       },
     }
 
@@ -41,9 +46,9 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
           !cmbr.values.isVisible && 'hidden',
         )}
         ref={forwardedRef}
-        style={{ height: `${cmbr.values.containerHeightPc}%` }}
+        style={{ height: containerHeight }}
       >
-        <div className="flex h-full flex-col justify-end" id="cmbr-panel-mask">
+        <div className="flex h-full flex-col justify-end overflow-hidden" id="cmbr-panel-mask">
           <motion.div
             className={cn('pointer-events-auto absolute w-full p-4')}
             variants={variants}
@@ -58,7 +63,34 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
               id="cmbr-panel-glass"
             />
 
-            <div
+            <PanelShell>shell</PanelShell>
+          </motion.div>
+        </div>
+
+        <div className="pointer-events-auto" id="cmbr-rail-container">
+          <Glass
+            barWidth={1}
+            borderTopLeftRadius={cmbr.values.isOpen ? 0 : 16}
+            borderTopRightRadius={cmbr.values.isOpen ? 0 : 16}
+            borderBottomLeftRadius={16}
+            borderBottomRightRadius={16}
+            className="absolute inset-0 rounded-2xl"
+            id="cmbr-rail-glass"
+          />
+          <div
+            className="rounded-lg bg-gray-2 p-2 font-mono text-xs"
+            id="cmbr-rail"
+            style={{ height: railHeight, margin: glassMargins }}
+          ></div>
+        </div>
+      </div>
+    )
+  },
+)
+
+/*
+slider
+  <div
               className={cn('w-full overflow-hidden rounded-lg', !cmbr.values.isOpen && '')}
               id="cmbr-panel-shifter-mask"
             >
@@ -72,19 +104,11 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
                 ))}
               </motion.div>
             </div>
-          </motion.div>
-        </div>
 
-        <div className="pointer-events-auto" id="cmbr-rail-container">
-          <Glass
-            barWidth={1}
-            borderBottomLeftRadius={16}
-            borderBottomRightRadius={16}
-            className="absolute inset-0 rounded-2xl"
-            id="cmbr-rail-glass"
-          />
-          <div className="mx-4 mb-4 h-14 rounded-lg bg-gray-2 p-2 font-mono text-xs" id="cmbr-rail">
-            <div className="flex-between">
+*/
+
+/* rail
+<div className="flex-between">
               <div className="flex gap-2">
                 <IconButton
                   variant="surface"
@@ -126,9 +150,4 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
                 </IconButton>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    )
-  },
-)
+*/

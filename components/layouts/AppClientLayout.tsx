@@ -1,5 +1,6 @@
 'use client'
 
+import { CmbrDebug } from '@/components/command-bar/CmbrDebug'
 import { CommandBar } from '@/components/command-bar/CommandBar'
 import { ErrBoundary } from '@/components/util/ErrorBoundary'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
@@ -12,6 +13,7 @@ export const AppClientLayout = () => {
           <CommandBar />
         </ErrBoundary>
       </NonSecureAdminRoleOnly>
+      <CmbrDebug />
     </>
   )
 }
