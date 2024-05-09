@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai'
+import { atom, useAtom } from 'jotai'
 import { atomWithStorage, RESET } from 'jotai/utils'
 
 import type { ModelContent } from '@/convex/external'
@@ -22,3 +22,6 @@ export const useCmbr = () => {
 // generation
 const currentModelAtom = atomWithStorage<ModelContent | undefined>('current-model', undefined)
 export const useCurrentModelAtom = () => useAtom(currentModelAtom)
+
+const quantityAtom = atom('2')
+export const useGenerationQuantity = () => useAtom(quantityAtom)

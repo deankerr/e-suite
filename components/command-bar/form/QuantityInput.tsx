@@ -1,14 +1,14 @@
 import { SegmentedControl } from '@radix-ui/themes'
 
+import { useGenerationQuantity } from '@/components/command-bar/alphaAtoms'
 import { FormLabel } from '@/components/command-bar/form/Controls'
 
 export const QuantityInput = () => {
+  const [value, set] = useGenerationQuantity()
   return (
     <div className="grid h-fit gap-1.5 font-mono text-xs">
-      <FormLabel htmlFor="quantity" className="">
-        quantity
-      </FormLabel>
-      <SegmentedControl.Root id="quantity" defaultValue="2" size="3">
+      <FormLabel htmlFor="quantity">quantity</FormLabel>
+      <SegmentedControl.Root id="quantity" size="3" value={value} onValueChange={set}>
         <SegmentedControl.Item value="1" className="font-mono">
           1
         </SegmentedControl.Item>

@@ -9,13 +9,14 @@ export const DimensionsInput = () => {
     <div className={cn('grid max-w-80 gap-1 font-mono text-xs')}>
       <FormLabel htmlFor="dimensions">dimensions</FormLabel>
       <CheckboxCards.Root
+        name="dimensions"
         id="dimensions"
         size="1"
         gap="2"
         columns="2"
         className="w-fit grid-cols-[1fr_auto]"
       >
-        <CheckboxCards.Item value="square">
+        <CheckboxCards.Item id="dim1" value="square" itemID="dim1">
           <SquareIcon />
           <div className="font-sans font-medium">Square</div>
         </CheckboxCards.Item>

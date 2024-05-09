@@ -4,11 +4,14 @@ import { useCurrentModelAtom } from '@/components/command-bar/alphaAtoms'
 import { DimensionsInput } from '@/components/command-bar/form/DimensionsInput'
 import { FormLabel, inputRegister } from '@/components/command-bar/form/ParameterInputs'
 import { QuantityInput } from '@/components/command-bar/form/QuantityInput'
+import { useGenerationForm } from '@/components/command-bar/form/useGenerationForm'
 import { ModelCard } from '@/components/command-bar/ModelCard'
 import { PanelShell } from '@/components/command-bar/PanelShell'
 import { paramBodySchemas } from '@/convex/lib/schemas'
 
 export const GenerationPanel = () => {
+  const { formAction } = useGenerationForm()
+
   const [currentModel] = useCurrentModelAtom()
   const formTarget = currentModel
     ? paramBodySchemas[currentModel.provider][currentModel.model_id] ??
@@ -23,7 +26,7 @@ export const GenerationPanel = () => {
   return (
     <PanelShell>
       <div className="p-1 font-mono text-xs">
-        <form className="space-y-2 @container">
+        <form className="space-y-2 @container" action={formAction}>
           {formPromptInputs?.map((param) => inputRegister[param.element](param))}
 
           <div className="flex gap-2">

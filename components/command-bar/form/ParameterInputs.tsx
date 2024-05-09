@@ -72,27 +72,31 @@ export const inputRegister = {
   ignore: () => null,
 
   textarea: (props: InfParam) => (
-    <FormControl>
+    <FormControl key={props.name}>
       {props.label ?? props.name}
       <FormInputTextarea name={props.name} />
     </FormControl>
   ),
   number: (props: InfParam) => (
-    <FormControl className="w-fit">
+    <FormControl key={props.name} className="w-fit">
       {props.label ?? props.name}
       <FormInputNumber name={props.name} placeholder={props.placeholder} {...props.number} />
     </FormControl>
   ),
   checkbox: (props: InfParam) => (
-    <FormControl className="max-w-48 grid-cols-[2em_auto]">
+    <FormControl key={props.name} className="max-w-48 grid-cols-[2em_auto]">
       <FormInputCheckbox name={props.name} />
       {props.label ?? props.name}
     </FormControl>
   ),
   select: (props: InfParam) => (
-    <FormControl className="w-64">
+    <FormControl key={props.name} className="w-64">
       {props.label ?? props.name}
-      <FormInputSelect defaultValue={props?.items?.[0] ?? ''} items={props.items ?? []} />
+      <FormInputSelect
+        name={props.name}
+        defaultValue={props?.items?.[0] ?? ''}
+        items={props.items ?? []}
+      />
     </FormControl>
   ),
 } as const
