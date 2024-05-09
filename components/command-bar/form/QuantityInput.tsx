@@ -1,7 +1,7 @@
 import { SegmentedControl } from '@radix-ui/themes'
 
 import { useGenerationQuantity } from '@/components/command-bar/alphaAtoms'
-import { FormLabel } from '@/components/command-bar/form/Controls'
+import { FormLabel } from '@/components/command-bar/form/ParameterInputs'
 
 export const QuantityInput = () => {
   const [value, set] = useGenerationQuantity()

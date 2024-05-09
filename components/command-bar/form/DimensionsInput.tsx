@@ -1,7 +1,7 @@
 import { CheckboxCards } from '@radix-ui/themes'
 import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'
 
-import { FormLabel } from '@/components/command-bar/form/Controls'
+import { FormLabel } from '@/components/command-bar/form/ParameterInputs'
 import { cn } from '@/lib/utils'
 
 export const DimensionsInput = () => {

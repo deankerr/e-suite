@@ -6,7 +6,6 @@ import { motion } from 'framer-motion'
 import { MenuIcon } from 'lucide-react'
 
 import { useCmbr } from '@/components/command-bar/alphaAtoms'
-import { generationInputPanelDef } from '@/components/command-bar/GenerationInputPanel'
 import { generationPanelDef } from '@/components/command-bar/GenerationPanel'
 import { helloPanelDef } from '@/components/command-bar/HelloPanel'
 import { logsPanelDef } from '@/components/command-bar/LogPanel'
@@ -16,13 +15,7 @@ import { cn } from '@/lib/utils'
 
 import type { ButtonProps } from '@radix-ui/themes'
 
-const panelConfig = [
-  helloPanelDef,
-  modelBrowserPanelDef,
-  generationInputPanelDef,
-  generationPanelDef,
-  logsPanelDef,
-]
+const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationPanelDef, logsPanelDef]
 
 type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
 
