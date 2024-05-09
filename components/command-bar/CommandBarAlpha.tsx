@@ -7,6 +7,7 @@ import { MenuIcon } from 'lucide-react'
 
 import { useCmbr } from '@/components/command-bar/alphaAtoms'
 import { generationInputPanelDef } from '@/components/command-bar/GenerationInputPanel'
+import { generationPanelDef } from '@/components/command-bar/GenerationPanel'
 import { helloPanelDef } from '@/components/command-bar/HelloPanel'
 import { logsPanelDef } from '@/components/command-bar/LogPanel'
 import { modelBrowserPanelDef } from '@/components/command-bar/ModelBrowserPanel'
@@ -15,15 +16,21 @@ import { cn } from '@/lib/utils'
 
 import type { ButtonProps } from '@radix-ui/themes'
 
-const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationInputPanelDef, logsPanelDef]
+const panelConfig = [
+  helloPanelDef,
+  modelBrowserPanelDef,
+  generationInputPanelDef,
+  generationPanelDef,
+  logsPanelDef,
+]
 
 type CommandBarAlphaProps = { props?: unknown } & React.ComponentProps<'div'>
 
 export const CommandBarAlpha = forwardRef<HTMLDivElement, CommandBarAlphaProps>(
   function CommandBarAlpha(props, forwardedRef) {
     const openOffset = 64
-    const closedOffset = -20
-    const panelInnerHeight = 448
+    const closedOffset = -202
+    const panelInnerHeight = 500
 
     const cmbr = useCmbr()
 
