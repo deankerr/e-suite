@@ -9,7 +9,13 @@ import { internalAction, internalMutation, internalQuery, mutation, query } from
 import { fal } from './providers/fal'
 import { sinkin } from './providers/sinkin'
 import { generationFields, generationResultField, generationVoteFields } from './schema'
-import { generateRid, insist, runWithRetries, zPaginationOptValidator } from './utils'
+import {
+  generateRid,
+  getImageGenerationSize,
+  insist,
+  runWithRetries,
+  zPaginationOptValidator,
+} from './utils'
 
 import type { Ent, MutationCtx, QueryCtx } from './types'
 
@@ -22,8 +28,11 @@ export const getGenerationXL = async (ctx: QueryCtx, generation: Ent<'generation
     R.mapValues((value) => value?.length ?? 0),
   )
 
+  const size = getImageGenerationSize(generation.size)
   const generationXL = {
     ...generation,
+    ...size,
+
     image: await generation.edge('generated_image'),
     votes: tally,
   }
@@ -105,23 +114,23 @@ export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'mes
   const inference = message.inference?.generation
   insist(inference, 'message lacks generation parameters')
 
+  const { sizes, ...generation } = inference
+
   await Promise.all(
-    inference.dimensions.map(async ({ width, height, n }) => {
+    sizes.map(async ({ size, n }) => {
       const parameters = {
-        ...inference.parameters,
-        width,
-        height,
+        ...generation,
+        size,
       }
 
       const generationIds = await Promise.all(
         [...Array(n)].map(async (_) => {
-          const generation = {
+          return await ctx.table('generations').insert({
             ...parameters,
             rid: await generateRid(ctx, 'generations'),
             private: message.private,
             messageId: message._id,
-          }
-          return await ctx.table('generations').insert(generation)
+          })
         }),
       )
       await runWithRetries(ctx, internal.generation.textToImage, {

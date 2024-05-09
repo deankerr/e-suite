@@ -47,6 +47,13 @@ const units = {
       ...ridFields,
       deletionTime: z.undefined().optional(),
       votes: z.record(z.string(), z.number()),
+      size: z.string().catch('square'), //! TEMP
+      provider: z.string().catch('fal'),
+      prompt: z.string().catch('fake prompt'),
+      entries: z.array(z.any()).catch([]), //! TEMP
+
+      width: z.number(),
+      height: z.number(),
       _creationTime: z.number(),
       _id: zid('generations'),
     })
@@ -56,6 +63,7 @@ const units = {
     .object({
       ...messageFields,
       ...ridFields,
+      inference: messageFields.inference.catch(undefined), //! void older
       _creationTime: z.number(),
       _id: zid('messages'),
       deletionTime: z.undefined().optional(),

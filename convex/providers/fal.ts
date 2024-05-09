@@ -1,13 +1,12 @@
 import * as falClient from '@fal-ai/serverless-client'
 import { ConvexError } from 'convex/values'
-import * as R from 'remeda'
 
 import * as FastLightningSdxl from './fal/fast_lightning_sdxl'
 import * as HyperSdxl from './fal/hyper_sdxl'
 import * as SDLora from './fal/lora'
 import * as PixartSigma from './fal/pixart_sigma'
 
-import type { GenerationInputParams } from '../schema'
+import type { GenerationParams } from '../schema'
 import type { TextToImageHandler } from './types'
 
 //* Model config
@@ -38,34 +37,31 @@ export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: GenerationInputParams
+  parameters: Omit<GenerationParams, 'result'>
   n: number
 }) => {
   try {
-    const { model_id, width, height } = parameters
+    const { model_id, size, entries } = parameters
     if (!(model_id in textToImageModels))
       throw new ConvexError({ message: 'unsupported model', model_id })
 
     const parsers = textToImageModels[model_id as keyof typeof textToImageModels]
-    const translated = R.swapProps(
-      parameters as Record<string, any>,
-      'steps',
-      'num_inference_steps',
-    )
 
     //TODO temp - some schemas expect strings instead of numbers
-    const num_inference_steps =
-      parameters.model_id !== 'fal-ai/lora' && parameters.steps
-        ? String(parameters.steps)
-        : parameters.steps
+    const mapped = Object.fromEntries(entries)
+
+    const stepsI = entries.findIndex(([key]) => key === 'num_inference_steps')
+    if (
+      stepsI >= 0 &&
+      (model_id === 'fal-ai/hyper-sdxl' || model_id === 'fal-ai/fast-lightning-sdxl')
+    ) {
+      mapped['num_inference_steps'] = String(mapped['num_inference_steps'])
+    }
 
     const parsedInput = parsers.body.safeParse({
-      ...translated,
-      num_inference_steps,
-      image_size: { width, height },
+      ...mapped,
+      image_size: size,
       num_images: n,
-      enable_safety_checker: false,
-      expand_prompt: true,
     })
     if (!parsedInput.success) {
       console.error(parsedInput.error.issues)

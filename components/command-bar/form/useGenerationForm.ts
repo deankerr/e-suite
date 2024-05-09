@@ -5,8 +5,7 @@ import { zfd } from 'zod-form-data'
 
 import { useCurrentModelAtom, useGenerationQuantity } from '@/components/command-bar/alphaAtoms'
 import { api } from '@/convex/_generated/api'
-import { imageSizesPx } from '@/convex/constants'
-import { generationInferenceParamsSchema } from '@/convex/schema'
+import { imageGenerationSizesMap } from '@/convex/constants'
 import { useThreadCtx } from '@/lib/queries'
 
 const formSchema = zfd.formData({
@@ -52,16 +51,19 @@ export const useGenerationForm = () => {
     toast.success('Form validation success')
     console.log(form.data)
 
-    const { dimensions, ...parameters } = form.data
+    const { dimensions, prompt, seed, ...rest } = form.data
     //TODO temp: remove unsupported params
-    const generation = generationInferenceParamsSchema.parse({
-      parameters: {
-        ...parameters,
-        provider: currentModel.provider,
-        model_id: currentModel.model_id,
-      },
-      dimensions: getDimensionsN(dimensions, Number(quantity)),
-    })
+    const generation = {
+      prompt,
+      seed,
+      provider: currentModel.provider,
+      model_id: currentModel.model_id,
+      entries: Object.entries(rest),
+      sizes: dimensions.map((size) => ({ size, n: Number(quantity) })) as Array<{
+        size: keyof typeof imageGenerationSizesMap
+        n: number
+      }>,
+    }
 
     send({
       message: {
@@ -80,18 +82,4 @@ export const useGenerationForm = () => {
   }
 
   return { formAction }
-}
-
-const getDimensionsN = (sizes: string[], n: number) => {
-  const sizesToPx = imageSizesPx as Record<string, { width: number; height: number }>
-  return sizes
-    .map((size) => {
-      const px = sizesToPx[size]
-      if (px) return { ...px, n }
-    })
-    .filter(Boolean) as {
-    n: number
-    width: number
-    height: number
-  }[]
 }

@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { api } from '@/convex/_generated/api'
+import { getImageGenerationSize } from '@/convex/utils'
 import { cn } from '../../lib/utils'
 import { GoldSparkles } from '../effects/GoldSparkles'
 import { VoteButtonPanel } from './VoteButtonPanel'
@@ -30,6 +31,7 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
     forwardedRef,
   ) {
     const { image } = generation
+
     const width = image?.width ?? generation.width
     const height = image?.height ?? generation.height
     const isGenerating = !image && generation.result?.type !== 'error'

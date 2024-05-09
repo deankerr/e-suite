@@ -1,9 +1,10 @@
 import ky from 'ky'
 import { z } from 'zod'
 
+import { imageGenerationSizesMap } from '../constants'
 import { getEnv } from '../utils'
 
-import type { GenerationInputParams } from '../schema'
+import type { GenerationParams } from '../schema'
 import type { TextToImageHandler } from './types'
 
 const api = ky.extend({
@@ -12,32 +13,27 @@ const api = ky.extend({
   retry: 0,
 })
 
-const translateKey = (key: string) => {
-  switch (key) {
-    case 'model':
-      return 'model_id'
-    case 'negativePrompt':
-      return 'negative_prompt'
-    case 'n':
-      return 'num_images'
-    default:
-      return key
-  }
-}
-
 export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: GenerationInputParams
+  parameters: Omit<GenerationParams, 'result'>
   n: number
 }) => {
+  const { size, entries, model_id, prompt } = parameters
+  const { width, height } = imageGenerationSizesMap[size]
+
   const body = new URLSearchParams()
 
-  for (const [key, value] of Object.entries(parameters)) {
-    body.set(translateKey(key), String(value))
+  for (const [key, value] of entries) {
+    body.set(key, String(value))
   }
-  body.set(translateKey('n'), String(n))
+  body.set('width', width.toString())
+  body.set('height', height.toString())
+  body.set('model_id', model_id)
+  body.set('prompt', prompt)
+
+  body.set('num_images', String(n))
 
   body.set('access_token', getEnv('SINKIN_API_KEY'))
 

@@ -3,7 +3,7 @@ import { ConvexError } from 'convex/values'
 import { customAlphabet } from 'nanoid/non-secure'
 import { z } from 'zod'
 
-import { ridLength } from './constants'
+import { imageGenerationSizesMap, ridLength } from './constants'
 
 import type { MutationCtx } from './types'
 import type { Value } from 'convex/values'
@@ -64,3 +64,6 @@ export function emptyPage() {
     pageStatus: 'SplitRequired' as const,
   }
 }
+
+export const getImageGenerationSize = (size: keyof typeof imageGenerationSizesMap) =>
+  imageGenerationSizesMap[size]

@@ -12,12 +12,6 @@ type GenerationDataListProps = {
   orientation?: 'horizontal' | 'vertical'
 }
 
-const om = R.mapToObj(
-  ['result', 'metadata', 'model_id', 'width', 'height', 'prompt'] as const,
-  (key) => [key, true as const],
-)
-const params = z.object(generationFields).omit(om)
-
 export const GenerationDataList = ({
   generations,
   orientation = 'vertical',
@@ -26,9 +20,9 @@ export const GenerationDataList = ({
   if (!first) return null
   const { model_id, prompt, _creationTime, _id, ...rest } = first
 
-  const dimensions = R.groupBy(generations, ({ width, height }) => `${width} x ${height}`)
+  // const dimensions = R.groupBy(generations, ({ width, height }) => `${width} x ${height}`)
 
-  const unordered = Object.entries(params.parse(rest))
+  // const unordered = Object.entries(params.parse(rest))
   const model = SinkinModels.find((model) => model.model_id === model_id)
   return (
     <DataList.Root orientation={orientation}>
@@ -46,9 +40,9 @@ export const GenerationDataList = ({
         <DataList.Label>dimensions</DataList.Label>
         <DataList.Value>
           <div className="grid gap-0.5">
-            {Object.entries(dimensions).map(([key, values]) => (
+            {/* {Object.entries(dimensions).map(([key, values]) => (
               <Code key={key} color="gold">{`${key} (${values.length})`}</Code>
-            ))}
+            ))} */}
           </div>
         </DataList.Value>
       </DataList.Item>
@@ -58,19 +52,19 @@ export const GenerationDataList = ({
         <DataList.Value>{prompt}</DataList.Value>
       </DataList.Item>
 
-      {unordered.map(([key, value]) => (
+      {/* {unordered.map(([key, value]) => (
         <DataList.Item key={key}>
           <DataList.Label>{key}</DataList.Label>
           <DataList.Value>
             {typeof value === 'number' ? <Code color="gold">{value}</Code> : value}
           </DataList.Value>
         </DataList.Item>
-      ))}
+      ))} */}
 
       <DataList.Item>
         <DataList.Label>created</DataList.Label>
         <DataList.Value>
-          <Code color="gold">{new Date(_creationTime).toLocaleString()}</Code>
+          {/* <Code color="gold">{new Date(_creationTime).toLocaleString()}</Code> */}
         </DataList.Value>
       </DataList.Item>
     </DataList.Root>

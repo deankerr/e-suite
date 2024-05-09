@@ -25,6 +25,7 @@ import type * as inferenceSchema from "../inferenceSchema.js";
 import type * as lib_schemas from "../lib/schemas.js";
 import type * as lib_sharp from "../lib/sharp.js";
 import type * as messages from "../messages.js";
+import type * as migrations from "../migrations.js";
 import type * as models from "../models.js";
 import type * as providers_aws from "../providers/aws.js";
 import type * as providers_clerk from "../providers/clerk.js";
@@ -148,6 +149,7 @@ declare const fullApi: ApiFromModules<{
   "lib/schemas": typeof lib_schemas;
   "lib/sharp": typeof lib_sharp;
   messages: typeof messages;
+  migrations: typeof migrations;
   models: typeof models;
   "providers/aws": typeof providers_aws;
   "providers/clerk": typeof providers_clerk;

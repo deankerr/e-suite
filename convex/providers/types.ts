@@ -1,4 +1,4 @@
-import type { GenerationInputParams } from '../schema'
+import type { GenerationParams } from '../schema'
 
 export type TextToImageHandlerResult = {
   result: { urls: string[] } & Record<string, any>
@@ -15,6 +15,6 @@ export type TextToImageHandlerError = {
 }
 
 export type TextToImageHandler = (args: {
-  parameters: GenerationInputParams
+  parameters: GenerationParams
   n: number
 }) => Promise<TextToImageHandlerResult | TextToImageHandlerError>

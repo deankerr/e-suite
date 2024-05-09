@@ -8,6 +8,7 @@ import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { Spinner } from '@/components/ui/Spinner'
+import { getImageGenerationSize } from '@/convex/utils'
 import { useInsecureDemoOnlyGeneraitonList } from '@/lib/queries'
 import { PageHeader } from './PageHeader'
 

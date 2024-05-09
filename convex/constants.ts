@@ -24,7 +24,7 @@ export const generationVoteNames = ['best', 'good', 'poor', 'bad', 'none'] as co
 export const imageSrcsetWidths = [
   128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840,
 ] as const
-export const imageSizes = [
+export const imageGenerationSizes = [
   'square',
   'square_hd',
   'portrait_4_3',
@@ -32,7 +32,7 @@ export const imageSizes = [
   'landscape_4_3',
   'landscape_16_9',
 ] as const
-export const imageSizesPx = {
+export const imageGenerationSizesMap = {
   square: {
     width: 512,
     height: 512,

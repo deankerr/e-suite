@@ -8,6 +8,7 @@ import {
   completionProviders,
   generationProviders,
   generationVoteNames,
+  imageGenerationSizes,
   imageSrcsetWidths,
   maxMessageNameStringLength,
   maxTitleStringLength,
@@ -15,8 +16,7 @@ import {
   ridLength,
 } from './constants'
 
-export type GenerationInputParams = z.infer<typeof parametersInputSchema>
-
+export type GenerationParams = z.infer<typeof generationFieldsObject>
 const timeToDelete = ms('1 day')
 
 export const ridField = z.string().length(ridLength)
@@ -89,30 +89,18 @@ export const generationResultField = z.object({
 })
 
 export const generationFields = {
-  result: generationResultField.optional(),
-
   provider: z.enum(generationProviders),
-  metadata: z.string().array().array().optional(),
-
-  // common
   model_id: z.string(),
-  width: z.number().min(512).max(2048),
-  height: z.number().min(512).max(2048),
+
   prompt: z.string(),
-  seed: z.number().optional(),
+  size: z.enum(imageGenerationSizes),
 
-  // common optional
-  negative_prompt: z.string().optional(),
-  guidance_scale: z.number().optional(),
-  steps: z.number().optional(),
+  entries: z.tuple([z.string(), z.union([z.string(), z.number(), z.boolean()])]).array(),
 
-  // sinkin
-  lcm: z.boolean().optional(),
-  use_default_neg: z.boolean().optional(),
-
-  // fal
-  enable_safety_checker: z.boolean().optional(),
+  result: generationResultField.optional(),
+  metadata: z.string().array().array().optional(),
 }
+const generationFieldsObject = z.object(generationFields)
 export const generations = defineEnt(zodToConvexFields(generationFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
@@ -155,19 +143,18 @@ export const chatInference = z.object({
 })
 
 //* Messages
-const parametersInputSchema = z.object(generationFields).omit({ result: true })
-export const generationInferenceParamsSchema = z.object({
-  parameters: parametersInputSchema.omit({ width: true, height: true }),
-  dimensions: z
-    .object({
-      width: z.number().min(512).max(2048),
-      height: z.number().min(512).max(2048),
-      n: z.number().min(1).max(8),
-    })
-    .array()
-    .min(1)
-    .max(8),
-})
+const messageInferenceGenerationSchema = z
+  .object(generationFields)
+  .omit({ result: true, size: true })
+  .merge(
+    z.object({
+      sizes: z
+        .object({ size: z.enum(imageGenerationSizes), n: z.number().min(1).max(8) })
+        .array()
+        .min(1)
+        .max(6),
+    }),
+  )
 
 export const messageFields = {
   role: z.enum(messageRoles),
@@ -179,7 +166,7 @@ export const messageFields = {
 
   inference: z
     .object({
-      generation: generationInferenceParamsSchema.optional(),
+      generation: messageInferenceGenerationSchema.optional(),
     })
     .optional(),
 
