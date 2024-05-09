@@ -87,7 +87,7 @@ export const Glass = ({
   ...props
 }: GlassProps) => {
   return (
-    <motion.div layout {...props}>
+    <motion.div {...props}>
       <Refraction
         blur={4}
         saturate={150}

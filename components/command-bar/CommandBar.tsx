@@ -1,39 +1,45 @@
 'use client'
 
 import { forwardRef } from 'react'
-import { Button, IconButton } from '@radix-ui/themes'
 import { motion } from 'framer-motion'
-import { MenuIcon } from 'lucide-react'
 
 import { useCmbr } from '@/components/command-bar/atoms'
-import { generationPanelDef } from '@/components/command-bar/GenerationPanel'
-import { helloPanelDef } from '@/components/command-bar/HelloPanel'
-import { logsPanelDef } from '@/components/command-bar/LogPanel'
-import { modelBrowserPanelDef } from '@/components/command-bar/ModelBrowserPanel'
-import { PanelShell } from '@/components/command-bar/PanelShell'
 import { Glass } from '@/components/ui/Glass'
 import { cn } from '@/lib/utils'
 
-import type { ButtonProps } from '@radix-ui/themes'
+import type { Variants } from 'framer-motion'
 
-const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationPanelDef, logsPanelDef]
+// const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationPanelDef, logsPanelDef]
 
 export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(
   function CommandBarAlpha(props, forwardedRef) {
     const cmbr = useCmbr()
 
-    const containerHeight = 650
+    const containerHeight = 850
 
-    const panelHeight = 512
-    const railHeight = 56
-    const glassMargins = 16
+    const marginGlass = 16
 
-    const variants = {
+    const railInnerHeight = 56
+    const railTotalHeight = railInnerHeight + marginGlass
+
+    const panelInnerHeight = 512
+    const panelTotalHeight = panelInnerHeight + marginGlass * 2
+
+    const variants: Variants = {
       open: {
         y: 0,
+        transition: {
+          type: 'spring',
+          duration: '0.8',
+        },
       },
       closed: {
-        y: panelHeight + railHeight,
+        y: panelTotalHeight - marginGlass,
+        transition: {
+          type: 'tween',
+          ease: 'anticipate',
+          duration: '0.8',
+        },
       },
     }
 
@@ -50,38 +56,47 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
       >
         <div className="flex h-full flex-col justify-end overflow-hidden" id="cmbr-panel-mask">
           <motion.div
-            className={cn('pointer-events-auto absolute w-full p-4')}
+            className={cn('pointer-events-auto absolute w-full')}
             variants={variants}
             animate={cmbr.values.isOpen ? 'open' : 'closed'}
             id="cmbr-panel-container-m"
+            style={{ height: panelTotalHeight }}
           >
             <Glass
               barWidth={1}
               borderTopLeftRadius={16}
               borderTopRightRadius={16}
-              className="absolute inset-0 rounded-2xl"
-              id="cmbr-panel-glass"
+              style={{ width: '100%', height: marginGlass }}
+              id="cmbr-panel-glass-top"
+            />
+            <Glass
+              barWidth={1}
+              style={{ width: '100%', height: panelInnerHeight + marginGlass * 3 }}
+              id="cmbr-panel-glass-main"
             />
 
-            <PanelShell>shell</PanelShell>
+            <div className="absolute rounded-lg bg-green-2" style={{ inset: marginGlass }}>
+              panel
+            </div>
           </motion.div>
         </div>
 
         <div className="pointer-events-auto" id="cmbr-rail-container">
           <Glass
             barWidth={1}
-            borderTopLeftRadius={cmbr.values.isOpen ? 0 : 16}
-            borderTopRightRadius={cmbr.values.isOpen ? 0 : 16}
             borderBottomLeftRadius={16}
             borderBottomRightRadius={16}
-            className="absolute inset-0 rounded-2xl"
             id="cmbr-rail-glass"
+            style={{ height: railTotalHeight }}
           />
+
           <div
-            className="rounded-lg bg-gray-2 p-2 font-mono text-xs"
+            className="absolute rounded-lg bg-cyan-2"
             id="cmbr-rail"
-            style={{ height: railHeight, margin: glassMargins }}
-          ></div>
+            style={{ insetBlockStart: 0, insetBlockEnd: marginGlass, insetInline: marginGlass }}
+          >
+            rail
+          </div>
         </div>
       </div>
     )
