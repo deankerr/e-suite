@@ -1,19 +1,20 @@
 'use client'
 
-import { CmbrDebug } from '@/components/command-bar/CmbrDebug'
-import { CommandBar } from '@/components/command-bar/CommandBar'
-import { ErrBoundary } from '@/components/util/ErrorBoundary'
+import dynamic from 'next/dynamic'
+
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
+
+const CommandBar = dynamic(
+  () => import('@/components/command-bar/CommandBar').then((m) => m.CommandBar),
+  { ssr: false },
+)
 
 export const AppClientLayout = () => {
   return (
     <>
       <NonSecureAdminRoleOnly>
-        <ErrBoundary>
-          <CommandBar />
-        </ErrBoundary>
+        <CommandBar />
       </NonSecureAdminRoleOnly>
-      <CmbrDebug />
     </>
   )
 }

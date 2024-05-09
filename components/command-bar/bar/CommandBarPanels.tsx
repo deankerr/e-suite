@@ -13,6 +13,7 @@ export const CommandBarPanels = () => {
           key={panel.id}
           className="absolute grid w-full"
           style={{ height: cmbr.layout.panelInnerHeight, left: `${i * 100}%` }}
+          initial={false}
           animate={{ x: `${-100 * cmbr.panelIndex}%` }}
           transition={{
             duration: 0.3,

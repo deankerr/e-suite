@@ -34,8 +34,8 @@ export const panels: Panel[] = [
 
 const commandBarAtom = atomWithStorage('command-bar', {
   containerHeight: 850,
-  isHidden: false,
-  isOpen: true,
+  isHidden: true,
+  isOpen: false,
   layout: {
     railInnerHeight: 56,
     panelInnerHeight: 512,

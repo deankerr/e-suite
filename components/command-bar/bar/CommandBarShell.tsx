@@ -10,9 +10,7 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
   const cmbr = useCommandBar()
 
   const marginGlass = 16
-
   const railTotalHeight = cmbr.layout.railInnerHeight + marginGlass
-
   const panelTotalHeight = cmbr.layout.panelInnerHeight + marginGlass * 2
 
   const variants: Variants = {
@@ -38,7 +36,7 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
       id="cmbr-container"
       className={cn(
         'pointer-events-none fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end',
-        !cmbr.isHidden && 'hidden',
+        cmbr.isHidden && 'hidden',
       )}
       style={{ height: cmbr.containerHeight }}
     >
@@ -47,8 +45,9 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
           className={cn('pointer-events-auto absolute w-full')}
           variants={variants}
           animate={cmbr.isOpen ? 'open' : 'closed'}
-          id="cmbr-panel-container-m"
+          initial={false}
           style={{ height: panelTotalHeight }}
+          id="cmbr-panel-container-m"
         >
           <Glass
             barWidth={1}
