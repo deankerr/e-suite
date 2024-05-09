@@ -42,7 +42,7 @@ export const useCurrentUserThreads = () => {
   return { self, threads, createThread, removeThread, userAuth }
 }
 
-export const useInsecureDemoOnlyGeneraitonList = () => {
+export const useInsecureDemoOnlyGenerationList = () => {
   const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
   return pager
 }

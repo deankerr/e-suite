@@ -41,7 +41,7 @@ export const textToImage: TextToImageHandler = async ({
   n: number
 }) => {
   try {
-    const { model_id, size, entries } = parameters
+    const { model_id, size, prompt, entries } = parameters
     if (!(model_id in textToImageModels))
       throw new ConvexError({ message: 'unsupported model', model_id })
 
@@ -60,6 +60,7 @@ export const textToImage: TextToImageHandler = async ({
 
     const parsedInput = parsers.body.safeParse({
       ...mapped,
+      prompt,
       image_size: size,
       num_images: n,
     })

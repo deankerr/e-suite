@@ -58,7 +58,7 @@ export const useGenerationForm = () => {
       seed,
       provider: currentModel.provider,
       model_id: currentModel.model_id,
-      entries: Object.entries(rest),
+      entries: Object.entries(rest).filter(([_, value]) => value !== undefined),
       sizes: dimensions.map((size) => ({ size, n: Number(quantity) })) as Array<{
         size: keyof typeof imageGenerationSizesMap
         n: number

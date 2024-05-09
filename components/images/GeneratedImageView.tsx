@@ -10,7 +10,6 @@ import { toast } from 'sonner'
 
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { api } from '@/convex/_generated/api'
-import { getImageGenerationSize } from '@/convex/utils'
 import { cn } from '../../lib/utils'
 import { GoldSparkles } from '../effects/GoldSparkles'
 import { VoteButtonPanel } from './VoteButtonPanel'
