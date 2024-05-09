@@ -94,11 +94,21 @@ export const generationFields = {
 
   prompt: z.string(),
   size: z.enum(imageGenerationSizes),
+  width: z.number(),
+  height: z.number(),
 
-  entries: z.tuple([z.string(), z.union([z.string(), z.number(), z.boolean()])]).array(),
+  entries: z
+    .tuple([z.string(), z.union([z.string(), z.number(), z.boolean()])])
+    .array()
+    .default([]),
 
   result: generationResultField.optional(),
   metadata: z.string().array().array().optional(),
+
+  negative_prompt: z.string().optional(), //TODO remove after migration
+  lcm: z.string().optional(), //TODO remove after migration
+  steps: z.string().optional(), //TODO remove after migration
+  use_default_neg: z.string().optional(), //TODO remove after migration
 }
 const generationFieldsObject = z.object(generationFields)
 export const generations = defineEnt(zodToConvexFields(generationFields))
@@ -145,7 +155,7 @@ export const chatInference = z.object({
 //* Messages
 const messageInferenceGenerationSchema = z
   .object(generationFields)
-  .omit({ result: true, size: true })
+  .omit({ result: true, size: true, width: true, height: true })
   .merge(
     z.object({
       sizes: z

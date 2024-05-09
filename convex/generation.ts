@@ -118,9 +118,12 @@ export const runGenerationInference = async (ctx: MutationCtx, message: Ent<'mes
 
   await Promise.all(
     sizes.map(async ({ size, n }) => {
+      const { width, height } = getImageGenerationSize(size)
       const parameters = {
         ...generation,
         size,
+        width,
+        height,
       }
 
       const generationIds = await Promise.all(
