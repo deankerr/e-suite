@@ -1,4 +1,4 @@
-import { Button, Checkbox, Slider } from '@radix-ui/themes'
+import { Button, Checkbox, IconButton, Slider } from '@radix-ui/themes'
 
 import { useCommandBar } from '@/components/command-bar/atoms'
 import { cn } from '@/lib/utils'
@@ -29,6 +29,24 @@ export const CmbrDebug = ({}: CmbDebugProps) => {
       <Button variant="surface" className="font-mono" size="1" onClick={() => cmbr.reset()}>
         reset
       </Button>
+
+      <div className="flex gap-2">
+        <div className="flex-center">panelIndex: {cmbr.panelIndex}</div>
+        <IconButton
+          variant="surface"
+          size="1"
+          onClick={() => cmbr.set((o) => ({ ...o, panelIndex: o.panelIndex - 1 }))}
+        >
+          ←
+        </IconButton>
+        <IconButton
+          variant="surface"
+          size="1"
+          onClick={() => cmbr.set((o) => ({ ...o, panelIndex: o.panelIndex + 1 }))}
+        >
+          →
+        </IconButton>
+      </div>
 
       <div className="flex gap-1">
         <Checkbox

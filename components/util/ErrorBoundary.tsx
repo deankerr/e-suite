@@ -9,9 +9,9 @@ function Fallback({ error, resetErrorBoundary }: FallbackProps) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
-    <div role="alert" className="gap-2 bg-gray-2 flex-col-center">
+    <div role="alert" className="mx-auto max-w-[80%] gap-2 bg-gray-2 p-4 flex-col-center">
       <p>Something went wrong:</p>
-      <pre style={{ color: 'red' }}>{error.message}</pre>
+      <pre className="text-wrap">{error.message}</pre>
       <Button color="indigo" onClick={() => resetErrorBoundary()}>
         reset?
       </Button>

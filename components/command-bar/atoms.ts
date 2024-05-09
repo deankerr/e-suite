@@ -1,7 +1,36 @@
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage, RESET } from 'jotai/utils'
 
+import { GenerationPanel } from '@/components/command-bar/panels/GenerationPanel'
+import { ModelBrowserPanel } from '@/components/command-bar/panels/ModelBrowserPanel'
+
 import type { ModelContent } from '@/convex/external'
+import type { ButtonProps } from '@radix-ui/themes'
+
+type Panel = {
+  id: string
+  name: string
+  button: ButtonProps
+  component: () => React.ReactNode
+  hidden: boolean
+}
+
+export const panels: Panel[] = [
+  {
+    id: 'models',
+    name: 'Models',
+    button: { color: 'amber' },
+    component: ModelBrowserPanel,
+    hidden: false,
+  },
+  {
+    id: 'generation',
+    name: 'Generate',
+    button: { color: 'orange' },
+    component: GenerationPanel,
+    hidden: false,
+  },
+]
 
 const commandBarAtom = atomWithStorage('command-bar', {
   containerHeight: 850,
@@ -11,6 +40,7 @@ const commandBarAtom = atomWithStorage('command-bar', {
     railInnerHeight: 56,
     panelInnerHeight: 512,
   },
+  panelIndex: 0,
 })
 commandBarAtom.debugLabel = 'commandBar'
 export const useCommandBar = () => {

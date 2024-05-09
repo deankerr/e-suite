@@ -3,7 +3,6 @@ import { ScrollArea, TextField } from '@radix-ui/themes'
 import { SearchIcon } from 'lucide-react'
 
 import { useCurrentModelAtom } from '@/components/command-bar/atoms'
-import { PanelShell } from '@/components/command-bar/PanelShell'
 import { ModelCard } from '@/components/generation/ModelCard'
 import { useModelList } from '@/lib/queries'
 import { cn } from '@/lib/utils'
@@ -17,7 +16,7 @@ export const ModelBrowserPanel = () => {
     model.name.toLowerCase().includes(searchValue.toLowerCase()),
   )
   return (
-    <PanelShell className="space-y-2 p-2">
+    <div className="space-y-2 overflow-hidden rounded-lg bg-gray-2 p-2">
       <TextField.Root
         size="3"
         placeholder="Search models"
@@ -46,13 +45,6 @@ export const ModelBrowserPanel = () => {
           ))}
         </div>
       </ScrollArea>
-    </PanelShell>
+    </div>
   )
-}
-
-export const modelBrowserPanelDef = {
-  id: 'models',
-  name: 'Models',
-  buttonColor: 'orange',
-  element: ModelBrowserPanel,
 }
