@@ -3,20 +3,16 @@ import { atomWithStorage, RESET } from 'jotai/utils'
 
 import type { ModelContent } from '@/convex/external'
 
-const cmbrDefaults = {
-  containerHeightPc: 95,
-  panelHeight: 560,
-  panelIndex: 0,
-  isOpen: false,
-  isVisible: true,
-}
-
-const cmbrAtom = atomWithStorage('cmbr', cmbrDefaults)
-cmbrAtom.debugLabel = 'cmbr'
-export const useCmbr = () => {
-  const [values, set] = useAtom(cmbrAtom)
+const commandBarAtom = atomWithStorage('command-bar', {
+  containerHeight: 850,
+  isHidden: false,
+  isOpen: true,
+})
+commandBarAtom.debugLabel = 'commandBar'
+export const useCommandBar = () => {
+  const [values, set] = useAtom(commandBarAtom)
   const reset = () => set(RESET)
-  return { values, set, reset }
+  return { ...values, set, reset }
 }
 
 // generation

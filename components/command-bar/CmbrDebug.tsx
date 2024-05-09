@@ -1,6 +1,6 @@
 import { Button, Checkbox, Slider } from '@radix-ui/themes'
 
-import { useCmbr } from '@/components/command-bar/atoms'
+import { useCommandBar } from '@/components/command-bar/atoms'
 import { cn } from '@/lib/utils'
 
 type CmbDebugProps = { props?: unknown }
@@ -8,69 +8,49 @@ type CmbDebugProps = { props?: unknown }
 const HIDE = false
 
 export const CmbrDebug = ({}: CmbDebugProps) => {
-  const cmbr = useCmbr()
+  const cmbr = useCommandBar()
 
   return (
     <div
       className={cn(
-        'fixed right-1 top-0 flex gap-2 bg-bronze-2 p-2 font-mono text-xs',
+        'fixed right-2 top-16 grid gap-2 rounded-xl bg-bronze-2 p-2 font-mono text-xs',
         HIDE && 'hidden',
       )}
     >
-      <div className="grid gap-1">
-        <Button variant="surface" className="font-mono" size="1" onClick={() => cmbr.reset()}>
-          reset
-        </Button>
-      </div>
-      <div className="grid gap-1">
-        <Button
-          variant="surface"
-          className="font-mono"
-          size="1"
-          onClick={() => cmbr.set((o) => ({ ...o, isOpen: !o.isOpen }))}
-        >
-          {cmbr.values.isOpen ? 'open' : 'closed'}
-        </Button>
+      <Button
+        variant="surface"
+        className="font-mono"
+        size="1"
+        onClick={() => cmbr.set((o) => ({ ...o, isOpen: !o.isOpen }))}
+      >
+        {cmbr.isOpen ? 'open' : 'closed'}
+      </Button>
 
-        <div>
-          <Checkbox
-            checked={cmbr.values.isVisible}
-            onCheckedChange={() => cmbr.set((o) => ({ ...o, isVisible: !o.isVisible }))}
-          />
-          visible
-        </div>
+      <Button variant="surface" className="font-mono" size="1" onClick={() => cmbr.reset()}>
+        reset
+      </Button>
+
+      <div className="flex gap-1">
+        <Checkbox
+          checked={cmbr.isHidden}
+          onCheckedChange={() => cmbr.set((o) => ({ ...o, isHidden: !o.isHidden }))}
+        />
+        hidden
       </div>
+
       <div className="w-40">
-        <div>panel height</div>
+        <div>container height</div>
         <div className="w-full flex-between">
           <span>0</span>
-          <span>{cmbr.values.panelHeight}</span>
+          <span>{cmbr.containerHeight}</span>
           <span>1000</span>
         </div>
         <Slider
           size="1"
           min={0}
           max={1000}
-          value={[cmbr.values.panelHeight]}
-          onValueChange={([v]) => cmbr.set((o) => ({ ...o, panelHeight: v ?? o.panelHeight }))}
-        />
-      </div>
-
-      <div className="w-40">
-        <div>container height %</div>
-        <div className="w-full flex-between">
-          <span>0</span>
-          <span>{cmbr.values.containerHeightPc}</span>
-          <span>100%</span>
-        </div>
-        <Slider
-          size="1"
-          min={0}
-          max={100}
-          value={[cmbr.values.containerHeightPc]}
-          onValueChange={([v]) =>
-            cmbr.set((o) => ({ ...o, containerHeightPc: v ?? o.containerHeightPc }))
-          }
+          value={[cmbr.containerHeight]}
+          onValueChange={([v]) => cmbr.set((o) => ({ ...o, containerHeight: v! }))}
         />
       </div>
     </div>
