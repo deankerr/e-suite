@@ -182,6 +182,9 @@ importers:
       zod:
         specifier: ^3.23.5
         version: 3.23.6
+      zod-form-data:
+        specifier: ^2.0.2
+        version: 2.0.2(zod@3.23.6)
       zod-validation-error:
         specifier: ^3.2.0
         version: 3.2.0(zod@3.23.6)
@@ -4988,6 +4991,11 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zod-form-data@2.0.2:
+    resolution: {integrity: sha512-sKTi+k0fvkxdakD0V5rq+9WVJA3cuTQUfEmNqvHrTzPLvjfLmkkBLfR0ed3qOi9MScJXTHIDH/jUNnEJ3CBX4g==}
+    peerDependencies:
+      zod: '>= 3.11.0'
 
   zod-validation-error@3.2.0:
     resolution: {integrity: sha512-cYlPR6zuyrgmu2wRTdumEAJGuwI7eHVHGT+VyneAQxmRAKtGRL1/7pjz4wfLhz4J05f5qoSZc3rGacswgyTjjw==}
@@ -10725,6 +10733,10 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  zod-form-data@2.0.2(zod@3.23.6):
+    dependencies:
+      zod: 3.23.6
 
   zod-validation-error@3.2.0(zod@3.23.6):
     dependencies:

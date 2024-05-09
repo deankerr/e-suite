@@ -53,17 +53,25 @@ export const textToImage: TextToImageHandler = async ({
       'num_inference_steps',
     )
 
+    //TODO temp - some schemas expect strings instead of numbers
+    const num_inference_steps =
+      parameters.model_id !== 'fal-ai/lora' && parameters.steps
+        ? String(parameters.steps)
+        : parameters.steps
+
     const parsedInput = parsers.body.safeParse({
       ...translated,
+      num_inference_steps,
       image_size: { width, height },
       num_images: n,
       enable_safety_checker: false,
       expand_prompt: true,
     })
     if (!parsedInput.success) {
+      console.error(parsedInput.error.issues)
       return {
         error: {
-          message: 'input validation failed',
+          message: '(pre-request) input validation failed',
           noRetry: true,
           data: parsedInput.error.issues,
         },
