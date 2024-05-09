@@ -135,7 +135,7 @@ const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
   .edge('generation')
   .index('userId', ['userId'])
   .index('ip', ['ip'])
-  .index('constituant_vote', ['constituent', 'generationId'])
+  .index('constituent_vote', ['constituent', 'generationId'])
 
 //* Chat/Completion
 export const completionParametersSchema = z.object({

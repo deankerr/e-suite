@@ -106,7 +106,6 @@ export const query = zCustomQuery(baseQuery, {
       (await getViewerIdFromAuth({ ...baseCtx, ...ctx })) ??
       (await getViewerIdFromApiKey({ ...baseCtx, ...ctx }, apiKey))
 
-    // console.debug('viewerid: ', viewerId)
     const entDefinitionsWithRules = getEntDefinitionsWithRules({ ...ctx, viewerId } as any)
     const table = entsTableFactory(baseCtx, entDefinitionsWithRules)
 

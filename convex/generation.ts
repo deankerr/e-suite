@@ -190,7 +190,7 @@ export const vote = mutation({
     const userId = ctx.viewerId ?? undefined
 
     const existingVote = await ctx
-      .table('generation_votes', 'constituant_vote', (q) =>
+      .table('generation_votes', 'constituent_vote', (q) =>
         q.eq('constituent', constituent).eq('generationId', generationId),
       )
       .unique()
@@ -213,7 +213,7 @@ export const getMyVote = query({
   },
   handler: async (ctx, { generationId, constituent }) => {
     const vote = await ctx
-      .table('generation_votes', 'constituant_vote', (q) =>
+      .table('generation_votes', 'constituent_vote', (q) =>
         q.eq('constituent', constituent).eq('generationId', generationId),
       )
       .unique()
@@ -228,7 +228,7 @@ export const _generateFakeVotes = internalMutation({
     const generations = await ctx.table('generations')
     const constituent = crypto.randomUUID()
 
-    const tovote = generations.flatMap(({ _id: generationId }) => {
+    const votes = generations.flatMap(({ _id: generationId }) => {
       const best = [...Array(Math.floor(Math.random() * 10 + 1))].map((_) => ({
         constituent,
         vote: 'best' as const,
@@ -252,7 +252,7 @@ export const _generateFakeVotes = internalMutation({
       return [...best, ...good, ...poor, ...bad]
     })
 
-    await ctx.table('generation_votes').insertMany(tovote)
-    console.log('created votes:', tovote.length)
+    await ctx.table('generation_votes').insertMany(votes)
+    console.log('created votes:', votes.length)
   },
 })
