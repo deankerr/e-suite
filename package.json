@@ -48,7 +48,6 @@
     "jotai": "^2.8.0",
     "jotai-suspense": "^0.2.0",
     "ky": "^1.2.4",
-    "leva": "^0.9.35",
     "lucide-react": "^0.377.0",
     "mini-svg-data-uri": "^1.4.4",
     "nanoid": "^5.0.7",

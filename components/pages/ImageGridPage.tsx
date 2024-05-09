@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useControls } from 'leva'
 import { ImagesIcon } from 'lucide-react'
 
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
@@ -13,19 +11,6 @@ import { PageHeader } from './PageHeader'
 
 export const ImageGridPage = () => {
   const pager = useInsecureDemoOnlyGenerationList()
-
-  const [{ infinite, status }, set] = useControls('ImageGridFeed', () => ({
-    infinite: true,
-    status: pager.status,
-  }))
-
-  useEffect(() => {
-    if (status !== pager.status) {
-      set({
-        status: pager.status,
-      })
-    }
-  }, [pager.status, set, status])
 
   let count = 0
   return (
@@ -45,23 +30,21 @@ export const ImageGridPage = () => {
           )}
         />
 
-        {infinite && (
-          <InfiniteScroll
-            hasMore={pager.status === 'CanLoadMore'}
-            isLoading={pager.isLoading}
-            next={() => {
-              console.log('load more()', 'current', pager.results.length)
-              pager.loadMore(16)
-            }}
-            threshold={1}
-          >
-            {pager.status !== 'Exhausted' && (
-              <div className="mx-auto text-center">
-                <Spinner className="size-8" />
-              </div>
-            )}
-          </InfiniteScroll>
-        )}
+        <InfiniteScroll
+          hasMore={pager.status === 'CanLoadMore'}
+          isLoading={pager.isLoading}
+          next={() => {
+            console.log('load more()', 'current', pager.results.length)
+            pager.loadMore(16)
+          }}
+          threshold={1}
+        >
+          {pager.status !== 'Exhausted' && (
+            <div className="mx-auto text-center">
+              <Spinner className="size-8" />
+            </div>
+          )}
+        </InfiniteScroll>
       </div>
     </>
   )
