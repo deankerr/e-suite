@@ -19,25 +19,23 @@ const panelConfig = [helloPanelDef, modelBrowserPanelDef, generationPanelDef, lo
 
 export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(
   function CommandBarAlpha(props, forwardedRef) {
-    const openOffset = 64
-    const closedOffset = -202
-    const panelInnerHeight = 500
-
     const cmbr = useCmbr()
+
+    const panelHeight = 512
 
     const variants = {
       open: {
-        y: 0 + openOffset,
+        y: 0,
       },
       closed: {
-        y: cmbr.values.panelHeight + closedOffset,
+        y: panelHeight,
       },
     }
 
     return (
       <div
         {...props}
-        id="home"
+        id="cmbr-container"
         className={cn(
           'pointer-events-none fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end',
           !cmbr.values.isVisible && 'hidden',
@@ -45,27 +43,29 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
         ref={forwardedRef}
         style={{ height: `${cmbr.values.containerHeightPc}%` }}
       >
-        <div className="flex h-full flex-col justify-end overflow-hidden">
+        <div className="flex h-full flex-col justify-end" id="cmbr-panel-mask">
           <motion.div
             className={cn('pointer-events-auto absolute w-full p-4')}
-            style={{ height: cmbr.values.panelHeight }}
             variants={variants}
             animate={cmbr.values.isOpen ? 'open' : 'closed'}
+            id="cmbr-panel-container-m"
           >
             <Glass
               barWidth={1}
               borderTopLeftRadius={16}
               borderTopRightRadius={16}
               className="absolute inset-0 rounded-2xl"
+              id="cmbr-panel-glass"
             />
 
             <div
-              className={cn('w-full overflow-hidden rounded-lg', !cmbr.values.isOpen && 'hidden')}
-              style={{ height: panelInnerHeight }}
+              className={cn('w-full overflow-hidden rounded-lg', !cmbr.values.isOpen && '')}
+              id="cmbr-panel-shifter-mask"
             >
               <motion.div
                 className="flex h-full"
                 animate={{ x: `-${cmbr.values.panelIndex * 100}%` }}
+                id="cmbr-panel-shifter"
               >
                 {panelConfig.map((panel) => (
                   <panel.element key={panel.id} />
@@ -75,14 +75,15 @@ export const CommandBar = forwardRef<HTMLDivElement, React.ComponentProps<'div'>
           </motion.div>
         </div>
 
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto" id="cmbr-rail-container">
           <Glass
             barWidth={1}
             borderBottomLeftRadius={16}
             borderBottomRightRadius={16}
             className="absolute inset-0 rounded-2xl"
+            id="cmbr-rail-glass"
           />
-          <div className="mx-4 mb-4 h-14 rounded-lg bg-gray-2 p-2 font-mono text-xs">
+          <div className="mx-4 mb-4 h-14 rounded-lg bg-gray-2 p-2 font-mono text-xs" id="cmbr-rail">
             <div className="flex-between">
               <div className="flex gap-2">
                 <IconButton
