@@ -83,14 +83,14 @@ export const inputRegister = {
   ),
 
   text: (props: ParameterFormInput) => (
-    <FormControl key={props.name} className="w-fit">
+    <FormControl key={props.name} className="w-fit min-w-32">
       {props.label ?? props.name}
       <TextField.Root name={props.name} />
     </FormControl>
   ),
 
   number: (props: ParameterFormInput) => (
-    <FormControl key={props.name} className="w-fit">
+    <FormControl key={props.name} className="w-fit min-w-20">
       {props.label ?? props.name}
       <FormInputNumber name={props.name} placeholder={props.placeholder} {...props.number} />
     </FormControl>
@@ -102,19 +102,13 @@ export const inputRegister = {
     </FormControl>
   ),
   select: (props: ParameterFormInput) => (
-    <FormControl key={props.name} className="w-64">
+    <FormControl key={props.name} className="w-48">
       {props.label ?? props.name}
       <FormInputSelect
         name={props.name}
         defaultValue={props?.items?.[0] ?? ''}
         items={props.items ?? []}
       />
-    </FormControl>
-  ),
-
-  sdModelWithLoras: (props: ParameterFormInput) => (
-    <FormControl key={props.name} className="w-64">
-      here we go
     </FormControl>
   ),
 } as const

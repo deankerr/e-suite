@@ -26,7 +26,7 @@ export const GenerationPanel = () => {
 
   return (
     <ScrollArea>
-      <div className="rounded-lg bg-gray-2 p-2 font-mono text-xs">
+      <div className="h-full rounded-lg bg-gray-2 p-2 font-mono text-xs">
         <form className="space-y-2 @container" action={formAction}>
           {formPromptInputs?.map((param) => inputRegister[param.element](param))}
 
@@ -56,6 +56,7 @@ export const GenerationPanel = () => {
           </div>
 
           {currentModel?.model_id === 'fal-ai/lora' && <SDModelLorasInput />}
+          {/* <SDModelLorasInput /> */}
         </form>
       </div>
     </ScrollArea>

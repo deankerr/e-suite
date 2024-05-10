@@ -22,6 +22,12 @@ const nextConfig = {
     loaderFile: './lib/image-loader.ts',
   },
   transpilePackages: ['jotai-devtools'],
+  experimental: {
+    swcPlugins: [
+      ['@swc-jotai/debug-label', { atomNames: ['customAtom'] }],
+      ['@swc-jotai/react-refresh', { atomNames: ['customAtom'] }],
+    ],
+  },
 }
 
 const withBundleAnalyzer = bundleAnalyzer({
