@@ -17,6 +17,7 @@ import type {
 import type * as app_images from "../app_images.js";
 import type * as constants from "../constants.js";
 import type * as external from "../external.js";
+import type * as frontend from "../frontend.js";
 import type * as functions from "../functions.js";
 import type * as generated_images from "../generated_images.js";
 import type * as generation from "../generation.js";
@@ -141,6 +142,7 @@ declare const fullApi: ApiFromModules<{
   app_images: typeof app_images;
   constants: typeof constants;
   external: typeof external;
+  frontend: typeof frontend;
   functions: typeof functions;
   generated_images: typeof generated_images;
   generation: typeof generation;

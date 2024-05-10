@@ -136,6 +136,7 @@ export type AppImage = z.infer<typeof units.appImage>
 export type Generation = z.infer<typeof generationWithImage>
 export type GeneratedImage = z.infer<typeof units.generated_image>
 export type GenerationVoteNames = (typeof generationVoteNames)[number]
+export type Message = z.infer<typeof units.message>
 export type MessageContent = z.infer<typeof messageXL>
 export type Model = z.infer<typeof units.models>
 export type ModelContent = z.infer<typeof modelXL>

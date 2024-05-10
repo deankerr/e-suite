@@ -1,11 +1,9 @@
 import { Button } from '@radix-ui/themes'
 import { useConvex } from 'convex/react'
 
-import { useGlobalThreadManager } from '@/lib/api'
-
 export const Monitor = () => {
   const convex = useConvex()
-  const { loadMore } = useGlobalThreadManager()
+  // const { loadMore } = useGlobalThreadManager()
 
   return (
     <>
@@ -22,7 +20,7 @@ export const Monitor = () => {
         variant="surface"
         color="pink"
         onClick={() => {
-          loadMore(5)
+          // loadMore(5)
         }}
       >
         M
