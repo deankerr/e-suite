@@ -2,6 +2,7 @@ import { Button, IconButton } from '@radix-ui/themes'
 import { MenuIcon } from 'lucide-react'
 
 import { panels, useCommandBar } from '@/components/command-bar/atoms'
+import { Monitor } from '@/components/command-bar/Monitor'
 
 export const CommandBarRail = () => {
   const cmbr = useCommandBar()
@@ -30,6 +31,8 @@ export const CommandBarRail = () => {
           {panel.name}
         </Button>
       ))}
+
+      <Monitor />
     </div>
   )
 }

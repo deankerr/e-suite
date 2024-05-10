@@ -106,9 +106,9 @@ export const generationFields = {
   metadata: z.string().array().array().optional(),
 
   negative_prompt: z.string().optional(), //TODO remove after migration
-  lcm: z.string().optional(), //TODO remove after migration
-  steps: z.string().optional(), //TODO remove after migration
-  use_default_neg: z.string().optional(), //TODO remove after migration
+  lcm: z.boolean().optional(), //TODO remove after migration
+  steps: z.number().optional(), //TODO remove after migration
+  use_default_neg: z.boolean().optional(), //TODO remove after migration
 }
 const generationFieldsObject = z.object(generationFields)
 export const generations = defineEnt(zodToConvexFields(generationFields))

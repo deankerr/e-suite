@@ -1,11 +1,33 @@
-import { useThreadCtx } from '@/lib/queries'
+import { Button } from '@radix-ui/themes'
+import { useConvex } from 'convex/react'
+
+import { useGlobalThreadManager } from '@/lib/api'
 
 export const Monitor = () => {
-  const thread = useThreadCtx()
+  const convex = useConvex()
+  const { loadMore } = useGlobalThreadManager()
 
   return (
-    <div className="absolute inset-y-0 right-0 font-mono text-xs">
-      {thread && <div>t:{thread.title ?? thread.rid}</div>}
-    </div>
+    <>
+      <Button
+        variant="surface"
+        color="mint"
+        onClick={() => {
+          console.log(convex)
+        }}
+      >
+        M
+      </Button>
+      <Button
+        variant="surface"
+        color="pink"
+        onClick={() => {
+          loadMore(5)
+        }}
+      >
+        M
+      </Button>
+      <div className="font-mono text-xs"></div>
+    </>
   )
 }
