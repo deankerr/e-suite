@@ -71,6 +71,48 @@ export const CmbrDebug = ({}: CmbDebugProps) => {
           onValueChange={([v]) => cmbr.set((o) => ({ ...o, containerHeight: v! }))}
         />
       </div>
+
+      <div className="w-40">
+        <div>container width</div>
+        <div className="flex-between">
+          <Button
+            variant="surface"
+            size="1"
+            className="font-mono"
+            color={cmbr.containerWidth === 320 ? 'grass' : undefined}
+            onClick={() => cmbr.set((o) => ({ ...o, containerWidth: 320 }))}
+          >
+            320
+          </Button>
+          <Button
+            variant="surface"
+            size="1"
+            className="font-mono"
+            color={cmbr.containerWidth === 360 ? 'grass' : undefined}
+            onClick={() => cmbr.set((o) => ({ ...o, containerWidth: 360 }))}
+          >
+            360
+          </Button>
+          <Button
+            variant="surface"
+            size="1"
+            className="font-mono"
+            color={cmbr.containerWidth === 768 ? 'grass' : undefined}
+            onClick={() => cmbr.set((o) => ({ ...o, containerWidth: 768 }))}
+          >
+            768
+          </Button>
+          <Button
+            variant="surface"
+            size="1"
+            className="font-mono"
+            color={cmbr.containerWidth === 1200 ? 'grass' : undefined}
+            onClick={() => cmbr.set((o) => ({ ...o, containerWidth: 1200 }))}
+          >
+            big
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

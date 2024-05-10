@@ -34,6 +34,7 @@ export const panels: Panel[] = [
 
 const commandBarAtom = atomWithStorage('command-bar', {
   containerHeight: 850,
+  containerWidth: 768,
   isHidden: true,
   isOpen: false,
   layout: {
@@ -42,7 +43,6 @@ const commandBarAtom = atomWithStorage('command-bar', {
   },
   panelIndex: 0,
 })
-commandBarAtom.debugLabel = 'commandBar'
 export const useCommandBar = () => {
   const [values, set] = useAtom(commandBarAtom)
   const reset = () => set(RESET)

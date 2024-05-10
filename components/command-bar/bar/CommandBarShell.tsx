@@ -35,10 +35,10 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
     <div
       id="cmbr-container"
       className={cn(
-        'pointer-events-none fixed left-1/2 top-0 flex w-full max-w-3xl -translate-x-1/2 flex-col justify-end',
+        'pointer-events-none fixed left-1/2 top-0 flex w-full -translate-x-1/2 flex-col justify-end',
         cmbr.isHidden && 'hidden',
       )}
-      style={{ height: cmbr.containerHeight }}
+      style={{ maxWidth: cmbr.containerWidth, height: cmbr.containerHeight }}
     >
       <div className="flex h-full flex-col justify-end overflow-hidden" id="cmbr-panel-mask">
         <motion.div
