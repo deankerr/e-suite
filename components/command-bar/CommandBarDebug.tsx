@@ -3,18 +3,14 @@ import { Button, Checkbox, IconButton, Slider } from '@radix-ui/themes'
 import { useCommandBar } from '@/components/command-bar/atoms'
 import { cn } from '@/lib/utils'
 
-type CmbDebugProps = { props?: unknown }
-
-const HIDE = false
-
-export const CmbrDebug = ({}: CmbDebugProps) => {
+export const CommandBarDebug = () => {
   const cmbr = useCommandBar()
 
   return (
     <div
       className={cn(
-        'fixed right-2 top-16 grid gap-2 rounded-xl bg-bronze-2 p-2 font-mono text-xs',
-        HIDE && 'hidden',
+        'fixed right-2 top-1/4 grid gap-2 rounded-xl bg-bronze-2 p-2 font-mono text-xs',
+        'translate-x-3/4 opacity-20 transition-transform hover:translate-x-0 hover:opacity-100',
       )}
     >
       <Button
