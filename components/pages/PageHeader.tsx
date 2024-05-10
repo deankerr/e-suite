@@ -2,10 +2,10 @@
 
 import { SignInButton, UserButton } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
-import { useDocumentTitle } from '@uidotdev/usehooks'
 import { Unauthenticated } from 'convex/react'
 import { HomeIcon, UserIcon } from 'lucide-react'
 import Link from 'next/link'
+import { useTitle } from 'react-use'
 
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
@@ -71,6 +71,6 @@ export const PageHeader = ({
 
 const DocumentTitle = ({ subtitle }: { subtitle?: string }) => {
   const title = `e/suite${subtitle ? ` / ${subtitle}` : ''}`
-  useDocumentTitle(title)
+  useTitle(title)
   return null
 }

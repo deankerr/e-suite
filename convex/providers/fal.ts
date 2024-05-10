@@ -47,15 +47,21 @@ export const textToImage: TextToImageHandler = async ({
 
     const parsers = textToImageModels[model_id as keyof typeof textToImageModels]
 
-    //TODO temp - some schemas expect strings instead of numbers
     const mapped = Object.fromEntries(entries)
 
+    //TODO temp - some schemas expect strings instead of numbers
     const stepsI = entries.findIndex(([key]) => key === 'num_inference_steps')
     if (
       stepsI >= 0 &&
       (model_id === 'fal-ai/hyper-sdxl' || model_id === 'fal-ai/fast-lightning-sdxl')
     ) {
       mapped['num_inference_steps'] = String(mapped['num_inference_steps'])
+    }
+
+    //* sd with loras
+    if (model_id === 'fal-ai/lora' && mapped._lora_path) {
+      const loras = [{ path: mapped._lora_path, scale: mapped._lora_scale ?? 0.75 }]
+      mapped.loras = loras as any
     }
 
     const parsedInput = parsers.body.safeParse({
@@ -77,9 +83,9 @@ export const textToImage: TextToImageHandler = async ({
     }
 
     const input = parsedInput.data
-    console.log('[fal/textToImage] >>>', input)
+    console.log('[fal/textToImage] >>>', model_id, input)
 
-    const response = await falClient.subscribe('fal-ai/hyper-sdxl', {
+    const response = await falClient.subscribe(model_id, {
       input,
     })
     console.log('[fal/textToImage] <<<', response)

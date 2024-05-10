@@ -4,7 +4,7 @@ import { Checkbox, Select, TextArea, TextField } from '@radix-ui/themes'
 
 import { cn } from '@/lib/utils'
 
-import type { InfParam } from '@/convex/lib/schemas'
+import type { ParameterFormInput } from '@/convex/lib/schemas'
 
 export const FormLabel = ({
   className,
@@ -32,6 +32,10 @@ export const FormInputTextarea = forwardRef<
 >(function FormInputTextarea(props, forwardedRef) {
   return <TextArea size="3" {...props} ref={forwardedRef} />
 })
+
+export const FormInputText = (props: React.ComponentProps<typeof TextField.Root>) => {
+  return <TextField.Root size="3" type="text" {...props} />
+}
 
 export const FormInputNumber = forwardRef<
   HTMLInputElement,
@@ -71,25 +75,33 @@ export const inputRegister = {
   constant: () => null,
   ignore: () => null,
 
-  textarea: (props: InfParam) => (
+  textarea: (props: ParameterFormInput) => (
     <FormControl key={props.name}>
       {props.label ?? props.name}
       <FormInputTextarea name={props.name} />
     </FormControl>
   ),
-  number: (props: InfParam) => (
+
+  text: (props: ParameterFormInput) => (
+    <FormControl key={props.name} className="w-fit">
+      {props.label ?? props.name}
+      <TextField.Root name={props.name} />
+    </FormControl>
+  ),
+
+  number: (props: ParameterFormInput) => (
     <FormControl key={props.name} className="w-fit">
       {props.label ?? props.name}
       <FormInputNumber name={props.name} placeholder={props.placeholder} {...props.number} />
     </FormControl>
   ),
-  checkbox: (props: InfParam) => (
+  checkbox: (props: ParameterFormInput) => (
     <FormControl key={props.name} className="max-w-48 grid-cols-[2em_auto]">
       <FormInputCheckbox name={props.name} />
       {props.label ?? props.name}
     </FormControl>
   ),
-  select: (props: InfParam) => (
+  select: (props: ParameterFormInput) => (
     <FormControl key={props.name} className="w-64">
       {props.label ?? props.name}
       <FormInputSelect
@@ -97,6 +109,12 @@ export const inputRegister = {
         defaultValue={props?.items?.[0] ?? ''}
         items={props.items ?? []}
       />
+    </FormControl>
+  ),
+
+  sdModelWithLoras: (props: ParameterFormInput) => (
+    <FormControl key={props.name} className="w-64">
+      here we go
     </FormControl>
   ),
 } as const

@@ -7,6 +7,7 @@ import type { GenerationProvider } from '../types'
 
 const inputRegister = {
   textarea: 'textarea',
+  text: 'text',
   number: 'number',
   select: 'select',
   checkbox: 'checkbox',
@@ -14,7 +15,7 @@ const inputRegister = {
   ignore: 'ignore',
 } as const
 
-export type InfParam = {
+export type ParameterFormInput = {
   name: string
   label?: string
   required?: boolean
@@ -65,7 +66,7 @@ const sinkin = {
     { name: 'lora_scale', element: 'ignore' },
     { name: 'version', element: 'ignore' },
   ],
-} satisfies Record<string, InfParam[]>
+} satisfies Record<string, ParameterFormInput[]>
 
 const fal = {
   'fal-ai/hyper-sdxl': [
@@ -157,6 +158,7 @@ const fal = {
       name: 'negative_prompt',
       element: 'textarea',
     },
+
     { name: 'seed', element: 'number', number: { min: -1, max: 999999999, step: 1 } },
     {
       name: 'guidance_scale',
@@ -170,7 +172,7 @@ const fal = {
     {
       name: 'num_inference_steps',
       element: 'number',
-      number: { min: 1, max: 10 },
+      number: { min: 1, max: 99 },
     },
     {
       name: 'scheduler',
@@ -200,9 +202,9 @@ const fal = {
     { name: 'embeddings', element: 'ignore' },
     { name: 'sync_mode', element: 'ignore' },
   ],
-} satisfies Record<string, InfParam[]>
+} satisfies Record<string, ParameterFormInput[]>
 
-export const paramBodySchemas: Record<GenerationProvider, Record<string, InfParam[]>> = {
+export const paramBodySchemas: Record<GenerationProvider, Record<string, ParameterFormInput[]>> = {
   sinkin,
   fal,
 }

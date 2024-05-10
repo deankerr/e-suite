@@ -28,6 +28,12 @@ const formSchema = zfd.formData({
   enable_safety_checker: zfd.checkbox().optional(),
 
   dimensions: zfd.repeatable(z.string().array().min(1)),
+
+  model_name: zfd.text(z.string().optional()),
+  model_architecture: zfd.text(z.string().optional()),
+  variant: zfd.text(z.string().optional()),
+  _lora_path: zfd.text(z.string().optional()),
+  _lora_scale: zfd.numeric(z.number().optional()),
 })
 
 export const useGenerationForm = () => {
