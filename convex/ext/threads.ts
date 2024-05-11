@@ -48,7 +48,15 @@ export const messages = query({
       .order(order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(paginationOpts)
-      .map((message) => validators.message.parse(message))
+      .map(async (m) => {
+        const message = validators.message.parse(m)
+        const images = await m.edge('generated_images')
+
+        return {
+          ...message,
+          images: validators.generatedImage.array().parse(images),
+        }
+      })
 
     return pager
   },

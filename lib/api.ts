@@ -1,61 +1,93 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { usePaginatedQuery, useQuery } from 'convex/react'
-import { atom, useAtom } from 'jotai'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { atomWithPending } from 'jotai-suspense'
+import { atomFamily } from 'jotai/utils'
 
 import { api } from '@/convex/_generated/api'
-import { MessageContent, Thread } from '@/convex/external'
 
-const threadRidAtom = atom('')
-const threadAtom = atom<Thread | null | undefined>(undefined)
-const messagesAtom = atom<MessageContent[]>([])
-const pagerStatusAtom = atom<{
-  isLoading: boolean
-  status: 'LoadingFirstPage' | 'CanLoadMore' | 'LoadingMore' | 'Exhausted'
-}>({ isLoading: false, status: 'Exhausted' })
+import type { EGeneratedImage, EMessage, EThread } from '@/convex/external'
+import type { UsePaginatedQueryReturnType } from 'convex/react'
 
-export const useThreadRidAtom = () => useAtom(threadRidAtom)
+const generatedImageAtoms = atomFamily((rid: string) => {
+  const atom = atomWithPending<EGeneratedImage>()
+  atom.debugLabel = `generatedImage(${rid})`
+  return atom
+})
 
-export const useGlobalThreadManager = () => {
-  const [rid] = useThreadRidAtom()
-  const [_thread, setThread] = useAtom(threadAtom)
-  const [_messages, setMessages] = useAtom(messagesAtom)
-  const [_status, setStatus] = useAtom(pagerStatusAtom)
+export const useGeneratedImage = (rid: string) => useAtomValue(generatedImageAtoms(rid))
 
-  const queryKey = rid ? { rid } : 'skip'
-  const threadResult = useQuery(api.threads.get, queryKey)
-  const {
-    results: messageResults,
-    isLoading,
-    status,
-    loadMore,
-  } = usePaginatedQuery(api.threads.messages, queryKey, {
-    initialNumItems: 5,
-  })
+const setGeneratedImagesAtom = atom(null, (_, set, images: EGeneratedImage[]) => {
+  for (const image of images) {
+    set(generatedImageAtoms(image.rid), image)
+  }
+})
 
-  const thread = useMemo(() => threadResult, [threadResult])
-  const messages = useMemo(() => messageResults, [messageResults])
+//* messages
+const messageAtoms = atomFamily((rid: string) => {
+  const atom = atomWithPending<EMessage & { images: EGeneratedImage[] }>()
+  atom.debugLabel = `message(${rid})`
+  return atom
+})
+const setMessagesAtom = atom(
+  null,
+  (_, set, messages: Array<EMessage & { images: EGeneratedImage[] }>) => {
+    for (const message of messages) {
+      set(messageAtoms(message.rid), message)
+    }
+  },
+)
 
-  useEffect(() => {
-    setThread(thread)
-    console.log('thread ->', thread)
-  }, [setThread, thread])
-
-  useEffect(() => {
-    setMessages(messages)
-    console.log('messages ->', messages)
-  }, [setMessages, messages])
-
-  useEffect(() => {
-    setStatus({ isLoading, status })
-  }, [isLoading, setStatus, status])
-
-  return { loadMore }
+export const useMessage = (rid: string) => {
+  const message = useAtomValue(messageAtoms(rid))
+  return message
 }
 
-export const useGlobalThreadPage = () => {
-  const [thread] = useAtom(threadAtom)
-  const [messages] = useAtom(messagesAtom)
-  const [status] = useAtom(pagerStatusAtom)
+export const useMessageToAtom = (rid?: string) => {
+  const result = useQuery(api.ext.messages.get, rid ? { rid } : 'skip')
+  const message = result?.message
+  const images = result?.images
 
-  return { thread, messages, isLoading: status.isLoading, status: status.status }
+  const setMessage = useSetAtom(messageAtoms(rid ?? ''))
+  const setImages = useSetAtom(setGeneratedImagesAtom)
+
+  useEffect(() => {
+    if (!(message && images)) return
+    setMessage({ ...message, images })
+    setImages(images)
+  }, [images, message, setImages, setMessage])
+}
+
+//* threads
+type ThreadWithPager = EThread & {
+  pager: UsePaginatedQueryReturnType<typeof api.ext.threads.messages>
+  messages: string[]
+}
+const threadAtoms = atomFamily((rid: string) => {
+  const atom = atomWithPending<ThreadWithPager>()
+  atom.debugLabel = `thread(${rid})`
+  return atom
+})
+
+export const useThread = (rid: string) => {
+  const thread = useAtomValue(threadAtoms(rid))
+  return thread
+}
+
+export const useLoadThread = (rid?: string) => {
+  const thread = useQuery(api.ext.threads.get, rid ? { rid } : 'skip')
+  const pager = usePaginatedQuery(
+    api.ext.threads.messages,
+    thread ? { threadId: thread._id } : 'skip',
+    { initialNumItems: 5 },
+  )
+
+  const setThread = useSetAtom(threadAtoms(thread?.rid ?? ''))
+  const setMessages = useSetAtom(setMessagesAtom)
+
+  useEffect(() => {
+    if (!thread) return
+    setMessages(pager.results)
+    setThread({ ...thread, pager, messages: pager.results.map(({ rid }) => rid) })
+  }, [pager, setMessages, setThread, thread])
 }

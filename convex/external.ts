@@ -32,7 +32,7 @@ const appImage = z.object({
 })
 
 const generatedImage = z.object({
-  _id: zid('generated_image'),
+  _id: zid('generated_images'),
   _creationTime: z.number(),
   deletionTime: z.undefined().optional(),
 

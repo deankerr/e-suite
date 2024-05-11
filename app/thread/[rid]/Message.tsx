@@ -6,20 +6,20 @@ import { toast } from 'sonner'
 
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { api } from '@/convex/_generated/api'
+import { useMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
-
-import type { EGeneratedImage, EMessage, EThread } from '@/convex/external'
 
 const thumbnailHeightPx = 256
 
-type ThreadMessageProps = {
-  thread: EThread
-  message: EMessage
-  images: EGeneratedImage[]
+type MessageProps = {
+  rid: string
   priority?: boolean
 }
 
-export const ThreadMessage = ({ message, images, priority = false }: ThreadMessageProps) => {
+export const Message = ({ rid, priority = false }: MessageProps) => {
+  const message = useMessage(rid)
+  const { images } = message
+
   const removeMessage = useMutation(api.messages.remove)
 
   const viewType = {

@@ -26,14 +26,14 @@ export const ThreadPage = ({ rid }: { rid: string }) => {
 
         {!shouldShowLoader && thread && (
           <>
-            {pager.results.map((result, i) => (
+            {/* {pager.results.map((result, i) => (
               <ThreadMessage
                 key={result.message._id}
                 {...result}
                 thread={thread}
                 priority={i < 3}
               />
-            ))}
+            ))} */}
             <InfiniteScroll
               hasMore={pager.status === 'CanLoadMore'}
               isLoading={pager.isLoading}

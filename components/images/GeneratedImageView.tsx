@@ -13,10 +13,10 @@ import { api } from '@/convex/_generated/api'
 import { cn } from '../../lib/utils'
 import { GoldSparkles } from '../effects/GoldSparkles'
 
-import type { GeneratedImage } from '@/convex/external'
+import type { EGeneratedImage } from '@/convex/external'
 
 type GeneratedImageViewProps = {
-  generation: GeneratedImage
+  generation: EGeneratedImage
   imageProps?: Partial<React.ComponentProps<typeof NextImage>>
   containerWidth?: number
   containerHeight?: number

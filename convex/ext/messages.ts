@@ -9,7 +9,11 @@ export const get = query({
   },
   handler: async (ctx, { rid }) => {
     const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).unique()
-    if (!message || message.deletionTime) return null
-    return validators.message.parse(message)
+    if (!message || message.deletionTime) return { message: null, images: null }
+
+    const images = await message
+      .edge('generated_images')
+      .map((image) => validators.generatedImage.parse(image))
+    return { message: validators.message.parse(message), images }
   },
 })
