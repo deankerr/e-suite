@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { useCommandBar } from '@/components/command-bar/atoms'
+import { CommandBarPanels } from '@/components/command-bar/bar/CommandBarPanels'
+import { CommandBarRail } from '@/components/command-bar/bar/CommandBarRail'
 import { Glass } from '@/components/ui/Glass'
 import { cn } from '@/lib/utils'
 
 import type { Variants } from 'framer-motion'
 
-export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.ReactNode }) => {
+export const CommandBarShell = () => {
   const cmbr = useCommandBar()
 
   const marginGlass = 16
@@ -30,6 +33,13 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
       },
     },
   }
+
+  const [mountPanels, setMountPanels] = useState(false)
+  useEffect(() => {
+    if (!mountPanels && !cmbr.isHidden && cmbr.isOpen) {
+      setMountPanels(true)
+    }
+  }, [cmbr.isHidden, cmbr.isOpen, mountPanels])
 
   return (
     <div
@@ -63,7 +73,7 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
           />
 
           <div className="absolute grid" style={{ inset: marginGlass }}>
-            {props.panels}
+            {mountPanels && <CommandBarPanels />}
           </div>
         </motion.div>
       </div>
@@ -86,7 +96,7 @@ export const CommandBarShell = (props: { rail: React.ReactNode; panels: React.Re
             insetInline: marginGlass,
           }}
         >
-          {props.rail}
+          <CommandBarRail />
         </div>
       </div>
     </div>
