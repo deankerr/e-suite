@@ -1,9 +1,8 @@
 import { Code, DataList } from '@radix-ui/themes'
 
-import type { MessageContent } from '@/convex/external'
-
 type GenerationDataListProps = {
-  generations: NonNullable<MessageContent['generations']>
+  // generations: NonNullable<MessageContent['generations']>
+  generations: Record<string, any>
   orientation?: 'horizontal' | 'vertical'
 }
 

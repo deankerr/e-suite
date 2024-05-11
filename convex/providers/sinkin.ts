@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { imageGenerationSizesMap } from '../constants'
 import { getEnv } from '../utils'
 
-import type { GenerationParams } from '../schema'
+import type { generationParameters } from '../schema'
 import type { TextToImageHandler } from './types'
 
 const api = ky.extend({
@@ -17,7 +17,7 @@ export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: Omit<GenerationParams, 'result'>
+  parameters: z.infer<typeof generationParameters>
   n: number
 }) => {
   const { size, entries, model_id, prompt } = parameters

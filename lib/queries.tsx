@@ -25,10 +25,10 @@ export const useMessageQuery = ({ rid }: { rid: string }) => {
   return result
 }
 
-export const useGeneration = ({ rid }: { rid: string }) => {
-  const result = useQuery(api.generation.get, { rid })
-  return result
-}
+// export const useGeneration = ({ rid }: { rid: string }) => {
+//   const result = useQuery(api.generation.get, { rid })
+//   return result
+// }
 
 export const useCurrentUserThreads = () => {
   const self = useQuery(api.users.getSelf, {})
@@ -42,10 +42,10 @@ export const useCurrentUserThreads = () => {
   return { self, threads, createThread, removeThread, userAuth }
 }
 
-export const useInsecureDemoOnlyGenerationList = () => {
-  const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
-  return pager
-}
+// export const useInsecureDemoOnlyGenerationList = () => {
+//   const pager = usePaginatedQuery(api.generation._list, {}, { initialNumItems: 10 })
+//   return pager
+// }
 
 export const useModelList = (skip?: 'skip') => {
   const models = useQuery(api.models.list, skip ?? {})

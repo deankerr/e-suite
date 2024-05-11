@@ -2,14 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { generationProviders } from './constants'
-import {
-  generatedImageFields,
-  generationFields,
-  messageFields,
-  ridField,
-  threadFields,
-  userFields,
-} from './schema'
+import { generatedImageFields, messageFields, ridField, threadFields, userFields } from './schema'
 
 import type { generationVoteNames } from './constants'
 
@@ -41,29 +34,10 @@ const units = {
     .omit({ sourceUrl: true, sourceFileId: true })
     .describe('external'),
 
-  generation: z
-    .object({
-      ...generationFields,
-      ...ridFields,
-      deletionTime: z.undefined().optional(),
-      votes: z.record(z.string(), z.number()),
-      size: z.string().catch('square'), //! TEMP
-      provider: z.string().catch('fal'),
-      prompt: z.string().catch('fake prompt'),
-      entries: z.array(z.any()).catch([]), //! TEMP
-
-      width: z.number(),
-      height: z.number(),
-      _creationTime: z.number(),
-      _id: zid('generations'),
-    })
-    .describe('external'),
-
   message: z
     .object({
       ...messageFields,
       ...ridFields,
-      inference: messageFields.inference.catch(undefined), //! void older
       _creationTime: z.number(),
       _id: zid('messages'),
       deletionTime: z.undefined().optional(),
@@ -100,14 +74,6 @@ const units = {
     .describe('external'),
 }
 
-const generationWithImage = units.generation
-  .merge(
-    z.object({
-      image: units.generated_image.nullable(),
-    }),
-  )
-  .describe('external xl')
-
 const modelXL = units.models
   .merge(
     z.object({
@@ -119,21 +85,19 @@ const modelXL = units.models
 const messageXL = z
   .object({
     message: units.message,
-    generations: generationWithImage.array().nullable(),
+    generated_images: units.generated_image.array().optional(),
   })
   .describe('external xl')
 
 export const external = {
   unit: units,
   xl: {
-    generation: generationWithImage,
     model: modelXL,
     message: messageXL,
   },
 }
 
 export type AppImage = z.infer<typeof units.appImage>
-export type Generation = z.infer<typeof generationWithImage>
 export type GeneratedImage = z.infer<typeof units.generated_image>
 export type GenerationVoteNames = (typeof generationVoteNames)[number]
 export type Message = z.infer<typeof units.message>

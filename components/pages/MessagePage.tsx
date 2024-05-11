@@ -1,12 +1,9 @@
 'use client'
 
-import { Card } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
-import { GenerationDataList } from '@/components/generation/GenerationDataList'
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
-import { ErrorCallout } from '@/components/ui/Callouts'
 import { useMessageQuery } from '@/lib/queries'
 import { GenerationView } from '../generation/GenerationView'
 import { PageHeader } from './PageHeader'
@@ -18,20 +15,22 @@ type MessagePageProps = {
 export const MessagePage = ({ rid }: MessagePageProps) => {
   const result = useMessageQuery({ rid })
   const message = result?.message
-  const generations = result?.generations
+  const generated_images = result?.generated_images
 
-  const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
+  // const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
+  const imageList = generated_images ?? []
   const breakpoints = imageList.length <= 4 ? [520, 768] : [520, 900, 1024]
-  const errors = new Set(
-    generations
-      ?.filter((generation) => generation.result?.type === 'error')
-      .map((generation) => generation.result!.message),
-  )
+  // const errors = new Set(
+  //   generations
+  //     ?.filter((generation) => generation.result?.type === 'error')
+  //     .map((generation) => generation.result!.message),
+  // )
 
-  const title = message
-    ? generations?.[0]?.prompt ?? `Message from ${message?.name ?? message?.role}`
-    : undefined
-  const single = generations?.length === 1 ? generations?.[0] : undefined
+  const title = `Message from ${message?.name ?? message?.role}`
+  // const title = message
+  //   ? generations?.[0]?.prompt ?? `Message from ${message?.name ?? message?.role}`
+  //   : undefined
+  const single = generated_images?.length === 1 ? generated_images?.[0] : undefined
 
   return (
     <>
@@ -40,13 +39,13 @@ export const MessagePage = ({ rid }: MessagePageProps) => {
         title={title}
         setPageTitle={false}
       />
-      {[...errors].map((message) => (
+      {/* {[...errors].map((message) => (
         <ErrorCallout
           key={message}
           title="(sinkin.ai) endpoint returned error:"
           message={message}
         />
-      ))}
+      ))} */}
 
       {!single && (
         <div className="space-y-4 px-1 py-4">
@@ -64,11 +63,11 @@ export const MessagePage = ({ rid }: MessagePageProps) => {
             )}
           />
 
-          {generations && generations?.length >= 0 && (
+          {/* {generations && generations?.length >= 0 && (
             <Card className="overflow-hidden">
               <GenerationDataList generations={generations} />
             </Card>
-          )}
+          )} */}
         </div>
       )}
 

@@ -8,6 +8,8 @@ import { api } from '@/convex/_generated/api'
 import { imageGenerationSizesMap } from '@/convex/constants'
 import { useThreadCtx } from '@/lib/queries'
 
+import type { GenerationParameters } from '@/convex/schema'
+
 const formSchema = zfd.formData({
   prompt: zfd.text(),
   negative_prompt: zfd.text(z.string().optional()),
@@ -57,28 +59,29 @@ export const useGenerationForm = () => {
     toast.success('Form validation success')
     console.log(form.data)
 
-    const { dimensions, prompt, seed, ...rest } = form.data
-    //TODO temp: remove unsupported params
-    const generation = {
+    const { dimensions, prompt, ...rest } = form.data
+    // todo sizes
+    const { width, height } = imageGenerationSizesMap['square']
+    const generation: GenerationParameters = {
       prompt,
-      seed,
+
       provider: currentModel.provider,
+      endpoint: '',
       model_id: currentModel.model_id,
       entries: Object.entries(rest).filter(([_, value]) => value !== undefined),
-      sizes: dimensions.map((size) => ({ size, n: Number(quantity) })) as Array<{
-        size: keyof typeof imageGenerationSizesMap
-        n: number
-      }>,
+
+      width,
+      height,
+      size: 'square',
+      n: 2,
     }
 
     send({
       message: {
         role: 'assistant',
-        inference: {
-          generation,
-        },
       },
       threadId: thread._id,
+      generations: [generation],
     })
       .then(() => toast.success('generation started'))
       .catch((err) => {

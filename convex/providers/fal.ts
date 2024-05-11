@@ -6,8 +6,9 @@ import * as HyperSdxl from './fal/hyper_sdxl'
 import * as SDLora from './fal/lora'
 import * as PixartSigma from './fal/pixart_sigma'
 
-import type { GenerationParams } from '../schema'
+import type { generationParameters } from '../schema'
 import type { TextToImageHandler } from './types'
+import type { z } from 'zod'
 
 //* Model config
 const textToImageModels = {
@@ -37,7 +38,7 @@ export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: Omit<GenerationParams, 'result'>
+  parameters: z.infer<typeof generationParameters>
   n: number
 }) => {
   try {

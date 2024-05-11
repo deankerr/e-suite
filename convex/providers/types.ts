@@ -1,4 +1,5 @@
-import type { GenerationParams } from '../schema'
+import type { generationParameters } from '../schema'
+import type { z } from 'zod'
 
 export type TextToImageHandlerResult = {
   result: { urls: string[] } & Record<string, any>
@@ -15,6 +16,6 @@ export type TextToImageHandlerError = {
 }
 
 export type TextToImageHandler = (args: {
-  parameters: GenerationParams
+  parameters: z.infer<typeof generationParameters>
   n: number
 }) => Promise<TextToImageHandlerResult | TextToImageHandlerError>

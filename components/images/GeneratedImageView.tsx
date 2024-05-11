@@ -12,12 +12,11 @@ import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly
 import { api } from '@/convex/_generated/api'
 import { cn } from '../../lib/utils'
 import { GoldSparkles } from '../effects/GoldSparkles'
-import { VoteButtonPanel } from './VoteButtonPanel'
 
-import type { Generation } from '@/convex/external'
+import type { GeneratedImage } from '@/convex/external'
 
 type GeneratedImageViewProps = {
-  generation: Generation
+  generation: GeneratedImage
   imageProps?: Partial<React.ComponentProps<typeof NextImage>>
   containerWidth?: number
   containerHeight?: number
@@ -29,13 +28,14 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
     { generation, imageProps, containerWidth, containerHeight, enablePageLink = true },
     forwardedRef,
   ) {
-    const { image } = generation
+    const image = generation
 
     const width = image?.width ?? generation.width
     const height = image?.height ?? generation.height
-    const isGenerating = !image && generation.result?.type !== 'error'
+    // const isGenerating = !image && generation.result?.type !== 'error'
+    const isGenerating = false
 
-    const removeGeneration = useMutation(api.generation.remove)
+    const removeGeneration = useMutation(api.generated_images.remove)
 
     const sizes = containerWidth
       ? `${containerWidth}px`
@@ -88,7 +88,7 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
               size="1"
               className="opacity-75 hover:opacity-100"
               onClick={() => {
-                removeGeneration({ generationId: generation._id })
+                removeGeneration({ generatedImageId: generation._id })
                   .then(() => toast.success('Generation removed'))
                   .catch((err) => {
                     if (err instanceof Error) toast.error(err.message)
@@ -102,9 +102,9 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
         </NonSecureAdminRoleOnly>
 
         {/* votes */}
-        {!isGenerating && (
+        {/* {!isGenerating && (
           <VoteButtonPanel generationId={generation._id} votes={generation.votes} />
-        )}
+        )} */}
       </div>
     )
   },

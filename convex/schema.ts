@@ -5,7 +5,6 @@ import { ms } from 'itty-time'
 import { z } from 'zod'
 
 import {
-  completionProviders,
   generationProviders,
   generationVoteNames,
   imageGenerationSizes,
@@ -16,7 +15,8 @@ import {
   ridLength,
 } from './constants'
 
-export type GenerationParams = z.infer<typeof generationFieldsObject>
+export type GenerationParameters = z.infer<typeof generationParameters>
+
 const timeToDelete = ms('1 day')
 
 export const ridField = z.string().length(ridLength)
@@ -69,10 +69,45 @@ const sharedImageFields = {
 export const appImageFields = { ...sharedImageFields, srcset: srcsetField }
 const app_images = defineEnt(zodToConvexFields(appImageFields)).index('sourceUrl', ['sourceUrl'])
 
+//* Generations
+export const generationParameters = z.object({
+  provider: z.enum(generationProviders),
+  endpoint: z.string(),
+
+  prompt: z.string(),
+  size: z.enum(imageGenerationSizes),
+  width: z.number(),
+  height: z.number(),
+  n: z.number(),
+
+  model_id: z.string(),
+  loras: z
+    .object({
+      id: z.string(),
+      weight: z.number(),
+    })
+    .optional(),
+
+  entries: z.tuple([z.string(), z.union([z.string(), z.number(), z.boolean()])]).array(),
+})
+
+export const generationResultField = z.object({
+  type: z.enum(['url', 'error']),
+  items: z.string().array(),
+})
+
+export const generationJobFields = {
+  status: z.enum(['queue', 'pending', 'active', 'complete', 'failed']),
+  result: generationResultField.optional(),
+  parameters: generationParameters,
+}
+const generation_jobs = defineEnt(zodToConvexFields(generationJobFields)).edge('message')
+
 //* Generated Images
 export const generatedImageFields = {
   ...sharedImageFields,
   srcset: srcsetField.optional(),
+  parameters: generationParameters.optional(),
 }
 const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
   .deletion('scheduled', {
@@ -80,44 +115,8 @@ const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
   })
   .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
-  .edge('generation', { field: 'generationId' })
-
-//* Generations
-export const generationResultField = z.object({
-  type: z.enum(['url', 'error']),
-  message: z.string(),
-})
-
-export const generationFields = {
-  provider: z.enum(generationProviders),
-  model_id: z.string(),
-
-  prompt: z.string(),
-  size: z.enum(imageGenerationSizes),
-  width: z.number(),
-  height: z.number(),
-
-  entries: z
-    .tuple([z.string(), z.union([z.string(), z.number(), z.boolean()])])
-    .array()
-    .default([]),
-
-  result: generationResultField.optional(),
-  metadata: z.string().array().array().optional(),
-
-  negative_prompt: z.string().optional(), //TODO remove after migration
-  lcm: z.boolean().optional(), //TODO remove after migration
-  steps: z.number().optional(), //TODO remove after migration
-  use_default_neg: z.boolean().optional(), //TODO remove after migration
-}
-const generationFieldsObject = z.object(generationFields)
-export const generations = defineEnt(zodToConvexFields(generationFields))
-  .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
-  .field('private', zodToConvex(z.boolean()), { index: true })
   .edge('message')
-  .edge('generated_image', { optional: true, ref: 'generationId', deletion: 'soft' })
-  .edges('generation_votes', { ref: true, deletion: 'soft' })
+  .edges('generation_votes', { ref: true })
 
 //* Votes
 export const generationVoteFields = {
@@ -130,42 +129,12 @@ export const generationVoteFields = {
 }
 const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('generation')
+  .edge('generated_image')
   .index('userId', ['userId'])
   .index('ip', ['ip'])
-  .index('constituent_vote', ['constituent', 'generationId'])
-
-//* Chat/Completion
-export const completionParametersSchema = z.object({
-  model: z.string(),
-  max_tokens: z.number().optional(),
-  stop: z.string().array().optional(),
-  temperature: z.number().optional(),
-  top_p: z.number().optional(),
-  top_k: z.number().optional(),
-  repetition_penalty: z.number().optional(),
-  stream: z.boolean().optional(),
-})
-
-export const chatInference = z.object({
-  provider: z.enum(completionProviders),
-  parameters: completionParametersSchema,
-})
+  .index('constituent_vote', ['constituent', 'generated_imageId'])
 
 //* Messages
-const messageInferenceGenerationSchema = z
-  .object(generationFields)
-  .omit({ result: true, size: true, width: true, height: true })
-  .merge(
-    z.object({
-      sizes: z
-        .object({ size: z.enum(imageGenerationSizes), n: z.number().min(1).max(8) })
-        .array()
-        .min(1)
-        .max(6),
-    }),
-  )
-
 export const messageFields = {
   role: z.enum(messageRoles),
   name: z
@@ -174,12 +143,6 @@ export const messageFields = {
     .optional(),
   text: z.string().optional(),
 
-  inference: z
-    .object({
-      generation: messageInferenceGenerationSchema.optional(),
-    })
-    .optional(),
-
   metadata: z.string().array().array().optional(),
   speechId: zid('speech').optional(),
 }
@@ -187,7 +150,8 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
-  .edges('generations', { ref: true, deletion: 'soft' })
+  .edges('generated_images', { ref: true, deletion: 'soft' })
+  .edges('generation_jobs', { ref: true })
   .edge('thread')
   .edge('user')
 
@@ -234,8 +198,8 @@ const schema = defineEntSchema(
   {
     app_images,
 
-    generations,
     generated_images,
+    generation_jobs,
     generation_votes,
 
     messages,
@@ -253,3 +217,20 @@ const schema = defineEntSchema(
 
 export default schema
 export const entDefinitions = getEntDefinitions(schema)
+
+//* Chat/Completion
+// export const completionParametersSchema = z.object({
+//   model: z.string(),
+//   max_tokens: z.number().optional(),
+//   stop: z.string().array().optional(),
+//   temperature: z.number().optional(),
+//   top_p: z.number().optional(),
+//   top_k: z.number().optional(),
+//   repetition_penalty: z.number().optional(),
+//   stream: z.boolean().optional(),
+// })
+
+// export const chatInference = z.object({
+//   provider: z.enum(completionProviders),
+//   parameters: completionParametersSchema,
+// })

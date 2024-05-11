@@ -18,12 +18,16 @@ type ThreadMessageProps = {
   priority?: boolean
 } & MessageContent
 
-export const ThreadMessage = ({ message, generations, priority = false }: ThreadMessageProps) => {
+export const ThreadMessage = ({
+  message,
+  generated_images,
+  priority = false,
+}: ThreadMessageProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
   const viewType = {
-    text: !generations,
-    image: !!generations,
+    text: !generated_images,
+    image: !!generated_images,
   }
 
   const icon = viewType.image ? (
@@ -32,13 +36,14 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
     <MessageSquareIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
   )
 
-  const title = generations?.[0] ? generations?.[0].prompt : message?.name ?? getRole(message.role)
+  const title = message?.name ?? getRole(message.role)
+  // const title = generations?.[0] ? generations?.[0].prompt : message?.name ?? getRole(message.role)
 
-  const errors = new Set(
-    generations
-      ?.filter((generation) => generation.result?.type === 'error')
-      .map((generation) => generation.result!.message),
-  )
+  // const errors = new Set(
+  //   generations
+  //     ?.filter((generation) => generation.result?.type === 'error')
+  //     .map((generation) => generation.result!.message),
+  // )
   return (
     <Card>
       <div className="space-y-3">
@@ -75,15 +80,15 @@ export const ThreadMessage = ({ message, generations, priority = false }: Thread
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className={cn('h-64 gap-2 flex-start')}>
-              {[...errors].map((message) => (
+              {/* {[...errors].map((message) => (
                 <ErrorCallout
                   key={message}
                   title="(sinkin.ai) endpoint returned error:"
                   message={message}
                 />
-              ))}
-              {generations?.map((generation) => {
-                if (generation.result?.type === 'error') return null
+              ))} */}
+              {generated_images?.map((generation) => {
+                // if (generation.result?.type === 'error') return null
                 return (
                   <GeneratedImageView
                     key={generation._id}

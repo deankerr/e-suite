@@ -1,24 +1,20 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
+import { internal } from './_generated/api'
 import { external } from './external'
 import { mutation, query } from './functions'
-import { getGenerationXL, runGenerationInference } from './generation'
-import { messageFields, ridField } from './schema'
+import { generationParameters, messageFields, ridField } from './schema'
 import { generateRid } from './utils'
 
 import type { Ent, QueryCtx } from './types'
 
 // *** public queries ***
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getMessageEntXL = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const generations = await message
-    .edge('generations')
-    .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .map(async (generation) => await getGenerationXL(ctx, generation))
-
   const xl = {
     message,
-    generations: generations.length ? generations : null,
+    generated_images: await message.edge('generated_images'),
   }
 
   return external.xl.message.parse(xl)
@@ -58,8 +54,7 @@ export const getPageMetadata = query({
     const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).unique()
     if (!message || message.deletionTime) return null
 
-    const generations = await message.edge('generations')
-    const title = generations?.[0]?.prompt ?? `Message from ${message.name ?? message.role}`
+    const title = `Message from ${message.name ?? message.role}`
     // const icon = generations.length ? ' ✴️' : ''
     const description = `it's the e/suite - ${title}`
 
@@ -75,9 +70,10 @@ export const create = mutation({
   args: {
     threadId: zid('threads'),
     message: z.object(messageFields),
+    generations: generationParameters.array().optional(),
     private: z.boolean().default(true),
   },
-  handler: async (ctx, { threadId, message: messageFields, ...args }) => {
+  handler: async (ctx, { threadId, message: messageFields, generations = [], ...args }) => {
     const rid = await generateRid(ctx, 'messages')
     const user = await ctx.viewerX()
 
@@ -86,7 +82,13 @@ export const create = mutation({
       .insert({ threadId, ...messageFields, rid, userId: user._id, private: args.private })
       .get()
 
-    if (message.inference?.generation) await runGenerationInference(ctx, message)
+    for (const parameters of generations) {
+      const generationJobId = await ctx
+        .table('generation_jobs')
+        .insert({ parameters, messageId: message._id, status: 'pending' })
+
+      await ctx.scheduler.runAfter(0, internal.generation_jobs.run, { generationJobId })
+    }
 
     return message._id
   },

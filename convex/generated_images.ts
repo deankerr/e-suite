@@ -2,12 +2,11 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { internalMutation, internalQuery } from './functions'
+import { internalMutation, internalQuery, mutation } from './functions'
 import { generatedImageFields, ridField, srcsetField } from './schema'
 import { generateRid, runWithRetries } from './utils'
 
 // *** public queries ***
-
 export const getHttp = internalQuery({
   args: {
     rid: ridField,
@@ -21,38 +20,38 @@ export const getHttp = internalQuery({
     return generated_image
   },
 })
-
 // *** end public queries ***
 
 export const create = internalMutation({
   args: {
     ...generatedImageFields,
-    generationId: zid('generations'),
+    generationJobId: zid('generation_jobs'),
   },
-  handler: async (ctx, args) => {
-    const rid = await generateRid(ctx, 'generated_images')
-    const generation = await ctx.table('generations').getX(args.generationId)
+  handler: async (ctx, { generationJobId, ...fields }) => {
+    const job = await ctx.table('generation_jobs').getX(generationJobId)
 
+    const rid = await generateRid(ctx, 'generated_images')
     const generatedImageId = await ctx.table('generated_images').insert({
-      ...args,
+      ...fields,
+      messageId: job.messageId,
+      parameters: job.parameters,
       rid,
-      private: generation.private,
+      private: false, // TODO
     })
 
     await runWithRetries(ctx, internal.lib.sharp.generatedImageSrcset, {
-      fileId: args.fileId,
+      fileId: fields.fileId,
       generatedImageId,
     })
   },
 })
 
-export const createFromUrl = internalMutation({
+export const remove = mutation({
   args: {
-    sourceUrl: z.string(),
-    generationId: zid('generations'),
+    generatedImageId: zid('generated_images'),
   },
-  handler: async (ctx, args) => {
-    await runWithRetries(ctx, internal.lib.sharp.generationFromUrl, args)
+  handler: async (ctx, { generatedImageId }) => {
+    await ctx.table('generated_images').getX(generatedImageId).delete()
   },
 })
 

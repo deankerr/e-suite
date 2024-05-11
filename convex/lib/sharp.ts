@@ -31,12 +31,12 @@ type SharpProcessOptions = {
 }
 
 //* Actions
-export const generationFromUrl = internalAction({
+export const createGeneratedImageFromUrl = internalAction({
   args: {
     sourceUrl: z.string(),
-    generationId: zid('generations'),
+    generationJobId: zid('generation_jobs'),
   },
-  handler: async (ctx, { sourceUrl, generationId }) => {
+  handler: async (ctx, { sourceUrl, generationJobId }) => {
     const inputBlob = await ky.get(sourceUrl).blob()
     const { metadata, webpBlob, blurDataUrl, color } = await processImage(inputBlob)
 
@@ -45,7 +45,7 @@ export const generationFromUrl = internalAction({
     const webpStorageId = await ctx.storage.store(webpBlob)
 
     await ctx.runMutation(internal.generated_images.create, {
-      generationId,
+      generationJobId,
       width: metadata.width,
       height: metadata.height,
       sourceFileId,
@@ -54,26 +54,6 @@ export const generationFromUrl = internalAction({
       blurDataUrl,
       color,
     })
-  },
-})
-
-export const generatedImageSrcset = internalAction({
-  args: {
-    fileId: zid('_storage'),
-    generatedImageId: zid('generated_images'),
-  },
-  handler: async (ctx, { fileId, generatedImageId }) => {
-    const input = await ctx.storage.get(fileId)
-    insist(input, 'invalid file id')
-    const srcsetBlobs = await processImageSrcset(input, imageSrcsetWidths)
-
-    const srcset: { width: number; fileId: Id<'_storage'> }[] = []
-    for (const { width, blob } of srcsetBlobs) {
-      const resizedFileId = await ctx.storage.store(blob)
-      srcset.push({ width, fileId: resizedFileId })
-    }
-
-    await ctx.runMutation(internal.generated_images.updateSrcset, { generatedImageId, srcset })
   },
 })
 
@@ -106,6 +86,26 @@ export const createAppImageFromUrl = internalAction({
       color,
       srcset,
     })
+  },
+})
+
+export const generatedImageSrcset = internalAction({
+  args: {
+    fileId: zid('_storage'),
+    generatedImageId: zid('generated_images'),
+  },
+  handler: async (ctx, { fileId, generatedImageId }) => {
+    const input = await ctx.storage.get(fileId)
+    insist(input, 'invalid file id')
+    const srcsetBlobs = await processImageSrcset(input, imageSrcsetWidths)
+
+    const srcset: { width: number; fileId: Id<'_storage'> }[] = []
+    for (const { width, blob } of srcsetBlobs) {
+      const resizedFileId = await ctx.storage.store(blob)
+      srcset.push({ width, fileId: resizedFileId })
+    }
+
+    await ctx.runMutation(internal.generated_images.updateSrcset, { generatedImageId, srcset })
   },
 })
 

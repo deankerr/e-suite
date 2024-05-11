@@ -29,11 +29,11 @@ export const ThreadView = ({ rid }: ThreadViewProps) => {
 }
 
 const MessageSummaryLink = ({ rid }: { rid: string }) => {
-  const { message, generations } = useMessage(rid)
+  const { message } = useMessage(rid)
 
   return (
     <Link key={rid} href={`/gents/m/${rid}`} className="block py-1">
-      {message.role} {message.name} Gens: {generations?.length ?? 'none'}
+      {message.role} {message.name}
     </Link>
   )
 }
