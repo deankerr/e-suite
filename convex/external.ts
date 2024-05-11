@@ -1,15 +1,102 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { generationProviders } from './constants'
+import { generationProviders, generationVoteNames, messageRoles } from './constants'
 import { generatedImageFields, messageFields, ridField, threadFields, userFields } from './schema'
-
-import type { generationVoteNames } from './constants'
 
 const ridFields = {
   rid: ridField,
   private: z.boolean(),
 }
+
+/* Public ents
+  app_images
+  generated_images
+  generation_jobs - status/size only?
+  generation_votes
+  messages
+  threads
+  users
+
+*/
+
+const appImage = z.object({
+  _id: zid('app_images'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined().optional(),
+
+  width: z.number(),
+  height: z.number(),
+  blurDataUrl: z.string(),
+  color: z.string(),
+})
+
+const generatedImage = z.object({
+  _id: zid('generated_image'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined().optional(),
+
+  width: z.number(),
+  height: z.number(),
+  blurDataUrl: z.string(),
+  color: z.string(),
+
+  rid: ridField,
+})
+
+const generationVote = z.object({
+  _id: zid('generation_votes'),
+  deletionTime: z.undefined().optional(),
+
+  vote: z.enum(generationVoteNames),
+})
+
+const model = z.object({
+  model_id: z.string(),
+  name: z.string(),
+  provider: z.enum(generationProviders),
+  resId: z.string(),
+})
+
+const message = z.object({
+  _id: zid('messages'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined().optional(),
+
+  role: z.enum(messageRoles),
+  name: z.string().optional(),
+  text: z.string().optional(),
+
+  rid: ridField,
+})
+
+const thread = z.object({
+  _id: zid('threads'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined().optional(),
+
+  title: z.string().optional(),
+
+  rid: ridField,
+})
+
+const user = z.object({
+  _id: zid('users'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined().optional(),
+
+  name: z.string(),
+  imageUrl: z.string(),
+  role: z.enum(['user', 'admin']),
+
+  rid: ridField,
+})
+
+export const validators = { appImage, generatedImage, generationVote, model, message, thread, user }
+
+export type EGeneratedImage = z.infer<typeof generatedImage>
+export type EMessage = z.infer<typeof message>
+export type EThread = z.infer<typeof thread>
 
 const units = {
   appImage: z
