@@ -75,7 +75,7 @@ export const generationParameters = z.object({
   endpoint: z.string(),
 
   prompt: z.string(),
-  size: z.enum(imageGenerationSizes),
+  size: z.enum([...imageGenerationSizes, 'custom']),
   width: z.number(),
   height: z.number(),
   n: z.number(),

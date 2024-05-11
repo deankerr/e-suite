@@ -1,7 +1,6 @@
 import ky from 'ky'
 import { z } from 'zod'
 
-import { imageGenerationSizesMap } from '../constants'
 import { getEnv } from '../utils'
 
 import type { generationParameters } from '../schema'
@@ -20,16 +19,13 @@ export const textToImage: TextToImageHandler = async ({
   parameters: z.infer<typeof generationParameters>
   n: number
 }) => {
-  const { size, entries, model_id, prompt } = parameters
-  const { width, height } = imageGenerationSizesMap[size]
+  const { entries, model_id, prompt } = parameters
 
   const body = new URLSearchParams()
 
   for (const [key, value] of entries) {
     body.set(key, String(value))
   }
-  body.set('width', width.toString())
-  body.set('height', height.toString())
   body.set('model_id', model_id)
   body.set('prompt', prompt)
 
