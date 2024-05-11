@@ -186,18 +186,18 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(zod@3.23.6)
     devDependencies:
+      '@deankerr/debug-label':
+        specifier: ^0.1.0
+        version: 0.1.0
+      '@deankerr/react-refresh':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.2.1
         version: 4.2.1(prettier@3.2.5)
       '@next/bundle-analyzer':
         specifier: ^14.2.3
         version: 14.2.3
-      '@swc-jotai/debug-label':
-        specifier: link:../swc-jotai/crates/debug_label
-        version: link:../swc-jotai/crates/debug_label
-      '@swc-jotai/react-refresh':
-        specifier: link:../swc-jotai/crates/react_refresh
-        version: link:../swc-jotai/crates/react_refresh
       '@types/bun':
         specifier: ^1.1.1
         version: 1.1.1
@@ -542,6 +542,12 @@ packages:
   '@clerk/types@4.2.0':
     resolution: {integrity: sha512-JtQINgvRGkO9K8os8pSj3QvNrBDvdc0lFpbTwpF3J1CBLafiJmJiBUyUSzWcI/k/9FlClMZxauZufVp9jlSBjg==}
     engines: {node: '>=18.17.0'}
+
+  '@deankerr/debug-label@0.1.0':
+    resolution: {integrity: sha512-Mui3Eub/8kzuxFzT/dhTL9FM5DVjzueGgQ2DWpMk5xnWJaRtzK2zsBq0dCgxncrcOHUbrcPxSnvgP55QcuxRiQ==}
+
+  '@deankerr/react-refresh@0.1.0':
+    resolution: {integrity: sha512-kChD1QlYwC7WDbEhIAm8Pen9iaqlHKzzSmYswRhSTFiiI3s/Ql52SDQFLpSYTzulUZxmCEHZaHnavUyBNImqDQ==}
 
   '@discoveryjs/json-ext@0.5.7':
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -5699,6 +5705,10 @@ snapshots:
   '@clerk/types@4.2.0':
     dependencies:
       csstype: 3.1.1
+
+  '@deankerr/debug-label@0.1.0': {}
+
+  '@deankerr/react-refresh@0.1.0': {}
 
   '@discoveryjs/json-ext@0.5.7': {}
 

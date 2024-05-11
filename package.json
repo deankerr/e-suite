@@ -74,10 +74,10 @@
     "zod-validation-error": "^3.2.0"
   },
   "devDependencies": {
+    "@deankerr/debug-label": "^0.1.0",
+    "@deankerr/react-refresh": "^0.1.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
     "@next/bundle-analyzer": "^14.2.3",
-    "@swc-jotai/debug-label": "link:../swc-jotai/crates/debug_label",
-    "@swc-jotai/react-refresh": "link:../swc-jotai/crates/react_refresh",
     "@types/bun": "^1.1.1",
     "@types/node": "^20.12.8",
     "@types/react": "^18.3.1",

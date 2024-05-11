@@ -24,8 +24,8 @@ const nextConfig = {
   transpilePackages: ['jotai-devtools'],
   experimental: {
     swcPlugins: [
-      ['@swc-jotai/debug-label', { atomNames: ['customAtom'] }],
-      ['@swc-jotai/react-refresh', { atomNames: ['customAtom'] }],
+      ['@deankerr/debug-label', { atomNames: ['customAtom'] }],
+      ['@deankerr/react-refresh', { atomNames: ['customAtom'] }],
     ],
   },
 }
