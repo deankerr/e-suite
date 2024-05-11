@@ -1,6 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import { atomWithStorage, RESET } from 'jotai/utils'
 
+import { ChatPanel } from '@/components/command-bar/panels/ChatPanel'
 import { GenerationPanel } from '@/components/command-bar/panels/GenerationPanel'
 import { ModelBrowserPanel } from '@/components/command-bar/panels/ModelBrowserPanel'
 
@@ -28,6 +29,13 @@ export const panels: Panel[] = [
     name: 'Generate',
     button: { color: 'orange' },
     component: GenerationPanel,
+    hidden: false,
+  },
+  {
+    id: 'chat',
+    name: 'Chat',
+    button: { color: 'orange' },
+    component: ChatPanel,
     hidden: false,
   },
 ]

@@ -43,7 +43,6 @@ export const useGenerationForm = () => {
 
   const send = useMutation(api.messages.create)
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   const formAction = (formData: FormData) => {
     if (!currentModel || !thread) return
 
