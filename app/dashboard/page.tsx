@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+
 import { DashboardPage } from '@/components/pages/DashboardPage'
 
 export const metadata = {
@@ -5,5 +7,9 @@ export const metadata = {
 }
 
 export default function Page() {
-  return <DashboardPage />
+  return (
+    <Suspense>
+      <DashboardPage />
+    </Suspense>
+  )
 }

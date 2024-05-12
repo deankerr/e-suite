@@ -101,18 +101,27 @@ export const useLoadThread = (rid?: string) => {
   }, [pager, setMessages, setThread, thread])
 }
 
+const viewerThreadsAtom = atomWithPending<EThread[]>()
+export const useViewerThreads = () => {
+  const threads = useAtomValue(viewerThreadsAtom)
+  const createThread = useMutation(api.threads.create)
+  const removeThread = useMutation(api.threads.remove)
+
+  return { threads, createThread, removeThread }
+}
+
+export const useLoadViewerThreads = () => {
+  const { results: threads } = usePaginatedQuery(api.ext.threads.list, {}, { initialNumItems: 50 })
+  const setThreads = useSetAtom(viewerThreadsAtom)
+  useEffect(() => {
+    setThreads(threads)
+  }, [setThreads, threads])
+}
+
 //* non-atom queries
 export const useModelList = (skip?: 'skip') => {
   const models = useQuery(api.models.list, skip ?? {})
   return models
-}
-
-export const useDashboardTemp = () => {
-  const threads = usePaginatedQuery(api.ext.threads.list, {}, { initialNumItems: 20 })
-  const createThread = useMutation(api.threads.create)
-  const removeThread = useMutation(api.threads.remove)
-
-  return { threads: threads.results, createThread, removeThread }
 }
 
 export const useViewer = () => {
