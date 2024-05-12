@@ -36,6 +36,13 @@
 .lucide {
   stroke-width: 1.5px;
 }
+
+.jotai-devtools-trigger-button {
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+  opacity: 0.1;
+}
+
 /*
 #cmbr-container {
   border: red solid 1px;
