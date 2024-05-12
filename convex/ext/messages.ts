@@ -13,6 +13,7 @@ export const get = query({
 
     const images = await message
       .edge('generated_images')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .map((image) => validators.generatedImage.parse(image))
     return { message: validators.message.parse(message), images }
   },
