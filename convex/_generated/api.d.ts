@@ -20,7 +20,6 @@ import type * as ext_generatedImages from "../ext/generatedImages.js";
 import type * as ext_messages from "../ext/messages.js";
 import type * as ext_threads from "../ext/threads.js";
 import type * as external from "../external.js";
-import type * as frontend from "../frontend.js";
 import type * as functions from "../functions.js";
 import type * as generated_images from "../generated_images.js";
 import type * as generation_jobs from "../generation_jobs.js";
@@ -145,7 +144,6 @@ declare const fullApi: ApiFromModules<{
   "ext/messages": typeof ext_messages;
   "ext/threads": typeof ext_threads;
   external: typeof external;
-  frontend: typeof frontend;
   functions: typeof functions;
   generated_images: typeof generated_images;
   generation_jobs: typeof generation_jobs;

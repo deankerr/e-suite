@@ -2,49 +2,11 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
-import { external } from './external'
 import { mutation, query } from './functions'
 import { generationParameters, messageFields, ridField } from './schema'
 import { generateRid } from './utils'
 
-import type { Ent, QueryCtx } from './types'
-
 // *** public queries ***
-// eslint-disable-next-line @typescript-eslint/require-await
-export const getMessageEntXL = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const xl = {
-    message,
-    generated_images: await message.edge('generated_images'),
-  }
-
-  return external.xl.message.parse(xl)
-}
-
-export const get = query({
-  args: {
-    rid: ridField,
-  },
-  handler: async (ctx, { rid }) => {
-    const message = await ctx.table('messages', 'rid', (q) => q.eq('rid', rid)).unique()
-    if (!message || message.deletionTime) return null
-
-    return await getMessageEntXL(ctx, message)
-  },
-})
-
-// agent
-export const getById = query({
-  args: {
-    messageId: zid('messages'),
-  },
-
-  handler: async (ctx, { messageId }) => {
-    const message = await ctx.table('messages').getX(messageId)
-    if (message.deletionTime) return null
-    return external.unit.message.parse(message)
-  },
-})
-
 // next.js page title/description
 export const getPageMetadata = query({
   args: {
