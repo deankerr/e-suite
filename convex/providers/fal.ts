@@ -65,6 +65,10 @@ export const textToImage: TextToImageHandler = async ({
       mapped.loras = loras as any
     }
 
+    //* explicitly set bools to false if not present
+    mapped.expand_prompt ??= false
+    mapped.enable_safety_checker ??= false
+
     const parsedInput = parsers.body.safeParse({
       ...mapped,
       prompt,
