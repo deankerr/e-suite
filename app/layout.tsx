@@ -9,7 +9,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { PartyBoy } from '@/components/effects/PartyBoy'
-import { AppLayout } from '@/components/layouts/AppLayout'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { cn, environment } from '@/lib/utils'
 

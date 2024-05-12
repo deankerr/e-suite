@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 
-import { NewThreadPage } from '@/app/thread/[rid]/NewThreadPage'
+import { ThreadPage } from '@/components/pages/ThreadPage'
 
 export default function Page({ params: { rid } }: { params: { rid: string } }) {
   return (
@@ -11,7 +11,7 @@ export default function Page({ params: { rid } }: { params: { rid: string } }) {
         </div>
       }
     >
-      <NewThreadPage rid={rid} />
+      <ThreadPage rid={rid} />
     </Suspense>
   )
 }

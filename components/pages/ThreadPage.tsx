@@ -1,20 +1,17 @@
 'use client'
 
 import { Suspense } from 'react'
-import { MessagesSquareIcon } from 'lucide-react'
 
 import { Message } from '@/app/thread/[rid]/Message'
-import { PageHeader } from '@/components/pages/PageHeader'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useThread } from '@/lib/api'
 
-export const NewThreadPage = ({ rid }: { rid: string }) => {
-  const { messages, ...thread } = useThread(rid)
-  const title = thread?.title
+export const ThreadPage = ({ rid }: { rid: string }) => {
+  const { messages } = useThread(rid)
+  // const title = thread?.title
 
   return (
     <>
-      <PageHeader icon={<MessagesSquareIcon className="size-5" />} title={title} />
       <div className="space-y-4 p-1 sm:p-4">
         {messages.map((rid, i) => (
           <Suspense key={rid}>

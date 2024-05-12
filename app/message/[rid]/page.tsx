@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 
-import { NewMessagePage } from '@/app/message/[rid]/NewMessagePage'
+// import {fetchQuery} from 'convex/nextjs'
+
+import { MessagePage } from '@/components/pages/MessagePage'
 
 // export async function generateMetadata({ params: { rid } }: { params: { rid: string } }) {
 //   try {
@@ -26,7 +28,7 @@ export default function Page({ params: { rid } }: { params: { rid: string } }) {
         </div>
       }
     >
-      <NewMessagePage rid={rid} />
+      <MessagePage rid={rid} />
     </Suspense>
   )
 }

@@ -31,12 +31,12 @@ export const PageHeader = ({
 
   return (
     <>
-      <header className="h-10 px-1 flex-between md:h-12 md:gap-2 md:px-5">
+      <header className="h-10 bg-gray-1 px-1 flex-between md:h-12 md:gap-2 md:px-3">
         {setPageTitle ? <DocumentTitle subtitle={title} /> : null}
 
         <AppLogoTitle showText={showAppTitle} />
 
-        {(title || icon) && <div className="flex-none text-sm md:text-base">/</div>}
+        {(title || icon) && <div className="flex-none text-sm md:text-base">∕</div>}
         {icon && <div className="-mr-0.5 flex-none [&>svg]:size-4 md:[&>svg]:size-5">{icon}</div>}
 
         {/* page title */}
@@ -59,7 +59,7 @@ export const PageHeader = ({
         </div>
       </header>
 
-      <div className="px-1 md:px-4">
+      <div>
         <Separator size="4" />
       </div>
     </>

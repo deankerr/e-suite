@@ -6,14 +6,12 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { useViewerThreads } from '@/lib/api'
-import { PageHeader } from './PageHeader'
 
 export const DashboardPage = () => {
   const { threads, createThread, removeThread } = useViewerThreads()
 
   return (
     <>
-      <PageHeader title="Dashboard" />
       <div className="flex flex-wrap gap-2 px-1 py-4 md:px-4">
         <Card className="h-fit min-w-80 max-w-lg">
           <Heading size="4">Threads</Heading>
