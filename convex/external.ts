@@ -83,7 +83,18 @@ const user = z.object({
   rid: ridField,
 })
 
-export const validators = { appImage, generatedImage, generationVote, model, message, thread, user }
+const self = user.merge(z.object({ apiKey: z.string().optional() }))
+
+export const validators = {
+  appImage,
+  generatedImage,
+  generationVote,
+  model,
+  message,
+  thread,
+  user,
+  self,
+}
 
 export type EGeneratedImage = z.infer<typeof generatedImage>
 export type EMessage = z.infer<typeof message>

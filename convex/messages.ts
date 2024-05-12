@@ -17,7 +17,6 @@ export const getPageMetadata = query({
     if (!message || message.deletionTime) return null
 
     const title = `Message from ${message.name ?? message.role}`
-    // const icon = generations.length ? ' ✴️' : ''
     const description = `it's the e/suite - ${title}`
 
     return {
@@ -26,7 +25,6 @@ export const getPageMetadata = query({
     }
   },
 })
-// *** end public queries ****
 
 export const create = mutation({
   args: {
@@ -64,3 +62,4 @@ export const remove = mutation({
     await ctx.table('messages').getX(messageId).delete()
   },
 })
+// *** end public queries ****

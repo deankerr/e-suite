@@ -7,6 +7,7 @@ import { UserIcon } from 'lucide-react'
 import { useTitle } from 'react-use'
 
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
+import { useViewer } from '@/lib/api'
 import { useTwMediaQuery } from '@/lib/hooks'
 
 const hideTextWhenTitleLength = 55
@@ -44,6 +45,7 @@ export const PageHeader = ({
         </h2>
 
         <div className="flex-none gap-2 flex-end">
+          <ViewerInfo className="text-right font-mono text-xs text-gray-9" />
           {/* user buttons */}
           <Unauthenticated>
             <SignInButton>
@@ -61,6 +63,24 @@ export const PageHeader = ({
         <Separator size="4" />
       </div>
     </>
+  )
+}
+
+const ViewerInfo = (props: React.ComponentProps<'div'>) => {
+  const { db, auth } = useViewer()
+  return (
+    <div {...props}>
+      <div>
+        {db?.name} {db?.role}/{auth.user?.publicMetadata?.role as string}{' '}
+        {auth.isSignedIn ? '∴' : '∶'}
+      </div>
+      {db?.apiKey && (
+        <div className="group">
+          <span className="group-hover:hidden">api key</span>
+          <span className="hidden group-hover:inline">{db.apiKey}</span>
+        </div>
+      )}
+    </div>
   )
 }
 

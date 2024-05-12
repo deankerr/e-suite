@@ -108,13 +108,16 @@ export const useModelList = (skip?: 'skip') => {
 }
 
 export const useDashboardTemp = () => {
-  const self = useQuery(api.users.getSelf, {})
-
   const threads = usePaginatedQuery(api.ext.threads.list, {}, { initialNumItems: 20 })
   const createThread = useMutation(api.threads.create)
   const removeThread = useMutation(api.threads.remove)
 
-  const userAuth = useUser()
+  return { threads: threads.results, createThread, removeThread }
+}
 
-  return { self, threads: threads.results, createThread, removeThread, userAuth }
+export const useViewer = () => {
+  const db = useQuery(api.ext.user.getSelf, {})
+  const auth = useUser()
+
+  return { db, auth }
 }

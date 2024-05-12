@@ -1,15 +1,6 @@
 'use client'
 
-import {
-  Badge,
-  Button,
-  Card,
-  Code,
-  DataList,
-  Heading,
-  IconButton,
-  TextField,
-} from '@radix-ui/themes'
+import { Button, Card, Heading, IconButton, TextField } from '@radix-ui/themes'
 import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
@@ -19,7 +10,7 @@ import { useDashboardTemp } from '@/lib/api'
 import { PageHeader } from './PageHeader'
 
 export const DashboardPage = () => {
-  const { self, threads, createThread, removeThread, userAuth } = useDashboardTemp()
+  const { threads, createThread, removeThread } = useDashboardTemp()
 
   return (
     <>
@@ -34,34 +25,6 @@ export const DashboardPage = () => {
         </Unauthenticated>
 
         <Authenticated>
-          {self && (
-            <Card className="h-fit w-80">
-              <Heading size="4" mb="4">
-                {self.name}
-              </Heading>
-              <DataList.Root orientation="horizontal">
-                <DataList.Item>
-                  <DataList.Label minWidth="64px">Role</DataList.Label>
-                  <DataList.Value>
-                    <Badge>{self.role}</Badge>
-                  </DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="64px">API Key</DataList.Label>
-                  <DataList.Value>
-                    <Code>{self.apiKey}</Code>
-                  </DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="64px">Clerk</DataList.Label>
-                  <DataList.Value>
-                    <Code>{JSON.stringify(userAuth.user?.publicMetadata, null, 2)}</Code>
-                  </DataList.Value>
-                </DataList.Item>
-              </DataList.Root>
-            </Card>
-          )}
-
           {threads && (
             <Card className="h-fit min-w-80 max-w-lg">
               <Heading size="4">Threads</Heading>
