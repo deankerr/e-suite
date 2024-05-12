@@ -1,10 +1,14 @@
 import { asyncMap } from 'convex-helpers'
 
 import { internal } from './_generated/api'
-import { external } from './external'
 import { internalMutation, query } from './functions'
 import FalModelsJson from './providers/fal.models.json'
 import SinkinModelsJson from './providers/sinkin.models.json'
+
+import type { api } from './_generated/api'
+import type { FunctionReturnType } from 'convex/server'
+
+export type Temp_EModels = FunctionReturnType<typeof api.models.list>
 
 const falAvailableIds = [
   'fal-ai/hyper-sdxl',
@@ -35,7 +39,7 @@ export const list = query({
         .first(),
     }))
 
-    return external.xl.model.array().parse(models)
+    return models
   },
 })
 

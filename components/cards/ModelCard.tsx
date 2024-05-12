@@ -4,7 +4,7 @@ import NextImage from 'next/image'
 import { useModelList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { ModelContent } from '@/convex/external'
+import type { Temp_EModels } from '@/convex/models'
 
 export const ModelCard = ({
   model: modelFromProps,
@@ -13,7 +13,7 @@ export const ModelCard = ({
   className,
   ...props
 }: {
-  model?: ModelContent
+  model?: Temp_EModels[number]
   resId?: string
   variant?: 'nano' | 'mini'
 } & Omit<React.ComponentProps<typeof Card>, 'variant'>) => {

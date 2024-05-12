@@ -5,7 +5,7 @@ import { ChatPanel } from '@/components/command-bar/panels/ChatPanel'
 import { GenerationPanel } from '@/components/command-bar/panels/GenerationPanel'
 import { ModelBrowserPanel } from '@/components/command-bar/panels/ModelBrowserPanel'
 
-import type { ModelContent } from '@/convex/external'
+import type { Temp_EModels } from '@/convex/models'
 import type { ButtonProps } from '@radix-ui/themes'
 
 type Panel = {
@@ -58,7 +58,10 @@ export const useCommandBar = () => {
 }
 
 // generation
-const currentModelAtom = atomWithStorage<ModelContent | undefined>('current-model', undefined)
+const currentModelAtom = atomWithStorage<Temp_EModels[number] | undefined>(
+  'current-model',
+  undefined,
+)
 export const useCurrentModelAtom = () => useAtom(currentModelAtom)
 
 const quantityAtom = atom('2')
