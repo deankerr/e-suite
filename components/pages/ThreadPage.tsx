@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react'
 
-import { Message } from '@/app/thread/[rid]/Message'
+import { MessageCard } from '@/components/cards/MessageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useThread } from '@/lib/api'
 
@@ -15,7 +15,7 @@ export const ThreadPage = ({ rid }: { rid: string }) => {
       <div className="space-y-4 p-1 sm:p-4">
         {messages.map((rid, i) => (
           <Suspense key={rid}>
-            <Message rid={rid} priority={i < 3} />
+            <MessageCard rid={rid} priority={i < 3} />
           </Suspense>
         ))}
 

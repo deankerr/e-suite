@@ -16,7 +16,10 @@ export const ChatPanel = () => {
       <form action={formAction} className="space-y-4">
         <FormControl>
           message
-          <FormInputTextarea name={'message'} />
+          <FormInputTextarea
+            placeholder="A bird in the bush is worth two in my shoe..."
+            name={'message'}
+          />
         </FormControl>
 
         <div className="gap-4 flex-between">

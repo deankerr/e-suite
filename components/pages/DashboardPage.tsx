@@ -12,7 +12,7 @@ export const DashboardPage = () => {
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 px-1 py-4 md:px-4">
+      <div className="px-1 py-4 md:px-4">
         <Card className="h-fit min-w-80 max-w-lg">
           <Heading size="4">Threads</Heading>
 

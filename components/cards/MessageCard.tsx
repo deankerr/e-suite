@@ -18,7 +18,7 @@ type MessageProps = {
   priority?: boolean
 }
 
-export const Message = ({ rid, priority = false }: MessageProps) => {
+export const MessageCard = ({ rid, priority = false }: MessageProps) => {
   const message = useMessage(rid)
   const { images } = message
 
