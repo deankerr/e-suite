@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { ScrollArea, TextField } from '@radix-ui/themes'
 import { SearchIcon } from 'lucide-react'
 
+import { ModelCard } from '@/components/cards/ModelCard'
 import { useCurrentModelAtom } from '@/components/command-bar/atoms'
-import { ModelCard } from '@/components/generation/ModelCard'
-import { useModelList } from '@/lib/queries'
+import { useModelList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ModelBrowserPanel = () => {

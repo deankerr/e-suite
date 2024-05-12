@@ -1,12 +1,12 @@
 import { Button, ScrollArea } from '@radix-ui/themes'
 
+import { ModelCard } from '@/components/cards/ModelCard'
 import { useCurrentModelAtom } from '@/components/command-bar/atoms'
 import { DimensionsInput } from '@/components/command-bar/form/DimensionsInput'
 import { FormLabel, inputRegister } from '@/components/command-bar/form/ParameterInputs'
 import { QuantityInput } from '@/components/command-bar/form/QuantityInput'
 import { SDModelLorasInput } from '@/components/command-bar/form/SDModelLorasInput'
 import { useGenerationForm } from '@/components/command-bar/form/useGenerationForm'
-import { ModelCard } from '@/components/generation/ModelCard'
 import { paramBodySchemas } from '@/convex/lib/schemas'
 
 export const GenerationPanel = () => {

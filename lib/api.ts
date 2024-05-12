@@ -91,3 +91,9 @@ export const useLoadThread = (rid?: string) => {
     setThread({ ...thread, pager, messages: pager.results.map(({ rid }) => rid) })
   }, [pager, setMessages, setThread, thread])
 }
+
+//* non-atom queries
+export const useModelList = (skip?: 'skip') => {
+  const models = useQuery(api.models.list, skip ?? {})
+  return models
+}

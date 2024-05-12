@@ -1,7 +1,7 @@
 import { Card, Inset } from '@radix-ui/themes'
 import NextImage from 'next/image'
 
-import { useModelList } from '@/lib/queries'
+import { useModelList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { ModelContent } from '@/convex/external'

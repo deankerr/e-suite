@@ -25,7 +25,7 @@ type GeneratedImageViewProps = {
 
 export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewProps>(
   function GeneratedImageView(
-    { generation, imageProps, containerWidth, containerHeight, enablePageLink = true },
+    { generation, imageProps, containerWidth, containerHeight },
     forwardedRef,
   ) {
     const image = generation
@@ -54,7 +54,8 @@ export const GeneratedImageView = forwardRef<HTMLDivElement, GeneratedImageViewP
       >
         {image && (
           <OptionalLink
-            enabled={enablePageLink}
+            // enabled={enablePageLink}
+            enabled={false}
             href={`/image/${generation.rid}`}
             className="block h-full w-full"
           >
