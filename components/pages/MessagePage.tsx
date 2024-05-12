@@ -4,7 +4,7 @@ import { MessageSquareIcon } from 'lucide-react'
 
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { JustifiedRowGrid } from '@/components/images/JustifiedRowGrid'
-import { useMessageQuery } from '@/lib/queries'
+import { useMessage } from '@/lib/api'
 import { GenerationView } from '../generation/GenerationView'
 import { PageHeader } from './PageHeader'
 
@@ -13,9 +13,9 @@ type MessagePageProps = {
 }
 
 export const MessagePage = ({ rid }: MessagePageProps) => {
-  const result = useMessageQuery({ rid })
-  const message = result?.message
-  const generated_images = result?.generated_images
+  const result = useMessage(rid)
+  const message = result
+  const generated_images = result.images
 
   // const imageList = generations?.filter((generation) => generation.result?.type !== 'error') ?? []
   const imageList = generated_images ?? []

@@ -1,4 +1,4 @@
-import { Card, Heading, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
+import { Button, Card, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
@@ -8,6 +8,8 @@ import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { api } from '@/convex/_generated/api'
 import { useMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
+
+import type { ButtonProps } from '@radix-ui/themes'
 
 const thumbnailHeightPx = 256
 
@@ -23,36 +25,53 @@ export const Message = ({ rid, priority = false }: MessageProps) => {
   const removeMessage = useMutation(api.messages.remove)
 
   const viewType = {
-    text: !images,
-    image: !!images,
+    text: message.text,
+    image: images.length > 0,
   }
 
   const icon = viewType.image ? (
-    <ImageIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
+    <ImageIcon className="size-5" />
   ) : (
-    <MessageSquareIcon className="mr-1 size-6 stroke-[1.5] text-orange-11" />
+    <MessageSquareIcon className="size-5" />
   )
 
-  const title = message?.name ?? getRole(message.role)
-  // const title = generations?.[0] ? generations?.[0].prompt : message?.name ?? getRole(message.role)
+  const title = images?.[0]
+    ? images?.[0].parameters?.prompt
+    : message?.name ?? getRole(message.role)
 
-  // const errors = new Set(
-  //   generations
-  //     ?.filter((generation) => generation.result?.type === 'error')
-  //     .map((generation) => generation.result!.message),
-  // )
   return (
-    <Card>
+    <Card className={cn('mx-auto max-w-4xl')}>
       <div className="space-y-3">
         <Inset side="top">
-          <div className="h-10 bg-gray-3 p-2 flex-between">
-            <div className="shrink-0">{icon}</div>
+          <div className="h-10 gap-2 bg-gray-3 p-2 flex-between">
+            {/* message type icon */}
+            <div className="flex-none flex-start">
+              <IconButton variant="ghost" size="1">
+                {icon}
+              </IconButton>
+            </div>
 
-            <Heading size="3" className="grow truncate">
+            {/* title */}
+            <div className="grow truncate text-sm font-semibold">
               <Link href={`/message/${message.rid}`}>{title}</Link>
-            </Heading>
+            </div>
 
-            <div className="shrink-0">
+            <div className="flex-none gap-1.5 flex-end">
+              {/* role */}
+              <Button
+                variant="surface"
+                size="1"
+                className="font-mono"
+                color={getRoleColor(message.role)}
+              >
+                {message.role}
+              </Button>
+
+              <IconButton variant="surface" size="1" className="font-serif text-sm">
+                i
+              </IconButton>
+
+              {/* delete */}
               <IconButton
                 color="red"
                 size="1"
@@ -66,17 +85,17 @@ export const Message = ({ rid, priority = false }: MessageProps) => {
                     })
                 }}
               >
-                <Trash2Icon className="size-4 stroke-[1.5]" />
+                <Trash2Icon className="size-4" />
               </IconButton>
             </div>
           </div>
         </Inset>
 
-        {viewType.text && <div className="min-h-6">{message.text}</div>}
+        {viewType.text && <div className="min-h-6">{quickFormat(message.text)}</div>}
 
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
-            <div className={cn('h-64 gap-2 flex-start')}>
+            <div className={cn('h-64 gap-2 flex-center')}>
               {/* {[...errors].map((message) => (
                 <ErrorCallout
                   key={message}
@@ -85,7 +104,6 @@ export const Message = ({ rid, priority = false }: MessageProps) => {
                 />
               ))} */}
               {images?.map((generation) => {
-                // if (generation.result?.type === 'error') return null
                 return (
                   <GeneratedImageView
                     key={generation._id}
@@ -113,4 +131,26 @@ const getRole = (role: string) => {
   }
 
   return roles[role] ?? role
+}
+
+const getRoleColor = (role: string) => {
+  const fallback = 'orange'
+
+  const colors: Record<string, ButtonProps['color']> = {
+    user: 'orange',
+    assistant: 'blue',
+    system: 'grass',
+  }
+  return colors[role] ?? fallback
+}
+
+const quickFormat = (text = '') => {
+  const p = text.split('\n').filter((t) => t)
+  return (
+    <div className="mx-auto flex flex-col gap-3 text-base">
+      {p.map((t, i) => (
+        <p key={i}>{t}</p>
+      ))}
+    </div>
+  )
 }

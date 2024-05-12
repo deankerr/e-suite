@@ -2,7 +2,6 @@
 
 import { MessagesSquareIcon } from 'lucide-react'
 
-import { ThreadMessage } from '@/components/threads/ThreadMessage'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useThreadFeed } from '@/lib/queries'
 import InfiniteScroll from '../ui/InfiniteScroll'

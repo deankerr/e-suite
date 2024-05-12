@@ -16,7 +16,7 @@ export const AppLogoTitle = ({ showText = true, className, ...props }: AppLogoTi
         <NextImage
           src={LogoSunset}
           alt="logo"
-          className="size-5 flex-none md:size-7"
+          className="size-5 flex-none md:size-6"
           priority
           unoptimized
         />

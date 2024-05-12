@@ -9,17 +9,6 @@ const ridFields = {
   private: z.boolean(),
 }
 
-/* Public ents
-  app_images
-  generated_images
-  generation_jobs - status/size only?
-  generation_votes
-  messages
-  threads
-  users
-
-*/
-
 const appImage = z.object({
   _id: zid('app_images'),
   _creationTime: z.number(),
@@ -40,6 +29,8 @@ const generatedImage = z.object({
   height: z.number(),
   blurDataUrl: z.string(),
   color: z.string(),
+
+  parameters: z.record(z.string(), z.any()),
 
   rid: ridField,
 })

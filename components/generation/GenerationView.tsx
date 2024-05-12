@@ -1,11 +1,8 @@
-import { Card } from '@radix-ui/themes'
-
 import { GeneratedImageView } from '../images/GeneratedImageView'
-import { GenerationDataList } from './GenerationDataList'
 
-import type { GeneratedImage } from '@/convex/external'
+import type { EGeneratedImage } from '@/convex/external'
 
-type GenerationViewProps = { generation: GeneratedImage }
+type GenerationViewProps = { generation: EGeneratedImage }
 
 export const GenerationView = ({ generation }: GenerationViewProps) => {
   return (
@@ -18,9 +15,7 @@ export const GenerationView = ({ generation }: GenerationViewProps) => {
         />
       </div>
 
-      <div>
-        <Card>{/* <GenerationDataList generations={[generation]} /> */}</Card>
-      </div>
+      <div>{/* <Card><GenerationDataList generations={[generation]} /></Card> */}</div>
     </div>
   )
 }
