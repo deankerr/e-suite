@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
-import { usePaginatedQuery, useQuery } from 'convex/react'
+import { useUser } from '@clerk/nextjs'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { atomWithPending } from 'jotai-suspense'
 import { atomFamily } from 'jotai/utils'
+import { useSelectedLayoutSegments } from 'next/navigation'
 
 import { api } from '@/convex/_generated/api'
 
@@ -74,6 +76,13 @@ export const useThread = (rid: string) => {
   return thread
 }
 
+export const useThreadCtx = () => {
+  const segments = useSelectedLayoutSegments()
+  const [_, rid] = segments
+  const thread = useAtomValue(threadAtoms(rid ?? ''))
+  return thread
+}
+
 export const useLoadThread = (rid?: string) => {
   const thread = useQuery(api.ext.threads.get, rid ? { rid } : 'skip')
   const pager = usePaginatedQuery(
@@ -96,4 +105,16 @@ export const useLoadThread = (rid?: string) => {
 export const useModelList = (skip?: 'skip') => {
   const models = useQuery(api.models.list, skip ?? {})
   return models
+}
+
+export const useDashboardTemp = () => {
+  const self = useQuery(api.users.getSelf, {})
+
+  const threads = useQuery(api.threads.list, {})
+  const createThread = useMutation(api.threads.create)
+  const removeThread = useMutation(api.threads.remove)
+
+  const userAuth = useUser()
+
+  return { self, threads, createThread, removeThread, userAuth }
 }

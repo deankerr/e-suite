@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { zfd } from 'zod-form-data'
 
 import { api } from '@/convex/_generated/api'
-import { useThreadCtx } from '@/lib/queries'
+import { useThreadCtx } from '@/lib/api'
 
 const formSchema = zfd.formData({
   message: zfd.text(),

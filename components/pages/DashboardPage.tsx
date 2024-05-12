@@ -15,11 +15,11 @@ import { MessagesSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { useCurrentUserThreads } from '@/lib/queries'
+import { useDashboardTemp } from '@/lib/api'
 import { PageHeader } from './PageHeader'
 
 export const DashboardPage = () => {
-  const { self, threads, createThread, removeThread, userAuth } = useCurrentUserThreads()
+  const { self, threads, createThread, removeThread, userAuth } = useDashboardTemp()
 
   return (
     <>

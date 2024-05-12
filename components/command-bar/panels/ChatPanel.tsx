@@ -6,7 +6,7 @@ import {
   FormInputText,
   FormInputTextarea,
 } from '@/components/command-bar/form/ParameterInputs'
-import { useChatForm } from '@/components/command-bar/form/useChstForm'
+import { useChatForm } from '@/components/command-bar/form/useChatForm'
 
 export const ChatPanel = () => {
   const { formAction } = useChatForm()
