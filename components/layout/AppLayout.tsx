@@ -3,7 +3,7 @@
 import { Separator } from '@radix-ui/themes'
 
 import { AppClientLayout } from '@/components/layout/AppClientLayout'
-import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
+import { TitleMenuButton } from '@/components/layout/TitleMenuButton'
 import { UserSegment } from '@/components/layout/UserSegment'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import { cn } from '@/lib/utils'
@@ -11,9 +11,9 @@ import { cn } from '@/lib/utils'
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className={cn('mx-auto min-h-screen max-w-8xl')}>
-      <header className="h-10 bg-gray-1 px-1 flex-start md:h-12 md:gap-2 md:px-3">
+      <header className="grid h-10 grid-cols-[1fr_3fr_1fr] items-center bg-gray-1 px-1 md:h-12 md:gap-2 md:px-3">
         <AppLogoTitle />
-        <Breadcrumbs />
+        <TitleMenuButton />
         <UserSegment />
       </header>
       <div>

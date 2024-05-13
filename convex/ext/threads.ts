@@ -16,6 +16,41 @@ export const get = query({
   },
 })
 
+export const getLatest = query({
+  args: {},
+  handler: async (ctx) => {
+    const viewerId = ctx.viewerId
+    if (!viewerId) return null
+
+    const thread = await ctx
+      .table('threads', 'userId', (q) => q.eq('userId', viewerId))
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .first()
+
+    if (!thread || thread.deletionTime) return null
+
+    const messages = await thread
+      .edge('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(10)
+      .map(async (m) => {
+        const message = validators.message.parse(m)
+        const images = await m
+          .edge('generated_images')
+          .filter((q) => q.eq(q.field('deletionTime'), undefined))
+
+        return {
+          ...message,
+          images: validators.generatedImage.array().parse(images),
+        }
+      })
+
+    return { thread: validators.thread.parse(thread), messages }
+  },
+})
+
 export const list = query({
   args: {
     order: z.enum(['asc', 'desc']).default('desc'),

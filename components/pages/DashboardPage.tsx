@@ -1,19 +1,39 @@
 'use client'
 
-import { Button, Card, Heading, IconButton, TextField } from '@radix-ui/themes'
-import { MessagesSquareIcon, Trash2Icon } from 'lucide-react'
-import Link from 'next/link'
-import { toast } from 'sonner'
+import { MessageCard } from '@/components/cards/MessageCard'
+import { InputBar } from '@/components/input-bar/InputBar'
+import { useLatestThread, useThread } from '@/lib/api2'
 
-import { useViewerThreads } from '@/lib/api'
+import type { api } from '@/convex/_generated/api'
+import type { Preloaded } from 'convex/react'
 
-export const DashboardPage = () => {
-  const { threads, createThread, removeThread } = useViewerThreads()
+export const DashboardPage = ({
+  preloadedThread,
+}: {
+  preloadedThread: Preloaded<typeof api.ext.threads.getLatest>
+}) => {
+  const latest = useLatestThread(preloadedThread)
+
+  const thread = useThread()
+  const messages = latest?.thread._id === thread?._id ? latest?.messages ?? [] : []
 
   return (
     <>
       <div className="px-1 py-4 md:px-4">
-        <Card className="h-fit min-w-80 max-w-lg">
+        <div className="mx-auto space-y-4">
+          {messages.map((message) => (
+            <MessageCard key={message._id} message={message} />
+          ))}
+        </div>
+      </div>
+
+      <InputBar />
+    </>
+  )
+}
+
+/*
+<Card className="h-fit min-w-80 max-w-lg">
           <Heading size="4">Threads</Heading>
 
           <div className="divide-y">
@@ -63,7 +83,5 @@ export const DashboardPage = () => {
             ))}
           </div>
         </Card>
-      </div>
-    </>
-  )
-}
+
+*/

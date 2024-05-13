@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 
-import { InputBar } from '@/components/input-bar/InputBar'
 import { ThreadPage } from '@/components/pages/ThreadPage'
 
 export default function Page({ params: { rid } }: { params: { rid: string } }) {
@@ -15,7 +14,6 @@ export default function Page({ params: { rid } }: { params: { rid: string } }) {
       >
         <ThreadPage rid={rid} />
       </Suspense>
-      <InputBar />
     </>
   )
 }

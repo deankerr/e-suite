@@ -9,19 +9,17 @@ import { api } from '@/convex/_generated/api'
 import { useMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EGeneratedImage, EMessage } from '@/convex/external'
 import type { ButtonProps } from '@radix-ui/themes'
 
 const thumbnailHeightPx = 256
 
 type MessageProps = {
-  // rid: string
-  message: EMessage & { images: EGeneratedImage[] }
+  rid: string
   priority?: boolean
 }
 
-export const MessageCard = ({ message, priority = false }: MessageProps) => {
-  // const message = useMessage(rid)
+export const MessageCardS = ({ rid, priority = false }: MessageProps) => {
+  const message = useMessage(rid)
   const { images } = message
 
   const removeMessage = useMutation(api.messages.remove)
