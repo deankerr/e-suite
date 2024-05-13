@@ -7,7 +7,7 @@ async function main() {
     .map((model) => {
       if (!model.isFeaturedModel) return null
       return {
-        ref: model.name,
+        model_id: model.name,
         name: model.display_name,
         creatorName: model.creator_organization,
         type: model.display_type,

@@ -4,6 +4,7 @@ import { internal } from './_generated/api'
 import { internalMutation, query } from './functions'
 import FalModelsJson from './providers/fal.models.json'
 import SinkinModelsJson from './providers/sinkin.models.json'
+import TogetherAiModels from './providers/togetherai.models.json'
 
 import type { api } from './_generated/api'
 import type { FunctionReturnType } from 'convex/server'
@@ -49,5 +50,15 @@ export const importCoverImages = internalMutation({
     for (const model of modelsList) {
       await ctx.scheduler.runAfter(0, internal.app_images.importUrl, { url: model.cover_image })
     }
+  },
+})
+
+const chatModels = TogetherAiModels.filter((m) => m.type === 'chat')
+
+export const listChatModels = query({
+  args: {},
+  // eslint-disable-next-line @typescript-eslint/require-await
+  handler: async () => {
+    return chatModels
   },
 })
