@@ -34,7 +34,7 @@ export const acquire = internalMutation({
   },
   handler: async (ctx, { generationJobId }) => {
     const job = await ctx.table('generation_jobs').getX(generationJobId)
-    insist(job.status === 'pending', 'invalid job status')
+    insist(job.status === 'queue', 'invalid job status')
     await job.patch({ status: 'active' })
 
     return job

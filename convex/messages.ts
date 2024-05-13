@@ -1,9 +1,9 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { internal } from './_generated/api'
 import { createCompletionJob } from './completion'
 import { internalQuery, mutation, query } from './functions'
+import { createGenerationJob } from './generation_jobs'
 import { completionParameters, generationParameters, messageFields, ridField } from './schema'
 import { generateRid } from './utils'
 
@@ -39,40 +39,38 @@ export const create = mutation({
     ctx,
     { threadId, message: messageFields, completions = [], generations = [], ...args },
   ) => {
-    const rid = await generateRid(ctx, 'messages')
     const user = await ctx.viewerX()
 
-    const message = await ctx
-      .table('messages')
-      .insert({ threadId, ...messageFields, rid, userId: user._id, private: args.private })
-      .get()
+    const messageId = await ctx.table('messages').insert({
+      threadId,
+      ...messageFields,
+      rid: await generateRid(ctx, 'messages'),
+      userId: user._id,
+      private: args.private,
+    })
 
-    const asstMessageId =
-      message.role !== 'assistant' && completions.length > 0
-        ? await ctx
-            .table('messages')
-            .insert({
+    if (completions.length > 0 || generations.length > 0) {
+      const targetMessageId =
+        messageFields.role === 'assistant'
+          ? messageId
+          : await ctx.table('messages').insert({
               threadId,
               role: 'assistant',
               rid: await generateRid(ctx, 'messages'),
               userId: user._id,
               private: args.private,
             })
-        : null
 
-    for (const parameters of completions) {
-      await createCompletionJob(ctx, { parameters, messageId: asstMessageId ?? message._id })
+      for (const parameters of completions) {
+        await createCompletionJob(ctx, { parameters, messageId: targetMessageId })
+      }
+
+      for (const parameters of generations) {
+        await createGenerationJob(ctx, { parameters, messageId: targetMessageId })
+      }
     }
 
-    for (const parameters of generations) {
-      const generationJobId = await ctx
-        .table('generation_jobs')
-        .insert({ parameters, messageId: message._id, status: 'pending' })
-
-      await ctx.scheduler.runAfter(0, internal.generation_jobs.run, { generationJobId })
-    }
-
-    return message._id
+    return messageId
   },
 })
 

@@ -16,14 +16,15 @@ import { cn } from '@/lib/utils'
 type InputBarProps = { props?: unknown }
 
 export const InputBar = ({}: InputBarProps) => {
-  const threadId = useCurrentThreadId()
   const [inputBar, setInputBar] = useInputBarAtom()
+
+  const threadId = useCurrentThreadId()
   const chatModels = useQuery(api.models.listChatModels, {}) ?? []
   const imageModels = useModelList() ?? []
 
   const send = useMutation(api.messages.create)
 
-  const sendChat = async () => {
+  const sendMessage = async () => {
     if (!threadId) return
 
     try {
@@ -33,11 +34,30 @@ export const InputBar = ({}: InputBarProps) => {
           role: 'user',
           text: inputBar.prompt,
         },
-        completions: [
-          {
-            model: inputBar.chatModel,
-          },
-        ],
+        completions:
+          inputBar.mode === 'chat'
+            ? [
+                {
+                  model: inputBar.chatModel,
+                },
+              ]
+            : undefined,
+        generations:
+          inputBar.mode === 'image'
+            ? [
+                {
+                  model_id: inputBar.imageModel,
+                  prompt: inputBar.prompt,
+                  provider: inputBar.imageModel.startsWith('fal') ? 'fal' : 'sinkin',
+                  endpoint: '',
+                  size: 'square_hd',
+                  width: 1024,
+                  height: 1024,
+                  n: 4,
+                  entries: [],
+                },
+              ]
+            : undefined,
       })
 
       toast.success('Message sent.')
@@ -62,11 +82,7 @@ export const InputBar = ({}: InputBarProps) => {
                 onChange={(e) => setInputBar((o) => ({ ...o, prompt: e.target.value }))}
               />
               <div className="h-9 flex-end">
-                <IconButton
-                  variant="ghost"
-                  size="2"
-                  onClick={() => inputBar.mode === 'chat' && void sendChat()}
-                >
+                <IconButton variant="ghost" size="2" onClick={() => void sendMessage()}>
                   <SendHorizonalIcon />
                 </IconButton>
               </div>
@@ -87,8 +103,8 @@ export const InputBar = ({}: InputBarProps) => {
 
               <div className={cn('hidden w-64', inputBar.mode === 'image' && 'block')}>
                 <SelectList
-                  items={imageModels.map(({ resId, name }) => ({
-                    value: resId,
+                  items={imageModels.map(({ model_id, name }) => ({
+                    value: model_id,
                     label: name,
                   }))}
                   value={inputBar.imageModel}
