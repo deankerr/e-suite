@@ -2,7 +2,6 @@
 
 import { Separator } from '@radix-ui/themes'
 
-import { InputBar } from '@/components/InputBar'
 import { AppClientLayout } from '@/components/layout/AppClientLayout'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { UserSegment } from '@/components/layout/UserSegment'
@@ -23,7 +22,6 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
       {children}
       <AppClientLayout />
-      <InputBar />
     </div>
   )
 }
