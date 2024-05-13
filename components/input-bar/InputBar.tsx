@@ -1,23 +1,51 @@
 'use client'
 
 import { IconButton, SegmentedControl } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { SendHorizonalIcon } from 'lucide-react'
 import TextareaAutosize from 'react-textarea-autosize'
+import { toast } from 'sonner'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { Glass } from '@/components/ui/Glass'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
-import { useModelList } from '@/lib/api'
+import { useCurrentThreadId, useModelList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 type InputBarProps = { props?: unknown }
 
 export const InputBar = ({}: InputBarProps) => {
+  const threadId = useCurrentThreadId()
   const [inputBar, setInputBar] = useInputBarAtom()
   const chatModels = useQuery(api.models.listChatModels, {}) ?? []
   const imageModels = useModelList() ?? []
+
+  const send = useMutation(api.messages.create)
+
+  const sendChat = async () => {
+    if (!threadId) return
+
+    try {
+      await send({
+        threadId: threadId,
+        message: {
+          role: 'user',
+          text: inputBar.prompt,
+        },
+        completions: [
+          {
+            model: inputBar.chatModel,
+          },
+        ],
+      })
+
+      toast.success('Message sent.')
+    } catch (err) {
+      console.error(err)
+      toast.error('An error occurred')
+    }
+  }
 
   return (
     <div className="fixed bottom-0 left-1/2 flex w-full -translate-x-1/2 flex-col justify-center">
@@ -34,7 +62,11 @@ export const InputBar = ({}: InputBarProps) => {
                 onChange={(e) => setInputBar((o) => ({ ...o, prompt: e.target.value }))}
               />
               <div className="h-9 flex-end">
-                <IconButton variant="ghost" size="2">
+                <IconButton
+                  variant="ghost"
+                  size="2"
+                  onClick={() => inputBar.mode === 'chat' && void sendChat()}
+                >
                   <SendHorizonalIcon />
                 </IconButton>
               </div>
@@ -50,6 +82,8 @@ export const InputBar = ({}: InputBarProps) => {
                 <SegmentedControl.Item value="chat">Chat</SegmentedControl.Item>
                 <SegmentedControl.Item value="image">Image</SegmentedControl.Item>
               </SegmentedControl.Root>
+
+              <div className="font-mono text-xs">{threadId}</div>
 
               <div className={cn('hidden w-64', inputBar.mode === 'image' && 'block')}>
                 <SelectList

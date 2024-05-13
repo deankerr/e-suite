@@ -4,7 +4,7 @@ import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { atomWithPending } from 'jotai-suspense'
 import { atomFamily } from 'jotai/utils'
-import { useSelectedLayoutSegments } from 'next/navigation'
+import { usePathname, useSelectedLayoutSegments } from 'next/navigation'
 
 import { api } from '@/convex/_generated/api'
 
@@ -81,6 +81,14 @@ export const useThreadCtx = () => {
   const [_, rid] = segments
   const thread = useAtomValue(threadAtoms(rid ?? ''))
   return thread
+}
+
+export const useCurrentThreadId = () => {
+  const pathname = usePathname()
+  const [_, route, rid] = pathname.split('/')
+  const queryKey = route === 'thread' && rid ? { rid } : 'skip'
+  const thread = useQuery(api.ext.threads.get, queryKey)
+  return thread?._id
 }
 
 export const useLoadThread = (rid?: string) => {

@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as app_images from "../app_images.js";
+import type * as completion from "../completion.js";
 import type * as constants from "../constants.js";
 import type * as ext_generatedImages from "../ext/generatedImages.js";
 import type * as ext_messages from "../ext/messages.js";
@@ -140,6 +141,7 @@ import type * as validators from "../validators.js";
  */
 declare const fullApi: ApiFromModules<{
   app_images: typeof app_images;
+  completion: typeof completion;
   constants: typeof constants;
   "ext/generatedImages": typeof ext_generatedImages;
   "ext/messages": typeof ext_messages;
