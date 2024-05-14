@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { api } from '@/convex/_generated/api'
-import { useMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EGeneratedImage, EMessage } from '@/convex/external'
@@ -15,13 +15,11 @@ import type { ButtonProps } from '@radix-ui/themes'
 const thumbnailHeightPx = 256
 
 type MessageProps = {
-  // rid: string
   message: EMessage & { images: EGeneratedImage[] }
   priority?: boolean
 }
 
 export const MessageCard = ({ message, priority = false }: MessageProps) => {
-  // const message = useMessage(rid)
   const { images } = message
 
   const removeMessage = useMutation(api.messages.remove)
@@ -154,5 +152,13 @@ const quickFormat = (text = '') => {
         <p key={i}>{t}</p>
       ))}
     </div>
+  )
+}
+
+export const MessageCardSkeleton = () => {
+  return (
+    <Skeleton className="mx-auto min-h-32 w-full max-w-4xl">
+      <Skeleton className="h-10 rounded-b-none bg-gray-3" />
+    </Skeleton>
   )
 }
