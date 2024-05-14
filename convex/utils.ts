@@ -43,6 +43,7 @@ export const generateSha256Hash = async (input: string) => {
   return hashHex
 }
 
+export type ZPaginationOptValidator = z.infer<typeof zPaginationOptValidator>
 export const zPaginationOptValidator = z.object({
   numItems: z.number(),
   cursor: z.union([z.string(), z.null()]),

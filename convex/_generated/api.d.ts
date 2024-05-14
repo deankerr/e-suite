@@ -17,7 +17,6 @@ import type {
 import type * as app_images from "../app_images.js";
 import type * as completion from "../completion.js";
 import type * as constants from "../constants.js";
-import type * as ext_generatedImages from "../ext/generatedImages.js";
 import type * as ext_messages from "../ext/messages.js";
 import type * as ext_threads from "../ext/threads.js";
 import type * as ext_user from "../ext/user.js";
@@ -126,6 +125,9 @@ import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as providers_types from "../providers/types.js";
 import type * as rules from "../rules.js";
 import type * as threads from "../threads.js";
+import type * as threadsx_mutations from "../threadsx/mutations.js";
+import type * as threadsx_queries from "../threadsx/queries.js";
+import type * as threadsx from "../threadsx.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
@@ -143,7 +145,6 @@ declare const fullApi: ApiFromModules<{
   app_images: typeof app_images;
   completion: typeof completion;
   constants: typeof constants;
-  "ext/generatedImages": typeof ext_generatedImages;
   "ext/messages": typeof ext_messages;
   "ext/threads": typeof ext_threads;
   "ext/user": typeof ext_user;
@@ -252,6 +253,9 @@ declare const fullApi: ApiFromModules<{
   "providers/types": typeof providers_types;
   rules: typeof rules;
   threads: typeof threads;
+  "threadsx/mutations": typeof threadsx_mutations;
+  "threadsx/queries": typeof threadsx_queries;
+  threadsx: typeof threadsx;
   types: typeof types;
   users: typeof users;
   utils: typeof utils;

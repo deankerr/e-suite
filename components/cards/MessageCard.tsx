@@ -15,7 +15,7 @@ import type { ButtonProps } from '@radix-ui/themes'
 const thumbnailHeightPx = 256
 
 type MessageProps = {
-  message: EMessage & { images: EGeneratedImage[] }
+  message: EMessage & { images?: EGeneratedImage[] }
   priority?: boolean
 }
 
@@ -26,7 +26,7 @@ export const MessageCard = ({ message, priority = false }: MessageProps) => {
 
   const viewType = {
     text: message.text,
-    image: images.length > 0,
+    image: images && images.length > 0,
   }
 
   const icon = viewType.image ? (

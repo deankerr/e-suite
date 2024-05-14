@@ -1,17 +1,22 @@
 import { Separator } from '@radix-ui/themes'
+import { preloadQuery } from 'convex/nextjs'
 
 import { AppClientLayout } from '@/components/layout/AppClientLayout'
 import { TitleMenuButton } from '@/components/layout/TitleMenuButton'
 import { UserSegment } from '@/components/layout/UserSegment'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
+import { api } from '@/convex/_generated/api'
+import { getAuthToken } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
-export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+export const AppLayout = async ({ children }: { children: React.ReactNode }) => {
+  const token = await getAuthToken()
+  const preloadedThreads = await preloadQuery(api.threadsx.listThreads, {}, { token })
   return (
     <div className={cn('mx-auto min-h-screen max-w-8xl')}>
       <header className="grid h-10 grid-cols-[1fr_3fr_1fr] items-center bg-gray-1 px-1 md:h-12 md:gap-2 md:px-3">
         <AppLogoTitle />
-        <TitleMenuButton />
+        <TitleMenuButton preloadedThreads={preloadedThreads} />
         <UserSegment />
       </header>
       <div>

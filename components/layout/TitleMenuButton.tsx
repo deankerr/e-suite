@@ -1,27 +1,25 @@
 'use client'
 
-import { IconButton, Select } from '@radix-ui/themes'
-import { useAtom } from 'jotai'
-import { EllipsisIcon, PlusCircleIcon, Trash2Icon } from 'lucide-react'
+import { useState } from 'react'
+import { IconButton, Select, TextField } from '@radix-ui/themes'
+import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon } from 'lucide-react'
 
-import { Spinner } from '@/components/ui/Spinner'
-import { useThreadMutations, useThreads } from '@/lib/api2'
-import { activeThreadAtom } from '@/lib/atoms'
+import { usePreloadedThreads, useThreadMutations } from '@/lib/api3'
+import { cn } from '@/lib/utils'
 
-type TitleMenuButtonProps = { props?: unknown }
+import type { api } from '@/convex/_generated/api'
+import type { Id } from '@/convex/_generated/dataModel'
+import type { Preloaded } from 'convex/react'
 
-export const TitleMenuButton = ({}: TitleMenuButtonProps) => {
-  const [activeThread, setActiveThread] = useAtom(activeThreadAtom)
+type TitleMenuButtonProps = { preloadedThreads: Preloaded<typeof api.threadsx.listThreads> }
 
-  const { results: threads } = useThreads()
-  const { create, remove } = useThreadMutations()
+export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
+  const { create, remove, rename } = useThreadMutations()
+  const { threads, activeThreadId, setActiveThreadId } = usePreloadedThreads(preloadedThreads)
+  const activeThread = threads.find((thread) => thread._id === activeThreadId)
 
-  if (!activeThread)
-    return (
-      <div className="flex w-full">
-        <Spinner className="mx-auto" />
-      </div>
-    )
+  const [isRenamingThread, setIsRenamingThread] = useState(false)
+  const [newThreadTitle, setNewThreadTitle] = useState('')
 
   return (
     <div className="w-full gap-2 flex-center">
@@ -29,33 +27,60 @@ export const TitleMenuButton = ({}: TitleMenuButtonProps) => {
         <PlusCircleIcon />
       </IconButton>
 
-      <Select.Root
-        value={activeThread.rid}
-        onValueChange={(rid) => {
-          const nextThread = threads.find((thread) => thread.rid === rid)
-          setActiveThread(nextThread)
-        }}
-      >
-        <Select.Trigger className="w-full max-w-60 text-center [&>span]:grow" />
+      {isRenamingThread && (
+        <TextField.Root
+          className="w-full max-w-60"
+          placeholder="set new thread title"
+          value={newThreadTitle}
+          onChange={(e) => setNewThreadTitle(e.target.value)}
+        />
+      )}
+
+      <Select.Root value={activeThreadId} onValueChange={setActiveThreadId}>
+        <Select.Trigger
+          className={cn('w-full max-w-60 text-center [&>span]:grow', isRenamingThread && 'hidden')}
+        />
 
         <Select.Content position="popper">
           {threads.map((thread) => (
-            <Select.Item key={thread._id} value={thread.rid}>
+            <Select.Item key={thread._id} value={thread._id}>
               {thread.title ?? 'Untitled'}
             </Select.Item>
           ))}
         </Select.Content>
       </Select.Root>
 
-      <IconButton variant="ghost" size="2">
-        <EllipsisIcon />
-      </IconButton>
+      {/* rename */}
+      {isRenamingThread ? (
+        <IconButton
+          variant="ghost"
+          color="grass"
+          onClick={() => {
+            setIsRenamingThread(false)
+            if (!newThreadTitle || newThreadTitle === activeThread?.title) return
+            rename(activeThreadId, newThreadTitle)
+          }}
+        >
+          <CheckIcon />
+        </IconButton>
+      ) : (
+        <IconButton
+          variant="ghost"
+          onClick={() => {
+            setIsRenamingThread(true)
+            setNewThreadTitle(activeThread?.title ?? '')
+          }}
+        >
+          <FolderPenIcon />
+        </IconButton>
+      )}
 
+      {/* delete */}
       <IconButton
         variant="ghost"
-        color="tomato"
+        color="red"
         onClick={() => {
-          remove(activeThread._id)
+          remove(activeThreadId as Id<'threads'>)
         }}
       >
         <Trash2Icon />

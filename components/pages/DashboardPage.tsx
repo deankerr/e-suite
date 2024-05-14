@@ -2,33 +2,23 @@
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { InputBarB } from '@/components/input-bar/InputBarB'
-import { useLatestThread, useMessages, useThread } from '@/lib/api2'
+import { useActiveThread } from '@/lib/api3'
 
-import type { api } from '@/convex/_generated/api'
-import type { Preloaded } from 'convex/react'
-
-export const DashboardPage = ({
-  preloadedThread,
-}: {
-  preloadedThread: Preloaded<typeof api.ext.threads.getLatest>
-}) => {
-  const latest = useLatestThread(preloadedThread)
-
-  const thread = useThread()
-  const { results, isLoading } = useMessages()
-
-  const messages = latest?.thread._id === thread?._id ? latest?.messages ?? [] : results
-
+export const DashboardPage = () => {
+  const thread = useActiveThread()
+  const messages = thread?.messages ?? []
   return (
     <>
-      {isLoading && <DashboardPageSkeleton />}
+      {!thread && <DashboardPageSkeleton />}
       <div className="px-1 py-4 md:px-4">
         <div className="mx-auto space-y-4">
-          {messages?.map((message) => <MessageCard key={message._id} message={message} />)}
+          {messages.map((message) => (
+            <MessageCard key={message._id} message={message} />
+          ))}
         </div>
       </div>
 
-      <InputBarB centered={!isLoading && messages.length === 0} />
+      <InputBarB centered={thread !== undefined && messages.length === 0} />
     </>
   )
 }
