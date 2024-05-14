@@ -95,25 +95,16 @@ export const MessageCard = ({ message, priority = false }: MessageProps) => {
 
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
-            <div className={cn('h-64 gap-2 flex-center')}>
-              {/* {[...errors].map((message) => (
-                <ErrorCallout
-                  key={message}
-                  title="(sinkin.ai) endpoint returned error:"
-                  message={message}
+            <div className="mx-auto grid w-fit grid-cols-2 place-content-center gap-2">
+              {images?.map((image) => (
+                <GeneratedImageView
+                  key={image._id}
+                  generation={image}
+                  containerHeight={thumbnailHeightPx}
+                  imageProps={{ priority }}
+                  enablePageLink
                 />
-              ))} */}
-              {images?.map((generation) => {
-                return (
-                  <GeneratedImageView
-                    key={generation._id}
-                    generation={generation}
-                    containerHeight={thumbnailHeightPx}
-                    imageProps={{ priority }}
-                    enablePageLink
-                  />
-                )
-              })}
+              ))}
             </div>
           </ScrollArea>
         )}
