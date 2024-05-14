@@ -1,18 +1,21 @@
 'use client'
 
 import { IconButton, SegmentedControl } from '@radix-ui/themes'
-import { useMutation, useQuery } from 'convex/react'
-import { SendHorizonalIcon } from 'lucide-react'
+import { useQuery } from 'convex/react'
+import {
+  RectangleHorizontalIcon,
+  RectangleVerticalIcon,
+  SendHorizonalIcon,
+  SquareIcon,
+} from 'lucide-react'
 import TextareaAutosize from 'react-textarea-autosize'
-import { toast } from 'sonner'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { useSendMessage } from '@/components/input-bar/useSendMessage'
 import { Glass } from '@/components/ui/Glass'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
-import { useCurrentThreadId, useModelList } from '@/lib/api'
-import { cn } from '@/lib/utils'
+import { useModelList } from '@/lib/api'
 
 type InputBarProps = { props?: unknown }
 
@@ -57,28 +60,59 @@ export const InputBar = ({}: InputBarProps) => {
                 <SegmentedControl.Item value="image">Image</SegmentedControl.Item>
               </SegmentedControl.Root>
 
-              <div className={cn('hidden w-64', inputBar.mode === 'image' && 'block')}>
-                {imageModels && (
-                  <SelectList
-                    items={imageModels.map(({ model_id, name }) => ({
-                      value: model_id,
-                      label: name,
-                    }))}
-                    value={inputBar.imageModel}
-                    onValueChange={(value) => setInputBar((o) => ({ ...o, imageModel: value }))}
-                  />
+              {/* right */}
+              <div className="flex gap-2">
+                {inputBar.mode === 'image' && (
+                  <>
+                    <SegmentedControl.Root
+                      value={inputBar.imageShape}
+                      onValueChange={(v) => {
+                        setInputBar((o) => ({
+                          ...o,
+                          imageShape: v as 'portrait' | 'square' | 'landscape',
+                        }))
+                      }}
+                    >
+                      <SegmentedControl.Item value="portrait">
+                        <RectangleVerticalIcon className="size-4" />
+                      </SegmentedControl.Item>
+                      <SegmentedControl.Item value="square">
+                        <SquareIcon className="size-4" />
+                      </SegmentedControl.Item>
+                      <SegmentedControl.Item value="landscape">
+                        <RectangleHorizontalIcon className="size-4" />
+                      </SegmentedControl.Item>
+                    </SegmentedControl.Root>
+
+                    {imageModels && (
+                      <div className="w-64">
+                        <SelectList
+                          items={imageModels.map(({ model_id, name }) => ({
+                            value: model_id,
+                            label: name,
+                          }))}
+                          value={inputBar.imageModel}
+                          onValueChange={(value) =>
+                            setInputBar((o) => ({ ...o, imageModel: value }))
+                          }
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
-              </div>
-              <div className={cn('hidden w-64', inputBar.mode === 'chat' && 'block')}>
-                {chatModels && (
-                  <SelectList
-                    items={chatModels.map(({ model_id, name }) => ({
-                      value: model_id,
-                      label: name,
-                    }))}
-                    value={inputBar.chatModel}
-                    onValueChange={(value) => setInputBar((o) => ({ ...o, chatModel: value }))}
-                  />
+
+                {/* chat input */}
+                {inputBar.mode === 'chat' && chatModels && (
+                  <div className="w-64">
+                    <SelectList
+                      items={chatModels.map(({ model_id, name }) => ({
+                        value: model_id,
+                        label: name,
+                      }))}
+                      value={inputBar.chatModel}
+                      onValueChange={(value) => setInputBar((o) => ({ ...o, chatModel: value }))}
+                    />
+                  </div>
                 )}
               </div>
             </div>

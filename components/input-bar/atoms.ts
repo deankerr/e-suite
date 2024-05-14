@@ -2,16 +2,18 @@ import { atom, useAtom } from 'jotai'
 
 type InputBarData = {
   mode: 'chat' | 'image'
+  prompt: string
   chatModel: string
   imageModel: string
-  prompt: string
+  imageShape: 'portrait' | 'square' | 'landscape'
 }
 
 const inputBarAtom = atom<InputBarData>({
   mode: 'chat',
+  prompt: '',
   chatModel: 'Austism/chronos-hermes-13b',
   imageModel: 'fal-ai/hyper-sdxl',
-  prompt: '',
+  imageShape: 'square',
 })
 
 export const useInputBarAtom = () => useAtom(inputBarAtom)

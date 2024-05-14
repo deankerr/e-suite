@@ -3,6 +3,9 @@ import { toast } from 'sonner'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { api } from '@/convex/_generated/api'
+import { imageGenerationSizesMap } from '@/convex/constants'
+
+import type { GenerationProvider } from '@/convex/types'
 
 export const useSendMessage = () => {
   const [inputBar] = useInputBarAtom()
@@ -13,7 +16,8 @@ export const useSendMessage = () => {
 
   const sendMessage = async () => {
     if (!threadId) return
-
+    const provider = inputBar.imageModel.startsWith('fal') ? 'fal' : 'sinkin'
+    const size = getImageSize(inputBar.imageShape, provider)
     try {
       await send({
         threadId: threadId,
@@ -35,11 +39,9 @@ export const useSendMessage = () => {
                 {
                   model_id: inputBar.imageModel,
                   prompt: inputBar.prompt,
-                  provider: inputBar.imageModel.startsWith('fal') ? 'fal' : 'sinkin',
+                  provider: provider,
                   endpoint: '',
-                  size: 'square_hd',
-                  width: 1024,
-                  height: 1024,
+                  ...size,
                   n: 4,
                   entries: [],
                 },
@@ -54,4 +56,27 @@ export const useSendMessage = () => {
     }
   }
   return sendMessage
+}
+
+const getImageSize = (
+  size: string,
+  provider: GenerationProvider,
+): { size: keyof typeof imageGenerationSizesMap; width: number; height: number } => {
+  switch (size) {
+    case 'portrait':
+      return provider === 'fal'
+        ? { size: 'portrait_16_9', ...imageGenerationSizesMap['portrait_16_9'] }
+        : { size: 'portrait_4_3', ...imageGenerationSizesMap['portrait_4_3'] }
+
+    case 'landscape':
+      return provider === 'fal'
+        ? { size: 'landscape_16_9', ...imageGenerationSizesMap['landscape_16_9'] }
+        : { size: 'landscape_4_3', ...imageGenerationSizesMap['landscape_4_3'] }
+
+    case 'square':
+    default:
+      return provider === 'fal'
+        ? { size: 'square_hd', ...imageGenerationSizesMap['square_hd'] }
+        : { size: 'square', ...imageGenerationSizesMap['square'] }
+  }
 }

@@ -19,7 +19,7 @@ export const textToImage: TextToImageHandler = async ({
   parameters: z.infer<typeof generationParameters>
   n: number
 }) => {
-  const { entries, model_id, prompt } = parameters
+  const { entries, model_id, prompt, width, height } = parameters
 
   const body = new URLSearchParams()
 
@@ -28,6 +28,8 @@ export const textToImage: TextToImageHandler = async ({
   }
   body.set('model_id', model_id)
   body.set('prompt', prompt)
+  body.set('width', String(width))
+  body.set('height', String(height))
 
   body.set('num_images', String(n))
 
