@@ -56,11 +56,11 @@ const Refraction = ({
         maskImage,
         WebkitMaskImage: maskImage,
         backgroundColor,
-        borderRadius,
-        borderTopLeftRadius,
-        borderTopRightRadius,
-        borderBottomLeftRadius,
-        borderBottomRightRadius,
+
+        borderTopLeftRadius: borderTopLeftRadius ?? borderRadius,
+        borderTopRightRadius: borderTopRightRadius ?? borderRadius,
+        borderBottomLeftRadius: borderBottomLeftRadius ?? borderRadius,
+        borderBottomRightRadius: borderBottomRightRadius ?? borderRadius,
       }}
     />
   )

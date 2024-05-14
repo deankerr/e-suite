@@ -9,7 +9,7 @@ type InputBarData = {
 }
 
 const inputBarAtom = atom<InputBarData>({
-  mode: 'chat',
+  mode: 'image',
   prompt: '',
   chatModel: 'Austism/chronos-hermes-13b',
   imageModel: 'fal-ai/hyper-sdxl',
