@@ -4,11 +4,11 @@ import { SearchIcon } from 'lucide-react'
 
 import { ModelCard } from '@/components/cards/ModelCard'
 import { useCurrentModelAtom } from '@/components/command-bar/atoms'
-import { useModelList } from '@/lib/api'
+import { useImageModelList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ModelBrowserPanel = () => {
-  const models = useModelList() ?? []
+  const models = useImageModelList() ?? []
   const [searchValue, setSearchValue] = useState('')
   const [currentModel, setCurrentModel] = useCurrentModelAtom()
 

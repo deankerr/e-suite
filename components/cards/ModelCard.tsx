@@ -1,25 +1,23 @@
 import { Card, Inset } from '@radix-ui/themes'
 import NextImage from 'next/image'
 
-import { useModelList } from '@/lib/api'
+
 import { cn } from '@/lib/utils'
 
 import type { Temp_EModels } from '@/convex/models'
 
 export const ModelCard = ({
   model: modelFromProps,
-  resId,
   variant = 'mini',
   className,
   ...props
 }: {
-  model?: Temp_EModels[number]
-  resId?: string
+  model: Temp_EModels[number]
+
   variant?: 'nano' | 'mini'
 } & Omit<React.ComponentProps<typeof Card>, 'variant'>) => {
-  const modelList = useModelList(modelFromProps ? 'skip' : undefined)
 
-  const model = modelFromProps || modelList?.find((model) => model.resId === resId)
+  const model = modelFromProps
   if (!model) return null
 
   const sizeCn = variant === 'nano' ? 'h-32 w-32' : 'h-60 w-40'

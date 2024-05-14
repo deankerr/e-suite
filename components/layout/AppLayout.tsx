@@ -1,7 +1,6 @@
 import { Separator } from '@radix-ui/themes'
 import { preloadQuery } from 'convex/nextjs'
 
-import { AppClientLayout } from '@/components/layout/AppClientLayout'
 import { TitleMenuButton } from '@/components/layout/TitleMenuButton'
 import { UserSegment } from '@/components/layout/UserSegment'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
@@ -24,7 +23,6 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
       </div>
 
       <div className="min-h-[calc(100vh-2.5rem)]">{children}</div>
-      <AppClientLayout />
     </div>
   )
 }

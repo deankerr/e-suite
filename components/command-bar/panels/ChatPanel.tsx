@@ -6,10 +6,10 @@ import {
   FormInputText,
   FormInputTextarea,
 } from '@/components/command-bar/form/ParameterInputs'
-import { useChatForm } from '@/components/command-bar/form/useChatForm'
 
 export const ChatPanel = () => {
-  const { formAction } = useChatForm()
+  // const { formAction } = useChatForm()
+  const formAction = () => {}
 
   return (
     <div className="h-full rounded-lg bg-gray-2 p-2 font-mono text-xs">

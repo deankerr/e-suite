@@ -2,7 +2,7 @@
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { InputBarB } from '@/components/input-bar/InputBarB'
-import { useActiveThread } from '@/lib/api3'
+import { useActiveThread } from '@/lib/api'
 
 export const DashboardPage = () => {
   const thread = useActiveThread()

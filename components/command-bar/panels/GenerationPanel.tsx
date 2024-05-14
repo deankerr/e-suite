@@ -1,16 +1,15 @@
 import { Button, ScrollArea } from '@radix-ui/themes'
 
-import { ModelCard } from '@/components/cards/ModelCard'
 import { useCurrentModelAtom } from '@/components/command-bar/atoms'
 import { DimensionsInput } from '@/components/command-bar/form/DimensionsInput'
 import { FormLabel, inputRegister } from '@/components/command-bar/form/ParameterInputs'
 import { QuantityInput } from '@/components/command-bar/form/QuantityInput'
 import { SDModelLorasInput } from '@/components/command-bar/form/SDModelLorasInput'
-import { useGenerationForm } from '@/components/command-bar/form/useGenerationForm'
 import { paramBodySchemas } from '@/convex/lib/schemas'
 
 export const GenerationPanel = () => {
-  const { formAction } = useGenerationForm()
+  // const { formAction } = useGenerationForm()
+  const formAction = () => {}
 
   const [currentModel] = useCurrentModelAtom()
   const formTarget = currentModel
@@ -51,7 +50,7 @@ export const GenerationPanel = () => {
 
             <div className="flex flex-col justify-between pb-3">
               <FormLabel htmlFor={'model'}>model</FormLabel>
-              <ModelCard variant="nano" model={currentModel} />
+              {/* <ModelCard variant="nano" model={currentModel} /> */}
             </div>
           </div>
 

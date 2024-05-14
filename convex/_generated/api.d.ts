@@ -17,9 +17,6 @@ import type {
 import type * as app_images from "../app_images.js";
 import type * as completion from "../completion.js";
 import type * as constants from "../constants.js";
-import type * as ext_messages from "../ext/messages.js";
-import type * as ext_threads from "../ext/threads.js";
-import type * as ext_user from "../ext/user.js";
 import type * as external from "../external.js";
 import type * as functions from "../functions.js";
 import type * as generated_images from "../generated_images.js";
@@ -145,9 +142,6 @@ declare const fullApi: ApiFromModules<{
   app_images: typeof app_images;
   completion: typeof completion;
   constants: typeof constants;
-  "ext/messages": typeof ext_messages;
-  "ext/threads": typeof ext_threads;
-  "ext/user": typeof ext_user;
   external: typeof external;
   functions: typeof functions;
   generated_images: typeof generated_images;

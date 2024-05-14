@@ -1,17 +1,18 @@
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { api } from '@/convex/_generated/api'
 import { imageGenerationSizesMap } from '@/convex/constants'
+import { useActiveThread } from '@/lib/api'
 
 import type { GenerationProvider } from '@/convex/types'
 
 export const useSendMessage = () => {
   const [inputBar] = useInputBarAtom()
-  const latest = useQuery(api.ext.threads.getLatest, {})
+  const thread = useActiveThread()
 
-  const threadId = latest?.thread._id
+  const threadId = thread?._id
   const send = useMutation(api.messages.create)
 
   const sendMessage = async () => {

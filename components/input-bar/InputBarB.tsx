@@ -17,7 +17,6 @@ import { useSendMessage } from '@/components/input-bar/useSendMessage'
 import { Glass } from '@/components/ui/Glass'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
-import { useModelList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 type InputBarProps = { centered?: boolean }
@@ -26,7 +25,7 @@ export const InputBarB = ({ centered = false }: InputBarProps) => {
   const [inputBar, setInputBar] = useInputBarAtom()
 
   const chatModels = useQuery(api.models.listChatModels, {})
-  const imageModels = useModelList()
+  const imageModels = useQuery(api.models.listImageModels, {})
 
   const sendMessage = useSendMessage()
 

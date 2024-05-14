@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { IconButton, Select, TextField } from '@radix-ui/themes'
 import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon } from 'lucide-react'
 
-import { usePreloadedThreads, useThreadMutations } from '@/lib/api3'
+import { usePreloadedThreads, useThreadMutations } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'

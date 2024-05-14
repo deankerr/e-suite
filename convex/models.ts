@@ -9,7 +9,7 @@ import TogetherAiModels from './providers/togetherai.models.json'
 import type { api } from './_generated/api'
 import type { FunctionReturnType } from 'convex/server'
 
-export type Temp_EModels = FunctionReturnType<typeof api.models.list>
+export type Temp_EModels = FunctionReturnType<typeof api.models.listImageModels>
 
 const falAvailableIds = [
   'fal-ai/hyper-sdxl',
@@ -30,7 +30,7 @@ const sinkin = SinkinModelsJson.map((model) => ({
 
 export const modelsList = [fal, sinkin].flat()
 
-export const list = query({
+export const listImageModels = query({
   args: {},
   handler: async (ctx) => {
     const models = await asyncMap(modelsList, async (model) => ({
