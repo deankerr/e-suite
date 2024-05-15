@@ -97,18 +97,17 @@ export const MessageCard = ({ message }: MessageProps) => {
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className="mx-auto grid w-fit grid-cols-2 place-content-center gap-2">
               {images?.map((image) => <ImageCard key={image._id} image={image} />)}
-              {/* {images?.map((image) => (
-                <GeneratedImageView
-                  key={image._id}
-                  generation={image}
-                  containerHeight={thumbnailHeightPx}
-                  imageProps={{ priority }}
-                  enablePageLink
-                />
-              ))} */}
             </div>
           </ScrollArea>
         )}
+
+        <div className="flex flex-wrap gap-3 font-mono text-xs">
+          {message?.jobs?.map((job, i) => (
+            <div key={i} className="">
+              [{job.type}: {job.status} {job.time && `${(job.time / 1000).toFixed(2)}s`}]
+            </div>
+          ))}
+        </div>
       </div>
     </Card>
   )

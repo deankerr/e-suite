@@ -7,7 +7,6 @@ export const serveImage = httpAction(async (ctx, request) => {
   const url = new URL(request.url)
   const imageId = getIdFromPath(url.pathname, '/i')
   const image = imageId ? await ctx.runQuery(internal.images.query.get, { imageId }) : null
-  console.log(imageId)
   if (!image) return new Response('invalid image id', { status: 400 })
 
   const blob = await ctx.storage.get(image.fileId)

@@ -62,7 +62,7 @@ export const processImage = async (input: Blob, options?: Partial<SharpProcessOp
       return { width, height, format }
     })
 
-  const webpBuffer = await sharp(original).webp({ effort: 6 }).toBuffer()
+  const webpBuffer = await sharp(original).webp({ effort: 4 }).toBuffer()
   const webpBlob = new Blob([webpBuffer], { type: 'image/webp' })
 
   // see https://github.com/joe-bell/plaiceholder/blob/main/packages/plaiceholder/src/index.ts

@@ -2,7 +2,15 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { generationProviders, generationVoteNames, messageRoles } from './constants'
+import { jobStatusEnum, jobTypesEnum } from './jobs/schema'
 import { ridField } from './schema'
+
+const generationVote = z.object({
+  _id: zid('generation_votes'),
+  deletionTime: z.undefined().optional(),
+
+  vote: z.enum(generationVoteNames),
+})
 
 const image = z.object({
   _id: zid('images'),
@@ -15,12 +23,30 @@ const image = z.object({
   color: z.string(),
 })
 
-const generationVote = z.object({
-  _id: zid('generation_votes'),
-  deletionTime: z.undefined().optional(),
+const job = z
+  .object({
+    deletionTime: z.undefined().optional(),
 
-  vote: z.enum(generationVoteNames),
-})
+    type: jobTypesEnum,
+    status: jobStatusEnum,
+
+    metrics: z
+      .object({
+        startTime: z.number().optional(),
+        endTime: z.number().optional(),
+      })
+      .optional(),
+  })
+  .transform(({ type, status, metrics }) => {
+    const start = metrics?.startTime
+    const end = metrics?.endTime
+    const time = start && end ? end - start : 0
+    return {
+      type,
+      status,
+      time,
+    }
+  })
 
 const model = z.object({
   model_id: z.string(),
@@ -68,6 +94,7 @@ const self = user.merge(z.object({ apiKey: z.string().optional() }))
 export const validators = {
   generationVote,
   image,
+  job,
   model,
   message,
   thread,

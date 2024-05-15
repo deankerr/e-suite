@@ -13,7 +13,10 @@ export type MessageWithContent = z.infer<typeof messageWithContentSchema>
 
 //* validators
 const messageWithContentSchema = validators.message.merge(
-  z.object({ images: validators.image.array().optional() }),
+  z.object({
+    images: validators.image.array().optional(),
+    jobs: validators.job.array().optional(),
+  }),
 )
 
 const threadWithMessagesSchema = validators.thread.merge(
@@ -27,6 +30,7 @@ const messageWithContent = async (message: Ent<'messages'>) => {
   return {
     ...message,
     images: await message.edge('images').filter((q) => q.eq(q.field('deletionTime'), undefined)),
+    jobs: await message.edge('jobs').filter((q) => q.eq(q.field('deletionTime'), undefined)),
   }
 }
 

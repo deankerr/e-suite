@@ -27,7 +27,7 @@ export const textToImage = internalAction({
   args: {
     jobId: zid('jobs'),
   },
-  handler: async (ctx, { jobId }) => {
+  handler: async (ctx, { jobId }): Promise<void> => {
     const job = await ctx.runMutation(internal.jobs.manage.acquire, { jobId })
 
     const { inference } = await ctx.runQuery(internal.jobs.generation.getJobMessage, {
