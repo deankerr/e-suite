@@ -1,7 +1,6 @@
 import { entDefinitions } from './schema'
 
 import type { TableNames } from './_generated/dataModel'
-import type { generationProviders } from './constants'
 import type { authOnlyMutation, authOnlyQuery } from './functions'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
@@ -17,7 +16,6 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
 >
 
 export type ScheduledFunction = SystemDataModel['_scheduled_functions']['document']
-// export type JobStatus = ScheduledFunction['state']['kind'] | 'unknown'
 
 export type CollectionItem<T extends object> = { id: string; name: string } & T
 export type CollectionGroup<T extends object> = {
@@ -26,12 +24,3 @@ export type CollectionGroup<T extends object> = {
   group: CollectionItem<T>[]
 }
 export type Collection<T extends object> = (CollectionItem<T> | CollectionGroup<T>)[]
-
-export type ImageModel = {
-  id: string
-  name: string
-  link: string
-  civitai_model_id?: number
-}
-
-export type GenerationProvider = (typeof generationProviders)[number]

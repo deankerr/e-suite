@@ -4,8 +4,6 @@ import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { imageGenerationSizesMap } from '@/convex/constants'
 import { useActiveThread, useCreateMessage } from '@/lib/api'
 
-import type { GenerationProvider } from '@/convex/types'
-
 export const useSendMessage = () => {
   const [inputBar] = useInputBarAtom()
   const thread = useActiveThread()
@@ -59,7 +57,7 @@ export const useSendMessage = () => {
 
 const getImageSize = (
   size: string,
-  provider: GenerationProvider,
+  provider: 'fal' | 'sinkin',
 ): { size: keyof typeof imageGenerationSizesMap; width: number; height: number } => {
   switch (size) {
     case 'portrait':

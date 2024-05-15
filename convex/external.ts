@@ -4,32 +4,6 @@ import { z } from 'zod'
 import { generationProviders, generationVoteNames, messageRoles } from './constants'
 import { ridField } from './schema'
 
-const appImage = z.object({
-  _id: zid('app_images'),
-  _creationTime: z.number(),
-  deletionTime: z.undefined().optional(),
-
-  width: z.number(),
-  height: z.number(),
-  blurDataUrl: z.string(),
-  color: z.string(),
-})
-
-const generatedImage = z.object({
-  _id: zid('generated_images'),
-  _creationTime: z.number(),
-  deletionTime: z.undefined().optional(),
-
-  width: z.number(),
-  height: z.number(),
-  blurDataUrl: z.string(),
-  color: z.string(),
-
-  parameters: z.record(z.string(), z.any()),
-
-  rid: ridField,
-})
-
 const image = z.object({
   _id: zid('images'),
   _creationTime: z.number(),
@@ -92,8 +66,6 @@ const user = z.object({
 const self = user.merge(z.object({ apiKey: z.string().optional() }))
 
 export const validators = {
-  appImage,
-  generatedImage,
   generationVote,
   image,
   model,
@@ -103,7 +75,6 @@ export const validators = {
   self,
 }
 
-export type EGeneratedImage = z.infer<typeof generatedImage>
 export type EImage = z.infer<typeof image>
 export type EMessage = z.infer<typeof message>
 export type EThread = z.infer<typeof thread>

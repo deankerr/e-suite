@@ -8,8 +8,8 @@ export const jobTypesEnum = z.enum([
   'chat-completion',
   'title-completion',
   'text-to-image',
+  'create-images-from-results',
   'text-to-speech',
-  'fetch-image-to-file',
 ])
 export const jobResultTypesEnum = z.enum(['message', 'url', 'error', 'openai-chat-completion-json'])
 
@@ -22,14 +22,11 @@ export const jobFields = {
 
   messageId: zid('messages'),
   threadId: zid('threads'),
-  input: z.string().optional(),
 
   metrics: z
     .object({
-      active: z.object({
-        startedTime: z.number(),
-        endedTime: z.number(),
-      }),
+      startTime: z.number().optional(),
+      endTime: z.number().optional(),
     })
     .optional(),
 }

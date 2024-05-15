@@ -3,8 +3,6 @@
 //   trimTo: (v: string, max?: number) => v.slice(0, max ?? maxInputStringLength).trim(),
 // }
 
-import type { GenerationProvider } from '../types'
-
 const inputRegister = {
   textarea: 'textarea',
   text: 'text',
@@ -204,7 +202,7 @@ const fal = {
   ],
 } satisfies Record<string, ParameterFormInput[]>
 
-export const paramBodySchemas: Record<GenerationProvider, Record<string, ParameterFormInput[]>> = {
+export const paramBodySchemas: Record<'fal' | 'sinkin', Record<string, ParameterFormInput[]>> = {
   sinkin,
   fal,
 }

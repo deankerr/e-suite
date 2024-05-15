@@ -114,16 +114,16 @@ export const MessageCard = ({ message }: MessageProps) => {
   )
 }
 
-const getRole = (role: string) => {
-  const roles: Record<string, string> = {
-    user: 'User',
-    assistant: 'AI',
-    system: 'System',
-    tool: 'Tool',
-  }
+// const getRole = (role: string) => {
+//   const roles: Record<string, string> = {
+//     user: 'User',
+//     assistant: 'AI',
+//     system: 'System',
+//     tool: 'Tool',
+//   }
 
-  return roles[role] ?? role
-}
+//   return roles[role] ?? role
+// }
 
 const getRoleColor = (role: string) => {
   const fallback = 'orange'

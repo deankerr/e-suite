@@ -16,7 +16,7 @@ export const generateRandomString = (length: number) => {
 }
 
 //* rid
-type RidTables = 'messages' | 'generated_images' | 'threads' | 'users'
+type RidTables = 'messages' | 'threads' | 'users'
 
 export const generateRid = async (ctx: MutationCtx, table: RidTables): Promise<string> => {
   const rid = generateRandomString(ridLength)

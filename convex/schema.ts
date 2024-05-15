@@ -1,10 +1,10 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 import { z } from 'zod'
 
-import { generationVoteNames, imageSrcsetWidths, ridLength } from './constants'
+import { ridLength } from './constants'
 import { imageFields } from './images/schema'
 import { jobFields } from './jobs/schema'
 import { messageFields, threadFields } from './threads/schema'
@@ -37,67 +37,20 @@ const speech = defineEnt({
   voiceRef: v.string(),
 })
 
-//* Images
-export const srcsetField = z
-  .object({
-    width: z.number().refine((val) => imageSrcsetWidths.some((width) => width === val)),
-    fileId: zid('_storage'),
-  })
-  .array()
+// Votes
+// export const generationVoteFields = {
+//   vote: z.enum(generationVoteNames),
 
-const sharedImageFields = {
-  width: z.number(),
-  height: z.number(),
-
-  sourceUrl: z.string(),
-  sourceFileId: zid('_storage'),
-
-  // optimized
-  fileId: zid('_storage'),
-
-  blurDataUrl: z.string(),
-  color: z.string(),
-}
-
-//* App Images
-export const appImageFields = { ...sharedImageFields, srcset: srcsetField }
-const app_images = defineEnt(zodToConvexFields(appImageFields)).index('sourceUrl', ['sourceUrl'])
-
-//* Generated Images
-export const generatedImageFields = {
-  ...sharedImageFields,
-  srcset: srcsetField.optional(),
-  // parameters: generationParameters.optional(), // TODO fix
-}
-const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
-  .deletion('scheduled', {
-    delayMs: timeToDelete,
-  })
-  .field('rid', zodToConvex(ridField), { unique: true })
-  .edge('message')
-  .edges('generation_votes', { ref: true })
-
-//* Votes
-export const generationVoteFields = {
-  vote: z.enum(generationVoteNames),
-
-  userId: zid('users').optional(),
-  ip: z.string().optional(),
-  constituent: z.string().uuid(),
-  metadata: z.any().optional(),
-}
-const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
-  .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('generated_image')
-  .index('userId', ['userId'])
-  .index('ip', ['ip'])
-  .index('constituent_vote', ['constituent', 'generated_imageId'])
+//   userId: zid('users').optional(),
+//   ip: z.string().optional(),
+//   constituent: z.string().uuid(),
+//   metadata: z.any().optional(),
+// }
 
 //* Messages
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
-  .edges('generated_images', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('thread')
@@ -140,15 +93,11 @@ const images = defineEnt(zodToConvexFields(imageFields))
     delayMs: timeToDelete,
   })
   .edge('message')
+  .index('originUrl', ['originUrl'])
 
 //* Schema
 const schema = defineEntSchema(
   {
-    app_images,
-
-    generated_images,
-    generation_votes,
-
     jobs,
     images,
 

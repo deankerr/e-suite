@@ -1,7 +1,6 @@
 import { asyncMap } from 'convex-helpers'
 
-import { internal } from './_generated/api'
-import { internalMutation, query } from './functions'
+import { query } from './functions'
 import FalModelsJson from './providers/fal.models.json'
 import SinkinModelsJson from './providers/sinkin.models.json'
 import TogetherAiModels from './providers/togetherai.models.json'
@@ -36,7 +35,7 @@ export const listImageModels = query({
     const models = await asyncMap(modelsList, async (model) => ({
       ...model,
       image: await ctx
-        .table('app_images', 'sourceUrl', (q) => q.eq('sourceUrl', model.cover_image))
+        .table('images', 'originUrl', (q) => q.eq('originUrl', model.cover_image))
         .first(),
     }))
 
@@ -44,14 +43,14 @@ export const listImageModels = query({
   },
 })
 
-export const importCoverImages = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    for (const model of modelsList) {
-      await ctx.scheduler.runAfter(0, internal.app_images.importUrl, { url: model.cover_image })
-    }
-  },
-})
+// export const importCoverImages = internalMutation({
+//   args: {},
+//   handler: async (ctx) => {
+//     for (const model of modelsList) {
+//       await ctx.scheduler.runAfter(0, internal.app_images.importUrl, { url: model.cover_image })
+//     }
+//   },
+// })
 
 const chatModels = TogetherAiModels.filter((m) => m.type === 'chat')
 

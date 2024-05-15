@@ -2,6 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internalQuery } from '../functions'
+import { jobTypesEnum } from '../jobs/schema'
 import { insist } from '../utils'
 
 const msgSchema = z.object({
@@ -63,13 +64,16 @@ export const getTitleCompletionContext = internalQuery({
   },
 })
 
-// export const getMessageWithJobs = internalQuery({
-//   args: {
-//     messageId: zid('messages'),
-//   },
-//   handler: async (ctx, { messageId }) => {
-//     const message = await ctx.table('messages').getX(messageId)
-//     const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
-//     return { message, jobs }
-//   },
-// })
+export const getMessageWithJobsOfType = internalQuery({
+  args: {
+    messageId: zid('messages'),
+    jobType: jobTypesEnum,
+  },
+  handler: async (ctx, { messageId, jobType }) => {
+    const message = await ctx.table('messages').getX(messageId)
+    const jobs = await ctx
+      .table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
+      .filter((q) => q.eq(q.field('type'), jobType))
+    return { message, jobs }
+  },
+})
