@@ -9,9 +9,11 @@ import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
 import type { ZPaginationOptValidator } from '../utils'
 
+export type MessageWithContent = z.infer<typeof messageWithContentSchema>
+
 //* validators
 const messageWithContentSchema = validators.message.merge(
-  z.object({ images: validators.generatedImage.array().optional() }),
+  z.object({ images: validators.image.array().optional() }),
 )
 
 const threadWithMessagesSchema = validators.thread.merge(
@@ -24,9 +26,7 @@ const threadSchema = validators.thread
 const messageWithContent = async (message: Ent<'messages'>) => {
   return {
     ...message,
-    images: await message
-      .edge('generated_images')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined)),
+    images: await message.edge('images').filter((q) => q.eq(q.field('deletionTime'), undefined)),
   }
 }
 

@@ -5,6 +5,7 @@ import { ms } from 'itty-time'
 import { z } from 'zod'
 
 import { generationVoteNames, imageSrcsetWidths, ridLength } from './constants'
+import { imageFields } from './images/schema'
 import { jobFields } from './jobs/schema'
 import { messageFields, threadFields } from './threads/schema'
 
@@ -73,7 +74,6 @@ const generated_images = defineEnt(zodToConvexFields(generatedImageFields))
     delayMs: timeToDelete,
   })
   .field('rid', zodToConvex(ridField), { unique: true })
-  .field('private', zodToConvex(z.boolean()), { index: true })
   .edge('message')
   .edges('generation_votes', { ref: true })
 
@@ -97,18 +97,16 @@ const generation_votes = defineEnt(zodToConvexFields(generationVoteFields))
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
-  .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('generated_images', { ref: true, deletion: 'soft' })
+  .edges('images', { ref: true, deletion: 'soft' })
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('thread')
   .edge('user')
 
 //* Threads
-
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
-  .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('user')
@@ -136,6 +134,13 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
   .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 
+//* Images
+const images = defineEnt(zodToConvexFields(imageFields))
+  .deletion('scheduled', {
+    delayMs: timeToDelete,
+  })
+  .edge('message')
+
 //* Schema
 const schema = defineEntSchema(
   {
@@ -145,6 +150,7 @@ const schema = defineEntSchema(
     generation_votes,
 
     jobs,
+    images,
 
     messages,
     threads,

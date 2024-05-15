@@ -30,6 +30,17 @@ const generatedImage = z.object({
   rid: ridField,
 })
 
+const image = z.object({
+  _id: zid('images'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined().optional(),
+
+  width: z.number(),
+  height: z.number(),
+  blurDataUrl: z.string(),
+  color: z.string(),
+})
+
 const generationVote = z.object({
   _id: zid('generation_votes'),
   deletionTime: z.undefined().optional(),
@@ -84,6 +95,7 @@ export const validators = {
   appImage,
   generatedImage,
   generationVote,
+  image,
   model,
   message,
   thread,
@@ -92,5 +104,6 @@ export const validators = {
 }
 
 export type EGeneratedImage = z.infer<typeof generatedImage>
+export type EImage = z.infer<typeof image>
 export type EMessage = z.infer<typeof message>
 export type EThread = z.infer<typeof thread>

@@ -3,8 +3,8 @@ import { z } from 'zod'
 
 import { internal } from './_generated/api'
 import { internalMutation, internalQuery, mutation } from './functions'
-import { generatedImageFields, ridField, srcsetField } from './schema'
-import { generateRid, runWithRetries } from './utils'
+import { ridField, srcsetField } from './schema'
+import { runWithRetries } from './utils'
 
 // *** public queries ***
 export const getHttp = internalQuery({

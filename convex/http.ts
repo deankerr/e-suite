@@ -3,6 +3,7 @@ import { ConvexError } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
+import { serveImage } from './images/http'
 import { handleWebhook } from './providers/clerk'
 
 import type { Id } from './_generated/dataModel'
@@ -16,8 +17,10 @@ http.route({
   handler: handleWebhook,
 })
 
+http.route({ pathPrefix: '/i/', method: 'GET', handler: serveImage })
+
 http.route({
-  pathPrefix: '/i/',
+  pathPrefix: '/gi/',
   method: 'GET',
   handler: httpAction(async (ctx, request) => {
     const { pathname, searchParams } = new URL(request.url)

@@ -12,7 +12,7 @@ export const createThread = mutation({
     const user = await ctx.viewerX()
     const rid = await generateRid(ctx, 'threads')
 
-    const threadId = await ctx.table('threads').insert({ userId: user._id, rid, private: true })
+    const threadId = await ctx.table('threads').insert({ userId: user._id, rid })
     return threadId
   },
 })
@@ -54,11 +54,11 @@ export const createMessage = mutation({
       ...args.message,
       rid: await generateRid(ctx, 'messages'),
       userId: user._id,
-      private: false,
     })
 
     if (!args.inference) return messageId
 
+    // todo could get created without valid job
     const targetMessageId =
       args.message.role === 'assistant'
         ? messageId
@@ -67,14 +67,15 @@ export const createMessage = mutation({
             role: 'assistant',
             rid: await generateRid(ctx, 'messages'),
             userId: user._id,
-            private: false,
             inference: args.inference,
           })
 
     if (args.inference.type === 'chat-completion') {
       await createJob(ctx, { type: 'chat-completion', messageId: targetMessageId, threadId })
-    } else {
-      //create job
+    }
+
+    if (args.inference.type === 'text-to-image') {
+      await createJob(ctx, { type: 'text-to-image', messageId: targetMessageId, threadId })
     }
 
     return targetMessageId

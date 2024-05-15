@@ -31,31 +31,31 @@ type SharpProcessOptions = {
 }
 
 //* Actions
-export const createGeneratedImageFromUrl = internalAction({
-  args: {
-    sourceUrl: z.string(),
-    generationJobId: zid('generation_jobs'),
-  },
-  handler: async (ctx, { sourceUrl, generationJobId }) => {
-    const inputBlob = await ky.get(sourceUrl).blob()
-    const { metadata, webpBlob, blurDataUrl, color } = await processImage(inputBlob)
+// export const createGeneratedImageFromUrl = internalAction({
+//   args: {
+//     sourceUrl: z.string(),
+//     generationJobId: zid('generation_jobs'),
+//   },
+//   handler: async (ctx, { sourceUrl, generationJobId }) => {
+//     const inputBlob = await ky.get(sourceUrl).blob()
+//     const { metadata, webpBlob, blurDataUrl, color } = await processImage(inputBlob)
 
-    const sourceBlob = new Blob([inputBlob], { type: `image/${metadata.format}` })
-    const sourceFileId = await ctx.storage.store(sourceBlob)
-    const webpStorageId = await ctx.storage.store(webpBlob)
+//     const sourceBlob = new Blob([inputBlob], { type: `image/${metadata.format}` })
+//     const sourceFileId = await ctx.storage.store(sourceBlob)
+//     const webpStorageId = await ctx.storage.store(webpBlob)
 
-    // await ctx.runMutation(internal.generated_images.create, {
-    //   generationJobId,
-    //   width: metadata.width,
-    //   height: metadata.height,
-    //   sourceFileId,
-    //   fileId: webpStorageId,
-    //   sourceUrl,
-    //   blurDataUrl,
-    //   color,
-    // })
-  },
-})
+//     // await ctx.runMutation(internal.generated_images.create, {
+//     //   generationJobId,
+//     //   width: metadata.width,
+//     //   height: metadata.height,
+//     //   sourceFileId,
+//     //   fileId: webpStorageId,
+//     //   sourceUrl,
+//     //   blurDataUrl,
+//     //   color,
+//     // })
+//   },
+// })
 
 export const createAppImageFromUrl = internalAction({
   args: {

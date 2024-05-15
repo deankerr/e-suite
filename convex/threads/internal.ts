@@ -62,3 +62,14 @@ export const getTitleCompletionContext = internalQuery({
     return { message, messages: msgSchema.array().parse(messages), inference }
   },
 })
+
+// export const getMessageWithJobs = internalQuery({
+//   args: {
+//     messageId: zid('messages'),
+//   },
+//   handler: async (ctx, { messageId }) => {
+//     const message = await ctx.table('messages').getX(messageId)
+//     const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
+//     return { message, jobs }
+//   },
+// })

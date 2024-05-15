@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { generationProviders, imageGenerationSizes } from '../constants'
+import { imageGenerationSizes } from '../constants'
 import { zTruncate } from '../validators'
 
 export type GenerationParameters = z.infer<typeof generationParameters>
@@ -9,11 +9,8 @@ export type GenerationParameters = z.infer<typeof generationParameters>
 export const messageRolesEnum = z.enum(['system', 'assistant', 'user'])
 
 export const generationParameters = z.object({
-  provider: z.enum(generationProviders), //todo remove
-  endpoint: z.string(),
-
   prompt: z.string(),
-  size: z.enum([...imageGenerationSizes, 'custom']), //todo remove
+  size: z.enum([...imageGenerationSizes, 'custom']), //?
   width: z.number(),
   height: z.number(),
   n: z.number(),

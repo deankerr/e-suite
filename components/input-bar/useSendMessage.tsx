@@ -27,7 +27,17 @@ export const useSendMessage = () => {
               model: inputBar.chatModel,
             },
           }
-        : undefined
+        : {
+            type: 'text-to-image' as const,
+            endpoint: provider,
+            parameters: {
+              prompt: inputBar.prompt,
+              ...size,
+              n: 4,
+              model_id: inputBar.imageModel,
+              entries: [],
+            },
+          }
     try {
       await create({
         threadId: threadId,

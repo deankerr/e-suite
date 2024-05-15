@@ -3,22 +3,22 @@ import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { GeneratedImageView } from '@/components/images/GeneratedImageView'
+import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useRemoveMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EGeneratedImage, EMessage } from '@/convex/external'
+import type { MessageWithContent } from '@/convex/threads/query'
 import type { ButtonProps } from '@radix-ui/themes'
 
-const thumbnailHeightPx = 256
+// const thumbnailHeightPx = 256
 
 type MessageProps = {
-  message: EMessage & { images?: EGeneratedImage[] }
+  message: MessageWithContent
   priority?: boolean
 }
 
-export const MessageCard = ({ message, priority = false }: MessageProps) => {
+export const MessageCard = ({ message }: MessageProps) => {
   const { images } = message
 
   const removeMessage = useRemoveMessage()
@@ -34,9 +34,10 @@ export const MessageCard = ({ message, priority = false }: MessageProps) => {
     <MessageSquareIcon className="size-5" />
   )
 
-  const title = images?.[0]
-    ? images?.[0].parameters?.prompt
-    : message?.name ?? getRole(message.role)
+  const title = 'message'
+  // const title = images?.[0]
+  //   ? images?.[0].parameters?.prompt
+  //   : message?.name ?? getRole(message.role)
 
   return (
     <Card className={cn('mx-auto max-w-4xl')}>
@@ -95,7 +96,8 @@ export const MessageCard = ({ message, priority = false }: MessageProps) => {
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className="mx-auto grid w-fit grid-cols-2 place-content-center gap-2">
-              {images?.map((image) => (
+              {images?.map((image) => <ImageCard key={image._id} image={image} />)}
+              {/* {images?.map((image) => (
                 <GeneratedImageView
                   key={image._id}
                   generation={image}
@@ -103,7 +105,7 @@ export const MessageCard = ({ message, priority = false }: MessageProps) => {
                   imageProps={{ priority }}
                   enablePageLink
                 />
-              ))}
+              ))} */}
             </div>
           </ScrollArea>
         )}

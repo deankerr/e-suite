@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { ConvexError } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
@@ -16,13 +17,27 @@ export const createJob = async (
     type,
     messageId,
     threadId,
-  }: { type: JobTypes; messageId: Id<'messages'>; threadId: Id<'threads'> },
+    input,
+  }: { type: JobTypes; messageId: Id<'messages'>; threadId: Id<'threads'>; input?: string },
 ) => {
   const jobId = await ctx
     .table('jobs')
-    .insert({ type, messageId, threadId, status: 'queued', results: [] })
+    .insert({ type, messageId, threadId, input, status: 'queued', results: [] })
 
-  await ctx.scheduler.runAfter(0, internal.jobs.completion.chatCompletion, { jobId })
+  switch (type) {
+    case 'text-to-image':
+      await ctx.scheduler.runAfter(0, internal.jobs.generation.textToImage, { jobId })
+      break
+    case 'chat-completion':
+      await ctx.scheduler.runAfter(0, internal.jobs.completion.chatCompletion, { jobId })
+      break
+    case 'fetch-image-to-file':
+      await ctx.scheduler.runAfter(0, internal.jobs.files.fetchImageToFile, { jobId })
+      break
+    default:
+      throw new ConvexError({ message: 'invalid job type', type })
+  }
+
   return jobId
 }
 
@@ -52,6 +67,15 @@ export const results = internalMutation({
     for (const result of results) {
       if (result.type === 'message' && job.type === 'chat-completion') {
         await ctx.table('messages').getX(job.messageId).patch({ content: result.value })
+      }
+
+      if (job.type === 'text-to-image' && result.type === 'url') {
+        await createJob(ctx, {
+          type: 'fetch-image-to-file',
+          messageId: job.messageId,
+          threadId: job.threadId,
+          input: result.value,
+        })
       }
     }
   },
