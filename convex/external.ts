@@ -51,7 +51,7 @@ const message = z.object({
 
   role: z.enum(messageRoles),
   name: z.string().optional(),
-  text: z.string().optional(),
+  content: z.string().optional(),
 
   rid: ridField,
 })

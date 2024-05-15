@@ -60,7 +60,7 @@ export const run = internalAction({
       completionJobId,
     })
 
-    const messages = await ctx.runQuery(internal.messages.getContext, {
+    const messages = await ctx.runQuery(internal.deprecated.messages.getContext, {
       messageId,
     })
 

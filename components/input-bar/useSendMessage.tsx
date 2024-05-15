@@ -1,10 +1,8 @@
-import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
-import { api } from '@/convex/_generated/api'
 import { imageGenerationSizesMap } from '@/convex/constants'
-import { useActiveThread } from '@/lib/api'
+import { useActiveThread, useCreateMessage } from '@/lib/api'
 
 import type { GenerationProvider } from '@/convex/types'
 
@@ -13,41 +11,31 @@ export const useSendMessage = () => {
   const thread = useActiveThread()
 
   const threadId = thread?._id
-  const send = useMutation(api.messages.create)
+  const create = useCreateMessage()
 
   const sendMessage = async () => {
     if (!threadId) return
     const provider = inputBar.imageModel.startsWith('fal') ? 'fal' : 'sinkin'
     const size = getImageSize(inputBar.imageShape, provider)
+
+    const inference =
+      inputBar.mode === 'chat'
+        ? {
+            type: 'chat-completion' as const,
+            endpoint: 'together',
+            parameters: {
+              model: inputBar.chatModel,
+            },
+          }
+        : undefined
     try {
-      await send({
+      await create({
         threadId: threadId,
         message: {
           role: 'user',
-          text: inputBar.prompt,
+          content: inputBar.prompt,
         },
-        completions:
-          inputBar.mode === 'chat'
-            ? [
-                {
-                  model: inputBar.chatModel,
-                },
-              ]
-            : undefined,
-        generations:
-          inputBar.mode === 'image'
-            ? [
-                {
-                  model_id: inputBar.imageModel,
-                  prompt: inputBar.prompt,
-                  provider: provider,
-                  endpoint: '',
-                  ...size,
-                  n: 4,
-                  entries: [],
-                },
-              ]
-            : undefined,
+        inference,
       })
 
       toast.success('Message sent.')

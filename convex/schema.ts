@@ -16,10 +16,47 @@ import {
 } from './constants'
 
 export type GenerationParameters = z.infer<typeof generationParameters>
+export type CompletionParameters = z.infer<typeof completionParameters>
 
 const timeToDelete = ms('1 day')
 
 export const ridField = z.string().length(ridLength)
+
+export type InferenceSchema = z.infer<typeof inferenceSchema>
+
+export type JobTypes = (typeof jobTypes)[number]
+
+export const jobTypes = [
+  'chat-completion',
+  'title-completion',
+  'text-to-image',
+  'text-to-speech',
+  'fetch-image',
+] as const
+
+export const resultTypes = ['message', 'url', 'error', 'openai-chat-completion-json'] as const
+
+export const jobResultSchema = z.object({ type: z.enum(resultTypes), value: z.string() })
+
+export const jobFields = {
+  type: z.enum(jobTypes),
+  status: z.enum(['queued', 'active', 'complete', 'failed']),
+  results: jobResultSchema.array(),
+
+  messageId: zid('messages'),
+  threadId: zid('threads'),
+
+  metrics: z
+    .object({
+      active: z.object({
+        startedTime: z.number(),
+        endedTime: z.number(),
+      }),
+    })
+    .optional(),
+}
+
+const jobs = defineEnt(zodToConvexFields(jobFields)).deletion('soft').edge('message').edge('thread')
 
 // TODO migrate
 const speech = defineEnt({
@@ -158,6 +195,18 @@ export const completionJobFields = {
 }
 const completion_jobs = defineEnt(zodToConvexFields(completionJobFields)).edge('message')
 
+export const inferenceSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('chat-completion'),
+    endpoint: z.string(),
+    parameters: completionParameters,
+  }),
+  z.object({
+    type: z.literal('text-to-image'),
+    endpoint: z.string(),
+    parameters: generationParameters,
+  }),
+])
 //* Messages
 export const messageFields = {
   role: z.enum(messageRoles),
@@ -166,17 +215,14 @@ export const messageFields = {
     .transform((value) => value.slice(0, maxMessageNameStringLength))
     .optional(),
   text: z.string().optional(),
+  content: z.string().optional(),
 
-  // completion: z
-  //   .object({
-  //     endpoint: z.string(),
-  //     parameters: completionParameters,
-  //   })
-  //   .optional(),
+  inference: inferenceSchema.optional(),
 
   metadata: z.string().array().array().optional(),
   speechId: zid('speech').optional(),
 }
+export const messageFieldsObject = z.object(messageFields)
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('rid', zodToConvex(ridField), { unique: true })
@@ -184,6 +230,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edges('generated_images', { ref: true, deletion: 'soft' })
   .edges('generation_jobs', { ref: true })
   .edges('completion_jobs', { ref: true })
+  .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('thread')
   .edge('user')
 
@@ -200,6 +247,7 @@ const threads = defineEnt(zodToConvexFields(threadFields))
   .field('rid', zodToConvex(ridField), { unique: true })
   .field('private', zodToConvex(z.boolean()), { index: true })
   .edges('messages', { ref: true, deletion: 'soft' })
+  .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('user')
 
 //* Users
@@ -234,6 +282,8 @@ const schema = defineEntSchema(
     generated_images,
     generation_jobs,
     generation_votes,
+
+    jobs,
 
     messages,
     threads,

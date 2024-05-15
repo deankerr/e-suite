@@ -34,7 +34,12 @@ export const getThread = async (ctx: QueryCtx, args: { threadId: string }) => {
   const thread = id ? await ctx.table('threads').get(id) : null
   if (!thread || thread.deletionTime) return null
 
-  const messages = await thread.edge('messages').order('desc').take(8).map(messageWithContent)
+  const messages = await thread
+    .edge('messages')
+    .order('desc')
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .take(8)
+    .map(messageWithContent)
 
   return threadWithMessagesSchema.parse({
     ...thread,

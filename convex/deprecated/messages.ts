@@ -1,11 +1,11 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { createCompletionJob } from './completion'
-import { internalQuery, mutation, query } from './functions'
-import { createGenerationJob } from './generation_jobs'
-import { completionParameters, generationParameters, messageFields, ridField } from './schema'
-import { generateRid } from './utils'
+import { createCompletionJob } from '../completion'
+import { internalQuery, mutation, query } from '../functions'
+import { createGenerationJob } from '../generation_jobs'
+import { completionParameters, generationParameters, messageFields, ridField } from '../schema'
+import { generateRid } from '../utils'
 
 // *** public queries ***
 // next.js page title/description
@@ -98,7 +98,7 @@ export const getContext = internalQuery({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .filter((q) => q.lt(q.field('_creationTime'), targetMessage._creationTime))
-      .filter((q) => q.neq(q.field('text'), undefined))
+      .filter((q) => q.neq(q.field('content'), undefined))
       .take(messageContextAmount)
       .map(({ role, name, text }) => ({ role, name, content: text! }))
 

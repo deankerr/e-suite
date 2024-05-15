@@ -88,5 +88,7 @@ export const useThreadMutations = () => {
   return mutations
 }
 
+export const useCreateMessage = () => useMutation(api.threadsx.createMessage)
+
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})

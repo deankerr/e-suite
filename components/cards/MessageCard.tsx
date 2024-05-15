@@ -22,10 +22,10 @@ type MessageProps = {
 export const MessageCard = ({ message, priority = false }: MessageProps) => {
   const { images } = message
 
-  const removeMessage = useMutation(api.messages.remove)
+  const removeMessage = useMutation(api.deprecated.messages.remove)
 
   const viewType = {
-    text: message.text,
+    text: message.content,
     image: images && images.length > 0,
   }
 
@@ -91,7 +91,7 @@ export const MessageCard = ({ message, priority = false }: MessageProps) => {
           </div>
         </Inset>
 
-        {viewType.text && <div className="min-h-6">{quickFormat(message.text)}</div>}
+        {viewType.text && <div className="min-h-6">{quickFormat(message?.content)}</div>}
 
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
