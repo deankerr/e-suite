@@ -44,16 +44,16 @@ export const createGeneratedImageFromUrl = internalAction({
     const sourceFileId = await ctx.storage.store(sourceBlob)
     const webpStorageId = await ctx.storage.store(webpBlob)
 
-    await ctx.runMutation(internal.generated_images.create, {
-      generationJobId,
-      width: metadata.width,
-      height: metadata.height,
-      sourceFileId,
-      fileId: webpStorageId,
-      sourceUrl,
-      blurDataUrl,
-      color,
-    })
+    // await ctx.runMutation(internal.generated_images.create, {
+    //   generationJobId,
+    //   width: metadata.width,
+    //   height: metadata.height,
+    //   sourceFileId,
+    //   fileId: webpStorageId,
+    //   sourceUrl,
+    //   blurDataUrl,
+    //   color,
+    // })
   },
 })
 

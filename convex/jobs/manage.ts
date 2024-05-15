@@ -3,12 +3,12 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation } from '../functions'
-import { jobResultSchema } from '../schema'
 import { insist } from '../utils'
+import { jobResultSchema } from './schema'
 
 import type { Id } from '../_generated/dataModel'
-import type { JobTypes } from '../schema'
 import type { MutationCtx } from '../types'
+import type { JobTypes } from './schema'
 
 export const createJob = async (
   ctx: MutationCtx,
@@ -23,7 +23,6 @@ export const createJob = async (
     .insert({ type, messageId, threadId, status: 'queued', results: [] })
 
   await ctx.scheduler.runAfter(0, internal.jobs.completion.chatCompletion, { jobId })
-
   return jobId
 }
 

@@ -2,7 +2,7 @@ import z from 'zod'
 
 import { maxMessageContentStringLength, textToSpeechProviders } from './constants'
 
-const zTruncate = (max: number, min = 0) =>
+export const zTruncate = (max: number, min = 0) =>
   z
     .string()
     .min(min)

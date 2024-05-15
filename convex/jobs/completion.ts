@@ -23,11 +23,14 @@ export const chatCompletion = internalAction({
     jobId: zid('jobs'),
   },
   handler: async (ctx, { jobId }) => {
-    const job = await ctx.runMutation(internal.jobs.interface.acquire, { jobId })
-    const { messages, inference } = await ctx.runQuery(internal.threadsx.getChatCompletionContext, {
-      messageId: job.messageId,
-      take: 20,
-    })
+    const job = await ctx.runMutation(internal.jobs.manage.acquire, { jobId })
+    const { messages, inference } = await ctx.runQuery(
+      internal.threads.internal.getChatCompletionContext,
+      {
+        messageId: job.messageId,
+        take: 20,
+      },
+    )
     const api = createApi(inference.endpoint)
 
     console.log(inference.type, inference.endpoint, inference.parameters)
@@ -44,7 +47,7 @@ export const chatCompletion = internalAction({
 
     const content = chatCompletion.choices[0]?.message.content ?? '' //TODO check
 
-    await ctx.runMutation(internal.jobs.interface.results, {
+    await ctx.runMutation(internal.jobs.manage.results, {
       jobId,
       status: 'complete',
       results: [{ type: 'message', value: content }],

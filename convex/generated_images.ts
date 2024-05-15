@@ -31,29 +31,29 @@ export const remove = mutation({
 })
 // *** end public queries ***
 
-export const create = internalMutation({
-  args: {
-    ...generatedImageFields,
-    generationJobId: zid('generation_jobs'),
-  },
-  handler: async (ctx, { generationJobId, ...fields }) => {
-    const job = await ctx.table('generation_jobs').getX(generationJobId)
+// export const create = internalMutation({
+//   args: {
+//     ...generatedImageFields,
+//     generationJobId: zid('generation_jobs'),
+//   },
+//   handler: async (ctx, { generationJobId, ...fields }) => {
+//     const job = await ctx.table('generation_jobs').getX(generationJobId)
 
-    const rid = await generateRid(ctx, 'generated_images')
-    const generatedImageId = await ctx.table('generated_images').insert({
-      ...fields,
-      messageId: job.messageId,
-      parameters: job.parameters,
-      rid,
-      private: false, // TODO
-    })
+//     const rid = await generateRid(ctx, 'generated_images')
+//     const generatedImageId = await ctx.table('generated_images').insert({
+//       ...fields,
+//       messageId: job.messageId,
+//       parameters: job.parameters,
+//       rid,
+//       private: false, // TODO
+//     })
 
-    await runWithRetries(ctx, internal.lib.sharp.generatedImageSrcset, {
-      fileId: fields.fileId,
-      generatedImageId,
-    })
-  },
-})
+//     await runWithRetries(ctx, internal.lib.sharp.generatedImageSrcset, {
+//       fileId: fields.fileId,
+//       generatedImageId,
+//     })
+//   },
+// })
 
 export const updateSrcset = internalMutation({
   args: {

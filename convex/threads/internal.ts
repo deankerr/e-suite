@@ -1,65 +1,9 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { internalQuery, mutation, query } from './functions'
-import { inferenceSchema, messageFieldsObject } from './schema'
-import * as mutations from './threadsx/mutations'
-import * as queries from './threadsx/queries'
-import { insist, zPaginationOptValidator } from './utils'
-import { zThreadTitle } from './validators'
+import { internalQuery } from '../functions'
+import { insist } from '../utils'
 
-//* queries
-export const getThread = query({
-  args: {
-    threadId: z.string(),
-  },
-  handler: queries.getThread,
-})
-
-export const listThreads = query({
-  args: {},
-  handler: queries.listThreads,
-})
-
-export const listMessages = query({
-  args: {
-    threadId: zid('threads'),
-    paginationOpts: zPaginationOptValidator,
-  },
-  handler: queries.listMessages,
-})
-
-//* mutations
-export const createThread = mutation({
-  args: {},
-  handler: mutations.createThread,
-})
-
-export const removeThread = mutation({
-  args: {
-    threadId: z.string(),
-  },
-  handler: mutations.removeThread,
-})
-
-export const renameThread = mutation({
-  args: {
-    threadId: z.string(),
-    title: zThreadTitle,
-  },
-  handler: mutations.renameThread,
-})
-
-export const createMessage = mutation({
-  args: {
-    threadId: z.string(),
-    message: messageFieldsObject,
-    inference: inferenceSchema.optional(),
-  },
-  handler: mutations.createMessage,
-})
-
-//* internal query
 const msgSchema = z.object({
   role: z.enum(['system', 'assistant', 'user']),
   name: z.string().optional(),

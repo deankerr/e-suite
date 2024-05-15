@@ -9,7 +9,7 @@ import { activeThreadIdAtom } from '@/lib/atoms'
 import type { Preloaded } from 'convex/react'
 
 export const usePreloadedThreads = (
-  preloadedThreads: Preloaded<typeof api.threadsx.listThreads>,
+  preloadedThreads: Preloaded<typeof api.threads.query.listThreads>,
 ) => {
   const [activeThreadId, setActiveThreadId] = useAtom(activeThreadIdAtom)
   const threads = usePreloadedQuery(preloadedThreads)
@@ -26,21 +26,21 @@ export const usePreloadedThreads = (
 }
 
 export const useThreads = () => {
-  const threads = useQuery(api.threadsx.listThreads, {})
+  const threads = useQuery(api.threads.query.listThreads, {})
   return threads
 }
 
 export const useActiveThread = () => {
   const id = useAtomValue(activeThreadIdAtom)
-  const thread = useQuery(api.threadsx.getThread, { threadId: id })
+  const thread = useQuery(api.threads.query.getThread, { threadId: id })
 
   return thread
 }
 
 export const useThreadMutations = () => {
-  const create = useMutation(api.threadsx.createThread)
-  const remove = useMutation(api.threadsx.removeThread)
-  const rename = useMutation(api.threadsx.renameThread)
+  const create = useMutation(api.threads.mutate.createThread)
+  const remove = useMutation(api.threads.mutate.removeThread)
+  const rename = useMutation(api.threads.mutate.renameThread)
 
   const mutations = {
     create: () => {
@@ -88,7 +88,8 @@ export const useThreadMutations = () => {
   return mutations
 }
 
-export const useCreateMessage = () => useMutation(api.threadsx.createMessage)
+export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
+export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})

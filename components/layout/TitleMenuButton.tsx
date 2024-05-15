@@ -7,11 +7,10 @@ import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon } from 'lucide-rea
 import { usePreloadedThreads, useThreadMutations } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
-import type { Preloaded } from 'convex/react'
+import type { PreloadedThreadsQuery } from '@/lib/api.server'
 
-type TitleMenuButtonProps = { preloadedThreads: Preloaded<typeof api.threadsx.listThreads> }
+type TitleMenuButtonProps = { preloadedThreads: PreloadedThreadsQuery }
 
 export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
   const { create, remove, rename } = useThreadMutations()

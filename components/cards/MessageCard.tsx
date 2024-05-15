@@ -1,12 +1,11 @@
 import { Button, Card, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { GeneratedImageView } from '@/components/images/GeneratedImageView'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { api } from '@/convex/_generated/api'
+import { useRemoveMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EGeneratedImage, EMessage } from '@/convex/external'
@@ -22,7 +21,7 @@ type MessageProps = {
 export const MessageCard = ({ message, priority = false }: MessageProps) => {
   const { images } = message
 
-  const removeMessage = useMutation(api.deprecated.messages.remove)
+  const removeMessage = useRemoveMessage()
 
   const viewType = {
     text: message.content,
