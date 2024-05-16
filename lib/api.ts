@@ -1,6 +1,5 @@
-import { useEffect } from 'react'
 import { useMutation, usePreloadedQuery, useQuery } from 'convex/react'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
@@ -11,18 +10,8 @@ import type { Preloaded } from 'convex/react'
 export const usePreloadedThreads = (
   preloadedThreads: Preloaded<typeof api.threads.query.listThreads>,
 ) => {
-  const [activeThreadId, setActiveThreadId] = useAtom(activeThreadIdAtom)
   const threads = usePreloadedQuery(preloadedThreads)
-
-  const latestId = threads?.[0]?._id
-
-  useEffect(() => {
-    if (activeThreadId === '' && latestId) {
-      setActiveThreadId(latestId)
-    }
-  }, [activeThreadId, latestId, setActiveThreadId])
-
-  return { threads, activeThreadId: activeThreadId ?? latestId, setActiveThreadId }
+  return threads
 }
 
 export const useThread = (slug?: string) => {
