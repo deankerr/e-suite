@@ -6,7 +6,10 @@ type ImageCardProps = { image: EImage }
 
 export const ImageCard = ({ image }: ImageCardProps) => {
   return (
-    <div className="overflow-hidden rounded-xl" style={{ aspectRatio: image.width / image.height }}>
+    <div
+      className="overflow-hidden rounded-xl"
+      style={{ aspectRatio: image.width / image.height, width: image.width, maxWidth: '100%' }}
+    >
       <Image
         src={`/i/${image._id}.webp`}
         width={image.width}

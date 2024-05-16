@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { generationProviders, generationVoteNames, messageRoles } from './constants'
 import { jobStatusEnum, jobTypesEnum } from './jobs/schema'
 import { ridField } from './schema'
+import { inferenceSchema } from './threads/schema'
 
 const generationVote = z.object({
   _id: zid('generation_votes'),
@@ -63,6 +64,8 @@ const message = z.object({
   role: z.enum(messageRoles),
   name: z.string().optional(),
   content: z.string().optional(),
+
+  inference: inferenceSchema.optional(),
 
   rid: ridField,
 })

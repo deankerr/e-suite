@@ -1,10 +1,10 @@
 import { Fragment } from 'react'
-import { Button, Card, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
+import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
-import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
@@ -26,21 +26,23 @@ export const MessageCard = ({ message }: MessageProps) => {
 
   const removeMessage = useRemoveMessage()
 
-  const viewType = {
-    text: message.content,
-    image: images && images.length > 0,
-  }
+  const hasImages = images && images.length > 0
 
-  const icon = viewType.image ? (
+  const icon = hasImages ? (
     <ImageIcon className="size-5" />
   ) : (
     <MessageSquareIcon className="size-5" />
   )
 
-  const title = message?.name ?? getRole(message.role)
+  const title = hasImages ? 'Generation' : message?.name ?? getRole(message.role)
   // const title = images?.[0]
   //   ? images?.[0].parameters?.prompt
   //   : message?.name ?? getRole(message.role)
+
+  const showLoader = message.jobs?.find(
+    (job) =>
+      job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
+  )
 
   return (
     <Card className={cn('mx-auto max-w-4xl')}>
@@ -55,9 +57,7 @@ export const MessageCard = ({ message }: MessageProps) => {
             </div>
 
             {/* title */}
-            <div className="grow truncate text-sm font-semibold">
-              <Link href={`/message/${message.rid}`}>{title}</Link>
-            </div>
+            <div className="grow truncate text-sm font-semibold">{title}</div>
 
             <div className="flex-none gap-1.5 flex-end">
               {/* role */}
@@ -65,14 +65,14 @@ export const MessageCard = ({ message }: MessageProps) => {
                 variant="surface"
                 size="1"
                 className="font-mono"
-                color={getRoleColor(message.role)}
+                color={getRoleColor(message.role) && 'orange'}
               >
                 {message.role}
               </Button>
 
-              <IconButton variant="surface" size="1" className="font-serif text-sm">
+              {/* <IconButton variant="surface" size="1" className="font-serif text-sm">
                 i
-              </IconButton>
+              </IconButton> */}
 
               {/* delete */}
               <IconButton
@@ -94,10 +94,20 @@ export const MessageCard = ({ message }: MessageProps) => {
           </div>
         </Inset>
 
-        {/* {viewType.text && <div className="min-h-6">{quickFormat(message?.content)}</div>} */}
+        {showLoader && (
+          <div className="h-72">
+            <GoldSparkles />
+          </div>
+        )}
 
-        {viewType.text && (
-          <div className="prose prose-invert prose-stone prose-pre:p-0 mx-auto min-h-6 max-w-none">
+        {message.images && message.images.length > 0 && (
+          <div className="mx-auto grid w-fit grid-cols-2 gap-2">
+            {message.images?.map((image) => <ImageCard key={image._id} image={image} />)}
+          </div>
+        )}
+
+        {message.content && (
+          <div className="prose prose-invert prose-stone prose-pre:p-0 prose-h1:text-xl prose-h1:mb-2 prose-h2:text-xl prose-h2:mt-1 prose-h3:mt-1 prose-h2:mb-2 prose-h3:mb-2 mx-auto min-h-6 max-w-none">
             <Markdown
               options={{
                 wrapper: Fragment,
@@ -110,21 +120,16 @@ export const MessageCard = ({ message }: MessageProps) => {
             </Markdown>
           </div>
         )}
-        {viewType.image && (
-          <ScrollArea scrollbars="horizontal" type="auto">
-            <div className="mx-auto grid w-fit grid-cols-2 place-content-center gap-2">
-              {images?.map((image) => <ImageCard key={image._id} image={image} />)}
-            </div>
-          </ScrollArea>
-        )}
 
-        <div className="flex flex-wrap gap-3 font-mono text-xs">
-          {message?.jobs?.map((job, i) => (
-            <div key={i} className="">
-              [{job.type}: {job.status} {job.time && `${(job.time / 1000).toFixed(2)}s`}]
-            </div>
-          ))}
-        </div>
+        {message.jobs && message.jobs.length > 0 && (
+          <div className="flex flex-wrap gap-3 font-mono text-xs">
+            {message.jobs.map((job, i) => (
+              <div key={i} className={cn(job.status === 'failed' && 'text-red-10')}>
+                [{job.type}: {job.status} {job.time && `${(job.time / 1000).toFixed(2)}s`}]
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Card>
   )
