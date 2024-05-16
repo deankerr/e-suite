@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { useRemoveMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -96,8 +97,17 @@ export const MessageCard = ({ message }: MessageProps) => {
         {/* {viewType.text && <div className="min-h-6">{quickFormat(message?.content)}</div>} */}
 
         {viewType.text && (
-          <div className="prose prose-invert prose-stone mx-auto min-h-6 max-w-none">
-            <Markdown options={{ wrapper: Fragment }}>{message?.content ?? ''}</Markdown>
+          <div className="prose prose-invert prose-stone prose-pre:p-0 mx-auto min-h-6 max-w-none">
+            <Markdown
+              options={{
+                wrapper: Fragment,
+                overrides: {
+                  code: SyntaxHighlightedCode,
+                },
+              }}
+            >
+              {message?.content ?? ''}
+            </Markdown>
           </div>
         )}
         {viewType.image && (
