@@ -77,8 +77,10 @@ export const results = internalMutation({
 
     if (status === 'failed') return
 
+    const thread = await ctx.table('threads').get(job.threadId)
+
     if (job.type === 'text-to-image') {
-      return await createJob(ctx, {
+      await createJob(ctx, {
         type: 'create-images-from-results',
         messageId: job.messageId,
         threadId: job.threadId,
@@ -87,23 +89,20 @@ export const results = internalMutation({
 
     if (job.type === 'title-completion') {
       const title = results.find((result) => result.type === 'message')?.value ?? '<title?>'
-      const thread = await ctx.table('threads').get(job.threadId)
-      return await thread?.patch({ title })
+      await thread?.patch({ title })
     }
 
     if (job.type === 'chat-completion') {
-      for (const result of results) {
-        if (result.type === 'message') {
-          await ctx.table('messages').getX(job.messageId).patch({ content: result.value })
-        }
-      }
-      const thread = await ctx.table('threads').get(job.threadId)
-      if (!thread?.title)
-        await createJob(ctx, {
-          type: 'title-completion',
-          threadId: job.threadId,
-          messageId: job.messageId,
-        })
+      const message = results.find((result) => result.type === 'message')
+      if (message) await ctx.table('messages').getX(job.messageId).patch({ content: message.value })
+    }
+
+    if (!thread?.title) {
+      await createJob(ctx, {
+        type: 'title-completion',
+        threadId: job.threadId,
+        messageId: job.messageId,
+      })
     }
   },
 })

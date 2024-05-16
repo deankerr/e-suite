@@ -6,18 +6,18 @@ import { useThread } from '@/lib/api'
 
 export const ThreadPage = ({ slug }: { slug?: string }) => {
   const thread = useThread(slug)
-  const messages = thread?.messages ?? []
+
+  const isLoading = thread === undefined && slug
   return (
     <>
+      {isLoading && <ThreadPageSkeleton />}
       <div className="px-1 py-4 md:px-4">
         <div className="mx-auto space-y-4">
-          {messages.map((message) => (
-            <MessageCard key={message._id} message={message} />
-          ))}
+          {thread?.messages?.map((message) => <MessageCard key={message._id} message={message} />)}
         </div>
       </div>
 
-      <InputBarC threadId={slug} centered={thread !== undefined && messages.length === 0} />
+      <InputBarC threadId={slug} centered={thread === undefined && !isLoading} />
     </>
   )
 }
