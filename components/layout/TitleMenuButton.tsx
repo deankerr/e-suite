@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { IconButton, Select, TextField } from '@radix-ui/themes'
-import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon } from 'lucide-react'
+import { useMutation } from 'convex/react'
+import { CheckIcon, FolderPenIcon, PlusCircleIcon, SquirrelIcon, Trash2Icon } from 'lucide-react'
 
+import { api } from '@/convex/_generated/api'
 import { usePreloadedThreads, useThreadMutations } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -14,6 +16,8 @@ type TitleMenuButtonProps = { preloadedThreads: PreloadedThreadsQuery }
 
 export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
   const { create, remove, rename } = useThreadMutations()
+  const completeTitle = useMutation(api.threads.mutate.completeThreadTitle)
+
   const { threads, activeThreadId, setActiveThreadId } = usePreloadedThreads(preloadedThreads)
   const activeThread = threads.find((thread) => thread._id === activeThreadId)
 
@@ -22,13 +26,20 @@ export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
 
   return (
     <div className="w-full gap-2 flex-center">
+      <IconButton
+        variant="surface"
+        onClick={() => void completeTitle({ threadId: activeThreadId })}
+      >
+        <SquirrelIcon />
+      </IconButton>
+
       <IconButton variant="ghost" onClick={create}>
         <PlusCircleIcon />
       </IconButton>
 
       {isRenamingThread && (
         <TextField.Root
-          className="w-full max-w-60"
+          className="w-full max-w-96"
           placeholder="set new thread title"
           value={newThreadTitle}
           onChange={(e) => setNewThreadTitle(e.target.value)}
@@ -37,7 +48,7 @@ export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
 
       <Select.Root value={activeThreadId} onValueChange={setActiveThreadId}>
         <Select.Trigger
-          className={cn('w-full max-w-60 text-center [&>span]:grow', isRenamingThread && 'hidden')}
+          className={cn('w-full max-w-96 text-center [&>span]:grow', isRenamingThread && 'hidden')}
         />
 
         <Select.Content position="popper">

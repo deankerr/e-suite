@@ -10,7 +10,7 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
   const preloadedThreads = await preloadThreads()
   return (
     <div className={cn('mx-auto min-h-screen max-w-8xl')}>
-      <header className="grid h-10 grid-cols-[1fr_3fr_1fr] items-center bg-gray-1 px-1 md:h-12 md:gap-2 md:px-3">
+      <header className="flex h-10 items-center justify-between bg-gray-1 px-1 md:h-12 md:gap-2 md:px-3">
         <AppLogoTitle />
         <TitleMenuButton preloadedThreads={preloadedThreads} />
         <UserSegment />

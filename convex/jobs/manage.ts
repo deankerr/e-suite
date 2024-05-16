@@ -30,6 +30,9 @@ export const createJob = async (
     case 'chat-completion':
       await ctx.scheduler.runAfter(0, internal.jobs.completion.chatCompletion, { jobId })
       break
+    case 'title-completion':
+      await ctx.scheduler.runAfter(0, internal.jobs.completion.titleCompletion, { jobId })
+      break
     case 'create-images-from-results':
       await ctx.scheduler.runAfter(0, internal.jobs.files.createImagesFromResults, { jobId })
       break
@@ -80,6 +83,12 @@ export const results = internalMutation({
         messageId: job.messageId,
         threadId: job.threadId,
       })
+    }
+
+    if (job.type === 'title-completion') {
+      const title = results.find((result) => result.type === 'message')?.value ?? '<title?>'
+      const thread = await ctx.table('threads').get(job.threadId)
+      return await thread?.patch({ title })
     }
 
     for (const result of results) {

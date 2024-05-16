@@ -40,27 +40,25 @@ export const getChatCompletionContext = internalQuery({
 
 export const getTitleCompletionContext = internalQuery({
   args: {
-    messageId: zid('messages'),
+    threadId: zid('threads'),
     take: z.number(),
   },
-  handler: async (ctx, { messageId, take }) => {
-    const message = await ctx.table('messages').getX(messageId)
-    const inference = message.inference
-    insist(inference && inference.type === 'chat-completion', 'completion message lacks parameters')
-
+  handler: async (ctx, { threadId, take }) => {
     const messages = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', message.threadId))
+      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
       .order('desc')
       .filter((q) =>
         q.and(
           q.eq(q.field('deletionTime'), undefined),
           q.neq(q.field('content'), undefined),
           q.neq(q.field('role'), 'system'),
+          q.neq(q.field('content'), undefined),
         ),
       )
       .take(take)
+      .map((message) => msgSchema.parse(message))
 
-    return { message, messages: msgSchema.array().parse(messages), inference }
+    return { messages: messages.toReversed() }
   },
 })
 

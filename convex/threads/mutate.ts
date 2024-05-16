@@ -38,6 +38,21 @@ export const renameThread = mutation({
   },
 })
 
+export const completeThreadTitle = mutation({
+  args: {
+    threadId: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const id = ctx.unsafeDb.normalizeId('threads', args.threadId)
+    if (!id) return
+    const thread = await ctx.table('threads').getX(id)
+    const message = await thread.edge('messages').firstX()
+    return id
+      ? await createJob(ctx, { type: 'title-completion', threadId: id, messageId: message._id })
+      : null
+  },
+})
+
 export const createMessage = mutation({
   args: {
     threadId: z.string(),
