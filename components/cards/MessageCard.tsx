@@ -1,5 +1,7 @@
+import { Fragment } from 'react'
 import { Button, Card, IconButton, Inset, ScrollArea } from '@radix-ui/themes'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
+import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
@@ -34,7 +36,7 @@ export const MessageCard = ({ message }: MessageProps) => {
     <MessageSquareIcon className="size-5" />
   )
 
-  const title = 'message'
+  const title = message?.name ?? getRole(message.role)
   // const title = images?.[0]
   //   ? images?.[0].parameters?.prompt
   //   : message?.name ?? getRole(message.role)
@@ -91,8 +93,13 @@ export const MessageCard = ({ message }: MessageProps) => {
           </div>
         </Inset>
 
-        {viewType.text && <div className="min-h-6">{quickFormat(message?.content)}</div>}
+        {/* {viewType.text && <div className="min-h-6">{quickFormat(message?.content)}</div>} */}
 
+        {viewType.text && (
+          <div className="prose prose-invert prose-stone mx-auto min-h-6 max-w-none">
+            <Markdown options={{ wrapper: Fragment }}>{message?.content ?? ''}</Markdown>
+          </div>
+        )}
         {viewType.image && (
           <ScrollArea scrollbars="horizontal" type="auto">
             <div className="mx-auto grid w-fit grid-cols-2 place-content-center gap-2">
@@ -113,16 +120,16 @@ export const MessageCard = ({ message }: MessageProps) => {
   )
 }
 
-// const getRole = (role: string) => {
-//   const roles: Record<string, string> = {
-//     user: 'User',
-//     assistant: 'AI',
-//     system: 'System',
-//     tool: 'Tool',
-//   }
+const getRole = (role: string) => {
+  const roles: Record<string, string> = {
+    user: 'User',
+    assistant: 'AI',
+    system: 'System',
+    tool: 'Tool',
+  }
 
-//   return roles[role] ?? role
-// }
+  return roles[role] ?? role
+}
 
 const getRoleColor = (role: string) => {
   const fallback = 'orange'
@@ -133,17 +140,6 @@ const getRoleColor = (role: string) => {
     system: 'grass',
   }
   return colors[role] ?? fallback
-}
-
-const quickFormat = (text = '') => {
-  const p = text.split('\n').filter((t) => t)
-  return (
-    <div className="mx-auto flex flex-col gap-3 text-base">
-      {p.map((t, i) => (
-        <p key={i}>{t}</p>
-      ))}
-    </div>
-  )
 }
 
 export const MessageCardSkeleton = () => {

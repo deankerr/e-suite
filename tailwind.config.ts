@@ -16,6 +16,7 @@ const config: Config = {
   plugins: [
     require('@tailwindcss/container-queries'),
     require('tailwindcss-animated'),
+    require('@tailwindcss/typography'),
     // css reset
     plugin(({ addBase }) => {
       addBase({
