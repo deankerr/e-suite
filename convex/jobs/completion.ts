@@ -67,28 +67,28 @@ export const titleCompletion = internalAction({
     })
     const api = createApi('together')
 
-    // console.log('textToImage', 'together')
-    // console.log(messages)
-    const summary = messages
-      .map((message) => message.content)
-      .join('\n')
-      .slice(-500)
-    const message = titleMessage.replace('%%%', summary)
-    console.log('title-completion', message)
+    const message = titleMessage.replace(
+      '%%%',
+      messages
+        .map((message) => message.content)
+        .join('\n')
+        .slice(500),
+    )
 
-    const chatCompletion = await api.chat.completions.create({
+    const body = {
       messages: [
         {
-          role: 'system',
+          role: 'system' as const,
           content: message,
         },
-        ...messages,
       ],
       max_tokens: 1024,
-      model: 'meta-llama/Llama-3-70b-chat-hf',
-      stream: false,
-    })
+      model: 'meta-llama/Llama-3-8b-chat-hf',
+      stream: false as const,
+    }
+    console.log('title-completion', 'together', body)
 
+    const chatCompletion = await api.chat.completions.create(body)
     console.log(chatCompletion)
 
     const content = chatCompletion.choices[0]?.message.content ?? '' //TODO check
