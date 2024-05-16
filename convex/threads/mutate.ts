@@ -7,12 +7,14 @@ import { zThreadTitle } from '../validators'
 import { inferenceSchema, messageFields } from './schema'
 
 export const createThread = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    title: zThreadTitle.optional(),
+  },
+  handler: async (ctx, args) => {
     const user = await ctx.viewerX()
     const rid = await generateRid(ctx, 'threads')
 
-    const threadId = await ctx.table('threads').insert({ userId: user._id, rid })
+    const threadId = await ctx.table('threads').insert({ ...args, userId: user._id, rid })
     return threadId
   },
 })

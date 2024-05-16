@@ -1,15 +1,14 @@
 'use client'
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
-import { InputBarB } from '@/components/input-bar/InputBarB'
-import { useActiveThread } from '@/lib/api'
+import { InputBarC } from '@/components/input-bar/InputBarC'
+import { useThread } from '@/lib/api'
 
-export const DashboardPage = () => {
-  const thread = useActiveThread()
+export const ThreadPage = ({ slug }: { slug?: string }) => {
+  const thread = useThread(slug)
   const messages = thread?.messages ?? []
   return (
     <>
-      {!thread && <DashboardPageSkeleton />}
       <div className="px-1 py-4 md:px-4">
         <div className="mx-auto space-y-4">
           {messages.map((message) => (
@@ -18,12 +17,12 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      <InputBarB centered={thread !== undefined && messages.length === 0} />
+      <InputBarC threadId={slug} centered={thread !== undefined && messages.length === 0} />
     </>
   )
 }
 
-const DashboardPageSkeleton = () => {
+export const ThreadPageSkeleton = () => {
   return (
     <>
       <div className="absolute inset-0 grid w-full animate-pulse grid-rows-4 gap-4 p-1 md:p-4">

@@ -25,6 +25,11 @@ export const usePreloadedThreads = (
   return { threads, activeThreadId: activeThreadId ?? latestId, setActiveThreadId }
 }
 
+export const useThread = (slug?: string) => {
+  const thread = useQuery(api.threads.query.getThread, slug ? { threadId: slug } : 'skip')
+  return thread
+}
+
 export const useThreads = () => {
   const threads = useQuery(api.threads.query.listThreads, {})
   return threads
@@ -36,6 +41,8 @@ export const useActiveThread = () => {
 
   return thread
 }
+
+export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
 
 export const useThreadMutations = () => {
   const create = useMutation(api.threads.mutate.createThread)

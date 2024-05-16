@@ -13,21 +13,21 @@ import NextImage from 'next/image'
 import TextareaAutosize from 'react-textarea-autosize'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
-import { useSendMessage } from '@/components/input-bar/useSendMessage'
+import { useSendMessageC } from '@/components/input-bar/useSendMessageC'
 import { Glass } from '@/components/ui/Glass'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
-type InputBarProps = { centered?: boolean }
+type InputBarProps = { threadId?: string; centered?: boolean }
 
-export const InputBarB = ({ centered = false }: InputBarProps) => {
+export const InputBarC = ({ threadId, centered = false }: InputBarProps) => {
   const [inputBar, setInputBar] = useInputBarAtom()
 
   const chatModels = useQuery(api.models.listChatModels, {})
   const imageModels = useQuery(api.models.listImageModels, {})
 
-  const sendMessage = useSendMessage()
+  const sendMessage = useSendMessageC()
 
   const currentChatModel = chatModels?.find((m) => m.model_id === inputBar.chatModel)
   const currentImageModel = imageModels?.find((m) => m.model_id === inputBar.imageModel)
@@ -61,15 +61,19 @@ export const InputBarB = ({ centered = false }: InputBarProps) => {
             </div>
 
             <div className="flex-wrap gap-2 flex-between">
-              <SegmentedControl.Root
-                value={inputBar.mode}
-                onValueChange={(value) =>
-                  setInputBar((o) => ({ ...o, mode: value as 'chat' | 'image' }))
-                }
-              >
-                <SegmentedControl.Item value="chat">Chat</SegmentedControl.Item>
-                <SegmentedControl.Item value="image">Image</SegmentedControl.Item>
-              </SegmentedControl.Root>
+              <div className="grid">
+                <SegmentedControl.Root
+                  value={inputBar.mode}
+                  onValueChange={(value) =>
+                    setInputBar((o) => ({ ...o, mode: value as 'chat' | 'image' }))
+                  }
+                >
+                  <SegmentedControl.Item value="chat">Chat</SegmentedControl.Item>
+                  <SegmentedControl.Item value="image">Image</SegmentedControl.Item>
+                </SegmentedControl.Root>
+
+                <div>{threadId ? threadId.slice(0, 6) : 'x'}</div>
+              </div>
 
               {/* right */}
               <div className="flex gap-2">

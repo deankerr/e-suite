@@ -57,7 +57,7 @@ export const getTitleCompletionContext = internalQuery({
       )
       .take(take)
       .map((message) => msgSchema.parse(message))
-
+    console.log('getcontext', messages)
     return { messages: messages.toReversed() }
   },
 })

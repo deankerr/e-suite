@@ -1,3 +1,4 @@
+import { usePathname } from 'next/navigation'
 import { useMedia } from 'react-use'
 
 export const useTwMediaQuery = () => {
@@ -8,4 +9,11 @@ export const useTwMediaQuery = () => {
     xl: useMedia('(min-width: 1280px)', false),
     '2xl': useMedia('(min-width: 1640px)', false),
   }
+}
+
+export const useRouteData = () => {
+  const pathname = usePathname()
+  const [_, route, id] = pathname.split('/')
+  const thread = route === 't' ? id : undefined
+  return { thread }
 }

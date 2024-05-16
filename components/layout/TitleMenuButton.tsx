@@ -4,36 +4,45 @@ import { useState } from 'react'
 import { IconButton, Select, TextField } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { CheckIcon, FolderPenIcon, PlusCircleIcon, SquirrelIcon, Trash2Icon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
+import { Spinner } from '@/components/ui/Spinner'
 import { api } from '@/convex/_generated/api'
-import { usePreloadedThreads, useThreadMutations } from '@/lib/api'
+import { useThreadMutations, useThreads } from '@/lib/api'
+import { useRouteData } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 
-import type { Id } from '@/convex/_generated/dataModel'
 import type { PreloadedThreadsQuery } from '@/lib/api.server'
 
 type TitleMenuButtonProps = { preloadedThreads: PreloadedThreadsQuery }
 
-export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
-  const { create, remove, rename } = useThreadMutations()
+export const TitleMenuButton = ({}: TitleMenuButtonProps) => {
+  const router = useRouter()
+  const route = useRouteData()
+  const threads = useThreads()
+
+  const { remove, rename } = useThreadMutations()
   const completeTitle = useMutation(api.threads.mutate.completeThreadTitle)
-
-  const { threads, activeThreadId, setActiveThreadId } = usePreloadedThreads(preloadedThreads)
-  const activeThread = threads.find((thread) => thread._id === activeThreadId)
-
   const [isRenamingThread, setIsRenamingThread] = useState(false)
   const [newThreadTitle, setNewThreadTitle] = useState('')
 
+  if (!threads)
+    return (
+      <div className="w-full gap-2 flex-center">
+        <Spinner />
+      </div>
+    )
+
+  const activeThread = threads.find((thread) => thread._id === route.thread)
+  const id = activeThread?._id ?? ''
+
   return (
     <div className="w-full gap-2 flex-center">
-      <IconButton
-        variant="surface"
-        onClick={() => void completeTitle({ threadId: activeThreadId })}
-      >
+      <IconButton variant="surface" onClick={() => void completeTitle({ threadId: id })}>
         <SquirrelIcon />
       </IconButton>
 
-      <IconButton variant="ghost" onClick={create}>
+      <IconButton variant="ghost" onClick={() => router.push('/')}>
         <PlusCircleIcon />
       </IconButton>
 
@@ -46,15 +55,21 @@ export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
         />
       )}
 
-      <Select.Root value={activeThreadId} onValueChange={setActiveThreadId}>
+      <Select.Root
+        value={id}
+        onValueChange={(id) => {
+          router.push(`/t/${id}`)
+        }}
+      >
         <Select.Trigger
           className={cn('w-full max-w-96 text-center [&>span]:grow', isRenamingThread && 'hidden')}
+          placeholder="no thread"
         />
 
         <Select.Content position="popper">
           {threads.map((thread) => (
             <Select.Item key={thread._id} value={thread._id}>
-              {thread.title ?? 'Untitled'}
+              {thread.title ?? <span className="italic text-gray-11">New thread</span>}
             </Select.Item>
           ))}
         </Select.Content>
@@ -68,7 +83,7 @@ export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
           onClick={() => {
             setIsRenamingThread(false)
             if (!newThreadTitle || newThreadTitle === activeThread?.title) return
-            rename(activeThreadId, newThreadTitle)
+            rename(id, newThreadTitle)
           }}
         >
           <CheckIcon />
@@ -90,7 +105,8 @@ export const TitleMenuButton = ({ preloadedThreads }: TitleMenuButtonProps) => {
         variant="ghost"
         color="red"
         onClick={() => {
-          remove(activeThreadId as Id<'threads'>)
+          remove(id)
+          router.push('/')
         }}
       >
         <Trash2Icon />

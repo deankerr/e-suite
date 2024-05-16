@@ -72,7 +72,7 @@ export const titleCompletion = internalAction({
       messages
         .map((message) => message.content)
         .join('\n')
-        .slice(500),
+        .slice(0, 500),
     )
 
     const body = {

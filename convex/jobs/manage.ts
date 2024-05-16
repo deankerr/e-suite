@@ -91,10 +91,19 @@ export const results = internalMutation({
       return await thread?.patch({ title })
     }
 
-    for (const result of results) {
-      if (result.type === 'message' && job.type === 'chat-completion') {
-        await ctx.table('messages').getX(job.messageId).patch({ content: result.value })
+    if (job.type === 'chat-completion') {
+      for (const result of results) {
+        if (result.type === 'message') {
+          await ctx.table('messages').getX(job.messageId).patch({ content: result.value })
+        }
       }
+      const thread = await ctx.table('threads').get(job.threadId)
+      if (!thread?.title)
+        await createJob(ctx, {
+          type: 'title-completion',
+          threadId: job.threadId,
+          messageId: job.messageId,
+        })
     }
   },
 })

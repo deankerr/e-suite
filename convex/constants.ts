@@ -7,9 +7,6 @@ export const textToSpeechProviders = ['elevenlabs', 'aws'] as const
 export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
 export const defaultSystemPrompt =
   'You are an advanced AI assistant who can assist with any user query.'
-export const maxMessageContentStringLength = 32767
-export const maxMessageNameStringLength = 64
-export const maxTitleStringLength = 256
 
 //* Audio
 export const defaultVoices = {

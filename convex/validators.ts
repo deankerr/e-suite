@@ -1,6 +1,6 @@
 import z from 'zod'
 
-import { maxMessageContentStringLength, textToSpeechProviders } from './constants'
+import { textToSpeechProviders } from './constants'
 
 export const zTruncate = (max: number, min = 0) =>
   z
@@ -9,9 +9,11 @@ export const zTruncate = (max: number, min = 0) =>
     .transform((value) => value.slice(0, max))
 
 export const zThreadTitle = zTruncate(256, 1)
+export const zMessageName = zTruncate(64, 1)
+export const zMessageTextContent = zTruncate(32767, 1)
 
 export const voiceoverValidator = z.object({
-  text: z.string().transform((value) => value.slice(0, maxMessageContentStringLength)),
+  text: zMessageTextContent,
   provider: z.enum(textToSpeechProviders),
   parameters: z.union([
     z.object({
