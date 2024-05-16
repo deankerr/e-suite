@@ -8,7 +8,7 @@ import { useRouteData } from '@/lib/hooks'
 
 import type { InputBarState } from '@/components/input-bar/atoms'
 
-export const useSendMessageC = () => {
+export const useSendMessage = () => {
   const [inputBar] = useInputBarAtom()
 
   const sendCreateThread = useCreateThread()

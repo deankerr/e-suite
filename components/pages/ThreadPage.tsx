@@ -1,13 +1,12 @@
 'use client'
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
-import { InputBarC } from '@/components/input-bar/InputBarC'
 import { useThread } from '@/lib/api'
 
 export const ThreadPage = ({ slug }: { slug?: string }) => {
   const thread = useThread(slug)
-
   const isLoading = thread === undefined && slug
+
   return (
     <>
       {isLoading && <ThreadPageSkeleton />}
@@ -16,8 +15,6 @@ export const ThreadPage = ({ slug }: { slug?: string }) => {
           {thread?.messages?.map((message) => <MessageCard key={message._id} message={message} />)}
         </div>
       </div>
-
-      <InputBarC threadId={slug} centered={thread === undefined && !isLoading} />
     </>
   )
 }

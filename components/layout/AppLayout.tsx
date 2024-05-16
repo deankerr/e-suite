@@ -1,6 +1,7 @@
 import { Separator } from '@radix-ui/themes'
 import Script from 'next/script'
 
+import { InputBar } from '@/components/input-bar/InputBar'
 import { TitleControlBar } from '@/components/layout/TitleControlBar'
 import { UserSegment } from '@/components/layout/UserSegment'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
@@ -28,6 +29,7 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
         </div>
 
         <div className="min-h-[calc(100vh-2.5rem)]">{children}</div>
+        <InputBar />
       </div>
     </>
   )

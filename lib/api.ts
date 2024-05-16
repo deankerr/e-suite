@@ -1,9 +1,7 @@
 import { useMutation, usePreloadedQuery, useQuery } from 'convex/react'
-import { useAtomValue } from 'jotai'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
-import { activeThreadIdAtom } from '@/lib/atoms'
 
 import type { Preloaded } from 'convex/react'
 
@@ -22,13 +20,6 @@ export const useThread = (slug?: string) => {
 export const useThreads = () => {
   const threads = useQuery(api.threads.query.listThreads, {})
   return threads
-}
-
-export const useActiveThread = () => {
-  const id = useAtomValue(activeThreadIdAtom)
-  const thread = useQuery(api.threads.query.getThread, { threadId: id })
-
-  return thread
 }
 
 export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
