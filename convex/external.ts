@@ -67,7 +67,7 @@ const message = z.object({
 
   inference: inferenceSchema.optional(),
 
-  rid: ridField,
+  series: z.number(),
 })
 
 const thread = z.object({
@@ -77,7 +77,7 @@ const thread = z.object({
 
   title: z.string().optional(),
 
-  rid: ridField,
+  slug: z.string(),
 })
 
 const user = z.object({

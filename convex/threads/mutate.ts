@@ -2,8 +2,9 @@ import { z } from 'zod'
 
 import { mutation } from '../functions'
 import { createJob } from '../jobs/manage'
-import { generateRid, insist } from '../utils'
+import { generateSlug, insist } from '../utils'
 import { zThreadTitle } from '../validators'
+import { getBySlugOrId } from './query'
 import { inferenceSchema, messageFields } from './schema'
 
 export const createThread = mutation({
@@ -12,10 +13,10 @@ export const createThread = mutation({
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
-    const rid = await generateRid(ctx, 'threads')
+    const slug = await generateSlug(ctx)
 
-    const threadId = await ctx.table('threads').insert({ ...args, userId: user._id, rid })
-    return threadId
+    await ctx.table('threads').insert({ ...args, userId: user._id, slug })
+    return slug
   },
 })
 
@@ -57,19 +58,27 @@ export const completeThreadTitle = mutation({
 
 export const createMessage = mutation({
   args: {
-    threadId: z.string(),
+    threadSlug: z.string(),
     message: z.object(messageFields),
     inference: inferenceSchema.optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
-    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    insist(threadId, 'invalid thread id')
+
+    const thread = await getBySlugOrId(ctx, args.threadSlug)
+    insist(thread && !thread.deletionTime, 'invalid thread')
+    const threadId = thread._id
+
+    const lastMessage = await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
+      .order('desc')
+      .first()
+    const series = lastMessage?.series ?? 0
 
     const messageId = await ctx.table('messages').insert({
       threadId,
       ...args.message,
-      rid: await generateRid(ctx, 'messages'),
+      series: series + 1,
       userId: user._id,
     })
 
@@ -82,7 +91,7 @@ export const createMessage = mutation({
         : await ctx.table('messages').insert({
             threadId,
             role: 'assistant',
-            rid: await generateRid(ctx, 'messages'),
+            series: series + 2,
             userId: user._id,
             inference: args.inference,
           })

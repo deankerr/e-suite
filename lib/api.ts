@@ -1,7 +1,8 @@
-import { useMutation, usePreloadedQuery, useQuery } from 'convex/react'
+import { useMutation, usePaginatedQuery, usePreloadedQuery, useQuery } from 'convex/react'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
+import { useRouteData } from '@/lib/hooks'
 
 import type { Preloaded } from 'convex/react'
 
@@ -13,8 +14,11 @@ export const usePreloadedThreads = (
 }
 
 export const useThread = (slug?: string) => {
-  const thread = useQuery(api.threads.query.getThread, slug ? { threadId: slug } : 'skip')
-  return thread
+  const route = useRouteData()
+  const key = slug ?? route.thread
+  const query = key ? { slug: key } : 'skip'
+  const thread = useQuery(api.threads.query.getThread, query)
+  return { thread, isLoading: thread === undefined && query !== 'skip', isError: thread === null }
 }
 
 export const useThreads = () => {
@@ -77,6 +81,9 @@ export const useThreadMutations = () => {
 
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
+
+export const useMessages = (threadId: string) =>
+  usePaginatedQuery(api.threads.query.listMessages, { threadId }, { initialNumItems: 8 })
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})

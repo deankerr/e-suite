@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { imageGenerationSizesMap } from '@/convex/constants'
-import { useCreateMessage, useCreateThread } from '@/lib/api'
+import { useCreateMessage, useCreateThread, useThread } from '@/lib/api'
 import { useRouteData } from '@/lib/hooks'
 
 import type { InputBarState } from '@/components/input-bar/atoms'
@@ -15,19 +15,21 @@ export const useSendMessage = () => {
   const sendCreateMessage = useCreateMessage()
   const router = useRouter()
   const route = useRouteData()
+  const { thread, isLoading, isError } = useThread(route.thread)
 
   const sendMessage = async () => {
     try {
-      const threadId = route.thread ?? (await sendCreateThread({}))
+      if (isLoading || isError) return
+      const threadSlug = thread?.slug ?? (await sendCreateThread({}))
       const inference = getInferenceParameters(inputBar)
 
       await sendCreateMessage({
-        threadId,
+        threadSlug,
         message: { role: 'user', content: inputBar.prompt },
         inference,
       })
 
-      if (route.thread !== threadId) router.replace(`/t/${threadId}`)
+      router.replace(`/t/${threadSlug}`)
     } catch (err) {
       toast.error('An error occurred')
       console.error(err)

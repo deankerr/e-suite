@@ -16,8 +16,8 @@ type TitleControlBarProps = { preloadedThreads: PreloadedThreadsQuery }
 export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
   const router = useRouter()
   const threads = usePreloadedThreads(preloadedThreads)
-  const [route, slug] = useSelectedLayoutSegments()
-  const threadId = (route === 't' ? slug : undefined) ?? ''
+  const [route, id] = useSelectedLayoutSegments()
+  const slug = (route === 't' ? id : undefined) ?? ''
 
   const { remove, rename } = useThreadMutations()
   const [isRenamingThread, setIsRenamingThread] = useState(false)
@@ -30,7 +30,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
       </div>
     )
 
-  const activeThread = threads.find((thread) => thread._id === threadId)
+  const activeThread = threads.find((thread) => thread.slug === slug)
 
   return (
     <div className="w-full gap-2 flex-center">
@@ -48,7 +48,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
       )}
 
       <Select.Root
-        value={threadId}
+        value={slug}
         onValueChange={(id) => {
           router.push(`/t/${id}`)
         }}
@@ -60,7 +60,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
 
         <Select.Content position="popper">
           {threads.map((thread) => (
-            <Select.Item key={thread._id} value={thread._id}>
+            <Select.Item key={thread._id} value={thread.slug}>
               {thread.title ?? <span className="italic text-gray-11">New thread</span>}
             </Select.Item>
           ))}
@@ -75,7 +75,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
           onClick={() => {
             setIsRenamingThread(false)
             if (!newThreadTitle || newThreadTitle === activeThread?.title) return
-            rename(threadId, newThreadTitle)
+            rename(activeThread?._id ?? '', newThreadTitle)
           }}
         >
           <CheckIcon />
@@ -97,7 +97,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
         variant="ghost"
         color="red"
         onClick={() => {
-          remove(threadId)
+          remove(activeThread?._id ?? '')
           router.push('/')
         }}
       >

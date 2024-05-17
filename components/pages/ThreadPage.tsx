@@ -3,9 +3,8 @@
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { useThread } from '@/lib/api'
 
-export const ThreadPage = ({ slug }: { slug?: string }) => {
-  const thread = useThread(slug)
-  const isLoading = thread === undefined && slug
+export const ThreadPage = ({}: { slug?: string }) => {
+  const { thread, isLoading } = useThread()
 
   return (
     <>

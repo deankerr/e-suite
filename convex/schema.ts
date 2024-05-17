@@ -50,7 +50,7 @@ const speech = defineEnt({
 //* Messages
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('series', zodToConvex(z.number()), { index: true })
   .edges('images', { ref: true, deletion: 'soft' })
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('thread')
@@ -59,7 +59,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
 //* Threads
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
+  .field('slug', zodToConvex(z.string()), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('user')

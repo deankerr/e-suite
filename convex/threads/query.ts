@@ -1,13 +1,10 @@
-import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { validators } from '../external'
 import { query } from '../functions'
-import { zPaginationOptValidator } from '../utils'
+import { emptyPage, zPaginationOptValidator } from '../utils'
 
-import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
-import type { ZPaginationOptValidator } from '../utils'
 
 export type MessageWithContent = z.infer<typeof messageWithContentSchema>
 
@@ -34,22 +31,29 @@ const messageWithContent = async (message: Ent<'messages'>) => {
   }
 }
 
+export const getBySlugOrId = async (ctx: QueryCtx, slug: string) => {
+  const threadBySlug = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
+  if (threadBySlug) return threadBySlug
+  const id = ctx.unsafeDb.normalizeId('threads', slug)
+  return id ? await ctx.table('threads').get(id) : null
+}
+
 //* queries
 // get any thread
 export const getThread = query({
   args: {
-    threadId: z.string(),
+    slug: z.string(),
   },
-  handler: async (ctx: QueryCtx, { threadId }) => {
-    const id = ctx.unsafeDb.normalizeId('threads', threadId)
-    const thread = id ? await ctx.table('threads').get(id) : null
+  handler: async (ctx: QueryCtx, { slug }) => {
+    const thread = await getBySlugOrId(ctx, slug)
+
     if (!thread || thread.deletionTime) return null
 
     const messages = await thread
       .edge('messages')
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(8)
+      .take(20)
       .map(messageWithContent)
 
     return threadWithMessagesSchema.parse({
@@ -78,23 +82,23 @@ export const listThreads = query({
 // paginated list of messages for a thread
 export const listMessages = query({
   args: {
-    threadId: zid('threads'),
+    threadId: z.string(),
     paginationOpts: zPaginationOptValidator,
   },
-  handler: async (
-    ctx: QueryCtx,
-    {
-      threadId,
-      paginationOpts,
-    }: { threadId: Id<'threads'>; paginationOpts: ZPaginationOptValidator },
-  ) => {
+  handler: async (ctx: QueryCtx, args) => {
+    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
+    if (!threadId) return emptyPage()
+
     const result = await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .paginate(paginationOpts)
+      .paginate(args.paginationOpts)
       .map(messageWithContent)
 
-    return messageWithContentSchema.array().parse(result)
+    return {
+      ...result,
+      page: messageWithContentSchema.array().parse(result.page),
+    }
   },
 })
