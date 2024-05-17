@@ -1,17 +1,24 @@
 'use client'
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
-import { useThread } from '@/lib/api'
+import { useMessageSeries, useThread } from '@/lib/api'
 
-export const ThreadPage = ({}: { slug?: string }) => {
+export const ThreadPage = ({ slug, series }: { slug?: string; series?: string }) => {
   const { thread, isLoading } = useThread()
+  const { message: seriesMessage } = useMessageSeries(slug, series)
 
   return (
     <>
       {isLoading && <ThreadPageSkeleton />}
+      <div className="absolute left-0 top-0 font-mono text-xs text-gray-11">
+        {slug}/{series}
+      </div>
       <div className="px-1 py-4 md:px-4">
         <div className="mx-auto space-y-4">
-          {thread?.messages?.map((message) => <MessageCard key={message._id} message={message} />)}
+          {seriesMessage ? <MessageCard message={seriesMessage} /> : null}
+          {!seriesMessage &&
+            thread &&
+            thread.messages?.map((message) => <MessageCard key={message._id} message={message} />)}
         </div>
       </div>
     </>

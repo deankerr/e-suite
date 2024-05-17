@@ -103,3 +103,24 @@ export const listMessages = query({
     }
   },
 })
+
+export const getMessage = query({
+  args: {
+    slug: z.string(),
+    series: z.number(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getValidThread(ctx, args.slug)
+    if (!thread) return null
+
+    const message = await ctx
+      .table('messages', 'threadId_series', (q) =>
+        q.eq('threadId', thread._id).eq('series', args.series),
+      )
+      .unique()
+
+    if (!message) return null
+    const messageContent = await messageWithContent(message)
+    return messageWithContentSchema.parse(messageContent)
+  },
+})

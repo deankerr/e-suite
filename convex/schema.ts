@@ -55,6 +55,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('thread')
   .edge('user')
+  .index('threadId_series', ['threadId', 'series'])
 
 //* Threads
 const threads = defineEnt(zodToConvexFields(threadFields))

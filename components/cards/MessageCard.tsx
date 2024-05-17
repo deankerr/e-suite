@@ -1,14 +1,15 @@
 import { Fragment } from 'react'
 import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
-import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
+import { ImageIcon, MessageSquareIcon, ShareIcon, Trash2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
+import Link from 'next/link'
 import { toast } from 'sonner'
 
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
-import { useRemoveMessage } from '@/lib/api'
+import { useRemoveMessage, useThread } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { MessageWithContent } from '@/convex/threads/query'
@@ -44,6 +45,8 @@ export const MessageCard = ({ message }: MessageProps) => {
       job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
   )
 
+  const { thread } = useThread()
+
   return (
     <Card className={cn('mx-auto max-w-4xl')}>
       <div className="space-y-3">
@@ -60,6 +63,12 @@ export const MessageCard = ({ message }: MessageProps) => {
             <div className="grow truncate text-sm font-semibold">{title}</div>
 
             <div className="flex-none gap-1.5 flex-end">
+              <IconButton variant="surface" size="1" asChild>
+                <Link href={`/t/${thread?.slug}/${message.series}`}>
+                  <ShareIcon className="size-4" />
+                </Link>
+              </IconButton>
+
               {/* role */}
               <Button
                 variant="surface"
