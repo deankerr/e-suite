@@ -16,7 +16,6 @@ export const useSendMessage = () => {
   const router = useRouter()
 
   const keys = useRouteKeys()
-  console.log('keys', keys)
   const { thread } = useThread(keys)
   const isLoading = false
   const isError = false

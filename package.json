@@ -33,6 +33,7 @@
     "@react-hooks-library/core": "^0.6.2",
     "@react-three/fiber": "^8.16.3",
     "@tailwindcss/container-queries": "^0.1.1",
+    "@tanstack/react-virtual": "^3.5.0",
     "@uidotdev/usehooks": "^2.4.1",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10",

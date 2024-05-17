@@ -2,31 +2,33 @@
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { ImageCard } from '@/components/images/ImageCard'
+import { MessageRowVirtualizer } from '@/components/MessageRowVirtualizer'
 import { useThread } from '@/lib/api'
 
 import type { ThreadKeys } from '@/lib/types'
 
 export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
-  const { thread, messages, file } = useThread(keys)
+  const { thread, message, file } = useThread(keys)
 
   return (
     <>
       {/* {isLoading && <ThreadPageSkeleton />} */}
-
       {file ? (
         <div className="grid h-full place-content-center px-1 py-4 md:px-4">
           <ImageCard image={file} />
         </div>
+      ) : message ? (
+        <div className="py-2">
+          <MessageCard message={message} />
+        </div>
       ) : (
-        <div className="mx-auto space-y-4 px-1 py-4 md:px-4">
-          {messages?.map((message) =>
-            message ? <MessageCard key={message._id} message={message} /> : null,
-          )}
+        <div className="mx-auto space-y-4 px-1 md:px-4">
+          {thread?.messages && <MessageRowVirtualizer messages={thread.messages} />}
         </div>
       )}
 
       <div className="absolute left-0 top-0 bg-overlay font-mono text-xs text-gray-11">
-        keys:{JSON.stringify(keys)} t:{thread?.messages?.length} m:{messages?.length}
+        {/* keys:{JSON.stringify(keys)} t:{thread?.messages?.length} m:{messages?.length} */}
       </div>
     </>
   )

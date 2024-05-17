@@ -26,7 +26,7 @@ export const useThread = (keys: ThreadKeys = ['', '', '']) => {
   const fileId =
     messageByIndex && !isNaN(fileIndexN) ? messageByIndex.files?.[fileIndexN]?.id : null
   const file = messageByIndex?.images?.find((image) => image._id === fileId)
-  return { thread, messages: messageIndex ? [messageByIndex] : thread?.messages, file }
+  return { thread, message: messageByIndex, file }
 }
 
 export const useThreads = () => {
