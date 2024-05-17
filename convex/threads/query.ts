@@ -80,8 +80,27 @@ export const listThreads = query({
   },
 })
 
+export const listRecentMessages = query({
+  args: {
+    slug: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getValidThread(ctx, args.slug)
+    if (!thread) return null
+
+    const messages = await thread
+      .edge('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(8)
+      .map(messageWithContent)
+
+    return messageWithContentSchema.array().parse(messages)
+  },
+})
+
 // paginated list of messages for a thread
-export const listMessages = query({
+export const pageMessages = query({
   args: {
     slug: z.string(),
     paginationOpts: zPaginationOptValidator,

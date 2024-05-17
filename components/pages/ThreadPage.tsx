@@ -3,13 +3,17 @@
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { ImageCard } from '@/components/images/ImageCard'
 import { MessageRowVirtualizer } from '@/components/MessageRowVirtualizer'
-import { useThread } from '@/lib/api'
+import { usePageMessages, useRecentMessages, useThread } from '@/lib/api'
 
 import type { ThreadKeys } from '@/lib/types'
 
 export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
   const { thread, message, file } = useThread(keys)
 
+  const slug = keys?.[0]
+  const queryKey = slug ? { slug } : 'skip'
+  const rmessages = useRecentMessages(queryKey)
+  const pmessages = usePageMessages(queryKey)
   return (
     <>
       {/* {isLoading && <ThreadPageSkeleton />} */}
@@ -22,8 +26,10 @@ export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
           <MessageCard message={message} />
         </div>
       ) : (
-        <div className="mx-auto px-1 pb-52 md:px-4">
-          {thread?.messages && <MessageRowVirtualizer messages={thread.messages} />}
+        <div className="mx-auto grid grid-cols-2 gap-4 px-1 pb-52 md:px-4">
+          {rmessages && <MessageRowVirtualizer messages={rmessages} />}
+          {pmessages && <MessageRowVirtualizer messages={pmessages.results} />}
+          {/* {thread?.messages && <MessageRowVirtualizer messages={thread.messages} />} */}
         </div>
       )}
 

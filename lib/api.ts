@@ -89,9 +89,10 @@ export const useThreadMutations = () => {
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
 
-export const useMessages = (slug: string) => {
-  usePaginatedQuery(api.threads.query.listMessages, { slug }, { initialNumItems: 8 })
-}
+export const usePageMessages = (slug: any) =>
+  usePaginatedQuery(api.threads.query.pageMessages, { slug }, { initialNumItems: 8 })
+export const useRecentMessages = (slug: any) =>
+  useQuery(api.threads.query.listRecentMessages, { slug })
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})
