@@ -107,15 +107,18 @@ export const listMessages = query({
 export const getMessage = query({
   args: {
     slug: z.string(),
-    series: z.number(),
+    messageIndex: z.string(),
   },
   handler: async (ctx, args) => {
     const thread = await getValidThread(ctx, args.slug)
     if (!thread) return null
 
+    const series = Number(args.messageIndex)
+    if (isNaN(series)) throw new Error(`invalid index ${args.messageIndex}`)
+
     const message = await ctx
       .table('messages', 'threadId_series', (q) =>
-        q.eq('threadId', thread._id).eq('series', args.series),
+        q.eq('threadId', thread._id).eq('series', series),
       )
       .unique()
 

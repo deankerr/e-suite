@@ -1,5 +1,7 @@
-import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useMedia } from 'react-use'
+
+import { ThreadKeys } from '@/lib/types'
 
 export const useTwMediaQuery = () => {
   return {
@@ -11,9 +13,8 @@ export const useTwMediaQuery = () => {
   }
 }
 
-export const useRouteData = () => {
-  const pathname = usePathname()
-  const [_, route, id] = pathname.split('/')
-  const thread = route === 't' ? id : undefined
-  return { thread }
+export const useRouteKeys = () => {
+  const params = useParams<{ keys: ThreadKeys }>()
+  const keys = params.keys ?? ['', '', '']
+  return keys
 }

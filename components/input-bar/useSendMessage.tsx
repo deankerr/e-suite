@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { imageGenerationSizesMap } from '@/convex/constants'
 import { useCreateMessage, useCreateThread, useThread } from '@/lib/api'
-import { useRouteData } from '@/lib/hooks'
+import { useRouteKeys } from '@/lib/hooks'
 
 import type { InputBarState } from '@/components/input-bar/atoms'
 
@@ -14,21 +14,24 @@ export const useSendMessage = () => {
   const sendCreateThread = useCreateThread()
   const sendCreateMessage = useCreateMessage()
   const router = useRouter()
-  const route = useRouteData()
-  const { thread, isLoading, isError } = useThread(route.thread)
 
+  const keys = useRouteKeys()
+  console.log('keys', keys)
+  const { thread } = useThread(keys)
+  const isLoading = false
+  const isError = false
+
+  // eslint-disable-next-line @typescript-eslint/require-await
   const sendMessage = async () => {
     try {
       if (isLoading || isError) return
       const slug = thread?.slug ?? (await sendCreateThread({}))
       const inference = getInferenceParameters(inputBar)
-
       await sendCreateMessage({
         slug,
         message: { role: 'user', content: inputBar.prompt },
         inference,
       })
-
       router.replace(`/t/${slug}`)
     } catch (err) {
       toast.error('An error occurred')

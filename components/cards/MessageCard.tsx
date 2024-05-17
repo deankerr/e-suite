@@ -10,6 +10,7 @@ import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { useRemoveMessage, useThread } from '@/lib/api'
+import { useRouteKeys } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import type { MessageWithContent } from '@/convex/threads/query'
@@ -45,7 +46,8 @@ export const MessageCard = ({ message }: MessageProps) => {
       job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
   )
 
-  const { thread } = useThread()
+  const keys = useRouteKeys()
+  const { thread } = useThread(keys)
 
   return (
     <Card className={cn('mx-auto max-w-4xl')}>
@@ -116,7 +118,7 @@ export const MessageCard = ({ message }: MessageProps) => {
         )}
 
         {message.content && (
-          <div className="prose prose-invert prose-stone prose-pre:p-0 prose-h1:text-xl prose-h1:mb-2 prose-h2:text-xl prose-h2:mt-1 prose-h3:mt-1 prose-h2:mb-2 prose-h3:mb-2 mx-auto min-h-6 max-w-none">
+          <div className="prose prose-stone prose-invert mx-auto min-h-6 max-w-none prose-h1:mb-2 prose-h1:text-xl prose-h2:mb-2 prose-h2:mt-1 prose-h2:text-xl prose-h3:mb-2 prose-h3:mt-1 prose-pre:p-0">
             <Markdown
               options={{
                 wrapper: Fragment,
