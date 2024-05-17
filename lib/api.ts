@@ -48,14 +48,13 @@ export const useThreadMutations = () => {
       void runCreate()
     },
 
-    remove: (threadId: string) => {
+    remove: (slug: string) => {
       const runRemove = async () => {
         try {
-          await remove({ threadId })
+          await remove({ slug })
           toast.info('Thread deleted.')
         } catch (err) {
           toast.error('Failed to delete thread.')
-
           console.error(err)
         }
       }
@@ -63,10 +62,10 @@ export const useThreadMutations = () => {
       void runRemove()
     },
 
-    rename: (threadId: string, title: string) => {
+    rename: (slug: string, title: string) => {
       const runRename = async () => {
         try {
-          await rename({ threadId, title })
+          await rename({ slug, title })
         } catch (err) {
           console.error(err)
         }
@@ -82,8 +81,8 @@ export const useThreadMutations = () => {
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
 
-export const useMessages = (threadId: string) =>
-  usePaginatedQuery(api.threads.query.listMessages, { threadId }, { initialNumItems: 8 })
+export const useMessages = (slug: string) =>
+  usePaginatedQuery(api.threads.query.listMessages, { slug }, { initialNumItems: 8 })
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})

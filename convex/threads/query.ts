@@ -31,11 +31,13 @@ const messageWithContent = async (message: Ent<'messages'>) => {
   }
 }
 
-export const getBySlugOrId = async (ctx: QueryCtx, slug: string) => {
-  const threadBySlug = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).first()
-  if (threadBySlug) return threadBySlug
+export const getValidThread = async (ctx: QueryCtx, slug: string) => {
+  const threadBySlug = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).unique()
+  if (threadBySlug) return threadBySlug && !threadBySlug.deletionTime ? threadBySlug : null
+
   const id = ctx.unsafeDb.normalizeId('threads', slug)
-  return id ? await ctx.table('threads').get(id) : null
+  const threadById = id ? await ctx.table('threads').get(id) : null
+  return threadById && !threadById.deletionTime ? threadById : null
 }
 
 //* queries
@@ -45,9 +47,8 @@ export const getThread = query({
     slug: z.string(),
   },
   handler: async (ctx: QueryCtx, { slug }) => {
-    const thread = await getBySlugOrId(ctx, slug)
-
-    if (!thread || thread.deletionTime) return null
+    const thread = await getValidThread(ctx, slug)
+    if (!thread) return null
 
     const messages = await thread
       .edge('messages')
@@ -82,15 +83,15 @@ export const listThreads = query({
 // paginated list of messages for a thread
 export const listMessages = query({
   args: {
-    threadId: z.string(),
+    slug: z.string(),
     paginationOpts: zPaginationOptValidator,
   },
   handler: async (ctx: QueryCtx, args) => {
-    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    if (!threadId) return emptyPage()
+    const thread = await getValidThread(ctx, args.slug)
+    if (!thread) return emptyPage()
 
     const result = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
+      .table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)

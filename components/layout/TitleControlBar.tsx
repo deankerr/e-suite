@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { IconButton, Select, TextField } from '@radix-ui/themes'
-import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon } from 'lucide-react'
+import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon, XIcon } from 'lucide-react'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 
 import { Spinner } from '@/components/ui/Spinner'
@@ -16,8 +16,8 @@ type TitleControlBarProps = { preloadedThreads: PreloadedThreadsQuery }
 export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
   const router = useRouter()
   const threads = usePreloadedThreads(preloadedThreads)
-  const [route, id] = useSelectedLayoutSegments()
-  const slug = (route === 't' ? id : undefined) ?? ''
+  const [route, slugSegment] = useSelectedLayoutSegments()
+  const slug = (route === 't' ? slugSegment : undefined) ?? ''
 
   const { remove, rename } = useThreadMutations()
   const [isRenamingThread, setIsRenamingThread] = useState(false)
@@ -34,7 +34,11 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
 
   return (
     <div className="w-full gap-2 flex-center">
-      <IconButton variant="ghost" onClick={() => router.push('/')}>
+      <IconButton
+        className={cn(isRenamingThread && 'hidden')}
+        variant="ghost"
+        onClick={() => router.push('/')}
+      >
         <PlusCircleIcon />
       </IconButton>
 
@@ -69,17 +73,28 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
 
       {/* rename */}
       {isRenamingThread ? (
-        <IconButton
-          variant="ghost"
-          color="grass"
-          onClick={() => {
-            setIsRenamingThread(false)
-            if (!newThreadTitle || newThreadTitle === activeThread?.title) return
-            rename(activeThread?._id ?? '', newThreadTitle)
-          }}
-        >
-          <CheckIcon />
-        </IconButton>
+        <>
+          <IconButton
+            variant="ghost"
+            color="orange"
+            onClick={() => {
+              setIsRenamingThread(false)
+            }}
+          >
+            <XIcon />
+          </IconButton>
+          <IconButton
+            variant="ghost"
+            color="grass"
+            onClick={() => {
+              setIsRenamingThread(false)
+              if (!newThreadTitle || newThreadTitle === activeThread?.title) return
+              rename(activeThread?._id ?? '', newThreadTitle)
+            }}
+          >
+            <CheckIcon />
+          </IconButton>
+        </>
       ) : (
         <IconButton
           variant="ghost"
@@ -94,6 +109,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
 
       {/* delete */}
       <IconButton
+        className={cn(isRenamingThread && 'hidden')}
         variant="ghost"
         color="red"
         onClick={() => {

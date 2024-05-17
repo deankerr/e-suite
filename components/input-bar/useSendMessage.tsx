@@ -20,16 +20,16 @@ export const useSendMessage = () => {
   const sendMessage = async () => {
     try {
       if (isLoading || isError) return
-      const threadSlug = thread?.slug ?? (await sendCreateThread({}))
+      const slug = thread?.slug ?? (await sendCreateThread({}))
       const inference = getInferenceParameters(inputBar)
 
       await sendCreateMessage({
-        threadSlug,
+        slug,
         message: { role: 'user', content: inputBar.prompt },
         inference,
       })
 
-      router.replace(`/t/${threadSlug}`)
+      router.replace(`/t/${slug}`)
     } catch (err) {
       toast.error('An error occurred')
       console.error(err)

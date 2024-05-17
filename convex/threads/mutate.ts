@@ -4,7 +4,7 @@ import { mutation } from '../functions'
 import { createJob } from '../jobs/manage'
 import { generateSlug, insist } from '../utils'
 import { zThreadTitle } from '../validators'
-import { getBySlugOrId } from './query'
+import { getValidThread } from './query'
 import { inferenceSchema, messageFields } from './schema'
 
 export const createThread = mutation({
@@ -22,51 +22,55 @@ export const createThread = mutation({
 
 export const removeThread = mutation({
   args: {
-    threadId: z.string(),
+    slug: z.string(),
   },
   handler: async (ctx, args) => {
-    const id = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    return id ? await ctx.table('threads').getX(id).delete() : null
+    const thread = await getValidThread(ctx, args.slug)
+    insist(thread, 'invalid thread')
+    return await ctx.table('threads').getX(thread._id).delete()
   },
 })
 
 export const renameThread = mutation({
   args: {
-    threadId: z.string(),
+    slug: z.string(),
     title: zThreadTitle,
   },
   handler: async (ctx, args) => {
-    const id = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    return id ? await ctx.table('threads').getX(id).patch({ title: args.title }) : null
+    const thread = await getValidThread(ctx, args.slug)
+    insist(thread, 'invalid thread')
+    return await ctx.table('threads').getX(thread._id).patch({ title: args.title })
   },
 })
 
 export const completeThreadTitle = mutation({
   args: {
-    threadId: z.string(),
+    slug: z.string(),
   },
   handler: async (ctx, args) => {
-    const id = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    if (!id) return
-    const thread = await ctx.table('threads').getX(id)
+    const thread = await getValidThread(ctx, args.slug)
+    insist(thread, 'invalid thread')
+
     const message = await thread.edge('messages').firstX()
-    return id
-      ? await createJob(ctx, { type: 'title-completion', threadId: id, messageId: message._id })
-      : null
+    return await createJob(ctx, {
+      type: 'title-completion',
+      threadId: thread._id,
+      messageId: message._id,
+    })
   },
 })
 
 export const createMessage = mutation({
   args: {
-    threadSlug: z.string(),
+    slug: z.string(),
     message: z.object(messageFields),
     inference: inferenceSchema.optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
 
-    const thread = await getBySlugOrId(ctx, args.threadSlug)
-    insist(thread && !thread.deletionTime, 'invalid thread')
+    const thread = await getValidThread(ctx, args.slug)
+    insist(thread, 'invalid thread')
     const threadId = thread._id
 
     const lastMessage = await ctx
