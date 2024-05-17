@@ -16,15 +16,13 @@ import { cn } from '@/lib/utils'
 import type { MessageWithContent } from '@/convex/threads/query'
 import type { ButtonProps } from '@radix-ui/themes'
 
-// const thumbnailHeightPx = 256
-
 type MessageProps = {
   message: MessageWithContent
   priority?: boolean
 }
 
 export const MessageCard = ({ message }: MessageProps) => {
-  const { images } = message
+  const { images, inference } = message
 
   const removeMessage = useRemoveMessage()
 
@@ -36,15 +34,16 @@ export const MessageCard = ({ message }: MessageProps) => {
     <MessageSquareIcon className="size-5" />
   )
 
-  const title = hasImages ? 'Generation' : message?.name ?? getRole(message.role)
-  // const title = images?.[0]
-  //   ? images?.[0].parameters?.prompt
-  //   : message?.name ?? getRole(message.role)
+  const title =
+    inference?.type === 'text-to-image'
+      ? inference.parameters.prompt
+      : message?.name ?? getRole(message.role)
 
-  const showLoader = message.jobs?.find(
-    (job) =>
-      job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
-  )
+  const showLoader =
+    message.jobs?.find(
+      (job) =>
+        job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
+    ) && !images?.length
 
   const keys = useRouteKeys()
   const { thread } = useThread(keys)
@@ -81,10 +80,6 @@ export const MessageCard = ({ message }: MessageProps) => {
                 {message.role}
               </Button>
 
-              {/* <IconButton variant="surface" size="1" className="font-serif text-sm">
-                i
-              </IconButton> */}
-
               {/* delete */}
               <IconButton
                 color="red"
@@ -104,12 +99,6 @@ export const MessageCard = ({ message }: MessageProps) => {
             </div>
           </div>
         </Inset>
-
-        {showLoader && (
-          <div className="h-72">
-            <GoldSparkles />
-          </div>
-        )}
 
         {message.images && message.images.length > 0 && (
           <div className="mx-auto grid w-fit grid-cols-2 gap-2">
@@ -136,6 +125,12 @@ export const MessageCard = ({ message }: MessageProps) => {
             >
               {message?.content ?? ''}
             </Markdown>
+          </div>
+        )}
+
+        {showLoader && (
+          <div className="h-72">
+            <GoldSparkles />
           </div>
         )}
 
