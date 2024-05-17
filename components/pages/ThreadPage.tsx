@@ -1,24 +1,29 @@
 'use client'
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
+import { ImageCard } from '@/components/images/ImageCard'
 import { useThread } from '@/lib/api'
 
 import type { ThreadKeys } from '@/lib/types'
 
 export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
-  const { thread, messages } = useThread(keys)
+  const { thread, messages, file } = useThread(keys)
 
   return (
     <>
       {/* {isLoading && <ThreadPageSkeleton />} */}
 
-      <div className="px-1 py-4 md:px-4">
-        <div className="mx-auto space-y-4">
+      {file ? (
+        <div className="grid h-full place-content-center px-1 py-4 md:px-4">
+          <ImageCard image={file} />
+        </div>
+      ) : (
+        <div className="mx-auto space-y-4 px-1 py-4 md:px-4">
           {messages?.map((message) =>
             message ? <MessageCard key={message._id} message={message} /> : null,
           )}
         </div>
-      </div>
+      )}
 
       <div className="absolute left-0 top-0 bg-overlay font-mono text-xs text-gray-11">
         keys:{JSON.stringify(keys)} t:{thread?.messages?.length} m:{messages?.length}

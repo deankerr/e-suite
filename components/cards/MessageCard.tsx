@@ -113,7 +113,14 @@ export const MessageCard = ({ message }: MessageProps) => {
 
         {message.images && message.images.length > 0 && (
           <div className="mx-auto grid w-fit grid-cols-2 gap-2">
-            {message.images?.map((image) => <ImageCard key={image._id} image={image} />)}
+            {message.images?.map((image) => (
+              <Link
+                key={image._id}
+                href={`/t/${thread?.slug}/${message.series}/${(message.files?.findIndex((f) => f.id === image._id) ?? -9) + 1}`}
+              >
+                <ImageCard image={image} />
+              </Link>
+            ))}
           </div>
         )}
 

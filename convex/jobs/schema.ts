@@ -11,7 +11,13 @@ export const jobTypesEnum = z.enum([
   'create-images-from-results',
   'text-to-speech',
 ])
-export const jobResultTypesEnum = z.enum(['message', 'url', 'error', 'openai-chat-completion-json'])
+export const jobResultTypesEnum = z.enum([
+  'message',
+  'url',
+  'image',
+  'error',
+  'openai-chat-completion-json',
+])
 
 export const jobResultSchema = z.object({ type: jobResultTypesEnum, value: z.string() })
 

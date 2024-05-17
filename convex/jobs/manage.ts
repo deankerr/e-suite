@@ -87,6 +87,15 @@ export const results = internalMutation({
       })
     }
 
+    if (job.type === 'create-images-from-results') {
+      const message = await ctx.table('messages').getX(job.messageId)
+      const newFiles = results
+        .filter((result) => result.type === 'image')
+        .map(({ value }) => ({ type: 'image' as const, id: value as Id<'images'> }))
+      const files = (message.files ?? []).concat(newFiles)
+      await message.patch({ files })
+    }
+
     if (job.type === 'title-completion') {
       const title = results.find((result) => result.type === 'message')?.value ?? '<title?>'
       await thread?.patch({ title })

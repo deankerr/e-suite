@@ -14,14 +14,19 @@ export const usePreloadedThreads = (
 }
 
 export const useThread = (keys: ThreadKeys = ['', '', '']) => {
-  const [threadKey, messageIndex] = keys
+  const [threadKey, messageIndex, fileIndex] = keys
   const thread = useQuery(api.threads.query.getThread, threadKey ? { slug: threadKey } : 'skip')
 
   const messageByIndex = useQuery(
     api.threads.query.getMessage,
     threadKey && messageIndex ? { slug: threadKey, messageIndex } : 'skip',
   )
-  return { thread, messages: messageIndex ? [messageByIndex] : thread?.messages }
+
+  const fileIndexN = Number(fileIndex) - 1
+  const fileId =
+    messageByIndex && !isNaN(fileIndexN) ? messageByIndex.files?.[fileIndexN]?.id : null
+  const file = messageByIndex?.images?.find((image) => image._id === fileId)
+  return { thread, messages: messageIndex ? [messageByIndex] : thread?.messages, file }
 }
 
 export const useThreads = () => {

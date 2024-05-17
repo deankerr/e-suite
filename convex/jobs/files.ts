@@ -67,7 +67,7 @@ export const createImagesFromResults = internalAction({
           const originFileId = await ctx.storage.store(originBlob)
           const webpStorageId = await ctx.storage.store(webpBlob)
 
-          return await ctx.runMutation(internal.images.manage.create, {
+          const id = await ctx.runMutation(internal.images.manage.create, {
             messageId: job.messageId,
             width: metadata.width,
             height: metadata.height,
@@ -79,6 +79,8 @@ export const createImagesFromResults = internalAction({
             sourceSet: [],
             generationData: [],
           })
+
+          return { type: 'image', id }
         }),
     )
 
@@ -87,12 +89,12 @@ export const createImagesFromResults = internalAction({
         return { type: 'error' as const, value: JSON.stringify(result.reason) }
       }
 
-      return { type: 'message' as const, value: result.value }
+      return { type: 'image' as const, value: result.value.id }
     })
 
     await ctx.runMutation(internal.jobs.manage.results, {
       jobId,
-      status: results.some((result) => result.type === 'message') ? 'complete' : 'failed',
+      status: results.some((result) => result.type === 'image') ? 'complete' : 'failed',
       results,
     })
   },

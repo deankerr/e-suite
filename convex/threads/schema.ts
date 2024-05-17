@@ -50,6 +50,8 @@ export const inferenceSchema = z.discriminatedUnion('type', [
   }),
 ])
 
+export const filesListSchema = z.object({ type: z.enum(['image']), id: zid('images') }).array()
+
 export const messageFields = {
   role: messageRolesEnum,
   name: zTruncate(64).optional(),
@@ -57,6 +59,7 @@ export const messageFields = {
   content: z.string().optional(),
 
   inference: inferenceSchema.optional(),
+  files: filesListSchema.optional(),
 
   metadata: z.string().array().array().optional(),
   speechId: zid('speech').optional(),
