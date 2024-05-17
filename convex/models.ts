@@ -2,6 +2,7 @@ import { asyncMap } from 'convex-helpers'
 
 import { query } from './functions'
 import FalModelsJson from './providers/fal.models.json'
+import { openai } from './providers/openai'
 import SinkinModelsJson from './providers/sinkin.models.json'
 import TogetherAiModels from './providers/togetherai.models.json'
 
@@ -52,12 +53,22 @@ export const listImageModels = query({
 //   },
 // })
 
-const chatModels = TogetherAiModels.filter((m) => m.type === 'chat')
-
 export const listChatModels = query({
   args: {},
   // eslint-disable-next-line @typescript-eslint/require-await
   handler: async () => {
-    return chatModels
+    const models = [
+      TogetherAiModels.filter((m) => m.type === 'chat').map((model) => ({
+        model_id: model.model_id,
+        name: model.name,
+        creator: model.creatorName,
+        type: model.type,
+        contextLength: model.contextLength,
+        endpoint: 'together',
+      })),
+      openai.models.chat.map((model) => ({ ...model, type: 'chat', endpoint: 'openai' })),
+    ].flat()
+
+    return models
   },
 })

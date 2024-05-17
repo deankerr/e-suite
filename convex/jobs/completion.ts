@@ -13,6 +13,12 @@ const createApi = (endpoint: string) => {
         apiKey: getEnv('TOGETHER_API_KEY'),
         baseURL: 'https://api.together.xyz/v1',
       })
+
+    case 'openai':
+      return new OpenAI({
+        apiKey: getEnv('OPENAI_API_KEY'),
+        baseURL: 'https://api.openai.com/v1',
+      })
   }
 
   throw new ConvexError('invalid endpoint') // todo no retry

@@ -118,6 +118,7 @@ export const MessageCard = ({ message }: MessageProps) => {
             <Markdown
               options={{
                 wrapper: Fragment,
+                forceBlock: true,
                 overrides: {
                   code: SyntaxHighlightedCode,
                 },

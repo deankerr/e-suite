@@ -119,6 +119,7 @@ import type * as providers_fal_types_upscaleOutput from "../providers/fal/types/
 import type * as providers_fal_types_validationError from "../providers/fal/types/validationError.js";
 import type * as providers_fal_types_validationErrorLocItem from "../providers/fal/types/validationErrorLocItem.js";
 import type * as providers_fal from "../providers/fal.js";
+import type * as providers_openai from "../providers/openai.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as providers_types from "../providers/types.js";
@@ -245,6 +246,7 @@ declare const fullApi: ApiFromModules<{
   "providers/fal/types/validationError": typeof providers_fal_types_validationError;
   "providers/fal/types/validationErrorLocItem": typeof providers_fal_types_validationErrorLocItem;
   "providers/fal": typeof providers_fal;
+  "providers/openai": typeof providers_openai;
   "providers/sinkin": typeof providers_sinkin;
   "providers/togetherai": typeof providers_togetherai;
   "providers/types": typeof providers_types;

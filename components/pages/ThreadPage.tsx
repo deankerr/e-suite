@@ -22,7 +22,7 @@ export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
           <MessageCard message={message} />
         </div>
       ) : (
-        <div className="mx-auto space-y-4 px-1 md:px-4">
+        <div className="mx-auto px-1 pb-52 md:px-4">
           {thread?.messages && <MessageRowVirtualizer messages={thread.messages} />}
         </div>
       )}
