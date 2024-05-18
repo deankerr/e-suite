@@ -6,12 +6,11 @@ import { MessageCard } from '@/components/cards/MessageCard'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
-import type { MessageWithContent, ThreadWithMessages } from '@/convex/threads/query'
+import type { EThread } from '@/convex/validators'
 import type { UsePaginatedQueryReturnType } from 'convex/react'
 
 type ThreadContainerProps = {
-  thread: ThreadWithMessages
-  messages?: MessageWithContent[]
+  thread: EThread
   page: UsePaginatedQueryReturnType<typeof api.threads.query.pageMessages>
 } & React.ComponentProps<'div'>
 

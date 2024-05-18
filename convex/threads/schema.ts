@@ -55,7 +55,6 @@ export const filesListSchema = z.object({ type: z.enum(['image']), id: zid('imag
 export const messageFields = {
   role: messageRolesEnum,
   name: zTruncate(64).optional(),
-  text: z.string().optional(),
   content: z.string().optional(),
 
   inference: inferenceSchema.optional(),

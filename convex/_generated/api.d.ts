@@ -15,7 +15,6 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as constants from "../constants.js";
-import type * as external from "../external.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as images_http from "../images/http.js";
@@ -142,7 +141,6 @@ import type * as validators from "../validators.js";
  */
 declare const fullApi: ApiFromModules<{
   constants: typeof constants;
-  external: typeof external;
   functions: typeof functions;
   http: typeof http;
   "images/http": typeof images_http;

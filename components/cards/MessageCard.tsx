@@ -13,11 +13,11 @@ import { useRemoveMessage, useThread } from '@/lib/api'
 import { useRouteKeys } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 
-import type { MessageWithContent } from '@/convex/threads/query'
+import type { EMessageContent } from '@/convex/validators'
 import type { ButtonProps } from '@radix-ui/themes'
 
 type MessageProps = {
-  message: MessageWithContent
+  message: EMessageContent
   priority?: boolean
 } & React.ComponentProps<typeof Card>
 

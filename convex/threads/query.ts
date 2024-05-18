@@ -1,27 +1,10 @@
 import { z } from 'zod'
 
-import { validators } from '../external'
 import { query } from '../functions'
 import { emptyPage, zPaginationOptValidator } from '../utils'
+import { zClient } from '../validators'
 
 import type { Ent, QueryCtx } from '../types'
-
-export type ThreadWithMessages = z.infer<typeof threadWithMessagesSchema>
-export type MessageWithContent = z.infer<typeof messageWithContentSchema>
-
-//* validators
-const messageWithContentSchema = validators.message.merge(
-  z.object({
-    images: validators.image.array().optional(),
-    jobs: validators.job.array().optional(),
-  }),
-)
-
-const threadWithMessagesSchema = validators.thread.merge(
-  z.object({ messages: messageWithContentSchema.array().optional() }),
-)
-
-const threadSchema = validators.thread
 
 //* helpers
 const messageWithContent = async (message: Ent<'messages'>) => {
@@ -58,7 +41,7 @@ export const getThread = query({
       .take(20)
       .map(messageWithContent)
 
-    return threadWithMessagesSchema.parse({
+    return zClient.threadWithMessages.parse({
       ...thread,
       messages,
     })
@@ -77,7 +60,7 @@ export const listThreads = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
 
-    return threadSchema.array().parse(threads)
+    return zClient.thread.array().parse(threads)
   },
 })
 
@@ -97,7 +80,7 @@ export const listRecentMessages = query({
       .take(args.limit)
       .map(messageWithContent)
 
-    return messageWithContentSchema.array().parse(messages)
+    return zClient.messageContent.array().parse(messages)
   },
 })
 
@@ -120,7 +103,7 @@ export const pageMessages = query({
 
     return {
       ...result,
-      page: messageWithContentSchema.array().parse(result.page),
+      page: zClient.messageContent.array().parse(result.page),
     }
   },
 })
@@ -145,6 +128,6 @@ export const getMessage = query({
 
     if (!message) return null
     const messageContent = await messageWithContent(message)
-    return messageWithContentSchema.parse(messageContent)
+    return zClient.messageContent.parse(messageContent)
   },
 })

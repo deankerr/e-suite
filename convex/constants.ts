@@ -4,7 +4,7 @@ export const generationProviders = ['sinkin', 'fal'] as const
 export const textToSpeechProviders = ['elevenlabs', 'aws'] as const
 
 //* Messages
-export const messageRoles = ['system', 'user', 'assistant', 'tool'] as const
+export const messageRoles = ['system', 'user', 'assistant'] as const
 export const defaultSystemPrompt =
   'You are an advanced AI assistant who can assist with any user query.'
 
