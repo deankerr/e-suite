@@ -6,18 +6,25 @@ import { MessageCard } from '@/components/cards/MessageCard'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
-import type { EThread } from '@/convex/validators'
+import type { EMessageContent, EThread } from '@/convex/validators'
 import type { UsePaginatedQueryReturnType } from 'convex/react'
 
 type ThreadContainerProps = {
   thread: EThread
-  page: UsePaginatedQueryReturnType<typeof api.threads.query.pageMessages>
+  page: UsePaginatedQueryReturnType<typeof api.threads.query.listMessages>
+  series?: EMessageContent[] | null
 } & React.ComponentProps<'div'>
 
-export const ThreadContainer = ({ thread, page, className, ...props }: ThreadContainerProps) => {
+export const ThreadContainer = ({
+  thread,
+  page,
+  series,
+  className,
+  ...props
+}: ThreadContainerProps) => {
   const parentRef = useRef<HTMLDivElement>(null)
 
-  const messages = page.results.toReversed()
+  const messages = series ?? page.results.toReversed()
 
   const virtualizer = useVirtualizer({
     count: messages.length,

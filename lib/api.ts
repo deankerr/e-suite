@@ -2,6 +2,7 @@ import { useMutation, usePaginatedQuery, usePreloadedQuery, useQuery } from 'con
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
+import { useRouteIndex } from '@/lib/hooks'
 
 import type { ThreadIndex } from '@/lib/types'
 import type { Preloaded } from 'convex/react'
@@ -13,20 +14,30 @@ export const usePreloadedThreads = (
   return threads
 }
 
-export const useThread = (keys: ThreadIndex['keys'] = ['', '', '']) => {
-  const [threadKey, messageIndex, fileIndex] = keys
-  const thread = useQuery(api.threads.query.getThread, threadKey ? { slug: threadKey } : 'skip')
+const emptyThreadIndex: ThreadIndex = { thread: '', message: '', file: '', keys: ['', '', ''] }
 
-  const messageByIndex = useQuery(
-    api.threads.query.getMessage,
-    threadKey && messageIndex ? { slug: threadKey, messageIndex } : 'skip',
-  )
+export const useThreadIndex = (index: ThreadIndex = emptyThreadIndex) => {
+  const queryKey = index.thread ? { slug: index.thread } : 'skip'
+  const thread = useQuery(api.threads.query.getThread, queryKey)
 
-  const fileIndexN = Number(fileIndex) - 1
-  const fileId =
-    messageByIndex && !isNaN(fileIndexN) ? messageByIndex.files?.[fileIndexN]?.id : null
-  const file = messageByIndex?.images?.find((image) => image._id === fileId)
-  return { thread, message: messageByIndex, file }
+  const listMessagesQueryKey = index.thread && !index.message ? { slug: index.thread } : 'skip'
+  const messages = usePaginatedQuery(api.threads.query.listMessages, listMessagesQueryKey, {
+    initialNumItems: 8,
+  })
+
+  const getMessageSeriesQueryKey =
+    index.thread && index.message ? { slug: index.thread, series: index.message } : 'skip'
+  const series = useQuery(api.threads.query.getMessageSeries, getMessageSeriesQueryKey)
+
+  return { thread, messages, series }
+}
+
+export const useThread = (slug?: string) => {
+  const routeIndex = useRouteIndex()
+  const queryKey = slug ? { slug } : routeIndex.thread ? { slug: routeIndex.thread } : 'skip'
+  const thread = useQuery(api.threads.query.getThread, queryKey)
+
+  return thread
 }
 
 export const useThreads = () => {
@@ -88,10 +99,6 @@ export const useThreadMutations = () => {
 
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
-
-export const usePageMessages = (slug: any) =>
-  usePaginatedQuery(api.threads.query.pageMessages, slug, { initialNumItems: 8 })
-export const useRecentMessages = (slug: any) => useQuery(api.threads.query.listRecentMessages, slug)
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})

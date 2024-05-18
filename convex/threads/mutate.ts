@@ -3,9 +3,8 @@ import { z } from 'zod'
 import { mutation } from '../functions'
 import { createJob } from '../jobs/manage'
 import { generateSlug, insist } from '../utils'
-import { zThreadTitle } from '../validators'
 import { getValidThread } from './query'
-import { inferenceSchema, messageFields } from './schema'
+import { inferenceSchema, messageFields, zThreadTitle } from './schema'
 
 export const createThread = mutation({
   args: {

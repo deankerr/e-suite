@@ -3,7 +3,12 @@ import z from 'zod'
 
 import { textToSpeechProviders } from './constants'
 import { jobStatusEnum, jobTypesEnum } from './jobs/schema'
-import { filesListSchema, inferenceSchema, messageRolesEnum } from './threads/schema'
+import {
+  filesListSchema,
+  inferenceSchema,
+  messageRolesEnum,
+  zMessageTextContent,
+} from './threads/schema'
 
 export type EImage = z.infer<typeof zClient.image>
 export type EMessage = z.infer<typeof zClient.message>
@@ -15,15 +20,6 @@ export type EMessageContent = z.infer<typeof zClient.messageContent>
 export type EThreadWithMessages = z.infer<typeof zClient.threadWithMessages>
 
 //* fields
-export const zTruncate = (max: number, min = 0) =>
-  z
-    .string()
-    .min(min)
-    .transform((value) => value.slice(0, max))
-
-export const zThreadTitle = zTruncate(256, 1)
-export const zMessageName = zTruncate(64, 1)
-export const zMessageTextContent = zTruncate(32767, 1)
 
 //* front-end shapes
 const image = z.object({

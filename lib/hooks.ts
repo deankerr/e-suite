@@ -15,7 +15,7 @@ export const useTwMediaQuery = () => {
   }
 }
 
-export const useIndexParams = (): ThreadIndex => {
+export const useRouteIndex = (): ThreadIndex => {
   const params = useParams<{ index?: string[] }>()
 
   return buildThreadIndex(params.index ?? [])

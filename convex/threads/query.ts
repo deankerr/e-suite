@@ -7,7 +7,7 @@ import { zClient } from '../validators'
 import type { Ent, QueryCtx } from '../types'
 
 //* helpers
-const messageWithContent = async (message: Ent<'messages'>) => {
+const getMessageContent = async (message: Ent<'messages'>) => {
   return {
     ...message,
     images: await message.edge('images').filter((q) => q.eq(q.field('deletionTime'), undefined)),
@@ -38,8 +38,8 @@ export const getThread = query({
       .edge('messages')
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(20)
-      .map(messageWithContent)
+      .take(0)
+      .map(getMessageContent)
 
     return zClient.threadWithMessages.parse({
       ...thread,
@@ -64,31 +64,12 @@ export const listThreads = query({
   },
 })
 
-export const listRecentMessages = query({
-  args: {
-    slug: z.string(),
-    limit: z.number().default(8),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getValidThread(ctx, args.slug)
-    if (!thread) return null
-
-    const messages = await thread
-      .edge('messages')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(args.limit)
-      .map(messageWithContent)
-
-    return zClient.messageContent.array().parse(messages)
-  },
-})
-
 // paginated list of messages for a thread
-export const pageMessages = query({
+export const listMessages = query({
   args: {
     slug: z.string(),
     paginationOpts: zPaginationOptValidator,
+    series: z.number().optional(),
   },
   handler: async (ctx: QueryCtx, args) => {
     const thread = await getValidThread(ctx, args.slug)
@@ -99,7 +80,7 @@ export const pageMessages = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map(messageWithContent)
+      .map(getMessageContent)
 
     return {
       ...result,
@@ -108,26 +89,25 @@ export const pageMessages = query({
   },
 })
 
-export const getMessage = query({
+export const getMessageSeries = query({
   args: {
     slug: z.string(),
-    messageIndex: z.string(),
+    series: z.string(),
   },
   handler: async (ctx, args) => {
     const thread = await getValidThread(ctx, args.slug)
     if (!thread) return null
 
-    const series = Number(args.messageIndex)
-    if (isNaN(series)) throw new Error(`invalid index ${args.messageIndex}`)
+    const series = Number(args.series)
+    if (isNaN(series)) throw new Error(`invalid index ${args.series}`)
 
-    const message = await ctx
+    const messages = await ctx
       .table('messages', 'threadId_series', (q) =>
         q.eq('threadId', thread._id).eq('series', series),
       )
-      .unique()
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map(getMessageContent)
 
-    if (!message) return null
-    const messageContent = await messageWithContent(message)
-    return zClient.messageContent.parse(messageContent)
+    return zClient.messageContent.array().parse(messages)
   },
 })
