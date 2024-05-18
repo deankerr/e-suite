@@ -29,14 +29,14 @@ export const ThreadContainer = ({ thread, page, className, ...props }: ThreadCon
   })
 
   return (
-    <div {...props} className={cn('border-tomato grid h-full rounded border p-2', className)}>
+    <div {...props} className={cn('grid h-full rounded border border-gray-3 p-2', className)}>
       <ScrollArea ref={parentRef} className="overscroll-none">
         <div
           style={{
             height: `${virtualizer.getTotalSize()}px`,
-            width: '100%',
             position: 'relative',
           }}
+          className="mx-auto w-full max-w-4xl"
         >
           {virtualizer.getVirtualItems().map((virtualItem) => (
             <div
@@ -48,7 +48,6 @@ export const ThreadContainer = ({ thread, page, className, ...props }: ThreadCon
                 top: 0,
                 left: 0,
                 width: '100%',
-                // height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >

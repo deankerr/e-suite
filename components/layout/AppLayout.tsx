@@ -1,6 +1,3 @@
-import { Separator } from '@radix-ui/themes'
-import Script from 'next/script'
-
 import { InputBar } from '@/components/input-bar/InputBar'
 import { TitleControlBar } from '@/components/layout/TitleControlBar'
 import { UserSegment } from '@/components/layout/UserSegment'
@@ -12,23 +9,14 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
   const preloadedThreads = await preloadThreads()
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/hybrid.min.css"
-      />
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" />
-
       <div className={cn('mx-auto min-h-screen max-w-8xl')}>
-        <header className="flex h-10 items-center justify-between bg-gray-1 px-1 md:h-12 md:gap-2 md:px-3">
+        <header className="flex h-12 items-center justify-between gap-2 bg-gray-1 px-2">
           <AppLogoTitle />
           <TitleControlBar preloadedThreads={preloadedThreads} />
           <UserSegment />
         </header>
-        <div>
-          <Separator size="4" />
-        </div>
 
-        <div className="min-h-[calc(100vh-2.5rem)]">{children}</div>
+        <div className="min-h-[calc(100vh-3rem)]">{children}</div>
         <InputBar />
       </div>
     </>

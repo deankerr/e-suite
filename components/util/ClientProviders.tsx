@@ -17,7 +17,9 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
       <Jotai store={store}>
-        {environment === 'dev' && <JotaiDevTools theme="dark" store={store} />}
+        {environment === 'dev' && process.env.JOTAI_DEV_TOOLS && (
+          <JotaiDevTools theme="dark" store={store} />
+        )}
         {children}
       </Jotai>
     </ConvexProviderWithClerk>

@@ -11,6 +11,7 @@ import { Toaster } from 'sonner'
 import { PartyBoy } from '@/components/effects/PartyBoy'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
+import { HighlightLoader } from '@/components/util/HighlightLoader'
 import { cn, environment } from '@/lib/utils'
 
 import type { Metadata, Viewport } from 'next'
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <AppLayout>{children}</AppLayout>
               <PartyBoy />
               <Toaster richColors />
+              <HighlightLoader />
             </Theme>
           </ClientProviders>
         </ClerkProvider>
