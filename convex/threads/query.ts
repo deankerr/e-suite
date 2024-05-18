@@ -6,6 +6,7 @@ import { emptyPage, zPaginationOptValidator } from '../utils'
 
 import type { Ent, QueryCtx } from '../types'
 
+export type ThreadWithMessages = z.infer<typeof threadWithMessagesSchema>
 export type MessageWithContent = z.infer<typeof messageWithContentSchema>
 
 //* validators

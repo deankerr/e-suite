@@ -1,27 +1,27 @@
 'use client'
 
-import { Button } from '@radix-ui/themes'
 import { usePaginatedQuery } from 'convex/react'
 
-import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
-import { ImageCard } from '@/components/images/ImageCard'
-import { MessagesContainer } from '@/components/MessagesContainer'
+import { MessageCardSkeleton } from '@/components/cards/MessageCard'
+import { ThreadContainer } from '@/components/thread/ThreadContainer'
 import { api } from '@/convex/_generated/api'
 import { useThread } from '@/lib/api'
 
 import type { ThreadKeys } from '@/lib/types'
 
 export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
-  const { message, file } = useThread(keys)
+  const { thread } = useThread(keys)
 
   const slug = keys?.[0]
   const queryKey = slug ? { slug } : 'skip'
   const page = usePaginatedQuery(api.threads.query.pageMessages, queryKey, { initialNumItems: 3 })
-  const messages = page.results.toReversed()
   return (
     <>
       {/* {isLoading && <ThreadPageSkeleton />} */}
-
+      <div className="absolute box-border h-[calc(100vh-3rem)] w-full border border-green-7 p-1 md:p-4">
+        {thread && <ThreadContainer thread={thread} page={page} />}
+      </div>
+      {/*
       {file ? (
         <div className="grid h-full place-content-center px-1 py-4 md:px-4">
           <ImageCard image={file} />
@@ -39,7 +39,7 @@ export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
           </div>
           <MessagesContainer messages={messages} style={{ height: '70vh' }} />
         </div>
-      )}
+      )} */}
 
       <div className="absolute left-0 top-0 bg-overlay font-mono text-xs text-gray-11">
         {/* keys:{JSON.stringify(keys)} t:{thread?.messages?.length} m:{messages?.length} */}
