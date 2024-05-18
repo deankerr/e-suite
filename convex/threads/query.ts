@@ -83,6 +83,7 @@ export const listThreads = query({
 export const listRecentMessages = query({
   args: {
     slug: z.string(),
+    limit: z.number().default(8),
   },
   handler: async (ctx, args) => {
     const thread = await getValidThread(ctx, args.slug)
@@ -92,7 +93,7 @@ export const listRecentMessages = query({
       .edge('messages')
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(8)
+      .take(args.limit)
       .map(messageWithContent)
 
     return messageWithContentSchema.array().parse(messages)

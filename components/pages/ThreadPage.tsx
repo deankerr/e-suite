@@ -1,35 +1,43 @@
 'use client'
 
+import { Button } from '@radix-ui/themes'
+import { usePaginatedQuery } from 'convex/react'
+
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { ImageCard } from '@/components/images/ImageCard'
-import { MessageRowVirtualizer } from '@/components/MessageRowVirtualizer'
-import { usePageMessages, useRecentMessages, useThread } from '@/lib/api'
+import { MessagesContainer } from '@/components/MessagesContainer'
+import { api } from '@/convex/_generated/api'
+import { useThread } from '@/lib/api'
 
 import type { ThreadKeys } from '@/lib/types'
 
 export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
-  const { thread, message, file } = useThread(keys)
+  const { message, file } = useThread(keys)
 
   const slug = keys?.[0]
   const queryKey = slug ? { slug } : 'skip'
-  const rmessages = useRecentMessages(queryKey)
-  const pmessages = usePageMessages(queryKey)
+  const page = usePaginatedQuery(api.threads.query.pageMessages, queryKey, { initialNumItems: 3 })
+  const messages = page.results.toReversed()
   return (
     <>
       {/* {isLoading && <ThreadPageSkeleton />} */}
+
       {file ? (
         <div className="grid h-full place-content-center px-1 py-4 md:px-4">
           <ImageCard image={file} />
         </div>
       ) : message ? (
-        <div className="py-2">
-          <MessageCard message={message} />
+        <div className="mx-auto w-full max-w-4xl px-1 py-2 md:px-4">
+          <MessageCard className="mx-auto" message={message} />
         </div>
       ) : (
-        <div className="mx-auto grid grid-cols-2 gap-4 px-1 pb-52 md:px-4">
-          {rmessages && <MessageRowVirtualizer messages={rmessages} />}
-          {pmessages && <MessageRowVirtualizer messages={pmessages.results} />}
-          {/* {thread?.messages && <MessageRowVirtualizer messages={thread.messages} />} */}
+        <div className="mx-auto w-full max-w-4xl px-1 pb-40 pt-2 md:px-4">
+          <div className="py-1 flex-center">
+            <Button variant="surface" disabled={page.isLoading} onClick={() => page.loadMore(3)}>
+              {page.status}
+            </Button>
+          </div>
+          <MessagesContainer messages={messages} style={{ height: '70vh' }} />
         </div>
       )}
 

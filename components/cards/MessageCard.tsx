@@ -19,9 +19,9 @@ import type { ButtonProps } from '@radix-ui/themes'
 type MessageProps = {
   message: MessageWithContent
   priority?: boolean
-}
+} & React.ComponentProps<typeof Card>
 
-export const MessageCard = ({ message }: MessageProps) => {
+export const MessageCard = ({ message, ...props }: MessageProps) => {
   const { images, inference } = message
 
   const removeMessage = useRemoveMessage()
@@ -49,7 +49,7 @@ export const MessageCard = ({ message }: MessageProps) => {
   const { thread } = useThread(keys)
 
   return (
-    <Card className={cn('mx-auto max-w-4xl')}>
+    <Card {...props}>
       <div className="space-y-3">
         <Inset side="top">
           <div className="h-10 gap-2 bg-gray-3 p-2 flex-between">
@@ -59,6 +59,8 @@ export const MessageCard = ({ message }: MessageProps) => {
                 {icon}
               </IconButton>
             </div>
+
+            <div className="flex-none font-mono">{message.series}</div>
 
             {/* title */}
             <div className="grow truncate text-sm font-semibold">{title}</div>
