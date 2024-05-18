@@ -57,7 +57,7 @@ export const ThreadContainer = ({
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <MessageCard message={messages[virtualItem.index]!} />
+              <MessageCard slug={thread.slug} message={messages[virtualItem.index]!} />
             </div>
           ))}
         </div>

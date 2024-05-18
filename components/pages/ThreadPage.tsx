@@ -1,18 +1,31 @@
 'use client'
 
-import { MessageCardSkeleton } from '@/components/cards/MessageCard'
+import { MessageCard, MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { ThreadContainer } from '@/components/thread/ThreadContainer'
 import { useThreadIndex } from '@/lib/api'
 
 import type { ThreadIndex } from '@/lib/types'
 
 export const ThreadPage = ({ index }: { index?: ThreadIndex }) => {
-  const { thread, messages, series } = useThreadIndex(index)
+  const { thread, messages, series, file } = useThreadIndex(index)
+
+  const shouldShowFile = series?.length && file
+
+  if (!thread) return null
 
   return (
     <>
       <div className="absolute box-border h-[calc(100vh-3rem-2px)] w-full p-2">
-        {thread && <ThreadContainer thread={thread} page={messages} series={series} />}
+        {shouldShowFile && (
+          <MessageCard
+            className="mx-auto w-full max-w-4xl"
+            slug={thread.slug}
+            message={series[0]!}
+            file={file}
+          />
+        )}
+
+        {!shouldShowFile && <ThreadContainer thread={thread} page={messages} series={series} />}
       </div>
     </>
   )

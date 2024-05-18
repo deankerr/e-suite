@@ -9,42 +9,35 @@ import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
-import { useRemoveMessage, useThread } from '@/lib/api'
+import { useRemoveMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EMessageContent } from '@/convex/validators'
 import type { ButtonProps } from '@radix-ui/themes'
 
 type MessageProps = {
+  slug?: string
   message: EMessageContent
+  file?: number
   priority?: boolean
 } & React.ComponentProps<typeof Card>
 
-export const MessageCard = ({ message, ...props }: MessageProps) => {
-  const { images, inference } = message
-
+export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps) => {
   const removeMessage = useRemoveMessage()
 
-  const hasImages = images && images.length > 0
-
-  const icon = hasImages ? (
-    <ImageIcon className="size-5" />
-  ) : (
-    <MessageSquareIcon className="size-5" />
-  )
+  const { images, inference, files } = message
 
   const title =
     inference?.type === 'text-to-image'
       ? inference.parameters.prompt
       : message?.name ?? getRole(message.role)
 
+  const incompleteJobs = message.jobs.filter(
+    (job) => job.status === 'queued' || job.status === 'active',
+  )
   const showLoader =
-    message.jobs?.find(
-      (job) =>
-        job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
-    ) && !images?.length
-
-  const thread = useThread()
+    incompleteJobs.filter((job) => ['text-to-image', 'chat-completion'].includes(job.type)).length >
+    0
 
   return (
     <Card {...props}>
@@ -54,22 +47,14 @@ export const MessageCard = ({ message, ...props }: MessageProps) => {
             {/* message type icon */}
             <div className="flex-none flex-start">
               <IconButton variant="ghost" size="1">
-                {icon}
+                {images.length ? <ImageIcon /> : <MessageSquareIcon />}
               </IconButton>
             </div>
-
-            <div className="flex-none font-mono">{message.series}</div>
 
             {/* title */}
             <div className="grow truncate text-sm font-semibold">{title}</div>
 
             <div className="flex-none gap-1.5 flex-end">
-              <IconButton variant="surface" size="1" asChild>
-                <Link href={`/t/${thread?.slug}/${message.series}`}>
-                  <ShareIcon className="size-4" />
-                </Link>
-              </IconButton>
-
               {/* role */}
               <Button
                 variant="surface"
@@ -78,6 +63,14 @@ export const MessageCard = ({ message, ...props }: MessageProps) => {
                 color={getRoleColor(message.role) && 'orange'}
               >
                 {message.role}
+              </Button>
+
+              {/* message page link */}
+              <Button variant="surface" size="1" asChild>
+                <Link href={`/t/${slug}/${message.series}`}>
+                  <ShareIcon className="size-3" />
+                  <span className="font-mono">{message.series}</span>
+                </Link>
               </Button>
 
               {/* delete */}
@@ -100,16 +93,29 @@ export const MessageCard = ({ message, ...props }: MessageProps) => {
           </div>
         </Inset>
 
-        {message.images && message.images.length > 0 && (
-          <div className="mx-auto grid w-fit grid-cols-2 gap-2">
-            {message.images?.map((image) => (
-              <Link
-                key={image._id}
-                href={`/t/${thread?.slug}/${message.series}/${(message.files?.findIndex((f) => f.id === image._id) ?? -9) + 1}`}
-              >
+        {file &&
+          files?.map(({ id }, i) => {
+            if (i !== file) return null
+            const image = images.find((image) => image._id === id)
+            if (!image) return null
+            return (
+              <div key={id} className="mx-auto w-fit">
                 <ImageCard image={image} />
-              </Link>
-            ))}
+              </div>
+            )
+          })}
+
+        {!file && files && (
+          <div className="mx-auto grid w-fit grid-cols-2 gap-2">
+            {files.map((file, i) => {
+              const image = images.find((image) => image._id === file.id)
+              if (!image) return null
+              return (
+                <Link key={file.id} href={`/t/${slug}/${message.series}/${i + 1}`}>
+                  <ImageCard image={image} />
+                </Link>
+              )
+            })}
           </div>
         )}
 

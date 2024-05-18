@@ -29,7 +29,8 @@ export const useThreadIndex = (index: ThreadIndex = emptyThreadIndex) => {
     index.thread && index.message ? { slug: index.thread, series: index.message } : 'skip'
   const series = useQuery(api.threads.query.getMessageSeries, getMessageSeriesQueryKey)
 
-  return { thread, messages, series }
+  const file = Number(index.file) ? Number(index.file) : undefined
+  return { thread, messages, series, file }
 }
 
 export const useThread = (slug?: string) => {
@@ -44,8 +45,6 @@ export const useThreads = () => {
   const threads = useQuery(api.threads.query.listThreads, {})
   return threads
 }
-
-export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
 
 export const useThreadMutations = () => {
   const create = useMutation(api.threads.mutate.createThread)
@@ -97,6 +96,7 @@ export const useThreadMutations = () => {
   return mutations
 }
 
+export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
 
