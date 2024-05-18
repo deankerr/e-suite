@@ -10,7 +10,7 @@ import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { useRemoveMessage, useThread } from '@/lib/api'
-import { useRouteKeys } from '@/lib/hooks'
+import { useIndexParams } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import type { EMessageContent } from '@/convex/validators'
@@ -45,8 +45,8 @@ export const MessageCard = ({ message, ...props }: MessageProps) => {
         job.type !== 'title-completion' && (job.status === 'queued' || job.status === 'active'),
     ) && !images?.length
 
-  const keys = useRouteKeys()
-  const { thread } = useThread(keys)
+  const index = useIndexParams()
+  const { thread } = useThread(index.keys)
 
   return (
     <Card {...props}>

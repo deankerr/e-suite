@@ -6,20 +6,24 @@ import { MessageCardSkeleton } from '@/components/cards/MessageCard'
 import { ThreadContainer } from '@/components/thread/ThreadContainer'
 import { api } from '@/convex/_generated/api'
 import { useThread } from '@/lib/api'
+import { useIndexParams } from '@/lib/hooks'
 
-import type { ThreadKeys } from '@/lib/types'
+import type { ThreadIndex } from '@/lib/types'
 
-export const ThreadPage = ({ keys }: { keys?: ThreadKeys }) => {
-  const { thread } = useThread(keys)
-
-  const slug = keys?.[0]
+export const ThreadPage = ({ index }: { index?: ThreadIndex }) => {
+  const { thread } = useThread(index?.keys)
+  const slug = index?.thread
   const queryKey = slug ? { slug } : 'skip'
   const page = usePaginatedQuery(api.threads.query.pageMessages, queryKey, { initialNumItems: 3 })
+
+  const params = useIndexParams()
   return (
     <>
       <div className="absolute box-border h-[calc(100vh-3rem-2px)] w-full p-2">
         {thread && <ThreadContainer thread={thread} page={page} />}
       </div>
+
+      <div className="bg-black">{JSON.stringify(params)}</div>
     </>
   )
 }

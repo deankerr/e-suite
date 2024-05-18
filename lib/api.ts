@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 
-import type { ThreadKeys } from '@/lib/types'
+import type { ThreadIndex } from '@/lib/types'
 import type { Preloaded } from 'convex/react'
 
 export const usePreloadedThreads = (
@@ -13,7 +13,7 @@ export const usePreloadedThreads = (
   return threads
 }
 
-export const useThread = (keys: ThreadKeys = ['', '', '']) => {
+export const useThread = (keys: ThreadIndex['keys'] = ['', '', '']) => {
   const [threadKey, messageIndex, fileIndex] = keys
   const thread = useQuery(api.threads.query.getThread, threadKey ? { slug: threadKey } : 'skip')
 

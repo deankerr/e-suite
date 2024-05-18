@@ -1,7 +1,9 @@
 import { useParams } from 'next/navigation'
 import { useMedia } from 'react-use'
 
-import { ThreadKeys } from '@/lib/types'
+import { buildThreadIndex } from '@/lib/utils'
+
+import type { ThreadIndex } from '@/lib/types'
 
 export const useTwMediaQuery = () => {
   return {
@@ -13,8 +15,8 @@ export const useTwMediaQuery = () => {
   }
 }
 
-export const useRouteKeys = () => {
-  const params = useParams<{ keys: ThreadKeys }>()
-  const keys = params.keys ?? ['', '', '']
-  return keys
+export const useIndexParams = (): ThreadIndex => {
+  const params = useParams<{ index?: string[] }>()
+
+  return buildThreadIndex(params.index ?? [])
 }

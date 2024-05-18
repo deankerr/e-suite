@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { imageGenerationSizesMap } from '@/convex/constants'
 import { useCreateMessage, useCreateThread, useThread } from '@/lib/api'
-import { useRouteKeys } from '@/lib/hooks'
+import { useIndexParams } from '@/lib/hooks'
 
 import type { InputBarState } from '@/components/input-bar/atoms'
 
@@ -15,8 +15,8 @@ export const useSendMessage = () => {
   const sendCreateMessage = useCreateMessage()
   const router = useRouter()
 
-  const keys = useRouteKeys()
-  const { thread } = useThread(keys)
+  const index = useIndexParams()
+  const { thread } = useThread(index.keys)
   const isLoading = false
   const isError = false
 

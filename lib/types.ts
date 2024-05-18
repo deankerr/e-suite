@@ -1,1 +1,6 @@
-export type ThreadKeys = [threadKey: string, messageIndex: string, fileIndex: string]
+export type ThreadIndex = {
+  keys: [thread: string, message: string, file: string]
+  thread: string
+  message: string
+  file: string
+}
