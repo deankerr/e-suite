@@ -3,6 +3,7 @@
 import { Inset, SegmentedControl } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { motion } from 'framer-motion'
+import { useAtomValue } from 'jotai'
 import {
   ImageIcon,
   MessageCircleIcon,
@@ -17,9 +18,11 @@ import { MessageInput } from '@/components/input-bar/MessageInput'
 import { Glass } from '@/components/ui/Glass'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
+import { mountInputBarAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const InputBar = () => {
+  const mountInputBar = useAtomValue(mountInputBarAtom)
   const [inputBar, setInputBar] = useInputBarAtom()
 
   const chatModels = useQuery(api.models.listChatModels, {})
@@ -27,7 +30,7 @@ export const InputBar = () => {
 
   // const currentChatModel = chatModels?.find((m) => m.model_id === inputBar.chatModel)
   // const currentImageModel = imageModels?.find((m) => m.model_id === inputBar.imageModel)
-
+  if (!mountInputBar) return null
   return (
     <motion.div
       className={cn(

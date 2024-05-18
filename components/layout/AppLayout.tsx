@@ -1,4 +1,5 @@
 import { InputBar } from '@/components/input-bar/InputBar'
+import { DebugBar } from '@/components/layout/DebugBar'
 import { TitleControlBar } from '@/components/layout/TitleControlBar'
 import { UserSegment } from '@/components/layout/UserSegment'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
@@ -13,6 +14,7 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
         <header className="flex h-12 items-center justify-between gap-2 bg-gray-1 px-2">
           <AppLogoTitle />
           <TitleControlBar preloadedThreads={preloadedThreads} />
+          <DebugBar />
           <UserSegment />
         </header>
 

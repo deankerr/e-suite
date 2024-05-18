@@ -1,3 +1,3 @@
-import { atom } from 'jotai'
+import { atomWithToggleAndStorage } from '@/lib/utils'
 
-export const activeThreadIdAtom = atom<string>('')
+export const mountInputBarAtom = atomWithToggleAndStorage('e-mount-input-bar', false)
