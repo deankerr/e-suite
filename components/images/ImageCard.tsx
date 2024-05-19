@@ -2,9 +2,9 @@ import Image from 'next/image'
 
 import type { EImage } from '@/convex/validators'
 
-type ImageCardProps = { image: EImage }
+type ImageCardProps = { image: EImage; sizes?: string }
 
-export const ImageCard = ({ image }: ImageCardProps) => {
+export const ImageCard = ({ image, sizes }: ImageCardProps) => {
   return (
     <div
       className="overflow-hidden rounded-xl"
@@ -17,6 +17,7 @@ export const ImageCard = ({ image }: ImageCardProps) => {
         placeholder={image.blurDataUrl ? 'blur' : 'empty'}
         blurDataURL={image.blurDataUrl}
         className={'h-full w-full object-cover'}
+        sizes={sizes}
         alt="generated image"
       />
     </div>

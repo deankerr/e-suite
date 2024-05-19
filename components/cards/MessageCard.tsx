@@ -116,7 +116,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
               if (!image) return null
               return (
                 <Link key={file.id} href={`/t/${slug}/${message.series}/${i + 1}`}>
-                  <ImageCard image={image} />
+                  <ImageCard image={image} sizes="(max-width: 56rem) 50vw, 28rem" />
                 </Link>
               )
             })}
