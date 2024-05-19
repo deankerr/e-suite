@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
-import { ImageIcon, MessageSquareIcon, ShareIcon, Trash2Icon } from 'lucide-react'
+import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -43,32 +43,36 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
     <Card {...props}>
       <div className="space-y-3">
         <Inset side="top">
-          <div className="h-10 gap-2 bg-gray-3 p-2 flex-between">
+          <div className="h-10 gap-1 bg-gray-3 p-2 flex-between md:gap-2">
             {/* message type icon */}
             <div className="flex-none flex-start">
-              <IconButton variant="ghost" size="1">
+              <IconButton variant="ghost" size="1" className="[&>svg]:size-5">
                 {images.length ? <ImageIcon /> : <MessageSquareIcon />}
               </IconButton>
             </div>
 
             {/* title */}
-            <div className="grow truncate text-sm font-semibold">{title}</div>
+            <Link
+              href={`/t/${slug}/${message.series}`}
+              className="grow truncate text-sm font-semibold"
+            >
+              {title}
+            </Link>
 
             <div className="flex-none gap-1.5 flex-end">
               {/* role */}
               <Button
                 variant="surface"
                 size="1"
-                className="font-mono"
+                className="hidden font-mono md:flex"
                 color={getRoleColor(message.role) && 'orange'}
               >
                 {message.role}
               </Button>
 
-              {/* message page link */}
-              <Button variant="surface" size="1" asChild>
+              {/* message series */}
+              <Button variant="surface" size="1" className="hidden md:flex" asChild>
                 <Link href={`/t/${slug}/${message.series}`}>
-                  <ShareIcon className="size-3" />
                   <span className="font-mono">{message.series}</span>
                 </Link>
               </Button>

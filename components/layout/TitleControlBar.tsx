@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { IconButton, Select, TextField } from '@radix-ui/themes'
-import { CheckIcon, FolderPenIcon, PlusCircleIcon, Trash2Icon, XIcon } from 'lucide-react'
+import { CheckIcon, FolderPenIcon, Trash2Icon, XIcon } from 'lucide-react'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 
 import { Spinner } from '@/components/ui/Spinner'
@@ -34,14 +34,6 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
 
   return (
     <div className="w-full gap-2 flex-center">
-      <IconButton
-        className={cn(isRenamingThread && 'hidden')}
-        variant="ghost"
-        onClick={() => router.push('/')}
-      >
-        <PlusCircleIcon />
-      </IconButton>
-
       {isRenamingThread && (
         <TextField.Root
           className="w-full max-w-96"
@@ -58,7 +50,10 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
         }}
       >
         <Select.Trigger
-          className={cn('w-full max-w-96 text-center [&>span]:grow', isRenamingThread && 'hidden')}
+          className={cn(
+            'w-full max-w-96 text-center text-xs sm:text-sm [&>span]:grow',
+            isRenamingThread && 'hidden',
+          )}
           placeholder="no thread"
         />
 
@@ -102,6 +97,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
             setIsRenamingThread(true)
             setNewThreadTitle(activeThread?.title ?? '')
           }}
+          className="hidden sm:flex"
         >
           <FolderPenIcon />
         </IconButton>
@@ -109,7 +105,7 @@ export const TitleControlBar = ({ preloadedThreads }: TitleControlBarProps) => {
 
       {/* delete */}
       <IconButton
-        className={cn(isRenamingThread && 'hidden')}
+        className={cn('hidden sm:flex', isRenamingThread && 'hidden')}
         variant="ghost"
         color="red"
         onClick={() => {

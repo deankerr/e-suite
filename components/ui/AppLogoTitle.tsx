@@ -13,20 +13,14 @@ export const AppLogoTitle = ({ showText = true, className, ...props }: AppLogoTi
   return (
     <Link href="/" {...props} className={cn('flex-none', className)}>
       <motion.div className="gap-1 flex-start">
-        <NextImage
-          src={LogoSunset}
-          alt="logo"
-          className="size-5 flex-none md:size-6"
-          priority
-          unoptimized
-        />
+        <NextImage src={LogoSunset} alt="logo" className="size-7 flex-none" priority unoptimized />
         <AnimatePresence>
           {showText && (
             <motion.h1
               initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex-none font-semibold tracking-tight md:text-lg"
+              className="hidden flex-none font-semibold tracking-tight sm:inline md:text-lg"
             >
               e/suite
             </motion.h1>

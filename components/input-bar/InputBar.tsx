@@ -39,9 +39,9 @@ export const InputBar = () => {
         'overflow-hidden rounded-[18px]',
       )}
     >
-      <Glass barWidth={1} borderRadius={18} className="absolute inset-0" />
-      <div className="min-h-12 p-4">
-        <div className="rounded-lg bg-gray-2 p-3">
+      <Glass barWidth={1} borderRadius={18} className="absolute inset-0 hidden sm:block" />
+      <div className="min-h-12 p-1 sm:p-4">
+        <div className="rounded-lg border border-gold-7 bg-gray-2 p-3">
           <div className="flex flex-col gap-3 text-lg">
             <MessageInput />
 

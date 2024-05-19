@@ -15,7 +15,7 @@ export const ThreadPage = ({ index }: { index?: ThreadIndex }) => {
 
   return (
     <>
-      <div className="absolute box-border h-[calc(100vh-3rem-2px)] w-full p-2">
+      <div className="absolute box-border h-[calc(100vh-3rem-2px)] w-full">
         {shouldShowFile && (
           <MessageCard
             className="mx-auto w-full max-w-4xl"

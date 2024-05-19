@@ -16,7 +16,10 @@ export const DebugBar = ({ className, ...props }: DebugBarProps) => {
     <NonSecureAdminRoleOnly>
       <div
         {...props}
-        className={cn('flex-none px-1 font-mono text-xs text-gray-11 flex-center', className)}
+        className={cn(
+          'absolute top-12 z-50 flex-none px-1 font-mono text-xs text-gray-11 flex-center md:static',
+          className,
+        )}
       >
         <Label>
           input-bar{' '}

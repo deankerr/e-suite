@@ -6,7 +6,7 @@ type UserSegmentProps = { props?: unknown }
 
 export const UserSegment = ({}: UserSegmentProps) => {
   return (
-    <div className="flex-none gap-2 flex-end">
+    <div className="min-w-7 flex-none gap-2 flex-end">
       <SignedOut>
         <SignInButton mode="modal">
           <IconButton variant="surface" radius="large">

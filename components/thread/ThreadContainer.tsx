@@ -60,7 +60,7 @@ export const ThreadContainer = ({
   // }, [latestId])
 
   return (
-    <div {...props} className={cn('grid h-full rounded border border-gray-3 p-2', className)}>
+    <div {...props} className={cn('grid h-full p-2', className)}>
       <ScrollArea ref={scrollAreaRef} className="overscroll-none">
         <div
           style={{
@@ -89,8 +89,8 @@ export const ThreadContainer = ({
         </div>
       </ScrollArea>
 
-      <div className="absolute bg-overlay font-mono text-xs">
-        thread[{thread.slug}] {thread.title}
+      <div className="absolute h-4 w-2 overflow-hidden font-mono text-xs text-gray-4 hover:w-auto hover:bg-overlay hover:text-gray-11">
+        thread/{thread.slug} {thread.title}
       </div>
     </div>
   )
