@@ -120,17 +120,17 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
         )}
 
         {message.content && (
-          <div className="prose prose-stone prose-invert mx-auto min-h-6 max-w-none prose-h1:mb-2 prose-h1:text-xl prose-h2:mb-2 prose-h2:mt-1 prose-h2:text-xl prose-h3:mb-2 prose-h3:mt-1 prose-pre:p-0">
+          <div className="prose prose-stone prose-invert mx-auto min-h-6 max-w-none prose-h1:mb-2 prose-h1:text-lg prose-h2:mb-2 prose-h2:mt-1 prose-h2:text-lg prose-h3:mb-2 prose-h3:mt-1 prose-pre:p-0">
             <Markdown
               options={{
                 wrapper: Fragment,
-                forceBlock: true,
+                disableParsingRawHTML: true,
                 overrides: {
                   code: SyntaxHighlightedCode,
                 },
               }}
             >
-              {message?.content ?? ''}
+              {message.content}
             </Markdown>
           </div>
         )}

@@ -1,5 +1,11 @@
 import Script from 'next/script'
 
+declare global {
+  interface Window {
+    hljs: any
+  }
+}
+
 export const HighlightLoader = () => {
   return (
     <>

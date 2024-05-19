@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { ScrollArea } from '@radix-ui/themes'
 import { useVirtualizer } from '@tanstack/react-virtual'
 
@@ -22,21 +22,46 @@ export const ThreadContainer = ({
   className,
   ...props
 }: ThreadContainerProps) => {
-  const parentRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  const [initialScrollToBottom, setInitialScrollToBottom] = useState(false)
+  // const [latestId, setLatestId] = useState<string>('')
 
   const messages = series ?? page.results.toReversed()
 
   const virtualizer = useVirtualizer({
     count: messages.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 1000,
+    getScrollElement: () => scrollAreaRef.current,
+    estimateSize: () => 1600,
+    getItemKey: useCallback((index: number) => messages[index]?._id ?? index, [messages]),
     gap: 16,
-    overscan: 16,
+    overscan: 5,
+    paddingEnd: 140,
+    onChange: (v) => {
+      console.log('change')
+      if (initialScrollToBottom) return
+      setInitialScrollToBottom(true)
+      if (messages.length > 0) v.scrollToIndex(messages.length - 1)
+    },
   })
+
+  // useEffect(() => {
+  //   if (messages.length > 0) {
+  //     const id = messages[messages.length - 1]?._id
+  //     if (id) setLatestId(id)
+  //   }
+  // }, [messages])
+
+  // useEffect(() => {
+  //   if (latestId) {
+  //     const el = document.getElementById('vrow-bottom')
+  //     if (el) el.scrollIntoView({ behavior: 'auto' })
+  //   }
+  // }, [latestId])
 
   return (
     <div {...props} className={cn('grid h-full rounded border border-gray-3 p-2', className)}>
-      <ScrollArea ref={parentRef} className="overscroll-none">
+      <ScrollArea ref={scrollAreaRef} className="overscroll-none">
         <div
           style={{
             height: `${virtualizer.getTotalSize()}px`,
@@ -60,6 +85,7 @@ export const ThreadContainer = ({
               <MessageCard slug={thread.slug} message={messages[virtualItem.index]!} />
             </div>
           ))}
+          <div id="vrow-bottom" />
         </div>
       </ScrollArea>
 

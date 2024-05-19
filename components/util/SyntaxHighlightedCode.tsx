@@ -4,17 +4,14 @@ import { useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-declare global {
-  interface Window {
-    hljs: any
-  }
-}
-
 export function SyntaxHighlightedCode(props: Partial<React.ComponentProps<'code'>>) {
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (ref.current && props.className?.includes('lang-') && window.hljs) {
+      // false positives
+      window.hljs.configure({ ignoreUnescapedHTML: true })
+
       window.hljs.highlightElement(ref.current)
 
       // hljs won't reprocess the element unless this attribute is removed
