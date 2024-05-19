@@ -49,6 +49,12 @@ export const textToImage: TextToImageHandler = async ({
 
     const mapped = Object.fromEntries(entries)
 
+    const image_size = size.startsWith('portrait')
+      ? { width: 832, height: 1216 }
+      : size.startsWith('landscape')
+        ? { width: 1216, height: 832 }
+        : 'square_hd'
+
     //TODO temp - some schemas expect strings instead of numbers
     const stepsI = entries.findIndex(([key]) => key === 'num_inference_steps')
     if (
@@ -64,6 +70,14 @@ export const textToImage: TextToImageHandler = async ({
       mapped.loras = loras as any
     }
 
+    if (model_id === 'fal-ai/lora') {
+      mapped.model_name = 'RunDiffusion/Juggernaut-X-v10'
+      mapped.model_architecture = 'sdxl'
+      mapped.schedule = 'DPM++ 2M Karras'
+      mapped.num_inference_steps = 30
+      mapped.guidance_scale = 6
+    }
+
     //* explicitly set bools to false if not present
     mapped.expand_prompt ??= false
     mapped.enable_safety_checker ??= false
@@ -71,7 +85,7 @@ export const textToImage: TextToImageHandler = async ({
     const parsedInput = parsers.body.safeParse({
       ...mapped,
       prompt,
-      image_size: size,
+      image_size,
       num_images: n,
     })
     if (!parsedInput.success) {
