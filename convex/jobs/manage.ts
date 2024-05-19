@@ -17,11 +17,21 @@ export const createJob = async (
     type,
     messageId,
     threadId,
+    input,
   }: { type: JobTypes; messageId: Id<'messages'>; threadId: Id<'threads'>; input?: string },
-) => {
+): Promise<Id<'jobs'>> => {
   const jobId = await ctx
     .table('jobs')
     .insert({ type, messageId, threadId, status: 'queued', results: [] })
+
+  if (type === 'ingest-image-url') {
+    insist(input, 'input missing')
+    await ctx.scheduler.runAfter(0, internal.jobs.files.ingestImageUrl, {
+      jobId,
+      url: input,
+    })
+    return jobId
+  }
 
   switch (type) {
     case 'text-to-image':
@@ -32,9 +42,6 @@ export const createJob = async (
       break
     case 'title-completion':
       await ctx.scheduler.runAfter(0, internal.jobs.completion.titleCompletion, { jobId })
-      break
-    case 'create-images-from-results':
-      await ctx.scheduler.runAfter(0, internal.jobs.files.createImagesFromResults, { jobId })
       break
     default:
       throw new ConvexError({ message: 'invalid job type', type })
@@ -80,14 +87,18 @@ export const results = internalMutation({
     const thread = await ctx.table('threads').get(job.threadId)
 
     if (job.type === 'text-to-image') {
-      await createJob(ctx, {
-        type: 'create-images-from-results',
-        messageId: job.messageId,
-        threadId: job.threadId,
-      })
+      for (const result of results) {
+        if (result.type !== 'url') continue
+        await createJob(ctx, {
+          type: 'ingest-image-url',
+          messageId: job.messageId,
+          threadId: job.threadId,
+          input: result.value,
+        })
+      }
     }
 
-    if (job.type === 'create-images-from-results') {
+    if (job.type === 'ingest-image-url') {
       const message = await ctx.table('messages').getX(job.messageId)
       const newFiles = results
         .filter((result) => result.type === 'image')

@@ -145,6 +145,12 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           </div>
         )}
 
+        {message.inference?.type === 'text-to-image' && (
+          <div className="flex flex-wrap gap-3 font-mono text-xs">
+            {message.inference.parameters.model_id}
+          </div>
+        )}
+
         {message.jobs && message.jobs.length > 0 && (
           <div className="flex flex-wrap gap-3 font-mono text-xs">
             {message.jobs.map((job, i) => (

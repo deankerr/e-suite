@@ -8,8 +8,8 @@ export const jobTypesEnum = z.enum([
   'chat-completion',
   'title-completion',
   'text-to-image',
-  'create-images-from-results',
   'text-to-speech',
+  'ingest-image-url',
 ])
 export const jobResultTypesEnum = z.enum([
   'message',
@@ -26,6 +26,7 @@ export const jobFields = {
   status: jobStatusEnum,
   results: jobResultSchema.array(),
 
+  previousJobId: zid('jobs').optional(),
   messageId: zid('messages'),
   threadId: zid('threads'),
 

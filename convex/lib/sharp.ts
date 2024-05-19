@@ -21,28 +21,54 @@ type SharpProcessOptions = {
   resizeWidths?: number[]
 }
 
-// Actions
-// export const generatedImageSrcset = internalAction({
-//   args: {
-//     fileId: zid('_storage'),
-//     generatedImageId: zid('generated_images'),
-//   },
-//   handler: async (ctx, { fileId, generatedImageId }) => {
-//     const input = await ctx.storage.get(fileId)
-//     insist(input, 'invalid file id')
-//     const srcsetBlobs = await processImageSrcset(input, imageSrcsetWidths)
+export const optimizeImage = async (input: Blob) => {
+  const blurOptions = {
+    format: BLUR_FORMAT,
+    size: BLUR_SIZE,
+    brightness: BLUR_BRIGHTNESS,
+    saturation: BLUR_SATURATION,
+  }
 
-//     const srcset: { width: number; fileId: Id<'_storage'> }[] = []
-//     for (const { width, blob } of srcsetBlobs) {
-//       const resizedFileId = await ctx.storage.store(blob)
-//       srcset.push({ width, fileId: resizedFileId })
-//     }
+  const inputArrayBuffer = await input.arrayBuffer()
+  const { width, height, format } = await sharp(inputArrayBuffer)
+    .metadata()
+    .then(({ width, height, format }) => {
+      if (!(width && height && format)) {
+        throw new Error('Failed to get required image metadata')
+      }
+      return { width, height, format }
+    })
 
-//     // await ctx.runMutation(internal.generated_images.updateSrcset, { generatedImageId, srcset })
-//   },
-// })
+  const webpBuffer = await sharp(inputArrayBuffer).webp({ effort: 4 }).toBuffer()
+  const webpBlob = new Blob([webpBuffer], { type: 'image/webp' })
 
-//* Implementations
+  // see https://github.com/joe-bell/plaiceholder/blob/main/packages/plaiceholder/src/index.ts
+  const pipeline = sharp(inputArrayBuffer)
+    .resize(blurOptions.size, blurOptions.size, { fit: 'inside' })
+    .toFormat(blurOptions.format)
+    .modulate({
+      brightness: blurOptions.brightness,
+      saturation: blurOptions.saturation,
+    })
+
+  // dominant hex color
+  const color = await pipeline
+    .clone()
+    .stats()
+    .then(({ dominant: { r, g, b } }) => {
+      return '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('')
+    })
+
+  // base64
+  const blur = await pipeline.clone().normalise().toBuffer({ resolveWithObject: true })
+  const blurDataUrl = `data:image/${blur.info.format};base64,${blur.data.toString('base64')}`
+
+  // new input blob with type from metadata
+  const inputBlob = new Blob([input], { type: `image/${format}` })
+
+  return { inputBlob, webpBlob, blurDataUrl, color, width, height, format }
+}
+
 export const processImage = async (input: Blob, options?: Partial<SharpProcessOptions>) => {
   const blurOptions = {
     format: BLUR_FORMAT,

@@ -1,5 +1,5 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 import { z } from 'zod'
@@ -47,7 +47,27 @@ const speech = defineEnt({
 //   metadata: z.any().optional(),
 // }
 
-//* Messages
+export const fileFields = {
+  fileId: zid('_storage'),
+  isOriginFile: z.boolean(),
+  isOrphaned: z.boolean(),
+
+  category: z.enum(['image']),
+  format: z.string(),
+
+  width: z.number().optional(),
+  height: z.number().optional(),
+}
+const files = defineEnt(zodToConvexFields(fileFields)).edge('image')
+
+const images = defineEnt(zodToConvexFields(imageFields))
+  .deletion('scheduled', {
+    delayMs: timeToDelete,
+  })
+  .edge('message')
+  .edges('files', { ref: true })
+  .index('originUrl', ['originUrl'])
+
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('series', zodToConvex(z.number()), { index: true })
@@ -57,7 +77,6 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
 
-//* Threads
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('slug', zodToConvex(z.string()), { unique: true })
@@ -65,7 +84,6 @@ const threads = defineEnt(zodToConvexFields(threadFields))
   .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('user')
 
-//* Users
 export const userFields = {
   name: z.string(),
   imageUrl: z.string(),
@@ -79,7 +97,6 @@ const users = defineEnt(zodToConvexFields(userFields))
   .edges('threads', { ref: true, deletion: 'soft' })
   .edges('messages', { ref: true })
 
-//* API Keys
 export const usersApiKeysFields = {
   valid: z.boolean(),
 }
@@ -88,17 +105,9 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
   .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 
-//* Images
-const images = defineEnt(zodToConvexFields(imageFields))
-  .deletion('scheduled', {
-    delayMs: timeToDelete,
-  })
-  .edge('message')
-  .index('originUrl', ['originUrl'])
-
-//* Schema
 const schema = defineEntSchema(
   {
+    files,
     jobs,
     images,
 

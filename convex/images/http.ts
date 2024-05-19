@@ -6,10 +6,11 @@ import { httpAction } from '../_generated/server'
 export const serveImage = httpAction(async (ctx, request) => {
   const url = new URL(request.url)
   const imageId = getIdFromPath(url.pathname, '/i')
-  const image = imageId ? await ctx.runQuery(internal.images.query.get, { imageId }) : null
-  if (!image) return new Response('invalid image id', { status: 400 })
+  // const width = Number(url.searchParams.get('w'))
+  const fileId = imageId ? await ctx.runQuery(internal.images.manage.getFileId, { imageId }) : null
+  if (!fileId) return new Response('invalid image id', { status: 400 })
 
-  const blob = await ctx.storage.get(image.fileId)
+  const blob = await ctx.storage.get(fileId)
   if (!blob) throw new ConvexError('unable to get file id')
   return new Response(blob)
 })
@@ -19,8 +20,7 @@ const getIdFromPath = (pathname: string, route: string) => {
   const match = pathname.match(new RegExp(`^${route}/([^/]+)\\.([^/]+)$`, 'i'))
   if (!match) return null
 
-  const [, id, ext] = match
-  if (ext !== 'webp') return null
+  const [, id, _ext] = match
 
   return id
 }
