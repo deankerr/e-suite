@@ -12,8 +12,8 @@ export const zTruncate = (max: number, min = 0) =>
     .transform((value) => value.slice(0, max))
 
 export const zThreadTitle = zTruncate(256, 1)
-export const zMessageName = zTruncate(64, 1)
-export const zMessageTextContent = zTruncate(32767, 1)
+export const zMessageName = zTruncate(64)
+export const zMessageTextContent = zTruncate(32767)
 
 export const messageRolesEnum = z.enum(['system', 'assistant', 'user'])
 

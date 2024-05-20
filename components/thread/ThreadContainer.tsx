@@ -25,9 +25,11 @@ export const ThreadContainer = ({
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   const [initialScrollToBottom, setInitialScrollToBottom] = useState(false)
-  // const [latestId, setLatestId] = useState<string>('')
 
   const messages = series ?? page.results.toReversed()
+  const isStreaming = messages.some((message) =>
+    message.jobs.some((job) => job.type === 'chat-completion-stream' && job.status === 'active'),
+  )
 
   const virtualizer = useVirtualizer({
     count: messages.length,
@@ -36,28 +38,21 @@ export const ThreadContainer = ({
     getItemKey: useCallback((index: number) => messages[index]?._id ?? index, [messages]),
     gap: 16,
     overscan: 5,
-    paddingEnd: 140,
-    onChange: (v) => {
-      console.log('change')
-      if (initialScrollToBottom) return
-      setInitialScrollToBottom(true)
-      if (messages.length > 0) v.scrollToIndex(messages.length - 1)
+    paddingEnd: 180,
+    onChange: () => {
+      if (isStreaming && scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop =
+          scrollAreaRef.current.scrollHeight + scrollAreaRef.current.offsetHeight
+        return
+      }
+
+      if (!initialScrollToBottom && scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop =
+          scrollAreaRef.current.scrollHeight + scrollAreaRef.current.offsetHeight
+        setInitialScrollToBottom(true)
+      }
     },
   })
-
-  // useEffect(() => {
-  //   if (messages.length > 0) {
-  //     const id = messages[messages.length - 1]?._id
-  //     if (id) setLatestId(id)
-  //   }
-  // }, [messages])
-
-  // useEffect(() => {
-  //   if (latestId) {
-  //     const el = document.getElementById('vrow-bottom')
-  //     if (el) el.scrollIntoView({ behavior: 'auto' })
-  //   }
-  // }, [latestId])
 
   return (
     <div {...props} className={cn('grid h-full p-2', className)}>
@@ -85,12 +80,16 @@ export const ThreadContainer = ({
               <MessageCard slug={thread.slug} message={messages[virtualItem.index]!} />
             </div>
           ))}
-          <div id="vrow-bottom" />
         </div>
       </ScrollArea>
 
-      <div className="absolute h-4 w-2 overflow-hidden font-mono text-xs text-gray-4 hover:w-auto hover:bg-overlay hover:text-gray-11">
-        thread/{thread.slug} {thread.title}
+      <div className="absolute -z-50 font-mono text-xs text-gray-4 hover:z-50 hover:bg-overlay hover:text-gray-11">
+        <div>
+          thread/{thread.slug} {thread.title}
+        </div>
+        <div>{messages.length}</div>
+        {isStreaming && <div>streaming</div>}
+        {virtualizer.isScrolling && <div>scrolling</div>}
       </div>
     </div>
   )

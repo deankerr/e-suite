@@ -1,3 +1,4 @@
+import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
@@ -5,7 +6,13 @@ import { createJob } from '../jobs/manage'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThread } from './query'
-import { inferenceSchema, messageFields, zThreadTitle } from './schema'
+import {
+  inferenceSchema,
+  messageFields,
+  zMessageName,
+  zMessageTextContent,
+  zThreadTitle,
+} from './schema'
 
 export const createThread = mutation({
   args: {
@@ -109,6 +116,24 @@ export const createMessage = mutation({
     }
 
     return targetMessageId
+  },
+})
+
+export const editMessage = mutation({
+  args: {
+    messageId: zid('messages'),
+    role: z.enum(['user', 'assistant', 'system']),
+    name: zMessageName.optional(),
+    text: zMessageTextContent,
+  },
+  handler: async (ctx, { messageId, role, name, text }) => {
+    const id = ctx.unsafeDb.normalizeId('messages', messageId)
+    return id
+      ? await ctx
+          .table('messages')
+          .getX(id)
+          .patch({ role, name: name || undefined, content: text })
+      : null
   },
 })
 

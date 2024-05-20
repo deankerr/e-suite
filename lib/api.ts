@@ -97,7 +97,9 @@ export const useThreadMutations = () => {
 }
 
 export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
+
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
+export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})

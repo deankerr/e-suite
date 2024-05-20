@@ -1,10 +1,11 @@
 import { Fragment, useState } from 'react'
-import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
-import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
+import { Card, IconButton, Inset, Tabs } from '@radix-ui/themes'
+import { ImageIcon, MessageSquareIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { MessageEditor } from '@/components/cards/message-card/MessageEditor'
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -14,7 +15,6 @@ import { cn, getConvexSiteUrl } from '@/lib/utils'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import type { EMessageContent } from '@/convex/shared/schemas'
-import type { ButtonProps } from '@radix-ui/themes'
 
 type MessageProps = {
   slug?: string
@@ -39,6 +39,8 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
   const showLoader =
     incompleteJobs.filter((job) => ['text-to-image', 'chat-completion'].includes(job.type)).length >
     0
+
+  const [showRawContent, setShowRawContent] = useState(false)
 
   const [streamedMessage, setStreamedMessage] = useState('')
   return (
@@ -79,22 +81,15 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
             </Link>
 
             <div className="flex-none gap-1.5 flex-end">
-              {/* role */}
-              <Button
+              {/* edit */}
+              <IconButton
                 variant="surface"
                 size="1"
-                className="hidden font-mono md:flex"
-                color={getRoleColor(message.role) && 'orange'}
+                className="hidden md:flex"
+                onClick={() => setShowRawContent(!showRawContent)}
               >
-                {message.role}
-              </Button>
-
-              {/* message series */}
-              <Button variant="surface" size="1" className="hidden md:flex" asChild>
-                <Link href={`/t/${slug}/${message.series}`}>
-                  <span className="font-mono">{message.series}</span>
-                </Link>
-              </Button>
+                <PencilIcon className="size-4" />
+              </IconButton>
 
               {/* delete */}
               <IconButton
@@ -142,21 +137,38 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           </div>
         )}
 
-        {message.content && (
-          <div className="prose prose-stone prose-invert mx-auto min-h-6 max-w-none prose-h1:mb-2 prose-h1:text-lg prose-h2:mb-2 prose-h2:mt-1 prose-h2:text-lg prose-h3:mb-2 prose-h3:mt-1 prose-pre:p-0">
-            <Markdown
-              options={{
-                wrapper: Fragment,
-                disableParsingRawHTML: true,
-                overrides: {
-                  code: SyntaxHighlightedCode,
-                },
-              }}
-            >
-              {streamedMessage || message.content}
-            </Markdown>
-          </div>
-        )}
+        {message.content ? (
+          showRawContent ? (
+            <Tabs.Root defaultValue="edit">
+              <Tabs.List>
+                <Tabs.Trigger value="edit">Edit</Tabs.Trigger>
+                <Tabs.Trigger value="json">JSON</Tabs.Trigger>
+              </Tabs.List>
+
+              <Tabs.Content value="edit">
+                <MessageEditor message={message} />
+              </Tabs.Content>
+
+              <Tabs.Content value="json">
+                <Pre>{JSON.stringify(message, null, 2)}</Pre>
+              </Tabs.Content>
+            </Tabs.Root>
+          ) : (
+            <div className="prose prose-stone prose-invert mx-auto min-h-6 max-w-none prose-h1:mb-2 prose-h1:text-lg prose-h2:mb-2 prose-h2:mt-1 prose-h2:text-lg prose-h3:mb-2 prose-h3:mt-1 prose-pre:p-0">
+              <Markdown
+                options={{
+                  wrapper: Fragment,
+                  disableParsingRawHTML: true,
+                  overrides: {
+                    code: SyntaxHighlightedCode,
+                  },
+                }}
+              >
+                {streamedMessage || message.content}
+              </Markdown>
+            </div>
+          )
+        ) : null}
 
         {showLoader && (
           <div className="h-72">
@@ -184,6 +196,18 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
   )
 }
 
+export const Pre = ({ className, ...props }: React.ComponentProps<'pre'>) => {
+  return (
+    <pre
+      {...props}
+      className={cn(
+        'overflow-auto text-wrap rounded bg-gray-1 p-2 font-mono text-sm text-gray-11',
+        className,
+      )}
+    />
+  )
+}
+
 const getRole = (role: string) => {
   const roles: Record<string, string> = {
     user: 'User',
@@ -193,17 +217,6 @@ const getRole = (role: string) => {
   }
 
   return roles[role] ?? role
-}
-
-const getRoleColor = (role: string) => {
-  const fallback = 'orange'
-
-  const colors: Record<string, ButtonProps['color']> = {
-    user: 'orange',
-    assistant: 'blue',
-    system: 'grass',
-  }
-  return colors[role] ?? fallback
 }
 
 export const MessageCardSkeleton = () => {
