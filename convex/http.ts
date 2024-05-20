@@ -20,10 +20,12 @@ http.route({
 http.route({ pathPrefix: '/i/', method: 'GET', handler: serveImage })
 
 // TODO temp, add db integration, access control
+const chatEnabled = false
 http.route({
   path: '/chat',
   method: 'POST',
   handler: httpAction(async (ctx, request) => {
+    if (!chatEnabled) return new Response('chat disabled', { status: 403 })
     const body = await request.json()
     const messageId: Id<'messages'> = body.messageId
 
