@@ -6,6 +6,7 @@ export type JobTypes = z.infer<typeof jobTypesEnum>
 export const jobStatusEnum = z.enum(['queued', 'active', 'complete', 'failed'])
 export const jobTypesEnum = z.enum([
   'chat-completion',
+  'chat-completion-stream',
   'title-completion',
   'text-to-image',
   'text-to-speech',

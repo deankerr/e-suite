@@ -40,6 +40,9 @@ export const createJob = async (
     case 'chat-completion':
       await ctx.scheduler.runAfter(0, internal.jobs.completion.chatCompletion, { jobId })
       break
+    case 'chat-completion-stream':
+      await ctx.scheduler.runAfter(0, internal.jobs.completion.chatCompletionStream, { jobId })
+      break
     case 'title-completion':
       await ctx.scheduler.runAfter(0, internal.jobs.completion.titleCompletion, { jobId })
       break

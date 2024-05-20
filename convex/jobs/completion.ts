@@ -24,6 +24,17 @@ const createApi = (endpoint: string) => {
   throw new ConvexError('invalid endpoint') // todo no retry
 }
 
+function hasDelimiter(response: string) {
+  return (
+    response.includes('\n') ||
+    response.includes('.') ||
+    response.includes('?') ||
+    response.includes('!') ||
+    response.includes(',') ||
+    response.length > 100
+  )
+}
+
 export const chatCompletion = internalAction({
   args: {
     jobId: zid('jobs'),
@@ -57,6 +68,57 @@ export const chatCompletion = internalAction({
       jobId,
       status: 'complete',
       results: [{ type: 'message', value: content }],
+    })
+  },
+})
+
+export const chatCompletionStream = internalAction({
+  args: {
+    jobId: zid('jobs'),
+  },
+  handler: async (ctx, { jobId }) => {
+    const job = await ctx.runMutation(internal.jobs.manage.acquire, { jobId })
+    const { messages, inference } = await ctx.runQuery(
+      internal.threads.internal.getChatCompletionContext,
+      {
+        messageId: job.messageId,
+        take: 20,
+      },
+    )
+    const api = createApi(inference.endpoint)
+
+    console.log(inference.type, inference.endpoint, inference.parameters)
+    console.log(messages)
+
+    const stream = await api.chat.completions.create({
+      ...inference.parameters,
+      messages,
+      max_tokens: 2048,
+      stream: true,
+    })
+
+    let body = ''
+    for await (const part of stream) {
+      const text = part.choices[0]?.delta?.content
+      if (text) {
+        body += text
+        if (hasDelimiter(text)) {
+          await ctx.runMutation(internal.threads.mutate.updateMessage, {
+            messageId: job.messageId,
+            text: body,
+          })
+        }
+      }
+    }
+    await ctx.runMutation(internal.threads.mutate.updateMessage, {
+      messageId: job.messageId,
+      text: body,
+    })
+
+    await ctx.runMutation(internal.jobs.manage.results, {
+      jobId,
+      status: 'complete',
+      results: [{ type: 'message', value: 'streamed' }],
     })
   },
 })

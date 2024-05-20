@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { mutation } from '../functions'
+import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/manage'
 import { generateSlug, insist } from '../utils'
 import { getValidThread } from './query'
@@ -100,7 +100,7 @@ export const createMessage = mutation({
           })
 
     if (args.inference.type === 'chat-completion') {
-      await createJob(ctx, { type: 'chat-completion', messageId: targetMessageId, threadId })
+      await createJob(ctx, { type: 'chat-completion-stream', messageId: targetMessageId, threadId })
     }
 
     if (args.inference.type === 'text-to-image') {
@@ -118,5 +118,16 @@ export const removeMessage = mutation({
   handler: async (ctx, args) => {
     const id = ctx.unsafeDb.normalizeId('messages', args.messageId)
     return id ? await ctx.table('messages').getX(id).delete() : null
+  },
+})
+
+export const updateMessage = internalMutation({
+  args: {
+    messageId: z.string(),
+    text: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const id = ctx.unsafeDb.normalizeId('messages', args.messageId)
+    return id ? await ctx.table('messages').getX(id).patch({ content: args.text }) : null
   },
 })

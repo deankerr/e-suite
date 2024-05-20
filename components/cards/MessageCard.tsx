@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
 import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
@@ -10,8 +10,9 @@ import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { useRemoveMessage } from '@/lib/api'
-import { cn } from '@/lib/utils'
+import { cn, getConvexSiteUrl } from '@/lib/utils'
 
+import type { Id } from '@/convex/_generated/dataModel'
 import type { EMessageContent } from '@/convex/validators'
 import type { ButtonProps } from '@radix-ui/themes'
 
@@ -39,6 +40,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
     incompleteJobs.filter((job) => ['text-to-image', 'chat-completion'].includes(job.type)).length >
     0
 
+  const [streamedMessage, setStreamedMessage] = useState('')
   return (
     <Card {...props}>
       <div className="space-y-3">
@@ -46,7 +48,24 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           <div className="h-10 gap-1 bg-gray-3 p-2 flex-between md:gap-2">
             {/* message type icon */}
             <div className="flex-none flex-start">
-              <IconButton variant="ghost" size="1" className="[&>svg]:size-5">
+              <IconButton
+                variant="ghost"
+                size="1"
+                className="[&>svg]:size-5"
+                onClick={() => {
+                  // Kick off ChatGPT response + stream the result
+                  async function streamMessage() {
+                    await handleGptResponse(
+                      (text) => {
+                        setStreamedMessage((p) => p + text)
+                      },
+                      { messageId: message._id },
+                    )
+                  }
+
+                  void streamMessage()
+                }}
+              >
                 {images.length ? <ImageIcon /> : <MessageSquareIcon />}
               </IconButton>
             </div>
@@ -134,7 +153,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
                 },
               }}
             >
-              {message.content}
+              {streamedMessage || message.content}
             </Markdown>
           </div>
         )}
@@ -193,4 +212,32 @@ export const MessageCardSkeleton = () => {
       <Skeleton className="h-10 rounded-b-none bg-gray-3" />
     </Skeleton>
   )
+}
+
+async function handleGptResponse(
+  onUpdate: (update: string) => void,
+  requestBody: { messageId: Id<'messages'> },
+) {
+  const convexSiteUrl = getConvexSiteUrl()
+  console.log('handleGptResponse', requestBody, convexSiteUrl)
+  const response = await fetch(`${convexSiteUrl}/chat`, {
+    method: 'POST',
+    body: JSON.stringify(requestBody),
+    headers: { 'Content-Type': 'application/json' },
+  })
+  // Taken from https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams
+  const responseBody = response.body
+  if (responseBody === null) {
+    console.log('responseBody is null')
+    return
+  }
+  const reader = responseBody.getReader()
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) {
+      onUpdate(new TextDecoder().decode(value))
+      return
+    }
+    onUpdate(new TextDecoder().decode(value))
+  }
 }

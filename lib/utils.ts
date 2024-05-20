@@ -21,6 +21,12 @@ function getEnvironment() {
 }
 export const environment = getEnvironment()
 
+export const getConvexSiteUrl = () => {
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
+  if (!convexUrl) throw new Error('NEXT_PUBLIC_CONVEX_URL is undefined')
+  return convexUrl.replace('.cloud', '.site')
+}
+
 // see https://github.com/JacobWeisenburger/zod_utilz
 const jsonLiteralSchema = z.union([z.string(), z.number(), z.boolean(), z.null()])
 type JsonLiteral = z.infer<typeof jsonLiteralSchema>
