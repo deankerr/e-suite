@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internalQuery } from '../functions'
 import { jobTypesEnum } from '../jobs/schema'
-import { insist } from '../utils'
+import { insist } from '../shared/utils'
 
 const msgSchema = z.object({
   role: z.enum(['system', 'assistant', 'user']),

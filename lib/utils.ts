@@ -21,7 +21,7 @@ function getEnvironment() {
 }
 export const environment = getEnvironment()
 
-export const getConvexSiteUrl = () => {
+export function getConvexSiteUrl() {
   const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
   if (!convexUrl) throw new Error('NEXT_PUBLIC_CONVEX_URL is undefined')
   return convexUrl.replace('.cloud', '.site')

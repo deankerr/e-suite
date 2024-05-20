@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery } from '../functions'
-import { insist } from '../utils'
+import { insist } from '../shared/utils'
 import { jobResultSchema } from './schema'
 
 import type { Id } from '../_generated/dataModel'

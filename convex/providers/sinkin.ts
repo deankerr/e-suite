@@ -1,7 +1,7 @@
 import ky from 'ky'
 import { z } from 'zod'
 
-import { getEnv } from '../utils'
+import { env } from '../shared/utils'
 
 import type { GenerationParameters } from '../threads/schema'
 import type { TextToImageHandler } from './types'
@@ -33,7 +33,7 @@ export const textToImage: TextToImageHandler = async ({
 
   body.set('num_images', String(n))
 
-  body.set('access_token', getEnv('SINKIN_API_KEY'))
+  body.set('access_token', env('SINKIN_API_KEY'))
 
   console.log('[sinkin/textToImage] >>>', [...body.entries()])
   const response = await api

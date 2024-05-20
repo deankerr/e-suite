@@ -121,6 +121,7 @@ import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as providers_types from "../providers/types.js";
 import type * as rules from "../rules.js";
+import type * as shared_utils from "../shared/utils.js";
 import type * as threads_internal from "../threads/internal.js";
 import type * as threads_mutate from "../threads/mutate.js";
 import type * as threads_query from "../threads/query.js";
@@ -245,6 +246,7 @@ declare const fullApi: ApiFromModules<{
   "providers/togetherai": typeof providers_togetherai;
   "providers/types": typeof providers_types;
   rules: typeof rules;
+  "shared/utils": typeof shared_utils;
   "threads/internal": typeof threads_internal;
   "threads/mutate": typeof threads_mutate;
   "threads/query": typeof threads_query;

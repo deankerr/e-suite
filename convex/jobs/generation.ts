@@ -5,7 +5,7 @@ import { internal } from '../_generated/api'
 import { internalAction, internalQuery } from '../functions'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
-import { insist } from '../utils'
+import { insist } from '../shared/utils'
 
 import type { GenerationParameters } from '../threads/schema'
 

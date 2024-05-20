@@ -1,12 +1,10 @@
 import { makeActionRetrier } from 'convex-helpers/server/retries'
-import { ConvexError } from 'convex/values'
 import { customAlphabet } from 'nanoid/non-secure'
 import { z } from 'zod'
 
 import { imageGenerationSizesMap, ridLength } from './constants'
 
 import type { MutationCtx } from './types'
-import type { Value } from 'convex/values'
 
 export const { runWithRetries, retry } = makeActionRetrier('utils:retry')
 
@@ -34,16 +32,6 @@ export const generateRid = async (ctx: MutationCtx, table: RidTables): Promise<s
   const rid = generateRandomString(ridLength)
   const existing = await ctx.table(table, 'rid', (q) => q.eq('rid', rid)).first()
   return existing ? generateRid(ctx, table) : rid
-}
-
-export const getEnv = (env: string) => {
-  const value = process.env[env]
-  insist(value, `Unable to get ${env}`)
-  return value
-}
-
-export function insist<T>(condition: T, message: string, data?: Value): asserts condition {
-  if (!condition) throw new ConvexError(data ? { message: `insist: ${message}`, data } : message)
 }
 
 export const generateSha256Hash = async (input: string) => {

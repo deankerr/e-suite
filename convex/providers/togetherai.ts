@@ -1,9 +1,3 @@
-export const getTogetherAiApiKey = () => {
-  const apiKey = process.env.TOGETHERAI_API_KEY
-  if (!apiKey) throw new Error('TOGETHERAI_API_KEY is undefined')
-  return apiKey
-}
-
 export const models = {
   chat: [
     {

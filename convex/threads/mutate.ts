@@ -2,7 +2,8 @@ import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/manage'
-import { generateSlug, insist } from '../utils'
+import { insist } from '../shared/utils'
+import { generateSlug } from '../utils'
 import { getValidThread } from './query'
 import { inferenceSchema, messageFields, zThreadTitle } from './schema'
 

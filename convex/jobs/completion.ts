@@ -4,19 +4,19 @@ import OpenAI from 'openai'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
-import { getEnv } from '../utils'
+import { env } from '../shared/utils'
 
 const createApi = (endpoint: string) => {
   switch (endpoint) {
     case 'together':
       return new OpenAI({
-        apiKey: getEnv('TOGETHER_API_KEY'),
+        apiKey: env('TOGETHER_API_KEY'),
         baseURL: 'https://api.together.xyz/v1',
       })
 
     case 'openai':
       return new OpenAI({
-        apiKey: getEnv('OPENAI_API_KEY'),
+        apiKey: env('OPENAI_API_KEY'),
         baseURL: 'https://api.openai.com/v1',
       })
   }
