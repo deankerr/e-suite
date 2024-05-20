@@ -121,6 +121,7 @@ import type * as providers_sinkin from "../providers/sinkin.js";
 import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as providers_types from "../providers/types.js";
 import type * as rules from "../rules.js";
+import type * as shared_schemas from "../shared/schemas.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as threads_internal from "../threads/internal.js";
 import type * as threads_mutate from "../threads/mutate.js";
@@ -128,7 +129,6 @@ import type * as threads_query from "../threads/query.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
-import type * as validators from "../validators.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -246,6 +246,7 @@ declare const fullApi: ApiFromModules<{
   "providers/togetherai": typeof providers_togetherai;
   "providers/types": typeof providers_types;
   rules: typeof rules;
+  "shared/schemas": typeof shared_schemas;
   "shared/utils": typeof shared_utils;
   "threads/internal": typeof threads_internal;
   "threads/mutate": typeof threads_mutate;
@@ -253,7 +254,6 @@ declare const fullApi: ApiFromModules<{
   types: typeof types;
   users: typeof users;
   utils: typeof utils;
-  validators: typeof validators;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

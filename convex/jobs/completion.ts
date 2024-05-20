@@ -4,7 +4,7 @@ import OpenAI from 'openai'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
-import { env } from '../shared/utils'
+import { env, hasDelimiter } from '../shared/utils'
 
 const createApi = (endpoint: string) => {
   switch (endpoint) {
@@ -22,17 +22,6 @@ const createApi = (endpoint: string) => {
   }
 
   throw new ConvexError('invalid endpoint') // todo no retry
-}
-
-function hasDelimiter(response: string) {
-  return (
-    response.includes('\n') ||
-    response.includes('.') ||
-    response.includes('?') ||
-    response.includes('!') ||
-    response.includes(',') ||
-    response.length > 100
-  )
 }
 
 export const chatCompletion = internalAction({

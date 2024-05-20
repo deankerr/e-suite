@@ -57,5 +57,4 @@ export const imageGenerationSizesMap = {
 }
 
 //* App
-export const ridLength = 6
 export const maxInputStringLength = 32767

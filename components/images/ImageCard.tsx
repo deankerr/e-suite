@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import type { EImage } from '@/convex/validators'
+import type { EImage } from '@/convex/shared/schemas'
 
 type ImageCardProps = { image: EImage; sizes?: string }
 

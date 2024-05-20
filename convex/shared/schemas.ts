@@ -1,14 +1,8 @@
 import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { textToSpeechProviders } from './constants'
-import { jobStatusEnum, jobTypesEnum } from './jobs/schema'
-import {
-  filesListSchema,
-  inferenceSchema,
-  messageRolesEnum,
-  zMessageTextContent,
-} from './threads/schema'
+import { jobStatusEnum, jobTypesEnum } from '../jobs/schema'
+import { filesListSchema, inferenceSchema, messageRolesEnum } from '../threads/schema'
 
 export type EImage = z.infer<typeof zClient.image>
 export type EMessage = z.infer<typeof zClient.message>
@@ -19,9 +13,6 @@ export type ESelf = z.infer<typeof zClient.self>
 export type EMessageContent = z.infer<typeof zClient.messageContent>
 export type EThreadWithMessages = z.infer<typeof zClient.threadWithMessages>
 
-//* fields
-
-//* front-end shapes
 const image = z.object({
   _id: zid('images'),
   _creationTime: z.number(),
@@ -102,7 +93,7 @@ const user = z.object({
 
 const self = user.merge(z.object({ apiKey: z.string().optional() }))
 
-//* composed shapes
+//* composed
 const messageContent = message.merge(
   z.object({
     images: image.array(),
@@ -124,31 +115,31 @@ export const zClient = {
   threadWithMessages,
 }
 
-export const voiceoverValidator = z.object({
-  text: zMessageTextContent,
-  provider: z.enum(textToSpeechProviders),
-  parameters: z.union([
-    z.object({
-      elevenlabs: z.object({
-        model_id: z.string(),
-        voice_id: z.string(),
-        voice_settings: z
-          .object({
-            similarity_boost: z.number(),
-            stability: z.number(),
-            style: z.number(),
-            use_speaker_boost: z.boolean(),
-          })
-          .partial()
-          .optional(),
-      }),
-    }),
+// export const voiceoverValidator = z.object({
+//   text: zMessageTextContent,
+//   provider: z.enum(textToSpeechProviders),
+//   parameters: z.union([
+//     z.object({
+//       elevenlabs: z.object({
+//         model_id: z.string(),
+//         voice_id: z.string(),
+//         voice_settings: z
+//           .object({
+//             similarity_boost: z.number(),
+//             stability: z.number(),
+//             style: z.number(),
+//             use_speaker_boost: z.boolean(),
+//           })
+//           .partial()
+//           .optional(),
+//       }),
+//     }),
 
-    z.object({
-      aws: z.object({
-        VoiceId: z.string(),
-        Engine: z.enum(['neural', 'standard', 'long-form']),
-      }),
-    }),
-  ]),
-})
+//     z.object({
+//       aws: z.object({
+//         VoiceId: z.string(),
+//         Engine: z.enum(['neural', 'standard', 'long-form']),
+//       }),
+//     }),
+//   ]),
+// })

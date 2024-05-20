@@ -13,7 +13,7 @@ import { useRemoveMessage } from '@/lib/api'
 import { cn, getConvexSiteUrl } from '@/lib/utils'
 
 import type { Id } from '@/convex/_generated/dataModel'
-import type { EMessageContent } from '@/convex/validators'
+import type { EMessageContent } from '@/convex/shared/schemas'
 import type { ButtonProps } from '@radix-ui/themes'
 
 type MessageProps = {

@@ -11,3 +11,14 @@ export function env(name: string) {
   insist(value, `Environment variable is undefined: ${name}`)
   return value
 }
+
+export function hasDelimiter(text: string) {
+  return (
+    text.includes('\n') ||
+    text.includes('.') ||
+    text.includes('?') ||
+    text.includes('!') ||
+    text.includes(',') ||
+    text.length > 100
+  )
+}

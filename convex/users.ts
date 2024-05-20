@@ -3,7 +3,7 @@ import z from 'zod'
 
 import { internalMutation, mutation } from './functions'
 import { userFields } from './schema'
-import { generateRandomString, generateRid } from './utils'
+import { generateRandomString } from './utils'
 
 const userBySchema = z.union([
   z.object({ id: zid('users') }),
@@ -14,8 +14,7 @@ export const create = internalMutation({
   args: {
     fields: z.object({ tokenIdentifier: z.string(), ...userFields }),
   },
-  handler: async (ctx, { fields }) =>
-    await ctx.table('users').insert({ ...fields, rid: await generateRid(ctx, 'users') }),
+  handler: async (ctx, { fields }) => await ctx.table('users').insert({ ...fields }),
 })
 
 export const update = internalMutation({

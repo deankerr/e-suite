@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 import { query } from '../functions'
+import { zClient } from '../shared/schemas'
 import { emptyPage, zPaginationOptValidator } from '../utils'
-import { zClient } from '../validators'
 
 import type { Ent, QueryCtx } from '../types'
 

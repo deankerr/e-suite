@@ -2,7 +2,7 @@ import { makeActionRetrier } from 'convex-helpers/server/retries'
 import { customAlphabet } from 'nanoid/non-secure'
 import { z } from 'zod'
 
-import { imageGenerationSizesMap, ridLength } from './constants'
+import { imageGenerationSizesMap } from './constants'
 
 import type { MutationCtx } from './types'
 
@@ -25,15 +25,6 @@ export const generateRandomString = (length: number) => {
   return generate(length)
 }
 
-//* rid
-type RidTables = 'users'
-
-export const generateRid = async (ctx: MutationCtx, table: RidTables): Promise<string> => {
-  const rid = generateRandomString(ridLength)
-  const existing = await ctx.table(table, 'rid', (q) => q.eq('rid', rid)).first()
-  return existing ? generateRid(ctx, table) : rid
-}
-
 export const generateSha256Hash = async (input: string) => {
   const encoder = new TextEncoder()
   const data = encoder.encode(input)
@@ -53,15 +44,13 @@ export const zPaginationOptValidator = z.object({
   maximumBytesRead: z.optional(z.number()),
 })
 
-// https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
+// see https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
+// permanent loading state for a paginated query until a different result is returned
 export function emptyPage() {
   return {
     page: [],
     isDone: false,
     continueCursor: '',
-    // This is a little hack around usePaginatedQuery,
-    // which will lead to permanent loading state,
-    // until a different result is returned
     pageStatus: 'SplitRequired' as const,
   }
 }

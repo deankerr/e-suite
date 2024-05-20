@@ -6,7 +6,7 @@ import { MessageCard } from '@/components/cards/MessageCard'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
-import type { EMessageContent, EThread } from '@/convex/validators'
+import type { EMessageContent, EThread } from '@/convex/shared/schemas'
 import type { UsePaginatedQueryReturnType } from 'convex/react'
 
 type ThreadContainerProps = {

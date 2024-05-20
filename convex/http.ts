@@ -5,6 +5,7 @@ import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { serveImage } from './images/manage'
 import { handleWebhook } from './providers/clerk'
+import { hasDelimiter } from './shared/utils'
 
 import type { Id } from './_generated/dataModel'
 
@@ -17,17 +18,6 @@ http.route({
 })
 
 http.route({ pathPrefix: '/i/', method: 'GET', handler: serveImage })
-
-function hasDelimiter(response: string) {
-  return (
-    response.includes('\n') ||
-    response.includes('.') ||
-    response.includes('?') ||
-    response.includes('!') ||
-    response.includes(',') ||
-    response.length > 100
-  )
-}
 
 // TODO temp, add db integration, access control
 http.route({

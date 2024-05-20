@@ -4,14 +4,11 @@ import { v } from 'convex/values'
 import { ms } from 'itty-time'
 import { z } from 'zod'
 
-import { ridLength } from './constants'
 import { imageFields } from './images/schema'
 import { jobFields } from './jobs/schema'
 import { messageFields, threadFields } from './threads/schema'
 
 const timeToDelete = ms('1 day')
-
-export const ridField = z.string().length(ridLength)
 
 const jobs = defineEnt(zodToConvexFields(jobFields)).deletion('soft').edge('message').edge('thread')
 
@@ -91,7 +88,6 @@ export const userFields = {
 }
 const users = defineEnt(zodToConvexFields(userFields))
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('rid', zodToConvex(ridField), { unique: true })
   .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true, deletion: 'soft' })
