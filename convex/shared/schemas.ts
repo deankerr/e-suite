@@ -13,6 +13,19 @@ export type ESelf = z.infer<typeof zClient.self>
 export type EMessageContent = z.infer<typeof zClient.messageContent>
 export type EThreadWithMessages = z.infer<typeof zClient.threadWithMessages>
 
+export const imageFile = z.object({
+  fileId: zid('_storage'),
+  isOriginFile: z.boolean(),
+
+  category: z.literal('image'),
+  format: z.string(),
+
+  width: z.number(),
+  height: z.number(),
+
+  imageId: zid('images'),
+})
+
 const image = z.object({
   _id: zid('images'),
   _creationTime: z.number(),

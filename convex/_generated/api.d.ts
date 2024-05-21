@@ -17,6 +17,7 @@ import type {
 import type * as constants from "../constants.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
+import type * as images_actions from "../images/actions.js";
 import type * as images_manage from "../images/manage.js";
 import type * as jobs_completion from "../jobs/completion.js";
 import type * as jobs_files from "../jobs/files.js";
@@ -142,6 +143,7 @@ declare const fullApi: ApiFromModules<{
   constants: typeof constants;
   functions: typeof functions;
   http: typeof http;
+  "images/actions": typeof images_actions;
   "images/manage": typeof images_manage;
   "jobs/completion": typeof jobs_completion;
   "jobs/files": typeof jobs_files;

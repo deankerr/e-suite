@@ -47,7 +47,6 @@ const speech = defineEnt({
 export const fileFields = {
   fileId: zid('_storage'),
   isOriginFile: z.boolean(),
-  isOrphaned: z.boolean(),
 
   category: z.enum(['image']),
   format: z.string(),

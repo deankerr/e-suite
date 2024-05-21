@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, internalQuery } from '../functions'
+import { imageFile } from '../shared/schemas'
 import { imageFields } from './schema'
 
 export const create = internalMutation({
@@ -25,7 +26,7 @@ export const createImageFile = internalMutation({
     imageId: zid('images'),
   },
   handler: async (ctx, args) => {
-    return await ctx.table('files').insert({ ...args, category: 'image', isOrphaned: false })
+    return await ctx.table('files').insert({ ...args, category: 'image' })
   },
 })
 
@@ -39,30 +40,54 @@ export const getFileId = internalQuery({
     const image = id ? await ctx.table('images').get(id) : null
     if (!image) return null
 
-    const imageFiles = await ctx.table('files', 'imageId', (q) => q.eq('imageId', image._id))
+    const imageFiles = await ctx
+      .table('files', 'imageId', (q) => q.eq('imageId', image._id))
+      .map((file) => imageFile.parse(file))
 
-    // imageFiles.sort((a, b) => b.width - a.width)
-    // return latest image file for now
-    const file = imageFiles.reverse()[0]
-    if (!file) return null
-    console.log('requested width', width, 'sending', imageFiles.reverse()[0]?.width)
-    return file.fileId
+    const original = imageFiles.find((file) => file.isOriginFile)
+    const optimizedOriginal = imageFiles.find(
+      (file) => file.width === (original?.width ?? image.width) && !file.isOriginFile,
+    )
+    const optimized = imageFiles.find((file) => file.width === width)
+
+    return optimized ?? optimizedOriginal ?? original ?? null
   },
 })
 
-// const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]
+const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]
 
 export const serveImage = httpAction(async (ctx, request) => {
   const url = new URL(request.url)
   const imageId = getIdFromPath(url.pathname, '/i')
-  const width = Number(url.searchParams.get('w'))
-  const fileId = imageId
+  const width = normalizeWidthParam(url.searchParams.get('w'))
+  const image = imageId
     ? await ctx.runQuery(internal.images.manage.getFileId, { imageId, width: width || undefined })
     : null
-  if (!fileId) return new Response('invalid image id', { status: 400 })
+  if (!image) return new Response('invalid image id', { status: 400 })
 
-  const blob = await ctx.storage.get(fileId)
+  if (image.isOriginFile && width && width <= image.width) {
+    console.log('optimizing for width', width)
+    const optimizedBuffer = await ctx.runAction(internal.images.actions.resizeToWebpBuffer, {
+      originFileId: image.fileId,
+      width,
+    })
+    if (!optimizedBuffer) return new Response('image resizing failed', { status: 500 })
+    const optimizedBlob = new Blob([optimizedBuffer], { type: 'image/webp' })
+
+    await ctx.runMutation(internal.images.manage.createImageFile, {
+      fileId: await ctx.storage.store(optimizedBlob),
+      isOriginFile: false,
+      format: 'webp',
+      width,
+      height: Math.floor((width / image.width) * image.height),
+      imageId: image.imageId,
+    })
+    return new Response(optimizedBlob)
+  }
+
+  const blob = await ctx.storage.get(image.fileId)
   if (!blob) throw new ConvexError('unable to get file id')
+  console.log('requested width', width, 'sending', image.width, image.format, image.isOriginFile)
   return new Response(blob)
 })
 
@@ -73,4 +98,8 @@ const getIdFromPath = (pathname: string, route: string) => {
 
   const [, id, _ext] = match
   return id
+}
+
+const normalizeWidthParam = (param: string | null) => {
+  return srcSizes.findLast((size) => size <= Number(param)) ?? null
 }
