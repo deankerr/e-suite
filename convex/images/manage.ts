@@ -30,6 +30,32 @@ export const createImageFile = internalMutation({
   },
 })
 
+export const createImage = internalMutation({
+  args: {
+    ...imageFields,
+    format: z.string(),
+    fileId: zid('_storage'),
+    originUrl: z.string(),
+    messageId: zid('messages'),
+  },
+  handler: async (ctx, args) => {
+    const { fileId, format, messageId, originUrl, ...imageArgs } = args
+
+    const imageId = await ctx.table('images').insert({ ...imageArgs, originUrl, messageId })
+    await ctx.table('files').insert({
+      category: 'image',
+      format,
+      fileId,
+      isOriginFile: true,
+      width: imageArgs.width,
+      height: imageArgs.height,
+      imageId,
+    })
+
+    return imageId
+  },
+})
+
 export const getFileId = internalQuery({
   args: {
     imageId: z.string(),
