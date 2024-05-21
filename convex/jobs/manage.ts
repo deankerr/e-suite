@@ -17,21 +17,11 @@ export const createJob = async (
     type,
     messageId,
     threadId,
-    input,
   }: { type: JobTypes; messageId: Id<'messages'>; threadId: Id<'threads'>; input?: string },
 ): Promise<Id<'jobs'>> => {
   const jobId = await ctx
     .table('jobs')
     .insert({ type, messageId, threadId, status: 'queued', results: [] })
-
-  if (type === 'ingest-image-url') {
-    insist(input, 'input missing')
-    await ctx.scheduler.runAfter(0, internal.jobs.files.ingestImageUrl, {
-      jobId,
-      url: input,
-    })
-    return jobId
-  }
 
   switch (type) {
     case 'text-to-image':
@@ -96,22 +86,7 @@ export const results = internalMutation({
           url: result.value,
           messageId: job.messageId,
         })
-        // await createJob(ctx, {
-        //   type: 'ingest-image-url',
-        //   messageId: job.messageId,
-        //   threadId: job.threadId,
-        //   input: result.value,
-        // })
       }
-    }
-
-    if (job.type === 'ingest-image-url') {
-      const message = await ctx.table('messages').getX(job.messageId)
-      const newFiles = results
-        .filter((result) => result.type === 'image')
-        .map(({ value }) => ({ type: 'image' as const, id: value as Id<'images'> }))
-      const files = (message.files ?? []).concat(newFiles)
-      await message.patch({ files })
     }
 
     if (job.type === 'title-completion') {

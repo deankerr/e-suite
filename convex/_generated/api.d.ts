@@ -20,7 +20,6 @@ import type * as http from "../http.js";
 import type * as images_actions from "../images/actions.js";
 import type * as images_manage from "../images/manage.js";
 import type * as jobs_completion from "../jobs/completion.js";
-import type * as jobs_files from "../jobs/files.js";
 import type * as jobs_generation from "../jobs/generation.js";
 import type * as jobs_manage from "../jobs/manage.js";
 import type * as lib_schemas from "../lib/schemas.js";
@@ -146,7 +145,6 @@ declare const fullApi: ApiFromModules<{
   "images/actions": typeof images_actions;
   "images/manage": typeof images_manage;
   "jobs/completion": typeof jobs_completion;
-  "jobs/files": typeof jobs_files;
   "jobs/generation": typeof jobs_generation;
   "jobs/manage": typeof jobs_manage;
   "lib/schemas": typeof lib_schemas;
