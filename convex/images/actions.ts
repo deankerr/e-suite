@@ -27,6 +27,12 @@ export const ingestFromUrl = internalAction({
       generationData: [],
     })
 
+    await ctx.runMutation(internal.threads.internal.appendImage, {
+      messageId: args.messageId,
+      imageId,
+    })
+
+    console.log('ingested image:', metadata.format, `${metadata.width}x${metadata.height}`)
     return imageId
   },
 })
@@ -38,7 +44,7 @@ export const optimizeImageToWidth = internalAction({
     width: z.number(),
   },
   handler: async (ctx, args): Promise<Id<'_storage'>> => {
-    const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.fileToWebpResize, {
+    const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.fileToResizedWebp, {
       fileId: args.originFileId,
       width: args.width,
     })
@@ -51,6 +57,7 @@ export const optimizeImageToWidth = internalAction({
       isOriginFile: false,
     })
 
+    console.log('optimized webp width:', metadata.width)
     return fileId
   },
 })

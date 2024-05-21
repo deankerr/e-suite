@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { internalQuery } from '../functions'
+import { internalMutation, internalQuery } from '../functions'
 import { jobTypesEnum } from '../jobs/schema'
 import { insist } from '../shared/utils'
 
@@ -73,5 +73,18 @@ export const getMessageWithJobsOfType = internalQuery({
       .table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
       .filter((q) => q.eq(q.field('type'), jobType))
     return { message, jobs }
+  },
+})
+
+export const appendImage = internalMutation({
+  args: {
+    messageId: zid('messages'),
+    imageId: zid('images'),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.table('messages').getX(args.messageId)
+    await message.patch({
+      files: (message.files ?? []).concat({ type: 'image', id: args.imageId }),
+    })
   },
 })

@@ -50,7 +50,7 @@ export const storeImageFromUrl = internalAction({
   },
 })
 
-export const fileToWebpResize = internalAction({
+export const fileToResizedWebp = internalAction({
   args: {
     fileId: zid('_storage'),
     width: z.number(),
@@ -62,7 +62,7 @@ export const fileToWebpResize = internalAction({
       data,
       info: { width, height, format },
     } = await resizeToWebp(inputBlob, args.width)
-    const fileId = await ctx.storage.store(new Blob([data]))
+    const fileId = await ctx.storage.store(new Blob([data], { type: `image/${format}` }))
 
     return {
       fileId,

@@ -129,3 +129,73 @@ const getIdFromPath = (pathname: string, route: string) => {
 const normalizeWidthParam = (param: string | null) => {
   return srcSizes.findLast((size) => size <= Number(param)) ?? null
 }
+
+export const getImageWithFiles = internalQuery({
+  args: {
+    imageId: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const imageId = ctx.unsafeDb.normalizeId('images', args.imageId)
+    const image = imageId ? await ctx.table('images').get(imageId) : null
+    if (!image) return null
+
+    const imageFiles = await ctx
+      .table('files', 'imageId', (q) => q.eq('imageId', image._id))
+      .map((file) => imageFile.parse(file))
+
+    const original = imageFiles.find((file) => file.isOriginFile)
+    const optimized = imageFiles
+      .filter((file) => !file.isOriginFile)
+      .sort((a, b) => a.width - b.width)
+
+    return { image, original, optimized }
+  },
+})
+
+export const serveOptimizedImage = httpAction(async (ctx, request) => {
+  const imageRequest = parseRequestUrl(request.url, '/i')
+  if (!imageRequest || !imageRequest.id) return new Response('invalid request', { status: 400 })
+  const imageFiles = await ctx.runQuery(internal.images.manage.getImageWithFiles, {
+    imageId: imageRequest.id,
+  })
+  if (!imageFiles || !imageFiles.original) return new Response('invalid image id', { status: 400 })
+
+  const targetWidth = imageRequest.width
+    ? Math.min(imageRequest.width, imageFiles.original.width)
+    : imageFiles.original.width
+  const optimizedFile = imageFiles.optimized.find((file) => file.width === targetWidth)
+
+  // return file of matching width if exists
+  if (optimizedFile) {
+    console.log('targetWidth', targetWidth, 'using optimized:', optimizedFile.width)
+    const blob = await ctx.storage.get(optimizedFile.fileId)
+    return new Response(blob)
+  }
+
+  console.log('targetWidth', targetWidth, 'not found')
+  // create optimized file for width
+  const fileId = await ctx.runAction(internal.images.actions.optimizeImageToWidth, {
+    imageId: imageFiles.image._id,
+    originFileId: imageFiles.original.fileId,
+    width: targetWidth,
+  })
+
+  const blob = await ctx.storage.get(fileId)
+  return new Response(blob)
+})
+
+function parseRequestUrl(url: string, route: string) {
+  const { pathname, searchParams } = new URL(url)
+
+  // parse image id, extension from pathname
+  const match = pathname.match(new RegExp(`^${route}/([^/]+)\\.([^/]+)$`, 'i'))
+  if (!match) {
+    console.error('invalid pathname', pathname)
+    return null
+  }
+  const [, id, extension] = match
+
+  // parse width param to closest valid size
+  const width = srcSizes.findLast((size) => size <= Number(searchParams.get('w')))
+  return { id, extension, width }
+}

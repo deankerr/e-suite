@@ -3,7 +3,7 @@ import OpenAI from 'openai'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
-import { serveImage } from './images/manage'
+import { serveOptimizedImage } from './images/manage'
 import { handleWebhook } from './providers/clerk'
 import { hasDelimiter } from './shared/utils'
 
@@ -17,7 +17,7 @@ http.route({
   handler: handleWebhook,
 })
 
-http.route({ pathPrefix: '/i/', method: 'GET', handler: serveImage })
+http.route({ pathPrefix: '/i/', method: 'GET', handler: serveOptimizedImage })
 
 // TODO temp, add db integration, access control
 const chatEnabled = false

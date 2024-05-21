@@ -92,12 +92,16 @@ export const results = internalMutation({
     if (job.type === 'text-to-image') {
       for (const result of results) {
         if (result.type !== 'url') continue
-        await createJob(ctx, {
-          type: 'ingest-image-url',
+        await ctx.scheduler.runAfter(0, internal.images.actions.ingestFromUrl, {
+          url: result.value,
           messageId: job.messageId,
-          threadId: job.threadId,
-          input: result.value,
         })
+        // await createJob(ctx, {
+        //   type: 'ingest-image-url',
+        //   messageId: job.messageId,
+        //   threadId: job.threadId,
+        //   input: result.value,
+        // })
       }
     }
 
