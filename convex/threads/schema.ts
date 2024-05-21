@@ -59,7 +59,12 @@ export const inferenceSchema = z.discriminatedUnion('type', [
   }),
 ])
 
-export const filesListSchema = z.object({ type: z.enum(['image']), id: zid('images') }).array()
+export const filesListSchema = z
+  .discriminatedUnion('type', [
+    z.object({ type: z.literal('image'), id: zid('images') }),
+    z.object({ type: z.literal('image_url'), url: z.string() }),
+  ])
+  .array()
 
 export const messageFields = {
   role: messageRolesEnum,

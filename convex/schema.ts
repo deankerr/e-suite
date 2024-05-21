@@ -5,6 +5,7 @@ import { ms } from 'itty-time'
 import { z } from 'zod'
 
 import { imageFields } from './images/schema'
+import { jobsBetaFields } from './jobs/betaSchemat'
 import { jobFields } from './jobs/schema'
 import { messageFields, threadFields } from './threads/schema'
 
@@ -43,6 +44,12 @@ const speech = defineEnt({
 //   constituent: z.string().uuid(),
 //   metadata: z.any().optional(),
 // }
+
+const jobs_beta = defineEnt(zodToConvexFields(jobsBetaFields))
+  .index('status', ['status'])
+  .index('threadId', ['threadId'])
+  .index('messageId', ['messageId'])
+  .index('imageId', ['imageId'])
 
 export const fileFields = {
   fileId: zid('_storage'),
@@ -104,6 +111,7 @@ const schema = defineEntSchema(
   {
     files,
     jobs,
+    jobs_beta,
     images,
 
     messages,

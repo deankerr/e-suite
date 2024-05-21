@@ -108,7 +108,7 @@ export const createMessage = mutation({
           })
 
     if (args.inference.type === 'chat-completion') {
-      await createJob(ctx, { type: 'chat-completion-stream', messageId: targetMessageId, threadId })
+      await createJob(ctx, { type: 'chat-completion', messageId: targetMessageId, threadId })
     }
 
     if (args.inference.type === 'text-to-image') {

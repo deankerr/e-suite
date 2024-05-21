@@ -23,10 +23,16 @@ type MessageProps = {
   priority?: boolean
 } & React.ComponentProps<typeof Card>
 
+// todo temp
+type ImageFilesRecord = { type: 'image'; id: Id<'images'> }
+
 export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps) => {
   const removeMessage = useRemoveMessage()
 
-  const { images, inference, files } = message
+  const { images, inference } = message
+  const files = message.files?.filter((file) => file.type === 'image') as
+    | ImageFilesRecord[]
+    | undefined
 
   const title =
     inference?.type === 'text-to-image'
