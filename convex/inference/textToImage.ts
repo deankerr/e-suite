@@ -17,7 +17,7 @@ import type { Id } from '../_generated/dataModel'
 import type { GenerationParameters } from '../threads/schema'
 import type { MutationCtx } from '../types'
 
-export const createJob = async (
+export const createTextToImageJob = async (
   ctx: MutationCtx,
   args: {
     messageId: Id<'messages'>
