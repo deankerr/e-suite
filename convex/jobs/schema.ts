@@ -6,7 +6,7 @@ export const jobStatusEnum = z.enum(['queued', 'active', 'complete', 'failed'])
 export const jobErrorSchema = z.object({
   code: z.enum([
     'unhandled',
-    'invalid_job',
+    'invalid_acquire_job',
     'invalid_job_input',
     'invalid_job_output',
     'timeout',

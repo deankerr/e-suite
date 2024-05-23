@@ -25,6 +25,7 @@ import type * as inference_chatCompletion from "../inference/chatCompletion.js";
 import type * as inference_chatCompletionStream from "../inference/chatCompletionStream.js";
 import type * as inference_textToImage from "../inference/textToImage.js";
 import type * as inference_threadTitleCompletion from "../inference/threadTitleCompletion.js";
+import type * as jobs_definitions from "../jobs/definitions.js";
 import type * as jobs_runner from "../jobs/runner.js";
 import type * as lib_openai from "../lib/openai.js";
 import type * as lib_schemas from "../lib/schemas.js";
@@ -154,6 +155,7 @@ declare const fullApi: ApiFromModules<{
   "inference/chatCompletionStream": typeof inference_chatCompletionStream;
   "inference/textToImage": typeof inference_textToImage;
   "inference/threadTitleCompletion": typeof inference_threadTitleCompletion;
+  "jobs/definitions": typeof jobs_definitions;
   "jobs/runner": typeof jobs_runner;
   "lib/openai": typeof lib_openai;
   "lib/schemas": typeof lib_schemas;
