@@ -8,6 +8,7 @@ export type InputBarState = {
   chatStream: boolean
   imageModel: string
   imageShape: 'portrait' | 'square' | 'landscape'
+  imageN: string
 }
 
 const inputBarAtom = atomWithStorage<InputBarState>('e-input-bar-0', {
@@ -17,6 +18,7 @@ const inputBarAtom = atomWithStorage<InputBarState>('e-input-bar-0', {
   chatStream: true,
   imageModel: 'fal-ai/hyper-sdxl',
   imageShape: 'square',
+  imageN: String(4),
 })
 
 export const useInputBarAtom = () => useAtom(inputBarAtom)

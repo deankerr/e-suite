@@ -23,6 +23,7 @@ const jobDefinitions: Record<z.infer<typeof jobTypesEnum>, JobDefinition> = {
     handler: internal.files.createImageFromUrl.run,
     required: {
       url: true,
+      messageId: true,
     },
   },
 
@@ -115,7 +116,9 @@ export const jobResultError = async (
 
 export const acquireJob = async (ctx: MutationCtx, jobId: Id<'jobs_beta'>) => {
   const job = await ctx.table('jobs_beta').getX(jobId)
-  insist(job.status === 'queued', `job ${jobId} is not queued`, { code: 'invalid_job' })
+  insist(job.status === 'queued', `job ${jobId} is not queued: ${job.status}`, {
+    code: 'invalid_job',
+  })
 
   await job.patch({ status: 'active', startedTime: Date.now() })
   return job

@@ -109,7 +109,6 @@ export const createMessage = mutation({
           })
 
     if (args.inference.type === 'chat-completion') {
-      // await createJob(ctx, { type: 'chat-completion', messageId: targetMessageId, threadId })
       const jobType =
         args.inference.parameters.stream === true
           ? 'inference/chat-completion-stream'
@@ -120,7 +119,9 @@ export const createMessage = mutation({
     }
 
     if (args.inference.type === 'text-to-image') {
-      await createJob(ctx, { type: 'text-to-image', messageId: targetMessageId, threadId })
+      await createJobBeta(ctx, 'inference/text-to-image', {
+        messageId: targetMessageId,
+      })
     }
 
     return targetMessageId

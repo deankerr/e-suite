@@ -5,6 +5,7 @@ import { useQuery } from 'convex/react'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
 import {
+  Grid2X2Icon,
   ImageIcon,
   MessageCircleIcon,
   RectangleHorizontalIcon,
@@ -66,25 +67,44 @@ export const InputBar = () => {
               </SegmentedControl.Root>
 
               {inputBar.mode === 'image' && (
-                <SegmentedControl.Root
-                  value={inputBar.imageShape}
-                  onValueChange={(v) => {
-                    setInputBar((o) => ({
-                      ...o,
-                      imageShape: v as 'portrait' | 'square' | 'landscape',
-                    }))
-                  }}
-                >
-                  <SegmentedControl.Item value="portrait">
-                    <RectangleVerticalIcon className="size-4" />
-                  </SegmentedControl.Item>
-                  <SegmentedControl.Item value="square">
-                    <SquareIcon className="size-4" />
-                  </SegmentedControl.Item>
-                  <SegmentedControl.Item value="landscape">
-                    <RectangleHorizontalIcon className="size-4" />
-                  </SegmentedControl.Item>
-                </SegmentedControl.Root>
+                <>
+                  <SegmentedControl.Root
+                    value={inputBar.imageN}
+                    onValueChange={(v) => {
+                      setInputBar((o) => ({
+                        ...o,
+                        imageN: v,
+                      }))
+                    }}
+                  >
+                    <SegmentedControl.Item value="1">
+                      <SquareIcon className="size-2 stroke-2" />
+                    </SegmentedControl.Item>
+                    <SegmentedControl.Item value="4">
+                      <Grid2X2Icon className="size-4" />
+                    </SegmentedControl.Item>
+                  </SegmentedControl.Root>
+
+                  <SegmentedControl.Root
+                    value={inputBar.imageShape}
+                    onValueChange={(v) => {
+                      setInputBar((o) => ({
+                        ...o,
+                        imageShape: v as 'portrait' | 'square' | 'landscape',
+                      }))
+                    }}
+                  >
+                    <SegmentedControl.Item value="portrait">
+                      <RectangleVerticalIcon className="size-4" />
+                    </SegmentedControl.Item>
+                    <SegmentedControl.Item value="square">
+                      <SquareIcon className="size-4" />
+                    </SegmentedControl.Item>
+                    <SegmentedControl.Item value="landscape">
+                      <RectangleHorizontalIcon className="size-4" />
+                    </SegmentedControl.Item>
+                  </SegmentedControl.Root>
+                </>
               )}
 
               <div className={cn('flex-none', inputBar.mode !== 'chat' && 'hidden')}>
@@ -97,7 +117,7 @@ export const InputBar = () => {
                 </Label>
               </div>
 
-              <div className="w-72">
+              <div className="w-60">
                 {inputBar.mode === 'chat' ? (
                   <SelectList
                     items={

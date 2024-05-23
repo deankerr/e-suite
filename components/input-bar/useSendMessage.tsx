@@ -57,13 +57,14 @@ const getChatParameters = (inputBar: InputBarState) => {
 const getImageParameters = (inputBar: InputBarState) => {
   const provider = inputBar.imageModel.startsWith('fal') ? 'fal' : 'sinkin'
   const size = getImageSize(inputBar.imageShape, provider)
+  const n = inputBar.imageN === '1' ? 1 : 4
   return {
     type: 'text-to-image' as const,
     endpoint: provider,
     parameters: {
       prompt: inputBar.prompt,
       ...size,
-      n: 4,
+      n,
       model_id: inputBar.imageModel,
       entries: [],
     },

@@ -8,7 +8,7 @@ import { zid } from 'convex-helpers/server/zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, createJobBeta, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
 import { insist } from '../shared/utils'
@@ -110,7 +110,15 @@ export const complete = internalMutation({
     const files = (message.files ?? []).concat(args.files)
     await message.patch({ files })
 
-    // TODO queue ingest image jobs for each url
+    for (const file of files) {
+      if (file.type === 'image_url') {
+        await createJobBeta(ctx, 'files/create-image-from-url', {
+          url: file.url,
+          messageId: args.messageId,
+        })
+      }
+    }
+
     await jobResultSuccess(ctx, { jobId: args.jobId })
   },
 })
