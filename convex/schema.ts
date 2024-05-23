@@ -64,14 +64,12 @@ const images = defineEnt(zodToConvexFields(imageFields))
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
-  .edge('message')
   .edges('files', { ref: true })
   .index('originUrl', ['originUrl'])
 
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('series', zodToConvex(z.number()), { index: true })
-  .edges('images', { ref: true, deletion: 'soft' })
   .edge('thread')
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])

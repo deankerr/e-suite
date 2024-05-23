@@ -23,16 +23,10 @@ type MessageProps = {
   priority?: boolean
 } & React.ComponentProps<typeof Card>
 
-// todo temp
-type ImageFilesRecord = { type: 'image'; id: Id<'images'> }
-
 export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps) => {
   const removeMessage = useRemoveMessage()
 
-  const { images, inference } = message
-  const files = message.files?.filter((file) => file.type === 'image') as
-    | ImageFilesRecord[]
-    | undefined
+  const { files, inference } = message
 
   const title =
     inference?.type === 'text-to-image'
@@ -74,7 +68,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
                   void streamMessage()
                 }}
               >
-                {images.length ? <ImageIcon /> : <MessageSquareIcon />}
+                {files?.length ? <ImageIcon /> : <MessageSquareIcon />}
               </IconButton>
             </div>
 
@@ -118,13 +112,11 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
         </Inset>
 
         {file &&
-          files?.map(({ id }, i) => {
-            if (i !== file) return null
-            const image = images.find((image) => image._id === id)
-            if (!image) return null
+          files?.map((f, i) => {
+            if (i !== file || f.type !== 'image') return null
             return (
-              <div key={id} className="mx-auto w-fit">
-                <ImageCard image={image} />
+              <div key={f.id} className="mx-auto w-fit">
+                <ImageCard image={f.image} />
               </div>
             )
           })}
@@ -132,11 +124,10 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
         {!file && files && (
           <div className="mx-auto grid w-fit grid-cols-2 gap-2">
             {files.map((file, i) => {
-              const image = images.find((image) => image._id === file.id)
-              if (!image) return null
+              if (file.type !== 'image') return null
               return (
                 <Link key={file.id} href={`/t/${slug}/${message.series}/${i + 1}`}>
-                  <ImageCard image={image} sizes="(max-width: 56rem) 50vw, 28rem" />
+                  <ImageCard image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
                 </Link>
               )
             })}
@@ -192,7 +183,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           <div className="flex flex-wrap gap-3 font-mono text-xs">
             {message.jobs.map((job, i) => (
               <div key={i} className={cn(job.status === 'failed' && 'text-red-10')}>
-                [{job.name}: {job.status} {job.time && `${(job.time / 1000).toFixed(2)}s`}]
+                [{job.name}: {job.status}]{/* {job.time && `${(job.time / 1000).toFixed(2)}s`} */}
               </div>
             ))}
           </div>

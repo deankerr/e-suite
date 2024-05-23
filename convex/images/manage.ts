@@ -32,9 +32,9 @@ export const createImage = internalMutation({
     messageId: zid('messages'),
   },
   handler: async (ctx, args) => {
-    const { fileId, format, messageId, originUrl, ...imageArgs } = args
+    const { fileId, format, originUrl, ...imageArgs } = args
 
-    const imageId = await ctx.table('images').insert({ ...imageArgs, originUrl, messageId })
+    const imageId = await ctx.table('images').insert({ ...imageArgs, originUrl })
     await ctx.table('files').insert({
       category: 'image',
       format,

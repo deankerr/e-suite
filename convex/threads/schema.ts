@@ -63,12 +63,10 @@ export const inferenceSchema = z.discriminatedUnion('type', [
   inferenceTextToImageParameters,
 ])
 
-export const messageFileSchema = z
-  .discriminatedUnion('type', [
-    z.object({ type: z.literal('image'), id: zid('images') }),
-    z.object({ type: z.literal('image_url'), url: z.string() }),
-  ])
-
+export const messageFileSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('image'), id: zid('images') }),
+  z.object({ type: z.literal('image_url'), url: z.string() }),
+])
 
 export const messageFields = {
   role: messageRolesEnum,

@@ -1,3 +1,4 @@
+import { asyncMap } from 'convex-helpers'
 import { z } from 'zod'
 
 import { query } from '../functions'
@@ -7,11 +8,26 @@ import { emptyPage, zPaginationOptValidator } from '../utils'
 import type { Ent, QueryCtx } from '../types'
 
 //* helpers
-const getMessageContent = async (message: Ent<'messages'>) => {
+const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const files = message.files
+    ? await asyncMap(message?.files, async (file) => {
+        if (file.type === 'image') {
+          return {
+            ...file,
+            image: await ctx.table('images').getX(file.id),
+          }
+        }
+
+        return file
+      })
+    : undefined
+
+  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
+
   return {
     ...message,
-    images: await message.edge('images').filter((q) => q.eq(q.field('deletionTime'), undefined)),
-    jobs: [],
+    files,
+    jobs,
   }
 }
 
@@ -39,7 +55,7 @@ export const getThread = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(0)
-      .map(getMessageContent)
+      .map((m) => getMessageContent(ctx, m))
 
     return zClient.threadWithMessages.parse({
       ...thread,
@@ -80,7 +96,7 @@ export const listMessages = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map(getMessageContent)
+      .map((m) => getMessageContent(ctx, m))
 
     return {
       ...result,
@@ -106,7 +122,7 @@ export const getMessageSeries = query({
         q.eq('threadId', thread._id).eq('series', series),
       )
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(getMessageContent)
+      .map((m) => getMessageContent(ctx, m))
 
     return zClient.messageContent.array().parse(messages)
   },

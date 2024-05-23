@@ -37,30 +37,22 @@ const image = z.object({
   color: z.string(),
 })
 
-const job = z
-  .object({
-    deletionTime: z.undefined(),
+const job = z.object({
+  name: z.string(),
+  status: jobStatusEnum,
+  errors: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+      fatal: z.boolean(),
+    })
+    .array()
+    .optional(),
 
-    name: z.string(),
-    status: jobStatusEnum,
-
-    metrics: z
-      .object({
-        startTime: z.number().optional(),
-        endTime: z.number().optional(),
-      })
-      .optional(),
-  })
-  .transform(({ name, status, metrics }) => {
-    const start = metrics?.startTime
-    const end = metrics?.endTime
-    const time = start && end ? end - start : 0
-    return {
-      name,
-      status,
-      time,
-    }
-  })
+  queuedTime: z.number(),
+  startedTime: z.number().optional(),
+  endedTime: z.number().optional(),
+})
 
 const model = z.object({
   model_id: z.string(),
@@ -107,9 +99,14 @@ const user = z.object({
 const self = user.merge(z.object({ apiKey: z.string().optional() }))
 
 //* composed
+const filesWithContent = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('image'), id: zid('images'), image }),
+  z.object({ type: z.literal('image_url'), url: z.string() }),
+])
+
 const messageContent = message.merge(
   z.object({
-    images: image.array(),
+    files: filesWithContent.array().optional(),
     jobs: job.array(),
   }),
 )
