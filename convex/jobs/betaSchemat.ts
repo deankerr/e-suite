@@ -7,7 +7,7 @@ export const jobTypesEnum = z.enum([
   'inference/chat-completion-stream',
   'inference/thread-title-completion',
   'files/create-image-from-url',
-  'files/optimize-image',
+  'files/optimize-image-file',
 ])
 export const jobStatusEnum = z.enum(['queued', 'active', 'complete', 'failed'])
 
@@ -32,7 +32,9 @@ export const jobsBetaFields = {
   threadId: zid('threads').optional(),
   messageId: zid('messages').optional(),
   imageId: zid('images').optional(),
+
   url: z.string().optional(),
+  width: z.number().optional(),
 
   queuedTime: z.number(),
   startedTime: z.number().optional(),

@@ -27,8 +27,8 @@ const jobDefinitions: Record<z.infer<typeof jobTypesEnum>, JobDefinition> = {
     },
   },
 
-  'files/optimize-image': {
-    handler: internal.files.optimizeImage.run,
+  'files/optimize-image-file': {
+    handler: internal.files.optimizeImageFile.run,
     required: {
       imageId: true,
     },
