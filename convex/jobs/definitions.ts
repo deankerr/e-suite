@@ -13,7 +13,7 @@ export type JobDefinitions = typeof jobDefinitions
 
 export const jobDefinitions = {
   'files/create-image-from-url': {
-    handler: 'internal.files.createImageFromUrl.run',
+    handler: 'files/createImageFromUrl:run',
     required: z.object({
       url: z.string(),
       messageId: zid('messages'),
@@ -21,35 +21,28 @@ export const jobDefinitions = {
   },
 
   'files/optimize-image-file': {
-    handler: 'internal.files.optimizeImageFile.run',
+    handler: 'files/optimizeImageFile:run',
     required: z.object({
       imageId: zid('images'),
     }),
   },
 
   'inference/chat-completion': {
-    handler: 'internal.inference.chatCompletion.run',
-    required: z.object({
-      messageId: zid('messages'),
-    }),
-  },
-
-  'inference/chat-completion-stream': {
-    handler: 'internal.inference.chatCompletionStream.run',
+    handler: 'inference/chatCompletion:run',
     required: z.object({
       messageId: zid('messages'),
     }),
   },
 
   'inference/text-to-image': {
-    handler: 'internal.inference.textToImage.run',
+    handler: 'inference/textToImage:run',
     required: z.object({
       messageId: zid('messages'),
     }),
   },
 
   'inference/thread-title-completion': {
-    handler: 'internal.inference.threadTitleCompletion.run',
+    handler: 'inference/threadTitleCompletion:run',
     required: z.object({
       threadId: zid('threads'),
     }),

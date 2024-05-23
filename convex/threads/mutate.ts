@@ -91,11 +91,7 @@ export const createMessage = mutation({
           })
 
     if (args.inference.type === 'chat-completion') {
-      const jobType =
-        args.inference.parameters.stream === true
-          ? 'inference/chat-completion-stream'
-          : 'inference/chat-completion'
-      await createJob(ctx, jobType, {
+      await createJob(ctx, 'inference/chat-completion', {
         messageId: targetMessageId,
       })
     }
@@ -103,7 +99,6 @@ export const createMessage = mutation({
     if (args.inference.type === 'text-to-image') {
       await createJob(ctx, 'inference/text-to-image', {
         messageId: targetMessageId,
-        url: 'dfsdf',
       })
     }
 
@@ -139,13 +134,12 @@ export const removeMessage = mutation({
   },
 })
 
-export const updateMessage = internalMutation({
+export const streamCompletionContent = internalMutation({
   args: {
-    messageId: z.string(),
+    messageId: zid('messages'),
     text: z.string(),
   },
   handler: async (ctx, args) => {
-    const id = ctx.unsafeDb.normalizeId('messages', args.messageId)
-    return id ? await ctx.table('messages').getX(id).patch({ content: args.text }) : null
+    return await ctx.table('messages').getX(args.messageId).patch({ content: args.text })
   },
 })

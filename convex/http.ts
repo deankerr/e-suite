@@ -61,13 +61,13 @@ http.route({
           content += text
           await writer.write(textEncoder.encode(text))
           if (hasDelimiter(text)) {
-            await ctx.runMutation(internal.threads.mutate.updateMessage, {
+            await ctx.runMutation(internal.threads.mutate.streamCompletionContent, {
               messageId,
               text: content,
             })
           }
         }
-        await ctx.runMutation(internal.threads.mutate.updateMessage, {
+        await ctx.runMutation(internal.threads.mutate.streamCompletionContent, {
           messageId,
           text: content,
         })

@@ -5,7 +5,7 @@ import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { createOpenAiClient } from '../lib/openai'
-import { insist } from '../shared/utils'
+import { hasDelimiter, insist } from '../shared/utils'
 
 const temp_config_messageHistory = 20
 
@@ -68,16 +68,47 @@ export const run = internalAction({
       console.log(inference.type, inference.endpoint, inference.parameters)
       console.log(messages)
 
-      const chatCompletion = await api.chat.completions.create({
-        ...inference.parameters,
-        messages,
-        max_tokens: 2048,
-        stream: false,
-      })
+      const nonStreaming = async () => {
+        const chatCompletion = await api.chat.completions.create({
+          ...inference.parameters,
+          messages,
+          max_tokens: 2048,
+          stream: false,
+        })
 
-      console.log(chatCompletion)
+        console.log(chatCompletion)
 
-      const content = chatCompletion.choices[0]?.message.content ?? '' //TODO check
+        const content = chatCompletion.choices[0]?.message.content ?? '' //TODO check
+        return content
+      }
+
+      const streaming = async () => {
+        const stream = await api.chat.completions.create({
+          ...inference.parameters,
+          messages,
+          max_tokens: 2048,
+          stream: true,
+        })
+
+        let body = ''
+        for await (const part of stream) {
+          const text = part.choices[0]?.delta?.content
+          if (text) {
+            body += text
+            if (hasDelimiter(text)) {
+              await ctx.runMutation(internal.threads.mutate.streamCompletionContent, {
+                messageId: message._id,
+                text: body,
+              })
+            }
+          }
+        }
+
+        return body
+      }
+
+      const isStreamingRequest = !!inference.parameters.stream
+      const content = isStreamingRequest ? await streaming() : await nonStreaming()
 
       await ctx.runMutation(internal.inference.chatCompletion.complete, {
         jobId: args.jobId,

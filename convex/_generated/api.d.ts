@@ -22,7 +22,6 @@ import type * as http from "../http.js";
 import type * as images_actions from "../images/actions.js";
 import type * as images_manage from "../images/manage.js";
 import type * as inference_chatCompletion from "../inference/chatCompletion.js";
-import type * as inference_chatCompletionStream from "../inference/chatCompletionStream.js";
 import type * as inference_textToImage from "../inference/textToImage.js";
 import type * as inference_threadTitleCompletion from "../inference/threadTitleCompletion.js";
 import type * as jobs_definitions from "../jobs/definitions.js";
@@ -152,7 +151,6 @@ declare const fullApi: ApiFromModules<{
   "images/actions": typeof images_actions;
   "images/manage": typeof images_manage;
   "inference/chatCompletion": typeof inference_chatCompletion;
-  "inference/chatCompletionStream": typeof inference_chatCompletionStream;
   "inference/textToImage": typeof inference_textToImage;
   "inference/threadTitleCompletion": typeof inference_threadTitleCompletion;
   "jobs/definitions": typeof jobs_definitions;
