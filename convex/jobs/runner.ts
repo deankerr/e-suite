@@ -10,10 +10,17 @@ import { jobDefinitions } from './definitions'
 import type { Id } from '../_generated/dataModel'
 import type { ActionCtx } from '../_generated/server'
 import type { MutationCtx } from '../types'
-import type { JobNames } from './definitions'
+import type { JobDefinitions, JobNames } from './definitions'
 import type { jobErrorSchema } from './schema'
 
-export const createJob = async (ctx: MutationCtx, name: JobNames, args: Record<string, any>) => {
+export const createJob = async <
+  J extends JobNames,
+  A extends z.infer<JobDefinitions[J]['required']>,
+>(
+  ctx: MutationCtx,
+  name: J,
+  args: A,
+) => {
   const jobId = await ctx
     .table('jobs')
     .insert({ ...args, name, status: 'queued', queuedTime: Date.now() })

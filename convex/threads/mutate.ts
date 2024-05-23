@@ -103,6 +103,7 @@ export const createMessage = mutation({
     if (args.inference.type === 'text-to-image') {
       await createJob(ctx, 'inference/text-to-image', {
         messageId: targetMessageId,
+        url: 'dfsdf',
       })
     }
 

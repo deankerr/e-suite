@@ -17,19 +17,23 @@ export const jobErrorSchema = z.object({
   fatal: z.boolean(),
 })
 
-export const jobFields = {
-  name: z.string(),
-  status: jobStatusEnum,
-  errors: jobErrorSchema.array().optional(),
-
+export const jobAttributeFields = {
   threadId: zid('threads').optional(),
   messageId: zid('messages').optional(),
   imageId: zid('images').optional(),
 
   url: z.string().optional(),
   width: z.number().optional(),
+}
+
+export const jobFields = {
+  name: z.string(),
+  status: jobStatusEnum,
+  errors: jobErrorSchema.array().optional(),
 
   queuedTime: z.number(),
   startedTime: z.number().optional(),
   endedTime: z.number().optional(),
+
+  ...jobAttributeFields,
 }
