@@ -9,7 +9,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, createJobBeta, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { createOpenAiClient } from '../lib/openai'
 import { insist } from '../shared/utils'
 
@@ -122,6 +122,13 @@ export const complete = internalMutation({
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
     await message.patch({ content: args.text })
+
+    const thread = await ctx.skipRules.table('threads').getX(message.threadId)
+    if (!thread.title) {
+      await createJobBeta(ctx, 'inference/thread-title-completion', {
+        threadId: message.threadId,
+      })
+    }
     await jobResultSuccess(ctx, { jobId: args.jobId })
   },
 })

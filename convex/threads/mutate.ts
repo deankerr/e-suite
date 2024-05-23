@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/manage'
+import { createJobBeta } from '../jobs/runner'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThread } from './query'
@@ -108,7 +109,14 @@ export const createMessage = mutation({
           })
 
     if (args.inference.type === 'chat-completion') {
-      await createJob(ctx, { type: 'chat-completion', messageId: targetMessageId, threadId })
+      // await createJob(ctx, { type: 'chat-completion', messageId: targetMessageId, threadId })
+      const jobType =
+        args.inference.parameters.stream === true
+          ? 'inference/chat-completion-stream'
+          : 'inference/chat-completion'
+      await createJobBeta(ctx, jobType, {
+        messageId: targetMessageId,
+      })
     }
 
     if (args.inference.type === 'text-to-image') {

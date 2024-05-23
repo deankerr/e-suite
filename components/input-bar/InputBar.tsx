@@ -1,6 +1,6 @@
 'use client'
 
-import { Inset, SegmentedControl } from '@radix-ui/themes'
+import { Checkbox, Inset, SegmentedControl } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
@@ -16,6 +16,7 @@ import NextImage from 'next/image'
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { MessageInput } from '@/components/input-bar/MessageInput'
 import { Glass } from '@/components/ui/Glass'
+import { Label } from '@/components/ui/Label'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
 import { mountInputBarAtom } from '@/lib/atoms'
@@ -85,6 +86,16 @@ export const InputBar = () => {
                   </SegmentedControl.Item>
                 </SegmentedControl.Root>
               )}
+
+              <div className={cn('flex-none', inputBar.mode !== 'chat' && 'hidden')}>
+                <Label className="flex gap-1">
+                  <Checkbox
+                    checked={inputBar.chatStream}
+                    onCheckedChange={(c) => setInputBar((o) => ({ ...o, chatStream: Boolean(c) }))}
+                  />
+                  stream
+                </Label>
+              </div>
 
               <div className="w-72">
                 {inputBar.mode === 'chat' ? (

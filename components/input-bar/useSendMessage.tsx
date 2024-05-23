@@ -5,7 +5,6 @@ import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { imageGenerationSizesMap } from '@/convex/constants'
 import { useCreateMessage, useCreateThread, useThread } from '@/lib/api'
 
-
 import type { InputBarState } from '@/components/input-bar/atoms'
 
 export const useSendMessage = () => {
@@ -50,6 +49,7 @@ const getChatParameters = (inputBar: InputBarState) => {
     endpoint: inputBar.chatModel.startsWith('gpt-') ? 'openai' : 'together',
     parameters: {
       model: inputBar.chatModel,
+      stream: inputBar.chatStream,
     },
   }
 }

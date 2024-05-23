@@ -9,14 +9,90 @@ import { jobErrorSchema } from './betaSchemat'
 import type { Id } from '../_generated/dataModel'
 import type { ActionCtx } from '../_generated/server'
 import type { MutationCtx } from '../types'
+import type { jobTypesEnum } from './betaSchemat'
+import type { FunctionReference } from 'convex/server'
+
+type JobRequirableFields = 'threadId' | 'messageId' | 'imageId' | 'url'
+type JobDefinition = {
+  handler: FunctionReference<'action', 'internal'>
+  required: Partial<Record<JobRequirableFields, boolean>>
+}
+
+const jobDefinitions: Record<z.infer<typeof jobTypesEnum>, JobDefinition> = {
+  'files/create-image-from-url': {
+    handler: internal.files.createImageFromUrl.run,
+    required: {
+      url: true,
+    },
+  },
+
+  'files/optimize-image': {
+    handler: internal.files.optimizeImage.run,
+    required: {
+      imageId: true,
+    },
+  },
+
+  'inference/chat-completion': {
+    handler: internal.inference.chatCompletion.run,
+    required: {
+      messageId: true,
+    },
+  },
+
+  'inference/chat-completion-stream': {
+    handler: internal.inference.chatCompletionStream.run,
+    required: {
+      messageId: true,
+    },
+  },
+
+  'inference/text-to-image': {
+    handler: internal.inference.textToImage.run,
+    required: {
+      messageId: true,
+    },
+  },
+
+  'inference/thread-title-completion': {
+    handler: internal.inference.threadTitleCompletion.run,
+    required: {
+      threadId: true,
+    },
+  },
+}
+
+type JobDefinitions = typeof jobDefinitions
+
+export const createJobBeta = async <
+  T extends keyof JobDefinitions,
+  A extends Partial<Record<keyof JobDefinitions[T]['required'], any>>,
+>(
+  ctx: MutationCtx,
+  jobName: T,
+  args: A,
+) => {
+  const jobId = await ctx.table('jobs_beta').insert({
+    ...args,
+    type: jobName,
+    status: 'queued',
+    queuedTime: Date.now(),
+  })
+
+  await ctx.scheduler.runAfter(0, internal.jobs.runner.processJobs, {})
+
+  return jobId
+}
 
 export const processJobs = internalMutation({
   args: {},
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     // check for queued jobs to start
-    const jobs = await ctx.table('jobs_beta', 'status', (q) => q.eq('status', 'queued'))
-    for (const job of jobs) {
+    const queuedJobs = await ctx.table('jobs_beta', 'status', (q) => q.eq('status', 'queued'))
+    for (const job of queuedJobs) {
       // TODO - actual job queue management. for now just start all jobs
+      const handler = jobDefinitions[job.type].handler
+      await ctx.scheduler.runAfter(0, handler, { jobId: job._id })
     }
   },
 })

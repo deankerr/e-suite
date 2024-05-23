@@ -6,7 +6,7 @@ export const jobTypesEnum = z.enum([
   'inference/chat-completion',
   'inference/chat-completion-stream',
   'inference/thread-title-completion',
-  'files/ingest-image-url',
+  'files/create-image-from-url',
   'files/optimize-image',
 ])
 export const jobStatusEnum = z.enum(['queued', 'active', 'complete', 'failed'])

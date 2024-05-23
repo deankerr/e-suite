@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as constants from "../constants.js";
 import type * as files_createImageFromUrl from "../files/createImageFromUrl.js";
+import type * as files_optimizeImage from "../files/optimizeImage.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as images_actions from "../images/actions.js";
@@ -149,6 +150,7 @@ import type * as utils from "../utils.js";
 declare const fullApi: ApiFromModules<{
   constants: typeof constants;
   "files/createImageFromUrl": typeof files_createImageFromUrl;
+  "files/optimizeImage": typeof files_optimizeImage;
   functions: typeof functions;
   http: typeof http;
   "images/actions": typeof images_actions;
