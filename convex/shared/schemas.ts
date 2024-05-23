@@ -2,7 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
 import { jobStatusEnum, jobTypesEnum } from '../jobs/schema'
-import { filesListSchema, inferenceSchema, messageRolesEnum } from '../threads/schema'
+import { inferenceSchema, messageFileSchema, messageRolesEnum } from '../threads/schema'
 
 export type EImage = z.infer<typeof zClient.image>
 export type EMessage = z.infer<typeof zClient.message>
@@ -79,7 +79,7 @@ const message = z.object({
   content: z.string().optional(),
 
   inference: inferenceSchema.optional(),
-  files: filesListSchema.optional(),
+  files: messageFileSchema.array().optional(),
 
   series: z.number(),
 })

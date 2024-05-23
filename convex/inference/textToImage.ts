@@ -8,10 +8,11 @@ import { zid } from 'convex-helpers/server/zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, jobResultError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
-import { filesListSchema } from '../threads/schema'
+import { insist } from '../shared/utils'
+import { messageFileSchema } from '../threads/schema'
 
 import type { Id } from '../_generated/dataModel'
 import type { GenerationParameters } from '../threads/schema'
@@ -31,27 +32,25 @@ export const createTextToImageJob = async (
   })
 }
 
-export const initialize = internalMutation({
+export const init = internalMutation({
   args: {
     jobId: zid('jobs_beta'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
-    if (!job) return null
 
-    const message = job.messageId ? await ctx.table('messages').getX(job.messageId) : null
+    const messageId = job.messageId
+    insist(messageId, 'no messageId', { code: 'invalid_job_input' })
+
+    const message = await ctx.table('messages').getX(messageId)
     const inference = message?.inference
-    if (!inference || inference.type !== 'text-to-image') {
-      await jobResultError(ctx, {
-        jobId: job._id,
-        error: {
-          code: 'invalid_job',
-          message: 'message missing text-to-image params',
-          fatal: true,
-        },
-      })
-      return null
-    }
+    insist(
+      inference && inference.type === 'text-to-image',
+      'text-to-image message lacks parameters',
+      {
+        code: 'invalid_job_input',
+      },
+    )
 
     return { ...message, inference }
   },
@@ -63,7 +62,7 @@ export const run = internalAction({
   },
   handler: async (ctx, args) => {
     try {
-      const message = await ctx.runMutation(internal.inference.textToImage.initialize, {
+      const message = await ctx.runMutation(internal.inference.textToImage.init, {
         jobId: args.jobId,
       })
       if (!message) return
@@ -95,15 +94,7 @@ export const run = internalAction({
         files: result.urls.map((url) => ({ type: 'image_url' as const, url })),
       })
     } catch (err) {
-      console.error(err)
-
-      const message = err instanceof Error ? err.message : 'unknown error'
-      await ctx.runMutation(internal.jobs.runner.resultError, {
-        jobId: args.jobId,
-        error: { code: 'unhandled', message, fatal: false },
-      })
-
-      throw err
+      return await handleJobError(ctx, { err, jobId: args.jobId })
     }
   },
 })
@@ -112,7 +103,7 @@ export const complete = internalMutation({
   args: {
     jobId: zid('jobs_beta'),
     messageId: zid('messages'),
-    files: filesListSchema,
+    files: messageFileSchema.array(),
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

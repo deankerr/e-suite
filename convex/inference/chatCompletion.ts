@@ -44,8 +44,10 @@ export const init = internalMutation({
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
+    const messageId = job.messageId
+    insist(messageId, 'no messageId', { code: 'invalid_job_input' })
 
-    const message = job.messageId ? await ctx.table('messages').getX(job.messageId) : null
+    const message = await ctx.table('messages').getX(messageId)
     const inference = message?.inference
 
     insist(

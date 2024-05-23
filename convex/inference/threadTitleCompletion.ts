@@ -7,26 +7,11 @@ import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { createOpenAiClient } from '../lib/openai'
 import { insist } from '../shared/utils'
 
-import type { Id } from '../_generated/dataModel'
-import type { MutationCtx } from '../types'
-
 const msgSchema = z.object({
   role: z.enum(['system', 'assistant', 'user']),
   name: z.string().optional(),
   content: z.string(),
 })
-
-export const threadTitleCompletion = {
-  name: 'inference/thread-title-completion' as const,
-  required: {
-    threadId: true,
-  },
-  inputValidator: z.object({ threadId: zid('threads') }),
-
-  output: async (ctx: MutationCtx, args: { threadId: Id<'threads'>; title: string }) => {
-    await ctx.skipRules.table('threads').getX(args.threadId).patch({ title: args.title })
-  },
-}
 
 export const init = internalMutation({
   args: {
@@ -34,11 +19,10 @@ export const init = internalMutation({
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
-
     const threadId = job.threadId
-    insist(threadId, 'threadId missing', { code: 'invalid_job_input' })
+    insist(threadId, 'no threadId', { code: 'invalid_job_input' })
 
-    const messages = await ctx
+    const messages: z.infer<typeof msgSchema>[] = await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
       .order('desc')
       .filter((q) =>
@@ -92,6 +76,7 @@ export const run = internalAction({
 
       const content = chatCompletion.choices[0]?.message.content ?? '' //TODO check
       const title = content.split('\n').at(-1) ?? '<title?>'
+
       await ctx.runMutation(internal.inference.threadTitleCompletion.complete, {
         jobId,
         threadId: input.threadId,

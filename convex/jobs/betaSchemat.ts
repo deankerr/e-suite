@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const jobTypesEnum = z.enum([
   'inference/text-to-image',
   'inference/chat-completion',
+  'inference/chat-completion-stream',
   'inference/thread-title-completion',
   'files/ingest-image-url',
   'files/optimize-image',
@@ -31,6 +32,7 @@ export const jobsBetaFields = {
   threadId: zid('threads').optional(),
   messageId: zid('messages').optional(),
   imageId: zid('images').optional(),
+  url: z.string().optional(),
 
   queuedTime: z.number(),
   startedTime: z.number().optional(),

@@ -46,25 +46,29 @@ export const completionParameters = z.object({
   stream: z.boolean().optional(),
 })
 
+export const inferenceChatCompletionParameters = z.object({
+  type: z.literal('chat-completion'),
+  endpoint: z.string(),
+  parameters: completionParameters,
+})
+
+export const inferenceTextToImageParameters = z.object({
+  type: z.literal('text-to-image'),
+  endpoint: z.string(),
+  parameters: generationParameters,
+})
+
 export const inferenceSchema = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal('chat-completion'),
-    endpoint: z.string(),
-    parameters: completionParameters,
-  }),
-  z.object({
-    type: z.literal('text-to-image'),
-    endpoint: z.string(),
-    parameters: generationParameters,
-  }),
+  inferenceChatCompletionParameters,
+  inferenceTextToImageParameters,
 ])
 
-export const filesListSchema = z
+export const messageFileSchema = z
   .discriminatedUnion('type', [
     z.object({ type: z.literal('image'), id: zid('images') }),
     z.object({ type: z.literal('image_url'), url: z.string() }),
   ])
-  .array()
+
 
 export const messageFields = {
   role: messageRolesEnum,
@@ -72,7 +76,7 @@ export const messageFields = {
   content: z.string().optional(),
 
   inference: inferenceSchema.optional(),
-  files: filesListSchema.optional(),
+  files: messageFileSchema.array().optional(),
 
   metadata: z.string().array().array().optional(),
   speechId: zid('speech').optional(),

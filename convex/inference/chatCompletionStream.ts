@@ -7,6 +7,8 @@ import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { createOpenAiClient } from '../lib/openai'
 import { hasDelimiter, insist } from '../shared/utils'
 
+import type { Ent } from '../types'
+
 const temp_config_messageHistory = 20
 
 const msgSchema = z.object({
@@ -19,10 +21,11 @@ export const init = internalMutation({
   args: {
     jobId: zid('jobs_beta'),
   },
-  handler: async (ctx, args) => {
-    const job = await acquireJob(ctx, args.jobId)
+  handler: async (ctx, { jobId }) => {
+    const job = await acquireJob(ctx, jobId)
+    insist(job.messageId, 'no messageId', { code: 'invalid_job_input' })
 
-    const message = job.messageId ? await ctx.table('messages').getX(job.messageId) : null
+    const message: Ent<'messages'> = await ctx.table('messages').getX(job.messageId)
     const inference = message?.inference
 
     insist(
