@@ -1,20 +1,11 @@
-// chat-completion (non-streaming)
-// input: target message -> inference parameters, context window/truncation strategy
-// output:
-//  - text -> message content
-//  - token counts (prompt, completion, total), finish reason -> live on job results?
-
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, createJobBeta, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { createOpenAiClient } from '../lib/openai'
 import { insist } from '../shared/utils'
-
-import type { Id } from '../_generated/dataModel'
-import type { MutationCtx } from '../types'
 
 const temp_config_messageHistory = 20
 
@@ -24,23 +15,9 @@ const msgSchema = z.object({
   content: z.string(),
 })
 
-export const createChatCompletionJob = async (
-  ctx: MutationCtx,
-  args: {
-    messageId: Id<'messages'>
-  },
-) => {
-  return await ctx.table('jobs_beta').insert({
-    type: 'inference/chat-completion',
-    status: 'queued',
-    messageId: args.messageId,
-    queuedTime: Date.now(),
-  })
-}
-
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -77,7 +54,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     try {
@@ -115,7 +92,7 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
     messageId: zid('messages'),
     text: z.string(),
   },
@@ -125,7 +102,7 @@ export const complete = internalMutation({
 
     const thread = await ctx.skipRules.table('threads').getX(message.threadId)
     if (!thread.title) {
-      await createJobBeta(ctx, 'inference/thread-title-completion', {
+      await createJob(ctx, 'inference/thread-title-completion', {
         threadId: message.threadId,
       })
     }

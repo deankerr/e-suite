@@ -11,7 +11,7 @@ const getMessageContent = async (message: Ent<'messages'>) => {
   return {
     ...message,
     images: await message.edge('images').filter((q) => q.eq(q.field('deletionTime'), undefined)),
-    jobs: await message.edge('jobs').filter((q) => q.eq(q.field('deletionTime'), undefined)),
+    jobs: [],
   }
 }
 

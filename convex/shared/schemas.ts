@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { jobStatusEnum, jobTypesEnum } from '../jobs/schema'
+import { jobStatusEnum } from '../jobs/schema'
 import { inferenceSchema, messageFileSchema, messageRolesEnum } from '../threads/schema'
 
 export type EImage = z.infer<typeof zClient.image>
@@ -41,7 +41,7 @@ const job = z
   .object({
     deletionTime: z.undefined(),
 
-    type: jobTypesEnum,
+    name: z.string(),
     status: jobStatusEnum,
 
     metrics: z
@@ -51,12 +51,12 @@ const job = z
       })
       .optional(),
   })
-  .transform(({ type, status, metrics }) => {
+  .transform(({ name, status, metrics }) => {
     const start = metrics?.startTime
     const end = metrics?.endTime
     const time = start && end ? end - start : 0
     return {
-      type,
+      name,
       status,
       time,
     }

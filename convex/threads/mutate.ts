@@ -2,8 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
-import { createJob } from '../jobs/manage'
-import { createJobBeta } from '../jobs/runner'
+import { createJob } from '../jobs/runner'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThread } from './query'
@@ -48,23 +47,6 @@ export const renameThread = mutation({
     const thread = await getValidThread(ctx, args.slug)
     insist(thread, 'invalid thread')
     return await ctx.table('threads').getX(thread._id).patch({ title: args.title })
-  },
-})
-
-export const completeThreadTitle = mutation({
-  args: {
-    slug: z.string(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getValidThread(ctx, args.slug)
-    insist(thread, 'invalid thread')
-
-    const message = await thread.edge('messages').firstX()
-    return await createJob(ctx, {
-      type: 'title-completion',
-      threadId: thread._id,
-      messageId: message._id,
-    })
   },
 })
 
@@ -113,13 +95,13 @@ export const createMessage = mutation({
         args.inference.parameters.stream === true
           ? 'inference/chat-completion-stream'
           : 'inference/chat-completion'
-      await createJobBeta(ctx, jobType, {
+      await createJob(ctx, jobType, {
         messageId: targetMessageId,
       })
     }
 
     if (args.inference.type === 'text-to-image') {
-      await createJobBeta(ctx, 'inference/text-to-image', {
+      await createJob(ctx, 'inference/text-to-image', {
         messageId: targetMessageId,
       })
     }

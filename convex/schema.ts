@@ -5,13 +5,16 @@ import { ms } from 'itty-time'
 import { z } from 'zod'
 
 import { imageFields } from './images/schema'
-import { jobsBetaFields } from './jobs/betaSchemat'
 import { jobFields } from './jobs/schema'
 import { messageFields, threadFields } from './threads/schema'
 
 const timeToDelete = ms('1 day')
 
-const jobs = defineEnt(zodToConvexFields(jobFields)).deletion('soft').edge('message').edge('thread')
+const jobs = defineEnt(zodToConvexFields(jobFields))
+  .index('status', ['status'])
+  .index('threadId', ['threadId'])
+  .index('messageId', ['messageId'])
+  .index('imageId', ['imageId'])
 
 // TODO migrate
 const speech = defineEnt({
@@ -45,12 +48,6 @@ const speech = defineEnt({
 //   metadata: z.any().optional(),
 // }
 
-const jobs_beta = defineEnt(zodToConvexFields(jobsBetaFields))
-  .index('status', ['status'])
-  .index('threadId', ['threadId'])
-  .index('messageId', ['messageId'])
-  .index('imageId', ['imageId'])
-
 export const fileFields = {
   fileId: zid('_storage'),
   isOriginFile: z.boolean(),
@@ -75,7 +72,6 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('series', zodToConvex(z.number()), { index: true })
   .edges('images', { ref: true, deletion: 'soft' })
-  .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('thread')
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
@@ -84,7 +80,6 @@ const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('slug', zodToConvex(z.string()), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
-  .edges('jobs', { ref: true, deletion: 'soft' })
   .edge('user')
 
 export const userFields = {
@@ -111,7 +106,6 @@ const schema = defineEntSchema(
   {
     files,
     jobs,
-    jobs_beta,
     images,
 
     messages,

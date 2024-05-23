@@ -28,7 +28,7 @@ export const ThreadContainer = ({
 
   const messages = series ?? page.results.toReversed()
   const isStreaming = messages.some((message) =>
-    message.jobs.some((job) => job.type === 'chat-completion-stream' && job.status === 'active'),
+    message.jobs.some((job) => job.name === 'chat-completion-stream' && job.status === 'active'),
   )
 
   const virtualizer = useVirtualizer({

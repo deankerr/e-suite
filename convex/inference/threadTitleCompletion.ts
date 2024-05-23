@@ -15,7 +15,7 @@ const msgSchema = z.object({
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -42,7 +42,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, { jobId }) => {
     try {
@@ -90,7 +90,7 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
     threadId: zid('threads'),
     title: z.string(),
   },

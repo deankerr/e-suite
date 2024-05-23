@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, createJobBeta, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { createOpenAiClient } from '../lib/openai'
 import { hasDelimiter, insist } from '../shared/utils'
 
@@ -19,7 +19,7 @@ const msgSchema = z.object({
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, { jobId }) => {
     const job = await acquireJob(ctx, jobId)
@@ -53,7 +53,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     try {
@@ -102,7 +102,7 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
     messageId: zid('messages'),
     text: z.string(),
   },
@@ -112,7 +112,7 @@ export const complete = internalMutation({
 
     const thread = await ctx.skipRules.table('threads').getX(message.threadId)
     if (!thread.title) {
-      await createJobBeta(ctx, 'inference/thread-title-completion', {
+      await createJob(ctx, 'inference/thread-title-completion', {
         threadId: message.threadId,
       })
     }

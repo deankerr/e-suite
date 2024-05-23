@@ -1,40 +1,18 @@
-// text-to-image
-// input: target message -> inference parameters
-// output: url/s -> message.files
-//  -> spawn next job to ingest image
-//  -> append image to target message
-
 import { zid } from 'convex-helpers/server/zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, createJobBeta, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
 import { insist } from '../shared/utils'
 import { messageFileSchema } from '../threads/schema'
 
-import type { Id } from '../_generated/dataModel'
 import type { GenerationParameters } from '../threads/schema'
-import type { MutationCtx } from '../types'
-
-export const createTextToImageJob = async (
-  ctx: MutationCtx,
-  args: {
-    messageId: Id<'messages'>
-  },
-) => {
-  return await ctx.table('jobs_beta').insert({
-    type: 'inference/text-to-image',
-    status: 'queued',
-    messageId: args.messageId,
-    queuedTime: Date.now(),
-  })
-}
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -58,7 +36,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     try {
@@ -101,7 +79,7 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
     messageId: zid('messages'),
     files: messageFileSchema.array(),
   },
@@ -112,7 +90,7 @@ export const complete = internalMutation({
 
     for (const file of files) {
       if (file.type === 'image_url') {
-        await createJobBeta(ctx, 'files/create-image-from-url', {
+        await createJob(ctx, 'files/create-image-from-url', {
           url: file.url,
           messageId: args.messageId,
         })

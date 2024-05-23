@@ -7,7 +7,7 @@ import { insist } from '../shared/utils'
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -28,7 +28,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     const input = await ctx.runMutation(internal.files.optimizeImageFile.init, {
@@ -56,7 +56,7 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs_beta'),
+    jobId: zid('jobs'),
   },
   handler: async (ctx, args) => {
     await jobResultSuccess(ctx, { jobId: args.jobId })

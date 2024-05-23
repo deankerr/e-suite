@@ -43,7 +43,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
     (job) => job.status === 'queued' || job.status === 'active',
   )
   const showLoader =
-    incompleteJobs.filter((job) => ['text-to-image', 'chat-completion'].includes(job.type)).length >
+    incompleteJobs.filter((job) => ['text-to-image', 'chat-completion'].includes(job.name)).length >
     0
 
   const [showRawContent, setShowRawContent] = useState(false)
@@ -192,7 +192,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           <div className="flex flex-wrap gap-3 font-mono text-xs">
             {message.jobs.map((job, i) => (
               <div key={i} className={cn(job.status === 'failed' && 'text-red-10')}>
-                [{job.type}: {job.status} {job.time && `${(job.time / 1000).toFixed(2)}s`}]
+                [{job.name}: {job.status} {job.time && `${(job.time / 1000).toFixed(2)}s`}]
               </div>
             ))}
           </div>

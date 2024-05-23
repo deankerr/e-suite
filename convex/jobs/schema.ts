@@ -1,40 +1,35 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-export type JobTypes = z.infer<typeof jobTypesEnum>
-
 export const jobStatusEnum = z.enum(['queued', 'active', 'complete', 'failed'])
-export const jobTypesEnum = z.enum([
-  'chat-completion',
-  'chat-completion-stream',
-  'title-completion',
-  'text-to-image',
-  'text-to-speech',
-  'ingest-image-url',
-])
-export const jobResultTypesEnum = z.enum([
-  'message',
-  'url',
-  'image',
-  'error',
-  'openai-chat-completion-json',
-])
 
-export const jobResultSchema = z.object({ type: jobResultTypesEnum, value: z.string() })
+export const jobErrorSchema = z.object({
+  code: z.enum([
+    'unhandled',
+    'invalid_job',
+    'invalid_job_input',
+    'invalid_job_output',
+    'timeout',
+    'endpoint_error',
+    'invalid_error_code',
+  ]),
+  message: z.string(),
+  fatal: z.boolean(),
+})
 
 export const jobFields = {
-  type: jobTypesEnum,
+  name: z.string(),
   status: jobStatusEnum,
-  results: jobResultSchema.array(),
+  errors: jobErrorSchema.array().optional(),
 
-  previousJobId: zid('jobs').optional(),
-  messageId: zid('messages'),
-  threadId: zid('threads'),
+  threadId: zid('threads').optional(),
+  messageId: zid('messages').optional(),
+  imageId: zid('images').optional(),
 
-  metrics: z
-    .object({
-      startTime: z.number().optional(),
-      endTime: z.number().optional(),
-    })
-    .optional(),
+  url: z.string().optional(),
+  width: z.number().optional(),
+
+  queuedTime: z.number(),
+  startedTime: z.number().optional(),
+  endedTime: z.number().optional(),
 }

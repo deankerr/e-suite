@@ -6,34 +6,6 @@ import { internalAction } from '../functions'
 
 import type { Id } from '../_generated/dataModel'
 
-export const ingestFromUrl = internalAction({
-  args: {
-    url: z.string(),
-    messageId: zid('messages'),
-  },
-  handler: async (ctx, args): Promise<Id<'images'>> => {
-    const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.storeImageFromUrl, {
-      url: args.url,
-    })
-
-    const imageId: Id<'images'> = await ctx.runMutation(internal.images.manage.createImage, {
-      ...metadata,
-      fileId,
-      messageId: args.messageId,
-      originUrl: args.url,
-      generationData: [],
-    })
-
-    await ctx.runMutation(internal.threads.internal.appendImage, {
-      messageId: args.messageId,
-      imageId,
-    })
-
-    console.log('ingested image:', metadata.format, `${metadata.width}x${metadata.height}`)
-    return imageId
-  },
-})
-
 export const optimize = internalAction({
   args: {
     imageId: zid('images'),
