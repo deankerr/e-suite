@@ -10,10 +10,9 @@ import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
-import { useRemoveMessage } from '@/lib/api'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
+import { useRemoveMessage, useSelf } from '@/lib/api'
+import { cn } from '@/lib/utils'
 
-import type { Id } from '@/convex/_generated/dataModel'
 import type { EMessageContent } from '@/convex/shared/schemas'
 
 type MessageProps = {
@@ -24,6 +23,9 @@ type MessageProps = {
 } & React.ComponentProps<typeof Card>
 
 export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps) => {
+  const self = useSelf()
+  const selfIsOwner = self?._id === message.user?._id
+
   const removeMessage = useRemoveMessage()
 
   const { files, inference } = message
@@ -41,8 +43,6 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
     0
 
   const [showRawContent, setShowRawContent] = useState(false)
-
-  const [streamedMessage, setStreamedMessage] = useState('')
   return (
     <Card {...props}>
       <div className="space-y-3">
@@ -50,24 +50,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           <div className="h-10 gap-1 bg-gray-3 p-2 flex-between md:gap-2">
             {/* message type icon */}
             <div className="flex-none flex-start">
-              <IconButton
-                variant="ghost"
-                size="1"
-                className="[&>svg]:size-5"
-                onClick={() => {
-                  // Kick off ChatGPT response + stream the result
-                  async function streamMessage() {
-                    await handleGptResponse(
-                      (text) => {
-                        setStreamedMessage((p) => p + text)
-                      },
-                      { messageId: message._id },
-                    )
-                  }
-
-                  void streamMessage()
-                }}
-              >
+              <IconButton variant="ghost" size="1" className="[&>svg]:size-5">
                 {files?.length ? <ImageIcon /> : <MessageSquareIcon />}
               </IconButton>
             </div>
@@ -80,34 +63,36 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
               {title}
             </Link>
 
-            <div className="flex-none gap-1.5 flex-end">
-              {/* edit */}
-              <IconButton
-                variant="surface"
-                size="1"
-                className="hidden md:flex"
-                onClick={() => setShowRawContent(!showRawContent)}
-              >
-                <PencilIcon className="size-4" />
-              </IconButton>
+            {selfIsOwner && (
+              <div className="flex-none gap-1.5 flex-end">
+                {/* edit */}
+                <IconButton
+                  variant="surface"
+                  size="1"
+                  className="hidden md:flex"
+                  onClick={() => setShowRawContent(!showRawContent)}
+                >
+                  <PencilIcon className="size-4" />
+                </IconButton>
 
-              {/* delete */}
-              <IconButton
-                color="red"
-                size="1"
-                variant="surface"
-                onClick={() => {
-                  removeMessage({ messageId: message._id })
-                    .then(() => toast.success('Message removed'))
-                    .catch((err) => {
-                      if (err instanceof Error) toast.error(err.message)
-                      else toast.error('Unknown error')
-                    })
-                }}
-              >
-                <Trash2Icon className="size-4" />
-              </IconButton>
-            </div>
+                {/* delete */}
+                <IconButton
+                  color="red"
+                  size="1"
+                  variant="surface"
+                  onClick={() => {
+                    removeMessage({ messageId: message._id })
+                      .then(() => toast.success('Message removed'))
+                      .catch((err) => {
+                        if (err instanceof Error) toast.error(err.message)
+                        else toast.error('Unknown error')
+                      })
+                  }}
+                >
+                  <Trash2Icon className="size-4" />
+                </IconButton>
+              </div>
+            )}
           </div>
         </Inset>
 
@@ -115,8 +100,8 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           files?.map((f, i) => {
             if (i !== file || f.type !== 'image') return null
             return (
-              <div key={f.id} className="mx-auto w-fit">
-                <ImageCard image={f.image} />
+              <div key={f.id} className="mx-auto">
+                <ImageCard image={f.image} sizes="(max-width: 56rem) 100vw, 28rem" />
               </div>
             )
           })}
@@ -161,7 +146,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
                   },
                 }}
               >
-                {streamedMessage || message.content}
+                {message.content}
               </Markdown>
             </div>
           )
@@ -222,32 +207,4 @@ export const MessageCardSkeleton = () => {
       <Skeleton className="h-10 rounded-b-none bg-gray-3" />
     </Skeleton>
   )
-}
-
-async function handleGptResponse(
-  onUpdate: (update: string) => void,
-  requestBody: { messageId: Id<'messages'> },
-) {
-  const convexSiteUrl = getConvexSiteUrl()
-  console.log('handleGptResponse', requestBody, convexSiteUrl)
-  const response = await fetch(`${convexSiteUrl}/chat`, {
-    method: 'POST',
-    body: JSON.stringify(requestBody),
-    headers: { 'Content-Type': 'application/json' },
-  })
-  // Taken from https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams
-  const responseBody = response.body
-  if (responseBody === null) {
-    console.log('responseBody is null')
-    return
-  }
-  const reader = responseBody.getReader()
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) {
-      onUpdate(new TextDecoder().decode(value))
-      return
-    }
-    onUpdate(new TextDecoder().decode(value))
-  }
 }

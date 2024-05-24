@@ -28,6 +28,7 @@ const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
     ...message,
     files,
     jobs,
+    user: await message.edgeX('user'),
   }
 }
 
@@ -60,6 +61,7 @@ export const getThread = query({
     return zClient.threadWithMessages.parse({
       ...thread,
       messages,
+      user: await thread.edgeX('user'),
     })
   },
 })
@@ -75,6 +77,7 @@ export const listThreads = query({
       .table('threads', 'userId', (q) => q.eq('userId', viewerId))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map(async (thread) => ({ ...thread, user: await thread.edgeX('user') }))
 
     return zClient.thread.array().parse(threads)
   },

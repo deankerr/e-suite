@@ -1,8 +1,9 @@
 import { zid } from 'convex-helpers/server/zod'
 import z from 'zod'
 
-import { internalMutation, mutation } from './functions'
+import { internalMutation, mutation, query } from './functions'
 import { userFields } from './schema'
+import { zClient } from './shared/schemas'
 import { generateRandomString } from './utils'
 
 const userBySchema = z.union([
@@ -53,5 +54,14 @@ export const generateNewApiKey = mutation({
 
     const secret = `sk_${generateRandomString(32)}`
     return await ctx.table('users_api_keys').insert({ secret, valid: true, userId: user._id })
+  },
+})
+
+//* queries
+export const getSelf = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.viewer()
+    return user ? zClient.user.parse(user) : null
   },
 })

@@ -106,12 +106,13 @@ const filesWithContent = z.discriminatedUnion('type', [
 
 const messageContent = message.merge(
   z.object({
+    user,
     files: filesWithContent.array().optional(),
     jobs: job.array(),
   }),
 )
 
-const threadWithMessages = thread.merge(z.object({ messages: messageContent.array() }))
+const threadWithMessages = thread.merge(z.object({ user, messages: messageContent.array() }))
 
 export const zClient = {
   image,

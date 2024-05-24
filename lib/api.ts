@@ -104,3 +104,5 @@ export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessa
 
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})
+
+export const useSelf = () => useQuery(api.users.getSelf, {})
