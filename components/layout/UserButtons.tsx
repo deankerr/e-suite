@@ -1,12 +1,10 @@
-import { SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { IconButton } from '@radix-ui/themes'
 import { UserIcon } from 'lucide-react'
 
-type UserSegmentProps = { props?: unknown }
-
-export const UserSegment = ({}: UserSegmentProps) => {
+export const UserButtons = () => {
   return (
-    <div className="min-w-7 flex-none gap-2 flex-end">
+    <div className="w-7 flex-none gap-2 flex-end">
       <SignedOut>
         <SignInButton mode="modal">
           <IconButton variant="surface" radius="large">
@@ -14,7 +12,10 @@ export const UserSegment = ({}: UserSegmentProps) => {
           </IconButton>
         </SignInButton>
       </SignedOut>
-      <UserButton />
+
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
     </div>
   )
 }

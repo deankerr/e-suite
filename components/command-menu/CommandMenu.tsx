@@ -23,9 +23,9 @@ export const CommandMenu = ({
           variant="outline"
           color="gray"
           aria-label="open menu"
-          className="w-[28rem] max-w-full"
+          className="w-[28rem] max-w-full px-1.5"
         >
-          {title}
+          <div className="line-clamp-1 w-full">{title}</div>
         </Button>
       </Popover.Trigger>
 
