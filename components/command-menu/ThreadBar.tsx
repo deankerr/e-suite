@@ -1,19 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { PencilIcon, Trash2Icon } from 'lucide-react'
+import { MessagesSquareIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-import { CommandBar, CommandGroup, CommandItem } from '@/components/command-bar/CommandBar'
+import { CommandGroup, CommandItem, CommandMenu } from '@/components/command-menu/CommandMenu'
 import { DeleteThreadDialog, EditThreadTitle } from '@/components/ui/dialogs'
 import { usePreloadedThreads, useSelf } from '@/lib/api'
 import { useRouteIndex } from '@/lib/hooks'
 
 import type { PreloadedThreadsQuery } from '@/lib/api.server'
 
-type LayoutThreadBarProps = { preloadedThreads: PreloadedThreadsQuery }
+type ThreadBarProps = { preloadedThreads: PreloadedThreadsQuery }
 
-export const LayoutThreadBar = ({ preloadedThreads }: LayoutThreadBarProps) => {
+export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
   const self = useSelf()
   const router = useRouter()
   const threads = usePreloadedThreads(preloadedThreads)
@@ -31,7 +31,7 @@ export const LayoutThreadBar = ({ preloadedThreads }: LayoutThreadBarProps) => {
   const [editTitleDialogOpen, setEditTitleDialogOpen] = useState(false)
   return (
     <div className="w-full flex-center">
-      <CommandBar title={title} open={open} onOpenChange={setOpen}>
+      <CommandMenu title={title} open={open} onOpenChange={setOpen}>
         {activeThread && viewerIsOwner && (
           <CommandGroup heading="Actions">
             <CommandItem onSelect={() => setEditTitleDialogOpen(true)}>
@@ -39,7 +39,7 @@ export const LayoutThreadBar = ({ preloadedThreads }: LayoutThreadBarProps) => {
               Edit Title
             </CommandItem>
             <CommandItem
-              className="text-red-11 aria-selected:text-red-12"
+              className="text-red-11 aria-selected:text-red-11"
               onSelect={() => setDeleteDialogOpen(true)}
             >
               <Trash2Icon className="mr-2 size-4" />
@@ -58,11 +58,12 @@ export const LayoutThreadBar = ({ preloadedThreads }: LayoutThreadBarProps) => {
                 setOpen(false)
               }}
             >
-              {thread.title ?? 'untitled'}
+              <MessagesSquareIcon className="mr-2 size-4 shrink-0" />
+              {thread.title ?? 'Untitled Thread'}
             </CommandItem>
           ))}
         </CommandGroup>
-      </CommandBar>
+      </CommandMenu>
 
       {editTitleDialogOpen && (
         <EditThreadTitle
