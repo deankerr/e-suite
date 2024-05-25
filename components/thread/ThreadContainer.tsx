@@ -55,7 +55,7 @@ export const ThreadContainer = ({
   })
 
   return (
-    <div {...props} className={cn('grid h-full p-2', className)}>
+    <div {...props} className={cn('grid h-full', className)}>
       <ScrollArea ref={scrollAreaRef} className="overscroll-none">
         <div
           style={{
@@ -71,9 +71,7 @@ export const ThreadContainer = ({
               ref={virtualizer.measureElement}
               style={{
                 position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
+                insetInline: 0,
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
@@ -82,15 +80,6 @@ export const ThreadContainer = ({
           ))}
         </div>
       </ScrollArea>
-
-      <div className="absolute -z-50 font-mono text-xs text-gray-4 hover:z-50 hover:bg-overlay hover:text-gray-11">
-        <div>
-          thread/{thread.slug} {thread.title}
-        </div>
-        <div>{messages.length}</div>
-        {isStreaming && <div>streaming</div>}
-        {virtualizer.isScrolling && <div>scrolling</div>}
-      </div>
     </div>
   )
 }

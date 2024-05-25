@@ -37,7 +37,7 @@ export const CommandMenu = ({
           >
             <Command
               label="Command Menu"
-              className="flex h-full w-full flex-col overflow-hidden rounded-lg border bg-gray-2 shadow-md"
+              className="flex h-full w-full flex-col overflow-hidden rounded-md border border-grayA-8 bg-gray-2"
             >
               <div className="flex items-center border-b px-3">
                 <SearchIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />

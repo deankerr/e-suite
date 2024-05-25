@@ -1,6 +1,5 @@
 import { ThreadBar } from '@/components/command-menu/ThreadBar'
 import { InputBar } from '@/components/input-bar/InputBar'
-import { DebugBar } from '@/components/layout/DebugBar'
 import { UserSegment } from '@/components/layout/UserSegment'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import { preloadThreads } from '@/lib/api.server'
@@ -11,14 +10,13 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
   return (
     <>
       <div className={cn('mx-auto min-h-screen max-w-8xl')}>
-        <header className="flex h-12 items-center justify-between gap-2 bg-gray-1 px-2">
+        <header className="flex h-11 items-center justify-between gap-2 bg-gray-1 px-1">
           <AppLogoTitle />
           <ThreadBar preloadedThreads={preloadedThreads} />
-          <DebugBar />
           <UserSegment />
         </header>
 
-        <div className="min-h-[calc(100vh-3rem)]">{children}</div>
+        {children}
         <InputBar />
       </div>
     </>

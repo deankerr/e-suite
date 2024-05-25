@@ -1,12 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { MessagesSquareIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import { useAtom } from 'jotai'
+import {
+  KeyboardIcon,
+  KeyboardOffIcon,
+  MessagesSquareIcon,
+  PencilIcon,
+  Trash2Icon,
+} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import { CommandGroup, CommandItem, CommandMenu } from '@/components/command-menu/CommandMenu'
 import { DeleteThreadDialog, EditThreadTitle } from '@/components/ui/dialogs'
 import { usePreloadedThreads, useSelf } from '@/lib/api'
+import { mountInputBarAtom } from '@/lib/atoms'
 import { useRouteIndex } from '@/lib/hooks'
 
 import type { PreloadedThreadsQuery } from '@/lib/api.server'
@@ -29,11 +37,26 @@ export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
   const [open, setOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editTitleDialogOpen, setEditTitleDialogOpen] = useState(false)
+
+  const [mountInputBar, toggleMountInputBar] = useAtom(mountInputBarAtom)
   return (
     <div className="w-full flex-center">
       <CommandMenu title={title} open={open} onOpenChange={setOpen}>
         {activeThread && viewerIsOwner && (
           <CommandGroup heading="Actions">
+            <CommandItem onSelect={() => toggleMountInputBar()}>
+              {mountInputBar ? (
+                <>
+                  <KeyboardOffIcon className="mr-2 size-4" />
+                  Hide Input Bar
+                </>
+              ) : (
+                <>
+                  <KeyboardIcon className="mr-2 size-4" />
+                  Show Input Bar
+                </>
+              )}
+            </CommandItem>
             <CommandItem onSelect={() => setEditTitleDialogOpen(true)}>
               <PencilIcon className="mr-2 size-4" />
               Edit Title
