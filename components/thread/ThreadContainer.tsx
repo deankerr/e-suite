@@ -38,6 +38,7 @@ export const ThreadContainer = ({
     getItemKey: useCallback((index: number) => messages[index]?._id ?? index, [messages]),
     gap: 16,
     overscan: 5,
+    paddingStart: 4,
     paddingEnd: 180,
     onChange: () => {
       if (isStreaming && scrollAreaRef.current) {

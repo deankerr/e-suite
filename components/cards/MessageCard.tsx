@@ -25,6 +25,7 @@ type MessageProps = {
 export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps) => {
   const self = useSelf()
   const selfIsOwner = self?._id === message.user?._id
+  const selfIsAdmin = self?.role === 'admin'
 
   const removeMessage = useRemoveMessage()
 
@@ -164,8 +165,8 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
           </div>
         )}
 
-        {message.jobs && message.jobs.length > 0 && (
-          <div className="flex flex-wrap gap-3 font-mono text-xs">
+        {message.jobs && message.jobs.length > 0 && (selfIsAdmin || selfIsOwner) && (
+          <div className="flex flex-wrap gap-1 font-mono text-xs">
             {message.jobs.map((job, i) => (
               <div key={i} className={cn(job.status === 'failed' && 'text-red-10')}>
                 [{job.name}: {job.status}]{/* {job.time && `${(job.time / 1000).toFixed(2)}s`} */}

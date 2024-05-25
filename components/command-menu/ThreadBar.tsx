@@ -39,6 +39,10 @@ export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
   const [editTitleDialogOpen, setEditTitleDialogOpen] = useState(false)
 
   const [mountInputBar, toggleMountInputBar] = useAtom(mountInputBarAtom)
+
+  //TODO temp - don't show if not logged in
+  if (!self) return null
+
   return (
     <div className="w-full flex-center">
       <CommandMenu title={title} open={open} onOpenChange={setOpen}>

@@ -8,24 +8,24 @@ import type { ThreadIndex } from '@/lib/types'
 
 export const ThreadPage = ({ index }: { index?: ThreadIndex }) => {
   const { thread, messages, series, file } = useThreadIndex(index)
+  const isSingleMessage = series?.length && series.length === 1
 
-  const shouldShowFile = series?.length && file
-
-  if (!thread) return null
+  if (thread === null) return null
+  if (!thread || !(messages.results.length || series?.length)) return <ThreadPageSkeleton />
 
   return (
     <>
-      <div className="absolute box-border h-[calc(100vh-2.5rem-2px)] w-full">
-        {shouldShowFile && (
+      <div className="absolute box-border h-[calc(100vh-2.5rem-4px)] w-full">
+        {isSingleMessage ? (
           <MessageCard
             className="mx-auto w-full max-w-4xl"
             slug={thread.slug}
             message={series[0]!}
             file={file}
           />
+        ) : (
+          <ThreadContainer thread={thread} page={messages} series={series} />
         )}
-
-        {!shouldShowFile && <ThreadContainer thread={thread} page={messages} series={series} />}
       </div>
     </>
   )
@@ -34,13 +34,12 @@ export const ThreadPage = ({ index }: { index?: ThreadIndex }) => {
 export const ThreadPageSkeleton = () => {
   return (
     <>
-      <div className="absolute inset-0 grid w-full animate-pulse grid-rows-4 gap-4 p-1 md:p-4">
-        <MessageCardSkeleton />
+      <div className="absolute grid h-[calc(100vh-2.5rem-4px)] w-full animate-pulse grid-rows-3 gap-4 p-1 md:p-4">
         <MessageCardSkeleton />
         <MessageCardSkeleton />
         <MessageCardSkeleton />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-1"></div>
+      <div className="absolute h-[calc(100vh-2.5rem-4px)] bg-gradient-to-b from-transparent to-gray-1"></div>
     </>
   )
 }

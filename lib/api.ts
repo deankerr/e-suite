@@ -1,5 +1,4 @@
 import { useMutation, usePaginatedQuery, usePreloadedQuery, useQuery } from 'convex/react'
-import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 import { useRouteIndex } from '@/lib/hooks'
@@ -44,56 +43,6 @@ export const useThread = (slug?: string) => {
 export const useThreads = () => {
   const threads = useQuery(api.threads.query.listThreads, {})
   return threads
-}
-
-export const useThreadMutations = () => {
-  const create = useMutation(api.threads.mutate.createThread)
-  const remove = useMutation(api.threads.mutate.removeThread)
-  const rename = useMutation(api.threads.mutate.updateThreadTitle)
-
-  const mutations = {
-    create: () => {
-      const runCreate = async () => {
-        try {
-          await create({})
-          toast.info('Thread created')
-        } catch (err) {
-          toast.error('Failed to create thread.')
-          console.error(err)
-        }
-      }
-
-      void runCreate()
-    },
-
-    remove: (slug: string) => {
-      const runRemove = async () => {
-        try {
-          await remove({ slug })
-          toast.info('Thread deleted.')
-        } catch (err) {
-          toast.error('Failed to delete thread.')
-          console.error(err)
-        }
-      }
-
-      void runRemove()
-    },
-
-    rename: (slug: string, title: string) => {
-      const runRename = async () => {
-        try {
-          await rename({ slug, title })
-        } catch (err) {
-          console.error(err)
-        }
-      }
-
-      void runRename()
-    },
-  }
-
-  return mutations
 }
 
 export const useCreateThread = () => useMutation(api.threads.mutate.createThread)

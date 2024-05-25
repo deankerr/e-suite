@@ -16,14 +16,15 @@ import NextImage from 'next/image'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { MessageInput } from '@/components/input-bar/MessageInput'
-import { Glass } from '@/components/ui/Glass'
 import { Label } from '@/components/ui/Label'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
+import { useSelf } from '@/lib/api'
 import { mountInputBarAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const InputBar = () => {
+  const self = useSelf()
   const mountInputBar = useAtomValue(mountInputBarAtom)
   const [inputBar, setInputBar] = useInputBarAtom()
 
@@ -32,7 +33,7 @@ export const InputBar = () => {
 
   // const currentChatModel = chatModels?.find((m) => m.model_id === inputBar.chatModel)
   // const currentImageModel = imageModels?.find((m) => m.model_id === inputBar.imageModel)
-  if (!mountInputBar) return null
+  if (!mountInputBar || !self) return null
   return (
     <motion.div
       className={cn(
@@ -41,9 +42,9 @@ export const InputBar = () => {
         'overflow-hidden rounded-[18px]',
       )}
     >
-      <Glass barWidth={1} borderRadius={18} className="absolute inset-0 hidden sm:block" />
+      {/* <Glass barWidth={1} borderRadius={18} className="absolute inset-0 hidden sm:block" /> */}
       <div className="min-h-12 p-1 sm:p-4">
-        <div className="rounded-lg border border-gold-7 bg-gray-2 p-3">
+        <div className="rounded-lg border border-goldA-7 bg-gray-2 p-3 shadow-xl">
           <div className="flex flex-col gap-3 text-lg">
             <MessageInput />
 
