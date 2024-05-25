@@ -38,7 +38,7 @@ export const removeThread = mutation({
   },
 })
 
-export const renameThread = mutation({
+export const updateThreadTitle = mutation({
   args: {
     slug: z.string(),
     title: zThreadTitle,

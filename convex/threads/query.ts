@@ -58,7 +58,7 @@ export const getThread = query({
       .take(0)
       .map((m) => getMessageContent(ctx, m))
 
-    return zClient.threadWithMessages.parse({
+    return zClient.threadWithContent.parse({
       ...thread,
       messages,
       user: await thread.edgeX('user'),
@@ -77,9 +77,9 @@ export const listThreads = query({
       .table('threads', 'userId', (q) => q.eq('userId', viewerId))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (thread) => ({ ...thread, user: await thread.edgeX('user') }))
+      .map(async (thread) => ({ ...thread, user: await thread.edgeX('user'), messages: [] }))
 
-    return zClient.thread.array().parse(threads)
+    return zClient.threadWithContent.array().parse(threads)
   },
 })
 

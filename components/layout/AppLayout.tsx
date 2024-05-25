@@ -1,3 +1,4 @@
+import { LayoutThreadBar } from '@/components/command-bar/LayoutThreadBar'
 import { InputBar } from '@/components/input-bar/InputBar'
 import { DebugBar } from '@/components/layout/DebugBar'
 import { TitleControlBar } from '@/components/layout/TitleControlBar'
@@ -18,6 +19,7 @@ export const AppLayout = async ({ children }: { children: React.ReactNode }) => 
           <UserSegment />
         </header>
 
+        <LayoutThreadBar preloadedThreads={preloadedThreads} />
         <div className="min-h-[calc(100vh-3rem)]">{children}</div>
         <InputBar />
       </div>

@@ -49,7 +49,7 @@ export const useThreads = () => {
 export const useThreadMutations = () => {
   const create = useMutation(api.threads.mutate.createThread)
   const remove = useMutation(api.threads.mutate.removeThread)
-  const rename = useMutation(api.threads.mutate.renameThread)
+  const rename = useMutation(api.threads.mutate.updateThreadTitle)
 
   const mutations = {
     create: () => {
@@ -97,6 +97,8 @@ export const useThreadMutations = () => {
 }
 
 export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
+export const useUpdateThreadTitle = () => useMutation(api.threads.mutate.updateThreadTitle)
+export const useRemoveThread = () => useMutation(api.threads.mutate.removeThread)
 
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)

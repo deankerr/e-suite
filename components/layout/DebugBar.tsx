@@ -22,7 +22,6 @@ export const DebugBar = ({ className, ...props }: DebugBarProps) => {
         )}
       >
         <Label>
-          input-bar{' '}
           <Checkbox checked={mountInputBar} onCheckedChange={(c) => setMountInputBar(Boolean(c))} />
         </Label>
       </div>

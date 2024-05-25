@@ -11,7 +11,7 @@ export type EUser = z.infer<typeof zClient.user>
 export type ESelf = z.infer<typeof zClient.self>
 
 export type EMessageContent = z.infer<typeof zClient.messageContent>
-export type EThreadWithMessages = z.infer<typeof zClient.threadWithMessages>
+export type EThreadContent = z.infer<typeof zClient.threadWithContent>
 
 export const imageFile = z.object({
   fileId: zid('_storage'),
@@ -112,7 +112,7 @@ const messageContent = message.merge(
   }),
 )
 
-const threadWithMessages = thread.merge(z.object({ user, messages: messageContent.array() }))
+const threadWithContent = thread.merge(z.object({ user, messages: messageContent.array() }))
 
 export const zClient = {
   image,
@@ -123,7 +123,7 @@ export const zClient = {
   user,
   self,
   messageContent,
-  threadWithMessages,
+  threadWithContent,
 }
 
 // export const voiceoverValidator = z.object({
