@@ -44,11 +44,12 @@ const getInferenceParameters = (inputBar: InputBarState) => {
 }
 
 const getChatParameters = (inputBar: InputBarState) => {
+  const [endpoint = '', model = ''] = inputBar.chatModel.split(':')
   return {
     type: 'chat-completion' as const,
-    endpoint: inputBar.chatModel.startsWith('gpt-') ? 'openai' : 'together',
+    endpoint,
     parameters: {
-      model: inputBar.chatModel,
+      model,
       stream: inputBar.chatStream,
     },
   }

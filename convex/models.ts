@@ -3,6 +3,7 @@ import { asyncMap } from 'convex-helpers'
 import { query } from './functions'
 import FalModelsJson from './providers/fal.models.json'
 import { openai } from './providers/openai'
+import OpenRouterModelsJson from './providers/openrouter.models.json'
 import SinkinModelsJson from './providers/sinkin.models.json'
 import TogetherAiModels from './providers/togetherai.models.json'
 
@@ -67,6 +68,13 @@ export const listChatModels = query({
         endpoint: 'together',
       })),
       openai.models.chat.map((model) => ({ ...model, type: 'chat', endpoint: 'openai' })),
+      OpenRouterModelsJson.map((model) => ({
+        model_id: model.id,
+        name: model.name,
+        contextLength: model.context_length,
+        type: 'chat',
+        endpoint: 'openrouter',
+      })),
     ].flat()
 
     return models

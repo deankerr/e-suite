@@ -1,6 +1,6 @@
 'use client'
 
-import { Checkbox, Inset, SegmentedControl } from '@radix-ui/themes'
+import { Inset, SegmentedControl } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
@@ -16,7 +16,6 @@ import NextImage from 'next/image'
 
 import { useInputBarAtom } from '@/components/input-bar/atoms'
 import { MessageInput } from '@/components/input-bar/MessageInput'
-import { Label } from '@/components/ui/Label'
 import { SelectList } from '@/components/ui/SelectList'
 import { api } from '@/convex/_generated/api'
 import { useSelf } from '@/lib/api'
@@ -108,23 +107,13 @@ export const InputBar = () => {
                 </>
               )}
 
-              <div className={cn('flex-none', inputBar.mode !== 'chat' && 'hidden')}>
-                <Label className="flex gap-1">
-                  <Checkbox
-                    checked={inputBar.chatStream}
-                    onCheckedChange={(c) => setInputBar((o) => ({ ...o, chatStream: Boolean(c) }))}
-                  />
-                  stream
-                </Label>
-              </div>
-
               <div className="w-60">
                 {inputBar.mode === 'chat' ? (
                   <SelectList
                     items={
-                      chatModels?.map(({ model_id, name }) => ({
-                        value: model_id,
-                        label: name,
+                      chatModels?.map(({ model_id, name, endpoint }) => ({
+                        value: `${endpoint}:${model_id}`,
+                        label: `${getEndpointCode(endpoint)}: ${name}`,
                       })) ?? []
                     }
                     value={inputBar.chatModel}
@@ -149,6 +138,19 @@ export const InputBar = () => {
       </div>
     </motion.div>
   )
+}
+
+const getEndpointCode = (endpoint: string) => {
+  switch (endpoint) {
+    case 'openai':
+      return 'OAI'
+    case 'openrouter':
+      return 'OR'
+    case 'together':
+      return 'TAI'
+    default:
+      return '??'
+  }
 }
 
 type MCardProps = {

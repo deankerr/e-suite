@@ -16,7 +16,13 @@ export const createOpenAiClient = (endpoint: string) => {
         apiKey: env('OPENAI_API_KEY'),
         baseURL: 'https://api.openai.com/v1',
       })
+
+    case 'openrouter':
+      return new OpenAI({
+        apiKey: env('OPENROUTER_API_KEY'),
+        baseURL: 'https://openrouter.ai/api/v1',
+      })
   }
 
-  throw new ConvexError('invalid endpoint') // todo no retry
+  throw new ConvexError(`invalid endpoint: ${endpoint}`) // todo no retry
 }
