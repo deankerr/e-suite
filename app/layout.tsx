@@ -9,7 +9,6 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { PartyBoy } from '@/components/effects/PartyBoy'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { HighlightLoader } from '@/components/util/HighlightLoader'
 import { cn, environment } from '@/lib/utils'
@@ -48,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <Theme accentColor="orange" appearance="dark" panelBackground="solid">
-              <AppLayout>{children}</AppLayout>
+              {children}
               <PartyBoy />
               <Toaster richColors />
               <HighlightLoader />

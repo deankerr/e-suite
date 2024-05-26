@@ -58,7 +58,7 @@ export const generateNewApiKey = mutation({
 })
 
 //* queries
-export const getSelf = query({
+export const getViewer = query({
   args: {},
   handler: async (ctx) => {
     const user = await ctx.viewer()

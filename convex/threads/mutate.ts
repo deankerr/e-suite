@@ -5,7 +5,7 @@ import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/runner'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
-import { getValidThread } from './query'
+import { getValidThreadBySlugOrId } from './query'
 import {
   inferenceSchema,
   messageFields,
@@ -32,7 +32,7 @@ export const removeThread = mutation({
     slug: z.string(),
   },
   handler: async (ctx, args) => {
-    const thread = await getValidThread(ctx, args.slug)
+    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
     insist(thread, 'invalid thread')
     return await ctx.table('threads').getX(thread._id).delete()
   },
@@ -44,7 +44,7 @@ export const updateThreadTitle = mutation({
     title: zThreadTitle,
   },
   handler: async (ctx, args) => {
-    const thread = await getValidThread(ctx, args.slug)
+    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
     insist(thread, 'invalid thread')
     return await ctx.table('threads').getX(thread._id).patch({ title: args.title })
   },
@@ -59,7 +59,7 @@ export const createMessage = mutation({
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
 
-    const thread = await getValidThread(ctx, args.slug)
+    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
     insist(thread, 'invalid thread')
     const threadId = thread._id
 

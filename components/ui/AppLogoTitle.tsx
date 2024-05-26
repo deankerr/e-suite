@@ -20,7 +20,7 @@ export const AppLogoTitle = ({ showText = true, className, ...props }: AppLogoTi
               initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="hidden flex-none font-semibold tracking-tight sm:inline md:text-lg"
+              className="hidden flex-none font-semibold tracking-tight sm:inline md:text-xl"
             >
               e/suite
             </motion.h1>

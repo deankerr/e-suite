@@ -13,26 +13,26 @@ import { useRouter } from 'next/navigation'
 
 import { CommandGroup, CommandItem, CommandMenu } from '@/components/command-menu/CommandMenu'
 import { DeleteThreadDialog, EditThreadTitle } from '@/components/ui/dialogs'
-import { usePreloadedThreads, useSelf } from '@/lib/api'
+import { useListViewerThreads, useThreadContent } from '@/lib/api'
 import { mountInputBarAtom } from '@/lib/atoms'
-import { useRouteIndex } from '@/lib/hooks'
+import { useThreadParamSlug } from '@/lib/hooks'
 
-import type { PreloadedThreadsQuery } from '@/lib/api.server'
+import type { api } from '@/convex/_generated/api'
+import type { Preloaded } from 'convex/react'
 
-type ThreadBarProps = { preloadedThreads: PreloadedThreadsQuery }
+type ThreadBarProps = { preloadedList: Preloaded<typeof api.threads.query.listViewerThreads> }
 
-export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
-  const self = useSelf()
+export const ThreadBar = ({ preloadedList }: ThreadBarProps) => {
   const router = useRouter()
-  const threads = usePreloadedThreads(preloadedThreads)
+  const { threads, viewer } = useListViewerThreads(preloadedList)
+  const slug = useThreadParamSlug()
 
-  const index = useRouteIndex()
-  const activeThread = index.thread
-    ? threads.find((thread) => thread.slug === index.thread)
-    : undefined
-  const viewerIsOwner = self?._id === activeThread?.user._id
+  const focusedViewerThread = slug ? threads?.find((thread) => thread.slug === slug[0]) : undefined
+  const focusedUnownedThread = useThreadContent(slug && !focusedViewerThread ? slug[0] : undefined)
+  const focusedThread = focusedUnownedThread ?? focusedViewerThread
 
-  const title = index.thread ? activeThread?.title ?? 'Untitled' : 'No thread selected'
+  const viewerIsOwner = viewer?._id === focusedThread?.owner._id
+  const title = focusedThread?.title ?? 'No thread selected'
 
   const [open, setOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -40,27 +40,40 @@ export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
 
   const [mountInputBar, toggleMountInputBar] = useAtom(mountInputBarAtom)
 
-  //TODO temp - don't show if not logged in
-  if (!self) return null
-
   return (
     <div className="w-full flex-center">
       <CommandMenu title={title} open={open} onOpenChange={setOpen}>
-        {activeThread && viewerIsOwner && (
+        <CommandItem onSelect={() => toggleMountInputBar()}>
+          {mountInputBar ? (
+            <>
+              <KeyboardOffIcon className="mr-2 size-4" />
+              Hide Input Bar
+            </>
+          ) : (
+            <>
+              <KeyboardIcon className="mr-2 size-4" />
+              Show Input Bar
+            </>
+          )}
+        </CommandItem>
+        <CommandItem
+          onSelect={() => {
+            const slugs = threads?.map((thread) => thread.slug) ?? []
+            router.push(`/multi/${slugs.slice(0, 4).join('_')}`)
+          }}
+        >
+          Open Multiview Latest
+        </CommandItem>
+        <CommandItem
+          onSelect={() => {
+            router.push(`/multi/uhhc1xyv_wll2xbt7_g7sgbo6g_u2ra3rpk`)
+          }}
+        >
+          Open Multiview Select
+        </CommandItem>
+
+        {focusedViewerThread && viewerIsOwner && (
           <CommandGroup heading="Actions">
-            <CommandItem onSelect={() => toggleMountInputBar()}>
-              {mountInputBar ? (
-                <>
-                  <KeyboardOffIcon className="mr-2 size-4" />
-                  Hide Input Bar
-                </>
-              ) : (
-                <>
-                  <KeyboardIcon className="mr-2 size-4" />
-                  Show Input Bar
-                </>
-              )}
-            </CommandItem>
             <CommandItem onSelect={() => setEditTitleDialogOpen(true)}>
               <PencilIcon className="mr-2 size-4" />
               Edit Title
@@ -76,7 +89,7 @@ export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
         )}
 
         <CommandGroup heading="Threads">
-          {threads.map((thread) => (
+          {threads?.map((thread) => (
             <CommandItem
               key={thread._id}
               value={thread.slug}
@@ -94,15 +107,15 @@ export const ThreadBar = ({ preloadedThreads }: ThreadBarProps) => {
 
       {editTitleDialogOpen && (
         <EditThreadTitle
-          threadId={activeThread?._id ?? ''}
-          currentTitle={activeThread?.title}
+          threadId={focusedViewerThread?._id ?? ''}
+          currentTitle={focusedViewerThread?.title}
           defaultOpen={true}
           onOpenChange={setEditTitleDialogOpen}
         />
       )}
 
       <DeleteThreadDialog
-        threadId={activeThread?._id ?? ''}
+        threadId={focusedViewerThread?._id ?? ''}
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onSuccess={() => router.replace('/')}

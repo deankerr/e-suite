@@ -1,0 +1,21 @@
+import { ThreadView } from '@/app/multi/[[...slug]]/ThreadView'
+import { cn } from '@/lib/utils'
+
+type MultiThreadViewerProps = { slug: [threadIds: string] } & React.ComponentProps<'div'>
+
+export const MultiThreadViewer = ({ slug, className, ...props }: MultiThreadViewerProps) => {
+  const threadIds = slug[0].split('_')
+  return (
+    <div
+      {...props}
+      className={cn(
+        'grid h-[calc(100svh-2.75rem-1px)] max-h-full auto-cols-[28rem] grid-flow-col divide-x overflow-x-auto overflow-y-hidden bg-overlay',
+        className,
+      )}
+    >
+      {threadIds.map((slug) => (
+        <ThreadView key={slug} slug={[slug]} />
+      ))}
+    </div>
+  )
+}

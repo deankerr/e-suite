@@ -1,18 +1,20 @@
+import { preloadQuery } from 'convex/nextjs'
+
 import { ThreadBar } from '@/components/command-menu/ThreadBar'
 import { InputBar } from '@/components/input-bar/InputBar'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
-import { preloadThreads } from '@/lib/api.server'
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
 export const AppLayout = async ({ children }: { children: React.ReactNode }) => {
-  const preloadedThreads = await preloadThreads()
+  const preloadedList = await preloadQuery(api.threads.query.listViewerThreads, {})
   return (
     <>
       <div className={cn('mx-auto min-h-screen max-w-8xl')}>
         <header className="flex h-11 items-center justify-between gap-2 bg-gray-1 px-2">
           <AppLogoTitle />
-          <ThreadBar preloadedThreads={preloadedThreads} />
+          <ThreadBar preloadedList={preloadedList} />
           <UserButtons />
         </header>
 

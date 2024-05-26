@@ -56,4 +56,18 @@ export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessa
 export const useImageModelList = () => useQuery(api.models.listImageModels, {})
 export const useChatModelList = () => useQuery(api.models.listChatModels, {})
 
-export const useSelf = () => useQuery(api.users.getSelf, {})
+// TODO remove useSelf
+export const useSelf = () => useQuery(api.users.getViewer, {})
+export const useViewer = () => useQuery(api.users.getViewer, {})
+
+export const useThreadContent = (slugOrId?: string) => {
+  const thread = useQuery(api.threads.query.getThreadContent, slugOrId ? { slugOrId } : 'skip')
+  return thread
+}
+
+export const useListViewerThreads = (
+  preloadedList: Preloaded<typeof api.threads.query.listViewerThreads>,
+) => {
+  const result = usePreloadedQuery(preloadedList)
+  return result
+}

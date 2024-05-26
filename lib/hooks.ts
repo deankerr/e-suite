@@ -20,3 +20,8 @@ export const useRouteIndex = (): ThreadIndex => {
 
   return buildThreadIndex(params.index ?? [])
 }
+
+export const useThreadParamSlug = () => {
+  const params = useParams<{ slug?: [threadId: string] }>()
+  return params?.slug
+}

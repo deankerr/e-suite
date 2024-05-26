@@ -3,8 +3,10 @@ import { z } from 'zod'
 
 import { query } from '../functions'
 import { zClient } from '../shared/schemas'
+import { threadWithContentSchema } from '../shared/structures'
 import { emptyPage, zPaginationOptValidator } from '../utils'
 
+import type { EFileAttachmentRecord } from '../shared/structures'
 import type { Ent, QueryCtx } from '../types'
 
 //* helpers
@@ -32,7 +34,21 @@ const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   }
 }
 
-export const getValidThread = async (ctx: QueryCtx, slug: string) => {
+const getFilesContent = async (ctx: QueryCtx, files?: EFileAttachmentRecord[]) => {
+  if (!files) return undefined
+  return await asyncMap(files, async (file) => {
+    if (file.type === 'image') {
+      return {
+        ...file,
+        image: await ctx.table('images').getX(file.id),
+      }
+    }
+
+    return file
+  })
+}
+
+export const getValidThreadBySlugOrId = async (ctx: QueryCtx, slug: string) => {
   const threadBySlug = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).unique()
   if (threadBySlug) return threadBySlug && !threadBySlug.deletionTime ? threadBySlug : null
 
@@ -41,14 +57,65 @@ export const getValidThread = async (ctx: QueryCtx, slug: string) => {
   return threadById && !threadById.deletionTime ? threadById : null
 }
 
+const config_thread_messages = 8
+export const getThreadContentHelper = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
+  const messages = await thread
+    .edge('messages')
+    .order('desc')
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .take(config_thread_messages)
+    .map(async (message) => ({
+      ...message,
+      files: await getFilesContent(ctx, message.files),
+      jobs: await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id)),
+      owner: await message.edgeX('user'),
+    }))
+
+  const result = {
+    ...thread,
+    messages,
+    owner: await thread.edgeX('user'),
+  }
+
+  return threadWithContentSchema.parse(result)
+}
+
 //* queries
+export const getThreadContent = query({
+  args: {
+    slugOrId: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getValidThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return null
+
+    return await getThreadContentHelper(ctx, thread)
+  },
+})
+
+export const listViewerThreads = query({
+  args: {},
+  handler: async (ctx: QueryCtx) => {
+    const viewer = await ctx.viewer()
+    if (!viewer) return { threads: [], viewer }
+
+    const threads = await ctx
+      .table('threads', 'userId', (q) => q.eq('userId', viewer._id))
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map(async (thread) => await getThreadContentHelper(ctx, thread))
+
+    return { threads, viewer }
+  },
+})
+
 // get any thread
 export const getThread = query({
   args: {
     slug: z.string(),
   },
   handler: async (ctx: QueryCtx, { slug }) => {
-    const thread = await getValidThread(ctx, slug)
+    const thread = await getValidThreadBySlugOrId(ctx, slug)
     if (!thread) return null
 
     const messages = await thread
@@ -77,9 +144,9 @@ export const listThreads = query({
       .table('threads', 'userId', (q) => q.eq('userId', viewerId))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (thread) => ({ ...thread, user: await thread.edgeX('user'), messages: [] }))
+      .map(async (thread) => await getThreadContentHelper(ctx, thread))
 
-    return zClient.threadWithContent.array().parse(threads)
+    return threads
   },
 })
 
@@ -91,7 +158,7 @@ export const listMessages = query({
     series: z.number().optional(),
   },
   handler: async (ctx: QueryCtx, args) => {
-    const thread = await getValidThread(ctx, args.slug)
+    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
     if (!thread) return emptyPage()
 
     const result = await ctx
@@ -114,7 +181,7 @@ export const getMessageSeries = query({
     series: z.string(),
   },
   handler: async (ctx, args) => {
-    const thread = await getValidThread(ctx, args.slug)
+    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
     if (!thread) return null
 
     const series = Number(args.series)
