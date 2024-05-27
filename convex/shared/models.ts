@@ -2,7 +2,7 @@ import { OpenAIChatModels } from '../endpoints/openai'
 import OpenRouterModels from '../endpoints/openrouter.models.json'
 import TogetherModels from '../endpoints/together.models.json'
 
-import type { ChatModel } from './structures'
+import type { EChatModel } from './structures'
 
 const excludeChatModels = [
   'openai/gpt-3.5-turbo-0125',
@@ -18,12 +18,12 @@ const excludeChatModels = [
   'meta-llama/llama-guard-2-8b',
 ]
 
-export const chatModels: ChatModel[] = [
+export const chatModels: EChatModel[] = [
   OpenAIChatModels.map((model) => ({
     modelType: 'chat' as const,
     endpoint: 'openai',
     endpointModelId: model.model_id,
-    name: model.name,
+    name: `OpenAI: ${model.name}`,
     creatorName: 'OpenAI',
     contextLength: model.contextLength,
   })),
@@ -44,3 +44,4 @@ export const chatModels: ChatModel[] = [
 ]
   .flat()
   .filter((model) => !excludeChatModels.includes(model.endpointModelId))
+  .sort((a, b) => a.name.localeCompare(b.name))

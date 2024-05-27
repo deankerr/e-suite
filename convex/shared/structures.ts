@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { imageSchema, jobSchema, threadSchema, userSchema } from './entities'
 
-export type ChatModel = z.infer<typeof chatModelSchema>
+export type EChatModel = z.infer<typeof chatModelSchema>
 export const chatModelSchema = z.object({
   modelType: z.literal('chat'),
   endpoint: z.string(),
@@ -17,7 +17,7 @@ export const chatModelSchema = z.object({
   contextLength: z.number(),
 })
 
-export type ImageModel = z.infer<typeof imageModelSchema>
+export type EImageModel = z.infer<typeof imageModelSchema>
 export const imageModelSchema = z.object({
   modelType: z.literal('image'),
   endpoint: z.string(),

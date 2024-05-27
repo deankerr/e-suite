@@ -1,4 +1,5 @@
 import { ThreadView } from '@/app/multi/[[...slug]]/ThreadView'
+import { ThreadViewNew } from '@/app/multi/[[...slug]]/ThreadViewNew'
 import { cn } from '@/lib/utils'
 
 type MultiThreadViewerProps = { slug: [threadIds: string] } & React.ComponentProps<'div'>
@@ -13,6 +14,7 @@ export const MultiThreadViewer = ({ slug, className, ...props }: MultiThreadView
         className,
       )}
     >
+      <ThreadViewNew />
       {threadIds.map((slug) => (
         <ThreadView key={slug} slug={[slug]} />
       ))}
