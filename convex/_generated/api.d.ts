@@ -14,7 +14,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as bmodels from "../bmodels.js";
 import type * as constants from "../constants.js";
+import type * as endpoints_openai from "../endpoints/openai.js";
 import type * as files_createImageFromUrl from "../files/createImageFromUrl.js";
 import type * as files_optimizeImageFile from "../files/optimizeImageFile.js";
 import type * as functions from "../functions.js";
@@ -29,7 +31,6 @@ import type * as jobs_runner from "../jobs/runner.js";
 import type * as lib_openai from "../lib/openai.js";
 import type * as lib_schemas from "../lib/schemas.js";
 import type * as lib_sharp from "../lib/sharp.js";
-import type * as models from "../models.js";
 import type * as providers_aws from "../providers/aws.js";
 import type * as providers_clerk from "../providers/clerk.js";
 import type * as providers_fal_fast_animatediff from "../providers/fal/fast_animatediff.js";
@@ -123,10 +124,10 @@ import type * as providers_fal_types_validationErrorLocItem from "../providers/f
 import type * as providers_fal from "../providers/fal.js";
 import type * as providers_openai from "../providers/openai.js";
 import type * as providers_sinkin from "../providers/sinkin.js";
-import type * as providers_togetherai from "../providers/togetherai.js";
 import type * as providers_types from "../providers/types.js";
 import type * as rules from "../rules.js";
 import type * as shared_entities from "../shared/entities.js";
+import type * as shared_models from "../shared/models.js";
 import type * as shared_schemas from "../shared/schemas.js";
 import type * as shared_structures from "../shared/structures.js";
 import type * as shared_utils from "../shared/utils.js";
@@ -145,7 +146,9 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  bmodels: typeof bmodels;
   constants: typeof constants;
+  "endpoints/openai": typeof endpoints_openai;
   "files/createImageFromUrl": typeof files_createImageFromUrl;
   "files/optimizeImageFile": typeof files_optimizeImageFile;
   functions: typeof functions;
@@ -160,7 +163,6 @@ declare const fullApi: ApiFromModules<{
   "lib/openai": typeof lib_openai;
   "lib/schemas": typeof lib_schemas;
   "lib/sharp": typeof lib_sharp;
-  models: typeof models;
   "providers/aws": typeof providers_aws;
   "providers/clerk": typeof providers_clerk;
   "providers/fal/fast_animatediff": typeof providers_fal_fast_animatediff;
@@ -254,10 +256,10 @@ declare const fullApi: ApiFromModules<{
   "providers/fal": typeof providers_fal;
   "providers/openai": typeof providers_openai;
   "providers/sinkin": typeof providers_sinkin;
-  "providers/togetherai": typeof providers_togetherai;
   "providers/types": typeof providers_types;
   rules: typeof rules;
   "shared/entities": typeof shared_entities;
+  "shared/models": typeof shared_models;
   "shared/schemas": typeof shared_schemas;
   "shared/structures": typeof shared_structures;
   "shared/utils": typeof shared_utils;

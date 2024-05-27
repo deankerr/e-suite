@@ -10,7 +10,7 @@ import TogetherAiModels from './providers/togetherai.models.json'
 import type { api } from './_generated/api'
 import type { FunctionReturnType } from 'convex/server'
 
-export type Temp_EModels = FunctionReturnType<typeof api.models.listImageModels>
+export type Temp_EModels = FunctionReturnType<typeof api.bmodels.listImageModels>
 
 const falAvailableIds = [
   'fal-ai/hyper-sdxl',
@@ -44,15 +44,6 @@ export const listImageModels = query({
     return models
   },
 })
-
-// export const importCoverImages = internalMutation({
-//   args: {},
-//   handler: async (ctx) => {
-//     for (const model of modelsList) {
-//       await ctx.scheduler.runAfter(0, internal.app_images.importUrl, { url: model.cover_image })
-//     }
-//   },
-// })
 
 export const listChatModels = query({
   args: {},

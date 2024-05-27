@@ -53,8 +53,8 @@ export const useCreateMessage = () => useMutation(api.threads.mutate.createMessa
 export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
 
-export const useImageModelList = () => useQuery(api.models.listImageModels, {})
-export const useChatModelList = () => useQuery(api.models.listChatModels, {})
+export const useImageModelList = () => useQuery(api.bmodels.listImageModels, {})
+export const useChatModelList = () => useQuery(api.bmodels.listChatModels, {})
 
 // TODO remove useSelf
 export const useSelf = () => useQuery(api.users.getViewer, {})

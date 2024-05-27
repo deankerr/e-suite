@@ -5,7 +5,7 @@ import togetherAiModels from './togetherai-models-data.json'
 async function main() {
   const models = togetherAiModels
     .map((model) => {
-      if (!model.isFeaturedModel) return null
+      if (!model.isFeaturedModel || model.display_type !== 'chat') return null
       return {
         model_id: model.name,
         name: model.display_name,

@@ -1,10 +1,9 @@
 import { Card, Inset } from '@radix-ui/themes'
 import NextImage from 'next/image'
 
-
 import { cn } from '@/lib/utils'
 
-import type { Temp_EModels } from '@/convex/models'
+import type { Temp_EModels } from '@/convex/bmodels'
 
 export const ModelCard = ({
   model: modelFromProps,
@@ -16,7 +15,6 @@ export const ModelCard = ({
 
   variant?: 'nano' | 'mini'
 } & Omit<React.ComponentProps<typeof Card>, 'variant'>) => {
-
   const model = modelFromProps
   if (!model) return null
 

@@ -5,7 +5,6 @@ import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { MessageEditor } from '@/components/cards/message-card/MessageEditor'
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -128,9 +127,7 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
                 <Tabs.Trigger value="json">JSON</Tabs.Trigger>
               </Tabs.List>
 
-              <Tabs.Content value="edit">
-                <MessageEditor message={message} />
-              </Tabs.Content>
+              <Tabs.Content value="edit">{/* <MessageEditor message={message} /> */}</Tabs.Content>
 
               <Tabs.Content value="json">
                 <Pre>{JSON.stringify(message, null, 2)}</Pre>

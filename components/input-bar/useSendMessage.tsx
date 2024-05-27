@@ -25,9 +25,8 @@ export const useSendMessage = () => {
       const slug = thread?.slug ?? (await sendCreateThread({}))
       const inference = getInferenceParameters(inputBar)
       await sendCreateMessage({
-        slug,
-        message: { role: 'user', content: inputBar.prompt },
-        inference,
+        threadId: slug,
+        message: { role: 'user', content: inputBar.prompt, inference },
       })
       router.replace(`/t/${slug}`)
     } catch (err) {

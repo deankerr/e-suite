@@ -8,9 +8,9 @@ import { SelectList } from '@/components/ui/SelectList'
 import { useEditMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EMessage } from '@/convex/shared/schemas'
+import type { EMessageWithContent } from '@/convex/shared/structures'
 
-type MessageEditorProps = { message: EMessage } & React.ComponentProps<'div'>
+type MessageEditorProps = { message: EMessageWithContent } & React.ComponentProps<'div'>
 
 export const MessageEditor = ({ message, className, ...props }: MessageEditorProps) => {
   const send = useEditMessage()

@@ -6,14 +6,17 @@ import { createJob } from '../jobs/runner'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
-import {
-  inferenceSchema,
-  messageFields,
-  zMessageName,
-  zMessageTextContent,
-  zThreadTitle,
-} from './schema'
+import { messageFields, zMessageName, zMessageTextContent, zThreadTitle } from './schema'
 
+import type { Ent } from '../types'
+
+//* helpers
+const getNextMessageSeries = async (thread: Ent<'threads'>) => {
+  const prev = await thread.edge('messages').order('desc').first()
+  return (prev?.series ?? 0) + 1
+}
+
+//* mutations
 export const createThread = mutation({
   args: {
     title: zThreadTitle.optional(),
@@ -52,57 +55,38 @@ export const updateThreadTitle = mutation({
 
 export const createMessage = mutation({
   args: {
-    slug: z.string(),
+    threadId: z.string(),
     message: z.object(messageFields),
-    inference: inferenceSchema.optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
-
-    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
+    const thread = await getValidThreadBySlugOrId(ctx, args.threadId)
     insist(thread, 'invalid thread')
-    const threadId = thread._id
 
-    const lastMessage = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
-      .order('desc')
-      .first()
-    const series = lastMessage?.series ?? 0
+    const series = await getNextMessageSeries(thread)
 
     const messageId = await ctx.table('messages').insert({
-      threadId,
       ...args.message,
-      series: series + 1,
+      threadId: thread._id,
+      series,
       userId: user._id,
     })
 
-    if (!args.inference) return messageId
+    if (args.message.inference && args.message.role === 'assistant') {
+      if (args.message.inference.type === 'chat-completion') {
+        await createJob(ctx, 'inference/chat-completion', {
+          messageId,
+        })
+      }
 
-    // todo could get created without valid job
-    const targetMessageId =
-      args.message.role === 'assistant'
-        ? messageId
-        : await ctx.table('messages').insert({
-            threadId,
-            role: 'assistant',
-            series: series + 2,
-            userId: user._id,
-            inference: args.inference,
-          })
-
-    if (args.inference.type === 'chat-completion') {
-      await createJob(ctx, 'inference/chat-completion', {
-        messageId: targetMessageId,
-      })
+      if (args.message.inference.type === 'text-to-image') {
+        await createJob(ctx, 'inference/text-to-image', {
+          messageId,
+        })
+      }
     }
 
-    if (args.inference.type === 'text-to-image') {
-      await createJob(ctx, 'inference/text-to-image', {
-        messageId: targetMessageId,
-      })
-    }
-
-    return targetMessageId
+    return messageId
   },
 })
 

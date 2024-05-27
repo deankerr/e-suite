@@ -27,8 +27,8 @@ export const InputBar = () => {
   const mountInputBar = useAtomValue(mountInputBarAtom)
   const [inputBar, setInputBar] = useInputBarAtom()
 
-  const chatModels = useQuery(api.models.listChatModels, {})
-  const imageModels = useQuery(api.models.listImageModels, {})
+  const chatModels = useQuery(api.bmodels.listChatModels, {})
+  const imageModels = useQuery(api.bmodels.listImageModels, {})
 
   // const currentChatModel = chatModels?.find((m) => m.model_id === inputBar.chatModel)
   // const currentImageModel = imageModels?.find((m) => m.model_id === inputBar.imageModel)
