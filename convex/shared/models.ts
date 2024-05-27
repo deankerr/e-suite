@@ -1,8 +1,10 @@
+import FalModels from '../endpoints/fal.models.json'
 import { OpenAIChatModels } from '../endpoints/openai'
 import OpenRouterModels from '../endpoints/openrouter.models.json'
+import SinkinModels from '../endpoints/sinkin.models.json'
 import TogetherModels from '../endpoints/together.models.json'
 
-import type { EChatModel } from './structures'
+import type { EChatModel, EImageModel } from './structures'
 
 const excludeChatModels = [
   'openai/gpt-3.5-turbo-0125',
@@ -45,3 +47,25 @@ export const chatModels: EChatModel[] = [
   .flat()
   .filter((model) => !excludeChatModels.includes(model.endpointModelId))
   .sort((a, b) => a.name.localeCompare(b.name))
+
+const falIncludeModels = [
+  'fal-ai/hyper-sdxl',
+  'fal-ai/fast-lightning-sdxl',
+  'fal-ai/pixart-sigma',
+  // 'fal-ai/lora',
+]
+
+export const imageModels: EImageModel[] = [
+  FalModels.filter((model) => falIncludeModels.includes(model.model_id)).map((model) => ({
+    modelType: 'image' as const,
+    endpoint: 'fal',
+    endpointModelId: model.model_id,
+    name: model.name,
+  })),
+  SinkinModels.map((model) => ({
+    modelType: 'image' as const,
+    endpoint: 'sinkin',
+    endpointModelId: model.model_id,
+    name: model.name,
+  })),
+].flat()

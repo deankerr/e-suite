@@ -3,18 +3,20 @@ import * as Popover from '@radix-ui/react-popover'
 import { Command as Cmdk } from 'cmdk'
 import { ChevronsUpDownIcon, SearchIcon } from 'lucide-react'
 
-import { chatModels } from '@/convex/shared/models'
 import { cn } from '@/lib/utils'
+
+import type { EChatModel, EImageModel } from '@/convex/shared/structures'
 
 type ModelComboboxProps = {
   value: string
   onValueChange: (value: string) => unknown
+  models: EChatModel[] | EImageModel[]
 } & React.ComponentProps<typeof Popover.Root>
 
-export const ModelCombobox = ({ value, onValueChange, ...props }: ModelComboboxProps) => {
+export const ModelCombobox = ({ value, onValueChange, models, ...props }: ModelComboboxProps) => {
   const [open, setOpen] = useState(false)
 
-  const currentModel = chatModels.find(
+  const currentModel = models.find(
     (model) => `${model.endpoint}::${model.endpointModelId}` === value,
   )
 
@@ -29,7 +31,7 @@ export const ModelCombobox = ({ value, onValueChange, ...props }: ModelComboboxP
           <div className="grow text-left">{currentModel?.name}</div>
 
           <div className="shrink-0 text-right">
-            <div className="text-sm">chat</div>
+            <div className="text-sm">{currentModel?.modelType}</div>
             <div className="font-mono text-xs text-gray-10">{currentModel?.endpoint}</div>
           </div>
 
@@ -55,7 +57,7 @@ export const ModelCombobox = ({ value, onValueChange, ...props }: ModelComboboxP
           <Cmdk.List className="max-h-[300px] overflow-y-auto overflow-x-hidden">
             <Cmdk.Empty className="py-6 text-center text-sm">No results found.</Cmdk.Empty>
 
-            {chatModels.map((model) => (
+            {models.map((model) => (
               <Cmdk.Item
                 key={model.endpointModelId}
                 value={`${model.endpoint}::${model.endpointModelId}`}

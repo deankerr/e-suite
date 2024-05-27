@@ -6,13 +6,15 @@ import { SendHorizonalIcon } from 'lucide-react'
 
 import { ModelCombobox } from '@/components/model-picker/ModelCombobox'
 import { TextareaAuto } from '@/components/ui/TextareaAuto'
+import { chatModels, imageModels } from '@/convex/shared/models'
 import { cn } from '@/lib/utils'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type ThreadViewProps = {} & React.ComponentProps<'div'>
 
 export const ThreadViewNew = ({ className, ...props }: ThreadViewProps) => {
-  const [model, setModel] = useState('openai::gpt-4o')
+  const [chatModel, setChatModel] = useState('openai::gpt-4o')
+  const [imageModel, setImageModel] = useState('fal::fal-ai/hyper-sdxl')
 
   return (
     <div {...props} className={cn('flex max-w-4xl flex-col overflow-y-auto', className)}>
@@ -21,7 +23,8 @@ export const ThreadViewNew = ({ className, ...props }: ThreadViewProps) => {
       </div>
 
       <div className="flex grow flex-col gap-4 p-2">
-        <ModelCombobox value={model} onValueChange={setModel} />
+        <ModelCombobox value={chatModel} onValueChange={setChatModel} models={chatModels} />
+        <ModelCombobox value={imageModel} onValueChange={setImageModel} models={imageModels} />
       </div>
 
       <div className="sticky bottom-0 z-10 shrink-0 border-t bg-gray-1 p-3 text-base flex-center">

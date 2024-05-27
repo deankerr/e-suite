@@ -10,7 +10,7 @@ export const MultiThreadViewer = ({ slug, className, ...props }: MultiThreadView
     <div
       {...props}
       className={cn(
-        'grid h-[calc(100svh-2.75rem-1px)] max-h-full auto-cols-[28rem] grid-flow-col divide-x overflow-x-auto overflow-y-hidden bg-overlay',
+        'grid h-[calc(100svh-2.75rem-1px)] max-h-full auto-cols-[min(100vw,28rem)] grid-flow-col divide-x overflow-x-auto overflow-y-hidden bg-overlay',
         className,
       )}
     >
