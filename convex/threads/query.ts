@@ -73,7 +73,7 @@ export const getThreadContentHelper = async (ctx: QueryCtx, thread: Ent<'threads
 
   const result = {
     ...thread,
-    messages,
+    messages: messages.reverse(),
     owner: await thread.edgeX('user'),
   }
 
