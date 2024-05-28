@@ -128,7 +128,6 @@ import type * as providers_types from "../providers/types.js";
 import type * as rules from "../rules.js";
 import type * as shared_entities from "../shared/entities.js";
 import type * as shared_models from "../shared/models.js";
-import type * as shared_schemas from "../shared/schemas.js";
 import type * as shared_structures from "../shared/structures.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as threads_mutate from "../threads/mutate.js";
@@ -260,7 +259,6 @@ declare const fullApi: ApiFromModules<{
   rules: typeof rules;
   "shared/entities": typeof shared_entities;
   "shared/models": typeof shared_models;
-  "shared/schemas": typeof shared_schemas;
   "shared/structures": typeof shared_structures;
   "shared/utils": typeof shared_utils;
   "threads/mutate": typeof threads_mutate;

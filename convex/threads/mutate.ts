@@ -25,7 +25,32 @@ export const createThread = mutation({
     const user = await ctx.viewerX()
     const slug = await generateSlug(ctx)
 
-    await ctx.table('threads').insert({ ...args, userId: user._id, slug })
+    await ctx.table('threads').insert({
+      ...args,
+      userId: user._id,
+      slug,
+      inferenceConfig: {
+        chatCompletion: {
+          type: 'chat-completion',
+          endpoint: 'together',
+          parameters: {
+            model: 'meta-llama/Llama-3-70b-chat-hf',
+          },
+        },
+        textToImage: {
+          type: 'text-to-image',
+          endpoint: 'fal',
+          parameters: {
+            model: 'fal-ai/hyper-sdxl',
+            prompt: '',
+            width: 1024,
+            height: 1024,
+            n: 4,
+          },
+        },
+        custom: [],
+      },
+    })
     return slug
   },
 })

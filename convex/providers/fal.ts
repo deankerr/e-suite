@@ -6,7 +6,7 @@ import * as HyperSdxl from './fal/hyper_sdxl'
 import * as SDLora from './fal/lora'
 import * as PixartSigma from './fal/pixart_sigma'
 
-import type { GenerationParameters } from '../threads/schema'
+import type { ETextToImageInference } from '../shared/structures'
 import type { TextToImageHandler } from './types'
 
 //* Model config
@@ -37,53 +37,31 @@ export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: GenerationParameters
+  parameters: ETextToImageInference['parameters']
   n: number
 }) => {
   try {
-    const { model_id, size, prompt, entries } = parameters
-    if (!(model_id in textToImageModels))
-      throw new ConvexError({ message: 'unsupported model', model_id })
+    const { model, width, height, prompt } = parameters
+    if (!(model in textToImageModels))
+      throw new ConvexError({ message: 'unsupported model', model })
 
-    const parsers = textToImageModels[model_id as keyof typeof textToImageModels]
+    const parsers = textToImageModels[model as keyof typeof textToImageModels]
 
-    const mapped = Object.fromEntries(entries)
+    // const mapped = Object.fromEntries(entries)
 
-    const image_size = size.startsWith('portrait')
-      ? { width: 832, height: 1216 }
-      : size.startsWith('landscape')
-        ? { width: 1216, height: 832 }
-        : 'square_hd'
+    const image_size = { width, height }
 
     //TODO temp - some schemas expect strings instead of numbers
-    const stepsI = entries.findIndex(([key]) => key === 'num_inference_steps')
-    if (
-      stepsI >= 0 &&
-      (model_id === 'fal-ai/hyper-sdxl' || model_id === 'fal-ai/fast-lightning-sdxl')
-    ) {
-      mapped['num_inference_steps'] = String(mapped['num_inference_steps'])
-    }
-
-    //* sd with loras
-    if (model_id === 'fal-ai/lora' && mapped._lora_path) {
-      const loras = [{ path: mapped._lora_path, scale: mapped._lora_scale ?? 0.75 }]
-      mapped.loras = loras as any
-    }
-
-    if (model_id === 'fal-ai/lora') {
-      mapped.model_name = 'RunDiffusion/Juggernaut-X-v10'
-      mapped.model_architecture = 'sdxl'
-      mapped.schedule = 'DPM++ 2M Karras'
-      mapped.num_inference_steps = 30
-      mapped.guidance_scale = 6
-    }
+    // const stepsI = entries.findIndex(([key]) => key === 'num_inference_steps')
+    // if (stepsI >= 0 && (model === 'fal-ai/hyper-sdxl' || model === 'fal-ai/fast-lightning-sdxl')) {
+    //   mapped['num_inference_steps'] = String(mapped['num_inference_steps'])
+    // }
 
     //* explicitly set bools to false if not present
-    mapped.expand_prompt ??= false
-    mapped.enable_safety_checker ??= false
+    // mapped.expand_prompt ??= false
+    // mapped.enable_safety_checker ??= false
 
     const parsedInput = parsers.body.safeParse({
-      ...mapped,
       prompt,
       image_size,
       num_images: n,
@@ -101,9 +79,9 @@ export const textToImage: TextToImageHandler = async ({
     }
 
     const input = parsedInput.data
-    console.log('[fal/textToImage] >>>', model_id, input)
+    console.log('[fal/textToImage] >>>', model, input)
 
-    const response = await falClient.subscribe(model_id, {
+    const response = await falClient.subscribe(model, {
       input,
     })
     console.log('[fal/textToImage] <<<', response)

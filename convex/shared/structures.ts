@@ -29,50 +29,47 @@ export const imageModelSchema = z.object({
   coverImageUrl: z.string().optional(),
 })
 
-export const generationParametersSchema = z.object({
-  prompt: z.string(),
-  width: z.number(),
-  height: z.number(),
-  n: z.number(),
-
-  model_id: z.string(),
-  loras: z
-    .object({
-      id: z.string(),
-      weight: z.number(),
-    })
-    .optional(),
-
-  entries: z.tuple([z.string(), z.union([z.string(), z.number(), z.boolean()])]).array(),
-})
-
-export const completionParametersSchema = z.object({
-  model: z.string(),
-  max_tokens: z.number().optional(),
-  stop: z.string().array().optional(),
-  temperature: z.number().optional(),
-  top_p: z.number().optional(),
-  top_k: z.number().optional(),
-  repetition_penalty: z.number().optional(),
-  stream: z.boolean().optional(),
-})
-
+export type EChatCompletionInference = z.infer<typeof chatCompletionInferenceSchema>
 export const chatCompletionInferenceSchema = z.object({
   type: z.literal('chat-completion'),
   endpoint: z.string(),
-  parameters: completionParametersSchema,
+  parameters: z.object({
+    model: z.string(),
+    max_tokens: z.number().optional(),
+    stop: z.string().array().optional(),
+    temperature: z.number().optional(),
+    top_p: z.number().optional(),
+    top_k: z.number().optional(),
+    repetition_penalty: z.number().optional(),
+    stream: z.boolean().optional(),
+  }),
+  name: z.string().optional(),
 })
 
+export type ETextToImageInference = z.infer<typeof textToImageInferenceSchema>
 export const textToImageInferenceSchema = z.object({
   type: z.literal('text-to-image'),
   endpoint: z.string(),
-  parameters: generationParametersSchema,
+  parameters: z.object({
+    model: z.string(),
+    prompt: z.string(),
+    width: z.number(),
+    height: z.number(),
+    n: z.number(),
+  }),
+  name: z.string().optional(),
 })
 
-export const inferenceSchema = z.discriminatedUnion('type', [
+export const inferenceAttachmentSchema = z.discriminatedUnion('type', [
   chatCompletionInferenceSchema,
   textToImageInferenceSchema,
 ])
+
+export const threadInferenceConfigSchema = z.object({
+  chatCompletion: chatCompletionInferenceSchema,
+  textToImage: textToImageInferenceSchema,
+  custom: inferenceAttachmentSchema.array(),
+})
 
 export type EFileAttachmentRecord = z.infer<typeof fileAttachmentRecordSchema>
 export const fileAttachmentRecordSchema = z.discriminatedUnion('type', [
@@ -104,7 +101,7 @@ export const messageWithContentSchema = z.object({
   name: z.string().optional(),
   content: z.string().optional(),
 
-  inference: inferenceSchema.optional(),
+  inference: inferenceAttachmentSchema.optional(),
   files: z.array(fileAttachmentRecordWithContentSchema).optional(),
   jobs: z.array(jobSchema),
 
@@ -114,6 +111,7 @@ export const messageWithContentSchema = z.object({
 export type EThreadWithContent = z.infer<typeof threadWithContentSchema>
 export const threadWithContentSchema = threadSchema.merge(
   z.object({
+    inferenceConfig: threadInferenceConfigSchema,
     messages: z.array(messageWithContentSchema),
     owner: userSchema,
   }),

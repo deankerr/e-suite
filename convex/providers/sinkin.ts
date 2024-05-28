@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { env } from '../shared/utils'
 
-import type { GenerationParameters } from '../threads/schema'
+import type { ETextToImageInference } from '../shared/structures'
 import type { TextToImageHandler } from './types'
 
 const api = ky.extend({
@@ -16,17 +16,17 @@ export const textToImage: TextToImageHandler = async ({
   parameters,
   n,
 }: {
-  parameters: GenerationParameters
+  parameters: ETextToImageInference['parameters']
   n: number
 }) => {
-  const { entries, model_id, prompt, width, height } = parameters
+  const { model, prompt, width, height } = parameters
 
   const body = new URLSearchParams()
 
-  for (const [key, value] of entries) {
-    body.set(key, String(value))
-  }
-  body.set('model_id', model_id)
+  // for (const [key, value] of entries) {
+  //   body.set(key, String(value))
+  // }
+  body.set('model_id', model)
   body.set('prompt', prompt)
   body.set('width', String(width))
   body.set('height', String(height))

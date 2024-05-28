@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, internalQuery } from '../functions'
-import { imageFile } from '../shared/schemas'
+import { imageFileSchema } from '../shared/entities'
 import { imageFields } from './schema'
 
 const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]
@@ -60,7 +60,7 @@ export const getImageWithFiles = internalQuery({
 
     const imageFiles = await ctx
       .table('files', 'imageId', (q) => q.eq('imageId', image._id))
-      .map((file) => imageFile.parse(file))
+      .map((file) => imageFileSchema.parse(file))
 
     const original = imageFiles.find((file) => file.isOriginFile)
     const optimized = imageFiles

@@ -3,7 +3,7 @@ import z from 'zod'
 
 import { internalMutation, mutation, query } from './functions'
 import { userFields } from './schema'
-import { zClient } from './shared/schemas'
+import { userSchema } from './shared/entities'
 import { generateRandomString } from './utils'
 
 const userBySchema = z.union([
@@ -62,6 +62,6 @@ export const getViewer = query({
   args: {},
   handler: async (ctx) => {
     const user = await ctx.viewer()
-    return user ? zClient.user.parse(user) : null
+    return user ? userSchema.parse(user) : null
   },
 })

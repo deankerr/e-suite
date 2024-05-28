@@ -4,8 +4,8 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { fileAttachmentRecordSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
-import { messageFileSchema } from '../threads/schema'
 
 export const init = internalMutation({
   args: {
@@ -62,7 +62,7 @@ export const complete = internalMutation({
     jobId: zid('jobs'),
     messageId: zid('messages'),
     url: z.string(),
-    file: messageFileSchema,
+    file: fileAttachmentRecordSchema,
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

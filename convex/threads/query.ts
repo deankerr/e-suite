@@ -2,8 +2,7 @@ import { asyncMap } from 'convex-helpers'
 import { z } from 'zod'
 
 import { query } from '../functions'
-import { zClient } from '../shared/schemas'
-import { threadWithContentSchema } from '../shared/structures'
+import { messageWithContentSchema, threadWithContentSchema } from '../shared/structures'
 import { emptyPage, zPaginationOptValidator } from '../utils'
 
 import type { EFileAttachmentRecord } from '../shared/structures'
@@ -109,30 +108,6 @@ export const listViewerThreads = query({
   },
 })
 
-// get any thread
-export const getThread = query({
-  args: {
-    slug: z.string(),
-  },
-  handler: async (ctx: QueryCtx, { slug }) => {
-    const thread = await getValidThreadBySlugOrId(ctx, slug)
-    if (!thread) return null
-
-    const messages = await thread
-      .edge('messages')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(0)
-      .map((m) => getMessageContent(ctx, m))
-
-    return zClient.threadWithContent.parse({
-      ...thread,
-      messages,
-      user: await thread.edgeX('user'),
-    })
-  },
-})
-
 // list user's threads
 export const listThreads = query({
   args: {},
@@ -170,7 +145,7 @@ export const listMessages = query({
 
     return {
       ...result,
-      page: zClient.messageContent.array().parse(result.page),
+      page: messageWithContentSchema.array().parse(result.page),
     }
   },
 })
@@ -194,6 +169,6 @@ export const getMessageSeries = query({
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .map((m) => getMessageContent(ctx, m))
 
-    return zClient.messageContent.array().parse(messages)
+    return messageWithContentSchema.array().parse(messages)
   },
 })

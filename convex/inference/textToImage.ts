@@ -5,10 +5,8 @@ import { internalAction, internalMutation } from '../functions'
 import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs/runner'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
+import { fileAttachmentRecordSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
-import { messageFileSchema } from '../threads/schema'
-
-import type { GenerationParameters } from '../threads/schema'
 
 export const init = internalMutation({
   args: {
@@ -50,11 +48,11 @@ export const run = internalAction({
       const { result, error } =
         endpoint === 'sinkin'
           ? await sinkin.textToImage({
-              parameters: parameters as GenerationParameters,
+              parameters,
               n: parameters.n,
             })
           : await fal.textToImage({
-              parameters: parameters as GenerationParameters,
+              parameters,
               n: parameters.n,
             })
 
@@ -81,7 +79,7 @@ export const complete = internalMutation({
   args: {
     jobId: zid('jobs'),
     messageId: zid('messages'),
-    files: messageFileSchema.array(),
+    files: fileAttachmentRecordSchema.array(),
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

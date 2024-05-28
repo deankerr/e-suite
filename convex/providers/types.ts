@@ -1,4 +1,4 @@
-import type { GenerationParameters } from '../threads/schema'
+import type { ETextToImageInference } from '../shared/structures'
 
 export type TextToImageHandlerResult = {
   result: { urls: string[] } & Record<string, any>
@@ -15,6 +15,6 @@ export type TextToImageHandlerError = {
 }
 
 export type TextToImageHandler = (args: {
-  parameters: GenerationParameters
+  parameters: ETextToImageInference['parameters']
   n: number
 }) => Promise<TextToImageHandlerResult | TextToImageHandlerError>
