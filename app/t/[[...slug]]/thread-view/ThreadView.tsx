@@ -9,7 +9,7 @@ import {
   SquareIcon,
 } from 'lucide-react'
 
-import { MessageCard } from '@/app/t/[[...slug]]/MessageCard'
+import { MessageCard } from '@/components/cards/MessageCard'
 import { ModelCombobox } from '@/components/model-picker/ModelCombobox'
 import { chatModels, imageModels } from '@/convex/shared/models'
 

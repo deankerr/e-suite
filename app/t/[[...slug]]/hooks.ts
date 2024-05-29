@@ -1,3 +1,4 @@
+import { atom } from 'jotai'
 import { useParams, useRouter } from 'next/navigation'
 
 import { chatModels, imageModels } from '@/convex/shared/models'
@@ -34,3 +35,5 @@ export const useModelList = ({
   )
   return { current, chatModels, imageModels }
 }
+
+export const threadTitleAtom = atom('')
