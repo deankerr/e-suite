@@ -31,6 +31,7 @@ export const jobSchema = z.object({
   endedTime: z.number().optional(),
 })
 
+export type EImage = z.infer<typeof imageSchema>
 export const imageSchema = z.object({
   _id: zid('images'),
   _creationTime: z.number(),
