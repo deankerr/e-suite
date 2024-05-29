@@ -8,7 +8,7 @@ import { SearchIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import { useThreadStack } from '@/app/multi/[[...slug]]/hooks'
+import { useThreadStack } from '@/app/t/[[...slug]]/hooks'
 import { useCreateThread, useListViewerThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 

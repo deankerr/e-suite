@@ -57,12 +57,6 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
             </div>
 
             {/* title */}
-            {/* <Link
-              href={`/t/${slug}/${message.series}`}
-              className="grow truncate text-sm font-semibold"
-            >
-              {title}
-            </Link> */}
             <div className="grow truncate text-sm font-semibold">{title}</div>
 
             {viewerIsOwner && (

@@ -1,6 +1,6 @@
 'use client'
 
-import { ThreadContainer } from '@/app/multi/[[...slug]]/thread-view/ThreadContainer'
+import { ThreadContainer } from '@/app/t/[[...slug]]/thread-view/ThreadContainer'
 import { cn } from '@/lib/utils'
 
 type MultiThreadViewerProps = { slug?: [threadIds: string] } & React.ComponentProps<'div'>

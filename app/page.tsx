@@ -1,3 +1,9 @@
+import Link from 'next/link'
+
 export default function Page() {
-  return <></>
+  return (
+    <div>
+      <Link href="/t">Threads</Link>
+    </div>
+  )
 }

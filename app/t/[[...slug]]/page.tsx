@@ -1,4 +1,4 @@
-import { MultiThreadViewer } from '@/app/multi/[[...slug]]/MultiThreadViewer'
+import { MultiThreadViewer } from '@/app/t/[[...slug]]/MultiThreadViewer'
 
 export default function Page({ params }: { params: { slug: [threadIds: string] } }) {
   return <MultiThreadViewer slug={params.slug} />

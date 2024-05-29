@@ -1,8 +1,8 @@
 import { IconButton } from '@radix-ui/themes'
 import { ChevronsUpDownIcon, DotIcon, XIcon } from 'lucide-react'
 
-import { useThreadStack } from '@/app/multi/[[...slug]]/hooks'
-import { ThreadCommand } from '@/app/multi/[[...slug]]/thread-view/ThreadCommand'
+import { useThreadStack } from '@/app/t/[[...slug]]/hooks'
+import { ThreadCommand } from '@/app/t/[[...slug]]/thread-view/ThreadCommand'
 import { chatModels, imageModels } from '@/convex/shared/models'
 import { cn } from '@/lib/utils'
 

@@ -6,7 +6,7 @@ import { Command as Cmdk } from 'cmdk'
 import { BoxIcon, ChevronLeftIcon, PencilIcon, SearchIcon, Trash2Icon } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { useModelList, useThreadStack } from '@/app/multi/[[...slug]]/hooks'
+import { useModelList, useThreadStack } from '@/app/t/[[...slug]]/hooks'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
 import { useUpdateThreadInferenceConfig } from '@/lib/api'
 import { cn } from '@/lib/utils'

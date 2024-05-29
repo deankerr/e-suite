@@ -1,6 +1,6 @@
-import { ThreadInputBar } from '@/app/multi/[[...slug]]/thread-view/ThreadInputBar'
-import { ThreadView } from '@/app/multi/[[...slug]]/thread-view/ThreadView'
-import { ThreadViewBar } from '@/app/multi/[[...slug]]/thread-view/ThreadViewBar'
+import { ThreadInputBar } from '@/app/t/[[...slug]]/thread-view/ThreadInputBar'
+import { ThreadView } from '@/app/t/[[...slug]]/thread-view/ThreadView'
+import { ThreadViewBar } from '@/app/t/[[...slug]]/thread-view/ThreadViewBar'
 import { useThreadContent } from '@/lib/api'
 import { cn } from '@/lib/utils'
 

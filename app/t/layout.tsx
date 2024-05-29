@@ -1,6 +1,6 @@
 import { preloadQuery } from 'convex/nextjs'
 
-import { TopCommand } from '@/app/multi/TopCommand'
+import { TopCommand } from '@/app/t/TopCommand'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import { api } from '@/convex/_generated/api'

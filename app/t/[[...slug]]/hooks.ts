@@ -9,13 +9,13 @@ export const useThreadStack = () => {
 
   const add = (slug: string) => {
     const newStack = [...stack, slug]
-    router.replace(`/multi/${newStack.join('-')}`)
+    router.replace(`/t/${newStack.join('-')}`)
   }
 
   const remove = (slug?: string) => {
     if (!slug) return
     const newStack = stack.filter((s) => s !== slug)
-    router.replace(`/multi/${newStack.join('-')}`)
+    router.replace(`/t/${newStack.join('-')}`)
   }
 
   return { stack, add, remove }
