@@ -5,13 +5,17 @@ import { toast } from 'sonner'
 
 import { useRemoveThread, useUpdateThreadTitle } from '@/lib/api'
 
+import type { EThreadWithContent } from '@/convex/shared/structures'
+
 type DeleteDialogProps = {
   threadId: string
   onSuccess?: (threadId: string) => void
+  onClose?: () => void
 } & React.ComponentProps<typeof AlertDialog.Root>
 
 export const DeleteThreadDialog = ({
   threadId,
+  onClose,
   onSuccess,
   children,
   ...props
@@ -31,7 +35,7 @@ export const DeleteThreadDialog = ({
   }
 
   return (
-    <AlertDialog.Root {...props}>
+    <AlertDialog.Root {...props} onOpenChange={(open) => !open && onClose?.()}>
       {children && <AlertDialog.Trigger>{children}</AlertDialog.Trigger>}
 
       <AlertDialog.Content maxWidth="450px">
@@ -62,7 +66,7 @@ type EditThreadTitleProps = {
   currentTitle?: string
   onSuccess?: (threadId: string) => void
 } & React.ComponentProps<typeof Dialog.Root>
-
+// TODO remove
 export const EditThreadTitle = ({
   threadId,
   currentTitle,
@@ -91,6 +95,76 @@ export const EditThreadTitle = ({
       onOpenChange={(open) => {
         if (open) setTitle(currentTitle ?? '')
         onOpenChange?.(open)
+      }}
+      {...props}
+    >
+      {children && <Dialog.Trigger>{children}</Dialog.Trigger>}
+
+      <Dialog.Content maxWidth="450px">
+        <Dialog.Title>Edit title</Dialog.Title>
+        <Dialog.Description size="2" mb="4">
+          Change the title of your thread:
+        </Dialog.Description>
+
+        <div className="flex flex-col gap-3">
+          <Label className="text-sm font-semibold">
+            Title
+            <TextField.Root
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter thread title"
+            />
+          </Label>
+        </div>
+
+        <div className="mt-4 gap-3 flex-end">
+          <Dialog.Close>
+            <Button variant="soft" color="gray">
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close onClick={handleUpdate}>
+            <Button>Save</Button>
+          </Dialog.Close>
+        </div>
+      </Dialog.Content>
+    </Dialog.Root>
+  )
+}
+
+type UpdateThreadTitleProps = {
+  thread: EThreadWithContent
+  onSuccess?: (threadId: string) => void
+  onClose?: () => void
+} & React.ComponentProps<typeof Dialog.Root>
+
+export const UpdateThreadTitleDialog = ({
+  thread,
+  onSuccess,
+  onClose,
+  children,
+  ...props
+}: UpdateThreadTitleProps) => {
+  const [title, setTitle] = useState('')
+  const update = useUpdateThreadTitle()
+
+  const handleUpdate = () => {
+    update({ slug: thread.slug, title })
+      .then((threadId) => {
+        toast.success('Thread title updated')
+        onSuccess?.(threadId)
+      })
+      .catch((err) => {
+        console.error(err)
+        toast.error('An error occurred while trying to update thread title')
+      })
+  }
+
+  return (
+    <Dialog.Root
+      onOpenChange={(open) => {
+        if (open) setTitle(thread.title ?? '')
+        if (!open) onClose?.()
       }}
       {...props}
     >

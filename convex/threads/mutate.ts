@@ -3,7 +3,11 @@ import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/runner'
-import { chatCompletionInferenceSchema, textToImageInferenceSchema } from '../shared/structures'
+import {
+  chatCompletionInferenceSchema,
+  inferenceAttachmentSchema,
+  textToImageInferenceSchema,
+} from '../shared/structures'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
@@ -80,6 +84,40 @@ export const updateThreadTitle = mutation({
     const thread = await getValidThreadBySlugOrId(ctx, args.slug)
     insist(thread, 'invalid thread')
     return await ctx.table('threads').getX(thread._id).patch({ title: args.title })
+  },
+})
+
+export const updateInferenceConfig = mutation({
+  args: {
+    threadId: z.string(),
+    config: inferenceAttachmentSchema,
+  },
+  handler: async (ctx, args) => {
+    const thread = await getValidThreadBySlugOrId(ctx, args.threadId)
+    insist(thread, 'invalid thread')
+
+    switch (args.config.type) {
+      case 'chat-completion':
+        return await ctx
+          .table('threads')
+          .getX(thread._id)
+          .patch({
+            inferenceConfig: {
+              ...thread.inferenceConfig,
+              chatCompletion: args.config,
+            },
+          })
+      case 'text-to-image':
+        return await ctx
+          .table('threads')
+          .getX(thread._id)
+          .patch({
+            inferenceConfig: {
+              ...thread.inferenceConfig,
+              textToImage: args.config,
+            },
+          })
+    }
   },
 })
 

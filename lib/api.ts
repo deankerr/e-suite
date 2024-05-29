@@ -69,3 +69,6 @@ export const useListViewerThreads = (
   const result = usePreloadedQuery(preloadedList)
   return result
 }
+
+export const useUpdateThreadInferenceConfig = () =>
+  useMutation(api.threads.mutate.updateInferenceConfig)

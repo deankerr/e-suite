@@ -4,9 +4,11 @@ import { forwardRef, useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import { Command as Cmdk } from 'cmdk'
 import { BoxIcon, ChevronLeftIcon, PencilIcon, SearchIcon, Trash2Icon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 import { useModelList, useThreadStack } from '@/app/multi/[[...slug]]/hooks'
+import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
+import { useUpdateThreadInferenceConfig } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
@@ -14,7 +16,6 @@ import type { EThreadWithContent } from '@/convex/shared/structures'
 type ThreadCommandProps = { thread: EThreadWithContent; trigger: React.ReactNode }
 
 export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
-  const router = useRouter()
   const multi = useThreadStack()
 
   const [open, setOpen] = useState(false)
@@ -22,10 +23,14 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
   const [page, setPage] = useState('')
 
   const inference = thread.inferenceConfig[thread.inferenceConfig.primary]
-  const { current, chatModels, imageModels } = useModelList({
+  const { current, chatModels } = useModelList({
     endpoint: inference.endpoint,
     endpointModelId: inference.parameters.model,
   })
+
+  const updateInferenceConfig = useUpdateThreadInferenceConfig()
+
+  const [showDialog, setShowDialog] = useState<'updateTitle' | 'deleteThread' | null>(null)
 
   return (
     <Popover.Root
@@ -36,15 +41,16 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
       }}
     >
       <Popover.Trigger asChild>{trigger}</Popover.Trigger>
-
       <Popover.Content align="center" sideOffset={5} className="w-80">
         <Cmdk
           label="Thread Combobox"
           className={cn('flex h-full w-full flex-col overflow-hidden rounded-md border bg-gray-1')}
           onKeyDown={(e) => {
             if (e.key === 'Escape' || (e.key === 'Backspace' && !search)) {
-              e.preventDefault()
-              setPage('')
+              if (page) {
+                e.preventDefault()
+                setPage('')
+              }
             }
           }}
         >
@@ -63,11 +69,11 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
 
             {!page && (
               <>
-                <Item>
+                <Item onSelect={() => setShowDialog('updateTitle')}>
                   <PencilIcon className="mr-2 size-4" />
                   Edit Title
                 </Item>
-                <Item>
+                <Item onSelect={() => setShowDialog('deleteThread')}>
                   <Trash2Icon className="mr-2 size-4" />
                   Delete Thread
                 </Item>
@@ -87,7 +93,33 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
                 </Item>
 
                 {chatModels.map((model) => (
-                  <Item key={model.resourceId} value={model.resourceId}>
+                  <Item
+                    key={model.resourceId}
+                    value={model.resourceId}
+                    onSelect={(resourceId) => {
+                      if (inference.type !== 'chat-completion') return
+                      const [endpoint, endpointModelId] = resourceId.split('::')
+                      if (!endpoint || !endpointModelId) return
+                      const config = {
+                        ...inference,
+                        endpoint,
+                        parameters: { ...inference.parameters, model: endpointModelId },
+                      }
+
+                      updateInferenceConfig({
+                        threadId: thread.slug,
+                        config,
+                      })
+                        .then(() => {
+                          toast.success('Inference config updated')
+                          setOpen(false)
+                        })
+                        .catch((err) => {
+                          if (err instanceof Error) toast.error(err.message)
+                          else toast.error('Unknown error')
+                        })
+                    }}
+                  >
                     <div className="line-clamp-1 grow">{model.name}</div>
                     <div className="shrink-0 text-xs text-gray-11">{model.endpoint}</div>
                   </Item>
@@ -97,6 +129,18 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
           </Cmdk.List>
         </Cmdk>
       </Popover.Content>
+
+      {showDialog === 'updateTitle' && (
+        <UpdateThreadTitleDialog thread={thread} defaultOpen onClose={() => setShowDialog(null)} />
+      )}
+      {showDialog === 'deleteThread' && (
+        <DeleteThreadDialog
+          threadId={thread.slug}
+          defaultOpen
+          onSuccess={() => multi.remove(thread.slug)}
+          onClose={() => setShowDialog(null)}
+        />
+      )}
     </Popover.Root>
   )
 }
