@@ -57,12 +57,13 @@ export const MessageCard = ({ slug = '', message, file, ...props }: MessageProps
             </div>
 
             {/* title */}
-            <Link
+            {/* <Link
               href={`/t/${slug}/${message.series}`}
               className="grow truncate text-sm font-semibold"
             >
               {title}
-            </Link>
+            </Link> */}
+            <div className="grow truncate text-sm font-semibold">{title}</div>
 
             {viewerIsOwner && (
               <div className="flex-none gap-1.5 flex-end">

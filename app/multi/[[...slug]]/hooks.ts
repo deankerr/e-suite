@@ -1,5 +1,7 @@
 import { useParams, useRouter } from 'next/navigation'
 
+import { chatModels, imageModels } from '@/convex/shared/models'
+
 export const useThreadStack = () => {
   const router = useRouter()
   const params = useParams()
@@ -17,4 +19,18 @@ export const useThreadStack = () => {
   }
 
   return { stack, add, remove }
+}
+
+export const useModelList = ({
+  endpoint,
+  endpointModelId,
+}: {
+  endpoint?: string
+  endpointModelId?: string
+}) => {
+  const models = [...chatModels, ...imageModels]
+  const current = models.find(
+    (model) => endpoint === model.endpoint && endpointModelId === model.endpointModelId,
+  )
+  return { current, chatModels, imageModels }
 }

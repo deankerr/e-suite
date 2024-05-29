@@ -1,9 +1,7 @@
-import { useMutation, usePaginatedQuery, usePreloadedQuery, useQuery } from 'convex/react'
+import { useMutation, usePreloadedQuery, useQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
-import { useRouteIndex } from '@/lib/hooks'
 
-import type { ThreadIndex } from '@/lib/types'
 import type { Preloaded } from 'convex/react'
 
 export const usePreloadedThreads = (
@@ -13,32 +11,32 @@ export const usePreloadedThreads = (
   return threads
 }
 
-const emptyThreadIndex: ThreadIndex = { thread: '', message: '', file: '', keys: ['', '', ''] }
+// const emptyThreadIndex: ThreadIndex = { thread: '', message: '', file: '', keys: ['', '', ''] }
 
-export const useThreadIndex = (index: ThreadIndex = emptyThreadIndex) => {
-  const queryKey = index.thread ? { slug: index.thread } : 'skip'
-  const thread = useQuery(api.threads.query.getThread, queryKey)
+// export const useThreadIndex = (index: ThreadIndex = emptyThreadIndex) => {
+//   const queryKey = index.thread ? { slug: index.thread } : 'skip'
+//   const thread = useQuery(api.threads.query.getThread, queryKey)
 
-  const listMessagesQueryKey = index.thread && !index.message ? { slug: index.thread } : 'skip'
-  const messages = usePaginatedQuery(api.threads.query.listMessages, listMessagesQueryKey, {
-    initialNumItems: 8,
-  })
+//   const listMessagesQueryKey = index.thread && !index.message ? { slug: index.thread } : 'skip'
+//   const messages = usePaginatedQuery(api.threads.query.listMessages, listMessagesQueryKey, {
+//     initialNumItems: 8,
+//   })
 
-  const getMessageSeriesQueryKey =
-    index.thread && index.message ? { slug: index.thread, series: index.message } : 'skip'
-  const series = useQuery(api.threads.query.getMessageSeries, getMessageSeriesQueryKey)
+//   const getMessageSeriesQueryKey =
+//     index.thread && index.message ? { slug: index.thread, series: index.message } : 'skip'
+//   const series = useQuery(api.threads.query.getMessageSeries, getMessageSeriesQueryKey)
 
-  const file = Number(index.file) ? Number(index.file) : undefined
-  return { thread, messages, series, file }
-}
+//   const file = Number(index.file) ? Number(index.file) : undefined
+//   return { thread, messages, series, file }
+// }
 
-export const useThread = (slug?: string) => {
-  const routeIndex = useRouteIndex()
-  const queryKey = slug ? { slug } : routeIndex.thread ? { slug: routeIndex.thread } : 'skip'
-  const thread = useQuery(api.threads.query.getThread, queryKey)
+// export const useThread = (slug?: string) => {
+//   const routeIndex = useRouteIndex()
+//   const queryKey = slug ? { slug } : routeIndex.thread ? { slug: routeIndex.thread } : 'skip'
+//   const thread = useQuery(api.threads.query.getThread, queryKey)
 
-  return thread
-}
+//   return thread
+// }
 
 export const useThreads = () => {
   const threads = useQuery(api.threads.query.listThreads, {})

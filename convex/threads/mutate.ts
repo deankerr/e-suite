@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/runner'
+import { chatCompletionInferenceSchema, textToImageInferenceSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
@@ -20,24 +21,28 @@ const getNextMessageSeries = async (thread: Ent<'threads'>) => {
 export const createThread = mutation({
   args: {
     title: zThreadTitle.optional(),
+    primary: z.enum(['chatCompletion', 'textToImage']).default('chatCompletion'),
+    chatCompletion: chatCompletionInferenceSchema.optional(),
+    textToImage: textToImageInferenceSchema.optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
     const slug = await generateSlug(ctx)
 
     await ctx.table('threads').insert({
-      ...args,
+      title: args.title,
       userId: user._id,
       slug,
       inferenceConfig: {
-        chatCompletion: {
+        primary: args.primary,
+        chatCompletion: args.chatCompletion ?? {
           type: 'chat-completion',
           endpoint: 'together',
           parameters: {
             model: 'meta-llama/Llama-3-70b-chat-hf',
           },
         },
-        textToImage: {
+        textToImage: args.textToImage ?? {
           type: 'text-to-image',
           endpoint: 'fal',
           parameters: {

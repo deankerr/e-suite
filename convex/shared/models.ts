@@ -46,6 +46,7 @@ export const chatModels: EChatModel[] = [
 ]
   .flat()
   .filter((model) => !excludeChatModels.includes(model.endpointModelId))
+  .map((model) => ({ ...model, resourceId: `${model.endpoint}::${model.endpointModelId}` }))
   .sort((a, b) => a.name.localeCompare(b.name))
 
 const falIncludeModels = [
@@ -68,4 +69,6 @@ export const imageModels: EImageModel[] = [
     endpointModelId: model.model_id,
     name: model.name,
   })),
-].flat()
+]
+  .flat()
+  .map((model) => ({ ...model, resourceId: `${model.endpoint}::${model.endpointModelId}` }))

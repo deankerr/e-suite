@@ -8,6 +8,7 @@ export const chatModelSchema = z.object({
   modelType: z.literal('chat'),
   endpoint: z.string(),
   endpointModelId: z.string(),
+  resourceId: z.string(),
 
   name: z.string(),
   creatorName: z.string().optional(),
@@ -22,6 +23,7 @@ export const imageModelSchema = z.object({
   modelType: z.literal('image'),
   endpoint: z.string(),
   endpointModelId: z.string(),
+  resourceId: z.string(),
 
   name: z.string(),
   creatorName: z.string().optional(),
@@ -43,7 +45,9 @@ export const chatCompletionInferenceSchema = z.object({
     repetition_penalty: z.number().optional(),
     stream: z.boolean().optional(),
   }),
+
   name: z.string().optional(),
+  lastUsedAtTime: z.number().optional(),
 })
 
 export type ETextToImageInference = z.infer<typeof textToImageInferenceSchema>
@@ -57,7 +61,9 @@ export const textToImageInferenceSchema = z.object({
     height: z.number(),
     n: z.number(),
   }),
+
   name: z.string().optional(),
+  lastUsedAtTime: z.number().optional(),
 })
 
 export const inferenceAttachmentSchema = z.discriminatedUnion('type', [
@@ -66,6 +72,7 @@ export const inferenceAttachmentSchema = z.discriminatedUnion('type', [
 ])
 
 export const threadInferenceConfigSchema = z.object({
+  primary: z.enum(['chatCompletion', 'textToImage']),
   chatCompletion: chatCompletionInferenceSchema,
   textToImage: textToImageInferenceSchema,
   custom: inferenceAttachmentSchema.array(),

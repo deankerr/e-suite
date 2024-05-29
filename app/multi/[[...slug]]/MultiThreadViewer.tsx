@@ -1,15 +1,12 @@
 'use client'
 
-import { useAutoAnimate } from '@formkit/auto-animate/react'
-
-import { ThreadView } from '@/app/multi/[[...slug]]/ThreadView'
+import { ThreadContainer } from '@/app/multi/[[...slug]]/thread-view/ThreadContainer'
 import { cn } from '@/lib/utils'
 
 type MultiThreadViewerProps = { slug?: [threadIds: string] } & React.ComponentProps<'div'>
-// grid auto-cols-[min(100vw,28rem)] grid-flow-col
+
 export const MultiThreadViewer = ({ slug, className, ...props }: MultiThreadViewerProps) => {
-  const threadIds = slug?.[0].split('-') ?? []
-  const [parent] = useAutoAnimate(/* optional config */)
+  const threadIds = slug?.[0].split('-') ?? ['new']
   return (
     <div
       {...props}
@@ -17,12 +14,10 @@ export const MultiThreadViewer = ({ slug, className, ...props }: MultiThreadView
         'flex h-[calc(100svh-2.75rem)] max-h-full divide-x overflow-x-auto overflow-y-hidden',
         className,
       )}
-      ref={parent}
     >
-      {threadIds.map((slug) => (
-        <ThreadView key={slug} slug={[slug]} />
+      {threadIds.map((id) => (
+        <ThreadContainer key={id} threadId={id} />
       ))}
-      <ThreadView />
     </div>
   )
 }

@@ -6,9 +6,10 @@ import { Button, Theme } from '@radix-ui/themes'
 import { Command as Cmdk } from 'cmdk'
 import { SearchIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 import { useThreadStack } from '@/app/multi/[[...slug]]/hooks'
-import { useListViewerThreads } from '@/lib/api'
+import { useCreateThread, useListViewerThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
@@ -23,6 +24,7 @@ export const TopCommand = ({ preloadedList }: TopCommandProps) => {
 
   const { threads } = useListViewerThreads(preloadedList)
 
+  const createThread = useCreateThread()
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
@@ -50,6 +52,32 @@ export const TopCommand = ({ preloadedList }: TopCommandProps) => {
 
               <Cmdk.List className="max-h-[300px] overflow-y-auto overflow-x-hidden">
                 <Cmdk.Empty className="py-6 text-center text-sm">No results found.</Cmdk.Empty>
+
+                <CItem
+                  onSelect={() => {
+                    createThread({ primary: 'chatCompletion' })
+                      .then((id) => add(id))
+                      .catch((err) => {
+                        if (err instanceof Error) toast.error(err.message)
+                        else toast.error('Unknown error')
+                      })
+                  }}
+                >
+                  Create Chat
+                </CItem>
+
+                <CItem
+                  onSelect={() => {
+                    createThread({ primary: 'textToImage' })
+                      .then((id) => add(id))
+                      .catch((err) => {
+                        if (err instanceof Error) toast.error(err.message)
+                        else toast.error('Unknown error')
+                      })
+                  }}
+                >
+                  Create Image
+                </CItem>
 
                 <CGroup heading="Add to stack">
                   {threads
