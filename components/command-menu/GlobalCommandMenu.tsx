@@ -26,7 +26,7 @@ type GlobalCommandMenuProps = {
 }
 
 export const GlobalCommandMenu = ({ preloadedList }: GlobalCommandMenuProps) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   useKey(
     (e) => e.key === 'k' && e.metaKey,
     () => setOpen(!open),
@@ -51,7 +51,7 @@ export const GlobalCommandMenu = ({ preloadedList }: GlobalCommandMenuProps) => 
         <Dialog.Title className="sr-only">Global Command Menu</Dialog.Title>
 
         <Inset>
-          <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-gray-11 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+          <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
             <CommandInput placeholder="Type a command or search..." />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
