@@ -30,7 +30,7 @@ export const ThreadInterface = ({
 
   return (
     <div {...props} className={cn('flex h-full flex-col overflow-y-auto', className)}>
-      <div className="sticky z-10 h-16 shrink-0 border-b bg-gray-1">
+      <div className="sticky top-0 z-10 h-16 shrink-0 border-b bg-gray-1">
         {thread && (
           <HeaderBar thread={thread} handleCloseThread={handleCloseThread}>
             <CommandMenu thread={thread} />

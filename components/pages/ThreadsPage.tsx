@@ -16,14 +16,14 @@ export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
     <div
       {...props}
       className={cn(
-        'flex h-[calc(100svh-2.75rem)] max-h-full divide-x overflow-x-auto overflow-y-hidden',
+        'flex h-[calc(100svh-2.75rem)] max-h-full overflow-x-auto overflow-y-hidden',
         className,
       )}
     >
       {deckAtoms.map((atom) => (
         <ThreadInterface
           key={atom.toString()}
-          className="flex-[1_0_min(100vw,24rem)]"
+          className="mx-auto max-w-4xl flex-[1_0_min(100vw,24rem)] border-l last:border-r"
           threadAtom={atom}
           handleCloseThread={() => dispatch({ type: 'remove', atom })}
         />

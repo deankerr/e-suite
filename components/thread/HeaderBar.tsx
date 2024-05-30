@@ -1,5 +1,5 @@
 import { IconButton } from '@radix-ui/themes'
-import { DotIcon, ImageIcon, MessagesSquareIcon, XIcon } from 'lucide-react'
+import { ImageIcon, MessagesSquareIcon, XIcon } from 'lucide-react'
 
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { cn } from '@/lib/utils'
@@ -20,20 +20,26 @@ export const HeaderBar = ({
 }: HeaderBarProps) => {
   return (
     <div {...props} className={cn('h-full px-2 text-sm flex-between', className)}>
-      <div className="gap-1 flex-center">
-        <DotIcon />
+      <div className="w-14 shrink-0 gap-2 flex-center">
         {thread.active.type.includes('image') ? (
-          <ImageIcon className="size-5" />
+          <ImageIcon className="size-6" />
         ) : (
-          <MessagesSquareIcon className="size-5" />
+          <MessagesSquareIcon className="size-6" />
         )}
       </div>
 
-      <div>{children}</div>
+      <div className="flex max-w-80 grow">{children}</div>
 
-      <IconButton variant="ghost" color="gray" className="shrink-0" onClick={handleCloseThread}>
-        <XIcon />
-      </IconButton>
+      <div className="w-14 shrink-0 flex-end">
+        <IconButton
+          variant="ghost"
+          color="gray"
+          className="m-0 shrink-0"
+          onClick={handleCloseThread}
+        >
+          <XIcon />
+        </IconButton>
+      </div>
 
       <NonSecureAdminRoleOnly>
         <div className="absolute left-0 top-0 font-mono text-xs text-gold-4">{thread.slug}</div>

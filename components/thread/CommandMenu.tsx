@@ -4,6 +4,7 @@ import {
   BoxIcon,
   ChevronLeftIcon,
   ChevronsUpDownIcon,
+  DotIcon,
   ImageIcon,
   MessagesSquareIcon,
   PencilIcon,
@@ -51,12 +52,17 @@ export const CommandMenu = ({ thread, ...props }: CommandMenuProps) => {
       }}
     >
       <Popover.Trigger asChild>
-        <button className="inline-flex items-center justify-center whitespace-nowrap rounded py-1 pl-4 text-sm font-medium ring-accent-7 ring-offset-gray-1 transition-colors hover:bg-gray-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-8 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-          <div>
+        <button className="inline-flex grow items-center justify-center whitespace-nowrap rounded py-1 text-sm font-medium ring-accent-7 ring-offset-gray-1 transition-colors hover:bg-gray-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-8 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+          <div className="w-6 shrink-0">
+            <DotIcon className="text-gray-12" />
+          </div>
+          <div className="grow">
             <div>{thread.title ?? 'new thread'}</div>
             <div className="font-normal text-gray-11">{currentModel.name}</div>
           </div>
-          <ChevronsUpDownIcon className="ml-1 shrink-0 text-gray-10" />
+          <div className="w-6 shrink-0">
+            <ChevronsUpDownIcon className=" text-gray-10" />
+          </div>
         </button>
       </Popover.Trigger>
 

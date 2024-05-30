@@ -43,23 +43,30 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
   const [threadDeck, setThreadDeck] = useAtom(threadDeckAtoms)
   const [, dispatch] = useAtom(threadDeckSplitAtom)
 
-  // add initial param threads to deck
   useEffect(() => {
-    if (!threads || !initialThreadIds) return
-    const initialThreads = initialThreadIds
-      .split(',')
-      .map((id) => threads.find((t) => t.slug === id))
-      .filter(Boolean) as EThreadWithContent[]
+    if (!threads) return
+    if (!threadDeck.length) setThreadDeck(threads)
+  }, [setThreadDeck, threadDeck.length, threads])
 
-    setThreadDeck(initialThreads)
-    setInitialThreadIds('')
-  }, [initialThreadIds, setThreadDeck, threads])
+  // add initial param threads to deck
+  // useEffect(() => {
+  //   if (!threads || !initialThreadIds) return
+  //   const initialThreads = initialThreadIds
+  //     .split(',')
+  //     .map((id) => threads.find((t) => t.slug === id))
+  //     .filter(Boolean) as EThreadWithContent[]
+
+  //   setThreadDeck(initialThreads)
+  //   setInitialThreadIds('')
+  //   console.log('added initial threads to deck')
+  // }, [initialThreadIds, setThreadDeck, threads])
 
   // sync changes with url
-  useEffect(() => {
-    if (initialThreadIds) return
-    router.replace(`/t/?threads=${threadDeck.map((t) => t.slug).join(',')}`)
-  }, [initialThreadIds, router, threadDeck])
+  // useEffect(() => {
+  //   if (initialThreadIds) return
+  //   console.log('sync')
+  //   router.replace(`/t/?threads=${threadDeck.map((t) => t.slug).join(',')}`)
+  // }, [initialThreadIds, router, threadDeck])
 
   // sync query state with deck atoms
   useEffect(() => {
