@@ -1,16 +1,18 @@
 'use client'
 
-import { forwardRef, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import { Button, Theme } from '@radix-ui/themes'
 import { Command as Cmdk } from 'cmdk'
+import { useAtom, useSetAtom } from 'jotai'
 import { SearchIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import { useThreadStack } from '@/app/t/[[...slug]]/hooks'
+import { useThreadStack } from '@/app/t/[...slug]/hooks'
 import { defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { useCreateThread, useListViewerThreads } from '@/lib/api'
+import { allAvailableThreadsAtom, threadsPageStateAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
@@ -26,6 +28,14 @@ export const TopCommand = ({ preloadedList }: TopCommandProps) => {
   const { threads } = useListViewerThreads(preloadedList)
 
   const createThread = useCreateThread()
+
+  //* atoms
+  const [threadsPageState] = useAtom(threadsPageStateAtom)
+  const setAll = useSetAtom(allAvailableThreadsAtom)
+  useEffect(() => {
+    setAll(threads)
+  }, [setAll, threads])
+
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>

@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/runner'
-import { defaultChatInferenceConfig } from '../shared/defaults'
+import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { inferenceAttachmentSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
@@ -23,6 +23,7 @@ export const createThread = mutation({
   args: {
     title: zThreadTitle.optional(),
     inference: inferenceAttachmentSchema.optional(),
+    default: z.enum(['chat', 'image']).default('chat'),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -32,7 +33,11 @@ export const createThread = mutation({
       title: args.title,
       userId: user._id,
       slug,
-      saved: [args.inference ?? defaultChatInferenceConfig],
+      saved: [
+        args.inference ?? args.default === 'chat'
+          ? defaultChatInferenceConfig
+          : defaultImageInferenceConfig,
+      ],
     })
     return slug
   },
@@ -114,6 +119,14 @@ export const createMessage = mutation({
         await createJob(ctx, 'inference/text-to-image', {
           messageId,
         })
+
+        //* tti title generation
+        if (!thread.title) {
+          await ctx
+            .table('threads')
+            .getX(thread._id)
+            .patch({ title: `Images: ${args.message.inference.parameters.prompt.slice(0, 256)}` })
+        }
       }
     }
 

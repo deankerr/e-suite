@@ -1,4 +1,6 @@
-export const defaultChatInferenceConfig = {
+import type { EChatCompletionInference, ETextToImageInference } from './structures'
+
+export const defaultChatInferenceConfig: EChatCompletionInference = {
   type: 'chat-completion',
   resourceId: 'together::meta-llama/Llama-3-70b-chat-hf',
   endpoint: 'together',
@@ -6,9 +8,9 @@ export const defaultChatInferenceConfig = {
     model: 'meta-llama/Llama-3-70b-chat-hf',
     stream: true,
   },
-} as const
+}
 
-export const defaultImageInferenceConfig = {
+export const defaultImageInferenceConfig: ETextToImageInference = {
   type: 'text-to-image',
   resourceId: 'fal::fal-ai/hyper-sdxl',
   endpoint: 'fal',
@@ -19,4 +21,4 @@ export const defaultImageInferenceConfig = {
     height: 1024,
     n: 4,
   },
-} as const
+}

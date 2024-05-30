@@ -1,7 +1,6 @@
 'use client'
 
-import { ThreadContainer } from '@/app/t/[[...slug]]/thread-view/ThreadContainer'
-import { ThreadInterface } from '@/components/thread/ThreadInterface'
+import { ThreadContainer } from '@/app/t/[...slug]/thread-view/ThreadContainer'
 import { cn } from '@/lib/utils'
 
 type MultiThreadViewerProps = { slug?: [threadIds: string] } & React.ComponentProps<'div'>
@@ -16,7 +15,7 @@ export const MultiThreadViewer = ({ slug, className, ...props }: MultiThreadView
         className,
       )}
     >
-      <ThreadInterface threadId={threadIds[0]!} className="flex-[1_0_min(100vw,24rem)]" />
+      {/* <ThreadInterface threadId={threadIds[0]} className="flex-[1_0_min(100vw,24rem)]" /> */}
       {threadIds.map((id) => (
         <ThreadContainer key={id} threadId={id} />
       ))}

@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import { BoxIcon, ChevronLeftIcon, ChevronsUpDownIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import {
+  BoxIcon,
+  ChevronLeftIcon,
+  ChevronsUpDownIcon,
+  ImageIcon,
+  MessagesSquareIcon,
+  PencilIcon,
+  Trash2Icon,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useModelsData } from '@/components/thread/hooks'
@@ -13,7 +21,7 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useUpdateCurrentInferenceConfig } from '@/lib/api'
+import { useCreateThread, useUpdateCurrentInferenceConfig } from '@/lib/api'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
 
@@ -31,6 +39,8 @@ export const CommandMenu = ({ thread, ...props }: CommandMenuProps) => {
   const [dialog, setDialog] = useState('')
 
   const updateConfig = useUpdateCurrentInferenceConfig()
+  const createThread = useCreateThread()
+
   return (
     <Popover.Root
       {...props}
@@ -71,6 +81,17 @@ export const CommandMenu = ({ thread, ...props }: CommandMenuProps) => {
                     <BoxIcon className="mr-2 size-4" />
                     <div className="line-clamp-1 grow">{currentModel.name}</div>
                     <div className="text-xs text-gray-10">change</div>
+                  </CommandItem>
+                </CommandGroup>
+
+                <CommandGroup heading="Threads">
+                  <CommandItem onSelect={() => void createThread({ default: 'image' })}>
+                    <ImageIcon className="mr-2 size-4" />
+                    Create Image Thread
+                  </CommandItem>
+                  <CommandItem onSelect={() => void createThread({ default: 'chat' })}>
+                    <MessagesSquareIcon className="mr-2 size-4" />
+                    Create Chat Thread
                   </CommandItem>
                 </CommandGroup>
               </>

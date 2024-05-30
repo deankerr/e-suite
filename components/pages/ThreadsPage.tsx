@@ -1,25 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useAtom } from 'jotai'
 
 import { ThreadInterface } from '@/components/thread/ThreadInterface'
-import { useListViewerThreads } from '@/lib/api'
+import { threadDeckSplitAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
-import type { api } from '@/convex/_generated/api'
-import type { Preloaded } from 'convex/react'
-
 type ThreadsPageProps = {
-  preloadedThreads: Preloaded<typeof api.threads.query.listViewerThreads>
+  props?: unknown
 } & React.ComponentProps<'div'>
 
-export const ThreadsPage = ({ preloadedThreads, className, ...props }: ThreadsPageProps) => {
-  const viewerList = useListViewerThreads(preloadedThreads)
-
-  const [threadIds, setThreadIds] = useState<string[]>(
-    viewerList.threads.map((thread) => thread.slug),
-  )
-
+export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
+  const [deckAtoms, dispatch] = useAtom(threadDeckSplitAtom)
   return (
     <div
       {...props}
@@ -28,8 +20,13 @@ export const ThreadsPage = ({ preloadedThreads, className, ...props }: ThreadsPa
         className,
       )}
     >
-      {threadIds.map((id) => (
-        <ThreadInterface key={id} threadId={id} className="flex-[1_0_min(100vw,24rem)]" />
+      {deckAtoms.map((atom) => (
+        <ThreadInterface
+          key={atom.toString()}
+          className="flex-[1_0_min(100vw,24rem)]"
+          threadAtom={atom}
+          handleCloseThread={() => dispatch({ type: 'remove', atom })}
+        />
       ))}
     </div>
   )

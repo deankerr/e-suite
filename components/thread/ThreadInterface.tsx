@@ -1,4 +1,4 @@
-'use client'
+import { useAtomValue } from 'jotai'
 
 import { MessageCard } from '@/components/cards/MessageCard'
 import { CommandMenu } from '@/components/thread/CommandMenu'
@@ -9,28 +9,30 @@ import { useThreadContent } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
+import type { PrimitiveAtom } from 'jotai'
 
-export type ThreadInstanceDataExample = {
-  thread: EThreadWithContent
-  prompt: string
-  command: {
-    open: boolean
-    search: string
-    page: string
-    dialog: string // share with page?
-  }
-}
+type ThreadInterfaceProps = {
+  threadId?: string
+  threadAtom: PrimitiveAtom<EThreadWithContent>
+  handleCloseThread: () => void
+} & React.ComponentProps<'div'>
 
-type ThreadInterfaceProps = { threadId: string } & React.ComponentProps<'div'>
-
-export const ThreadInterface = ({ threadId, className, ...props }: ThreadInterfaceProps) => {
-  const thread = useThreadContent(threadId)
+export const ThreadInterface = ({
+  threadId,
+  threadAtom,
+  handleCloseThread,
+  className,
+  ...props
+}: ThreadInterfaceProps) => {
+  const threadFromQuery = useThreadContent(threadId)
+  const threadFromAtom = useAtomValue(threadAtom)
+  const thread = threadFromQuery ?? threadFromAtom
 
   return (
     <div {...props} className={cn('flex h-full flex-col overflow-y-auto', className)}>
       <div className="sticky z-10 h-16 shrink-0 border-b bg-gray-1">
         {thread && (
-          <HeaderBar thread={thread}>
+          <HeaderBar thread={thread} handleCloseThread={handleCloseThread}>
             <CommandMenu thread={thread} />
           </HeaderBar>
         )}

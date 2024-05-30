@@ -131,6 +131,7 @@ export const complete = internalMutation({
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
     await message.patch({ content: args.text })
 
+    //* title generation
     const thread = await ctx.skipRules.table('threads').getX(message.threadId)
     if (!thread.title) {
       await createJob(ctx, 'inference/thread-title-completion', {
