@@ -3,7 +3,7 @@
 import { useAtom } from 'jotai'
 
 import { ThreadInterface } from '@/components/thread/ThreadInterface'
-import { threadDeckSplitAtom } from '@/lib/atoms'
+import { threadDeckIdsAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 type ThreadsPageProps = {
@@ -11,7 +11,7 @@ type ThreadsPageProps = {
 } & React.ComponentProps<'div'>
 
 export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
-  const [deckAtoms, dispatch] = useAtom(threadDeckSplitAtom)
+  const [threadDeckIds, setThreadDeckIds] = useAtom(threadDeckIdsAtom)
   return (
     <div
       {...props}
@@ -20,12 +20,12 @@ export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
         className,
       )}
     >
-      {deckAtoms.map((atom) => (
+      {threadDeckIds.map((id) => (
         <ThreadInterface
-          key={atom.toString()}
+          key={id}
           className="mx-auto max-w-4xl flex-[1_0_min(100vw,24rem)] border-l last:border-r"
-          threadAtom={atom}
-          handleCloseThread={() => dispatch({ type: 'remove', atom })}
+          threadId={id}
+          handleCloseThread={() => setThreadDeckIds((ids) => ids.filter((id) => id !== id))}
         />
       ))}
     </div>

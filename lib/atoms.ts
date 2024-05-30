@@ -1,9 +1,6 @@
 import { atom } from 'jotai'
-import { splitAtom } from 'jotai/utils'
-
-import type { EThreadWithContent } from '@/convex/shared/structures'
+import { atomWithStorage } from 'jotai/utils'
 
 export const globalMenuOpenAtom = atom(false)
 
-export const threadDeckAtoms = atom<EThreadWithContent[]>([])
-export const threadDeckSplitAtom = splitAtom(threadDeckAtoms, (thread) => thread._id)
+export const threadDeckIdsAtom = atomWithStorage<string[]>('e-thread-deck-ids', [])

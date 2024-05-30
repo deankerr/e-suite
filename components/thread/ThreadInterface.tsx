@@ -1,5 +1,3 @@
-import { useAtomValue } from 'jotai'
-
 import { MessageCard } from '@/components/cards/MessageCard'
 import { CommandMenu } from '@/components/thread/CommandMenu'
 import { HeaderBar } from '@/components/thread/HeaderBar'
@@ -8,25 +6,18 @@ import { Spinner } from '@/components/ui/Spinner'
 import { useThreadContent } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EThreadWithContent } from '@/convex/shared/structures'
-import type { PrimitiveAtom } from 'jotai'
-
 type ThreadInterfaceProps = {
-  threadId?: string
-  threadAtom: PrimitiveAtom<EThreadWithContent>
+  threadId: string
   handleCloseThread: () => void
 } & React.ComponentProps<'div'>
 
 export const ThreadInterface = ({
   threadId,
-  threadAtom,
   handleCloseThread,
   className,
   ...props
 }: ThreadInterfaceProps) => {
-  const threadFromQuery = useThreadContent(threadId)
-  const threadFromAtom = useAtomValue(threadAtom)
-  const thread = threadFromQuery ?? threadFromAtom
+  const thread = useThreadContent(threadId)
 
   return (
     <div {...props} className={cn('flex h-full flex-col overflow-y-auto', className)}>
