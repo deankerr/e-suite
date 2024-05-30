@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { useThreadStack } from '@/app/t/[[...slug]]/hooks'
+import { defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { useCreateThread, useListViewerThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -68,7 +69,7 @@ export const TopCommand = ({ preloadedList }: TopCommandProps) => {
 
                 <CItem
                   onSelect={() => {
-                    createThread({})
+                    createThread({ inference: defaultImageInferenceConfig })
                       .then((id) => add(id))
                       .catch((err) => {
                         if (err instanceof Error) toast.error(err.message)

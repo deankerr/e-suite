@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import { BoxIcon, ChevronsUpDownIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import { BoxIcon, ChevronLeftIcon, ChevronsUpDownIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { useModelsData } from '@/components/thread/hooks'
 import {
@@ -12,20 +13,24 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
+import { useUpdateCurrentInferenceConfig } from '@/lib/api'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
 
 type CommandMenuProps = { thread: EThreadWithContent } & React.ComponentProps<typeof Popover.Root>
 
 export const CommandMenu = ({ thread, ...props }: CommandMenuProps) => {
-  const { getModel } = useModelsData()
+  const { getModel, chatModels, imageModels } = useModelsData()
   const inference = thread.active
   const currentModel = getModel([inference.endpoint, inference.parameters.model])
+  const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels
 
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
+
+  const updateConfig = useUpdateCurrentInferenceConfig()
   return (
     <Popover.Root
       {...props}
@@ -62,12 +67,54 @@ export const CommandMenu = ({ thread, ...props }: CommandMenuProps) => {
                     <Trash2Icon className="mr-2 size-4" />
                     Delete Thread
                   </CommandItem>
-                  <CommandItem onSelect={() => setPage('chatModels')}>
+                  <CommandItem onSelect={() => setPage('listModels')}>
                     <BoxIcon className="mr-2 size-4" />
                     <div className="line-clamp-1 grow">{currentModel.name}</div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
                 </CommandGroup>
+              </>
+            )}
+
+            {page === 'listModels' && (
+              <>
+                <CommandItem onSelect={() => setPage('')} className="text-gray-10">
+                  <ChevronLeftIcon className="mr-2 size-4" />
+                  return
+                </CommandItem>
+
+                {modelsList.map((model) => (
+                  <CommandItem
+                    key={model.resourceId}
+                    value={model.resourceId}
+                    onSelect={(resourceId) => {
+                      const [endpoint, endpointModelId] = resourceId.split('::')
+                      if (!endpoint || !endpointModelId) return
+                      updateConfig({
+                        threadId: thread.slug,
+                        inference: {
+                          ...thread.active,
+                          endpoint,
+                          resourceId,
+                          parameters: {
+                            ...thread.active.parameters,
+                            model: endpointModelId,
+                          },
+                        } as any,
+                      })
+                        .then(() => {
+                          toast.success('Inference config updated')
+                          setOpen(false)
+                        })
+                        .catch((err) => {
+                          if (err instanceof Error) toast.error(err.message)
+                          else toast.error('Failed to update config.')
+                        })
+                    }}
+                  >
+                    {model.name}
+                  </CommandItem>
+                ))}
               </>
             )}
           </CommandList>

@@ -4,6 +4,7 @@ export const defaultChatInferenceConfig = {
   endpoint: 'together',
   parameters: {
     model: 'meta-llama/Llama-3-70b-chat-hf',
+    stream: true,
   },
 } as const
 
