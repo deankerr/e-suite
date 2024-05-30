@@ -4,7 +4,6 @@ import { atomWithStorage } from 'jotai/utils'
 import { twMerge } from 'tailwind-merge'
 import z from 'zod'
 
-import type { ThreadIndex } from '@/lib/types'
 import type { ClassValue } from 'clsx'
 
 export type { ClassNameValue } from 'tailwind-merge'
@@ -61,19 +60,6 @@ export function atomWithToggleAndStorage(
   )
 
   return derivedAtom as WritableAtom<boolean, [boolean?], void>
-}
-
-export function buildThreadIndex(keys: string[]): ThreadIndex {
-  const thread = keys[0] ?? ''
-  const message = keys[1] ?? ''
-  const file = keys[2] ?? ''
-
-  return {
-    keys: [thread, message, file],
-    thread,
-    message,
-    file,
-  }
 }
 
 export const sleep = (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms))

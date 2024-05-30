@@ -2,8 +2,6 @@ import { makeActionRetrier } from 'convex-helpers/server/retries'
 import { customAlphabet } from 'nanoid/non-secure'
 import { z } from 'zod'
 
-import { imageGenerationSizesMap } from './constants'
-
 import type { MutationCtx } from './types'
 
 export const { runWithRetries, retry } = makeActionRetrier('utils:retry')
@@ -54,6 +52,3 @@ export function emptyPage() {
     pageStatus: 'SplitRequired' as const,
   }
 }
-
-export const getImageGenerationSize = (size: keyof typeof imageGenerationSizesMap) =>
-  imageGenerationSizesMap[size]

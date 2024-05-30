@@ -1,13 +1,26 @@
-import { useMutation, usePreloadedQuery, useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 
-import type { Preloaded } from 'convex/react'
+export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
+export const useUpdateThreadTitle = () => useMutation(api.threads.mutate.updateThreadTitle)
+export const useUpdateCurrentInferenceConfig = () =>
+  useMutation(api.threads.mutate.updateCurrentInferenceConfig)
+export const useRemoveThread = () => useMutation(api.threads.mutate.removeThread)
 
-export const usePreloadedThreads = (
-  preloadedThreads: Preloaded<typeof api.threads.query.listThreads>,
-) => {
-  const threads = usePreloadedQuery(preloadedThreads)
+export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
+export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)
+export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
+
+export const useViewer = () => useQuery(api.users.getViewer, {})
+
+export const useThreadContent = (slugOrId?: string) => {
+  const thread = useQuery(api.threads.query.getThreadContent, slugOrId ? { slugOrId } : 'skip')
+  return thread
+}
+
+export const useListThreads = () => {
+  const threads = useQuery(api.threads.query.listThreads, {})
   return threads
 }
 
@@ -37,43 +50,3 @@ export const usePreloadedThreads = (
 
 //   return thread
 // }
-
-export const useThreads = () => {
-  const threads = useQuery(api.threads.query.listThreads, {})
-  return threads
-}
-
-export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
-export const useUpdateThreadTitle = () => useMutation(api.threads.mutate.updateThreadTitle)
-export const useRemoveThread = () => useMutation(api.threads.mutate.removeThread)
-
-export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
-export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)
-export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)
-
-export const useImageModelList = () => useQuery(api.bmodels.listImageModels, {})
-export const useChatModelList = () => useQuery(api.bmodels.listChatModels, {})
-
-// TODO remove useSelf
-export const useSelf = () => useQuery(api.users.getViewer, {})
-export const useViewer = () => useQuery(api.users.getViewer, {})
-
-export const useThreadContent = (slugOrId?: string) => {
-  const thread = useQuery(api.threads.query.getThreadContent, slugOrId ? { slugOrId } : 'skip')
-  return thread
-}
-
-export const usePreloadedListViewerThreads = (
-  preloadedList: Preloaded<typeof api.threads.query.listViewerThreads>,
-) => {
-  const result = usePreloadedQuery(preloadedList)
-  return result
-}
-
-export const useListThreads = () => {
-  const threads = useQuery(api.threads.query.listThreads, {})
-  return threads
-}
-
-export const useUpdateCurrentInferenceConfig = () =>
-  useMutation(api.threads.mutate.updateCurrentInferenceConfig)
