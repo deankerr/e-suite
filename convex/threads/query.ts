@@ -113,7 +113,7 @@ export const listThreads = query({
   args: {},
   handler: async (ctx: QueryCtx) => {
     const viewerId = ctx.viewerId
-    if (!viewerId) return []
+    if (!viewerId) return null
 
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', viewerId))

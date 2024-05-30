@@ -63,11 +63,16 @@ export const useThreadContent = (slugOrId?: string) => {
   return thread
 }
 
-export const useListViewerThreads = (
+export const usePreloadedListViewerThreads = (
   preloadedList: Preloaded<typeof api.threads.query.listViewerThreads>,
 ) => {
   const result = usePreloadedQuery(preloadedList)
   return result
+}
+
+export const useListThreads = () => {
+  const threads = useQuery(api.threads.query.listThreads, {})
+  return threads
 }
 
 export const useUpdateCurrentInferenceConfig = () =>

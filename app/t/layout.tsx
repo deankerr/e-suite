@@ -1,20 +1,16 @@
-import { preloadQuery } from 'convex/nextjs'
-
 import { GlobalCommandMenu } from '@/components/command-menu/GlobalCommandMenu'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
-import { api } from '@/convex/_generated/api'
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
-  const preloadedList = await preloadQuery(api.threads.query.listViewerThreads, {})
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col">
       <header className="sticky flex h-11 items-center justify-between gap-2 border-b px-2">
         <AppLogoTitle />
+        <GlobalCommandMenu />
         <UserButtons />
       </header>
       {children}
-      <GlobalCommandMenu preloadedList={preloadedList} />
     </div>
   )
 }
