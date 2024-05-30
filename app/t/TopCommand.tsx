@@ -55,7 +55,7 @@ export const TopCommand = ({ preloadedList }: TopCommandProps) => {
 
                 <CItem
                   onSelect={() => {
-                    createThread({ primary: 'chatCompletion' })
+                    createThread({})
                       .then((id) => add(id))
                       .catch((err) => {
                         if (err instanceof Error) toast.error(err.message)
@@ -68,7 +68,7 @@ export const TopCommand = ({ preloadedList }: TopCommandProps) => {
 
                 <CItem
                   onSelect={() => {
-                    createThread({ primary: 'textToImage' })
+                    createThread({})
                       .then((id) => add(id))
                       .catch((err) => {
                         if (err instanceof Error) toast.error(err.message)

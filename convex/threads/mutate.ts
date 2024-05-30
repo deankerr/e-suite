@@ -3,11 +3,8 @@ import { z } from 'zod'
 
 import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/runner'
-import {
-  chatCompletionInferenceSchema,
-  inferenceAttachmentSchema,
-  textToImageInferenceSchema,
-} from '../shared/structures'
+import { defaultChatInferenceConfig } from '../shared/defaults'
+import { inferenceAttachmentSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
@@ -25,9 +22,7 @@ const getNextMessageSeries = async (thread: Ent<'threads'>) => {
 export const createThread = mutation({
   args: {
     title: zThreadTitle.optional(),
-    primary: z.enum(['chatCompletion', 'textToImage']).default('chatCompletion'),
-    chatCompletion: chatCompletionInferenceSchema.optional(),
-    textToImage: textToImageInferenceSchema.optional(),
+    inference: inferenceAttachmentSchema.optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -37,28 +32,7 @@ export const createThread = mutation({
       title: args.title,
       userId: user._id,
       slug,
-      inferenceConfig: {
-        primary: args.primary,
-        chatCompletion: args.chatCompletion ?? {
-          type: 'chat-completion',
-          endpoint: 'together',
-          parameters: {
-            model: 'meta-llama/Llama-3-70b-chat-hf',
-          },
-        },
-        textToImage: args.textToImage ?? {
-          type: 'text-to-image',
-          endpoint: 'fal',
-          parameters: {
-            model: 'fal-ai/hyper-sdxl',
-            prompt: '',
-            width: 1024,
-            height: 1024,
-            n: 4,
-          },
-        },
-        custom: [],
-      },
+      saved: [args.inference ?? defaultChatInferenceConfig],
     })
     return slug
   },
@@ -87,37 +61,26 @@ export const updateThreadTitle = mutation({
   },
 })
 
-export const updateInferenceConfig = mutation({
+export const updateCurrentInferenceConfig = mutation({
   args: {
     threadId: z.string(),
-    config: inferenceAttachmentSchema,
+    inference: inferenceAttachmentSchema,
   },
   handler: async (ctx, args) => {
     const thread = await getValidThreadBySlugOrId(ctx, args.threadId)
     insist(thread, 'invalid thread')
 
-    switch (args.config.type) {
-      case 'chat-completion':
-        return await ctx
-          .table('threads')
-          .getX(thread._id)
-          .patch({
-            inferenceConfig: {
-              ...thread.inferenceConfig,
-              chatCompletion: args.config,
-            },
-          })
-      case 'text-to-image':
-        return await ctx
-          .table('threads')
-          .getX(thread._id)
-          .patch({
-            inferenceConfig: {
-              ...thread.inferenceConfig,
-              textToImage: args.config,
-            },
-          })
-    }
+    const newInference = { ...args.inference, updatedTime: Date.now() }
+    const saved = thread.saved.filter(
+      (inf) => !(inf.type === newInference.type && inf.name === newInference.name),
+    )
+
+    return await ctx
+      .table('threads')
+      .getX(thread._id)
+      .patch({
+        saved: [newInference, ...saved],
+      })
   },
 })
 

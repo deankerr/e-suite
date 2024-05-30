@@ -1,11 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import {
-  fileAttachmentRecordSchema,
-  inferenceAttachmentSchema,
-  threadInferenceConfigSchema,
-} from '../shared/structures'
+import { fileAttachmentRecordSchema, inferenceAttachmentSchema } from '../shared/structures'
 
 export const zTruncate = (max: number, min = 0) =>
   z
@@ -33,5 +29,5 @@ export const messageFields = {
 
 export const threadFields = {
   title: zTruncate(256).optional(),
-  inferenceConfig: threadInferenceConfigSchema,
+  saved: inferenceAttachmentSchema.array(),
 }

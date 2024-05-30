@@ -1,6 +1,7 @@
-// -> threadid
+'use client'
 
 import { MessageCard } from '@/components/cards/MessageCard'
+import { CommandMenu } from '@/components/thread/CommandMenu'
 import { HeaderBar } from '@/components/thread/HeaderBar'
 import { InputBar } from '@/components/thread/InputBar'
 import { Spinner } from '@/components/ui/Spinner'
@@ -28,7 +29,11 @@ export const ThreadInterface = ({ threadId, className, ...props }: ThreadInterfa
   return (
     <div {...props} className={cn('flex h-full flex-col overflow-y-auto', className)}>
       <div className="sticky z-10 h-16 shrink-0 border-b bg-gray-1">
-        {thread && <HeaderBar thread={thread} />}
+        {thread && (
+          <HeaderBar thread={thread}>
+            <CommandMenu thread={thread} />
+          </HeaderBar>
+        )}
       </div>
 
       <div className="flex grow flex-col gap-4 p-3">

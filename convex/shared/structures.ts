@@ -1,6 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
+import { defaultChatInferenceConfig } from './defaults'
 import { imageSchema, jobSchema, threadSchema, userSchema } from './entities'
 
 export type EChatModel = z.infer<typeof chatModelSchema>
@@ -34,7 +35,9 @@ export const imageModelSchema = z.object({
 export type EChatCompletionInference = z.infer<typeof chatCompletionInferenceSchema>
 export const chatCompletionInferenceSchema = z.object({
   type: z.literal('chat-completion'),
+  resourceId: z.string(),
   endpoint: z.string(),
+
   parameters: z.object({
     model: z.string(),
     max_tokens: z.number().optional(),
@@ -47,13 +50,16 @@ export const chatCompletionInferenceSchema = z.object({
   }),
 
   name: z.string().optional(),
-  lastUsedAtTime: z.number().optional(),
+  keyword: z.string().optional(),
+  updatedTime: z.number().optional(),
 })
 
 export type ETextToImageInference = z.infer<typeof textToImageInferenceSchema>
 export const textToImageInferenceSchema = z.object({
   type: z.literal('text-to-image'),
+  resourceId: z.string(),
   endpoint: z.string(),
+
   parameters: z.object({
     model: z.string(),
     prompt: z.string(),
@@ -63,20 +69,14 @@ export const textToImageInferenceSchema = z.object({
   }),
 
   name: z.string().optional(),
-  lastUsedAtTime: z.number().optional(),
+  keyword: z.string().optional(),
+  updatedTime: z.number().optional(),
 })
 
 export const inferenceAttachmentSchema = z.discriminatedUnion('type', [
   chatCompletionInferenceSchema,
   textToImageInferenceSchema,
 ])
-
-export const threadInferenceConfigSchema = z.object({
-  primary: z.enum(['chatCompletion', 'textToImage']),
-  chatCompletion: chatCompletionInferenceSchema,
-  textToImage: textToImageInferenceSchema,
-  custom: inferenceAttachmentSchema.array(),
-})
 
 export type EFileAttachmentRecord = z.infer<typeof fileAttachmentRecordSchema>
 export const fileAttachmentRecordSchema = z.discriminatedUnion('type', [
@@ -116,10 +116,15 @@ export const messageWithContentSchema = z.object({
 })
 
 export type EThreadWithContent = z.infer<typeof threadWithContentSchema>
-export const threadWithContentSchema = threadSchema.merge(
-  z.object({
-    inferenceConfig: threadInferenceConfigSchema,
-    messages: z.array(messageWithContentSchema),
-    owner: userSchema,
-  }),
-)
+export const threadWithContentSchema = threadSchema
+  .merge(
+    z.object({
+      saved: inferenceAttachmentSchema.array(),
+      messages: z.array(messageWithContentSchema),
+      owner: userSchema,
+    }),
+  )
+  .transform((thread) => ({
+    ...thread,
+    active: thread.saved[0] ?? defaultChatInferenceConfig,
+  }))

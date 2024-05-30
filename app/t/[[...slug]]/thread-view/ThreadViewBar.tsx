@@ -15,8 +15,7 @@ type ThreadViewBarProps = {
 export const ThreadViewBar = ({ thread, className, ...props }: ThreadViewBarProps) => {
   const stack = useThreadStack()
 
-  const primary = thread.inferenceConfig.primary
-  const inference = thread.inferenceConfig[primary]
+  const inference = thread.active
 
   const models = [...chatModels, ...imageModels]
   const currentModel = models.find(

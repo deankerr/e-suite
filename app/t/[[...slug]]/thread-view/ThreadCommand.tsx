@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 
 import { useModelList, useThreadStack } from '@/app/t/[[...slug]]/hooks'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useUpdateThreadInferenceConfig } from '@/lib/api'
+import { useUpdateCurrentInferenceConfig } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
@@ -22,13 +22,13 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState('')
 
-  const inference = thread.inferenceConfig[thread.inferenceConfig.primary]
+  const inference = thread.active
   const { current, chatModels } = useModelList({
     endpoint: inference.endpoint,
     endpointModelId: inference.parameters.model,
   })
 
-  const updateInferenceConfig = useUpdateThreadInferenceConfig()
+  const updateInferenceConfig = useUpdateCurrentInferenceConfig()
 
   const [showDialog, setShowDialog] = useState<'updateTitle' | 'deleteThread' | null>(null)
 
@@ -108,7 +108,7 @@ export const ThreadCommand = ({ thread, trigger }: ThreadCommandProps) => {
 
                       updateInferenceConfig({
                         threadId: thread.slug,
-                        config,
+                        inference: config,
                       })
                         .then(() => {
                           toast.success('Inference config updated')

@@ -13,7 +13,7 @@ type ThreadInputBarProps = { thread: EThreadWithContent } & React.ComponentProps
 
 export const ThreadInputBar = ({ thread, className, ...props }: ThreadInputBarProps) => {
   const createMessage = useCreateMessage()
-  const inference = thread.inferenceConfig[thread.inferenceConfig.primary]
+  const inference = thread.active
   const [prompt, setPrompt] = useState('')
 
   const sendMessage = async () => {

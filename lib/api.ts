@@ -70,5 +70,5 @@ export const useListViewerThreads = (
   return result
 }
 
-export const useUpdateThreadInferenceConfig = () =>
-  useMutation(api.threads.mutate.updateInferenceConfig)
+export const useUpdateCurrentInferenceConfig = () =>
+  useMutation(api.threads.mutate.updateCurrentInferenceConfig)
