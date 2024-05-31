@@ -12,7 +12,6 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { useModelsData } from '@/components/thread/hooks'
 import {
   Command,
   CommandEmpty,
@@ -23,13 +22,14 @@ import {
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
 import { useCreateThread, useUpdateCurrentInferenceConfig } from '@/lib/api'
+import { useModelData } from '@/lib/hooks'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
 
-type CommandMenuProps = { thread: EThreadWithContent } & React.ComponentProps<typeof Popover.Root>
+type ChatMenuProps = { thread: EThreadWithContent } & React.ComponentProps<typeof Popover.Root>
 
-export const CommandMenu = ({ thread, ...props }: CommandMenuProps) => {
-  const { getModel, chatModels, imageModels } = useModelsData()
+export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
+  const { getModel, chatModels, imageModels } = useModelData()
   const inference = thread.active
   const currentModel = getModel([inference.endpoint, inference.parameters.model])
   const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels

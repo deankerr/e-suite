@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Label } from '@radix-ui/react-label'
 import { Button, TextField } from '@radix-ui/themes'
-import TextareaAutosize from 'react-textarea-autosize'
 import { toast } from 'sonner'
 
 import { SelectList } from '@/components/ui/SelectList'
@@ -58,7 +57,7 @@ export const MessageEditor = ({ message, className, ...props }: MessageEditorPro
         </Button>
       </div>
 
-      <TextareaAutosize
+      <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Message content..."

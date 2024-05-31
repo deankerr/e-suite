@@ -2,7 +2,7 @@
 
 import { useAtom } from 'jotai'
 
-import { ThreadInterface } from '@/components/thread/ThreadInterface'
+import { ChatPanel } from '@/components/chat-panel/ChatPanel'
 import { threadDeckIdsAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
@@ -21,7 +21,7 @@ export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
       )}
     >
       {threadDeckIds.map((id) => (
-        <ThreadInterface
+        <ChatPanel
           key={id}
           className="mx-auto max-w-4xl flex-[1_0_min(100vw,24rem)] border-l last:border-r"
           threadId={id}
