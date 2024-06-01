@@ -34,21 +34,18 @@ export const MessageTextEditor = ({
       })
   }
   return (
-    <div {...props} className={cn('', className)}>
-      <div className="font-mono text-xs text-gray-11">text editor</div>
-      <div className="space-y-3">
-        <Textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="message text..."
-          className={cn('text-wrap rounded-lg bg-gray-1 p-2 font-mono text-sm text-gray-12')}
-        />
-        <div className="gap-2 flex-end">
-          <Button variant="soft" color="gray" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSaveMessage}>Save</Button>
-        </div>
+    <div {...props} className={cn('space-y-3', className)}>
+      <Textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="message text..."
+        className={cn('text-wrap rounded-lg bg-gray-1 p-2 font-mono text-sm text-gray-12')}
+      />
+      <div className="gap-2 flex-end">
+        <Button variant="soft" color="gray" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={handleSaveMessage}>Save</Button>
       </div>
     </div>
   )

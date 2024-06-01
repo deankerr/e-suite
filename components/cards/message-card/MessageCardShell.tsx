@@ -1,4 +1,4 @@
-import { Card, IconButton, Inset } from '@radix-ui/themes'
+import { Card, Inset } from '@radix-ui/themes'
 import { MessageSquareIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -24,14 +24,12 @@ export const MessageCardShell = ({
   return (
     <Card {...props} className={cn('', className)}>
       <Inset side="top">
-        <div className="h-8 gap-1 border-b bg-gray-2 px-2 flex-between">
+        <div className="h-8 gap-1.5 border-b bg-gray-2 px-2 flex-between">
           {/* element button */}
-          <IconButton variant="ghost" size="1" className="pointer-events-none flex-none">
-            <IconComponent className="size-4" />
-          </IconButton>
+          <IconComponent className="-mb-0.5 size-4 flex-none text-accent-11" />
 
           {/* title */}
-          <div className="grow truncate text-sm font-semibold capitalize">{title}</div>
+          <div className="-mb-0.5 grow truncate text-sm font-medium capitalize">{title}</div>
 
           {/* controls */}
           <div className="flex-none gap-1.5 flex-end">{controls}</div>

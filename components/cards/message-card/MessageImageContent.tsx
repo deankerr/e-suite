@@ -11,19 +11,19 @@ export const MessageImageContent = ({ files, className, ...props }: MessageImage
   if (!files) return null
 
   return (
-    <div {...props} className={cn('', className)}>
-      <div className="font-mono text-xs text-gray-11">images</div>
-      <div className={cn('mx-auto grid w-fit gap-2', files.length > 1 && 'grid-cols-2')}>
-        {files.map((file) => {
-          if (file.type === 'image') {
-            return (
-              <ImageCard key={file.id} image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
-            )
-          }
+    <div
+      {...props}
+      className={cn('mx-auto grid w-fit gap-2', files.length > 1 && 'grid-cols-2', className)}
+    >
+      {files.map((file) => {
+        if (file.type === 'image') {
+          return (
+            <ImageCard key={file.id} image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
+          )
+        }
 
-          return null
-        })}
-      </div>
+        return null
+      })}
     </div>
   )
 }
