@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import * as React from 'react'
@@ -43,7 +42,7 @@ export const useAutosizeTextArea = ({
         textAreaRef.style.height = `${scrollHeight + offsetBorder}px`
       }
     }
-  }, [textAreaRef, triggerAutoSize])
+  }, [init, maxHeight, minHeight, textAreaRef, triggerAutoSize])
 }
 
 export type AutosizeTextAreaRef = {
@@ -67,6 +66,7 @@ export const Textarea = React.forwardRef<AutosizeTextAreaRef, AutosizeTextAreaPr
       onChange,
       value,
       onValueChange,
+      defaultValue,
       ...props
     }: AutosizeTextAreaProps,
     ref: React.Ref<AutosizeTextAreaRef>,
@@ -88,17 +88,19 @@ export const Textarea = React.forwardRef<AutosizeTextAreaRef, AutosizeTextAreaPr
       minHeight,
     }))
 
+    const textAreaValue = value ?? defaultValue
     React.useEffect(() => {
-      if (value || props?.defaultValue) {
-        setTriggerAutoSize(value as string)
+      if (textAreaValue) {
+        setTriggerAutoSize(textAreaValue as string)
       }
-    }, [value || props?.defaultValue])
+    }, [textAreaValue])
 
     return (
       <textarea
         {...props}
         value={value}
         ref={textAreaRef}
+        rows={1}
         className={cn(
           'flex focus-visible:outline-1 focus-visible:outline-accent-8 disabled:cursor-not-allowed disabled:opacity-50',
           'w-full resize-none rounded border border-grayA-7 bg-black/25 px-3 py-2 text-gray-12 placeholder:text-gray-9',
