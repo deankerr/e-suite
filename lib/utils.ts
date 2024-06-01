@@ -63,3 +63,15 @@ export function atomWithToggleAndStorage(
 }
 
 export const sleep = (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export const getWidthHeightForEndpoint = (size: string, endpoint: string) => {
+  const big = endpoint.includes('fal')
+  switch (size) {
+    case 'portrait':
+      return big ? { width: 832, height: 1216 } : { width: 512, height: 768 }
+    case 'landscape':
+      return big ? { width: 1216, height: 832 } : { width: 768, height: 512 }
+    default:
+      return big ? { width: 1024, height: 1024 } : { width: 512, height: 512 }
+  }
+}

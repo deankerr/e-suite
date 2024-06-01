@@ -10,10 +10,10 @@ import {
 import { toast } from 'sonner'
 
 import { Textarea } from '@/components/ui/Textarea'
-import { useCreateMessage } from '@/lib/api'
-import { cn } from '@/lib/utils'
+import { useCreateMessage, useUpdateThreadConfig } from '@/lib/api'
+import { cn, getWidthHeightForEndpoint } from '@/lib/utils'
 
-import type { EThreadWithContent } from '@/convex/shared/structures'
+import type { ETextToImageInference, EThreadWithContent } from '@/convex/shared/structures'
 
 type ChatInputProps = { thread: EThreadWithContent } & React.ComponentProps<'div'>
 
@@ -25,8 +25,15 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
 
   const handleSendMessage = async () => {
     try {
-      const inference = { ...thread.config }
-      if (inference.type === 'text-to-image') inference.parameters.prompt = prompt
+      if (textToImage) {
+        const inference = { ...textToImage, parameters: { ...textToImage.parameters, prompt } }
+        await createMessage({
+          threadId: thread.slug,
+          message: { role: 'assistant', inference },
+        })
+        setPrompt('')
+        return
+      }
 
       await createMessage({ threadId: thread.slug, message: { role: 'user', content: prompt } })
 
@@ -41,14 +48,35 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
       toast.error('An error occurred')
     }
   }
+
+  const { updateThreadConfig } = useUpdateThreadConfig()
+  const handleUpdateTTIConfig = (parameters: Partial<ETextToImageInference['parameters']>) => {
+    if (!textToImage) return
+    const config = {
+      ...textToImage,
+      parameters: {
+        ...textToImage.parameters,
+        ...parameters,
+      },
+    }
+    updateThreadConfig({ threadId: thread.slug, config })
+  }
+
   return (
     <div {...props} className={cn('flex h-full flex-col justify-between px-3 py-2', className)}>
       {textToImage && (
         <div className="mb-2 border-b border-gray-4 pb-2 flex-between">
-          <QuantityControl n={textToImage.parameters.n} />
+          <QuantityControl
+            n={textToImage.parameters.n}
+            onValueChange={(n) => handleUpdateTTIConfig({ n: Number(n) })}
+          />
           <DimensionsControl
             width={textToImage.parameters.width}
             height={textToImage.parameters.height}
+            onValueChange={(size: string) => {
+              const { width, height } = getWidthHeightForEndpoint(size, textToImage.endpoint)
+              handleUpdateTTIConfig({ width, height })
+            }}
           />
         </div>
       )}

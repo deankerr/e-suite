@@ -9,9 +9,23 @@ export const useRemoveThread = () => useMutation(api.threads.mutate.removeThread
 
 export const useUpdateThreadConfig = () => {
   const update = useMutation(api.threads.mutate.updateThreadConfig)
+  const updateOptimistic = useMutation(api.threads.mutate.updateThreadConfig).withOptimisticUpdate(
+    (localStore, args) => {
+      const currentValue = localStore.getQuery(api.threads.query.getThreadContent, {
+        slugOrId: args.threadId,
+      })
+      if (currentValue) {
+        localStore.setQuery(
+          api.threads.query.getThreadContent,
+          { slugOrId: args.threadId },
+          { ...currentValue, config: args.config },
+        )
+      }
+    },
+  )
 
-  const updateThreadConfig = (args: Parameters<typeof update>[0]) => {
-    update(args)
+  const updateThreadConfigOptimistic = (args: Parameters<typeof updateOptimistic>[0]) => {
+    updateOptimistic(args)
       .then(() => {
         toast.success('Thread config updated.')
       })
@@ -21,7 +35,7 @@ export const useUpdateThreadConfig = () => {
       })
   }
 
-  return { update, updateThreadConfig }
+  return { update, updateOptimistic, updateThreadConfig: updateThreadConfigOptimistic }
 }
 
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
