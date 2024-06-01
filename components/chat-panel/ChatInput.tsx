@@ -21,18 +21,18 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
   const createMessage = useCreateMessage()
   const [prompt, setPrompt] = useState('')
 
-  const textToImage = thread.active.type === 'text-to-image' ? thread.active : null
+  const textToImage = thread.config.type === 'text-to-image' ? thread.config : null
 
   const handleSendMessage = async () => {
     try {
-      const inference = { ...thread.active }
+      const inference = { ...thread.config }
       if (inference.type === 'text-to-image') inference.parameters.prompt = prompt
 
       await createMessage({ threadId: thread.slug, message: { role: 'user', content: prompt } })
 
       await createMessage({
         threadId: thread.slug,
-        message: { role: 'assistant', inference: thread.active },
+        message: { role: 'assistant', inference: thread.config },
       })
 
       setPrompt('')

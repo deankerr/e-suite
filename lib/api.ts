@@ -1,12 +1,28 @@
 import { useMutation, useQuery } from 'convex/react'
+import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 
 export const useCreateThread = () => useMutation(api.threads.mutate.createThread)
 export const useUpdateThreadTitle = () => useMutation(api.threads.mutate.updateThreadTitle)
-export const useUpdateCurrentInferenceConfig = () =>
-  useMutation(api.threads.mutate.updateCurrentInferenceConfig)
 export const useRemoveThread = () => useMutation(api.threads.mutate.removeThread)
+
+export const useUpdateThreadConfig = () => {
+  const update = useMutation(api.threads.mutate.updateThreadConfig)
+
+  const updateThreadConfig = (args: Parameters<typeof update>[0]) => {
+    update(args)
+      .then(() => {
+        toast.success('Thread config updated.')
+      })
+      .catch((err) => {
+        if (err instanceof Error) toast.error(err.message)
+        else toast.error('Failed to update config.')
+      })
+  }
+
+  return { update, updateThreadConfig }
+}
 
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)

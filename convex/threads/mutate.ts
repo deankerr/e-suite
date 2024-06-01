@@ -34,11 +34,11 @@ export const createThread = mutation({
       title: args.title,
       userId: user._id,
       slug,
-      saved: [
+      config:
         args.inference ?? args.default === 'chat'
           ? defaultChatInferenceConfig
           : defaultImageInferenceConfig,
-      ],
+      saved: [],
     })
     return slug
   },
@@ -67,26 +67,18 @@ export const updateThreadTitle = mutation({
   },
 })
 
-export const updateCurrentInferenceConfig = mutation({
+export const updateThreadConfig = mutation({
   args: {
     threadId: z.string(),
-    inference: inferenceAttachmentSchema,
+    config: inferenceAttachmentSchema,
   },
   handler: async (ctx, args) => {
     const thread = await getValidThreadBySlugOrId(ctx, args.threadId)
     insist(thread, 'invalid thread')
-
-    const newInference = { ...args.inference, updatedTime: Date.now() }
-    const saved = thread.saved.filter(
-      (inf) => !(inf.type === newInference.type && inf.name === newInference.name),
-    )
-
     return await ctx
       .table('threads')
       .getX(thread._id)
-      .patch({
-        saved: [newInference, ...saved],
-      })
+      .patch({ config: { ...args.config, updatedTime: Date.now() } })
   },
 })
 

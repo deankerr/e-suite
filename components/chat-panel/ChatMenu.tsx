@@ -8,7 +8,6 @@ import {
   PencilIcon,
   Trash2Icon,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { ChatMenuButton } from '@/components/chat-panel/ChatMenuButton'
 import {
@@ -20,7 +19,7 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useCreateThread, useUpdateCurrentInferenceConfig } from '@/lib/api'
+import { useCreateThread, useUpdateThreadConfig } from '@/lib/api'
 import { useModelData } from '@/lib/hooks'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
@@ -29,8 +28,7 @@ type ChatMenuProps = { thread: EThreadWithContent } & React.ComponentProps<typeo
 
 export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
   const { getModel, chatModels, imageModels } = useModelData()
-  const inference = thread.active
-  const currentModel = getModel([inference.endpoint, inference.parameters.model])
+  const currentModel = getModel([thread.config.endpoint, thread.config.parameters.model])
   const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels
 
   const [open, setOpen] = useState(false)
@@ -38,7 +36,7 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
 
-  const updateConfig = useUpdateCurrentInferenceConfig()
+  const { updateThreadConfig } = useUpdateThreadConfig()
   const createThread = useCreateThread()
 
   return (
@@ -103,28 +101,20 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
                     key={model.resourceId}
                     value={model.resourceId}
                     onSelect={(resourceId) => {
-                      const [endpoint, endpointModelId] = resourceId.split('::')
-                      if (!endpoint || !endpointModelId) return
-                      updateConfig({
+                      const model = getModel(resourceId)
+                      updateThreadConfig({
                         threadId: thread.slug,
-                        inference: {
-                          ...thread.active,
-                          endpoint,
-                          resourceId,
+                        config: {
+                          ...thread.config,
+                          endpoint: model.endpoint,
+                          resourceId: model.resourceId,
                           parameters: {
-                            ...thread.active.parameters,
-                            model: endpointModelId,
+                            ...thread.config.parameters,
+                            model: model.endpointModelId,
                           },
                         } as any,
                       })
-                        .then(() => {
-                          toast.success('Inference config updated')
-                          setOpen(false)
-                        })
-                        .catch((err) => {
-                          if (err instanceof Error) toast.error(err.message)
-                          else toast.error('Failed to update config.')
-                        })
+                      setOpen(false)
                     }}
                   >
                     {model.name}

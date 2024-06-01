@@ -1,7 +1,6 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { defaultChatInferenceConfig } from './defaults'
 import { imageSchema, jobSchema, threadSchema, userSchema } from './entities'
 
 export type EChatModel = z.infer<typeof chatModelSchema>
@@ -116,15 +115,11 @@ export const messageWithContentSchema = z.object({
 })
 
 export type EThreadWithContent = z.infer<typeof threadWithContentSchema>
-export const threadWithContentSchema = threadSchema
-  .merge(
-    z.object({
-      saved: inferenceAttachmentSchema.array(),
-      messages: z.array(messageWithContentSchema),
-      owner: userSchema,
-    }),
-  )
-  .transform((thread) => ({
-    ...thread,
-    active: thread.saved[0] ?? defaultChatInferenceConfig,
-  }))
+export const threadWithContentSchema = threadSchema.merge(
+  z.object({
+    config: inferenceAttachmentSchema,
+    saved: inferenceAttachmentSchema.array(),
+    messages: z.array(messageWithContentSchema),
+    owner: userSchema,
+  }),
+)

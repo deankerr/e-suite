@@ -30,6 +30,7 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
   )
   const [threadDeckIds, setThreadDeckIds] = useAtom(threadDeckIdsAtom)
   const threads = useListThreads()
+  const unopenedThreads = threads?.filter((thread) => !threadDeckIds.includes(thread.slug)) ?? []
 
   const createThread = useCreateThread()
   const handleCreateThread = (type: 'chat' | 'image') => {
@@ -63,10 +64,9 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
           </CommandGroup>
 
           <CommandSeparator />
-          <CommandGroup heading="Threads">
-            {threads
-              ?.filter((thread) => !threadDeckIds.includes(thread.slug))
-              .map((thread) => (
+          {unopenedThreads.length > 0 && (
+            <CommandGroup heading="Threads">
+              {unopenedThreads.map((thread) => (
                 <CommandItem
                   key={thread.slug}
                   value={thread.title ?? 'new thread ' + thread.slug}
@@ -75,7 +75,7 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
                     setOpen(false)
                   }}
                 >
-                  {thread.active.type.includes('image') ? (
+                  {thread.config.type.includes('image') ? (
                     <ImageIcon className="mr-2 size-4" />
                   ) : (
                     <MessagesSquareIcon className="mr-2 size-4" />
@@ -83,7 +83,8 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
                   {thread.title ?? 'new thread'}
                 </CommandItem>
               ))}
-          </CommandGroup>
+            </CommandGroup>
+          )}
         </CommandList>
       </Command>
     </CommandDialog>

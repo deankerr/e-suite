@@ -29,5 +29,6 @@ export const messageFields = {
 
 export const threadFields = {
   title: zTruncate(256).optional(),
+  config: inferenceAttachmentSchema,
   saved: inferenceAttachmentSchema.array(),
 }
