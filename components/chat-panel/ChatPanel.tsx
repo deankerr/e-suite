@@ -9,10 +9,10 @@ import { cn } from '@/lib/utils'
 
 type ChatPanelProps = {
   threadId: string
-  handleCloseThread: () => void
+  onClosePanel: () => void
 } & React.ComponentProps<'div'>
 
-export const ChatPanel = ({ threadId, handleCloseThread, className, ...props }: ChatPanelProps) => {
+export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatPanelProps) => {
   const thread = useThreadContent(threadId)
 
   return (
@@ -20,7 +20,7 @@ export const ChatPanel = ({ threadId, handleCloseThread, className, ...props }: 
       <div className="flex h-full w-full flex-col overflow-y-auto">
         <ChatHeader
           className="sticky top-0 z-10 h-16 shrink-0 border-b bg-gray-1"
-          onClosePanel={handleCloseThread}
+          onClosePanel={onClosePanel}
         >
           {thread && <ChatMenu thread={thread} />}
         </ChatHeader>
@@ -36,7 +36,7 @@ export const ChatPanel = ({ threadId, handleCloseThread, className, ...props }: 
         </div>
 
         <Footer className="sticky bottom-0 z-10 min-h-16 shrink-0 gap-2 border-t bg-gray-1">
-          <ChatInput />
+          {thread && <ChatInput thread={thread} />}
         </Footer>
 
         {/* debug ui */}

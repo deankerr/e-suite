@@ -20,12 +20,12 @@ export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
         className,
       )}
     >
-      {threadDeckIds.map((id) => (
+      {threadDeckIds.map((slug) => (
         <ChatPanel
-          key={id}
+          key={slug}
           className="mx-auto max-w-4xl flex-[1_0_min(100vw,24rem)] border-l last:border-r"
-          threadId={id}
-          handleCloseThread={() => setThreadDeckIds((ids) => ids.filter((id) => id !== id))}
+          threadId={slug}
+          onClosePanel={() => setThreadDeckIds((ids) => ids.filter((id) => id !== slug))}
         />
       ))}
     </div>

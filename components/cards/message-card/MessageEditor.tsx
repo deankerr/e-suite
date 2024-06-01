@@ -4,6 +4,7 @@ import { Button, TextField } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
 import { SelectList } from '@/components/ui/SelectList'
+import { AutosizeTextarea } from '@/components/ui/Textarea'
 import { useEditMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -57,13 +58,11 @@ export const MessageEditor = ({ message, className, ...props }: MessageEditorPro
         </Button>
       </div>
 
-      <textarea
+      <AutosizeTextarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Message content..."
-        className={cn(
-          'w-full resize-none text-wrap rounded-lg border border-transparent bg-gray-1 p-2 font-mono text-sm text-gray-12 outline-none placeholder:text-gray-9',
-        )}
+        className={cn('text-wrap rounded-lg bg-gray-1 p-2 font-mono text-sm text-gray-12')}
       />
     </div>
   )
