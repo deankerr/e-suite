@@ -3,7 +3,7 @@ import { IconButton } from '@radix-ui/themes'
 import { SendHorizonalIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { AutosizeTextarea } from '@/components/ui/Textarea'
+import { Textarea } from '@/components/ui/Textarea'
 import { useCreateMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -35,7 +35,8 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
   }
   return (
     <div {...props} className={cn('h-full gap-2 px-3 py-2 flex-between', className)}>
-      <AutosizeTextarea
+      <Textarea
+        placeholder="Prompt..."
         value={prompt}
         onValueChange={setPrompt}
         onKeyDown={(e) => {

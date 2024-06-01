@@ -4,6 +4,7 @@ import { Button, Dialog, Inset } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
 import { ImageIcon, ImagePlusIcon, MessageSquarePlusIcon, MessagesSquareIcon } from 'lucide-react'
 import { useKey } from 'react-use'
+import { toast } from 'sonner'
 
 import {
   Command,
@@ -14,7 +15,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/Command'
-import { useListThreads } from '@/lib/api'
+import { useCreateThread, useListThreads } from '@/lib/api'
 import { globalMenuOpenAtom, threadDeckIdsAtom } from '@/lib/atoms'
 
 type GlobalCommandMenuProps = {
@@ -30,6 +31,19 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
   const [threadDeckIds, setThreadDeckIds] = useAtom(threadDeckIdsAtom)
   const threads = useListThreads()
 
+  const createThread = useCreateThread()
+  const handleCreateThread = (type: 'chat' | 'image') => {
+    createThread({ default: type })
+      .then((slug) => {
+        setThreadDeckIds((ids) => [...ids, slug])
+        setOpen(false)
+      })
+      .catch((err) => {
+        console.error(err)
+        toast.error('An error occurred')
+      })
+  }
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
@@ -38,11 +52,11 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
           <CommandEmpty>No results found.</CommandEmpty>
 
           <CommandGroup>
-            <CommandItem>
+            <CommandItem onSelect={() => handleCreateThread('chat')}>
               <MessageSquarePlusIcon className="mr-2 size-4" />
               Start new Chat
             </CommandItem>
-            <CommandItem>
+            <CommandItem onSelect={() => handleCreateThread('image')}>
               <ImagePlusIcon className="mr-2 size-4" />
               Start new Generation
             </CommandItem>

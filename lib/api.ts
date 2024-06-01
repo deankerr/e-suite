@@ -14,6 +14,13 @@ export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessa
 
 export const useViewer = () => useQuery(api.users.getViewer, {})
 
+export const useViewerDetails = (ownerId?: string) => {
+  const user = useQuery(api.users.getViewer, {})
+  const isOwner = user?._id === ownerId
+  const isAdmin = user?.role === 'admin'
+  return { user, isOwner, isAdmin }
+}
+
 export const useThreadContent = (slugOrId?: string) => {
   const thread = useQuery(api.threads.query.getThreadContent, slugOrId ? { slugOrId } : 'skip')
   return thread

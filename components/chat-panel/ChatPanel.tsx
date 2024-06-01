@@ -1,8 +1,8 @@
-import { MessageCard } from '@/components/cards/MessageCard'
+import { MessageCard } from '@/components/cards/message-card/MessageCard'
 import { ChatHeader } from '@/components/chat-panel/ChatHeader'
 import { ChatInput } from '@/components/chat-panel/ChatInput'
 import { ChatMenu } from '@/components/chat-panel/ChatMenu'
-import { Spinner } from '@/components/ui/Spinner'
+import { Loading } from '@/components/ui/Loading'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { useThreadContent } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -27,11 +27,9 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
 
         <div className="flex grow flex-col gap-4 p-3">
           {thread ? (
-            thread.messages?.map((message) => (
-              <MessageCard key={message._id} slug={thread.slug} message={message} />
-            ))
+            thread.messages?.map((message) => <MessageCard key={message._id} message={message} />)
           ) : (
-            <Spinner className="m-auto" />
+            <Loading className="m-auto" />
           )}
         </div>
 

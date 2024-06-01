@@ -10,6 +10,7 @@ import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
 import { messageFields, zMessageName, zMessageTextContent, zThreadTitle } from './schema'
 
+import type { EMessageRole } from '../shared/structures'
 import type { Ent } from '../types'
 
 //* helpers
@@ -137,9 +138,11 @@ export const createMessage = mutation({
 export const editMessage = mutation({
   args: {
     messageId: zid('messages'),
-    role: z.enum(['user', 'assistant', 'system']),
+    role: z
+      .string()
+      .refine((role) => ['user', 'assistant', 'system'].includes(role), 'invalid role'),
     name: zMessageName.optional(),
-    text: zMessageTextContent,
+    text: zMessageTextContent.optional(),
   },
   handler: async (ctx, { messageId, role, name, text }) => {
     const id = ctx.unsafeDb.normalizeId('messages', messageId)
@@ -147,7 +150,11 @@ export const editMessage = mutation({
       ? await ctx
           .table('messages')
           .getX(id)
-          .patch({ role, name: name || undefined, content: text })
+          .patch({
+            role: role as EMessageRole,
+            name: name || undefined,
+            content: text || undefined,
+          })
       : null
   },
 })
