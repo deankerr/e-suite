@@ -33,7 +33,7 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
           )}
         </div>
 
-        <Footer className="sticky bottom-0 z-10 min-h-16 shrink-0 gap-2 border-t bg-gray-1">
+        <Footer className="sticky bottom-0 z-10 shrink-0 gap-2 border-t bg-gray-1">
           {thread && <ChatInput thread={thread} />}
         </Footer>
 
