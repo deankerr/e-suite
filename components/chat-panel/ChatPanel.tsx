@@ -21,15 +21,15 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
     <div {...props} className={cn('h-full overflow-hidden', className)}>
       <div className="flex h-full w-full flex-col overflow-y-auto">
         <ChatHeader
-          className="sticky top-0 z-10 h-16 shrink-0 border-b bg-gray-2"
+          className="sticky top-0 z-10 h-16 shrink-0 border-b bg-gray-1"
           onClosePanel={onClosePanel}
         >
           {thread && <ChatMenu thread={thread} />}
         </ChatHeader>
 
-        <div className="grow">
+        <div className="flex grow">
           {thread ? (
-            <ChatMessages thread={thread} />
+            <ChatMessages className="mx-auto max-w-2xl" thread={thread} />
           ) : thread === null ? (
             <FileQuestionIcon className="m-auto text-red-11" />
           ) : (

@@ -1,13 +1,6 @@
 import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import {
-  BoxIcon,
-  ChevronLeftIcon,
-  ImageIcon,
-  MessagesSquareIcon,
-  PencilIcon,
-  Trash2Icon,
-} from 'lucide-react'
+import { BoxIcon, ChevronLeftIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 
 import { ChatMenuButton } from '@/components/chat-panel/ChatMenuButton'
 import {
@@ -19,7 +12,7 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useCreateThread, useUpdateThreadConfig } from '@/lib/api'
+import { useUpdateThreadConfig } from '@/lib/api'
 import { useModelData } from '@/lib/hooks'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
@@ -39,7 +32,6 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
   const [dialog, setDialog] = useState('')
 
   const { updateThreadConfig } = useUpdateThreadConfig()
-  const createThread = useCreateThread()
 
   return (
     <Popover.Root
@@ -83,7 +75,7 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
                   </CommandItem> */}
                 </CommandGroup>
 
-                <CommandGroup heading="Threads">
+                {/* <CommandGroup heading="Threads">
                   <CommandItem onSelect={() => void createThread({ default: 'image' })}>
                     <ImageIcon className="mr-2 size-4" />
                     Create Image Thread
@@ -92,7 +84,7 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
                     <MessagesSquareIcon className="mr-2 size-4" />
                     Create Chat Thread
                   </CommandItem>
-                </CommandGroup>
+                </CommandGroup> */}
               </>
             )}
 

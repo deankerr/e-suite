@@ -1,8 +1,14 @@
 'use client'
 
-import { Button, Dialog, Inset } from '@radix-ui/themes'
+import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
-import { ImageIcon, ImagePlusIcon, MessageSquarePlusIcon, MessagesSquareIcon } from 'lucide-react'
+import {
+  ImageIcon,
+  ImagePlusIcon,
+  MenuIcon,
+  MessageSquarePlusIcon,
+  MessagesSquareIcon,
+} from 'lucide-react'
 import { useKey } from 'react-use'
 import { toast } from 'sonner'
 
@@ -95,9 +101,9 @@ export const CommandDialog = ({ children, ...props }: React.ComponentProps<typeo
   return (
     <Dialog.Root {...props}>
       <Dialog.Trigger>
-        <Button variant="outline" size="1">
-          Menu
-        </Button>
+        <IconButton variant="ghost">
+          <MenuIcon />
+        </IconButton>
       </Dialog.Trigger>
       <Dialog.Content aria-describedby={undefined}>
         <Dialog.Title className="sr-only">Global Command Menu</Dialog.Title>

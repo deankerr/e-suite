@@ -15,15 +15,12 @@ export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
   return (
     <div
       {...props}
-      className={cn(
-        'flex h-[calc(100svh-2.75rem)] max-h-full overflow-x-auto overflow-y-hidden',
-        className,
-      )}
+      className={cn('flex h-full gap-3 overflow-x-auto overflow-y-hidden p-3', className)}
     >
       {threadDeckIds.map((slug) => (
         <ChatPanel
           key={slug}
-          className="mx-auto max-w-4xl flex-[1_0_min(100vw,24rem)] border-l last:border-r"
+          className="mx-auto max-w-3xl flex-[1_0_min(100vw,24rem)] rounded-md border"
           threadId={slug}
           onClosePanel={() => setThreadDeckIds((ids) => ids.filter((id) => id !== slug))}
         />
