@@ -8,31 +8,9 @@ import { emptyPage, zPaginationOptValidator } from '../utils'
 import type { EFileAttachmentRecord } from '../shared/structures'
 import type { Ent, QueryCtx } from '../types'
 
+const latestMessagesWithThreadAmount = 8
+
 //* helpers
-const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const files = message.files
-    ? await asyncMap(message?.files, async (file) => {
-        if (file.type === 'image') {
-          return {
-            ...file,
-            image: await ctx.table('images').getX(file.id),
-          }
-        }
-
-        return file
-      })
-    : undefined
-
-  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
-
-  return {
-    ...message,
-    files,
-    jobs,
-    user: await message.edgeX('user'),
-  }
-}
-
 const getFilesContent = async (ctx: QueryCtx, files?: EFileAttachmentRecord[]) => {
   if (!files) return undefined
   return await asyncMap(files, async (file) => {
@@ -47,6 +25,20 @@ const getFilesContent = async (ctx: QueryCtx, files?: EFileAttachmentRecord[]) =
   })
 }
 
+const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
+  return jobs
+}
+
+const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  return {
+    ...message,
+    files: await getFilesContent(ctx, message.files),
+    jobs: await getMessageJobs(ctx, message),
+    owner: await message.edgeX('user'),
+  }
+}
+
 export const getValidThreadBySlugOrId = async (ctx: QueryCtx, slug: string) => {
   const threadBySlug = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).unique()
   if (threadBySlug) return threadBySlug && !threadBySlug.deletionTime ? threadBySlug : null
@@ -56,19 +48,13 @@ export const getValidThreadBySlugOrId = async (ctx: QueryCtx, slug: string) => {
   return threadById && !threadById.deletionTime ? threadById : null
 }
 
-const config_thread_messages = 8
 export const getThreadContentHelper = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   const messages = await thread
     .edge('messages')
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .take(config_thread_messages)
-    .map(async (message) => ({
-      ...message,
-      files: await getFilesContent(ctx, message.files),
-      jobs: await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id)),
-      owner: await message.edgeX('user'),
-    }))
+    .take(latestMessagesWithThreadAmount)
+    .map(async (message) => await getMessageContent(ctx, message))
 
   const result = {
     ...thread,
