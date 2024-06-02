@@ -5,10 +5,10 @@ import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs/runner'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { inferenceAttachmentSchema } from '../shared/structures'
-import { insist } from '../shared/utils'
+import { insist, zMessageName, zMessageTextContent, zThreadTitle } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
-import { messageFields, zMessageName, zMessageTextContent, zThreadTitle } from './schema'
+import { messageFields } from './schema'
 
 import type { EMessageRole } from '../shared/structures'
 import type { Ent } from '../types'
@@ -79,6 +79,18 @@ export const updateThreadConfig = mutation({
       .table('threads')
       .getX(thread._id)
       .patch({ config: { ...args.config, updatedTime: Date.now() } })
+  },
+})
+
+export const updateThreadInstructions = mutation({
+  args: {
+    threadId: z.string(),
+    instructions: zMessageTextContent,
+  },
+  handler: async (ctx, args) => {
+    const thread = await getValidThreadBySlugOrId(ctx, args.threadId)
+    insist(thread, 'invalid thread')
+    return await ctx.table('threads').getX(thread._id).patch({ instructions: args.instructions })
   },
 })
 

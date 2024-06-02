@@ -1,4 +1,5 @@
 import { ConvexError } from 'convex/values'
+import { z } from 'zod'
 
 import type { Value } from 'convex/values'
 
@@ -27,3 +28,14 @@ export function hasDelimiter(text: string) {
     text.length > 100
   )
 }
+
+//* zod utils
+export const zTruncate = (max: number, min = 0) =>
+  z
+    .string()
+    .min(min)
+    .transform((value) => value.slice(0, max))
+
+export const zThreadTitle = zTruncate(256, 1)
+export const zMessageName = zTruncate(64)
+export const zMessageTextContent = zTruncate(32767)

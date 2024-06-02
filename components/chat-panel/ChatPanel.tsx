@@ -1,6 +1,6 @@
 import { FileQuestionIcon } from 'lucide-react'
 
-import { MessageCard } from '@/components/cards/message-card/MessageCard'
+import { ChatMessages } from '@/components/chat-panel/body/ChatMessages'
 import { ChatHeader } from '@/components/chat-panel/ChatHeader'
 import { ChatInput } from '@/components/chat-panel/ChatInput'
 import { ChatMenu } from '@/components/chat-panel/ChatMenu'
@@ -27,9 +27,9 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
           {thread && <ChatMenu thread={thread} />}
         </ChatHeader>
 
-        <div className="flex grow flex-col gap-4 p-3">
+        <div className="grow">
           {thread ? (
-            thread.messages?.map((message) => <MessageCard key={message._id} message={message} />)
+            <ChatMessages thread={thread} />
           ) : thread === null ? (
             <FileQuestionIcon className="m-auto text-red-11" />
           ) : (

@@ -10,7 +10,7 @@ import type { Ent, QueryCtx } from '../types'
 
 const latestMessagesWithThreadAmount = 8
 
-//* helpers
+//* message helpers
 const getFilesContent = async (ctx: QueryCtx, files?: EFileAttachmentRecord[]) => {
   if (!files) return undefined
   return await asyncMap(files, async (file) => {
@@ -39,8 +39,10 @@ const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   }
 }
 
+//* thread helpers
 export const getValidThreadBySlugOrId = async (ctx: QueryCtx, slug: string) => {
   const threadBySlug = await ctx.table('threads', 'slug', (q) => q.eq('slug', slug)).unique()
+
   if (threadBySlug) return threadBySlug && !threadBySlug.deletionTime ? threadBySlug : null
 
   const id = ctx.unsafeDb.normalizeId('threads', slug)

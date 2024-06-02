@@ -3,7 +3,7 @@ import { Button } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
 import { Textarea } from '@/components/ui/Textarea'
-import { useEditMessage } from '@/lib/api'
+import { useEditMessage, useUpdateThreadInstructions } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EMessageWithContent } from '@/convex/shared/structures'
@@ -20,9 +20,17 @@ export const MessageTextEditor = ({
   ...props
 }: MessageTextEditorProps) => {
   const editMessage = useEditMessage()
+  const { updateThreadInstructions } = useUpdateThreadInstructions()
+
   const [text, setText] = useState(message.content ?? '')
 
   const handleSaveMessage = () => {
+    if (message._id === '_instructions') {
+      updateThreadInstructions({ threadId: message.threadId, instructions: text })
+      onClose()
+      return
+    }
+
     editMessage({ messageId: message._id, text, role: message.role })
       .then(() => {
         toast.success('Message saved')

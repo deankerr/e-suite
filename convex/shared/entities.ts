@@ -50,6 +50,7 @@ export const threadSchema = z.object({
 
   title: z.string().optional(),
   slug: z.string(),
+  instructions: z.string().optional(),
 })
 
 export const userSchema = z.object({

@@ -4,6 +4,9 @@ import { atomWithStorage } from 'jotai/utils'
 import { twMerge } from 'tailwind-merge'
 import z from 'zod'
 
+import { messageWithContentSchema } from '@/convex/shared/structures'
+
+import type { EMessageWithContent } from '@/convex/shared/structures'
 import type { ClassValue } from 'clsx'
 
 export type { ClassNameValue } from 'tailwind-merge'
@@ -74,4 +77,27 @@ export const getWidthHeightForEndpoint = (size: string, endpoint: string) => {
     default:
       return big ? { width: 1024, height: 1024 } : { width: 512, height: 512 }
   }
+}
+
+export const getMessageShape = (args: Partial<EMessageWithContent>): EMessageWithContent => {
+  const message = {
+    _id: '',
+    _creationTime: 0,
+    threadId: '_fakethread',
+    series: 0,
+    role: 'user',
+    content: '',
+    files: [],
+    jobs: [],
+    ...args,
+    owner: args.owner || {
+      _id: '_fakeuser',
+      _creationTime: 0,
+      name: 'fakeuser',
+      imageUrl: '',
+      role: 'user',
+    },
+  }
+
+  return messageWithContentSchema.parse(message)
 }

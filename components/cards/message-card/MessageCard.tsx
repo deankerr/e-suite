@@ -17,7 +17,7 @@ export const MessageCard = ({ message }: MessageCardProps) => {
   const [showMessageEditor, setShowMessageEditor] = useState(false)
 
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
-  const title = textToImage ? textToImage.parameters.prompt : message?.name ?? message.role
+  const title = textToImage ? textToImage.parameters.prompt : message?.name || message.role
 
   return (
     <MessageCardShell
@@ -38,6 +38,8 @@ export const MessageCard = ({ message }: MessageCardProps) => {
         ) : (
           <MessageTextContent content={message.content} />
         )}
+
+        {/* <pre className="text-wrap font-mono text-xs">{JSON.stringify(message, null, 2)}</pre> */}
       </div>
 
       <MessageCardFooter message={message} />

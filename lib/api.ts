@@ -38,6 +38,37 @@ export const useUpdateThreadConfig = () => {
   return { update, updateOptimistic, updateThreadConfig: updateThreadConfigOptimistic }
 }
 
+export const useUpdateThreadInstructions = () => {
+  const update = useMutation(api.threads.mutate.updateThreadInstructions).withOptimisticUpdate(
+    (localStore, args) => {
+      const currentValue = localStore.getQuery(api.threads.query.getThreadContent, {
+        slugOrId: args.threadId,
+      })
+      if (currentValue) {
+        localStore.setQuery(
+          api.threads.query.getThreadContent,
+          { slugOrId: args.threadId },
+          { ...currentValue, instructions: args.instructions },
+        )
+      }
+    },
+  )
+
+  return {
+    update,
+    updateThreadInstructions: (args: Parameters<typeof update>[0]) => {
+      update(args)
+        .then(() => {
+          toast.success('Thread instructions updated.')
+        })
+        .catch((err) => {
+          if (err instanceof Error) toast.error(err.message)
+          else toast.error('Failed to update instructions.')
+        })
+    },
+  }
+}
+
 export const useCreateMessage = () => useMutation(api.threads.mutate.createMessage)
 export const useEditMessage = () => useMutation(api.threads.mutate.editMessage)
 export const useRemoveMessage = () => useMutation(api.threads.mutate.removeMessage)

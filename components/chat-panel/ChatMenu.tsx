@@ -30,6 +30,8 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
   const { getModel, chatModels, imageModels } = useModelData()
   const currentModel = getModel([thread.config.endpoint, thread.config.parameters.model])
   const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels
+  // const textToImage = thread.config.type === 'text-to-image' ? thread.config : null
+  // const chatCompletion = thread.config.type === 'chat-completion' ? thread.config : null
 
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -74,6 +76,11 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
                     <div className="line-clamp-1 grow">{currentModel.name}</div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
+                  {/* <CommandItem onSelect={() => setPage('listModels')}>
+                    <BoxIcon className="mr-2 size-4" />
+                    <div className="line-clamp-1 grow">Instructions</div>
+                    <div className="text-xs text-gray-10">edit</div>
+                  </CommandItem> */}
                 </CommandGroup>
 
                 <CommandGroup heading="Threads">
