@@ -48,6 +48,11 @@ export const init = internalMutation({
       .take(temp_config_messageHistory)
       .map((message) => msgSchema.parse(message))
 
+    const thread = await ctx.table('threads').getX(message.threadId)
+    if (thread.instructions) {
+      messages.push(msgSchema.parse({ role: 'system', content: thread.instructions }))
+    }
+
     return { message, messages: messages.toReversed(), inference }
   },
 })
