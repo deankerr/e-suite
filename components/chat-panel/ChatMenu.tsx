@@ -43,7 +43,11 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
       }}
     >
       <Popover.Trigger asChild>
-        <ChatMenuButton title={thread.title ?? 'new thread'} modelName={currentModel.name} />
+        <ChatMenuButton
+          title={thread.title ?? 'new thread'}
+          modelName={currentModel.name}
+          className="mx-auto max-w-xl grow"
+        />
       </Popover.Trigger>
 
       <Popover.Content align="center" sideOffset={5} className="w-80">

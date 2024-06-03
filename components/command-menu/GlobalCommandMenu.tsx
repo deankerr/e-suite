@@ -9,6 +9,7 @@ import {
   MessageSquarePlusIcon,
   MessagesSquareIcon,
 } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 import { toast } from 'sonner'
 
@@ -34,6 +35,10 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
     (e) => e.key === 'k' && e.metaKey,
     () => setOpen(!open),
   )
+
+  const router = useRouter()
+  const isSingleThreadPage = usePathname().startsWith('/thread')
+
   const [threadDeckIds, setThreadDeckIds] = useAtom(threadDeckIdsAtom)
   const threads = useListThreads()
   const unopenedThreads = threads?.filter((thread) => !threadDeckIds.includes(thread.slug)) ?? []
@@ -42,7 +47,11 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
   const handleCreateThread = (type: 'chat' | 'image') => {
     createThread({ default: type })
       .then((slug) => {
-        setThreadDeckIds((ids) => [...ids, slug])
+        if (isSingleThreadPage) {
+          router.push(`/thread/${slug}`)
+        } else {
+          setThreadDeckIds((ids) => [...ids, slug])
+        }
         setOpen(false)
       })
       .catch((err) => {

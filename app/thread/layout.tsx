@@ -4,7 +4,7 @@ import { Logo } from '@/components/ui/Logo'
 import { cn } from '@/lib/utils'
 
 export const metadata = {
-  title: 'MultiThread',
+  title: 'Thread',
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
