@@ -11,7 +11,7 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
   const { user } = useViewerDetails()
   const chatCompletion = thread.config.type === 'chat-completion' ? thread.config : null
   return (
-    <div {...props} className={cn('flex h-full flex-col gap-4 p-3', className)}>
+    <div {...props} className={cn('flex h-full flex-col w-full gap-4 p-3', className)}>
       {chatCompletion && user && (
         <MessageCard
           message={getMessageShape({

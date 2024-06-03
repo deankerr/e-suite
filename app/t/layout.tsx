@@ -1,29 +1,25 @@
 import { GlobalCommandMenu } from '@/components/command-menu/GlobalCommandMenu'
 import { UserButtons } from '@/components/layout/UserButtons'
-// import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import { Logo } from '@/components/ui/Logo'
+import { cn } from '@/lib/utils'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col">
-      {/* <header className="sticky flex h-11 items-center justify-between gap-2 border-b border-gray-4 px-2">
-        <AppLogoTitle />
-        <UserButtons />
-      </header> */}
-
-      <div className="flex h-[calc(100svh-2.75rem)] w-full md:h-[100svh]">
-        <div className="h-full w-11 shrink-0 border-r border-gray-4 flex-col-start">
-          <div className="h-11 w-full border-b border-gray-4 flex-col-center md:border-transparent">
-            <Logo />
-          </div>
-
-          <div className="grow py-3 flex-col-between">
-            <GlobalCommandMenu />
-            <UserButtons />
-          </div>
-        </div>
-        {children}
-      </div>
+    <div className="flex h-[100svh] flex-col md:flex-row">
+      <Nav className="border-b md:flex-col md:border-r" />
+      {children}
     </div>
+  )
+}
+
+type NavProps = React.ComponentProps<'div'>
+const Nav = ({ className, ...props }: NavProps) => {
+  return (
+    <nav {...props} className={cn('flex shrink-0 items-center gap-3 border-gray-4 p-3', className)}>
+      <Logo />
+      <GlobalCommandMenu />
+      <div className="grow">{/* spacer */}</div>
+      <UserButtons />
+    </nav>
   )
 }

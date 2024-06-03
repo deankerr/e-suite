@@ -15,7 +15,7 @@ export const ThreadsPage = ({ className, ...props }: ThreadsPageProps) => {
   return (
     <div
       {...props}
-      className={cn('flex h-full gap-3 overflow-x-auto overflow-y-hidden p-3', className)}
+      className={cn('flex h-full w-full gap-3 overflow-x-auto overflow-y-hidden p-3', className)}
     >
       {threadDeckIds.map((slug) => (
         <ChatPanel

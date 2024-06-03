@@ -22,7 +22,7 @@ export const MessageCardShell = ({
   const IconComponent = icon
 
   return (
-    <Card {...props} className={cn('', className)}>
+    <Card {...props} className={cn('w-full', className)}>
       <Inset side="top">
         <div className="h-8 gap-1.5 border-b bg-gray-2 px-2 flex-between">
           {/* element button */}
