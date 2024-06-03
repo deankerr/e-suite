@@ -35,7 +35,7 @@ export const MessageCard = ({ message, ...props }: MessageCardProps) => {
       }
     >
       <div className="mt-3">
-        <MessageImageContent files={message.files} />
+        <MessageImageContent message={message} />
         {showMessageEditor ? (
           <MessageTextEditor message={message} onClose={() => setShowMessageEditor(false)} />
         ) : (
