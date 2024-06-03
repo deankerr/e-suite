@@ -104,7 +104,6 @@ http.route({
 http.route({
   path: '/chat',
   method: 'OPTIONS',
-  // eslint-disable-next-line @typescript-eslint/require-await
   handler: httpAction(async (_, request) => {
     // Make sure the necessary headers are present
     // for this to be a valid pre-flight request

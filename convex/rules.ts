@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
 import { addEntRules } from 'convex-ents'
 
 import { entDefinitions } from './schema'
