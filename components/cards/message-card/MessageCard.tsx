@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { IconButton, Skeleton } from '@radix-ui/themes'
+import { IconButton } from '@radix-ui/themes'
 import { ImageIcon, MessageSquareIcon, MoreHorizontalIcon } from 'lucide-react'
 
 import { MessageCardFooter } from '@/components/cards/message-card/MessageCardFooter'
@@ -8,6 +8,8 @@ import { MessageDropdownMenu } from '@/components/cards/message-card/MessageDrop
 import { MessageImageContent } from '@/components/cards/message-card/MessageImageContent'
 import { MessageTextContent } from '@/components/cards/message-card/MessageTextContent'
 import { MessageTextEditor } from '@/components/cards/message-card/MessageTextEditor'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { cn } from '@/lib/utils'
 
 import type { EMessageWithContent } from '@/convex/shared/structures'
 
@@ -50,10 +52,10 @@ export const MessageCard = ({ message, ...props }: MessageCardProps) => {
   )
 }
 
-export const MessageCardSkeleton = () => {
+export const MessageCardSkeleton = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (
-    <Skeleton className="mx-auto min-h-32 w-full max-w-4xl">
-      <Skeleton className="h-10 rounded-b-none" />
+    <Skeleton {...props} className={cn('aspect-video w-full border bg-grayA-2', className)}>
+      <Skeleton className="h-8 animate-none rounded-b-none border-b bg-transparent" />
     </Skeleton>
   )
 }

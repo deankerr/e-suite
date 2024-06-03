@@ -84,6 +84,7 @@ export const getMessageShape = (args: Partial<EMessageWithContent>): EMessageWit
     _id: '',
     _creationTime: 0,
     threadId: '_fakethread',
+    threadSlug: '_fakeslug',
     series: 0,
     role: 'user',
     content: '',

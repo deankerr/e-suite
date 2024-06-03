@@ -60,6 +60,15 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
       })
   }
 
+  const handleOpenThread = (slug: string) => {
+    if (isSingleThreadPage) {
+      router.push(`/thread/${slug}`)
+    } else {
+      setThreadDeckIds((ids) => [...ids, slug])
+    }
+    setOpen(false)
+  }
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
@@ -85,10 +94,7 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
                 <CommandItem
                   key={thread.slug}
                   value={thread.title ?? 'new thread ' + thread.slug}
-                  onSelect={() => {
-                    setThreadDeckIds((ids) => [...ids, thread.slug])
-                    setOpen(false)
-                  }}
+                  onSelect={() => handleOpenThread(thread.slug)}
                 >
                   {thread.config.type.includes('image') ? (
                     <ImageIcon className="mr-2 size-4" />

@@ -1,7 +1,13 @@
 import { SingleThreadPage } from '@/components/pages/SingleThreadPage'
 
 export default function Page({ params }: { params: { slug: string[] } }) {
-  const slug = params.slug[0]
+  const threadRing = params.slug[0]
+  const messageRing = params.slug[1] ?? ''
+  const fileRing = params.slug[2] ?? ''
 
-  return slug ? <SingleThreadPage threadIndex={[slug]} /> : <div>404</div>
+  return threadRing ? (
+    <SingleThreadPage threadIndex={[threadRing, messageRing, fileRing]} />
+  ) : (
+    <div>404</div>
+  )
 }

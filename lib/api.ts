@@ -87,6 +87,11 @@ export const useThreadContent = (slugOrId?: string) => {
   return thread
 }
 
+export const useThreadIndexContent = (index?: [string, string, string]) => {
+  const thread = useQuery(api.threads.query.getThreadIndexContent, index ? { index } : 'skip')
+  return thread
+}
+
 export const useListThreads = () => {
   const threads = useQuery(api.threads.query.listThreads, {})
   return threads

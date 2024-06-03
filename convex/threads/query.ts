@@ -30,9 +30,10 @@ const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   return jobs
 }
 
-const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+const getMessageContent = async (ctx: QueryCtx, message: Ent<'messages'>, threadSlug: string) => {
   return {
     ...message,
+    threadSlug,
     files: await getFilesContent(ctx, message.files),
     jobs: await getMessageJobs(ctx, message),
     owner: await message.edgeX('user'),
@@ -56,7 +57,7 @@ export const getThreadContentHelper = async (ctx: QueryCtx, thread: Ent<'threads
     .order('desc')
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
     .take(latestMessagesWithThreadAmount)
-    .map(async (message) => await getMessageContent(ctx, message))
+    .map(async (message) => await getMessageContent(ctx, message, thread.slug))
 
   const result = {
     ...thread,
@@ -77,6 +78,35 @@ export const getThreadContent = query({
     if (!thread) return null
 
     return await getThreadContentHelper(ctx, thread)
+  },
+})
+
+export const getThreadIndexContent = query({
+  args: {
+    index: z.tuple([z.string(), z.string(), z.string()]),
+  },
+  handler: async (ctx, { index }) => {
+    const [threadRing, messageRing] = index
+    const thread = await getValidThreadBySlugOrId(ctx, threadRing)
+    if (!thread) return null
+
+    const messageSeries = Number(messageRing)
+    const messages = messageSeries
+      ? await ctx
+          .table('messages', 'threadId_series', (q) =>
+            q.eq('threadId', thread._id).eq('series', messageSeries),
+          )
+          .filter((q) => q.eq(q.field('deletionTime'), undefined))
+          .map((message) => getMessageContent(ctx, message, thread.slug))
+      : []
+
+    const result = {
+      ...thread,
+      messages: messages.reverse(),
+      owner: await thread.edgeX('user'),
+    }
+
+    return threadWithContentSchema.parse(result)
   },
 })
 
@@ -129,34 +159,11 @@ export const listMessages = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map((m) => getMessageContent(ctx, m))
+      .map((m) => getMessageContent(ctx, m, thread.slug))
 
     return {
       ...result,
       page: messageWithContentSchema.array().parse(result.page),
     }
-  },
-})
-
-export const getMessageSeries = query({
-  args: {
-    slug: z.string(),
-    series: z.string(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getValidThreadBySlugOrId(ctx, args.slug)
-    if (!thread) return null
-
-    const series = Number(args.series)
-    if (isNaN(series)) throw new Error(`invalid index ${args.series}`)
-
-    const messages = await ctx
-      .table('messages', 'threadId_series', (q) =>
-        q.eq('threadId', thread._id).eq('series', series),
-      )
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map((m) => getMessageContent(ctx, m))
-
-    return messageWithContentSchema.array().parse(messages)
   },
 })

@@ -1,15 +1,23 @@
 import { DropdownMenu } from '@radix-ui/themes'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { useEditMessage, useRemoveMessage, useViewerDetails } from '@/lib/api'
 
 import type { EMessageWithContent } from '@/convex/shared/structures'
 
-type MessageDropdownMenuProps = { message: EMessageWithContent, onEdit: () => void } & React.ComponentProps<
-  typeof DropdownMenu.Root
->
+type MessageDropdownMenuProps = {
+  message: EMessageWithContent
+  onEdit: () => void
+} & React.ComponentProps<typeof DropdownMenu.Root>
 
-export const MessageDropdownMenu = ({ message, onEdit, children, ...props }: MessageDropdownMenuProps) => {
+export const MessageDropdownMenu = ({
+  message,
+  onEdit,
+  children,
+  ...props
+}: MessageDropdownMenuProps) => {
+  const router = useRouter()
   const viewer = useViewerDetails(message.owner._id)
   const editMessage = useEditMessage()
   const removeMessage = useRemoveMessage()
@@ -41,8 +49,13 @@ export const MessageDropdownMenu = ({ message, onEdit, children, ...props }: Mes
     <DropdownMenu.Root {...props}>
       <DropdownMenu.Trigger>{children}</DropdownMenu.Trigger>
 
-      <DropdownMenu.Content size="1">
+      <DropdownMenu.Content size="1" variant="soft">
         <DropdownMenu.Item onSelect={onEdit}>Edit</DropdownMenu.Item>
+        <DropdownMenu.Item
+          onSelect={() => router.push(`/thread/${message.threadSlug}/${message.series}`)}
+        >
+          Link
+        </DropdownMenu.Item>
 
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger>Role</DropdownMenu.SubTrigger>

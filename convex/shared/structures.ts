@@ -102,6 +102,7 @@ export const messageWithContentSchema = z.object({
   _creationTime: z.number(),
   deletionTime: z.undefined(),
   threadId: zid('threads'),
+  threadSlug: z.string(),
   series: z.number(),
 
   role: messageRolesEnum,
