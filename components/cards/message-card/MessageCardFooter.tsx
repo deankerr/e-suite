@@ -1,6 +1,6 @@
 import { Inset } from '@radix-ui/themes'
 
-import { Loading } from '@/components/ui/Loading'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { cn } from '@/lib/utils'
 
 import type { EMessageWithContent } from '@/convex/shared/structures'
@@ -21,8 +21,8 @@ export const MessageCardFooter = ({ message, className, ...props }: MessageCardF
         )}
       >
         {latestJob.name}
-        {latestJob.status === 'queued' && <Loading variant="dots" className="w-4" />}
-        {latestJob.status === 'active' && <Loading variant="dots" className="w-4" />}
+        {latestJob.status === 'queued' && <LoadingSpinner variant="dots" className="w-4" />}
+        {latestJob.status === 'active' && <LoadingSpinner variant="dots" className="w-4" />}
 
         {latestJob.status === 'failed' && (
           <div className="flex-none">

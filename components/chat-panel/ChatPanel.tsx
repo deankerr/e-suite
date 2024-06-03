@@ -4,7 +4,7 @@ import { ChatMessages } from '@/components/chat-panel/body/ChatMessages'
 import { ChatHeader } from '@/components/chat-panel/ChatHeader'
 import { ChatInput } from '@/components/chat-panel/ChatInput'
 import { ChatMenu } from '@/components/chat-panel/ChatMenu'
-import { Loading } from '@/components/ui/Loading'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useThreadContent, useViewerDetails } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +19,10 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
 
   return (
     <div {...props} className={cn('h-full overflow-hidden', className)}>
-      <div className="flex h-full w-full flex-col overflow-y-auto">
+      <div
+        id={thread ? `${thread._id}-chat-panel` : ''}
+        className="flex h-full w-full flex-col overflow-y-auto overscroll-y-none"
+      >
         <ChatHeader
           className="sticky top-0 z-10 h-16 shrink-0 border-b bg-gray-1"
           thread={thread}
@@ -34,7 +37,7 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
           ) : thread === null ? (
             <FileQuestionIcon className="m-auto text-red-11" />
           ) : (
-            <Loading className="m-auto" />
+            <LoadingSpinner className="m-auto" />
           )}
         </div>
 

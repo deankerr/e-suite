@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { IconButton, Skeleton } from '@radix-ui/themes'
 import { ImageIcon, MessageSquareIcon, MoreHorizontalIcon } from 'lucide-react'
 
@@ -11,9 +11,11 @@ import { MessageTextEditor } from '@/components/cards/message-card/MessageTextEd
 
 import type { EMessageWithContent } from '@/convex/shared/structures'
 
-type MessageCardProps = { message: EMessageWithContent }
+type MessageCardProps = { message: EMessageWithContent } & React.ComponentProps<
+  typeof MessageCardShell
+>
 
-export const MessageCard = ({ message }: MessageCardProps) => {
+export const MessageCard = ({ message, ...props }: MessageCardProps) => {
   const [showMessageEditor, setShowMessageEditor] = useState(false)
 
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
@@ -21,6 +23,7 @@ export const MessageCard = ({ message }: MessageCardProps) => {
 
   return (
     <MessageCardShell
+      {...props}
       title={title}
       icon={textToImage ? ImageIcon : MessageSquareIcon}
       controls={

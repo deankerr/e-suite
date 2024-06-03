@@ -1,6 +1,7 @@
 import { IconButton } from '@radix-ui/themes'
-import { MessagesSquareIcon, XIcon } from 'lucide-react'
+import { FileQuestionIcon, ImagesIcon, MessagesSquareIcon, XIcon } from 'lucide-react'
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { cn } from '@/lib/utils'
 
@@ -21,13 +22,20 @@ export const ChatHeader = ({
   className,
   ...props
 }: ChatHeaderProps) => {
-  const IconComponent = icon ?? MessagesSquareIcon
+  const textToImage = thread?.config.type === 'text-to-image' ? thread.config : null
+  const IconComponent = icon ?? textToImage ? ImagesIcon : MessagesSquareIcon
 
   return (
     <div {...props} className={cn('h-full px-2 text-sm flex-between', className)}>
       {/* panel icon */}
       <div className="w-14 shrink-0 flex-center">
-        <IconComponent className="flex-none text-accent-11" />
+        {thread ? (
+          <IconComponent className="flex-none text-accent-11" />
+        ) : thread === null ? (
+          <FileQuestionIcon className="flex-none text-red-11" />
+        ) : (
+          <LoadingSpinner />
+        )}
       </div>
 
       {/* title */}
