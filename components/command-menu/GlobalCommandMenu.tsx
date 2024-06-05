@@ -85,6 +85,17 @@ export const GlobalCommandMenu = ({}: GlobalCommandMenuProps) => {
               <ImagePlusIcon className="mr-2 size-4" />
               Start new Generation
             </CommandItem>
+            {isSingleThreadPage && (
+              <CommandItem
+                onSelect={() => {
+                  router.push('/t')
+                  setOpen(false)
+                }}
+              >
+                <ImagePlusIcon className="mr-2 size-4" />
+                Go to Multi Thread view
+              </CommandItem>
+            )}
           </CommandGroup>
 
           <CommandSeparator />

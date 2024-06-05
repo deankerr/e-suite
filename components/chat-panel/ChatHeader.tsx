@@ -1,5 +1,6 @@
 import { IconButton } from '@radix-ui/themes'
 import { FileQuestionIcon, ImagesIcon, MessagesSquareIcon, XIcon } from 'lucide-react'
+import Link from 'next/link'
 
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
@@ -29,13 +30,15 @@ export const ChatHeader = ({
     <div {...props} className={cn('h-full px-2 text-sm flex-between', className)}>
       {/* panel icon */}
       <div className="w-14 shrink-0 flex-center">
-        {thread ? (
-          <IconComponent className="flex-none text-accent-11" />
-        ) : thread === null ? (
-          <FileQuestionIcon className="flex-none text-red-11" />
-        ) : (
-          <LoadingSpinner />
-        )}
+        <Link href={thread ? `/thread/${thread.slug}` : '/t'}>
+          {thread ? (
+            <IconComponent className="text-accent-11" />
+          ) : thread === null ? (
+            <FileQuestionIcon className="text-red-11" />
+          ) : (
+            <LoadingSpinner />
+          )}
+        </Link>
       </div>
 
       {/* title */}
