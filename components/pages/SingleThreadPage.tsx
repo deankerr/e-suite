@@ -20,7 +20,7 @@ export const SingleThreadPage = ({ threadIndex }: SingleThreadPageProps) => {
     const singleMessage = threadFromIndex?.messages[0]
 
     return singleMessage ? (
-      <div className="w-full p-4">
+      <div className="h-full w-full overflow-y-auto p-4">
         <MessageCard message={singleMessage} className="mx-auto max-w-4xl" />
       </div>
     ) : (
