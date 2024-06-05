@@ -2,7 +2,7 @@ import { Card, Inset } from '@radix-ui/themes'
 
 import { MessageCard, MessageCardSkeleton } from '@/components/cards/message-card/MessageCard'
 import { ChatInput } from '@/components/chat/chat-input/ChatInput'
-import { ChatPanelApiProvider } from '@/components/chat/ChatApiProvider'
+import { ChatViewApiProvider } from '@/components/chat/ChatApiProvider'
 import { Header } from '@/components/chat/Header'
 import { cn } from '@/lib/utils'
 
@@ -21,10 +21,11 @@ const Component = ({ thread, className, ...props }: ChatViewProps) => {
 }
 
 export const ChatView = (props: ChatViewProps) => {
+  const threadId = props.thread?.slug ?? ''
   return (
-    <ChatPanelApiProvider>
+    <ChatViewApiProvider threadId={threadId}>
       <Component {...props} />
-    </ChatPanelApiProvider>
+    </ChatViewApiProvider>
   )
 }
 

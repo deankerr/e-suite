@@ -7,69 +7,36 @@ import {
   SendHorizonalIcon,
   SquareIcon,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
-import { useChatPanelApi } from '@/components/chat/ChatApiProvider'
+import { useChatViewApi } from '@/components/chat/ChatApiProvider'
 import { Textarea } from '@/components/ui/Textarea'
-import { useCreateMessage, useUpdateThreadConfig } from '@/lib/api'
+import { useUpdateThreadConfig } from '@/lib/api'
 import { cn, getWidthHeightForEndpoint } from '@/lib/utils'
 
 import type { ETextToImageInference, EThreadWithContent } from '@/convex/shared/structures'
 
 type ChatInputProps = { thread: EThreadWithContent } & React.ComponentProps<'div'>
 
-const config_use_new_api = true
-
 export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
-  const api = useChatPanelApi()
+  const api = useChatViewApi()
 
-  const createMessage = useCreateMessage()
   const [prompt, setPrompt] = useState('')
 
   const textToImage = thread.config.type === 'text-to-image' ? thread.config : null
   const chatCompletion = thread.config.type === 'chat-completion' ? thread.config : null
 
   const handleSendMessage = async () => {
-    if (config_use_new_api) {
-      if (textToImage) {
-        await api.sendTextToImageMessage({ threadId: thread.slug, prompt, inference: textToImage })
-        setPrompt('')
-      }
-
-      if (chatCompletion) {
-        await api.sendChatMessage({
-          threadId: thread.slug,
-          content: prompt,
-          inference: chatCompletion,
-        })
-        setPrompt('')
-      }
-
-      return
+    if (textToImage) {
+      await api.sendTextToImageMessage({ prompt, inference: textToImage })
+      setPrompt('')
     }
 
-    try {
-      if (textToImage) {
-        const inference = { ...textToImage, parameters: { ...textToImage.parameters, prompt } }
-        await createMessage({
-          threadId: thread.slug,
-          message: { role: 'assistant', inference },
-        })
-        setPrompt('')
-        return
-      }
-
-      await createMessage({ threadId: thread.slug, message: { role: 'user', content: prompt } })
-
-      await createMessage({
-        threadId: thread.slug,
-        message: { role: 'assistant', inference: thread.config },
+    if (chatCompletion) {
+      await api.sendChatMessage({
+        content: prompt,
+        inference: chatCompletion,
       })
-
       setPrompt('')
-    } catch (err) {
-      console.error(err)
-      toast.error('An error occurred')
     }
   }
 

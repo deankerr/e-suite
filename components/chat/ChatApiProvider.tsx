@@ -4,19 +4,20 @@ import { useChatApi } from '@/lib/useChatApi'
 
 type ChatApi = ReturnType<typeof useChatApi>
 
-const ChatPanelApiContext = createContext<ChatApi | undefined>(undefined)
+const ChatViewApiContext = createContext<ChatApi | undefined>(undefined)
 
-type ChatApiProviderProps = {
+type ChatViewApiProviderProps = {
+  threadId: string
   children: React.ReactNode
 }
 
-export const ChatPanelApiProvider = ({ children }: ChatApiProviderProps) => {
-  const api = useChatApi()
-  return <ChatPanelApiContext.Provider value={api}>{children}</ChatPanelApiContext.Provider>
+export const ChatViewApiProvider = ({ threadId, children }: ChatViewApiProviderProps) => {
+  const api = useChatApi(threadId)
+  return <ChatViewApiContext.Provider value={api}>{children}</ChatViewApiContext.Provider>
 }
 
-export const useChatPanelApi = (): ChatApi => {
-  const context = useContext(ChatPanelApiContext)
+export const useChatViewApi = (): ChatApi => {
+  const context = useContext(ChatViewApiContext)
   if (!context) {
     throw new Error('useChatPanelApi must be used within a ChatPanelApiProvider')
   }

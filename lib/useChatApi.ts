@@ -6,19 +6,19 @@ import { api } from '@/convex/_generated/api'
 
 import type { EChatCompletionInference, ETextToImageInference } from '@/convex/shared/structures'
 
-export const useChatApi = () => {
+export const useChatApi = (threadId: string) => {
   const createMessage = useMutation(api.threads.mutate.createMessage)
 
   const sendChatMessage = useCallback(
-    async (args: { threadId: string; content: string; inference: EChatCompletionInference }) => {
+    async (args: { content: string; inference: EChatCompletionInference }) => {
       console.log('sendChatMessage', args)
       try {
         await createMessage({
-          threadId: args.threadId,
+          threadId,
           message: { role: 'user', content: args.content },
         })
         await createMessage({
-          threadId: args.threadId,
+          threadId,
           message: { role: 'assistant', inference: args.inference },
         })
       } catch (err) {
@@ -26,24 +26,24 @@ export const useChatApi = () => {
         toast.error('Failed to send message.')
       }
     },
-    [createMessage],
+    [createMessage, threadId],
   )
 
   const sendTextToImageMessage = useCallback(
-    async (args: { threadId: string; prompt: string; inference: ETextToImageInference }) => {
+    async (args: { prompt: string; inference: ETextToImageInference }) => {
       console.log('sendTextToImageMessage', args)
       try {
         const inference = {
           ...args.inference,
           parameters: { ...args.inference.parameters, prompt: args.prompt },
         }
-        await createMessage({ threadId: args.threadId, message: { role: 'assistant', inference } })
+        await createMessage({ threadId, message: { role: 'assistant', inference } })
       } catch (err) {
         console.error(err)
         toast.error('Failed to send message.')
       }
     },
-    [createMessage],
+    [createMessage, threadId],
   )
 
   return { sendChatMessage, sendTextToImageMessage }
