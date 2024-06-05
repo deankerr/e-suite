@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, handleJobError, jobResultSuccess } from '../jobs'
 import { createOpenAiClient } from '../lib/openai'
 import { insist } from '../shared/utils'
 

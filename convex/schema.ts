@@ -4,11 +4,41 @@ import { v } from 'convex/values'
 import { ms } from 'itty-time'
 import { z } from 'zod'
 
-import { imageFields } from './images/schema'
-import { jobFields } from './jobs/schema'
-import { messageFields, threadFields } from './threads/schema'
+import {
+  fileAttachmentRecordSchema,
+  inferenceAttachmentSchema,
+  messageRolesEnum,
+} from './shared/structures'
+import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
 const timeToDelete = ms('1 day')
+
+export const jobAttributeFields = {
+  threadId: zid('threads').optional(),
+  messageId: zid('messages').optional(),
+  imageId: zid('images').optional(),
+
+  url: z.string().optional(),
+  width: z.number().optional(),
+}
+export const jobFields = {
+  name: z.string(),
+  status: z.enum(['queued', 'active', 'complete', 'failed']),
+  errors: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+      fatal: z.boolean(),
+    })
+    .array()
+    .optional(),
+
+  queuedTime: z.number(),
+  startedTime: z.number().optional(),
+  endedTime: z.number().optional(),
+
+  ...jobAttributeFields,
+}
 
 const jobs = defineEnt(zodToConvexFields(jobFields))
   .index('status', ['status'])
@@ -60,6 +90,17 @@ export const fileFields = {
 }
 const files = defineEnt(zodToConvexFields(fileFields)).edge('image')
 
+export const imageFields = {
+  originUrl: z.string(),
+
+  width: z.number(),
+  height: z.number(),
+  blurDataUrl: z.string(),
+  color: z.string(),
+
+  generationData: z.tuple([z.string(), z.string()]).array(),
+}
+
 const images = defineEnt(zodToConvexFields(imageFields))
   .deletion('scheduled', {
     delayMs: timeToDelete,
@@ -67,6 +108,17 @@ const images = defineEnt(zodToConvexFields(imageFields))
   .edges('files', { ref: true })
   .index('originUrl', ['originUrl'])
 
+export const messageFields = {
+  role: messageRolesEnum,
+  name: zMessageName.optional(),
+  content: zMessageTextContent.optional(),
+
+  inference: inferenceAttachmentSchema.optional(),
+  files: fileAttachmentRecordSchema.array().optional(),
+
+  metadata: z.string().array().array().optional(),
+  speechId: zid('speech').optional(),
+}
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('series', zodToConvex(z.number()), { index: true })
@@ -74,6 +126,12 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
 
+export const threadFields = {
+  title: zThreadTitle.optional(),
+  config: inferenceAttachmentSchema,
+  saved: inferenceAttachmentSchema.array(),
+  instructions: zMessageTextContent.optional(),
+}
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('slug', zodToConvex(z.string()), { unique: true })

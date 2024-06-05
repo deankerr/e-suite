@@ -1,21 +1,59 @@
+import { zid } from 'convex-helpers/server/zod'
 import { makeFunctionReference } from 'convex/server'
 import { ConvexError } from 'convex/values'
 import { z } from 'zod'
 
-import { internal } from '../_generated/api'
-import { internalMutation } from '../functions'
-import { insist } from '../shared/utils'
-import { jobDefinitions } from './definitions'
+import { internal } from './_generated/api'
+import { internalMutation } from './functions'
+import { jobAttributeFields } from './schema'
+import { insist } from './shared/utils'
 
-import type { Id } from '../_generated/dataModel'
-import type { ActionCtx } from '../_generated/server'
-import type { MutationCtx } from '../types'
-import type { JobDefinitions, JobNames } from './definitions'
-import type { jobErrorSchema } from './schema'
+import type { Id } from './_generated/dataModel'
+import type { ActionCtx } from './_generated/server'
+import type { MutationCtx } from './types'
 
+export const jobDefinitions = {
+  'files/create-image-from-url': {
+    handler: 'files/createImageFromUrl:run',
+    required: z.object({
+      url: z.string(),
+      messageId: zid('messages'),
+    }),
+  },
+
+  'files/optimize-image-file': {
+    handler: 'files/optimizeImageFile:run',
+    required: z.object({
+      imageId: zid('images'),
+    }),
+  },
+
+  'inference/chat-completion': {
+    handler: 'inference/chatCompletion:run',
+    required: z.object({
+      messageId: zid('messages'),
+    }),
+  },
+
+  'inference/text-to-image': {
+    handler: 'inference/textToImage:run',
+    required: z.object({
+      messageId: zid('messages'),
+    }),
+  },
+
+  'inference/thread-title-completion': {
+    handler: 'inference/threadTitleCompletion:run',
+    required: z.object({
+      threadId: zid('threads'),
+    }),
+  },
+}
+
+const jobAttributesObject = z.object(jobAttributeFields)
 export const createJob = async <
-  J extends JobNames,
-  A extends z.infer<JobDefinitions[J]['required']>,
+  J extends keyof typeof jobDefinitions,
+  A extends z.infer<typeof jobAttributesObject>,
 >(
   ctx: MutationCtx,
   name: J,
@@ -25,7 +63,7 @@ export const createJob = async <
     .table('jobs')
     .insert({ ...args, name, status: 'queued', queuedTime: Date.now() })
 
-  await ctx.scheduler.runAfter(0, internal.jobs.runner.processJobs, {})
+  await ctx.scheduler.runAfter(0, internal.jobs.processJobs, {})
   return jobId
 }
 
@@ -46,7 +84,7 @@ export const jobResultSuccess = async (ctx: MutationCtx, args: { jobId: Id<'jobs
 
 export const jobResultError = async (
   ctx: MutationCtx,
-  args: { jobId: Id<'jobs'>; error: z.infer<typeof jobErrorSchema> },
+  args: { jobId: Id<'jobs'>; error: { code: string; message: string; fatal: boolean } },
 ) => {
   const job = await ctx.table('jobs').getX(args.jobId)
 
@@ -63,7 +101,7 @@ export const handleJobError = async (
   if (err instanceof ConvexError && err.data.code) {
     if (err.data.code === 'invalid_acquire_job') return console.warn(err.message)
 
-    await ctx.runMutation(internal.jobs.runner.resultError, {
+    await ctx.runMutation(internal.jobs.resultError, {
       jobId,
       error: { code: err.data.code, message: err.data.message, fatal: err.data.fatal },
     })
@@ -73,7 +111,7 @@ export const handleJobError = async (
   }
 
   const message = err instanceof Error ? err.message : 'unknown error'
-  await ctx.runMutation(internal.jobs.runner.resultError, {
+  await ctx.runMutation(internal.jobs.resultError, {
     jobId,
     error: { code: 'unhandled', message, fatal: false },
   })
@@ -97,7 +135,7 @@ export const processJobs = internalMutation({
 export const resultError = internalMutation(jobResultError)
 
 const getJobDefinition = (jobName: string) => {
-  const jobDefinition = jobDefinitions[jobName as JobNames]
+  const jobDefinition = jobDefinitions[jobName as keyof typeof jobDefinitions]
   if (!jobDefinition) throw new ConvexError({ message: 'invalid job name', jobName })
   return jobDefinition
 }

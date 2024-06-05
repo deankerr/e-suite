@@ -2,7 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, jobResultSuccess } from '../jobs'
 import { insist } from '../shared/utils'
 
 export const init = internalMutation({
@@ -40,7 +40,7 @@ export const run = internalAction({
       width: input.width,
     })
 
-    await ctx.runMutation(internal.images.manage.createImageFile, {
+    await ctx.runMutation(internal.images.createImageFile, {
       ...metadata,
       fileId,
       imageId: input.imageId,

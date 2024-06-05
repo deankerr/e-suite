@@ -1,11 +1,13 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { internal } from '../_generated/api'
-import { httpAction } from '../_generated/server'
-import { internalMutation, internalQuery } from '../functions'
-import { imageFileSchema } from '../shared/entities'
+import { internal } from './_generated/api'
+import { httpAction } from './_generated/server'
+import { internalAction, internalMutation, internalQuery } from './functions'
 import { imageFields } from './schema'
+import { imageFileSchema } from './shared/entities'
+
+import type { Id } from './_generated/dataModel'
 
 const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]
 
@@ -71,10 +73,37 @@ export const getImageWithFiles = internalQuery({
   },
 })
 
+//* actions
+export const optimize = internalAction({
+  args: {
+    imageId: zid('images'),
+    originFileId: zid('_storage'),
+    width: z.number(),
+  },
+  handler: async (ctx, args): Promise<Id<'_storage'>> => {
+    const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.convertToWebpAndResize, {
+      fileId: args.originFileId,
+      width: args.width,
+    })
+
+    await ctx.runMutation(internal.images.createImageFile, {
+      ...metadata,
+      fileId,
+      imageId: args.imageId,
+      format: 'webp',
+      isOriginFile: false,
+    })
+
+    console.log('optimized webp width:', metadata.width)
+    return fileId
+  },
+})
+
+//* http
 export const serveOptimizedImage = httpAction(async (ctx, request) => {
   const imageRequest = parseRequestUrl(request.url, '/i')
   if (!imageRequest || !imageRequest.id) return new Response('invalid request', { status: 400 })
-  const imageFiles = await ctx.runQuery(internal.images.manage.getImageWithFiles, {
+  const imageFiles = await ctx.runQuery(internal.images.getImageWithFiles, {
     imageId: imageRequest.id,
   })
   if (!imageFiles || !imageFiles.original) return new Response('invalid image id', { status: 400 })
@@ -93,7 +122,7 @@ export const serveOptimizedImage = httpAction(async (ctx, request) => {
 
   console.log('targetWidth', targetWidth, 'not found')
   // create optimized file for width
-  const fileId = await ctx.runAction(internal.images.actions.optimize, {
+  const fileId = await ctx.runAction(internal.images.optimize, {
     imageId: imageFiles.image._id,
     originFileId: imageFiles.original.fileId,
     width: targetWidth,

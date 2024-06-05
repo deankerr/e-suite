@@ -3,8 +3,8 @@ import OpenAI from 'openai'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
-import { serveOptimizedImage } from './images/manage'
-import { handleWebhook } from './providers/clerk'
+import { serveOptimizedImage } from './images'
+import { handleWebhook } from './lib/clerk'
 import { hasDelimiter } from './shared/utils'
 
 import type { Id } from './_generated/dataModel'

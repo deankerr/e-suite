@@ -2,7 +2,7 @@ import { zid } from 'convex-helpers/server/zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
 import { fileAttachmentRecordSchema } from '../shared/structures'
@@ -57,7 +57,7 @@ export const run = internalAction({
             })
 
       if (error) {
-        await ctx.runMutation(internal.jobs.runner.resultError, {
+        await ctx.runMutation(internal.jobs.resultError, {
           jobId: args.jobId,
           error: { code: 'endpoint_error', message: error.message, fatal: true },
         })

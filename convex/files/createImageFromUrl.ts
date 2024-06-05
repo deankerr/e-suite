@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, handleJobError, jobResultSuccess } from '../jobs/runner'
+import { acquireJob, handleJobError, jobResultSuccess } from '../jobs'
 import { fileAttachmentRecordSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
 
@@ -37,7 +37,7 @@ export const run = internalAction({
         url: input.url,
       })
 
-      const imageId = await ctx.runMutation(internal.images.manage.createImage, {
+      const imageId = await ctx.runMutation(internal.images.createImage, {
         ...metadata,
         fileId,
         messageId: input.messageId,
