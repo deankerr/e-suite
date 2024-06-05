@@ -14,7 +14,7 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
-  ignorePatterns: ['.cosmos', 'convex/_generated'],
+  ignorePatterns: ['.cosmos', 'convex/_generated', 'scripts'],
   reportUnusedDisableDirectives: true,
   rules: {
     // downgrade unused/let vars to warning

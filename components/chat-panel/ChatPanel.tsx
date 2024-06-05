@@ -33,7 +33,7 @@ export const ChatPanel = ({ threadId, onClosePanel, className, ...props }: ChatP
 
         <div className="flex grow">
           {thread ? (
-            <ChatMessages className="mx-auto max-w-2xl" thread={thread} />
+            <ChatMessages className="mx-auto max-w-4xl" thread={thread} />
           ) : thread === null ? (
             <FileQuestionIcon className="m-auto text-red-11" />
           ) : (

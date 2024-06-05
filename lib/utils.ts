@@ -102,3 +102,31 @@ export const getMessageShape = (args: Partial<EMessageWithContent>): EMessageWit
 
   return messageWithContentSchema.parse(message)
 }
+
+export function stringToHex(str: string) {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  let color = '#'
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff
+    color += ('00' + value.toString(16)).slice(-2)
+  }
+
+  return color
+}
+
+export function endpointCode(endpoint: string) {
+  switch (endpoint) {
+    case 'openai':
+      return 'OA'
+    case 'openrouter':
+      return 'OR'
+    case 'together':
+      return 'TA'
+    default:
+      return endpoint.slice(0, 2).toUpperCase()
+  }
+}

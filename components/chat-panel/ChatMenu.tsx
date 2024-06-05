@@ -14,6 +14,7 @@ import {
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
 import { useUpdateThreadConfig } from '@/lib/api'
 import { useModelData } from '@/lib/hooks'
+import { endpointCode } from '@/lib/utils'
 
 import type { EThreadWithContent } from '@/convex/shared/structures'
 
@@ -120,7 +121,10 @@ export const ChatMenu = ({ thread, ...props }: ChatMenuProps) => {
                       setOpen(false)
                     }}
                   >
-                    {model.name}
+                    <div className="grow truncate">{model.name}</div>
+                    <div className="shrink-0 text-xs text-gray-10">
+                      {endpointCode(model.endpoint)}
+                    </div>
                   </CommandItem>
                 ))}
               </>
