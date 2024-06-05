@@ -131,6 +131,7 @@ export const threadFields = {
   config: inferenceAttachmentSchema,
   saved: inferenceAttachmentSchema.array(),
   instructions: zMessageTextContent.optional(),
+  latestActivityTime: z.number(),
 }
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })

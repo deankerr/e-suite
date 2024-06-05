@@ -39,6 +39,7 @@ export const createThread = mutation({
           ? defaultChatInferenceConfig
           : defaultImageInferenceConfig,
       saved: [],
+      latestActivityTime: Date.now(),
     })
     return slug
   },

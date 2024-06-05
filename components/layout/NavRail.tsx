@@ -1,3 +1,4 @@
+import { CommandMenu } from '@/components/command-menu/CommandMenu'
 import { GlobalCommandMenu } from '@/components/command-menu/GlobalCommandMenu'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { Logo } from '@/components/ui/Logo'
@@ -12,6 +13,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
     >
       <Logo />
       <GlobalCommandMenu />
+      <CommandMenu />
       <div className="grow">{/* spacer */}</div>
       <UserButtons />
     </nav>
