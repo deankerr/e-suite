@@ -11,6 +11,7 @@ export type E_Thread = {
   title?: string
   slug: string
   instructions?: string
+  config: EInferenceAttachment
 
   latestActivityTime: number
   userId: string

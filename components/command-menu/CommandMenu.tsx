@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import { ImagePlusIcon, MenuIcon, MessageSquarePlusIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
 import {
@@ -28,6 +29,11 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
     (e) => e.key === 'j' && e.metaKey,
     () => setOpen(!open),
   )
+  const router = useRouter()
+  const goto = (path: string) => {
+    router.push(`${path}`)
+    setOpen(false)
+  }
 
   const threads = useUserThreadsList()
 
@@ -46,6 +52,10 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
             <ImagePlusIcon className="mr-2 size-4" />
             Start new Generation
           </CommandItem>
+          <CommandItem onSelect={() => goto('/c')}>
+            <MessageSquarePlusIcon className="mr-2 size-4" />
+            Multi Chats
+          </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
@@ -55,6 +65,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
               key={thread._id}
               value={thread.title ?? 'new thread ' + thread.slug}
               className="gap-2"
+              onSelect={() => goto(`/c/${thread.slug}`)}
             >
               <div className="grow truncate">{thread.title ?? 'new thread'}</div>
               <div className="shrink-0 text-xs text-gray-11">

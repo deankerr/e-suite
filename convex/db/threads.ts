@@ -13,6 +13,7 @@ const threadShape = (thread: Ent<'threads'>): E_Thread =>
     'title',
     'slug',
     'instructions',
+    'config',
     'latestActivityTime',
     'userId',
   ])

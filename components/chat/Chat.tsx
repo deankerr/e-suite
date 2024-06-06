@@ -1,8 +1,10 @@
 import { Card, IconButton, Inset } from '@radix-ui/themes'
 import { MessagesSquareIcon, XIcon } from 'lucide-react'
 
+import { ChatInput } from '@/components/chat/chat-input/ChatInput'
 import { ChatViewApiProvider } from '@/components/chat/ChatApiProvider'
 import { ChatMessages } from '@/components/chat/ChatMessages'
+import { TempChatMenu } from '@/components/chat/TempChatMenu'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { cn } from '@/lib/utils'
 
@@ -15,9 +17,13 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
     <Card {...props} className={cn('flex h-full w-full flex-col overflow-hidden', className)}>
       <Inset side="top" className="h-10 shrink-0 border-b px-1 text-sm flex-between">
         <div className="shrink-0 flex-start">
-          <IconButton variant="ghost" className="m-0 shrink-0">
-            <MessagesSquareIcon className="size-5" />
-          </IconButton>
+          {thread && (
+            <TempChatMenu thread={thread}>
+              <IconButton variant="ghost" className="m-0 shrink-0">
+                <MessagesSquareIcon className="size-5" />
+              </IconButton>
+            </TempChatMenu>
+          )}
         </div>
 
         {thread && <div className="grow truncate flex-start">{thread?.title ?? 'new thread'}</div>}
@@ -33,8 +39,8 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
 
       <div className="grow overflow-hidden">{thread && <ChatMessages thread={thread} />}</div>
 
-      <Inset side="bottom" className="h-10 shrink-0 border-t px-1 text-sm flex-between">
-        Footer
+      <Inset side="bottom" className="min-h-10 shrink-0 border-t px-1 text-sm flex-between">
+        {thread && <ChatInput className="mx-auto max-w-3xl" thread={thread} />}
       </Inset>
     </Card>
   )

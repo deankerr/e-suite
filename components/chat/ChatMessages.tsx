@@ -1,19 +1,66 @@
-import { Fragment } from 'react'
-import { MessageSquareIcon } from 'lucide-react'
-import Markdown from 'markdown-to-jsx'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { ImageCard } from '@/components/images/ImageCard'
+import { ChatMessage } from '@/components/chat/ChatMessage'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
+import { createMessageShape } from '@/convex/shared/utils'
+import { useViewerDetails } from '@/lib/api'
 import { useMessagesList } from '@/lib/api2'
 import { cn } from '@/lib/utils'
 
+import type { Id } from '@/convex/_generated/dataModel'
 import type { E_Message, E_Thread } from '@/convex/shared/types'
 
 type ChatMessagesProps = { thread: E_Thread } & React.ComponentProps<'div'>
 
 export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps) => {
   const messages = useMessagesList(thread._id)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  //^ start copied from prev
+  const { user } = useViewerDetails()
+  const chatCompletion = thread.config.type === 'chat-completion' ? thread.config : null
+
+  const scrollPanelTo = useCallback(
+    (position: 'start' | 'end', options?: ScrollIntoViewOptions) => {
+      const scroll = scrollRef.current
+      if (!scroll) return
+
+      const top = position === 'start' ? 0 : scroll.scrollHeight
+      scroll.scrollTo({
+        top,
+        behavior: 'smooth',
+        ...options,
+      })
+    },
+    [],
+  )
+
+  // scroll to latest message if content/files are updated
+  const trackLatestMessage = true
+  const [latestMessage, setLatestMessage] = useState<E_Message | null>(null)
+  const latest = messages.data?.at(-1)
+
+  useEffect(() => {
+    if (!trackLatestMessage || !latest) {
+      setLatestMessage(null)
+      return
+    }
+
+    const isNewMessage = latest._id !== latestMessage?._id
+
+    if (isNewMessage) {
+      scrollPanelTo('end', { behavior: latestMessage === null ? 'instant' : 'smooth' })
+      setLatestMessage(latest)
+      return
+    } else {
+      const contentHasChanged = latest.content !== latestMessage?.content
+      const filesHaveChanged = latest.files && latest.files.length !== latestMessage?.files?.length
+      if (contentHasChanged || filesHaveChanged) {
+        scrollPanelTo('end')
+        setLatestMessage(latest)
+      }
+    }
+  }, [trackLatestMessage, latestMessage, latest, scrollPanelTo])
+  //^ end copied from prev
 
   if (messages.isError) return <div>Error {messages.error.message}</div>
   if (messages.isPending) return <LoadingSpinner />
@@ -21,59 +68,31 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
   return (
     <div
       {...props}
-      className={cn('flex h-full flex-col gap-2 divide-y overflow-y-auto px-2', className)}
+      ref={scrollRef}
+      className={cn(
+        'flex h-full flex-col gap-3 overflow-y-auto overflow-x-hidden px-2 py-3',
+        className,
+      )}
     >
+      {chatCompletion && user && (
+        <ChatMessage
+          className="rounded bg-gold-4 px-2"
+          message={createMessageShape({
+            _id: '_instructions' as Id<'messages'>,
+            _creationTime: 0,
+            series: 0,
+            threadId: thread._id as Id<'threads'>,
+            role: 'system',
+            name: 'Instructions',
+            content: thread.instructions,
+            userId: user._id as Id<'users'>,
+          })}
+        />
+      )}
+
       {messages.data.map((message) => (
         <ChatMessage key={message._id} message={message} />
       ))}
-    </div>
-  )
-}
-
-type ChatMessageProps = { message: E_Message } & React.ComponentProps<'div'>
-
-export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) => {
-  const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
-  const title = textToImage ? textToImage.parameters.prompt : message?.name || message.role
-
-  return (
-    <div {...props} className={cn('mx-auto w-full max-w-3xl py-2', className)}>
-      <div className="h-8 gap-1.5 flex-start">
-        <MessageSquareIcon className="size-4 flex-none text-accent-11" />
-        <div className="grow truncate text-sm font-medium capitalize">{title}</div>
-      </div>
-
-      {message.files && message.files.length > 0 && (
-        <div
-          className={cn(
-            'mx-auto grid w-fit max-w-2xl gap-2 overflow-hidden py-1',
-            message.files.length > 1 ? 'grid-cols-2' : 'place-content-center',
-          )}
-        >
-          {message.files.map((file) => {
-            if (file.type !== 'image') return null
-            return (
-              <ImageCard key={file.id} image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
-            )
-          })}
-        </div>
-      )}
-
-      {message.content && (
-        <div className="prose prose-stone prose-invert mx-auto max-w-none prose-pre:p-0">
-          <Markdown
-            options={{
-              wrapper: Fragment,
-              disableParsingRawHTML: true,
-              overrides: {
-                code: SyntaxHighlightedCode,
-              },
-            }}
-          >
-            {message.content}
-          </Markdown>
-        </div>
-      )}
     </div>
   )
 }

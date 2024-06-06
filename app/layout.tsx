@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Theme accentColor="orange" appearance="dark" panelBackground="solid">
               {children}
               <PartyBoy />
-              <Toaster richColors />
+              <Toaster position="top-right" theme="light" closeButton richColors />
               <HighlightLoader />
             </Theme>
           </ClientProviders>

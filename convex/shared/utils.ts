@@ -1,6 +1,9 @@
+import { pick } from 'convex-helpers'
 import { ConvexError } from 'convex/values'
 import { z } from 'zod'
 
+import type { Doc } from '../_generated/dataModel'
+import type { E_Message } from './types'
 import type { Value } from 'convex/values'
 
 export function insist<T>(
@@ -27,6 +30,20 @@ export function hasDelimiter(text: string) {
     text.includes(',') ||
     text.length > 100
   )
+}
+
+export function createMessageShape(message: Doc<'messages'>): E_Message {
+  return pick(message, [
+    '_id',
+    '_creationTime',
+    'threadId',
+    'role',
+    'name',
+    'content',
+    'inference',
+    'series',
+    'userId',
+  ])
 }
 
 //* zod utils
