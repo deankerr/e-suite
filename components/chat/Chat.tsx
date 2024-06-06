@@ -1,5 +1,5 @@
 import { Card, IconButton, Inset } from '@radix-ui/themes'
-import { MessagesSquareIcon, XIcon } from 'lucide-react'
+import { MenuIcon, MessagesSquareIcon, XIcon } from 'lucide-react'
 
 import { ChatInput } from '@/components/chat/chat-input/ChatInput'
 import { ChatViewApiProvider } from '@/components/chat/ChatApiProvider'
@@ -17,6 +17,10 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
     <Card {...props} className={cn('flex h-full w-full flex-col overflow-hidden', className)}>
       <Inset side="top" className="h-10 shrink-0 border-b px-1 text-sm flex-between">
         <div className="shrink-0 flex-start">
+          <IconButton variant="ghost" color="cyan" className="m-0 shrink-0">
+            <MenuIcon className="size-5" />
+          </IconButton>
+
           {thread && (
             <TempChatMenu thread={thread}>
               <IconButton variant="ghost" className="m-0 shrink-0">

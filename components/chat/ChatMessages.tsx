@@ -70,7 +70,7 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
       {...props}
       ref={scrollRef}
       className={cn(
-        'flex h-full flex-col gap-3 overflow-y-auto overflow-x-hidden px-2 py-3',
+        'flex h-full flex-col gap-2 overflow-y-auto overflow-x-hidden px-2 py-3',
         className,
       )}
     >

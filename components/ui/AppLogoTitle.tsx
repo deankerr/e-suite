@@ -2,16 +2,16 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import NextImage from 'next/image'
-import Link from 'next/link'
+import NextLink from 'next/link'
 
 import LogoSunset from '@/assets/logo-sunset.svg'
 import { cn } from '@/lib/utils'
 
-type AppLogoTitleProps = { showText?: boolean } & Partial<React.ComponentProps<typeof Link>>
+type AppLogoTitleProps = { showText?: boolean } & Partial<React.ComponentProps<typeof NextLink>>
 
 export const AppLogoTitle = ({ showText = true, className, ...props }: AppLogoTitleProps) => {
   return (
-    <Link href="/" {...props} className={cn('w-7 flex-none', className)}>
+    <NextLink href="/" {...props} className={cn('w-7 flex-none', className)}>
       <motion.div className="gap-1 flex-start">
         <NextImage src={LogoSunset} alt="logo" className="size-7 flex-none" priority unoptimized />
         <AnimatePresence>
@@ -27,6 +27,6 @@ export const AppLogoTitle = ({ showText = true, className, ...props }: AppLogoTi
           )}
         </AnimatePresence>
       </motion.div>
-    </Link>
+    </NextLink>
   )
 }

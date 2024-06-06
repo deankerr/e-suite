@@ -16,7 +16,7 @@ export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) 
 
   return (
     <div {...props} className={cn('mx-auto w-full max-w-3xl py-2', className)}>
-      <div className="gap-1.5 flex-start">
+      <div className="mb-1 gap-1.5 border-b px-1 py-1 flex-start">
         <MessageSquareIcon className="size-4 flex-none text-accent-11" />
         <div className="grow truncate text-sm font-medium capitalize">{title}</div>
       </div>
@@ -24,7 +24,7 @@ export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) 
       {message.files && message.files.length > 0 && (
         <div
           className={cn(
-            'mx-auto grid w-full max-w-2xl justify-items-center gap-2 overflow-hidden py-1',
+            'mx-auto grid w-full justify-items-center gap-2 overflow-hidden py-1',
             message.files.length > 1 ? 'grid-cols-2' : '',
           )}
         >
@@ -38,7 +38,7 @@ export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) 
       )}
 
       {message.content && (
-        <div className="prose prose-stone prose-invert mx-auto max-w-none prose-pre:p-0">
+        <div className="prose prose-stone prose-invert mx-auto max-w-none px-1 prose-pre:p-0">
           <Markdown
             options={{
               wrapper: Fragment,

@@ -1,9 +1,9 @@
-import Link from 'next/link'
+import NextLink from 'next/link'
 
 export default function Page() {
   return (
     <div>
-      <Link href="/t">Threads</Link>
+      <NextLink href="/c">Chat</NextLink>
     </div>
   )
 }
