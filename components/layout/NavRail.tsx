@@ -8,7 +8,10 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
   return (
     <nav
       {...props}
-      className={cn('flex flex-col items-center gap-3 border-gray-4 bg-gray-1 p-3', className)}
+      className={cn(
+        'flex w-12 shrink-0 flex-col items-center gap-3 border-gray-4 bg-grayA-1 py-3 backdrop-blur',
+        className,
+      )}
     >
       <Logo />
       <CommandMenu />

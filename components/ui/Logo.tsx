@@ -11,7 +11,7 @@ export const Logo = ({ className, ...props }: LogoProps) => {
       {...props}
       src={LogoSunset}
       alt="logo"
-      className={cn('size-7 flex-none', className)}
+      className={cn('size-7 shrink-0', className)}
       priority
       unoptimized
     />

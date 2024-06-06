@@ -43,19 +43,10 @@
   opacity: 0.1;
 }
 
-/*
-#cmbr-container {
-  border: red solid 1px;
+.card-bg-1 {
+  --card-background-color: #1b1d1eb3;
 }
 
-#cmbr-panel-mask {
-  border: blue solid 1px;
+.card-bg-2 {
+  --card-background-color: #1e1d1bb3;
 }
-
-#cmbr-panel-container-m {
-  border: green solid 1px;
-} */
-
-/* #cmbr-rail-container {
-  visibility: hidden;
-} */

@@ -38,7 +38,7 @@ export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) 
       )}
 
       {message.content && (
-        <div className="prose prose-stone prose-invert mx-auto max-w-none px-1 prose-pre:p-0">
+        <div className="prose prose-sm prose-stone prose-invert mx-auto max-w-none px-1 prose-pre:p-0">
           <Markdown
             options={{
               wrapper: Fragment,

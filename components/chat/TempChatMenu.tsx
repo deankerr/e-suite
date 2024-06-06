@@ -42,7 +42,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
     >
       <Popover.Trigger asChild>{children}</Popover.Trigger>
 
-      <Popover.Content side="right" align="start" sideOffset={5} className="z-30 w-80">
+      <Popover.Content sideOffset={5} className="z-30 w-80">
         <Command>
           <CommandInput value={search} onValueChange={setSearch} />
           <CommandList>
