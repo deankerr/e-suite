@@ -1,9 +1,40 @@
-import { pick } from 'convex-helpers'
+import { asyncMap, pick } from 'convex-helpers'
 import { z } from 'zod'
 
 import { query } from '../functions'
+import { fileAttachmentRecordWithContentSchema } from '../shared/structures'
 
 import type { E_Message } from '../shared/types'
+import type { Ent, QueryCtx } from '../types'
+
+const messageShape = (message: Ent<'messages'>): E_Message =>
+  pick(message, [
+    '_id',
+    '_creationTime',
+    'threadId',
+    'role',
+    'name',
+    'content',
+    'inference',
+    'series',
+    'userId',
+  ])
+
+const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['files']) => {
+  if (!files) return undefined
+  const filesWithContent = await asyncMap(files, async (file) => {
+    if (file.type === 'image') {
+      return {
+        ...file,
+        image: await ctx.table('images').get(file.id),
+      }
+    }
+
+    return file
+  })
+  // ? replace
+  return fileAttachmentRecordWithContentSchema.array().parse(filesWithContent)
+}
 
 export const list = query({
   args: {
@@ -20,21 +51,12 @@ export const list = query({
       .order(args.order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(args.limit)
-      .map((message) =>
-        pick(message, [
-          '_id',
-          '_creationTime',
-          'threadId',
-          'role',
-          'name',
-          'content',
-          'inference',
-          'files',
-          'series',
-          'userId',
-        ]),
-      )
+      .map(async (message) => {
+        const shape = messageShape(message)
+        const files = await getFileAttachmentContent(ctx, message.files)
+        return { ...shape, files }
+      })
 
-    return messages
+    return messages.reverse()
   },
 })

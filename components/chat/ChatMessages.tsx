@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import { MessageSquareIcon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 
+import { ImageCard } from '@/components/images/ImageCard'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { useMessagesList } from '@/lib/api2'
@@ -36,24 +37,43 @@ export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) 
   const title = textToImage ? textToImage.parameters.prompt : message?.name || message.role
 
   return (
-    <div {...props} className={cn('py-2', className)}>
+    <div {...props} className={cn('mx-auto w-full max-w-3xl py-2', className)}>
       <div className="h-8 gap-1.5 flex-start">
         <MessageSquareIcon className="size-4 flex-none text-accent-11" />
-        <div className="grow truncate text-xs font-medium capitalize">{title}</div>
+        <div className="grow truncate text-sm font-medium capitalize">{title}</div>
       </div>
-      <div className="prose prose-sm prose-stone prose-invert mx-auto min-h-6 max-w-none prose-pre:p-0">
-        <Markdown
-          options={{
-            wrapper: Fragment,
-            disableParsingRawHTML: true,
-            overrides: {
-              code: SyntaxHighlightedCode,
-            },
-          }}
+
+      {message.files && message.files.length > 0 && (
+        <div
+          className={cn(
+            'mx-auto grid w-fit max-w-2xl gap-2 overflow-hidden py-1',
+            message.files.length > 1 ? 'grid-cols-2' : 'place-content-center',
+          )}
         >
-          {message.content ?? '(empty)'}
-        </Markdown>
-      </div>
+          {message.files.map((file) => {
+            if (file.type !== 'image') return null
+            return (
+              <ImageCard key={file.id} image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
+            )
+          })}
+        </div>
+      )}
+
+      {message.content && (
+        <div className="prose prose-stone prose-invert mx-auto max-w-none prose-pre:p-0">
+          <Markdown
+            options={{
+              wrapper: Fragment,
+              disableParsingRawHTML: true,
+              overrides: {
+                code: SyntaxHighlightedCode,
+              },
+            }}
+          >
+            {message.content}
+          </Markdown>
+        </div>
+      )}
     </div>
   )
 }

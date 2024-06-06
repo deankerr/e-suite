@@ -1,4 +1,8 @@
-import type { EFileAttachmentRecord, EInferenceAttachment, EMessageRole } from './structures'
+import type {
+  EFileAttachmentRecordWithContent,
+  EInferenceAttachment,
+  EMessageRole,
+} from './structures'
 
 export type E_Thread = {
   _id: string
@@ -23,7 +27,7 @@ export type E_Message = {
   content?: string
 
   inference?: EInferenceAttachment
-  files?: EFileAttachmentRecord[]
+  files?: EFileAttachmentRecordWithContent[]
 
   userId: string
 }

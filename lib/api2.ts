@@ -23,6 +23,6 @@ export const useMessagesList = (
     threadId,
     ...options,
   })
-  result.data?.sort((a, b) => a._creationTime - b._creationTime)
+
   return result
 }

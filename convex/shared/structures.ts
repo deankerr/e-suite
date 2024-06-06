@@ -84,6 +84,7 @@ export const fileAttachmentRecordSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('image_url'), url: z.string() }),
 ])
 
+export type EFileAttachmentRecordWithContent = z.infer<typeof fileAttachmentRecordWithContentSchema>
 export const fileAttachmentRecordWithContentSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('image'), id: zid('images'), image: imageSchema }),
   z.object({ type: z.literal('image_url'), url: z.string() }),
