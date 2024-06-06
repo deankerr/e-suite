@@ -37,7 +37,7 @@ export const MessageImageContent = ({ message, className, ...props }: MessageIma
       )}
     >
       {files.map((file) => {
-        if (file.type === 'image') {
+        if (file.type === 'image' && file.image) {
           return (
             <ImageCard key={file.id} image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
           )

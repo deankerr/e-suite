@@ -72,6 +72,7 @@ export const textToImageInferenceSchema = z.object({
   updatedTime: z.number().optional(),
 })
 
+export type EInferenceAttachment = z.infer<typeof inferenceAttachmentSchema>
 export const inferenceAttachmentSchema = z.discriminatedUnion('type', [
   chatCompletionInferenceSchema,
   textToImageInferenceSchema,

@@ -1,22 +1,19 @@
 'use client'
 
-import { ChatView } from '@/components/chat/ChatView'
+import { Chat } from '@/components/chat/Chat'
 import { CommandMenu } from '@/components/command-menu/CommandMenu'
-import { useListThreads } from '@/lib/api'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { useUserThreadsList } from '@/lib/api2'
 
 const showMenu = false
 export default function Page() {
-  const threads = useListThreads()
+  const threads = useUserThreadsList()
   if (showMenu) return <CommandMenu asDialog={false} />
-  if (!threads) return <div>loading</div>
+  if (!threads) return <LoadingSpinner />
   return (
     <div className="flex h-full w-full snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden p-3">
-      {threads.map((thread) => (
-        <ChatView
-          key={thread.slug}
-          thread={thread}
-          className="flex-[1_0_min(100vw,28rem)] snap-center"
-        />
+      {threads.data?.map((thread) => (
+        <Chat key={thread.slug} thread={thread} className="flex-[1_0_min(100vw,36rem)]" />
       ))}
     </div>
   )

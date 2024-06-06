@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as db_messages from "../db/messages.js";
 import type * as db_threads from "../db/threads.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
 import type * as files_createImageFromUrl from "../files/createImageFromUrl.js";
@@ -63,6 +64,7 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "db/messages": typeof db_messages;
   "db/threads": typeof db_threads;
   "endpoints/openai": typeof endpoints_openai;
   "files/createImageFromUrl": typeof files_createImageFromUrl;
