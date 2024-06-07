@@ -1,25 +1,13 @@
-import { omit, pick } from 'convex-helpers'
+import { omit } from 'convex-helpers'
 import { z } from 'zod'
 
 import { mutation, query } from '../functions'
 import { threadFields } from '../schema'
+import { getThreadShape } from '../shared/shape'
 
 import type { Id } from '../_generated/dataModel'
 import type { EThread } from '../shared/types'
-import type { Ent, QueryCtx } from '../types'
-
-const threadShape = (thread: Ent<'threads'>): EThread =>
-  pick(thread, [
-    '_id',
-    '_creationTime',
-    'title',
-    'slug',
-    'instructions',
-    'currentInferenceConfig',
-    'savedInferenceConfigs',
-    'updatedAtTime',
-    'userId',
-  ])
+import type { QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   const id = ctx.unsafeDb.normalizeId('threads', slugOrId)
@@ -35,7 +23,7 @@ export const get = query({
   },
   handler: async (ctx, args): Promise<EThread | null> => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    return thread ? threadShape(thread) : null
+    return thread ? getThreadShape(thread) : null
   },
 })
 
@@ -48,7 +36,7 @@ export const list = query({
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(threadShape)
+      .map(getThreadShape)
 
     return threads
   },

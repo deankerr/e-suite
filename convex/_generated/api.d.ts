@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as db_chatModels from "../db/chatModels.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_threads from "../db/threads.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
@@ -46,6 +47,7 @@ import type * as rules from "../rules.js";
 import type * as shared_defaults from "../shared/defaults.js";
 import type * as shared_entities from "../shared/entities.js";
 import type * as shared_models from "../shared/models.js";
+import type * as shared_shape from "../shared/shape.js";
 import type * as shared_structures from "../shared/structures.js";
 import type * as shared_types from "../shared/types.js";
 import type * as shared_utils from "../shared/utils.js";
@@ -62,6 +64,7 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "db/chatModels": typeof db_chatModels;
   "db/messages": typeof db_messages;
   "db/threads": typeof db_threads;
   "endpoints/openai": typeof endpoints_openai;
@@ -94,6 +97,7 @@ declare const fullApi: ApiFromModules<{
   "shared/defaults": typeof shared_defaults;
   "shared/entities": typeof shared_entities;
   "shared/models": typeof shared_models;
+  "shared/shape": typeof shared_shape;
   "shared/structures": typeof shared_structures;
   "shared/types": typeof shared_types;
   "shared/utils": typeof shared_utils;

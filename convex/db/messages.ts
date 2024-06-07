@@ -1,9 +1,10 @@
-import { asyncMap, pick } from 'convex-helpers'
+import { asyncMap } from 'convex-helpers'
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
 import { createJob } from '../jobs'
+import { getMessageShape } from '../shared/shape'
 import {
   fileAttachmentRecordWithContentSchema,
   inferenceSchema,
@@ -11,24 +12,11 @@ import {
   metadataKVSchema,
 } from '../shared/structures'
 import { zMessageName, zMessageTextContent } from '../shared/utils'
+import { generateSlug } from '../utils'
 
 import type { Id } from '../_generated/dataModel'
 import type { EMessage } from '../shared/types'
 import type { Ent, QueryCtx } from '../types'
-
-const messageShape = (message: Ent<'messages'>): EMessage =>
-  pick(message, [
-    '_id',
-    '_creationTime',
-    'threadId',
-    'role',
-    'name',
-    'content',
-    'inference',
-    'series',
-    'metadata',
-    'userId',
-  ])
 
 const getNextMessageSeries = async (thread: Ent<'threads'>) => {
   const prev = await thread.edge('messages').order('desc').first()
@@ -73,7 +61,7 @@ export const list = query({
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(args.limit)
       .map(async (message) => {
-        const shape = messageShape(message)
+        const shape = getMessageShape(message)
         const files = await getFileAttachmentContent(ctx, message.files)
         return { ...shape, files }
       })
@@ -93,12 +81,16 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
-    if (!args.threadId) throw new Error('Not implemented') // TODO create thread
-    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    const thread = threadId ? await ctx.table('threads').getX(threadId) : null
-    if (!thread) throw new Error(`invalid thread: ${args.threadId}`)
-
-    await ctx.table('threads').getX(thread._id).patch({ updatedAtTime: Date.now() })
+    const thread = args.threadId
+      ? await ctx
+          .table('threads')
+          .getX(args.threadId as Id<'threads'>)
+          .patch({ updatedAtTime: Date.now() })
+          .get()
+      : await ctx
+          .table('threads')
+          .insert({ userId: user._id, slug: await generateSlug(ctx), updatedAtTime: Date.now() })
+          .get()
 
     const nextSeriesNumber = await getNextMessageSeries(thread)
     const userMessageId = await ctx.table('messages').insert({

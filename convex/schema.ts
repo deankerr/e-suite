@@ -14,6 +14,43 @@ import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
 const timeToDelete = ms('1 day')
 
+const sharedModelFields = {
+  slug: z.string(),
+  name: z.string(),
+  description: z.string(),
+  creatorName: z.string(),
+  link: z.string(),
+
+  license: z.string(),
+  tags: z.string().array(),
+  coverImageUrl: z.string().optional(),
+
+  endpoints: z
+    .object({
+      endpoint: z.string(),
+      model: z.string(),
+      pricing: z.object({
+        tokenInput: z.number().optional(),
+        tokenOutput: z.number().optional(),
+        imageInput: z.number().optional(),
+        imageOutput: z.number().optional(),
+      }),
+      maxOutputTokens: z.number().optional(),
+      isModerated: z.boolean().optional(),
+    })
+    .array(),
+}
+
+export const chatModelFields = {
+  ...sharedModelFields,
+  numParameters: z.number(),
+  contextLength: z.number(),
+  maxOutputTokens: z.number(),
+  tokenizer: z.string(),
+  stop: z.string().array(),
+}
+const chatModels = defineEnt(zodToConvexFields(chatModelFields))
+
 export const jobAttributeFields = {
   threadId: zid('threads').optional(),
   messageId: zid('messages').optional(),
@@ -140,6 +177,7 @@ export const threadFields = {
     .array()
     .optional(),
   updatedAtTime: z.number(),
+  metadata: metadataKVSchema.array().optional(),
 }
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -167,8 +205,17 @@ const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
   .field('secret', zodToConvex(z.string()), { unique: true })
   .edge('user')
 
+export const endpointDataCacheFields = {
+  endpoint: z.string(),
+  name: z.string(),
+  data: z.string(),
+}
+const endpointDataCache = defineEnt(zodToConvexFields(endpointDataCacheFields))
+
 const schema = defineEntSchema(
   {
+    chatModels,
+    endpointDataCache,
     files,
     jobs,
     images,

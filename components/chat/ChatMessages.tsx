@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ChatMessage } from '@/components/chat/ChatMessage'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { createMessageShape } from '@/convex/shared/utils'
+import { getMessageShape } from '@/convex/shared/shape'
 import { useMessagesList, useViewerDetails } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
 
@@ -76,7 +76,7 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
       {chatCompletion && user && (
         <ChatMessage
           className="rounded bg-gold-4 px-2"
-          message={createMessageShape({
+          message={getMessageShape({
             _id: '_instructions' as Id<'messages'>,
             _creationTime: 0,
             series: 0,
