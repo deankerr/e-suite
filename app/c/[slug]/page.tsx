@@ -1,7 +1,7 @@
 'use client'
 
 import { Chat } from '@/components/chat/Chat'
-import { useThread } from '@/lib/api2'
+import { useThread } from '@/lib/queries'
 
 export default function Page({ params }: { params: { slug: string } }) {
   const slug = params.slug

@@ -6,9 +6,9 @@ import { ImageCard } from '@/components/images/ImageCard'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { cn } from '@/lib/utils'
 
-import type { E_Message } from '@/convex/shared/types'
+import type { EMessage } from '@/convex/shared/types'
 
-type ChatMessageProps = { message: E_Message } & React.ComponentProps<'div'>
+type ChatMessageProps = { message: EMessage } & React.ComponentProps<'div'>
 
 export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) => {
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null

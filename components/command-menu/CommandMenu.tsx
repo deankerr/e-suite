@@ -18,8 +18,8 @@ import {
 } from '@/components/ui/Command'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Logo } from '@/components/ui/Logo'
-import { useUserThreadsList } from '@/lib/api2'
 import { commandMenuOpenAtom } from '@/lib/atoms'
+import { useUserThreadsList } from '@/lib/queries'
 
 type CommandMenuProps = {
   asDialog?: boolean

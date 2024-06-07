@@ -11,9 +11,9 @@ import { commandMenuOpenAtom } from '@/lib/atoms'
 import { useModelData } from '@/lib/hooks'
 import { cn, getThreadConfig } from '@/lib/utils'
 
-import type { E_Thread } from '@/convex/shared/types'
+import type { EThread } from '@/convex/shared/types'
 
-type ChatProps = { thread: E_Thread | null | undefined } & React.ComponentProps<typeof Card>
+type ChatProps = { thread: EThread | null | undefined } & React.ComponentProps<typeof Card>
 
 const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
   const setMenuOpen = useSetAtom(commandMenuOpenAtom)

@@ -3,13 +3,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChatMessage } from '@/components/chat/ChatMessage'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { createMessageShape } from '@/convex/shared/utils'
-import { useMessagesList, useViewerDetails } from '@/lib/api2'
+import { useMessagesList, useViewerDetails } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
 
 import type { Id } from '@/convex/_generated/dataModel'
-import type { E_Message, E_Thread } from '@/convex/shared/types'
+import type { EMessage, EThread } from '@/convex/shared/types'
 
-type ChatMessagesProps = { thread: E_Thread } & React.ComponentProps<'div'>
+type ChatMessagesProps = { thread: EThread } & React.ComponentProps<'div'>
 
 export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps) => {
   const messages = useMessagesList(thread._id)
@@ -35,7 +35,7 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
 
   // scroll to latest message if content/files are updated
   const trackLatestMessage = true
-  const [latestMessage, setLatestMessage] = useState<E_Message | null>(null)
+  const [latestMessage, setLatestMessage] = useState<EMessage | null>(null)
   const latest = messages.data?.at(-1)
 
   useEffect(() => {

@@ -13,9 +13,9 @@ import { Textarea } from '@/components/ui/Textarea'
 import { cn, getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
 
 import type { ETextToImageInference } from '@/convex/shared/structures'
-import type { E_Thread } from '@/convex/shared/types'
+import type { EThread } from '@/convex/shared/types'
 
-type ChatInputProps = { thread: E_Thread } & React.ComponentProps<'div'>
+type ChatInputProps = { thread: EThread } & React.ComponentProps<'div'>
 
 export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
   const api = useChatViewApi()

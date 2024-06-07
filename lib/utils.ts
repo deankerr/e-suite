@@ -6,7 +6,7 @@ import z from 'zod'
 
 import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
 
-import type { E_Thread } from '@/convex/shared/types'
+import type { EThread } from '@/convex/shared/types'
 import type { ClassValue } from 'clsx'
 
 export type { ClassNameValue } from 'tailwind-merge'
@@ -107,7 +107,7 @@ export function endpointCode(endpoint: string) {
   }
 }
 
-export function getThreadConfig(thread?: E_Thread | null) {
+export function getThreadConfig(thread?: EThread | null) {
   const current = thread?.currentInferenceConfig ?? defaultChatInferenceConfig
   const textToImage = current.type === 'text-to-image' ? current : null
   const chatCompletion = current.type === 'chat-completion' ? current : null

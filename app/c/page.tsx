@@ -2,7 +2,7 @@
 
 import { Chat } from '@/components/chat/Chat'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { useUserThreadsList } from '@/lib/api2'
+import { useUserThreadsList } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
 export default function Page() {

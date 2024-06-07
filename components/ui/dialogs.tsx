@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 
-import type { E_Thread } from '@/convex/shared/types'
+import type { EThread } from '@/convex/shared/types'
 
 type DeleteDialogProps = {
   threadId: string
@@ -63,7 +63,7 @@ export const DeleteThreadDialog = ({
 }
 
 type UpdateThreadTitleProps = {
-  thread: E_Thread
+  thread: EThread
   onSuccess?: (threadId: string) => void
   onClose?: () => void
 } & React.ComponentProps<typeof Dialog.Root>

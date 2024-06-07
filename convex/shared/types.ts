@@ -1,6 +1,6 @@
 import type { EFileAttachmentRecordWithContent, EInferenceConfig, EMessageRole } from './structures'
 
-export type E_Thread = {
+export type EThread = {
   _id: string
   _creationTime: number
 
@@ -19,7 +19,7 @@ export type E_Thread = {
   userId: string
 }
 
-export type E_Message = {
+export type EMessage = {
   _id: string
   _creationTime: number
   threadId: string

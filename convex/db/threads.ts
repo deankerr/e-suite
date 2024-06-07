@@ -5,10 +5,10 @@ import { mutation, query } from '../functions'
 import { threadFields } from '../schema'
 
 import type { Id } from '../_generated/dataModel'
-import type { E_Thread } from '../shared/types'
+import type { EThread } from '../shared/types'
 import type { Ent, QueryCtx } from '../types'
 
-const threadShape = (thread: Ent<'threads'>): E_Thread =>
+const threadShape = (thread: Ent<'threads'>): EThread =>
   pick(thread, [
     '_id',
     '_creationTime',
@@ -33,7 +33,7 @@ export const get = query({
   args: {
     slugOrId: z.string(),
   },
-  handler: async (ctx, args): Promise<E_Thread | null> => {
+  handler: async (ctx, args): Promise<EThread | null> => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     return thread ? threadShape(thread) : null
   },
@@ -41,7 +41,7 @@ export const get = query({
 
 export const list = query({
   args: {},
-  handler: async (ctx): Promise<E_Thread[]> => {
+  handler: async (ctx): Promise<EThread[]> => {
     const userId = ctx.viewerId
     if (!userId) return []
 

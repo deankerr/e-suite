@@ -13,10 +13,10 @@ import {
 import { zMessageName, zMessageTextContent } from '../shared/utils'
 
 import type { Id } from '../_generated/dataModel'
-import type { E_Message } from '../shared/types'
+import type { EMessage } from '../shared/types'
 import type { Ent, QueryCtx } from '../types'
 
-const messageShape = (message: Ent<'messages'>): E_Message =>
+const messageShape = (message: Ent<'messages'>): EMessage =>
   pick(message, [
     '_id',
     '_creationTime',
@@ -63,7 +63,7 @@ export const list = query({
     limit: z.number().max(200).default(50),
     order: z.enum(['asc', 'desc']).default('desc'),
   },
-  handler: async (ctx, args): Promise<E_Message[]> => {
+  handler: async (ctx, args): Promise<EMessage[]> => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
     if (!threadId) return []
 

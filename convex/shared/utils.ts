@@ -3,7 +3,7 @@ import { ConvexError } from 'convex/values'
 import { z } from 'zod'
 
 import type { Doc } from '../_generated/dataModel'
-import type { E_Message } from './types'
+import type { EMessage } from './types'
 import type { Value } from 'convex/values'
 
 export function insist<T>(
@@ -32,7 +32,7 @@ export function hasDelimiter(text: string) {
   )
 }
 
-export function createMessageShape(message: Doc<'messages'>): E_Message {
+export function createMessageShape(message: Doc<'messages'>): EMessage {
   return pick(message, [
     '_id',
     '_creationTime',
