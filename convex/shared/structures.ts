@@ -3,6 +3,8 @@ import { z } from 'zod'
 
 import { imageSchema, jobSchema, threadSchema, userSchema } from './entities'
 
+export const metadataKVSchema = z.object({ key: z.string(), value: z.string() })
+
 export type EChatModel = z.infer<typeof chatModelSchema>
 export const chatModelSchema = z.object({
   modelType: z.literal('chat'),
@@ -34,46 +36,32 @@ export const imageModelSchema = z.object({
 export type EChatCompletionInference = z.infer<typeof chatCompletionInferenceSchema>
 export const chatCompletionInferenceSchema = z.object({
   type: z.literal('chat-completion'),
-  resourceId: z.string(),
   endpoint: z.string(),
+  model: z.string(),
+  stream: z.boolean().optional(),
 
-  parameters: z.object({
-    model: z.string(),
-    max_tokens: z.number().optional(),
-    stop: z.string().array().optional(),
-    temperature: z.number().optional(),
-    top_p: z.number().optional(),
-    top_k: z.number().optional(),
-    repetition_penalty: z.number().optional(),
-    stream: z.boolean().optional(),
-  }),
-
-  name: z.string().optional(),
-  keyword: z.string().optional(),
-  updatedTime: z.number().optional(),
+  max_tokens: z.number().optional(),
+  stop: z.string().array().optional(),
+  temperature: z.number().optional(),
+  top_p: z.number().optional(),
+  top_k: z.number().optional(),
+  repetition_penalty: z.number().optional(),
 })
 
 export type ETextToImageInference = z.infer<typeof textToImageInferenceSchema>
 export const textToImageInferenceSchema = z.object({
   type: z.literal('text-to-image'),
-  resourceId: z.string(),
   endpoint: z.string(),
+  model: z.string(),
 
-  parameters: z.object({
-    model: z.string(),
-    prompt: z.string(),
-    width: z.number(),
-    height: z.number(),
-    n: z.number(),
-  }),
-
-  name: z.string().optional(),
-  keyword: z.string().optional(),
-  updatedTime: z.number().optional(),
+  prompt: z.string(),
+  width: z.number(),
+  height: z.number(),
+  n: z.number(),
 })
 
-export type EInferenceAttachment = z.infer<typeof inferenceAttachmentSchema>
-export const inferenceAttachmentSchema = z.discriminatedUnion('type', [
+export type EInference = z.infer<typeof inferenceSchema>
+export const inferenceSchema = z.discriminatedUnion('type', [
   chatCompletionInferenceSchema,
   textToImageInferenceSchema,
 ])
@@ -111,7 +99,7 @@ export const messageWithContentSchema = z.object({
   name: z.string().optional(),
   content: z.string().optional(),
 
-  inference: inferenceAttachmentSchema.optional(),
+  inference: inferenceSchema.optional(),
   files: z.array(fileAttachmentRecordWithContentSchema).optional(),
   jobs: z.array(jobSchema),
 
@@ -121,8 +109,8 @@ export const messageWithContentSchema = z.object({
 export type EThreadWithContent = z.infer<typeof threadWithContentSchema>
 export const threadWithContentSchema = threadSchema.merge(
   z.object({
-    config: inferenceAttachmentSchema,
-    saved: inferenceAttachmentSchema.array(),
+    config: inferenceSchema,
+    saved: inferenceSchema.array(),
     messages: z.array(messageWithContentSchema),
     owner: userSchema,
   }),

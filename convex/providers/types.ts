@@ -15,6 +15,5 @@ export type TextToImageHandlerError = {
 }
 
 export type TextToImageHandler = (args: {
-  parameters: ETextToImageInference['parameters']
-  n: number
+  parameters: ETextToImageInference
 }) => Promise<TextToImageHandlerResult | TextToImageHandlerError>

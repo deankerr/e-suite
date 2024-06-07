@@ -43,17 +43,15 @@ export const run = internalAction({
       })
       if (!message) return
 
-      const { endpoint, parameters } = message.inference
+      const { inference } = message
 
       const { result, error } =
-        endpoint === 'sinkin'
+        inference.endpoint === 'sinkin'
           ? await sinkin.textToImage({
-              parameters,
-              n: parameters.n,
+              parameters: inference,
             })
           : await fal.textToImage({
-              parameters,
-              n: parameters.n,
+              parameters: inference,
             })
 
       if (error) {

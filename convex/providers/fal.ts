@@ -35,13 +35,11 @@ falClient.config({
 
 export const textToImage: TextToImageHandler = async ({
   parameters,
-  n,
 }: {
-  parameters: ETextToImageInference['parameters']
-  n: number
+  parameters: ETextToImageInference
 }) => {
   try {
-    const { model, width, height, prompt } = parameters
+    const { model, width, height, prompt, n } = parameters
     if (!(model in textToImageModels))
       throw new ConvexError({ message: 'unsupported model', model })
 
@@ -65,6 +63,8 @@ export const textToImage: TextToImageHandler = async ({
       prompt,
       image_size,
       num_images: n,
+      expand_prompt: false,
+      enable_safety_checker: false,
     })
     if (!parsedInput.success) {
       console.error(parsedInput.error.issues)

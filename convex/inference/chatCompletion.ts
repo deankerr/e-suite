@@ -67,17 +67,16 @@ export const run = internalAction({
         jobId: args.jobId,
       })
       const { message, messages, inference } = input
+      const { type, endpoint, ...parameters } = inference
+      const api = createOpenAiClient(endpoint)
 
-      const api = createOpenAiClient(inference.endpoint)
-
-      console.log(inference.type, inference.endpoint, inference.parameters)
+      console.log(type, endpoint, parameters)
       console.log(messages)
 
       const nonStreaming = async () => {
         const chatCompletion = await api.chat.completions.create({
-          ...inference.parameters,
+          ...parameters,
           messages,
-          max_tokens: 2048,
           stream: false,
         })
 
@@ -89,9 +88,8 @@ export const run = internalAction({
 
       const streaming = async () => {
         const stream = await api.chat.completions.create({
-          ...inference.parameters,
+          ...parameters,
           messages,
-          max_tokens: 2048,
           stream: true,
         })
 
@@ -112,7 +110,7 @@ export const run = internalAction({
         return body
       }
 
-      const isStreamingRequest = !!inference.parameters.stream
+      const isStreamingRequest = !!inference.stream
       const content = isStreamingRequest ? await streaming() : await nonStreaming()
 
       await ctx.runMutation(internal.inference.chatCompletion.complete, {

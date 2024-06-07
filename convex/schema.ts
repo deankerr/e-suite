@@ -6,8 +6,9 @@ import { z } from 'zod'
 
 import {
   fileAttachmentRecordSchema,
-  inferenceAttachmentSchema,
+  inferenceSchema,
   messageRolesEnum,
+  metadataKVSchema,
 } from './shared/structures'
 import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
@@ -113,10 +114,10 @@ export const messageFields = {
   name: zMessageName.optional(),
   content: zMessageTextContent.optional(),
 
-  inference: inferenceAttachmentSchema.optional(),
+  inference: inferenceSchema.optional(),
   files: fileAttachmentRecordSchema.array().optional(),
 
-  metadata: z.string().array().array().optional(),
+  metadata: metadataKVSchema.array().optional(),
   speechId: zid('speech').optional(),
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
@@ -128,8 +129,8 @@ const messages = defineEnt(zodToConvexFields(messageFields))
 
 export const threadFields = {
   title: zThreadTitle.optional(),
-  config: inferenceAttachmentSchema,
-  saved: inferenceAttachmentSchema.array(),
+  config: inferenceSchema,
+  saved: inferenceSchema.array(),
   instructions: zMessageTextContent.optional(),
   latestActivityTime: z.number(),
 }

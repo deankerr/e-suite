@@ -12,7 +12,7 @@ type ChatMessageProps = { message: E_Message } & React.ComponentProps<'div'>
 
 export const ChatMessage = ({ message, className, ...props }: ChatMessageProps) => {
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
-  const title = textToImage ? textToImage.parameters.prompt : message?.name || message.role
+  const title = textToImage ? textToImage.prompt : message?.name || message.role
 
   return (
     <div {...props} className={cn('mx-auto w-full max-w-3xl py-2', className)}>

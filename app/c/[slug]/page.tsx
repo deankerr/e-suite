@@ -8,7 +8,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const thread = useThread(slug)
 
   return (
-    <div className="w-full p-1">
+    <div className="w-full px-3 sm:py-3">
       <Chat thread={thread.data} />
     </div>
   )

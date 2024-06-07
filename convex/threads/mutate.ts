@@ -5,7 +5,7 @@ import { internalMutation, mutation } from '../functions'
 import { createJob } from '../jobs'
 import { messageFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
-import { inferenceAttachmentSchema } from '../shared/structures'
+import { inferenceSchema } from '../shared/structures'
 import { insist, zMessageName, zMessageTextContent, zThreadTitle } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getValidThreadBySlugOrId } from './query'
@@ -23,7 +23,7 @@ const getNextMessageSeries = async (thread: Ent<'threads'>) => {
 export const createThread = mutation({
   args: {
     title: zThreadTitle.optional(),
-    inference: inferenceAttachmentSchema.optional(),
+    inference: inferenceSchema.optional(),
     default: z.enum(['chat', 'image']).default('chat'),
   },
   handler: async (ctx, args) => {
@@ -71,7 +71,7 @@ export const updateThreadTitle = mutation({
 export const updateThreadConfig = mutation({
   args: {
     threadId: z.string(),
-    config: inferenceAttachmentSchema,
+    config: inferenceSchema,
   },
   handler: async (ctx, args) => {
     const thread = await getValidThreadBySlugOrId(ctx, args.threadId)
@@ -79,7 +79,7 @@ export const updateThreadConfig = mutation({
     return await ctx
       .table('threads')
       .getX(thread._id)
-      .patch({ config: { ...args.config, updatedTime: Date.now() } })
+      .patch({ config: { ...args.config } })
   },
 })
 
@@ -131,7 +131,7 @@ export const createMessage = mutation({
           await ctx
             .table('threads')
             .getX(thread._id)
-            .patch({ title: `Images: ${args.message.inference.parameters.prompt.slice(0, 256)}` })
+            .patch({ title: `Images: ${args.message.inference.prompt.slice(0, 256)}` })
         }
       }
     }

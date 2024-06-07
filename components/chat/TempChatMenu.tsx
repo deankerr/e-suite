@@ -21,7 +21,7 @@ type ChatMenuProps = { thread: E_Thread } & React.ComponentProps<typeof Popover.
 
 export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const { getModel, chatModels, imageModels } = useModelData()
-  const currentModel = getModel([thread.config.endpoint, thread.config.parameters.model])
+  const currentModel = getModel(thread.config.endpoint, thread.config.model)
   const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels
 
   const [open, setOpen] = useState(false)
@@ -94,20 +94,15 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                 {modelsList.map((model) => (
                   <CommandItem
                     key={model.resourceId}
-                    value={model.resourceId}
-                    onSelect={(resourceId) => {
-                      const model = getModel(resourceId)
+                    value={`${model.name} ${model.endpoint}`}
+                    onSelect={() => {
                       updateThreadConfig({
                         threadId: thread.slug,
                         config: {
                           ...thread.config,
                           endpoint: model.endpoint,
-                          resourceId: model.resourceId,
-                          parameters: {
-                            ...thread.config.parameters,
-                            model: model.endpointModelId,
-                          },
-                        } as any,
+                          model: model.endpointModelId,
+                        },
                       })
                       setOpen(false)
                     }}

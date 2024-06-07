@@ -18,7 +18,7 @@ type ChatProps = { thread: E_Thread | null | undefined } & React.ComponentProps<
 const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
   const setMenuOpen = useSetAtom(commandMenuOpenAtom)
   const { getModel } = useModelData()
-  const currentModel = thread ? getModel(thread.config.resourceId) : null
+  const currentModel = thread ? getModel(thread.config.endpoint, thread.config.model) : null
 
   return (
     <Card
@@ -75,7 +75,7 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
 }
 
 export const Chat = (props: ChatProps) => {
-  const threadId = props.thread?.slug ?? ''
+  const threadId = props.thread?._id ?? ''
   return (
     <ChatViewApiProvider threadId={threadId}>
       <ChatComponent {...props} />

@@ -28,13 +28,16 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
 
   const handleSendMessage = async () => {
     if (textToImage) {
-      await api.sendTextToImageMessage({ prompt, inference: textToImage })
+      await api.createMessages({
+        message: {},
+        inference: { ...textToImage, prompt: prompt },
+      })
       setPrompt('')
     }
 
     if (chatCompletion) {
-      await api.sendChatMessage({
-        content: prompt,
+      await api.createMessages({
+        message: { content: prompt },
         inference: chatCompletion,
       })
       setPrompt('')
@@ -42,14 +45,11 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
   }
 
   const { updateThreadConfig } = useUpdateThreadConfig()
-  const handleUpdateTTIConfig = (parameters: Partial<ETextToImageInference['parameters']>) => {
+  const handleUpdateTTIConfig = (parameters: Partial<ETextToImageInference>) => {
     if (!textToImage) return
     const config = {
       ...textToImage,
-      parameters: {
-        ...textToImage.parameters,
-        ...parameters,
-      },
+      ...parameters,
     }
     updateThreadConfig({ threadId: thread.slug, config })
   }
@@ -62,12 +62,12 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
       {textToImage && (
         <div className="mb-2 border-b border-gray-4 pb-2 flex-between">
           <QuantityControl
-            n={textToImage.parameters.n}
+            n={textToImage.n}
             onValueChange={(n) => handleUpdateTTIConfig({ n: Number(n) })}
           />
           <DimensionsControl
-            width={textToImage.parameters.width}
-            height={textToImage.parameters.height}
+            width={textToImage.width}
+            height={textToImage.height}
             onValueChange={(size: string) => {
               const { width, height } = getWidthHeightForEndpoint(size, textToImage.endpoint)
               handleUpdateTTIConfig({ width, height })

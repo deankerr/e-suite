@@ -14,12 +14,10 @@ const api = ky.extend({
 
 export const textToImage: TextToImageHandler = async ({
   parameters,
-  n,
 }: {
-  parameters: ETextToImageInference['parameters']
-  n: number
+  parameters: ETextToImageInference
 }) => {
-  const { model, prompt, width, height } = parameters
+  const { model, prompt, width, height, n } = parameters
 
   const body = new URLSearchParams()
 

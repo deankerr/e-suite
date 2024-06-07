@@ -14,12 +14,11 @@ export const useTwMediaQuery = () => {
 
 export const useModelData = () => {
   const models = [...chatModels, ...imageModels]
-  const getModel = (key: [endpoint: string, endpointModelId: string] | string) => {
-    const [endpoint = '', endpointModelId = ''] = typeof key === 'string' ? key.split('::') : key
+  const getModel = (endpoint: string, endpointModelId: string) => {
     const model = models.find(
       (model) => model.endpoint === endpoint && model.endpointModelId === endpointModelId,
     )
-    if (!model) throw new Error(`invalid model key: ${JSON.stringify(key)}`)
+    if (!model) throw new Error(`invalid model: ${endpoint} ${endpointModelId}`)
     return model
   }
 
