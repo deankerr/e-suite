@@ -1,4 +1,4 @@
-import type { EFileAttachmentRecordWithContent, EInference, EMessageRole } from './structures'
+import type { EFileAttachmentRecordWithContent, EInferenceConfig, EMessageRole } from './structures'
 
 export type E_Thread = {
   _id: string
@@ -7,9 +7,15 @@ export type E_Thread = {
   title?: string
   slug: string
   instructions?: string
-  config: EInference
 
-  latestActivityTime: number
+  currentInferenceConfig?: EInferenceConfig
+  savedInferenceConfigs?: {
+    inference: EInferenceConfig
+    name: string
+    command?: string
+  }[]
+
+  updatedAtTime: number
   userId: string
 }
 
@@ -23,7 +29,7 @@ export type E_Message = {
   name?: string
   content?: string
 
-  inference?: EInference
+  inference?: EInferenceConfig
   files?: EFileAttachmentRecordWithContent[]
   metadata?: { key: string; value: string }[]
 

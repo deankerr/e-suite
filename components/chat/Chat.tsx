@@ -9,7 +9,7 @@ import { TempChatMenu } from '@/components/chat/TempChatMenu'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { commandMenuOpenAtom } from '@/lib/atoms'
 import { useModelData } from '@/lib/hooks'
-import { cn } from '@/lib/utils'
+import { cn, getThreadConfig } from '@/lib/utils'
 
 import type { E_Thread } from '@/convex/shared/types'
 
@@ -18,7 +18,8 @@ type ChatProps = { thread: E_Thread | null | undefined } & React.ComponentProps<
 const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
   const setMenuOpen = useSetAtom(commandMenuOpenAtom)
   const { getModel } = useModelData()
-  const currentModel = thread ? getModel(thread.config.endpoint, thread.config.model) : null
+  const config = getThreadConfig(thread)
+  const currentModel = thread ? getModel(config.current.endpoint, config.current.model) : null
 
   return (
     <Card

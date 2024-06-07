@@ -49,8 +49,6 @@ import type * as shared_models from "../shared/models.js";
 import type * as shared_structures from "../shared/structures.js";
 import type * as shared_types from "../shared/types.js";
 import type * as shared_utils from "../shared/utils.js";
-import type * as threads_mutate from "../threads/mutate.js";
-import type * as threads_query from "../threads/query.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
@@ -99,8 +97,6 @@ declare const fullApi: ApiFromModules<{
   "shared/structures": typeof shared_structures;
   "shared/types": typeof shared_types;
   "shared/utils": typeof shared_utils;
-  "threads/mutate": typeof threads_mutate;
-  "threads/query": typeof threads_query;
   types: typeof types;
   users: typeof users;
   utils: typeof utils;

@@ -1,7 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { imageSchema, jobSchema, threadSchema, userSchema } from './entities'
+import { imageSchema } from './entities'
 
 export const metadataKVSchema = z.object({ key: z.string(), value: z.string() })
 
@@ -60,7 +60,7 @@ export const textToImageInferenceSchema = z.object({
   n: z.number(),
 })
 
-export type EInference = z.infer<typeof inferenceSchema>
+export type EInferenceConfig = z.infer<typeof inferenceSchema>
 export const inferenceSchema = z.discriminatedUnion('type', [
   chatCompletionInferenceSchema,
   textToImageInferenceSchema,
@@ -85,33 +85,3 @@ export const messageRole = {
   user: 'user',
 }
 export const messageRolesEnum = z.enum(['system', 'assistant', 'user'])
-
-export type EMessageWithContent = z.infer<typeof messageWithContentSchema>
-export const messageWithContentSchema = z.object({
-  _id: zid('messages'),
-  _creationTime: z.number(),
-  deletionTime: z.undefined(),
-  threadId: zid('threads'),
-  threadSlug: z.string(),
-  series: z.number(),
-
-  role: messageRolesEnum,
-  name: z.string().optional(),
-  content: z.string().optional(),
-
-  inference: inferenceSchema.optional(),
-  files: z.array(fileAttachmentRecordWithContentSchema).optional(),
-  jobs: z.array(jobSchema),
-
-  owner: userSchema,
-})
-
-export type EThreadWithContent = z.infer<typeof threadWithContentSchema>
-export const threadWithContentSchema = threadSchema.merge(
-  z.object({
-    config: inferenceSchema,
-    saved: inferenceSchema.array(),
-    messages: z.array(messageWithContentSchema),
-    owner: userSchema,
-  }),
-)

@@ -11,7 +11,7 @@ export const useThread = (slugOrId: string) => {
 
 export const useUserThreadsList = () => {
   const result = useQuery(api.db.threads.list, {})
-  result.data?.sort((a, b) => b.latestActivityTime - a.latestActivityTime)
+  result.data?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
   return result
 }
 

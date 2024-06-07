@@ -71,7 +71,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
             >
               <div className="grow truncate">{thread.title ?? 'new thread'}</div>
               <div className="max-w-16 shrink-0 text-right text-xs text-gray-10">
-                {formatDistanceToNow(new Date(thread.latestActivityTime), { addSuffix: true })}
+                {formatDistanceToNow(new Date(thread.updatedAtTime), { addSuffix: true })}
               </div>
             </CommandItem>
           ))}

@@ -129,10 +129,17 @@ const messages = defineEnt(zodToConvexFields(messageFields))
 
 export const threadFields = {
   title: zThreadTitle.optional(),
-  config: inferenceSchema,
-  saved: inferenceSchema.array(),
   instructions: zMessageTextContent.optional(),
-  latestActivityTime: z.number(),
+  currentInferenceConfig: inferenceSchema.optional(),
+  savedInferenceConfigs: z
+    .object({
+      inference: inferenceSchema,
+      name: zMessageName,
+      command: zMessageName.optional(),
+    })
+    .array()
+    .optional(),
+  updatedAtTime: z.number(),
 }
 const threads = defineEnt(zodToConvexFields(threadFields))
   .deletion('scheduled', { delayMs: timeToDelete })

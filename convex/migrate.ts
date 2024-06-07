@@ -5,8 +5,13 @@ export const threads = internalMutation(async (ctx) => {
   const threads = await ctx.table('threads')
 
   for (const thread of threads) {
-    const message = await thread.edge('messages').order('desc').first()
-    const time = message?._creationTime ?? thread._creationTime
-    // await thread.patch({ lastActivityTime: undefined, latestActivityTime: time })
+    // const time = thread.latestActivityTime ?? thread._creationTime
+    // const currentInferenceConfig = thread.config!
+    // await thread.patch({
+    //   latestActivityTime: undefined,
+    //   updatedAtTime: time,
+    //   config: undefined,
+    //   currentInferenceConfig,
+    // })
   }
 })

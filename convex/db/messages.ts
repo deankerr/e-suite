@@ -1,11 +1,18 @@
 import { asyncMap, pick } from 'convex-helpers'
+import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { mutation, query } from '../functions'
+import { internalMutation, mutation, query } from '../functions'
 import { createJob } from '../jobs'
-import { fileAttachmentRecordWithContentSchema, inferenceSchema } from '../shared/structures'
+import {
+  fileAttachmentRecordWithContentSchema,
+  inferenceSchema,
+  messageRolesEnum,
+  metadataKVSchema,
+} from '../shared/structures'
 import { zMessageName, zMessageTextContent } from '../shared/utils'
 
+import type { Id } from '../_generated/dataModel'
 import type { E_Message } from '../shared/types'
 import type { Ent, QueryCtx } from '../types'
 
@@ -42,6 +49,12 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['
   })
   // ? replace
   return fileAttachmentRecordWithContentSchema.array().parse(filesWithContent)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
+  return jobs
 }
 
 export const list = query({
@@ -85,7 +98,7 @@ export const create = mutation({
     const thread = threadId ? await ctx.table('threads').getX(threadId) : null
     if (!thread) throw new Error(`invalid thread: ${args.threadId}`)
 
-    await ctx.table('threads').getX(thread._id).patch({ latestActivityTime: Date.now() })
+    await ctx.table('threads').getX(thread._id).patch({ updatedAtTime: Date.now() })
 
     const nextSeriesNumber = await getNextMessageSeries(thread)
     const userMessageId = await ctx.table('messages').insert({
@@ -116,5 +129,44 @@ export const create = mutation({
     })
 
     return { threadId: thread._id, messageId: asstMessageId, jobId }
+  },
+})
+
+export const update = mutation({
+  args: {
+    messageId: z.string(),
+
+    role: messageRolesEnum,
+    name: zMessageName.optional(),
+    content: zMessageTextContent.optional(),
+    metadata: metadataKVSchema.array().optional(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx
+      .table('messages')
+      .getX(args.messageId as Id<'messages'>)
+      .patch(args)
+  },
+})
+
+export const remove = mutation({
+  args: {
+    messageId: z.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx
+      .table('messages')
+      .getX(args.messageId as Id<'messages'>)
+      .delete()
+  },
+})
+
+export const streamCompletionContent = internalMutation({
+  args: {
+    messageId: zid('messages'),
+    content: z.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('messages').getX(args.messageId).patch({ content: args.content })
   },
 })

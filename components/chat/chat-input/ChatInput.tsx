@@ -11,7 +11,7 @@ import {
 import { useChatViewApi } from '@/components/chat/ChatApiProvider'
 import { Textarea } from '@/components/ui/Textarea'
 import { useUpdateThreadConfig } from '@/lib/api'
-import { cn, getWidthHeightForEndpoint } from '@/lib/utils'
+import { cn, getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
 
 import type { ETextToImageInference } from '@/convex/shared/structures'
 import type { E_Thread } from '@/convex/shared/types'
@@ -23,12 +23,11 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
 
   const [prompt, setPrompt] = useState('')
 
-  const textToImage = thread.config.type === 'text-to-image' ? thread.config : null
-  const chatCompletion = thread.config.type === 'chat-completion' ? thread.config : null
+  const { textToImage, chatCompletion } = getThreadConfig(thread)
 
   const handleSendMessage = async () => {
     if (textToImage) {
-      await api.createMessages({
+      await api.createMessage({
         message: {},
         inference: { ...textToImage, prompt: prompt },
       })
@@ -36,7 +35,7 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
     }
 
     if (chatCompletion) {
-      await api.createMessages({
+      await api.createMessage({
         message: { content: prompt },
         inference: chatCompletion,
       })

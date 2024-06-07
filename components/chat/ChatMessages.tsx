@@ -17,7 +17,8 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
   const scrollRef = useRef<HTMLDivElement>(null)
   //^ start copied from prev
   const { user } = useViewerDetails()
-  const chatCompletion = thread.config.type === 'chat-completion' ? thread.config : null
+  const chatCompletion =
+    thread.currentInferenceConfig.type === 'chat-completion' ? thread.config : null
 
   const scrollPanelTo = useCallback(
     (position: 'start' | 'end', options?: ScrollIntoViewOptions) => {

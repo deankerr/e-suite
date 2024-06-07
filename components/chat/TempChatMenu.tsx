@@ -13,7 +13,7 @@ import {
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
 import { useUpdateThreadConfig } from '@/lib/api'
 import { useModelData } from '@/lib/hooks'
-import { endpointCode } from '@/lib/utils'
+import { endpointCode, getThreadConfig } from '@/lib/utils'
 
 import type { E_Thread } from '@/convex/shared/types'
 
@@ -21,7 +21,8 @@ type ChatMenuProps = { thread: E_Thread } & React.ComponentProps<typeof Popover.
 
 export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const { getModel, chatModels, imageModels } = useModelData()
-  const currentModel = getModel(thread.config.endpoint, thread.config.model)
+  const config = getThreadConfig(thread)
+  const currentModel = getModel(config.current.endpoint, config.current.model)
   const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels
 
   const [open, setOpen] = useState(false)
@@ -99,7 +100,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                       updateThreadConfig({
                         threadId: thread.slug,
                         config: {
-                          ...thread.config,
+                          ...config,
                           endpoint: model.endpoint,
                           model: model.endpointModelId,
                         },

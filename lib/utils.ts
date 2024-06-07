@@ -4,9 +4,9 @@ import { atomWithStorage } from 'jotai/utils'
 import { twMerge } from 'tailwind-merge'
 import z from 'zod'
 
-import { messageWithContentSchema } from '@/convex/shared/structures'
+import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
 
-import type { EMessageWithContent } from '@/convex/shared/structures'
+import type { E_Thread } from '@/convex/shared/types'
 import type { ClassValue } from 'clsx'
 
 export type { ClassNameValue } from 'tailwind-merge'
@@ -79,30 +79,6 @@ export const getWidthHeightForEndpoint = (size: string, endpoint: string) => {
   }
 }
 
-export const getMessageShape = (args: Partial<EMessageWithContent>): EMessageWithContent => {
-  const message = {
-    _id: '',
-    _creationTime: 0,
-    threadId: '_fakethread',
-    threadSlug: '_fakeslug',
-    series: 0,
-    role: 'user',
-    content: '',
-    files: [],
-    jobs: [],
-    ...args,
-    owner: args.owner || {
-      _id: '_fakeuser',
-      _creationTime: 0,
-      name: 'fakeuser',
-      imageUrl: '',
-      role: 'user',
-    },
-  }
-
-  return messageWithContentSchema.parse(message)
-}
-
 export function stringToHex(str: string) {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
@@ -129,4 +105,11 @@ export function endpointCode(endpoint: string) {
     default:
       return endpoint.slice(0, 2).toUpperCase()
   }
+}
+
+export function getThreadConfig(thread?: E_Thread | null) {
+  const current = thread?.currentInferenceConfig ?? defaultChatInferenceConfig
+  const textToImage = current.type === 'text-to-image' ? current : null
+  const chatCompletion = current.type === 'chat-completion' ? current : null
+  return { current, textToImage, chatCompletion }
 }

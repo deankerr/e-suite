@@ -99,9 +99,9 @@ export const run = internalAction({
           if (text) {
             body += text
             if (hasDelimiter(text)) {
-              await ctx.runMutation(internal.threads.mutate.streamCompletionContent, {
+              await ctx.runMutation(internal.db.messages.streamCompletionContent, {
                 messageId: message._id,
-                text: body,
+                content: body,
               })
             }
           }
