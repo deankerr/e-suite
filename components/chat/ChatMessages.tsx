@@ -3,9 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChatMessage } from '@/components/chat/ChatMessage'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { createMessageShape } from '@/convex/shared/utils'
-import { useViewerDetails } from '@/lib/api'
-import { useMessagesList } from '@/lib/api2'
-import { cn } from '@/lib/utils'
+import { useMessagesList, useViewerDetails } from '@/lib/api2'
+import { cn, getThreadConfig } from '@/lib/utils'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import type { E_Message, E_Thread } from '@/convex/shared/types'
@@ -17,8 +16,7 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
   const scrollRef = useRef<HTMLDivElement>(null)
   //^ start copied from prev
   const { user } = useViewerDetails()
-  const chatCompletion =
-    thread.currentInferenceConfig.type === 'chat-completion' ? thread.config : null
+  const { chatCompletion } = getThreadConfig(thread)
 
   const scrollPanelTo = useCallback(
     (position: 'start' | 'end', options?: ScrollIntoViewOptions) => {
@@ -86,7 +84,7 @@ export const ChatMessages = ({ thread, className, ...props }: ChatMessagesProps)
             role: 'system',
             name: 'Instructions',
             content: thread.instructions,
-            userId: user._id as Id<'users'>,
+            userId: user.data?._id as Id<'users'>,
           })}
         />
       )}

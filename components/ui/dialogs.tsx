@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Label } from '@radix-ui/react-label'
 import { AlertDialog, Button, Dialog, TextField } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
-import { useRemoveThread, useUpdateThreadTitle } from '@/lib/api'
+import { api } from '@/convex/_generated/api'
 
 import type { E_Thread } from '@/convex/shared/types'
 
@@ -20,10 +21,10 @@ export const DeleteThreadDialog = ({
   children,
   ...props
 }: DeleteDialogProps) => {
-  const remove = useRemoveThread()
+  const remove = useMutation(api.db.threads.remove)
 
   const handleRemove = () => {
-    remove({ slug: threadId })
+    remove({ threadId })
       .then(() => {
         toast.success('Thread deleted.')
         onSuccess?.(threadId)
@@ -75,10 +76,10 @@ export const UpdateThreadTitleDialog = ({
   ...props
 }: UpdateThreadTitleProps) => {
   const [title, setTitle] = useState('')
-  const update = useUpdateThreadTitle()
+  const update = useMutation(api.db.threads.update)
 
   const handleUpdate = () => {
-    update({ slug: thread.slug, title })
+    update({ threadId: thread._id, title })
       .then((threadId) => {
         toast.success('Thread title updated')
         onSuccess?.(threadId)

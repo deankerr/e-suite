@@ -1,4 +1,4 @@
-import { pick } from 'convex-helpers'
+import { omit, pick } from 'convex-helpers'
 import { z } from 'zod'
 
 import { mutation, query } from '../functions'
@@ -54,10 +54,11 @@ export const list = query({
   },
 })
 
+const updateArgs = omit(threadFields, ['updatedAtTime'])
 export const update = mutation({
   args: {
     threadId: z.string(),
-    ...threadFields,
+    ...updateArgs,
   },
   handler: async (ctx, args) => {
     return await ctx

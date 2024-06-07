@@ -2,6 +2,7 @@ import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import { BoxIcon, ChevronLeftIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 
+import { useChatViewApi } from '@/components/chat/ChatApiProvider'
 import {
   Command,
   CommandEmpty,
@@ -11,7 +12,6 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useUpdateThreadConfig } from '@/lib/api'
 import { useModelData } from '@/lib/hooks'
 import { endpointCode, getThreadConfig } from '@/lib/utils'
 
@@ -30,7 +30,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
 
-  const { updateThreadConfig } = useUpdateThreadConfig()
+  const api = useChatViewApi()
 
   return (
     <Popover.Root
@@ -97,10 +97,9 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                     key={model.resourceId}
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
-                      updateThreadConfig({
-                        threadId: thread.slug,
-                        config: {
-                          ...config,
+                      void api.updateThread({
+                        currentInferenceConfig: {
+                          ...config.current,
                           endpoint: model.endpoint,
                           model: model.endpointModelId,
                         },
@@ -125,7 +124,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
       )}
       {dialog === 'deleteThread' && (
         <DeleteThreadDialog
-          threadId={thread.slug}
+          threadId={thread._id}
           defaultOpen
           // onSuccess={() => multi.remove(thread.slug)}
           onClose={() => setDialog('')}

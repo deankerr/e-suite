@@ -26,3 +26,12 @@ export const useMessagesList = (
 
   return result
 }
+
+export const useViewer = () => useQuery(api.users.getViewer, {})
+
+export const useViewerDetails = (ownerId?: string) => {
+  const user = useQuery(api.users.getViewer, {})
+  const isOwner = user.data?._id === ownerId
+  const isAdmin = user.data?.role === 'admin'
+  return { user, isOwner, isAdmin }
+}

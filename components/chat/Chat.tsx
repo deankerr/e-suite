@@ -77,8 +77,9 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
 
 export const Chat = (props: ChatProps) => {
   const threadId = props.thread?._id ?? ''
+  const slug = props.thread?.slug ?? ''
   return (
-    <ChatViewApiProvider threadId={threadId}>
+    <ChatViewApiProvider threadId={threadId} slug={slug}>
       <ChatComponent {...props} />
     </ChatViewApiProvider>
   )

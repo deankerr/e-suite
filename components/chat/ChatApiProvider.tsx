@@ -8,11 +8,12 @@ const ChatViewApiContext = createContext<ChatApi | undefined>(undefined)
 
 type ChatViewApiProviderProps = {
   threadId: string
+  slug: string
   children: React.ReactNode
 }
 
-export const ChatViewApiProvider = ({ threadId, children }: ChatViewApiProviderProps) => {
-  const api = useChatApi(threadId)
+export const ChatViewApiProvider = ({ threadId, slug, children }: ChatViewApiProviderProps) => {
+  const api = useChatApi(threadId, slug)
   return <ChatViewApiContext.Provider value={api}>{children}</ChatViewApiContext.Provider>
 }
 

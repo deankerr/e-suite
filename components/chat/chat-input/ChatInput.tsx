@@ -10,7 +10,6 @@ import {
 
 import { useChatViewApi } from '@/components/chat/ChatApiProvider'
 import { Textarea } from '@/components/ui/Textarea'
-import { useUpdateThreadConfig } from '@/lib/api'
 import { cn, getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
 
 import type { ETextToImageInference } from '@/convex/shared/structures'
@@ -43,14 +42,14 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
     }
   }
 
-  const { updateThreadConfig } = useUpdateThreadConfig()
-  const handleUpdateTTIConfig = (parameters: Partial<ETextToImageInference>) => {
+  const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
     if (!textToImage) return
-    const config = {
-      ...textToImage,
-      ...parameters,
-    }
-    updateThreadConfig({ threadId: thread.slug, config })
+    await api.updateThread({
+      currentInferenceConfig: {
+        ...textToImage,
+        ...parameters,
+      },
+    })
   }
 
   return (
@@ -62,14 +61,14 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
         <div className="mb-2 border-b border-gray-4 pb-2 flex-between">
           <QuantityControl
             n={textToImage.n}
-            onValueChange={(n) => handleUpdateTTIConfig({ n: Number(n) })}
+            onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
           />
           <DimensionsControl
             width={textToImage.width}
             height={textToImage.height}
-            onValueChange={(size: string) => {
+            onValueChange={async (size: string) => {
               const { width, height } = getWidthHeightForEndpoint(size, textToImage.endpoint)
-              handleUpdateTTIConfig({ width, height })
+              void handleUpdateTTIConfig({ width, height })
             }}
           />
         </div>
