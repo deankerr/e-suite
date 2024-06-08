@@ -99,6 +99,7 @@ export const Textarea = React.forwardRef<AutosizeTextAreaRef, AutosizeTextAreaPr
       <textarea
         {...props}
         value={value}
+        defaultValue={defaultValue}
         ref={textAreaRef}
         rows={1}
         className={cn(

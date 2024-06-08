@@ -20,3 +20,5 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
     />
   )
 })
+
+export const TextFieldSlot = RxTextField.Slot

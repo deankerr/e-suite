@@ -3,8 +3,15 @@
 import { Card, Heading, Tabs } from '@radix-ui/themes'
 import { omit } from 'convex-helpers'
 import { useQuery } from 'convex/react'
+import Image from 'next/image'
 import { z } from 'zod'
 
+import AnthropicLogo from '@/assets/logos/anthropic.svg'
+import CohereLogo from '@/assets/logos/cohere.svg'
+import GoogleLogo from '@/assets/logos/google.svg'
+import MetaLogo from '@/assets/logos/meta.svg'
+import MistralAiLogo from '@/assets/logos/mistral.svg'
+import OpenAiLogo from '@/assets/logos/openai.svg'
 import { api } from '@/convex/_generated/api'
 import { chatModelFields } from '@/convex/schema'
 
@@ -20,6 +27,15 @@ export default function Page() {
       <div className="flex max-h-[85vh] gap-3 overflow-hidden">
         <CacheDataView data={openrouterData} />
         <CacheDataView data={togetherData} />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <Image src={AnthropicLogo} alt="" />
+        <Image src={CohereLogo} alt="" />
+        <Image src={GoogleLogo} alt="" />
+        <Image src={MetaLogo} alt="" />
+        <Image src={MistralAiLogo} alt="" />
+        <Image src={OpenAiLogo} alt="" />
       </div>
     </div>
   )
