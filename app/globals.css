@@ -33,6 +33,22 @@
 
 @tailwind utilities;
 
+.wt-title-1 {
+  @apply text-3xl font-semibold tracking-tight;
+}
+
+.wt-title-2 {
+  @apply text-2xl font-semibold tracking-[-0.02em];
+}
+
+.wt-title-3 {
+  @apply text-xl font-semibold tracking-[-0.018em];
+}
+
+.wt-title-4 {
+  @apply text-lg font-semibold;
+}
+
 .lucide {
   stroke-width: 1.5px;
 }
@@ -49,4 +65,9 @@
 
 .card-bg-2 {
   --card-background-color: #1e1d1bb3;
+}
+
+.card-translucent {
+  --color-panel: var(--color-panel-translucent);
+  --backdrop-filter-panel: blur(64px);
 }

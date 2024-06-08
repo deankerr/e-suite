@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, Card, Heading, Theme } from '@radix-ui/themes'
+import { Badge, Card, Heading } from '@radix-ui/themes'
 import { useQuery } from 'convex-helpers/react'
 import { useTitle } from 'react-use'
 
@@ -13,15 +13,11 @@ export default function Page() {
   useTitle('admin - chat models - browse')
   const models = useQuery(api.db.chatModels.list, {})
   return (
-    <Theme panelBackground="solid" asChild>
-      <div className="bg-gradient-to-br from-violet-3 to-orange-3 p-3">
-        <p>chat models</p>
-
-        <div className="grid grid-cols-3 gap-3">
-          {models.data?.map((model) => <ChatModelCard key={model._id} model={model} />)}
-        </div>
+    <div className="">
+      <div className="grid grid-cols-3 gap-3">
+        {models.data?.map((model) => <ChatModelCard key={model._id} model={model} />)}
       </div>
-    </Theme>
+    </div>
   )
 }
 

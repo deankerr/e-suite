@@ -1,6 +1,6 @@
 'use client'
 
-import { Heading, Tabs } from '@radix-ui/themes'
+import { Card, Heading, Tabs } from '@radix-ui/themes'
 import { omit } from 'convex-helpers'
 import { useQuery } from 'convex/react'
 import { z } from 'zod'
@@ -17,7 +17,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-3 p-3">
-      <div className="flex max-h-[90vh] gap-3 overflow-hidden">
+      <div className="flex max-h-[85vh] gap-3 overflow-hidden">
         <CacheDataView data={openrouterData} />
         <CacheDataView data={togetherData} />
       </div>
@@ -28,7 +28,7 @@ export default function Page() {
 const CacheDataView = ({ data }: { data?: ParsedCacheData }) => {
   if (!data) return null
   return (
-    <div className="flex flex-1 flex-col rounded-lg bg-gray-2 p-3">
+    <Card className="flex flex-1 flex-col rounded-lg bg-gray-2 p-3">
       <Heading size="3">
         {data.endpoint} / {data.name}
       </Heading>
@@ -53,7 +53,7 @@ const CacheDataView = ({ data }: { data?: ParsedCacheData }) => {
           </Tabs.Content>
         </div>
       </Tabs.Root>
-    </div>
+    </Card>
   )
 }
 

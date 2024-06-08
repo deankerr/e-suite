@@ -11,7 +11,7 @@ type AppLogoTitleProps = { showText?: boolean } & Partial<React.ComponentProps<t
 
 export const AppLogoTitle = ({ showText = true, className, ...props }: AppLogoTitleProps) => {
   return (
-    <NextLink href="/" {...props} className={cn('w-7 flex-none', className)}>
+    <NextLink href="/" {...props} className={cn('shrink-0', className)}>
       <motion.div className="gap-1 flex-start">
         <NextImage src={LogoSunset} alt="logo" className="size-7 flex-none" priority unoptimized />
         <AnimatePresence>
