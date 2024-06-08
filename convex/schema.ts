@@ -37,6 +37,7 @@ const sharedModelFields = {
       }),
       maxOutputTokens: z.number().optional(),
       isModerated: z.boolean().optional(),
+      modelDataSource: z.string().optional(),
     })
     .array(),
 }
@@ -45,9 +46,9 @@ export const chatModelFields = {
   ...sharedModelFields,
   numParameters: z.number(),
   contextLength: z.number(),
-  maxOutputTokens: z.number(),
   tokenizer: z.string(),
   stop: z.string().array(),
+  maxOutputTokens: z.number().optional(),
 }
 const chatModels = defineEnt(zodToConvexFields(chatModelFields))
 

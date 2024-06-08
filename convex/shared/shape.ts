@@ -31,3 +31,23 @@ export function getThreadShape(thread: Doc<'threads'>): EThread {
     'metadata',
   ])
 }
+
+export type EChatModel = ReturnType<typeof getChatModelShape>
+export function getChatModelShape(model: Doc<'chatModels'>) {
+  return pick(model, [
+    '_id',
+    '_creationTime',
+    'slug',
+    'name',
+    'description',
+    'creatorName',
+    'link',
+    'license',
+    'tags',
+    'numParameters',
+    'contextLength',
+    'tokenizer',
+    'stop',
+    'endpoints',
+  ])
+}

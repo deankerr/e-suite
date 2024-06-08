@@ -1,8 +1,8 @@
 'use client'
 
-import { Button, Heading, Tabs } from '@radix-ui/themes'
+import { Heading, Tabs } from '@radix-ui/themes'
 import { omit } from 'convex-helpers'
-import { useAction, useQuery } from 'convex/react'
+import { useQuery } from 'convex/react'
 import { z } from 'zod'
 
 import { api } from '@/convex/_generated/api'
@@ -11,21 +11,13 @@ import { chatModelFields } from '@/convex/schema'
 import type { Doc } from '@/convex/_generated/dataModel'
 
 export default function Page() {
-  const fetchTogetherModels = useAction(api.db.chatModels.fetchTogetherModels)
-  const fetchOpenRouterModels = useAction(api.db.chatModels.fetchOpenRouterModels)
-
   const cacheData = useQuery(api.db.chatModels.getLatestCacheData, {})
   const openrouterData = parseOpenRouterData(cacheData?.openrouter)
   const togetherData = parseTogetherData(cacheData?.together)
 
   return (
-    <div className="space-y-3 p-3">
-      <div className="flex w-fit gap-2 border p-1">
-        <Button onClick={() => void fetchOpenRouterModels({})}>update OR</Button>
-        <Button onClick={() => void fetchTogetherModels({})}>update TAI</Button>
-      </div>
-
-      <div className="flex max-h-[80vh] gap-2 overflow-hidden">
+    <div className="flex flex-col gap-3 p-3">
+      <div className="flex max-h-[90vh] gap-3 overflow-hidden">
         <CacheDataView data={openrouterData} />
         <CacheDataView data={togetherData} />
       </div>
@@ -94,7 +86,14 @@ function parseOpenRouterData(cacheData?: Doc<'endpointDataCache'>): ParsedCacheD
         tokenizer: d.architecture.tokenizer,
         stop: [],
 
-        endpoints: [],
+        endpoints: [
+          {
+            endpoint: 'openrouter',
+            model: d.id,
+            pricing: {},
+            modelDataSource: JSON.stringify(d, null, 2),
+          },
+        ],
       }),
     )
     .sort((a, b) => a.slug.localeCompare(b.slug))
@@ -143,7 +142,14 @@ function parseTogetherData(cacheData?: Doc<'endpointDataCache'>): ParsedCacheDat
         tokenizer: '',
         stop: d.config?.stop ?? [],
 
-        endpoints: [],
+        endpoints: [
+          {
+            endpoint: 'together',
+            model: d.name,
+            pricing: {},
+            modelDataSource: JSON.stringify(d, null, 2),
+          },
+        ],
       }),
     )
     .sort((a, b) => a.slug.localeCompare(b.slug))
@@ -157,6 +163,6 @@ function parseTogetherData(cacheData?: Doc<'endpointDataCache'>): ParsedCacheDat
 
 const chatModelSchema = z.object(chatModelFields)
 type ChatModelData = z.infer<typeof chatModelSchema>
-function getChatModelShape(data: ChatModelData) {
+function getChatModelShape(data: ChatModelData): ChatModelData {
   return data
 }
