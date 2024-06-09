@@ -51,3 +51,21 @@ export function getChatModelShape(model: Doc<'chatModels'>) {
     'endpoints',
   ])
 }
+
+export type EImageModel = ReturnType<typeof getImageModelShape>
+export function getImageModelShape(model: Doc<'image_models'>) {
+  return pick(model, [
+    '_id',
+    '_creationTime',
+    'slug',
+    'name',
+    'description',
+    'creatorName',
+    'link',
+    'license',
+    'tags',
+    'endpoints',
+    'sizes',
+    'architecture',
+  ])
+}

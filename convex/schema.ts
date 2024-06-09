@@ -52,6 +52,18 @@ export const chatModelFields = {
 }
 const chatModels = defineEnt(zodToConvexFields(chatModelFields))
 
+export const imageModelFields = {
+  ...sharedModelFields,
+  architecture: z.enum(['sd', 'sdxl']),
+  sizes: z.object({
+    portrait: z.tuple([z.number(), z.number()]),
+    landscape: z.tuple([z.number(), z.number()]),
+    square: z.tuple([z.number(), z.number()]),
+  }),
+  civitaiModelId: z.string().optional(),
+}
+const image_models = defineEnt(zodToConvexFields(imageModelFields))
+
 export const jobAttributeFields = {
   threadId: zid('threads').optional(),
   messageId: zid('messages').optional(),
@@ -217,9 +229,11 @@ const schema = defineEntSchema(
   {
     chatModels,
     endpointDataCache,
+    endpoint_data_cache: endpointDataCache,
     files,
     jobs,
     images,
+    image_models,
 
     messages,
     threads,

@@ -17,7 +17,10 @@ import type {
 import type * as db_chatModels from "../db/chatModels.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_threads from "../db/threads.js";
+import type * as endpoints_fal from "../endpoints/fal.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
+import type * as endpoints_sinkin from "../endpoints/sinkin.js";
+import type * as endpoints from "../endpoints.js";
 import type * as files_createImageFromUrl from "../files/createImageFromUrl.js";
 import type * as files_optimizeImageFile from "../files/optimizeImageFile.js";
 import type * as functions from "../functions.js";
@@ -67,7 +70,10 @@ declare const fullApi: ApiFromModules<{
   "db/chatModels": typeof db_chatModels;
   "db/messages": typeof db_messages;
   "db/threads": typeof db_threads;
+  "endpoints/fal": typeof endpoints_fal;
   "endpoints/openai": typeof endpoints_openai;
+  "endpoints/sinkin": typeof endpoints_sinkin;
+  endpoints: typeof endpoints;
   "files/createImageFromUrl": typeof files_createImageFromUrl;
   "files/optimizeImageFile": typeof files_optimizeImageFile;
   functions: typeof functions;
