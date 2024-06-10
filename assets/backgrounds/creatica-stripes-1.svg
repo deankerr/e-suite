@@ -1,0 +1,63 @@
+<svg id="canvas" height="auto" xmlns="http://www.w3.org/2000/svg" version="1.1"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 900 512">
+  <defs>
+    <linearGradient gradientTransform="matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,0,0)"
+      id="SvgjsLinearGradient1004">
+      <stop stop-color="#000000ff" offset="0" />
+      <stop stop-color="#000000ff" offset="1" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="512" fill="url(#SvgjsLinearGradient1004)" />
+  <line x1="0" y1="0" x2="900" y2="0" stroke-width="8" stroke="#060301" />
+  <line x1="0" y1="30" x2="900" y2="30" stroke-width="8" stroke="#140902" />
+  <line x1="0" y1="60" x2="900" y2="60" stroke-width="8" stroke="#220f03" />
+  <line x1="0" y1="90" x2="900" y2="90" stroke-width="8" stroke="#311504" />
+  <line x1="0" y1="120" x2="900" y2="120" stroke-width="8" stroke="#3f1b05" />
+  <line x1="0" y1="150" x2="900" y2="150" stroke-width="8" stroke="#4d2107" />
+  <line x1="0" y1="180" x2="900" y2="180" stroke-width="8" stroke="#5b2708" />
+  <line x1="0" y1="210" x2="900" y2="210" stroke-width="8" stroke="#692e09" />
+  <line x1="0" y1="240" x2="900" y2="240" stroke-width="8" stroke="#77340a" />
+  <line x1="0" y1="270" x2="900" y2="270" stroke-width="8" stroke="#863a0b" />
+  <line x1="0" y1="300" x2="900" y2="300" stroke-width="8" stroke="#94400d" />
+  <line x1="0" y1="330" x2="900" y2="330" stroke-width="8" stroke="#a2460e" />
+  <line x1="0" y1="360" x2="900" y2="360" stroke-width="8" stroke="#b04c0f" />
+  <line x1="0" y1="390" x2="900" y2="390" stroke-width="8" stroke="#be5210" />
+  <line x1="0" y1="420" x2="900" y2="420" stroke-width="8" stroke="#cc5911" />
+  <line x1="0" y1="450" x2="900" y2="450" stroke-width="8" stroke="#db5f13" />
+  <line x1="0" y1="480" x2="900" y2="480" stroke-width="8" stroke="#e96514" />
+  <line x1="0" y1="510" x2="900" y2="510" stroke-width="8" stroke="#f76b15" />
+  <path d="M0 0L0 439.6L464.13486286083594 0L0 0 " fill="#000000ff" />
+  <line x1="-4" y1="30" x2="31.674353698419196" y2="-4" stroke-width="8" stroke="#060301" />
+  <line x1="-4" y1="60" x2="63.34870739683839" y2="-4" stroke-width="8" stroke="#140902" />
+  <line x1="-4" y1="90" x2="95.02306109525759" y2="-4" stroke-width="8" stroke="#220f03" />
+  <line x1="-4" y1="120" x2="126.69741479367678" y2="-4" stroke-width="8" stroke="#311504" />
+  <line x1="-4" y1="150" x2="158.37176849209598" y2="-4" stroke-width="8" stroke="#3f1b05" />
+  <line x1="-4" y1="180" x2="190.04612219051518" y2="-4" stroke-width="8" stroke="#4d2107" />
+  <line x1="-4" y1="210" x2="221.72047588893437" y2="-4" stroke-width="8" stroke="#5b2708" />
+  <line x1="-4" y1="240" x2="253.39482958735357" y2="-4" stroke-width="8" stroke="#692e09" />
+  <line x1="-4" y1="270" x2="285.06918328577274" y2="-4" stroke-width="8" stroke="#77340a" />
+  <line x1="-4" y1="300" x2="316.74353698419196" y2="-4" stroke-width="8" stroke="#863a0b" />
+  <line x1="-4" y1="330" x2="348.41789068261113" y2="-4" stroke-width="8" stroke="#94400d" />
+  <line x1="-4" y1="360" x2="380.09224438103035" y2="-4" stroke-width="8" stroke="#a2460e" />
+  <line x1="-4" y1="390" x2="411.7665980794495" y2="-4" stroke-width="8" stroke="#b04c0f" />
+  <line x1="-4" y1="420" x2="443.44095177786875" y2="-4" stroke-width="8" stroke="#be5210" />
+  <path d="M900 0L900 542L-452.4400186308055 0L900 0 " fill="#000000ff" />
+  <line x1="904" y1="30" x2="825.1416963857488" y2="-4" stroke-width="8" stroke="#060301" />
+  <line x1="904" y1="60" x2="750.2833927714976" y2="-4" stroke-width="8" stroke="#140902" />
+  <line x1="904" y1="90" x2="675.4250891572462" y2="-4" stroke-width="8" stroke="#220f03" />
+  <line x1="904" y1="120" x2="600.5667855429951" y2="-4" stroke-width="8" stroke="#311504" />
+  <line x1="904" y1="150" x2="525.7084819287438" y2="-4" stroke-width="8" stroke="#3f1b05" />
+  <line x1="904" y1="180" x2="450.8501783144926" y2="-4" stroke-width="8" stroke="#4d2107" />
+  <line x1="904" y1="210" x2="375.9918747002414" y2="-4" stroke-width="8" stroke="#5b2708" />
+  <line x1="904" y1="240" x2="301.1335710859902" y2="-4" stroke-width="8" stroke="#692e09" />
+  <line x1="904" y1="270" x2="226.27526747173897" y2="-4" stroke-width="8" stroke="#77340a" />
+  <line x1="904" y1="300" x2="151.41696385748776" y2="-4" stroke-width="8" stroke="#863a0b" />
+  <line x1="904" y1="330" x2="76.55866024323655" y2="-4" stroke-width="8" stroke="#94400d" />
+  <line x1="904" y1="360" x2="1.7003566289852188" y2="-4" stroke-width="8" stroke="#a2460e" />
+  <line x1="904" y1="390" x2="-73.157946985266" y2="-4" stroke-width="8" stroke="#b04c0f" />
+  <line x1="904" y1="420" x2="-148.0162505995172" y2="-4" stroke-width="8" stroke="#be5210" />
+  <line x1="904" y1="450" x2="-222.8745542137683" y2="-4" stroke-width="8" stroke="#cc5911" />
+  <line x1="904" y1="480" x2="-297.73285782801963" y2="-4" stroke-width="8" stroke="#db5f13" />
+  <line x1="904" y1="510" x2="-372.59116144227096" y2="-4" stroke-width="8" stroke="#e96514" />
+  <line x1="904" y1="540" x2="-447.44946505652206" y2="-4" stroke-width="8" stroke="#f76b15" />
+</svg>

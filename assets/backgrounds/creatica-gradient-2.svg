@@ -1,0 +1,42 @@
+<svg id="canvas" height="auto" xmlns="http://www.w3.org/2000/svg" version="1.1"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 2000 2000" width="auto"
+  style="width: auto; height: auto;">
+  <rect width="2000" height="2000" fill="#000000" />
+  <defs>
+    <filter id="SvgjsFilter1076">
+      <feTurbulence id="SvgjsFeTurbulence1066" result="SvgjsFeTurbulence1066" in="SourceGraphic" type="fractalNoise"
+        stitchTiles="stitch" seed="2" numOctaves="2" baseFrequency="0.65" />
+      <feColorMatrix id="SvgjsFeColorMatrix1067" result="SvgjsFeColorMatrix1067" in="SvgjsFeTurbulence1066" values="0"
+        type="saturate" />
+      <feComponentTransfer id="SvgjsFeComponentTransfer1068" result="SvgjsFeComponentTransfer1068"
+        in="SvgjsFeColorMatrix1067">
+        <feFuncR type="linear" slope="3" id="SvgjsFeFuncR1069" result="SvgjsFeFuncR1069" />
+        <feFuncG type="linear" slope="3" id="SvgjsFeFuncG1070" result="SvgjsFeFuncG1070" />
+        <feFuncB type="linear" slope="3" id="SvgjsFeFuncB1071" result="SvgjsFeFuncB1071" />
+      </feComponentTransfer>
+      <feColorMatrix id="SvgjsFeColorMatrix1072" result="SvgjsFeColorMatrix1072" in="SvgjsFeComponentTransfer1068"
+        type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -11" />
+    </filter>
+    <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" gradientTransform="rotate(51, 0.5, 0.5)"
+      id="SvgjsLinearGradient1073">
+      <stop stop-color="#582607" offset="0" />
+      <stop stop-color="rgba(0, 0, 0, 0)" offset="1" />
+    </linearGradient>
+    <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" gradientTransform="rotate(356, 0.5, 0.5)"
+      id="SvgjsLinearGradient1074">
+      <stop stop-color="#77340a" offset="0" />
+      <stop stop-color="rgba(0, 0, 0, 0)" offset="1" />
+    </linearGradient>
+    <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" gradientTransform="rotate(327, 0.5, 0.5)"
+      id="SvgjsLinearGradient1075">
+      <stop stop-color="#97420d" offset="0" />
+      <stop stop-color="rgba(0, 0, 0, 0)" offset="1" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#381805" />
+  <rect width="100%" height="100%" fill="url(#SvgjsLinearGradient1073)" />
+  <rect width="100%" height="100%" fill="url(#SvgjsLinearGradient1074)" />
+  <rect width="100%" height="100%" fill="url(#SvgjsLinearGradient1075)" />
+  <rect width="100%" height="100%" opacity="0.62" style="mix-blend-mode: soft-light" fill="transparent"
+    filter="url(#SvgjsFilter1076)" />
+</svg>

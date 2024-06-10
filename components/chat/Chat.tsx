@@ -24,7 +24,10 @@ const ChatComponent = ({ className, ...props }: ChatProps) => {
   return (
     <Card
       {...props}
-      className={cn('card-bg-1 flex h-full w-full flex-col overflow-hidden', className)}
+      className={cn(
+        'card-bg-1 flex h-full w-full flex-col overflow-hidden backdrop-blur-3xl',
+        className,
+      )}
     >
       {/* header */}
       <Inset side="top" className="h-10 shrink-0 border-b border-gray-5 px-2 text-sm flex-between">
