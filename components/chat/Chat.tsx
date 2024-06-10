@@ -15,10 +15,10 @@ import { Pre } from '@/components/util/Pre'
 import { commandMenuOpenAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
-type ChatProps = { slug: string } & React.ComponentProps<'div'>
+type ChatProps = { slug: string; onClose?: (slug: string) => void } & React.ComponentProps<'div'>
 
 const ChatComponent = ({ className, ...props }: ChatProps) => {
-  const { thread } = useChat()
+  const { thread, closeChat } = useChat()
   const setMenuOpen = useSetAtom(commandMenuOpenAtom)
   const [showJson, setShowJson] = useState(false)
   return (
@@ -48,7 +48,13 @@ const ChatComponent = ({ className, ...props }: ChatProps) => {
         {thread === undefined && <LoadingSpinner />}
 
         <div className="shrink-0 gap-2 flex-end">
-          <IconButton variant="ghost" color="gray" className="shrink-0" size="1">
+          <IconButton
+            variant="ghost"
+            color="gray"
+            size="1"
+            className="shrink-0"
+            onClick={closeChat}
+          >
             <XIcon />
           </IconButton>
         </div>
@@ -96,7 +102,7 @@ const ChatComponent = ({ className, ...props }: ChatProps) => {
 
 export const Chat = (props: ChatProps) => {
   return (
-    <ChatProvider slug={props.slug}>
+    <ChatProvider slug={props.slug} onClose={props.onClose}>
       <ChatComponent {...props} />
     </ChatProvider>
   )

@@ -17,7 +17,7 @@ export const useChatDeck = () => {
   const [deck, setDeck] = useAtom(chatDeckAtom)
 
   const add = (slug?: string) => {
-    setDeck((deck) => [...deck, slug ?? createLocalChatSlug()])
+    setDeck((deck) => [slug ?? createLocalChatSlug(), ...deck])
   }
 
   const remove = (slug: string) => {

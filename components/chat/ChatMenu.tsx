@@ -31,7 +31,7 @@ export const Chat2Menu = ({ thread, ...props }: ChatMenuProps) => {
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
 
-  const { updateThreadConfig } = useChat()
+  const { updateThreadConfig, closeChat } = useChat()
 
   return (
     <Popover.Root
@@ -70,23 +70,7 @@ export const Chat2Menu = ({ thread, ...props }: ChatMenuProps) => {
                     <div className="line-clamp-1 grow">{currentModel.name}</div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
-                  {/* <CommandItem onSelect={() => setPage('listModels')}>
-                    <BoxIcon className="mr-2 size-4" />
-                    <div className="line-clamp-1 grow">Instructions</div>
-                    <div className="text-xs text-gray-10">edit</div>
-                  </CommandItem> */}
                 </CommandGroup>
-
-                {/* <CommandGroup heading="Threads">
-                  <CommandItem onSelect={() => void createThread({ default: 'image' })}>
-                    <ImageIcon className="mr-2 size-4" />
-                    Create Image Thread
-                  </CommandItem>
-                  <CommandItem onSelect={() => void createThread({ default: 'chat' })}>
-                    <MessagesSquareIcon className="mr-2 size-4" />
-                    Create Chat Thread
-                  </CommandItem>
-                </CommandGroup> */}
               </>
             )}
 
@@ -128,7 +112,12 @@ export const Chat2Menu = ({ thread, ...props }: ChatMenuProps) => {
         <UpdateThreadTitleDialog thread={thread} defaultOpen onClose={() => setDialog('')} />
       )}
       {dialog === 'deleteThread' && (
-        <DeleteThreadDialog threadId={thread._id} defaultOpen onClose={() => setDialog('')} />
+        <DeleteThreadDialog
+          threadId={thread._id}
+          defaultOpen
+          onSuccess={() => closeChat()}
+          onClose={() => setDialog('')}
+        />
       )}
     </Popover.Root>
   )

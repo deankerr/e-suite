@@ -7,14 +7,23 @@ import { useThread } from '@/lib/queries'
 
 import type { EThread } from '@/convex/shared/types'
 
-const useChatContextApi = ({ slug }: { slug: string }) => {
-  const [localThread, setLocalThread] = useLocalStorage<EThread>(`e-chat-${slug}`, {
-    _id: '',
-    slug,
-    _creationTime: 0,
-    updatedAtTime: 0,
-    userId: '',
-  })
+const useChatContextApi = ({
+  slug,
+  onClose,
+}: {
+  slug: string
+  onClose?: (slug: string) => void
+}) => {
+  const [localThread, setLocalThread, removeLocalThread] = useLocalStorage<EThread>(
+    `chat-${slug}`,
+    {
+      _id: '',
+      slug,
+      _creationTime: 0,
+      updatedAtTime: 0,
+      userId: '',
+    },
+  )
 
   const [currentId, setCurrentId] = useState(slug)
   const { data: queriedThread } = useThread(currentId)
@@ -35,44 +44,51 @@ const useChatContextApi = ({ slug }: { slug: string }) => {
       if (newThreadId !== thread._id) {
         console.log('change thread id')
         setCurrentId(newThreadId)
+        removeLocalThread()
       }
     },
-    [thread, createMessage],
+    [thread, createMessage, removeLocalThread],
   )
 
   const updateThreadConfig = useCallback(
     async (args: Omit<Parameters<typeof updateThread>[0], 'threadId'>) => {
       if (!thread) return
       if (currentId.startsWith('_')) {
-        console.log('update local thread')
         setLocalThread((prev) => (prev ? { ...prev, ...args } : undefined))
         return
       }
 
-      console.log('update remote thread')
       await updateThread({ ...args, threadId: thread._id })
     },
     [currentId, thread, setLocalThread, updateThread],
   )
 
+  const closeChat = useCallback(() => {
+    if (onClose) onClose(slug)
+  }, [onClose, slug])
+
   return {
     thread: useMemo(() => thread, [thread]),
     sendMessage,
     updateThreadConfig,
+    closeChat,
   }
 }
 
 type ChatContext = ReturnType<typeof useChatContextApi>
 const ChatContext = createContext<ChatContext | undefined>(undefined)
 
-export const ChatProvider = ({ slug, children }: { slug: string; children: React.ReactNode }) => {
-  const { thread, sendMessage, updateThreadConfig } = useChatContextApi({ slug })
+export const ChatProvider = ({
+  children,
+  ...props
+}: {
+  slug: string
+  onClose?: (slug: string) => void
+  children: React.ReactNode
+}) => {
+  const api = useChatContextApi(props)
 
-  return (
-    <ChatContext.Provider value={{ thread, sendMessage, updateThreadConfig }}>
-      {children}
-    </ChatContext.Provider>
-  )
+  return <ChatContext.Provider value={api}>{children}</ChatContext.Provider>
 }
 
 export const useChat = (): ChatContext => {

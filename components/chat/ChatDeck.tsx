@@ -5,7 +5,7 @@ import { useChatDeck } from '@/components/chat/useChatDeck'
 import { cn } from '@/lib/utils'
 
 export const ChatDeck = ({ className, ...props }: React.ComponentProps<'div'>) => {
-  const { deck } = useChatDeck()
+  const { deck, remove } = useChatDeck()
   return (
     <div
       {...props}
@@ -15,7 +15,12 @@ export const ChatDeck = ({ className, ...props }: React.ComponentProps<'div'>) =
       )}
     >
       {deck.map((slug) => (
-        <Chat key={slug} slug={slug} className="flex-[1_0_min(100vw,30rem)] snap-center" />
+        <Chat
+          key={slug}
+          slug={slug}
+          onClose={() => remove(slug)}
+          className="flex-[1_0_min(100vw,30rem)] snap-center"
+        />
       ))}
     </div>
   )

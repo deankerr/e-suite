@@ -29,7 +29,7 @@ type CommandMenuProps = {
 export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
   const [open, setOpen] = useAtom(commandMenuOpenAtom)
   useKey(
-    (e) => e.key === 'j' && e.metaKey,
+    (e) => e.key === 'k' && e.metaKey,
     () => setOpen(!open),
   )
 
@@ -53,7 +53,12 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
         <CommandEmpty>No results found.</CommandEmpty>
 
         <CommandGroup>
-          <CommandItem>
+          <CommandItem
+            onSelect={() => {
+              add()
+              goto('/c')
+            }}
+          >
             <MessageSquarePlusIcon className="mr-2 size-4" />
             Start new Chat
           </CommandItem>
