@@ -67,7 +67,7 @@
   --card-background-color: #1e1d1bb3;
 }
 
-.card-translucent {
-  --color-panel: var(--color-panel-translucent);
+.card-translucent-1 {
+  --card-background-color: #1b1d1eb3;
   --backdrop-filter-panel: blur(64px);
 }
