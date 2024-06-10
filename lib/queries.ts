@@ -3,9 +3,14 @@ import { useQuery } from 'convex-helpers/react'
 import { api } from '@/convex/_generated/api'
 
 export const useThread = (slugOrId: string) => {
-  const result = useQuery(api.db.threads.get, {
-    slugOrId,
-  })
+  const result = useQuery(
+    api.db.threads.get,
+    slugOrId
+      ? {
+          slugOrId,
+        }
+      : 'skip',
+  )
   return result
 }
 

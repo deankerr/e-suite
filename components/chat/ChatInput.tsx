@@ -8,7 +8,7 @@ import {
   SquareIcon,
 } from 'lucide-react'
 
-import { useChatViewApi } from '@/components/chat/ChatApiProvider'
+import { useChat } from '@/components/chat/ChatProvider'
 import { Textarea } from '@/components/ui/Textarea'
 import { cn, getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
 
@@ -18,7 +18,7 @@ import type { EThread } from '@/convex/shared/types'
 type ChatInputProps = { thread: EThread } & React.ComponentProps<'div'>
 
 export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
-  const api = useChatViewApi()
+  const { sendMessage, updateThreadConfig } = useChat()
 
   const [prompt, setPrompt] = useState('')
 
@@ -26,7 +26,7 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
 
   const handleSendMessage = async () => {
     if (textToImage) {
-      await api.createMessage({
+      await sendMessage({
         message: {},
         inference: { ...textToImage, prompt: prompt },
       })
@@ -34,7 +34,7 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
     }
 
     if (chatCompletion) {
-      await api.createMessage({
+      await sendMessage({
         message: { content: prompt },
         inference: chatCompletion,
       })
@@ -44,7 +44,7 @@ export const ChatInput = ({ thread, className, ...props }: ChatInputProps) => {
 
   const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
     if (!textToImage) return
-    await api.updateThread({
+    await updateThreadConfig({
       currentInferenceConfig: {
         ...textToImage,
         ...parameters,

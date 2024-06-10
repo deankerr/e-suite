@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
+import { Button } from '@radix-ui/themes'
 import { BoxIcon, ChevronLeftIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 
-import { useChatViewApi } from '@/components/chat/ChatApiProvider'
+import { useChat } from '@/components/chat/ChatProvider'
 import {
   Command,
   CommandEmpty,
@@ -19,7 +20,7 @@ import type { EThread } from '@/convex/shared/types'
 
 type ChatMenuProps = { thread: EThread } & React.ComponentProps<typeof Popover.Root>
 
-export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
+export const Chat2Menu = ({ thread, ...props }: ChatMenuProps) => {
   const { getModel, chatModels, imageModels } = useModelData()
   const config = getThreadConfig(thread)
   const currentModel = getModel(config.current.endpoint, config.current.model)
@@ -30,7 +31,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
 
-  const api = useChatViewApi()
+  const { updateThreadConfig } = useChat()
 
   return (
     <Popover.Root
@@ -41,7 +42,11 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
         setOpen(open)
       }}
     >
-      <Popover.Trigger asChild>{children}</Popover.Trigger>
+      <Popover.Trigger asChild>
+        <Button variant="surface" size="1">
+          {currentModel.name}
+        </Button>
+      </Popover.Trigger>
 
       <Popover.Content sideOffset={5} className="z-30 w-80">
         <Command>
@@ -97,7 +102,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                     key={model.resourceId}
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
-                      void api.updateThread({
+                      void updateThreadConfig({
                         currentInferenceConfig: {
                           ...config.current,
                           endpoint: model.endpoint,
@@ -123,12 +128,7 @@ export const TempChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
         <UpdateThreadTitleDialog thread={thread} defaultOpen onClose={() => setDialog('')} />
       )}
       {dialog === 'deleteThread' && (
-        <DeleteThreadDialog
-          threadId={thread._id}
-          defaultOpen
-          // onSuccess={() => multi.remove(thread.slug)}
-          onClose={() => setDialog('')}
-        />
+        <DeleteThreadDialog threadId={thread._id} defaultOpen onClose={() => setDialog('')} />
       )}
     </Popover.Root>
   )

@@ -1,26 +1,26 @@
+'use client'
+
+import { useState } from 'react'
 import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
-import { MenuIcon, XIcon } from 'lucide-react'
+import { CodeIcon, FileWarningIcon, MenuIcon, XIcon } from 'lucide-react'
+import Link from 'next/link'
 
-import { ChatInput } from '@/components/chat/chat-input/ChatInput'
-import { ChatViewApiProvider } from '@/components/chat/ChatApiProvider'
+import { ChatInput } from '@/components/chat/ChatInput'
+import { Chat2Menu } from '@/components/chat/ChatMenu'
 import { ChatMessages } from '@/components/chat/ChatMessages'
-import { TempChatMenu } from '@/components/chat/TempChatMenu'
+import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Pre } from '@/components/util/Pre'
 import { commandMenuOpenAtom } from '@/lib/atoms'
-import { useModelData } from '@/lib/hooks'
-import { cn, getThreadConfig } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
-import type { EThread } from '@/convex/shared/types'
+type ChatProps = { slug: string } & React.ComponentProps<'div'>
 
-type ChatProps = { thread: EThread | null | undefined } & React.ComponentProps<typeof Card>
-
-const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
+const ChatComponent = ({ className, ...props }: ChatProps) => {
+  const { thread } = useChat()
   const setMenuOpen = useSetAtom(commandMenuOpenAtom)
-  const { getModel } = useModelData()
-  const config = getThreadConfig(thread)
-  const currentModel = thread ? getModel(config.current.endpoint, config.current.model) : null
-
+  const [showJson, setShowJson] = useState(false)
   return (
     <Card
       {...props}
@@ -40,6 +40,11 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
         </div>
 
         {thread && <div className="grow truncate flex-center">{thread?.title ?? 'new thread'}</div>}
+        {thread === null && (
+          <div className="grow truncate flex-center">
+            <FileWarningIcon className="text-red-11" />
+          </div>
+        )}
         {thread === undefined && <LoadingSpinner />}
 
         <div className="shrink-0 gap-2 flex-end">
@@ -50,22 +55,36 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
       </Inset>
 
       {/* header 2 */}
-      <Inset side="x" className="h-10 shrink-0 border-b px-1 text-sm flex-between">
-        <div className="w-14"></div>
-        {thread && (
-          <TempChatMenu thread={thread}>
-            <Button variant="surface" size="1">
-              {currentModel?.name}
-            </Button>
-          </TempChatMenu>
-        )}
-        {thread && (
-          <div className="w-14 shrink-0 text-xs text-gray-10 flex-start">{thread.slug}</div>
-        )}
+      <Inset side="x" className="h-10 shrink-0 border-b px-2 text-sm flex-between">
+        <div className="w-14 flex-start">
+          {/* show json button */}
+          <IconButton
+            variant="ghost"
+            color="gray"
+            size="1"
+            className="shrink-0"
+            onClick={() => setShowJson(!showJson)}
+          >
+            <CodeIcon />
+          </IconButton>
+        </div>
+
+        {/* chat menu button */}
+        {thread && <Chat2Menu thread={thread} />}
+
+        <div className="w-14 pr-1 flex-end">
+          {/* slug page link */}
+          <Button variant="ghost" color="gray" size="1" className="shrink-0" asChild>
+            <Link href={`/c/${thread?.slug}`}>{thread?.slug}</Link>
+          </Button>
+        </div>
       </Inset>
 
       {/* body */}
-      <div className="grow overflow-hidden">{thread && <ChatMessages thread={thread} />}</div>
+      <div className="grow overflow-hidden">
+        {thread && !showJson && <ChatMessages thread={thread} />}
+        {showJson && <Pre>{JSON.stringify(thread, null, 2)}</Pre>}
+      </div>
 
       {/* footer */}
       <Inset side="bottom" className="min-h-10 shrink-0 border-t px-1 text-sm flex-between">
@@ -76,11 +95,9 @@ const ChatComponent = ({ thread, className, ...props }: ChatProps) => {
 }
 
 export const Chat = (props: ChatProps) => {
-  const threadId = props.thread?._id ?? ''
-  const slug = props.thread?.slug ?? ''
   return (
-    <ChatViewApiProvider threadId={threadId} slug={slug}>
+    <ChatProvider slug={props.slug}>
       <ChatComponent {...props} />
-    </ChatViewApiProvider>
+    </ChatProvider>
   )
 }

@@ -5,9 +5,10 @@ import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
 import { ImagePlusIcon, MenuIcon, MessageSquarePlusIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
+import { useChatDeck } from '@/components/chat/useChatDeck'
 import {
   Command,
   CommandEmpty,
@@ -31,6 +32,9 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
     (e) => e.key === 'j' && e.metaKey,
     () => setOpen(!open),
   )
+
+  const isChatDeckMode = usePathname().endsWith('/c')
+  const { deck, add } = useChatDeck()
   const router = useRouter()
   const goto = (path: string) => {
     router.push(`${path}`)
@@ -38,6 +42,9 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
   }
 
   const threads = useUserThreadsList()
+  const threadsAvailable = (threads.data ?? []).filter((thread) =>
+    isChatDeckMode ? !deck.some((slug) => thread.slug === slug) : true,
+  )
 
   const menu = (
     <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
@@ -56,18 +63,22 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
           </CommandItem>
           <CommandItem onSelect={() => goto('/c')}>
             <MessageSquarePlusIcon className="mr-2 size-4" />
-            Multi Chats
+            Chat Deck
           </CommandItem>
         </CommandGroup>
 
         <CommandSeparator />
         <CommandGroup heading="Threads">
-          {threads.data?.map((thread) => (
+          {threadsAvailable.map((thread) => (
             <CommandItem
               key={thread._id}
               value={thread.title ?? 'new thread ' + thread.slug}
               className="h-11 gap-2"
-              onSelect={() => goto(`/c/${thread.slug}`)}
+              onSelect={() => {
+                if (isChatDeckMode) add(thread.slug)
+                else goto(`/c/${thread.slug}`)
+                setOpen(false)
+              }}
             >
               <div className="grow truncate">{thread.title ?? 'new thread'}</div>
               <div className="max-w-16 shrink-0 text-right text-xs text-gray-10">

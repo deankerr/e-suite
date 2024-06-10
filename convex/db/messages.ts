@@ -89,7 +89,12 @@ export const create = mutation({
           .get()
       : await ctx
           .table('threads')
-          .insert({ userId: user._id, slug: await generateSlug(ctx), updatedAtTime: Date.now() })
+          .insert({
+            userId: user._id,
+            slug: await generateSlug(ctx),
+            updatedAtTime: Date.now(),
+            currentInferenceConfig: args.inference,
+          })
           .get()
 
     const nextSeriesNumber = await getNextMessageSeries(thread)

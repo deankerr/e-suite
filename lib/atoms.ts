@@ -3,4 +3,4 @@ import { atomWithStorage } from 'jotai/utils'
 
 export const commandMenuOpenAtom = atom(false)
 
-export const threadDeckIdsAtom = atomWithStorage<string[]>('e-thread-deck-ids', [])
+export const chatDeckAtom = atomWithStorage<string[]>('chat-deck', [])
