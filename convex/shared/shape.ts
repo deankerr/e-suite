@@ -33,7 +33,7 @@ export function getThreadShape(thread: Doc<'threads'>): EThread {
 }
 
 export type EChatModel = ReturnType<typeof getChatModelShape>
-export function getChatModelShape(model: Doc<'chatModels'>) {
+export function getChatModelShape(model: Doc<'chat_models'>) {
   return pick(model, [
     '_id',
     '_creationTime',
@@ -48,7 +48,12 @@ export function getChatModelShape(model: Doc<'chatModels'>) {
     'contextLength',
     'tokenizer',
     'stop',
-    'endpoints',
+    'endpoint',
+    'model',
+    'pricing',
+    'moderated',
+    'available',
+    'hidden',
   ])
 }
 
@@ -64,7 +69,12 @@ export function getImageModelShape(model: Doc<'image_models'>) {
     'link',
     'license',
     'tags',
-    'endpoints',
+    'endpoint',
+    'model',
+    'pricing',
+    'moderated',
+    'available',
+    'hidden',
     'sizes',
     'architecture',
   ])

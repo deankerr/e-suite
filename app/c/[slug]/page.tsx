@@ -7,7 +7,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   if (slug === 'none') return null
 
   return (
-    <div className="w-full p-0.5">
+    <div className="w-full p-1">
       <Chat slug={slug} />
     </div>
   )

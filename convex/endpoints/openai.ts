@@ -1,3 +1,5 @@
+import type { ChatModelDataRecord } from '../db/models'
+
 export const OpenAIChatModels = [
   {
     model_id: 'gpt-4o',
@@ -43,18 +45,13 @@ export const openaiChatModelData = [
     license: '',
     tags: [],
 
-    numParameters: -1,
+    numParameters: 0,
     contextLength: 128000,
     tokenizer: 'GPT',
     stop: [],
 
-    endpoints: [
-      {
-        endpoint: 'openai',
-        model: 'gpt-4o',
-        pricing: {},
-      },
-    ],
+    model: 'gpt-4o',
+    pricing: {},
   },
   {
     slug: 'openai/gpt-4-turbo',
@@ -66,18 +63,13 @@ export const openaiChatModelData = [
     license: '',
     tags: [],
 
-    numParameters: -1,
+    numParameters: 0,
     contextLength: 128000,
     tokenizer: 'GPT',
     stop: [],
 
-    endpoints: [
-      {
-        endpoint: 'openai',
-        model: 'gpt-4-turbo',
-        pricing: {},
-      },
-    ],
+    model: 'gpt-4-turbo',
+    pricing: {},
   },
   {
     slug: 'openai/gpt-4',
@@ -89,18 +81,12 @@ export const openaiChatModelData = [
     license: '',
     tags: [],
 
-    numParameters: -1,
+    numParameters: 0,
     contextLength: 8192,
     tokenizer: 'GPT',
     stop: [],
 
-    endpoints: [
-      {
-        endpoint: 'openai',
-        model: 'gpt-4',
-        pricing: {},
-      },
-    ],
+    model: 'gpt-4',
   },
   {
     slug: 'openai/gpt-4-32k',
@@ -112,18 +98,12 @@ export const openaiChatModelData = [
     license: '',
     tags: [],
 
-    numParameters: -1,
+    numParameters: 0,
     contextLength: 32768,
     tokenizer: 'GPT',
     stop: [],
 
-    endpoints: [
-      {
-        endpoint: 'openai',
-        model: 'gpt-4-32k',
-        pricing: {},
-      },
-    ],
+    model: 'gpt-4-32k',
   },
   {
     slug: 'openai/gpt-3.5-turbo',
@@ -135,20 +115,30 @@ export const openaiChatModelData = [
     license: '',
     tags: [],
 
-    numParameters: -1,
+    numParameters: 0,
     contextLength: 16385,
     tokenizer: 'GPT',
     stop: [],
 
-    endpoints: [
-      {
-        endpoint: 'openai',
-        model: 'gpt-3.5-turbo',
-        pricing: {},
-      },
-    ],
+    model: 'gpt-3.5-turbo',
   },
 ]
+
+export const getNormalizedModelData = () => {
+  const models = openaiChatModelData.map(
+    (raw): ChatModelDataRecord => ({
+      ...raw,
+      slug: `openai::${raw.slug}`,
+      endpoint: 'openai',
+      pricing: {},
+      moderated: false,
+      available: true,
+      hidden: false,
+    }),
+  )
+
+  return models
+}
 
 export const OpenAIImageModels = [
   {

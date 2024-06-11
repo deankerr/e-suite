@@ -1,12 +1,10 @@
-import { internalMutation } from '../functions'
+import type { ImageModelDataRecord } from '../db/models'
 
-export const importModels = internalMutation(async (ctx) => {
-  for (const model of falImageModelData) {
-    await ctx.table('image_models').insert({
-      ...model,
-    })
-  }
-})
+const sdxlSizes = {
+  portrait: [832, 1216],
+  landscape: [1216, 832],
+  square: [1024, 1024],
+} satisfies ImageModelDataRecord['sizes']
 
 export const falImageModelData = [
   {
@@ -19,20 +17,15 @@ export const falImageModelData = [
     license: '',
     tags: [],
 
-    architecture: 'sdxl' as const,
-    sizes: {
-      portrait: [832, 1216],
-      landscape: [1216, 832],
-      square: [1024, 1024],
-    },
+    architecture: 'SDXL' as const,
+    sizes: sdxlSizes,
 
-    endpoints: [
-      {
-        endpoint: 'fal',
-        model: 'fal-ai/hyper-sdxl',
-        pricing: {},
-      },
-    ],
+    endpoint: 'fal',
+    model: 'fal-ai/hyper-sdxl',
+    pricing: {},
+    moderated: false,
+    available: true,
+    hidden: false,
   },
   {
     slug: 'fal-ai/fast-lightning-sdxl',
@@ -44,24 +37,19 @@ export const falImageModelData = [
     license: '',
     tags: [],
 
-    architecture: 'sdxl' as const,
-    sizes: {
-      portrait: [832, 1216],
-      landscape: [1216, 832],
-      square: [1024, 1024],
-    },
+    architecture: 'SDXL' as const,
+    sizes: sdxlSizes,
 
-    endpoints: [
-      {
-        endpoint: 'fal',
-        model: 'fal-ai/fast-lightning-sdxl',
-        pricing: {},
-      },
-    ],
+    endpoint: 'fal',
+    model: 'fal-ai/fast-lightning-sdxl',
+    pricing: {},
+    moderated: false,
+    available: true,
+    hidden: false,
   },
   {
     slug: 'fal-ai/pixart-sigma',
-    name: 'Pixart Sigma',
+    name: 'PixArt-Σ',
     description: '',
 
     creatorName: '',
@@ -69,19 +57,18 @@ export const falImageModelData = [
     license: '',
     tags: [],
 
-    architecture: 'sdxl' as const,
-    sizes: {
-      portrait: [832, 1216],
-      landscape: [1216, 832],
-      square: [1024, 1024],
-    },
+    architecture: 'SDXL' as const,
+    sizes: sdxlSizes,
 
-    endpoints: [
-      {
-        endpoint: 'fal',
-        model: 'fal-ai/pixart-sigma',
-        pricing: {},
-      },
-    ],
+    endpoint: 'fal',
+    model: 'fal-ai/pixart-sigma',
+    pricing: {},
+    moderated: false,
+    available: true,
+    hidden: false,
   },
 ]
+
+export const getNormalizedModelData = (): ImageModelDataRecord[] => {
+  return falImageModelData
+}

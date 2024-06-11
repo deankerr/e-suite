@@ -2,52 +2,50 @@ import ky from 'ky'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
-import { internalAction, internalMutation } from '../functions'
-import { env, insist } from '../shared/utils'
+import { env } from '../shared/utils'
 
-export const fetchModels = internalAction(async (ctx) => {
+import type { ActionCtx } from '../_generated/server'
+import type { ImageModelDataRecord } from '../db/models'
+import type { MutationCtx } from '../types'
+
+export const fetchModelData = async (ctx: ActionCtx) => {
   console.log('https://sinkin.ai/api/models')
   const body = new FormData()
   body.append('access_token', env('SINKIN_API_KEY'))
   const response = await ky.post('https://sinkin.ai/api/models', { body }).json()
-  await ctx.runMutation(internal.endpoints.createCacheData, {
+  await ctx.runMutation(internal.db.models.cacheEndpointModelData, {
     endpoint: 'sinkin',
     name: 'image-models',
     data: JSON.stringify(response, null, 2),
   })
-})
+}
 
-export const importModels = internalMutation(async (ctx) => {
-  const data = await ctx
+export const getNormalizedModelData = async (ctx: MutationCtx) => {
+  const cached = await ctx
     .table('endpoint_data_cache')
     .order('desc')
     .filter((q) =>
       q.and(q.eq(q.field('endpoint'), 'sinkin'), q.eq(q.field('name'), 'image-models')),
     )
-    .first()
-  insist(data, 'no image-models data')
-  const { models } = modelDataSchema.parse(JSON.parse(data.data))
+    .firstX()
 
-  for (const model of models) {
-    const architecture = model.name.includes('XL') ? 'sdxl' : 'sd'
-    await ctx.table('image_models').insert({
-      slug: model.name,
-      link: model.link,
-      name: model.name,
+  const modelList = modelDataSchema.parse(JSON.parse(cached.data))
+  return modelList.models.map((d): ImageModelDataRecord => {
+    const architecture = d.name.includes('XL') ? 'SDXL' : 'SD'
+
+    return {
+      slug: `sinkin::${encodeURIComponent(d.name)}`,
+      name: d.name,
       description: '',
+
       creatorName: '',
+      link: d.link,
       license: '',
       tags: [],
-      endpoints: [
-        {
-          endpoint: 'sinkin',
-          model: model.id,
-          pricing: {},
-        },
-      ],
+
       architecture,
       sizes:
-        architecture === 'sd'
+        architecture === 'SD'
           ? {
               portrait: [512, 768],
               landscape: [768, 512],
@@ -58,9 +56,16 @@ export const importModels = internalMutation(async (ctx) => {
               landscape: [1216, 832],
               square: [1024, 1024],
             },
-    })
-  }
-})
+
+      endpoint: 'sinkin',
+      model: d.id,
+      pricing: {},
+      moderated: false,
+      available: true,
+      hidden: false,
+    }
+  })
+}
 
 const modelDataSchema = z.object({
   loras: z.any(),

@@ -15,12 +15,15 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as db_chatModels from "../db/chatModels.js";
+import type * as db_imageModels from "../db/imageModels.js";
 import type * as db_messages from "../db/messages.js";
+import type * as db_models from "../db/models.js";
 import type * as db_threads from "../db/threads.js";
 import type * as endpoints_fal from "../endpoints/fal.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
+import type * as endpoints_openrouter from "../endpoints/openrouter.js";
 import type * as endpoints_sinkin from "../endpoints/sinkin.js";
-import type * as endpoints from "../endpoints.js";
+import type * as endpoints_together from "../endpoints/together.js";
 import type * as files_createImageFromUrl from "../files/createImageFromUrl.js";
 import type * as files_optimizeImageFile from "../files/optimizeImageFile.js";
 import type * as functions from "../functions.js";
@@ -68,12 +71,15 @@ import type * as utils from "../utils.js";
  */
 declare const fullApi: ApiFromModules<{
   "db/chatModels": typeof db_chatModels;
+  "db/imageModels": typeof db_imageModels;
   "db/messages": typeof db_messages;
+  "db/models": typeof db_models;
   "db/threads": typeof db_threads;
   "endpoints/fal": typeof endpoints_fal;
   "endpoints/openai": typeof endpoints_openai;
+  "endpoints/openrouter": typeof endpoints_openrouter;
   "endpoints/sinkin": typeof endpoints_sinkin;
-  endpoints: typeof endpoints;
+  "endpoints/together": typeof endpoints_together;
   "files/createImageFromUrl": typeof files_createImageFromUrl;
   "files/optimizeImageFile": typeof files_optimizeImageFile;
   functions: typeof functions;

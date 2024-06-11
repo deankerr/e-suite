@@ -25,21 +25,18 @@ const sharedModelFields = {
   tags: z.string().array(),
   coverImageUrl: z.string().optional(),
 
-  endpoints: z
-    .object({
-      endpoint: z.string(),
-      model: z.string(),
-      pricing: z.object({
-        tokenInput: z.number().optional(),
-        tokenOutput: z.number().optional(),
-        imageInput: z.number().optional(),
-        imageOutput: z.number().optional(),
-      }),
-      maxOutputTokens: z.number().optional(),
-      isModerated: z.boolean().optional(),
-      modelDataSource: z.string().optional(),
-    })
-    .array(),
+  endpoint: z.string(),
+  model: z.string(),
+  pricing: z.object({
+    tokenInput: z.number().optional(),
+    tokenOutput: z.number().optional(),
+    imageInput: z.number().optional(),
+    imageOutput: z.number().optional(),
+  }),
+
+  moderated: z.boolean(),
+  available: z.boolean(),
+  hidden: z.boolean(),
 }
 
 export const chatModelFields = {
@@ -50,11 +47,11 @@ export const chatModelFields = {
   stop: z.string().array(),
   maxOutputTokens: z.number().optional(),
 }
-const chatModels = defineEnt(zodToConvexFields(chatModelFields))
+const chat_models = defineEnt(zodToConvexFields(chatModelFields))
 
 export const imageModelFields = {
   ...sharedModelFields,
-  architecture: z.enum(['sd', 'sdxl']),
+  architecture: z.enum(['SD', 'SDXL']),
   sizes: z.object({
     portrait: z.tuple([z.number(), z.number()]),
     landscape: z.tuple([z.number(), z.number()]),
@@ -223,13 +220,12 @@ export const endpointDataCacheFields = {
   name: z.string(),
   data: z.string(),
 }
-const endpointDataCache = defineEnt(zodToConvexFields(endpointDataCacheFields))
+const endpoint_data_cache = defineEnt(zodToConvexFields(endpointDataCacheFields))
 
 const schema = defineEntSchema(
   {
-    chatModels,
-    endpointDataCache,
-    endpoint_data_cache: endpointDataCache,
+    chat_models,
+    endpoint_data_cache,
     files,
     jobs,
     images,

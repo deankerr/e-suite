@@ -40,3 +40,13 @@ export const useViewerDetails = (ownerId?: string) => {
   const isAdmin = user.data?.role === 'admin'
   return { user, isOwner, isAdmin }
 }
+
+export const useChatModels = () => {
+  const result = useQuery(api.db.chatModels.list, {})
+  return result
+}
+
+export const useImageModels = () => {
+  const result = useQuery(api.db.imageModels.list, {})
+  return result
+}

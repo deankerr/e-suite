@@ -1,20 +1,48 @@
 'use client'
 
-import { Card, IconButton, Inset } from '@radix-ui/themes'
+import { Badge, Button, Card, IconButton, Inset } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'
-import { MessagesSquareIcon, PaperclipIcon, SendHorizonalIcon } from 'lucide-react'
+import {
+  ExternalLinkIcon,
+  MessagesSquareIcon,
+  PaperclipIcon,
+  SendHorizonalIcon,
+} from 'lucide-react'
+import Link from 'next/link'
 
 import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
+import { Pre } from '@/components/util/Pre'
 import { api } from '@/convex/_generated/api'
-import { useModelData } from '@/lib/hooks'
+import { useChatModels, useImageModels } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
 
 export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const { thread } = useChat()
   const config = getThreadConfig(thread)
-  const { getModel } = useModelData()
-  const currentModel = getModel(config.current.endpoint, config.current.model)
+
+  const chatModels = useChatModels()
+  const chatModel =
+    thread && chatModels.isSuccess
+      ? chatModels.data.find(
+          (model) =>
+            model.model === config.chatCompletion?.model &&
+            model.endpoint === config.chatCompletion.endpoint,
+        )
+      : undefined
+
+  const imageModels = useImageModels()
+  const imageModel =
+    thread && imageModels.isSuccess
+      ? imageModels.data.find(
+          (model) =>
+            model.model === config.textToImage?.model &&
+            model.endpoint === config.textToImage.endpoint,
+        )
+      : undefined
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-redundant-type-constituents
+  const currentModel = (chatModel || imageModel) as typeof chatModel & typeof imageModel
 
   const messages = useQuery(
     api.db.messages.list,
@@ -43,15 +71,45 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
         {/* body */}
         <div className="flex grow overflow-hidden">
           {/* details */}
-          <div className="w-72 shrink-0 border-r border-grayA-3 p-4">
-            <div className="text-sm font-medium">{currentModel.name}</div>
+          <div className="w-80 shrink-0 border-r border-grayA-3 p-4">
+            {currentModel && (
+              <div className="space-y-3">
+                <div className="">
+                  <div className="text-sm font-medium text-gray-11">{currentModel.creatorName}</div>
+                  <div className="text-base font-medium">{currentModel.name}</div>
+                  <div className="font-mono text-xs text-gray-11">{currentModel.model}</div>
+                </div>
+
+                <div className="gap-2 flex-start">
+                  <Badge color="ruby">{currentModel.endpoint}</Badge>
+                  {currentModel.architecture && <Badge color="green">{currentModel.architecture}</Badge>}
+                  {currentModel.contextLength && <Badge color="gray">{currentModel.contextLength}</Badge>}
+                  {currentModel.link && (
+                    <IconButton variant="soft" size="1" className="shrink-0" asChild>
+                      <Link href={currentModel.link}>
+                        <ExternalLinkIcon className="size-4" />
+                      </Link>
+                    </IconButton>
+                  )}
+                  {currentModel.civitaiModelId && (
+                    <Button variant="soft" size="1" className="shrink-0" asChild>
+                      <Link href={`https://civitai.com/models/${currentModel.civitaiModelId}`}>
+                        civitai <ExternalLinkIcon className="size-4" />
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+                <div className="text-xs">{currentModel.description}</div>
+                <Pre className="h-fit">{JSON.stringify(currentModel, null, 2)}</Pre>
+              </div>
+            )}
           </div>
 
           {/* content feed */}
-          <div className="flex grow flex-col gap-3 overflow-hidden">
-            <div className="grow space-y-3 overflow-y-auto py-3 pl-3 pr-6">
+          <div className="flex grow flex-col items-center gap-3 overflow-hidden">
+            <div className="w-full grow space-y-3 overflow-y-auto py-3 pl-3 pr-6">
               {messages?.map((message) => (
-                <div key={message._id} className="shrink-0 space-y-1">
+                <div key={message._id} className="mx-auto max-w-4xl shrink-0 space-y-1">
                   <div className="flex items-center gap-2 px-1">
                     <div className="text-sm font-medium">{message.name ?? message.role}</div>
                     <div className="text-xs font-medium text-gray-11">
@@ -66,7 +124,7 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
             </div>
 
             {/* input */}
-            <div className="absolute inset-x-6 bottom-2 h-24 shrink-0 rounded-lg border border-grayA-3 bg-black/50 p-2 text-sm text-gray-10 backdrop-blur-3xl">
+            <div className="absolute bottom-2 mx-auto h-24 w-full max-w-3xl shrink-0 rounded-lg border border-grayA-3 bg-black/25 p-2 text-sm text-gray-10 backdrop-blur-3xl">
               Send a message...
               <div className="absolute bottom-3 right-2 gap-1 flex-end">
                 <IconButton variant="ghost" size="2" color="gray">
