@@ -12,8 +12,12 @@ export const SelectList = ({ items, placeholder, ...props }: SelectList) => {
   )
   return (
     <RadixSelect.Root {...props}>
-      <RadixSelect.Trigger placeholder={placeholder ?? 'Select an item'} className="w-full" />
-      <RadixSelect.Content>
+      <RadixSelect.Trigger
+        variant="surface"
+        placeholder={placeholder ?? 'Select an item'}
+        className="w-full"
+      />
+      <RadixSelect.Content variant="soft">
         <RadixSelect.Group>
           {list.map(({ label, value }) => (
             <RadixSelect.Item key={value} value={value}>
