@@ -42,6 +42,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
       link: d.link,
       license: '',
       tags: [],
+      coverImageUrl: d.cover_img,
 
       architecture,
       sizes:

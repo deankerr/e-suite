@@ -54,6 +54,7 @@ export function getChatModelShape(model: Doc<'chat_models'>) {
     'moderated',
     'available',
     'hidden',
+    'coverImageUrl',
   ])
 }
 
@@ -77,5 +78,7 @@ export function getImageModelShape(model: Doc<'image_models'>) {
     'hidden',
     'sizes',
     'architecture',
+    'civitaiModelId',
+    'coverImageUrl',
   ])
 }
