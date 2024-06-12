@@ -12,7 +12,7 @@ export const ImageModelCard = ({
   ...props
 }: { model: EImageModel } & React.ComponentProps<'div'>) => {
   return (
-    <Card {...props} className={cn('flex h-80 w-52 shrink-0 flex-col', className)}>
+    <Card {...props} className={cn('flex h-72 w-48 shrink-0 flex-col', className)}>
       <Inset side="top" className="absolute inset-0">
         {model.coverImageUrl && (
           <Image

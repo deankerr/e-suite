@@ -1,19 +1,12 @@
 'use client'
 
-import { Badge, Button, Card, IconButton, Inset } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
-import { formatDistanceToNow } from 'date-fns'
-import {
-  ExternalLinkIcon,
-  MessagesSquareIcon,
-  PaperclipIcon,
-  SendHorizonalIcon,
-} from 'lucide-react'
-import Link from 'next/link'
+import { Card, IconButton, Inset } from '@radix-ui/themes'
+import { MessagesSquareIcon, PaperclipIcon, SendHorizonalIcon } from 'lucide-react'
 
+import { ChatModelCard } from '@/components/cards/ChatModelCard'
+import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
-import { Pre } from '@/components/util/Pre'
-import { api } from '@/convex/_generated/api'
+import { ChatFeed } from '@/components/chat2/ChatFeed'
 import { useChatModels, useImageModels } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
 
@@ -41,28 +34,14 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
         )
       : undefined
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-redundant-type-constituents
-  const currentModel = (chatModel || imageModel) as typeof chatModel & typeof imageModel
-
-  const messages = useQuery(
-    api.db.messages.list,
-    thread
-      ? {
-          threadId: thread._id,
-        }
-      : 'skip',
-  )
   return (
-    <Card
-      {...props}
-      className={cn('card-translucent-1 grid h-full w-full overflow-hidden', className)}
-    >
+    <Card {...props} className={cn('grid h-full w-full overflow-hidden', className)}>
       <Inset side="all" className="flex flex-col overflow-hidden">
         {/* header bar */}
         <div className="h-10 shrink-0 border-b border-grayA-3 flex-between">
           <div className="gap-2 pl-3 flex-start">
             <IconButton variant="ghost">
-              <MessagesSquareIcon className="size-4" />
+              <MessagesSquareIcon className="size-5" />
             </IconButton>
             <div className="text-sm font-semibold">{thread?.title ?? 'Untitled'}</div>
           </div>
@@ -72,56 +51,14 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
         <div className="flex grow overflow-hidden">
           {/* details */}
           <div className="w-80 shrink-0 border-r border-grayA-3 p-4">
-            {currentModel && (
-              <div className="space-y-3">
-                <div className="">
-                  <div className="text-sm font-medium text-gray-11">{currentModel.creatorName}</div>
-                  <div className="text-base font-medium">{currentModel.name}</div>
-                  <div className="font-mono text-xs text-gray-11">{currentModel.model}</div>
-                </div>
-
-                <div className="gap-2 flex-start">
-                  <Badge color="ruby">{currentModel.endpoint}</Badge>
-                  {currentModel.architecture && <Badge color="green">{currentModel.architecture}</Badge>}
-                  {currentModel.contextLength && <Badge color="gray">{currentModel.contextLength}</Badge>}
-                  {currentModel.link && (
-                    <IconButton variant="soft" size="1" className="shrink-0" asChild>
-                      <Link href={currentModel.link}>
-                        <ExternalLinkIcon className="size-4" />
-                      </Link>
-                    </IconButton>
-                  )}
-                  {currentModel.civitaiModelId && (
-                    <Button variant="soft" size="1" className="shrink-0" asChild>
-                      <Link href={`https://civitai.com/models/${currentModel.civitaiModelId}`}>
-                        civitai <ExternalLinkIcon className="size-4" />
-                      </Link>
-                    </Button>
-                  )}
-                </div>
-                <div className="text-xs">{currentModel.description}</div>
-                <Pre className="h-fit">{JSON.stringify(currentModel, null, 2)}</Pre>
-              </div>
-            )}
+            {chatModel && <ChatModelCard model={chatModel} className="mx-auto" />}
+            {imageModel && <ImageModelCard model={imageModel} className="mx-auto" />}
+            {/* <Pre className="h-fit">{JSON.stringify(currentModel, null, 2)}</Pre> */}
           </div>
 
-          {/* content feed */}
+          {/* content */}
           <div className="flex grow flex-col items-center gap-3 overflow-hidden">
-            <div className="w-full grow space-y-3 overflow-y-auto py-3 pl-3 pr-6">
-              {messages?.map((message) => (
-                <div key={message._id} className="mx-auto max-w-4xl shrink-0 space-y-1">
-                  <div className="flex items-center gap-2 px-1">
-                    <div className="text-sm font-medium">{message.name ?? message.role}</div>
-                    <div className="text-xs font-medium text-gray-11">
-                      {formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })}
-                    </div>
-                  </div>
-                  <div className="space-y-2 rounded-md bg-black/20 p-2 text-sm">
-                    {message.content?.split('\n').map((line, i) => <p key={i}>{line}</p>)}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ChatFeed />
 
             {/* input */}
             <div className="absolute bottom-2 mx-auto h-24 w-full max-w-3xl shrink-0 rounded-lg border border-grayA-3 bg-black/25 p-2 text-sm text-gray-10 backdrop-blur-3xl">

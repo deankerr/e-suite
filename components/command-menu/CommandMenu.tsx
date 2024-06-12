@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
 import { useChatDeck } from '@/components/chat/useChatDeck'
+import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import {
   Command,
   CommandEmpty,
@@ -18,7 +19,6 @@ import {
   CommandSeparator,
 } from '@/components/ui/Command'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { Logo } from '@/components/ui/Logo'
 import { commandMenuOpenAtom } from '@/lib/atoms'
 import { useUserThreadsList } from '@/lib/queries'
 
@@ -119,9 +119,7 @@ const CommandDialog = ({ children, ...props }: React.ComponentProps<typeof Dialo
 
         <Inset side="top" className="p-3">
           <div className="pt-0.5 flex-between">
-            <div className="gap-1.5 text-xl font-semibold tracking-tight flex-start">
-              <Logo /> e/suite
-            </div>
+            <AppLogoTitle />
 
             <UserButton />
           </div>

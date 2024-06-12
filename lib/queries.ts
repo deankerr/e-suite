@@ -14,6 +14,18 @@ export const useThread = (slugOrId: string) => {
   return result
 }
 
+export const useMessages = (threadId?: string) => {
+  const result = useQuery(
+    api.db.messages.list,
+    threadId
+      ? {
+          threadId,
+        }
+      : 'skip',
+  )
+  return result.data
+}
+
 export const useUserThreadsList = () => {
   const result = useQuery(api.db.threads.list, {})
   result.data?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
