@@ -1,12 +1,13 @@
 'use client'
 
 import { Card, IconButton, Inset } from '@radix-ui/themes'
-import { MessagesSquareIcon, PaperclipIcon, SendHorizonalIcon } from 'lucide-react'
+import { MessagesSquareIcon } from 'lucide-react'
 
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
 import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
 import { ChatFeed } from '@/components/chat2/ChatFeed'
+import { MessageInput } from '@/components/message-input/MessageInput'
 import { useChatModels, useImageModels } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
 
@@ -57,26 +58,16 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
           </div>
 
           {/* content */}
-          <div className="flex grow flex-col items-center gap-3 overflow-hidden">
+          <div className="flex grow flex-col items-center gap-1 overflow-hidden py-1 pb-2">
             <ChatFeed />
 
             {/* input */}
-            <div className="absolute bottom-2 mx-auto h-24 w-full max-w-3xl shrink-0 rounded-lg border border-grayA-3 bg-black/25 p-2 text-sm text-gray-10 backdrop-blur-3xl">
-              Send a message...
-              <div className="absolute bottom-3 right-2 gap-1 flex-end">
-                <IconButton variant="ghost" size="2" color="gray">
-                  <PaperclipIcon className="size-5" />
-                </IconButton>
-                <IconButton variant="ghost" size="2">
-                  <SendHorizonalIcon className="size-5" />
-                </IconButton>
-              </div>
-            </div>
+            <MessageInput className="mx-auto max-w-3xl shrink-0" />
           </div>
         </div>
 
         {/* footer bar */}
-        <div className="h-6 shrink-0 border-t border-grayA-3 text-sm flex-start"></div>
+        {/* <div className="h-6 shrink-0 border-t border-grayA-3 text-sm flex-start"></div> */}
       </Inset>
     </Card>
   )

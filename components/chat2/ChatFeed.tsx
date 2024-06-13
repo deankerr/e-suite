@@ -68,7 +68,7 @@ export const ChatFeed = ({ className, ...props }: React.ComponentProps<'div'>) =
       {...props}
       ref={scrollRef}
       className={cn(
-        'flex h-full w-full flex-col gap-2 overflow-y-auto overflow-x-hidden px-2 py-3',
+        'flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-2 py-1',
         className,
       )}
     >
