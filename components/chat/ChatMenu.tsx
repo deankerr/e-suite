@@ -70,9 +70,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                   </CommandItem>
                   <CommandItem onSelect={() => setPage('listModels')}>
                     <BoxIcon className="mr-2 size-4" />
-                    <div className="line-clamp-1 grow">
-                      {currentModel?.name ?? 'No model selected'}
-                    </div>
+                    <div className="line-clamp-1 grow">{currentModel?.name ?? 'Model'}</div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
                 </CommandGroup>

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import type { EImage } from '@/convex/shared/entities'
+import type { EImage } from '@/convex/shared/structures'
 
 type ImageCardProps = { image: EImage; sizes?: string }
 

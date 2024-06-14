@@ -3,7 +3,7 @@ import z from 'zod'
 
 import { internalMutation, mutation, query } from './functions'
 import { userFields } from './schema'
-import { userSchema } from './shared/entities'
+import { userSchema } from './shared/structures'
 import { generateRandomString } from './utils'
 
 const userBySchema = z.union([

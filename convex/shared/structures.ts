@@ -1,7 +1,40 @@
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
-import { imageSchema } from './entities'
+export const imageFileSchema = z.object({
+  fileId: zid('_storage'),
+  isOriginFile: z.boolean(),
+
+  category: z.literal('image'),
+  format: z.string(),
+
+  width: z.number(),
+  height: z.number(),
+
+  imageId: zid('images'),
+})
+
+export const userSchema = z.object({
+  _id: zid('users'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined(),
+
+  name: z.string(),
+  imageUrl: z.string(),
+  role: z.enum(['user', 'admin']),
+})
+
+export type EImage = z.infer<typeof imageSchema>
+export const imageSchema = z.object({
+  _id: zid('images'),
+  _creationTime: z.number(),
+  deletionTime: z.undefined(),
+
+  width: z.number(),
+  height: z.number(),
+  blurDataUrl: z.string(),
+  color: z.string(),
+})
 
 export const metadataKVSchema = z.object({ key: z.string(), value: z.string() })
 

@@ -5,7 +5,7 @@ import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { internalAction, internalMutation, internalQuery } from './functions'
 import { imageFields } from './schema'
-import { imageFileSchema } from './shared/entities'
+import { imageFileSchema } from './shared/structures'
 
 import type { Id } from './_generated/dataModel'
 
