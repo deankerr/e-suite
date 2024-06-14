@@ -18,7 +18,7 @@ export const Message = ({
   const title = textToImage ? textToImage.prompt : message?.name || message.role
 
   return (
-    <div {...props} className={cn('shrink-0 space-y-1 text-sm', className)}>
+    <div {...props} className={cn('shrink-0 space-y-1 py-2 text-sm', className)}>
       <div className="flex items-center gap-2 border-b px-1 font-medium">
         <MessageSquareIcon className="-mr-0.5 size-4 flex-none text-accent-11" />
         <div className="truncate capitalize">{title}</div>

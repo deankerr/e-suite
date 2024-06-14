@@ -1,111 +1,98 @@
 'use client'
 
-import { useState } from 'react'
-import { Button, Card, IconButton, Inset } from '@radix-ui/themes'
-import { useSetAtom } from 'jotai'
-import { CodeIcon, FileWarningIcon, MenuIcon, XIcon } from 'lucide-react'
+import { Card, IconButton, Inset } from '@radix-ui/themes'
+import { LinkIcon, MessagesSquareIcon } from 'lucide-react'
 import Link from 'next/link'
 
-import { ChatInput } from '@/components/chat/ChatInput'
-import { Chat2Menu } from '@/components/chat/ChatMenu'
-import { ChatMessages } from '@/components/chat/ChatMessages'
+import { ChatModelCard } from '@/components/cards/ChatModelCard'
+import { ImageModelCard } from '@/components/cards/ImageModelCard'
+import { ChatFeed } from '@/components/chat/ChatFeed'
+import { ChatMenu } from '@/components/chat/ChatMenu'
 import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { Pre } from '@/components/util/Pre'
-import { commandMenuOpenAtom } from '@/lib/atoms'
-import { cn } from '@/lib/utils'
+import { MessageInput } from '@/components/message-input/MessageInput'
+import { ClientOnly } from '@/components/util/ClientOnly'
+import { useChatModels, useImageModels } from '@/lib/queries'
+import { cn, getThreadConfig } from '@/lib/utils'
 
-type ChatProps = { slug: string; onClose?: (slug: string) => void } & React.ComponentProps<'div'>
+export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div'>) => {
+  const { thread } = useChat()
+  const config = getThreadConfig(thread)
 
-const ChatComponent = ({ className, ...props }: ChatProps) => {
-  const { thread, closeChat } = useChat()
-  const setMenuOpen = useSetAtom(commandMenuOpenAtom)
-  const [showJson, setShowJson] = useState(false)
+  const chatModels = useChatModels()
+  const chatModel =
+    thread && chatModels.isSuccess
+      ? chatModels.data.find(
+          (model) =>
+            model.model === config.chatCompletion?.model &&
+            model.endpoint === config.chatCompletion.endpoint,
+        )
+      : undefined
+
+  const imageModels = useImageModels()
+  const imageModel =
+    thread && imageModels.isSuccess
+      ? imageModels.data.find(
+          (model) =>
+            model.model === config.textToImage?.model &&
+            model.endpoint === config.textToImage.endpoint,
+        )
+      : undefined
+
   return (
-    <Card
-      {...props}
-      className={cn(
-        'card-bg-1 flex h-full w-full flex-col overflow-hidden backdrop-blur-3xl',
-        className,
-      )}
-    >
-      {/* header */}
-      <Inset side="top" className="h-10 shrink-0 border-b border-gray-5 px-2 text-sm flex-between">
-        <div className="shrink-0 flex-start">
-          <IconButton
-            variant="ghost"
-            className="shrink-0"
-            size="1"
-            onClick={() => setMenuOpen(true)}
-          >
-            <MenuIcon />
-          </IconButton>
-        </div>
-
-        {thread && <div className="grow truncate flex-center">{thread?.title ?? 'new thread'}</div>}
-        {thread === null && (
-          <div className="grow truncate flex-center">
-            <FileWarningIcon className="text-red-11" />
+    <Card {...props} className={cn('grid h-full w-full overflow-hidden', className)}>
+      <Inset side="all" className="flex flex-col overflow-hidden">
+        {/* header bar */}
+        <div className="h-10 shrink-0 border-b border-grayA-3 flex-between">
+          <div className="shrink-0 gap-2 pl-3 flex-start">
+            {thread && (
+              <ChatMenu thread={thread}>
+                <IconButton variant="ghost">
+                  <MessagesSquareIcon className="size-5" />
+                </IconButton>
+              </ChatMenu>
+            )}
+            <div className="text-sm font-semibold">{thread?.title ?? 'Untitled'}</div>
           </div>
-        )}
-        {thread === undefined && <LoadingSpinner />}
 
-        <div className="shrink-0 gap-2 flex-end">
-          <IconButton
-            variant="ghost"
-            color="gray"
-            size="1"
-            className="shrink-0"
-            onClick={closeChat}
-          >
-            <XIcon />
-          </IconButton>
-        </div>
-      </Inset>
-
-      {/* header 2 */}
-      <Inset side="x" className="h-10 shrink-0 border-b px-2 text-sm flex-between">
-        <div className="w-14 flex-start">
-          {/* show json button */}
-          <IconButton
-            variant="ghost"
-            color="gray"
-            size="1"
-            className="shrink-0"
-            onClick={() => setShowJson(!showJson)}
-          >
-            <CodeIcon />
-          </IconButton>
+          <div className="shrink-0 gap-2 pl-3 pr-3 flex-end">
+            <Link href={`/c/${thread?.slug}`}>
+              <LinkIcon className="size-5 text-gray-11" />
+            </Link>
+          </div>
         </div>
 
-        {/* chat menu button */}
-        {thread && <Chat2Menu thread={thread} />}
+        {/* body */}
+        <div className="flex grow overflow-hidden">
+          {/* details */}
+          <div className="w-80 shrink-0 border-r border-grayA-3 p-4">
+            {chatModel && <ChatModelCard model={chatModel} className="mx-auto" />}
+            {imageModel && <ImageModelCard model={imageModel} className="mx-auto" />}
+            {/* <Pre className="h-fit">{JSON.stringify(currentModel, null, 2)}</Pre> */}
+          </div>
 
-        <div className="w-14 pr-1 flex-end">
-          {/* slug page link */}
-          <Button variant="ghost" color="gray" size="1" className="shrink-0" asChild>
-            <Link href={`/c/${thread?.slug}`}>{thread?.slug}</Link>
-          </Button>
+          {/* content */}
+          <div className="flex grow flex-col items-center gap-1 overflow-hidden py-1 pb-2">
+            <ChatFeed className="mx-auto max-w-3xl" />
+
+            {/* input */}
+            <ClientOnly>
+              <MessageInput className="mx-auto max-w-3xl shrink-0" />
+            </ClientOnly>
+          </div>
         </div>
-      </Inset>
 
-      {/* body */}
-      <div className="grow overflow-hidden">
-        {thread && !showJson && <ChatMessages thread={thread} />}
-        {showJson && <Pre>{JSON.stringify(thread, null, 2)}</Pre>}
-      </div>
-
-      {/* footer */}
-      <Inset side="bottom" className="min-h-10 shrink-0 border-t px-1 text-sm flex-between">
-        {thread && <ChatInput className="mx-auto max-w-3xl" thread={thread} />}
+        {/* footer bar */}
+        {/* <div className="h-6 shrink-0 border-t border-grayA-3 text-sm flex-start"></div> */}
       </Inset>
     </Card>
   )
 }
 
-export const Chat = (props: ChatProps) => {
+type ChatProps = { slug: string; onClose?: (slug: string) => void } & React.ComponentProps<'div'>
+
+export const Chat = ({ slug, onClose, ...props }: ChatProps) => {
   return (
-    <ChatProvider slug={props.slug} onClose={props.onClose}>
+    <ChatProvider slug={slug} onClose={onClose}>
       <ChatComponent {...props} />
     </ChatProvider>
   )

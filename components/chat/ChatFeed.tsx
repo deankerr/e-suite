@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { ChatMessage } from '@/components/chat/ChatMessage'
 import { useChat } from '@/components/chat/ChatProvider'
+import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { getMessageShape } from '@/convex/shared/shape'
 import { useMessages, useViewerDetails } from '@/lib/queries'
@@ -73,7 +73,7 @@ export const ChatFeed = ({ className, ...props }: React.ComponentProps<'div'>) =
       )}
     >
       {chatCompletion && user && (
-        <ChatMessage
+        <Message
           className="rounded bg-gold-4 px-2"
           message={getMessageShape({
             _id: '_instructions' as Id<'messages'>,
@@ -89,7 +89,7 @@ export const ChatFeed = ({ className, ...props }: React.ComponentProps<'div'>) =
       )}
 
       {messages.map((message) => (
-        <ChatMessage key={message._id} message={message} />
+        <Message key={message._id} message={message} />
       ))}
     </div>
   )

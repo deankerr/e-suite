@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import { Button } from '@radix-ui/themes'
 import { BoxIcon, ChevronLeftIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
@@ -20,7 +19,7 @@ import type { EThread } from '@/convex/shared/types'
 
 type ChatMenuProps = { thread: EThread } & React.ComponentProps<typeof Popover.Root>
 
-export const Chat2Menu = ({ thread, ...props }: ChatMenuProps) => {
+export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const { getModel, chatModels, imageModels } = useModelData()
   const config = getThreadConfig(thread)
   const currentModel = getModel(config.current.endpoint, config.current.model)
@@ -42,13 +41,9 @@ export const Chat2Menu = ({ thread, ...props }: ChatMenuProps) => {
         setOpen(open)
       }}
     >
-      <Popover.Trigger asChild>
-        <Button variant="surface" size="1">
-          {currentModel.name}
-        </Button>
-      </Popover.Trigger>
+      <Popover.Trigger asChild>{children}</Popover.Trigger>
 
-      <Popover.Content sideOffset={5} className="z-30 w-80">
+      <Popover.Content align="start" alignOffset={0} sideOffset={5} className="z-30 w-80">
         <Command>
           <CommandInput value={search} onValueChange={setSearch} />
           <CommandList>

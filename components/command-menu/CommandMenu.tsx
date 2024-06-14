@@ -8,7 +8,7 @@ import { ImagePlusIcon, MenuIcon, MessageSquarePlusIcon } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
-import { useChatDeck } from '@/components/chat/useChatDeck'
+import { useChatDeck } from '@/components/chat-deck/useChatDeck'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import {
   Command,
