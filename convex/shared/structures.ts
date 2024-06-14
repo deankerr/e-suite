@@ -5,34 +5,6 @@ import { imageSchema } from './entities'
 
 export const metadataKVSchema = z.object({ key: z.string(), value: z.string() })
 
-export type EChatModel = z.infer<typeof chatModelSchema>
-export const chatModelSchema = z.object({
-  modelType: z.literal('chat'),
-  endpoint: z.string(),
-  endpointModelId: z.string(),
-  resourceId: z.string(),
-
-  name: z.string(),
-  creatorName: z.string().optional(),
-  description: z.string().optional(),
-  coverImageUrl: z.string().optional(),
-
-  contextLength: z.number(),
-})
-
-export type EImageModel = z.infer<typeof imageModelSchema>
-export const imageModelSchema = z.object({
-  modelType: z.literal('image'),
-  endpoint: z.string(),
-  endpointModelId: z.string(),
-  resourceId: z.string(),
-
-  name: z.string(),
-  creatorName: z.string().optional(),
-  description: z.string().optional(),
-  coverImageUrl: z.string().optional(),
-})
-
 export type EChatCompletionInference = z.infer<typeof chatCompletionInferenceSchema>
 export const chatCompletionInferenceSchema = z.object({
   type: z.literal('chat-completion'),

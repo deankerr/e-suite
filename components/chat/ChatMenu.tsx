@@ -12,7 +12,7 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useModelData } from '@/lib/hooks'
+import { useChatModels, useImageModels } from '@/lib/queries'
 import { endpointCode, getThreadConfig } from '@/lib/utils'
 
 import type { EThread } from '@/convex/shared/types'
@@ -20,10 +20,18 @@ import type { EThread } from '@/convex/shared/types'
 type ChatMenuProps = { thread: EThread } & React.ComponentProps<typeof Popover.Root>
 
 export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
-  const { getModel, chatModels, imageModels } = useModelData()
+  const { data: chatModels } = useChatModels()
+  const { data: imageModels } = useImageModels()
+
   const config = getThreadConfig(thread)
-  const currentModel = getModel(config.current.endpoint, config.current.model)
-  const modelsList = currentModel.modelType === 'chat' ? chatModels : imageModels
+
+  const currentModelSlug = `${config.current.endpoint}::${config.current.model}`
+  const currentModel =
+    config.current.type === 'chat-completion'
+      ? chatModels?.find((model) => model.slug === currentModelSlug)
+      : imageModels?.find((model) => model.slug === currentModelSlug)
+
+  const modelList = config.current.type === 'chat-completion' ? chatModels : imageModels
 
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -62,7 +70,9 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                   </CommandItem>
                   <CommandItem onSelect={() => setPage('listModels')}>
                     <BoxIcon className="mr-2 size-4" />
-                    <div className="line-clamp-1 grow">{currentModel.name}</div>
+                    <div className="line-clamp-1 grow">
+                      {currentModel?.name ?? 'No model selected'}
+                    </div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
                 </CommandGroup>
@@ -76,16 +86,16 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                   return
                 </CommandItem>
 
-                {modelsList.map((model) => (
+                {modelList?.map((model) => (
                   <CommandItem
-                    key={model.resourceId}
+                    key={model._id}
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
                       void updateThreadConfig({
                         currentInferenceConfig: {
                           ...config.current,
                           endpoint: model.endpoint,
-                          model: model.endpointModelId,
+                          model: model.model,
                         },
                       })
                       setOpen(false)
