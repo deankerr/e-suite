@@ -11,13 +11,13 @@ import {
   getEditorStorageText,
   removeEditorStorageText,
 } from '@/components/text-editor/utils'
-import { cn, getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
+import { getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
 import { QuantityControl } from './QuantityControl'
 
 import type { ETextToImageInference } from '@/convex/shared/structures'
 
-export const MessageInput = ({ className, ...props }: React.ComponentProps<'div'>) => {
+export const MessageInput = () => {
   const { sendMessage, updateThreadConfig, thread } = useChat()
   const storageKey = `prompt-editor-${thread?.slug || ''}`
 
@@ -61,8 +61,9 @@ export const MessageInput = ({ className, ...props }: React.ComponentProps<'div'
     editor.onChange()
   }
 
+  if (!thread) return null
   return (
-    <div {...props} className={cn('flex w-full flex-col justify-center gap-2', className)}>
+    <div className="flex w-full shrink-0 flex-col justify-center gap-2 px-5 pb-2">
       {thread && <TextEditor storageKey={storageKey} editor={editor} />}
 
       <div className="shrink-0 gap-2 flex-between">

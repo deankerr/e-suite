@@ -5,12 +5,12 @@ import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { getMessageShape } from '@/convex/shared/shape'
 import { useMessages, useViewerDetails } from '@/lib/queries'
-import { cn, getThreadConfig } from '@/lib/utils'
+import { getThreadConfig } from '@/lib/utils'
 
 import type { Id } from '@/convex/_generated/dataModel'
 import type { EMessage } from '@/convex/shared/types'
 
-export const ChatFeed = ({ className, ...props }: React.ComponentProps<'div'>) => {
+export const ChatFeed = () => {
   const { thread } = useChat()
   const messages = useMessages(thread?._id)
 
@@ -65,12 +65,8 @@ export const ChatFeed = ({ className, ...props }: React.ComponentProps<'div'>) =
 
   return (
     <div
-      {...props}
       ref={scrollRef}
-      className={cn(
-        'flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-2 py-1',
-        className,
-      )}
+      className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-5 py-1"
     >
       {chatCompletion && user && (
         <Message

@@ -29,7 +29,7 @@ export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>
       : undefined
 
   return (
-    <div {...props} className={cn('w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
+    <div {...props} className={cn('h-full w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
       {chatModel && <ChatModelCard model={chatModel} className="mx-auto" />}
       {imageModel && <ImageModelCard model={imageModel} className="mx-auto" />}
     </div>
