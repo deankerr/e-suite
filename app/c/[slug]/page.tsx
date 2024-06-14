@@ -1,6 +1,6 @@
 'use client'
 
-import { Chat } from '@/components/chat/Chat'
+import { ChatStack } from '@/components/chat/ChatStack'
 
 export default function Page({ params }: { params: { slug: string } }) {
   const slug = params.slug
@@ -8,7 +8,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
   return (
     <div className="w-full p-1">
-      <Chat slug={slug} />
+      <ChatStack slug={slug} />
     </div>
   )
 }
