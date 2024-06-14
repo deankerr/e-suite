@@ -22,7 +22,7 @@ export const ChatModelCard = ({
   const logoSrc = llmAuthorLogos[model.creatorName.toLowerCase()]
 
   return (
-    <Card {...props} className={cn('flex h-48 w-72 max-w-full shrink-0 flex-col', className)}>
+    <Card {...props} className={cn('flex h-40 w-72 max-w-full shrink-0 flex-col', className)}>
       <div>
         <div className="flex justify-between text-sm font-medium text-gray-11">
           {model.creatorName}
@@ -34,13 +34,13 @@ export const ChatModelCard = ({
             />
           )}
         </div>
-        <div className="text-base font-medium">{model.name}</div>
+        <div className="text-sm font-medium">{model.name}</div>
         <div className="mt-1 font-mono text-xs text-gray-11">{model.model}</div>
       </div>
 
       <div className="flex grow flex-col justify-center text-sm">
         <div className="text-gray-11">context length</div>
-        <div className="">{model.contextLength.toLocaleString()}</div>
+        <div className="text-sm">{model.contextLength.toLocaleString()}</div>
       </div>
 
       <div className={cn('flex shrink-0 flex-wrap items-end gap-2')}>

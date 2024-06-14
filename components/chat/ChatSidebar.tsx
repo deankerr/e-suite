@@ -38,7 +38,12 @@ export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>
   return (
     <div {...props} className={cn('h-full w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
       {thread && chatCompletion && chatModel && (
-        <ChatCompletionParameters thread={thread} config={chatCompletion} model={chatModel} />
+        <ChatCompletionParameters
+          key={chatModel.slug}
+          thread={thread}
+          config={chatCompletion}
+          model={chatModel}
+        />
       )}
       {imageModel && <ImageModelCard model={imageModel} className="mx-auto" />}
     </div>
@@ -102,6 +107,17 @@ const chatCompletionParameters = [
   },
 ]
 
+const getModelParams = (model: EChatModel) => {
+  if (model.creatorName.toLowerCase() === 'openai') {
+    return chatCompletionParameters.filter(
+      (param) => !['top_k', 'repetition_penalty'].includes(param.id),
+    )
+  }
+  return chatCompletionParameters.filter(
+    (param) => !['frequency_penalty', 'presence_penalty'].includes(param.id),
+  )
+}
+
 const defaultMaxTokens = 4095
 
 const ChatCompletionParameters = ({
@@ -111,6 +127,8 @@ const ChatCompletionParameters = ({
   config: EChatCompletionInference
   model: EChatModel
 }) => {
+  const parameters = getModelParams(model)
+
   return (
     <div className="flex flex-col gap-2">
       <ChatModelCard model={model} className="mx-auto" />
@@ -118,13 +136,15 @@ const ChatCompletionParameters = ({
       <div className="grid gap-6 px-2">
         <SliderWithInput
           label="Max Tokens"
-          defaultValue={model.contextLength || defaultMaxTokens}
+          defaultValue={
+            defaultMaxTokens > model.contextLength ? model.contextLength : defaultMaxTokens
+          }
           min={1}
           max={model.contextLength || defaultMaxTokens}
           step={1}
         />
 
-        {chatCompletionParameters.map((param) => (
+        {parameters.map((param) => (
           <SliderWithInput
             key={param.id}
             label={param.label}

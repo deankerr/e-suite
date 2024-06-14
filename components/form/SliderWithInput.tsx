@@ -24,7 +24,7 @@ export const SliderWithInput = ({
         <div>{label}</div>
         <TextField
           type="number"
-          className="h-full w-full max-w-16 px-1 py-0.5 text-right"
+          className="h-full w-full max-w-20 px-1 py-0.5 text-right"
           size="2"
           defaultValue={defaultValue}
           value={value}
