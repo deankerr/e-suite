@@ -11,13 +11,17 @@ import {
   getEditorStorageText,
   removeEditorStorageText,
 } from '@/components/text-editor/utils'
-import { cn, getThreadConfig } from '@/lib/utils'
+import { cn, getThreadConfig, getWidthHeightForEndpoint } from '@/lib/utils'
+import { DimensionsControl } from './DimensionsControl'
+import { QuantityControl } from './QuantityControl'
+
+import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = ({ className, ...props }: React.ComponentProps<'div'>) => {
-  const { sendMessage, thread } = useChat()
+  const { sendMessage, updateThreadConfig, thread } = useChat()
   const storageKey = `prompt-editor-${thread?.slug || ''}`
 
-  const { chatCompletion } = getThreadConfig(thread)
+  const { chatCompletion, textToImage } = getThreadConfig(thread)
 
   const handleSendMessage = async () => {
     const prompt = getEditorStorageText(storageKey)
@@ -30,6 +34,24 @@ export const MessageInput = ({ className, ...props }: React.ComponentProps<'div'
       })
       resetEditorValue()
     }
+
+    if (textToImage) {
+      await sendMessage({
+        message: {},
+        inference: { ...textToImage, prompt: prompt },
+      })
+      resetEditorValue()
+    }
+  }
+
+  const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
+    if (!textToImage) return
+    await updateThreadConfig({
+      currentInferenceConfig: {
+        ...textToImage,
+        ...parameters,
+      },
+    })
   }
 
   const [editor] = useState(() => withReact(createEditor()))
@@ -53,6 +75,23 @@ export const MessageInput = ({ className, ...props }: React.ComponentProps<'div'
             Clear
           </Button>
         </div>
+
+        {textToImage && (
+          <div className="shrink-0 gap-2 flex-between">
+            <QuantityControl
+              n={textToImage.n}
+              onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
+            />
+            <DimensionsControl
+              width={textToImage.width}
+              height={textToImage.height}
+              onValueChange={async (size: string) => {
+                const { width, height } = getWidthHeightForEndpoint(size, textToImage.endpoint)
+                void handleUpdateTTIConfig({ width, height })
+              }}
+            />
+          </div>
+        )}
 
         <div className="shrink-0 gap-2 flex-end">
           <Button color="gray">Add</Button>

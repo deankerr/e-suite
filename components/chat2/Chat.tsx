@@ -7,6 +7,7 @@ import { ChatModelCard } from '@/components/cards/ChatModelCard'
 import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
 import { ChatFeed } from '@/components/chat2/ChatFeed'
+import { ChatMenu } from '@/components/chat2/ChatMenu'
 import { MessageInput } from '@/components/message-input/MessageInput'
 import { ClientOnly } from '@/components/util/ClientOnly'
 import { useChatModels, useImageModels } from '@/lib/queries'
@@ -42,9 +43,13 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
         {/* header bar */}
         <div className="h-10 shrink-0 border-b border-grayA-3 flex-between">
           <div className="gap-2 pl-3 flex-start">
-            <IconButton variant="ghost">
-              <MessagesSquareIcon className="size-5" />
-            </IconButton>
+            {thread && (
+              <ChatMenu thread={thread}>
+                <IconButton variant="ghost">
+                  <MessagesSquareIcon className="size-5" />
+                </IconButton>
+              </ChatMenu>
+            )}
             <div className="text-sm font-semibold">{thread?.title ?? 'Untitled'}</div>
           </div>
         </div>
