@@ -1,13 +1,20 @@
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
 import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { useChat } from '@/components/chat/ChatProvider'
+import { BasicTextArea } from '@/components/form/BasicTextArea'
+import { SliderWithInput } from '@/components/form/SliderWithInput'
 import { useChatModels, useImageModels } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
+
+import type { EChatModel } from '@/convex/shared/shape'
+import type { EChatCompletionInference } from '@/convex/shared/structures'
+import type { EThread } from '@/convex/shared/types'
 
 export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const { thread } = useChat()
   const config = getThreadConfig(thread)
 
+  const chatCompletion = config.chatCompletion
   const chatModels = useChatModels()
   const chatModel =
     thread && chatModels.isSuccess
@@ -30,8 +37,106 @@ export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>
 
   return (
     <div {...props} className={cn('h-full w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
-      {chatModel && <ChatModelCard model={chatModel} className="mx-auto" />}
+      {thread && chatCompletion && chatModel && (
+        <ChatCompletionParameters thread={thread} config={chatCompletion} model={chatModel} />
+      )}
       {imageModel && <ImageModelCard model={imageModel} className="mx-auto" />}
+    </div>
+  )
+}
+
+const chatCompletionParameters = [
+  {
+    id: 'temperature',
+    label: 'Temperature',
+    defaultValue: 1,
+    min: 0,
+    max: 1,
+    step: 0.01,
+    type: 'number',
+  },
+  {
+    id: 'top_p',
+    label: 'Top P',
+    defaultValue: 1,
+    min: 0,
+    max: 1,
+    step: 0.01,
+    type: 'number',
+  },
+  {
+    id: 'top_k',
+    label: 'Top K',
+    defaultValue: 0,
+    min: 0,
+    max: 100,
+    step: 1,
+    type: 'number',
+  },
+  {
+    id: 'repetition_penalty',
+    label: 'Repetition Penalty',
+    defaultValue: 1,
+    min: 1,
+    max: 2,
+    step: 0.01,
+    type: 'number',
+  },
+  {
+    id: 'frequency_penalty',
+    label: 'Frequency Penalty',
+    defaultValue: 0,
+    min: -2,
+    max: 2,
+    step: 0.01,
+    type: 'number',
+  },
+  {
+    id: 'presence_penalty',
+    label: 'Presence Penalty',
+    defaultValue: 0,
+    min: -2,
+    max: 2,
+    step: 0.01,
+    type: 'number',
+  },
+]
+
+const defaultMaxTokens = 4095
+
+const ChatCompletionParameters = ({
+  model,
+}: {
+  thread: EThread
+  config: EChatCompletionInference
+  model: EChatModel
+}) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <ChatModelCard model={model} className="mx-auto" />
+
+      <div className="grid gap-6 px-2">
+        <SliderWithInput
+          label="Max Tokens"
+          defaultValue={model.contextLength || defaultMaxTokens}
+          min={1}
+          max={model.contextLength || defaultMaxTokens}
+          step={1}
+        />
+
+        {chatCompletionParameters.map((param) => (
+          <SliderWithInput
+            key={param.id}
+            label={param.label}
+            min={param.min}
+            max={param.max}
+            step={param.step}
+            defaultValue={param.defaultValue}
+          />
+        ))}
+
+        <BasicTextArea label="Stop Sequences" rows={2} defaultValue={model.stop.join(', ')} />
+      </div>
     </div>
   )
 }
