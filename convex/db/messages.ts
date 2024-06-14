@@ -109,7 +109,6 @@ export const create = mutation({
     if (!args.inference) return { threadId: thread._id, messageId: userMessageId }
 
     const asstMessageId = await ctx.table('messages').insert({
-      ...args.message,
       role: 'assistant',
       threadId: thread._id,
       series: nextSeriesNumber + 1,

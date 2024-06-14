@@ -8,6 +8,7 @@ import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { ChatProvider, useChat } from '@/components/chat/ChatProvider'
 import { ChatFeed } from '@/components/chat2/ChatFeed'
 import { MessageInput } from '@/components/message-input/MessageInput'
+import { ClientOnly } from '@/components/util/ClientOnly'
 import { useChatModels, useImageModels } from '@/lib/queries'
 import { cn, getThreadConfig } from '@/lib/utils'
 
@@ -62,7 +63,9 @@ export const ChatComponent = ({ className, ...props }: React.ComponentProps<'div
             <ChatFeed />
 
             {/* input */}
-            <MessageInput className="mx-auto max-w-3xl shrink-0" />
+            <ClientOnly>
+              <MessageInput className="mx-auto max-w-3xl shrink-0" />
+            </ClientOnly>
           </div>
         </div>
 
