@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ChatModelDataRecord } from '../db/models'
+import type { ChatModelDataRecord } from '../db/endpoints'
 import type { MutationCtx } from '../types'
 
 export const fetchModelData = async (ctx: ActionCtx) => {
@@ -16,7 +16,7 @@ export const fetchModelData = async (ctx: ActionCtx) => {
       },
     })
     .json()
-  await ctx.runMutation(internal.db.models.cacheEndpointModelData, {
+  await ctx.runMutation(internal.db.endpoints.cacheEndpointModelData, {
     endpoint: 'together',
     name: 'chat-models',
     data: JSON.stringify(response, null, 2),
@@ -41,7 +41,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
     .map((raw): ChatModelDataRecord | null => {
       const parsed = modelDataRecordSchema.safeParse(raw)
       if (!parsed.success) {
-        console.error(parsed.error.issues)
+        console.error([raw.name, ...parsed.error.issues])
         return null
       }
 
@@ -52,14 +52,14 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
         description: d.description,
 
         creatorName: d.creator_organization,
-        link: d.link,
+        link: d.link ?? '',
         license: d.license,
         tags: [],
 
         numParameters: d.num_parameters ? Number(d.num_parameters) : 0,
         contextLength: d.context_length ?? 0,
         tokenizer: '',
-        stop: [],
+        stop: d.config?.stop ?? [],
 
         endpoint: 'together',
         model: d.name,
@@ -112,6 +112,7 @@ enum Access {
 
 const modelDataListSchema = z
   .object({
+    name: z.string(),
     display_type: z.nativeEnum(DisplayType),
     isFeaturedModel: z.boolean().optional(),
   })
@@ -157,7 +158,6 @@ const modelDataRecordSchema = z.object({
   description: z.string(),
   license: z.string(),
   creator_organization: z.string(),
-  hardware_label: z.string(),
   num_parameters: z.union([z.number(), z.string()]).optional(),
   show_in_playground: z.union([z.boolean(), z.string()]),
   isFeaturedModel: z.boolean().optional(),
@@ -172,9 +172,9 @@ const modelDataRecordSchema = z.object({
   }),
   created_at: z.string().optional(),
   update_at: z.string().optional(),
-  access: z.nativeEnum(Access),
-  link: z.string(),
-  descriptionLink: z.string(),
+  access: z.nativeEnum(Access).optional(),
+  link: z.string().optional(),
+  descriptionLink: z.string().optional(),
   pricing_tier: z.nativeEnum(PricingTier).optional().nullable(),
   release_date: z.string().optional(),
   isPrivate: z.boolean().optional(),

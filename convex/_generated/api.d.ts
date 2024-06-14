@@ -15,9 +15,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as db_chatModels from "../db/chatModels.js";
+import type * as db_endpoints from "../db/endpoints.js";
 import type * as db_imageModels from "../db/imageModels.js";
 import type * as db_messages from "../db/messages.js";
-import type * as db_models from "../db/models.js";
 import type * as db_threads from "../db/threads.js";
 import type * as endpoints_fal from "../endpoints/fal.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
@@ -71,9 +71,9 @@ import type * as utils from "../utils.js";
  */
 declare const fullApi: ApiFromModules<{
   "db/chatModels": typeof db_chatModels;
+  "db/endpoints": typeof db_endpoints;
   "db/imageModels": typeof db_imageModels;
   "db/messages": typeof db_messages;
-  "db/models": typeof db_models;
   "db/threads": typeof db_threads;
   "endpoints/fal": typeof endpoints_fal;
   "endpoints/openai": typeof endpoints_openai;

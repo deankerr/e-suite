@@ -4,13 +4,13 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ChatModelDataRecord } from '../db/models'
+import type { ChatModelDataRecord } from '../db/endpoints'
 import type { MutationCtx } from '../types'
 
 export const fetchModelData = async (ctx: ActionCtx) => {
   console.log('https://openrouter.ai/api/v1/models')
   const response = await ky.get('https://openrouter.ai/api/v1/models').json()
-  await ctx.runMutation(internal.db.models.cacheEndpointModelData, {
+  await ctx.runMutation(internal.db.endpoints.cacheEndpointModelData, {
     endpoint: 'openrouter',
     name: 'chat-models',
     data: JSON.stringify(response, null, 2),

@@ -5,7 +5,7 @@ import { internal } from '../_generated/api'
 import { env } from '../shared/utils'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ImageModelDataRecord } from '../db/models'
+import type { ImageModelDataRecord } from '../db/endpoints'
 import type { MutationCtx } from '../types'
 
 export const fetchModelData = async (ctx: ActionCtx) => {
@@ -13,7 +13,7 @@ export const fetchModelData = async (ctx: ActionCtx) => {
   const body = new FormData()
   body.append('access_token', env('SINKIN_API_KEY'))
   const response = await ky.post('https://sinkin.ai/api/models', { body }).json()
-  await ctx.runMutation(internal.db.models.cacheEndpointModelData, {
+  await ctx.runMutation(internal.db.endpoints.cacheEndpointModelData, {
     endpoint: 'sinkin',
     name: 'image-models',
     data: JSON.stringify(response, null, 2),

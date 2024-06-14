@@ -1,4 +1,4 @@
-import type { ChatModelDataRecord } from '../db/models'
+import type { ChatModelDataRecord } from '../db/endpoints'
 
 export const OpenAIChatModels = [
   {

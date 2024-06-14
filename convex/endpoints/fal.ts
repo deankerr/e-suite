@@ -1,4 +1,4 @@
-import type { ImageModelDataRecord } from '../db/models'
+import type { ImageModelDataRecord } from '../db/endpoints'
 
 const sdxlSizes = {
   portrait: [832, 1216],
