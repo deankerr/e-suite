@@ -3,7 +3,7 @@ import { NavRail } from '@/components/layout/NavRail'
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <div className="fixed flex h-full w-full">
+      <div className="fixed flex h-full w-full flex-col sm:flex-row">
         {/* background layer */}
         <div className="pointer-events-none fixed inset-0 bg-orange-1">
           {/* <Image
@@ -16,7 +16,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <div className='fixed inset-0 bg-[url("/nn2.svg")]' />
         </div>
 
-        <NavRail className="hidden h-full sm:flex" />
+        <NavRail />
         {children}
       </div>
     </>

@@ -10,7 +10,7 @@ export const ChatDeck = ({ className, ...props }: React.ComponentProps<'div'>) =
     <div
       {...props}
       className={cn(
-        'flex h-full w-full snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden px-3 sm:py-3',
+        'flex h-full w-full snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden p-2',
         className,
       )}
     >

@@ -15,7 +15,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
     <nav
       {...props}
       className={cn(
-        'flex w-12 shrink-0 flex-col items-center gap-3 border-gray-4 bg-grayA-1 py-3 backdrop-blur-3xl ',
+        '-mb-2 w-full shrink-0 gap-3 p-2 flex-start sm:-mr-2 sm:mb-0 sm:w-auto sm:flex-col-start',
         className,
       )}
     >
@@ -26,15 +26,15 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
           <MessagesSquareIcon />
         </Link>
       </IconButton>
-      <IconButton variant="ghost" className="shrink-0" asChild>
-        <Link href={`/c/none`}>
-          <CircleIcon />
-        </Link>
-      </IconButton>
 
       <div className="grow">{/* spacer */}</div>
 
       <NonSecureAdminRoleOnly>
+        <IconButton variant="ghost" className="shrink-0" asChild>
+          <Link href={`/c/none`}>
+            <CircleIcon />
+          </Link>
+        </IconButton>
         <IconButton variant="ghost" className="shrink-0" asChild>
           <Link href={`/admin`}>
             <ScanEyeIcon />

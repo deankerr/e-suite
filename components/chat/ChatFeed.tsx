@@ -61,7 +61,7 @@ export const ChatFeed = () => {
   return (
     <div
       ref={scrollRef}
-      className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-5 py-1"
+      className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-3 py-1"
     >
       {/* {chatCompletion && user && (
         <Message

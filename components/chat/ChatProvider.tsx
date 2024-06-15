@@ -104,7 +104,7 @@ const useChatContextApi = ({
     removeMessage,
     runInference,
     updateThreadConfig,
-    closeChat,
+    closeChat: onClose ? closeChat : undefined,
   }
 }
 

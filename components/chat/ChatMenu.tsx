@@ -121,7 +121,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
         <DeleteThreadDialog
           threadId={thread._id}
           defaultOpen
-          onSuccess={() => closeChat()}
+          onSuccess={() => closeChat?.()}
           onClose={() => setDialog('')}
         />
       )}

@@ -64,18 +64,18 @@ export const MessageInput = () => {
 
   if (!thread) return null
   return (
-    <div className="flex w-full shrink-0 flex-col justify-center gap-2 px-5 pb-2">
+    <div className="flex w-full shrink-0 flex-col justify-center gap-2 border-t border-grayA-3 px-5 pb-2 pt-2">
       {thread && <TextEditor storageKey={storageKey} editor={editor} />}
 
       <div className="shrink-0 gap-2 flex-between">
-        <div className="shrink-0 gap-2 flex-start">
+        <div className="shrink-0 gap-3 flex-start">
           <Button color="gray" variant="soft" disabled>
             User
           </Button>
         </div>
 
         {thread.config.ui.type === 'text-to-image' && (
-          <div className="shrink-0 gap-2 flex-between">
+          <div className="shrink-0 gap-3 flex-between">
             <QuantityControl
               n={thread.config.ui.n}
               onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
@@ -91,7 +91,7 @@ export const MessageInput = () => {
           </div>
         )}
 
-        <div className="shrink-0 gap-2 flex-end">
+        <div className="shrink-0 gap-3 flex-end">
           <Button color="gray">Add</Button>
           <Button onClick={handleSendMessage}>
             Send
