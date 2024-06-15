@@ -1,12 +1,16 @@
 import { IconButton } from '@radix-ui/themes'
-import { LinkIcon, MessagesSquareIcon } from 'lucide-react'
+import { useSetAtom } from 'jotai'
+import { LinkIcon, MessagesSquareIcon, SidebarIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
+import { showSidebarAtom } from '@/lib/atoms'
 
 export const ChatHeader = () => {
+  const toggleSidebar = useSetAtom(showSidebarAtom)
   const { thread } = useChat()
+
   return (
     <div className="h-10 shrink-0 border-b border-grayA-3 flex-between">
       <div className="shrink-0 gap-2 pl-3 flex-start">
@@ -24,9 +28,14 @@ export const ChatHeader = () => {
 
       <div className="shrink-0 gap-2 pl-3 pr-3 flex-end">
         {thread && (
-          <Link href={`/c/${thread?.slug}`}>
-            <LinkIcon className="size-4 text-gray-11" />
-          </Link>
+          <>
+            <IconButton variant="ghost" color="gray" onClick={() => toggleSidebar()}>
+              <SidebarIcon className="size-5" />
+            </IconButton>
+            <Link href={`/c/${thread?.slug}`}>
+              <LinkIcon className="size-5 text-gray-11" />
+            </Link>
+          </>
         )}
       </div>
     </div>

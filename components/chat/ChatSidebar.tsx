@@ -1,8 +1,11 @@
+import { useAtomValue } from 'jotai'
+
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
 import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { useChat } from '@/components/chat/ChatProvider'
 import { BasicTextArea } from '@/components/form/BasicTextArea'
 import { SliderWithInput } from '@/components/form/SliderWithInput'
+import { showSidebarAtom } from '@/lib/atoms'
 import { useChatModels, useImageModels } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -12,7 +15,8 @@ import type { EThread } from '@/convex/shared/types'
 
 export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const { thread } = useChat()
-
+  const showSidebar = useAtomValue(showSidebarAtom)
+  if (!showSidebar) return null
   return (
     <div {...props} className={cn('h-full w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
       {thread && thread.config.ui.type === 'chat-completion' && (

@@ -69,12 +69,8 @@ export const MessageInput = () => {
 
       <div className="shrink-0 gap-2 flex-between">
         <div className="shrink-0 gap-2 flex-start">
-          <Button color="gray" variant="soft">
+          <Button color="gray" variant="soft" disabled>
             User
-          </Button>
-
-          <Button color="gray" variant="soft" onClick={resetEditorValue}>
-            Clear
           </Button>
         </div>
 
