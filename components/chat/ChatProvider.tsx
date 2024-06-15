@@ -36,6 +36,7 @@ const useChatContextApi = ({
   const thread = currentId.startsWith('_') ? localThread : queriedThread
 
   const createMessage = useMutation(api.db.messages.create)
+  const run = useMutation(api.db.messages.run)
   const updateThread = useMutation(api.db.threads.update)
 
   const sendMessage = useCallback(
@@ -53,6 +54,23 @@ const useChatContextApi = ({
       }
     },
     [thread, createMessage, removeLocalThread],
+  )
+
+  const runInference = useCallback(
+    async (args: Omit<Parameters<typeof run>[0], 'threadId'>) => {
+      if (!thread) return
+      const { threadId: newThreadId } = await run({
+        ...args,
+        threadId: thread._id,
+      })
+
+      if (newThreadId !== thread._id) {
+        console.log('change thread id')
+        setCurrentId(newThreadId)
+        removeLocalThread()
+      }
+    },
+    [thread, run, removeLocalThread],
   )
 
   const updateThreadConfig = useCallback(
@@ -75,6 +93,7 @@ const useChatContextApi = ({
   return {
     thread: useMemo(() => thread, [thread]),
     sendMessage,
+    runInference,
     updateThreadConfig,
     closeChat,
   }

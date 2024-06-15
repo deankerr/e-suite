@@ -71,6 +71,7 @@ export const list = query({
   },
 })
 
+// TODO dedupe/clarify run
 export const create = mutation({
   args: {
     threadId: z.string().optional(),
@@ -111,6 +112,55 @@ export const create = mutation({
     })
 
     if (!args.inference) return { threadId: thread._id, messageId: userMessageId }
+
+    const asstMessageId = await ctx.table('messages').insert({
+      role: 'assistant',
+      threadId: thread._id,
+      series: nextSeriesNumber + 1,
+      userId: user._id,
+      inference: args.inference,
+    })
+
+    const jobName =
+      args.inference.type === 'chat-completion'
+        ? 'inference/chat-completion'
+        : 'inference/text-to-image'
+    const jobId = await createJob(ctx, jobName, {
+      messageId: asstMessageId,
+    })
+
+    return { threadId: thread._id, messageId: asstMessageId, jobId }
+  },
+})
+
+// TODO dedupe/clarify create
+export const run = mutation({
+  args: {
+    threadId: z.string().optional(),
+    inference: inferenceSchema,
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.viewerX()
+    const thread = args.threadId
+      ? await ctx
+          .table('threads')
+          .getX(args.threadId as Id<'threads'>)
+          .patch({ updatedAtTime: Date.now() })
+          .get()
+      : await ctx
+          .table('threads')
+          .insert({
+            userId: user._id,
+            slug: await generateSlug(ctx),
+            updatedAtTime: Date.now(),
+            config: {
+              ui: args.inference ?? defaultChatInferenceConfig,
+              saved: [],
+            },
+          })
+          .get()
+
+    const nextSeriesNumber = await getNextMessageSeries(thread)
 
     const asstMessageId = await ctx.table('messages').insert({
       role: 'assistant',

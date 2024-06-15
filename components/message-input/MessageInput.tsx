@@ -18,7 +18,7 @@ import { QuantityControl } from './QuantityControl'
 import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = () => {
-  const { sendMessage, updateThreadConfig, thread } = useChat()
+  const { sendMessage, runInference, updateThreadConfig, thread } = useChat()
   const storageKey = `prompt-editor-${thread?.slug || ''}`
 
   const handleSendMessage = async () => {
@@ -35,8 +35,7 @@ export const MessageInput = () => {
     }
 
     if (thread.config.ui.type === 'text-to-image') {
-      await sendMessage({
-        message: {},
+      await runInference({
         inference: { ...thread.config.ui, prompt },
       })
       resetEditorValue()
