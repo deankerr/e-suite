@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512pt" height="512pt" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <g fill="none" stroke="#000">
+  <path transform="scale(5.6889)" d="m80 45c0 19.33-15.67 35-35 35s-35-15.67-35-35 15.67-35 35-35 35 15.67 35 35" stroke-dasharray="0,2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path transform="scale(5.6889)" d="m47.431 45c0 17.397-1.0883 31.5-2.4307 31.5s-2.4307-14.103-2.4307-31.5 1.0883-31.5 2.4307-31.5 2.4307 14.103 2.4307 31.5" stroke-dasharray="44,13" stroke-miterlimit="10"/>
+  <path transform="scale(5.6889)" d="m76.5 45c0 1.3424-14.103 2.4307-31.5 2.4307s-31.5-1.0883-31.5-2.4307 14.103-2.4307 31.5-2.4307 31.5 1.0883 31.5 2.4307" stroke-dasharray="44,13" stroke-miterlimit="10"/>
+  <path transform="matrix(4.0227 -4.0227 4.0227 4.0227 -106.04 256)" d="m76.5 45c0 1.343-14.103 2.4311-31.5 2.4311-17.398 0-31.5-1.0886-31.5-2.4306 0-1.343 14.103-2.4311 31.5-2.4311 17.397-4.85e-4 31.5 1.0881 31.5 2.4306" stroke-dasharray="44,13" stroke-miterlimit="10"/>
+  <path transform="matrix(4.0227 -4.0227 4.0227 4.0227 -106.04 256)" d="m47.431 45c0 17.397-1.0881 31.5-2.4311 31.5-1.3425-4.85e-4 -2.4311-14.103-2.4306-31.5 0-17.397 1.0881-31.5 2.4311-31.5 1.342 0 2.4306 14.103 2.4306 31.5" stroke-dasharray="44,13" stroke-miterlimit="10"/>
+ </g>
+</svg>

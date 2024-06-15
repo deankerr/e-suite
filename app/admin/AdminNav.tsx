@@ -8,6 +8,7 @@ const routes = [
   { path: '/admin', label: 'Dashboard' },
   { path: '/admin/chat-models', label: 'chat models' },
   { path: '/admin/image-models', label: 'image models' },
+  { path: '/admin/svg', label: 'svg' },
   { path: '/admin/typography', label: 'typography' },
 ]
 

@@ -2,11 +2,11 @@ import { Badge } from '@radix-ui/themes'
 import { accentColors } from '@radix-ui/themes/props'
 
 const endpointColors: Record<string, (typeof accentColors)[number]> = {
-  openrouter: 'crimson',
-  openai: 'grass',
+  openrouter: 'violet',
+  openai: 'teal',
   together: 'sky',
   fal: 'purple',
-  sinkin: 'iris',
+  sinkin: 'teal',
 
   civitai: 'blue',
   huggingface: 'yellow',

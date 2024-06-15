@@ -38,7 +38,7 @@ export const ChatModelCard = ({
         <div className="mt-1 font-mono text-xs text-gray-11">{model.model}</div>
       </div>
 
-      <div className="flex grow flex-col justify-center text-sm">
+      <div className="flex grow gap-1 text-sm">
         <div className="text-gray-11">context length</div>
         <div className="text-sm">{model.contextLength.toLocaleString()}</div>
       </div>

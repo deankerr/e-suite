@@ -1,4 +1,4 @@
-import { Card, Inset } from '@radix-ui/themes'
+import { Badge, Card, Inset } from '@radix-ui/themes'
 import Image from 'next/image'
 
 import { EndpointBadge } from '@/app/admin/Badges'
@@ -26,15 +26,18 @@ export const ImageModelCard = ({
         )}
       </Inset>
 
-      <div className={cn('absolute right-2 top-2 rounded bg-surface')}>
-        <EndpointBadge endpoint={model.endpoint} variant="surface" size="2" className="block" />
+      <div className={cn('absolute inset-x-2 top-2 gap-2 rounded flex-between')}>
+        <Badge color="orange" variant="surface" className="bg-black/75">
+          {model.architecture}
+        </Badge>
+        <EndpointBadge endpoint={model.endpoint} variant="surface" className="bg-black/75" />
       </div>
 
       <Inset
         side="bottom"
         className="absolute inset-x-1 bottom-2 min-h-16 space-y-1 bg-black/75 px-3 py-3 text-center flex-col-center"
       >
-        <div className="text-base font-semibold">{model.name}</div>
+        <div className="text-sm font-medium">{model.name}</div>
       </Inset>
     </Card>
   )

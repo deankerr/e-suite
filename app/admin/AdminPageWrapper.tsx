@@ -4,7 +4,7 @@ export const AdminPageWrapper = ({ className, ...props }: React.ComponentProps<'
   return (
     <div
       {...props}
-      className={cn('grow overflow-auto rounded-lg border border-grayA-3 p-2', className)}
+      className={cn('h-full grow overflow-auto rounded-lg border border-grayA-3 p-2', className)}
     />
   )
 }

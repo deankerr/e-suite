@@ -66,3 +66,11 @@
 .bg-card-2 {
   background-color: #1e1d1bb3;
 }
+
+.colorize-pink {
+  filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(-70deg) saturate(5);
+}
+
+.colorize-svg {
+  filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(0deg) saturate(5);
+}
