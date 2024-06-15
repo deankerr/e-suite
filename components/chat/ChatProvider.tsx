@@ -36,6 +36,7 @@ const useChatContextApi = ({
   const thread = currentId.startsWith('_') ? localThread : queriedThread
 
   const createMessage = useMutation(api.db.messages.create)
+  const apiRemoveMessage = useMutation(api.db.messages.remove)
   const run = useMutation(api.db.messages.run)
   const updateThread = useMutation(api.db.threads.update)
 
@@ -54,6 +55,13 @@ const useChatContextApi = ({
       }
     },
     [thread, createMessage, removeLocalThread],
+  )
+
+  const removeMessage = useCallback(
+    async (messageId: string) => {
+      await apiRemoveMessage({ messageId })
+    },
+    [apiRemoveMessage],
   )
 
   const runInference = useCallback(
@@ -93,6 +101,7 @@ const useChatContextApi = ({
   return {
     thread: useMemo(() => thread, [thread]),
     sendMessage,
+    removeMessage,
     runInference,
     updateThreadConfig,
     closeChat,
