@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { internalMutation, mutation, query } from '../functions'
 import { createJob } from '../jobs'
 import { defaultChatInferenceConfig } from '../shared/defaults'
-import { getMessageShape } from '../shared/shape'
+import { getMessageShape, getThreadShape } from '../shared/shape'
 import {
   fileAttachmentRecordWithContentSchema,
   inferenceSchema,
@@ -14,6 +14,7 @@ import {
 } from '../shared/structures'
 import { zMessageName, zMessageTextContent } from '../shared/utils'
 import { generateSlug } from '../utils'
+import { getThreadBySlugOrId } from './threads'
 
 import type { Id } from '../_generated/dataModel'
 import type { EMessage } from '../shared/types'
@@ -45,6 +46,34 @@ const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
   return jobs
 }
+
+//* get single message by slug:series
+export const getSeries = query({
+  args: {
+    slug: z.string(),
+    series: z.number(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slug)
+    if (!thread) return null
+
+    const messages = await ctx
+      .table('messages', 'threadId_series', (q) =>
+        q.eq('threadId', thread._id).eq('series', args.series),
+      )
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map(async (message) => {
+        const shape = getMessageShape(message)
+        const files = await getFileAttachmentContent(ctx, message.files)
+        return { ...shape, files }
+      })
+
+    return {
+      thread: getThreadShape(thread),
+      messages: messages.reverse(),
+    }
+  },
+})
 
 export const list = query({
   args: {

@@ -8,7 +8,7 @@ import { useMessages } from '@/lib/queries'
 import type { EMessage } from '@/convex/shared/types'
 
 export const ChatFeed = () => {
-  const { thread } = useChat()
+  const { thread, removeMessage } = useChat()
   const messages = useMessages(thread?._id)
 
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -80,7 +80,12 @@ export const ChatFeed = () => {
       )} */}
 
       {messages.map((message) => (
-        <Message key={message._id} message={message} />
+        <Message
+          key={message._id}
+          message={message}
+          slug={thread?.slug}
+          removeMessage={removeMessage}
+        />
       ))}
     </div>
   )
