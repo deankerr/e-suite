@@ -20,7 +20,7 @@ export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>
     thread && chatModels.isSuccess
       ? chatModels.data.find(
           (model) =>
-            model.model === config.chatCompletion?.model &&
+            model.endpointModelId === config.chatCompletion?.endpointModelId &&
             model.endpoint === config.chatCompletion.endpoint,
         )
       : undefined
@@ -30,7 +30,7 @@ export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>
     thread && imageModels.isSuccess
       ? imageModels.data.find(
           (model) =>
-            model.model === config.textToImage?.model &&
+            model.endpointModelId === config.textToImage?.endpointModelId &&
             model.endpoint === config.textToImage.endpoint,
         )
       : undefined
@@ -39,7 +39,7 @@ export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>
     <div {...props} className={cn('h-full w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
       {thread && chatCompletion && chatModel && (
         <ChatCompletionParameters
-          key={chatModel.slug}
+          key={chatModel._id}
           thread={thread}
           config={chatCompletion}
           model={chatModel}

@@ -38,7 +38,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
 
       const d = parsed.data
       return {
-        slug: `openrouter::${d.id}`,
+        resourceKey: `openrouter::${d.id}`,
         name: d.name,
         description: d.description,
 
@@ -54,7 +54,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
         maxOutputTokens: d.top_provider.max_completion_tokens ?? undefined,
 
         endpoint: 'openrouter',
-        model: d.id,
+        endpointModelId: d.id,
         pricing: {},
         moderated: d.top_provider.is_moderated,
         available: true,

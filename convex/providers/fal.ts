@@ -39,7 +39,8 @@ export const textToImage: TextToImageHandler = async ({
   parameters: ETextToImageInference
 }) => {
   try {
-    const { model, width, height, prompt, n } = parameters
+    const { endpointModelId, width, height, prompt, n } = parameters
+    const model = endpointModelId
     if (!(model in textToImageModels))
       throw new ConvexError({ message: 'unsupported model', model })
 

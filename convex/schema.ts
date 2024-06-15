@@ -15,7 +15,7 @@ import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 const timeToDelete = ms('1 day')
 
 const sharedModelFields = {
-  slug: z.string(),
+  resourceKey: z.string(),
   name: z.string(),
   description: z.string(),
   creatorName: z.string(),
@@ -26,7 +26,7 @@ const sharedModelFields = {
   coverImageUrl: z.string().optional(),
 
   endpoint: z.string(),
-  model: z.string(),
+  endpointModelId: z.string(),
   pricing: z.object({
     tokenInput: z.number().optional(),
     tokenOutput: z.number().optional(),

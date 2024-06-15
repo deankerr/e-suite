@@ -8,7 +8,7 @@ import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 export default function Page() {
   return (
     <AdminPageWrapper>
-      <div className="flex h-full flex-wrap gap-2 bg-grayA-2">
+      <div className="flex flex-wrap gap-3 bg-grayA-2 p-2">
         {accentColors.map((color) => (
           <Badge key={color} size="3" color={color}>
             {color}

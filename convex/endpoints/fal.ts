@@ -8,7 +8,7 @@ const sdxlSizes = {
 
 export const falImageModelData = [
   {
-    slug: 'fal-ai/hyper-sdxl',
+    resourceKey: 'fal::fal-ai/hyper-sdxl',
     name: 'Hyper SDXL',
     description: '',
 
@@ -21,14 +21,14 @@ export const falImageModelData = [
     sizes: sdxlSizes,
 
     endpoint: 'fal',
-    model: 'fal-ai/hyper-sdxl',
+    endpointModelId: 'fal-ai/hyper-sdxl',
     pricing: {},
     moderated: false,
     available: true,
     hidden: false,
   },
   {
-    slug: 'fal-ai/fast-lightning-sdxl',
+    resourceKey: 'fal::fal-ai/fast-lightning-sdxl',
     name: 'Fast Lightning SDXL',
     description: '',
 
@@ -41,14 +41,14 @@ export const falImageModelData = [
     sizes: sdxlSizes,
 
     endpoint: 'fal',
-    model: 'fal-ai/fast-lightning-sdxl',
+    endpointModelId: 'fal-ai/fast-lightning-sdxl',
     pricing: {},
     moderated: false,
     available: true,
     hidden: false,
   },
   {
-    slug: 'fal-ai/pixart-sigma',
+    resourceKey: 'fal::fal-ai/pixart-sigma',
     name: 'PixArt-Σ',
     description: '',
 
@@ -61,7 +61,7 @@ export const falImageModelData = [
     sizes: sdxlSizes,
 
     endpoint: 'fal',
-    model: 'fal-ai/pixart-sigma',
+    endpointModelId: 'fal-ai/pixart-sigma',
     pricing: {},
     moderated: false,
     available: true,

@@ -67,7 +67,7 @@ export const run = internalAction({
         jobId: args.jobId,
       })
       const { message, messages, inference } = input
-      const { type, endpoint, ...parameters } = inference
+      const { type, endpoint, endpointModelId, ...parameters } = inference
       const api = createOpenAiClient(endpoint)
 
       console.log(type, endpoint, parameters)
@@ -76,6 +76,7 @@ export const run = internalAction({
       const nonStreaming = async () => {
         const chatCompletion = await api.chat.completions.create({
           ...parameters,
+          model: endpointModelId,
           messages,
           stream: false,
         })
@@ -89,6 +90,7 @@ export const run = internalAction({
       const streaming = async () => {
         const stream = await api.chat.completions.create({
           ...parameters,
+          model: endpointModelId,
           messages,
           stream: true,
         })

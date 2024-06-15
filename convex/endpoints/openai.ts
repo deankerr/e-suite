@@ -1,39 +1,5 @@
 import type { ChatModelDataRecord } from '../db/endpoints'
 
-export const OpenAIChatModels = [
-  {
-    model_id: 'gpt-4o',
-    name: 'GPT-4o',
-    creatorName: 'OpenAI',
-    contextLength: 128000,
-  },
-  {
-    model_id: 'gpt-4-turbo',
-    name: 'GPT-4 Turbo with Vision',
-    creatorName: 'OpenAI',
-    contextLength: 128000,
-  },
-  {
-    model_id: 'gpt-4',
-    name: 'GPT-4',
-    creatorName: 'OpenAI',
-    contextLength: 8192,
-  },
-  {
-    model_id: 'gpt-4-32k',
-    name: 'GPT-4 32k',
-    creatorName: 'OpenAI',
-    contextLength: 32768,
-  },
-  {
-    model_id: 'gpt-3.5-turbo',
-    name: 'GPT-3.5 Turbo',
-    creatorName: 'OpenAI',
-    contextLength: 16385,
-    outputMaxTokens: 4096,
-  },
-]
-
 export const openaiChatModelData = [
   {
     slug: 'openai/gpt-4o',
@@ -50,7 +16,7 @@ export const openaiChatModelData = [
     tokenizer: 'GPT',
     stop: [],
 
-    model: 'gpt-4o',
+    endpointModelId: 'gpt-4o',
     pricing: {},
   },
   {
@@ -68,7 +34,7 @@ export const openaiChatModelData = [
     tokenizer: 'GPT',
     stop: [],
 
-    model: 'gpt-4-turbo',
+    endpointModelId: 'gpt-4-turbo',
     pricing: {},
   },
   {
@@ -86,7 +52,7 @@ export const openaiChatModelData = [
     tokenizer: 'GPT',
     stop: [],
 
-    model: 'gpt-4',
+    endpointModelId: 'gpt-4',
   },
   {
     slug: 'openai/gpt-4-32k',
@@ -103,7 +69,7 @@ export const openaiChatModelData = [
     tokenizer: 'GPT',
     stop: [],
 
-    model: 'gpt-4-32k',
+    endpointModelId: 'gpt-4-32k',
   },
   {
     slug: 'openai/gpt-3.5-turbo',
@@ -120,7 +86,7 @@ export const openaiChatModelData = [
     tokenizer: 'GPT',
     stop: [],
 
-    model: 'gpt-3.5-turbo',
+    endpointModelId: 'gpt-3.5-turbo',
   },
 ]
 
@@ -128,7 +94,7 @@ export const getNormalizedModelData = () => {
   const models = openaiChatModelData.map(
     (raw): ChatModelDataRecord => ({
       ...raw,
-      slug: `openai::${raw.slug}`,
+      resourceKey: `openai::${raw.slug}`,
       endpoint: 'openai',
       pricing: {},
       moderated: false,

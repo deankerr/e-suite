@@ -25,11 +25,11 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
 
   const config = getThreadConfig(thread)
 
-  const currentModelSlug = `${config.current.endpoint}::${config.current.model}`
+  const currentModelSlug = `${config.current.endpoint}::${config.current.endpointModelId}`
   const currentModel =
     config.current.type === 'chat-completion'
-      ? chatModels?.find((model) => model.slug === currentModelSlug)
-      : imageModels?.find((model) => model.slug === currentModelSlug)
+      ? chatModels?.find((model) => model.resourceKey === currentModelSlug)
+      : imageModels?.find((model) => model.resourceKey === currentModelSlug)
 
   const modelList = config.current.type === 'chat-completion' ? chatModels : imageModels
 
@@ -92,8 +92,9 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                       void updateThreadConfig({
                         currentInferenceConfig: {
                           ...config.current,
+                          resourceKey: model.resourceKey,
                           endpoint: model.endpoint,
-                          model: model.model,
+                          endpointModelId: model.endpointModelId,
                         },
                       })
                       setOpen(false)

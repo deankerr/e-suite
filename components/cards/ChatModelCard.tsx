@@ -35,7 +35,7 @@ export const ChatModelCard = ({
           )}
         </div>
         <div className="text-sm font-medium">{model.name}</div>
-        <div className="mt-1 font-mono text-xs text-gray-11">{model.model}</div>
+        <div className="mt-1 font-mono text-xs text-gray-11">{model.endpointModelId}</div>
       </div>
 
       <div className="flex grow gap-1 text-sm">

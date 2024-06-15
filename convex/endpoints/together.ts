@@ -47,7 +47,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
 
       const d = parsed.data
       return {
-        slug: `together::${d.name}`,
+        resourceKey: `together::${d.name}`,
         name: d.display_name,
         description: d.description,
 
@@ -62,7 +62,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
         stop: d.config?.stop ?? [],
 
         endpoint: 'together',
-        model: d.name,
+        endpointModelId: d.name,
         pricing: {},
         moderated: false,
         available: true,

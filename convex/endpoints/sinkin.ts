@@ -34,7 +34,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
     const architecture = d.name.includes('XL') ? 'SDXL' : 'SD'
 
     return {
-      slug: `sinkin::${encodeURIComponent(d.name)}`,
+      resourceKey: `sinkin::${encodeURIComponent(d.name)}`,
       name: d.name,
       description: '',
 
@@ -59,7 +59,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
             },
 
       endpoint: 'sinkin',
-      model: d.id,
+      endpointModelId: d.id,
       pricing: {},
       moderated: false,
       available: true,

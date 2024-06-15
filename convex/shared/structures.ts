@@ -41,8 +41,9 @@ export const metadataKVSchema = z.object({ key: z.string(), value: z.string() })
 export type EChatCompletionInference = z.infer<typeof chatCompletionInferenceSchema>
 export const chatCompletionInferenceSchema = z.object({
   type: z.literal('chat-completion'),
+  resourceKey: z.string(),
   endpoint: z.string(),
-  model: z.string(),
+  endpointModelId: z.string(),
   stream: z.boolean().optional(),
 
   max_tokens: z.number().optional(),
@@ -56,8 +57,9 @@ export const chatCompletionInferenceSchema = z.object({
 export type ETextToImageInference = z.infer<typeof textToImageInferenceSchema>
 export const textToImageInferenceSchema = z.object({
   type: z.literal('text-to-image'),
+  resourceKey: z.string(),
   endpoint: z.string(),
-  model: z.string(),
+  endpointModelId: z.string(),
 
   prompt: z.string(),
   width: z.number(),

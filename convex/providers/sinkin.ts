@@ -17,8 +17,8 @@ export const textToImage: TextToImageHandler = async ({
 }: {
   parameters: ETextToImageInference
 }) => {
-  const { model, prompt, width, height, n } = parameters
-
+  const { endpointModelId, prompt, width, height, n } = parameters
+  const model = endpointModelId
   const body = new URLSearchParams()
 
   // for (const [key, value] of entries) {
