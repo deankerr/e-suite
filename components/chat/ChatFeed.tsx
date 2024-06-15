@@ -3,11 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { getMessageShape } from '@/convex/shared/shape'
-import { useMessages, useViewerDetails } from '@/lib/queries'
-import { getThreadConfig } from '@/lib/utils'
+import { useMessages } from '@/lib/queries'
 
-import type { Id } from '@/convex/_generated/dataModel'
 import type { EMessage } from '@/convex/shared/types'
 
 export const ChatFeed = () => {
@@ -15,8 +12,6 @@ export const ChatFeed = () => {
   const messages = useMessages(thread?._id)
 
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { user } = useViewerDetails()
-  const { chatCompletion } = getThreadConfig(thread)
 
   const scrollPanelTo = useCallback(
     (position: 'start' | 'end', options?: ScrollIntoViewOptions) => {
@@ -68,7 +63,7 @@ export const ChatFeed = () => {
       ref={scrollRef}
       className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-5 py-1"
     >
-      {chatCompletion && user && (
+      {/* {chatCompletion && user && (
         <Message
           className="rounded bg-gold-4 px-2"
           message={getMessageShape({
@@ -82,7 +77,7 @@ export const ChatFeed = () => {
             userId: user.data?._id as Id<'users'>,
           })}
         />
-      )}
+      )} */}
 
       {messages.map((message) => (
         <Message key={message._id} message={message} />

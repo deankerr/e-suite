@@ -79,7 +79,7 @@ export const UpdateThreadTitleDialog = ({
   const update = useMutation(api.db.threads.update)
 
   const handleUpdate = () => {
-    update({ threadId: thread._id, title })
+    update({ threadId: thread._id, fields: { title } })
       .then((threadId) => {
         toast.success('Thread title updated')
         onSuccess?.(threadId)

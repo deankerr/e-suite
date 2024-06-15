@@ -42,11 +42,11 @@ export const list = query({
   },
 })
 
-const updateArgs = omit(threadFields, ['updatedAtTime'])
+const updateArgs = z.object(omit(threadFields, ['updatedAtTime'])).partial()
 export const update = mutation({
   args: {
     threadId: z.string(),
-    ...updateArgs,
+    fields: updateArgs,
   },
   handler: async (ctx, args) => {
     return await ctx

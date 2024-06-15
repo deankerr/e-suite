@@ -177,15 +177,16 @@ const messages = defineEnt(zodToConvexFields(messageFields))
 export const threadFields = {
   title: zThreadTitle.optional(),
   instructions: zMessageTextContent.optional(),
-  currentInferenceConfig: inferenceSchema.optional(),
-  savedInferenceConfigs: z
-    .object({
-      inference: inferenceSchema,
-      name: zMessageName,
-      command: zMessageName.optional(),
-    })
-    .array()
-    .optional(),
+  config: z.object({
+    ui: inferenceSchema,
+    saved: z
+      .object({
+        inference: inferenceSchema,
+        name: zMessageName,
+        command: zMessageName.optional(),
+      })
+      .array(),
+  }),
   updatedAtTime: z.number(),
   metadata: metadataKVSchema.array().optional(),
 }

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
 import { useChatModels, useImageModels } from '@/lib/queries'
-import { endpointCode, getThreadConfig } from '@/lib/utils'
+import { endpointCode } from '@/lib/utils'
 
 import type { EThread } from '@/convex/shared/types'
 
@@ -23,15 +23,14 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const { data: chatModels } = useChatModels()
   const { data: imageModels } = useImageModels()
 
-  const config = getThreadConfig(thread)
+  const config = thread.config
 
-  const currentModelSlug = `${config.current.endpoint}::${config.current.endpointModelId}`
   const currentModel =
-    config.current.type === 'chat-completion'
-      ? chatModels?.find((model) => model.resourceKey === currentModelSlug)
-      : imageModels?.find((model) => model.resourceKey === currentModelSlug)
+    config.ui.type === 'chat-completion'
+      ? chatModels?.find((model) => model.resourceKey === config.ui.resourceKey)
+      : imageModels?.find((model) => model.resourceKey === config.ui.resourceKey)
 
-  const modelList = config.current.type === 'chat-completion' ? chatModels : imageModels
+  const modelList = config.ui.type === 'chat-completion' ? chatModels : imageModels
 
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -90,11 +89,14 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
                       void updateThreadConfig({
-                        currentInferenceConfig: {
-                          ...config.current,
-                          resourceKey: model.resourceKey,
-                          endpoint: model.endpoint,
-                          endpointModelId: model.endpointModelId,
+                        config: {
+                          ...config,
+                          ui: {
+                            ...config.ui,
+                            resourceKey: model.resourceKey,
+                            endpoint: model.endpoint,
+                            endpointModelId: model.endpointModelId,
+                          },
                         },
                       })
                       setOpen(false)

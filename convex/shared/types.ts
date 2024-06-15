@@ -8,12 +8,14 @@ export type EThread = {
   slug: string
   instructions?: string
 
-  currentInferenceConfig?: EInferenceConfig
-  savedInferenceConfigs?: {
-    inference: EInferenceConfig
-    name: string
-    command?: string
-  }[]
+  config: {
+    ui: EInferenceConfig
+    saved: {
+      inference: EInferenceConfig
+      name: string
+      command?: string
+    }[]
+  }
 
   updatedAtTime: number
   userId: string

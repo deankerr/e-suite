@@ -4,48 +4,31 @@ import { useChat } from '@/components/chat/ChatProvider'
 import { BasicTextArea } from '@/components/form/BasicTextArea'
 import { SliderWithInput } from '@/components/form/SliderWithInput'
 import { useChatModels, useImageModels } from '@/lib/queries'
-import { cn, getThreadConfig } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/shared/shape'
-import type { EChatCompletionInference } from '@/convex/shared/structures'
+import type { EChatCompletionInference, ETextToImageInference } from '@/convex/shared/structures'
 import type { EThread } from '@/convex/shared/types'
 
 export const ChatSidebar = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const { thread } = useChat()
-  const config = getThreadConfig(thread)
-
-  const chatCompletion = config.chatCompletion
-  const chatModels = useChatModels()
-  const chatModel =
-    thread && chatModels.isSuccess
-      ? chatModels.data.find(
-          (model) =>
-            model.endpointModelId === config.chatCompletion?.endpointModelId &&
-            model.endpoint === config.chatCompletion.endpoint,
-        )
-      : undefined
-
-  const imageModels = useImageModels()
-  const imageModel =
-    thread && imageModels.isSuccess
-      ? imageModels.data.find(
-          (model) =>
-            model.endpointModelId === config.textToImage?.endpointModelId &&
-            model.endpoint === config.textToImage.endpoint,
-        )
-      : undefined
 
   return (
     <div {...props} className={cn('h-full w-80 shrink-0 border-r border-grayA-3 p-4', className)}>
-      {thread && chatCompletion && chatModel && (
-        <ChatCompletionParameters
-          key={chatModel._id}
+      {thread && thread.config.ui.type === 'chat-completion' && (
+        <ChatCompletionSidebar
+          key={thread.config.ui.resourceKey}
           thread={thread}
-          config={chatCompletion}
-          model={chatModel}
+          config={thread.config.ui}
         />
       )}
-      {imageModel && <ImageModelCard model={imageModel} className="mx-auto" />}
+      {thread && thread.config.ui.type === 'text-to-image' && (
+        <ImageSidebar
+          key={thread.config.ui.resourceKey}
+          thread={thread}
+          config={thread.config.ui}
+        />
+      )}
     </div>
   )
 }
@@ -120,13 +103,16 @@ const getModelParams = (model: EChatModel) => {
 
 const defaultMaxTokens = 4095
 
-const ChatCompletionParameters = ({
-  model,
+const ChatCompletionSidebar = ({
+  config,
 }: {
   thread: EThread
   config: EChatCompletionInference
-  model: EChatModel
 }) => {
+  const { data: chatModels } = useChatModels()
+  const model = chatModels?.find((model) => model.resourceKey === config.resourceKey)
+  if (!model) return null
+
   const parameters = getModelParams(model)
 
   return (
@@ -159,4 +145,12 @@ const ChatCompletionParameters = ({
       </div>
     </div>
   )
+}
+
+const ImageSidebar = ({ config }: { thread: EThread; config: ETextToImageInference }) => {
+  const { data: imageModels } = useImageModels()
+  const model = imageModels?.find((model) => model.resourceKey === config.resourceKey)
+  if (!model) return null
+
+  return <ImageModelCard model={model} className="mx-auto" />
 }

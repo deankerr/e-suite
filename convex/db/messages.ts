@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
 import { createJob } from '../jobs'
+import { defaultChatInferenceConfig } from '../shared/defaults'
 import { getMessageShape } from '../shared/shape'
 import {
   fileAttachmentRecordWithContentSchema,
@@ -93,7 +94,10 @@ export const create = mutation({
             userId: user._id,
             slug: await generateSlug(ctx),
             updatedAtTime: Date.now(),
-            currentInferenceConfig: args.inference,
+            config: {
+              ui: args.inference ?? defaultChatInferenceConfig,
+              saved: [],
+            },
           })
           .get()
 

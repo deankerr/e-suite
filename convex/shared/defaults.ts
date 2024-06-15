@@ -18,3 +18,8 @@ export const defaultImageInferenceConfig: ETextToImageInference = {
   height: 1024,
   n: 4,
 }
+
+export const defaultThreadConfig = {
+  ui: defaultChatInferenceConfig,
+  saved: [],
+}

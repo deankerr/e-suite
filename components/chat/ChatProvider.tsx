@@ -3,6 +3,7 @@ import { useMutation } from 'convex/react'
 import { useLocalStorage } from 'react-use'
 
 import { api } from '@/convex/_generated/api'
+import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
 import { useThread } from '@/lib/queries'
 
 import type { EThread } from '@/convex/shared/types'
@@ -22,6 +23,10 @@ const useChatContextApi = ({
       _creationTime: 0,
       updatedAtTime: 0,
       userId: '',
+      config: {
+        ui: defaultChatInferenceConfig,
+        saved: [],
+      },
     },
   )
 
@@ -51,14 +56,14 @@ const useChatContextApi = ({
   )
 
   const updateThreadConfig = useCallback(
-    async (args: Omit<Parameters<typeof updateThread>[0], 'threadId'>) => {
+    async (args: Omit<Parameters<typeof updateThread>[0], 'threadId'>['fields']) => {
       if (!thread) return
       if (currentId.startsWith('_')) {
         setLocalThread((prev) => (prev ? { ...prev, ...args } : undefined))
         return
       }
 
-      await updateThread({ ...args, threadId: thread._id })
+      await updateThread({ threadId: thread._id, fields: args })
     },
     [currentId, thread, setLocalThread, updateThread],
   )
