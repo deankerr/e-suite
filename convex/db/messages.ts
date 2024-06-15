@@ -111,20 +111,31 @@ export const create = mutation({
       userId: user._id,
     })
 
-    if (!args.inference) return { threadId: thread._id, messageId: userMessageId }
+    //* saved run commands
+    const inferenceCommand = thread.config.saved.find(
+      (c) => c.command && args.message.content?.startsWith(c.command),
+    )
+    //^ mutate inference prompt
+    if (inferenceCommand && inferenceCommand.inference.type === 'text-to-image') {
+      const content = args.message.content ?? ''
+      const command = inferenceCommand.command ?? ''
+      inferenceCommand.inference.prompt = content.replace(command, '').trim()
+    }
+
+    const inference = inferenceCommand?.inference ?? args.inference
+
+    if (!inference) return { threadId: thread._id, messageId: userMessageId }
 
     const asstMessageId = await ctx.table('messages').insert({
       role: 'assistant',
       threadId: thread._id,
       series: nextSeriesNumber + 1,
       userId: user._id,
-      inference: args.inference,
+      inference,
     })
 
     const jobName =
-      args.inference.type === 'chat-completion'
-        ? 'inference/chat-completion'
-        : 'inference/text-to-image'
+      inference.type === 'chat-completion' ? 'inference/chat-completion' : 'inference/text-to-image'
     const jobId = await createJob(ctx, jobName, {
       messageId: asstMessageId,
     })
