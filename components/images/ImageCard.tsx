@@ -8,7 +8,7 @@ export const ImageCard = ({ image, sizes }: ImageCardProps) => {
   return (
     <div
       className="overflow-hidden rounded-xl"
-      style={{ aspectRatio: image.width / image.height, width: image.width, maxWidth: '100%' }}
+      style={{ aspectRatio: image.width / image.height, maxWidth: '100%' }}
     >
       <Image
         src={`/i/${image._id}.webp`}

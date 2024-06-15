@@ -5,6 +5,7 @@ import { ImageIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 
 import { useChat } from '@/components/chat/ChatProvider'
+import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { cn } from '@/lib/utils'
@@ -22,7 +23,7 @@ export const Message = ({
   const title = textToImage ? textToImage.prompt : message?.name || message.role
   const Icon = textToImage ? ImageIcon : MessageSquareIcon
   return (
-    <div {...props} className={cn('shrink-0 space-y-1 py-2 text-sm', className)}>
+    <div {...props} className={cn('shrink-0 space-y-1 overflow-hidden py-2 text-sm', className)}>
       <div className="gap-2 border-b px-1 font-medium flex-between">
         <div className="gap-2 flex-start">
           <Icon className="-mr-0.5 size-4 flex-none text-accent-11" />
@@ -52,11 +53,30 @@ export const Message = ({
             message.files.length > 1 ? 'grid-cols-2' : '',
           )}
         >
-          {message.files.map((file) => {
-            if (file.type !== 'image') return null
-            return (
-              <ImageCard key={file.id} image={file.image} sizes="(max-width: 56rem) 50vw, 28rem" />
-            )
+          {message.files.map((file, i) => {
+            if (file.type === 'image_url') {
+              const width = textToImage?.width ?? 1024
+              const height = textToImage?.height ?? 1024
+              return (
+                <div
+                  key={i}
+                  className="overflow-hidden rounded-xl"
+                  style={{ aspectRatio: width / height, width: width, maxWidth: '100%' }}
+                >
+                  <GoldSparkles />
+                </div>
+              )
+            }
+
+            if (file.type === 'image') {
+              return (
+                <ImageCard
+                  key={file.id}
+                  image={file.image}
+                  sizes="(max-width: 56rem) 50vw, 28rem"
+                />
+              )
+            }
           })}
         </div>
       )}

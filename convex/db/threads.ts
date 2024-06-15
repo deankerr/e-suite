@@ -52,7 +52,7 @@ export const update = mutation({
     return await ctx
       .table('threads')
       .getX(args.threadId as Id<'threads'>)
-      .patch({ ...args, updatedAtTime: Date.now() })
+      .patch({ ...args.fields, updatedAtTime: Date.now() })
   },
 })
 

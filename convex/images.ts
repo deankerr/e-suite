@@ -94,7 +94,6 @@ export const optimize = internalAction({
       isOriginFile: false,
     })
 
-    console.log('optimized webp width:', metadata.width)
     return fileId
   },
 })
@@ -115,7 +114,6 @@ export const serveOptimizedImage = httpAction(async (ctx, request) => {
 
   // return file of matching width if exists
   if (optimizedFile) {
-    console.log('targetWidth', targetWidth, 'using optimized:', optimizedFile.width)
     const blob = await ctx.storage.get(optimizedFile.fileId)
     return new Response(blob)
   }
