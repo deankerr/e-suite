@@ -23,7 +23,8 @@ export const useMessages = (threadId?: string) => {
         }
       : 'skip',
   )
-  return result.data
+  // if (!threadId) return
+  return result
 }
 
 export const useUserThreadsList = () => {

@@ -1,5 +1,5 @@
 import { IconButton } from '@radix-ui/themes'
-import { CircleIcon, MessagesSquareIcon, ScanEyeIcon } from 'lucide-react'
+import { CircleIcon, ScanEyeIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -21,11 +21,11 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
     >
       <Image src={HexLogo} alt="logo" className="size-8 flex-none" priority />
       <CommandMenu />
-      <IconButton variant="ghost" className="shrink-0" asChild>
+      {/* <IconButton variant="ghost" className="shrink-0" asChild>
         <Link href={`/c`}>
           <MessagesSquareIcon />
         </Link>
-      </IconButton>
+      </IconButton> */}
 
       <div className="grow">{/* spacer */}</div>
 

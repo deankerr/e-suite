@@ -10,6 +10,11 @@ import type { EMessage } from '@/convex/shared/types'
 export const ChatFeed = () => {
   const { thread, removeMessage } = useChat()
   const messages = useMessages(thread?._id)
+  if (!thread?._id) {
+    messages.data = []
+    messages.isSuccess = true
+    messages.isPending = false
+  }
 
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -31,7 +36,7 @@ export const ChatFeed = () => {
   // scroll to latest message if content/files are updated
   const trackLatestMessage = true
   const [latestMessage, setLatestMessage] = useState<EMessage | null>(null)
-  const latest = messages?.at(-1)
+  const latest = messages.data?.at(-1)
 
   useEffect(() => {
     if (!trackLatestMessage || !latest) {
@@ -56,30 +61,13 @@ export const ChatFeed = () => {
   }, [trackLatestMessage, latestMessage, latest, scrollPanelTo])
 
   if (messages === null) return <div>Error</div>
-  if (!messages) return <LoadingSpinner />
-
   return (
     <div
       ref={scrollRef}
       className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-3 py-1"
     >
-      {/* {chatCompletion && user && (
-        <Message
-          className="rounded bg-gold-4 px-2"
-          message={getMessageShape({
-            _id: '_instructions' as Id<'messages'>,
-            _creationTime: 0,
-            series: 0,
-            threadId: thread?._id as Id<'threads'>,
-            role: 'system',
-            name: 'Instructions',
-            content: thread?.instructions,
-            userId: user.data?._id as Id<'users'>,
-          })}
-        />
-      )} */}
-
-      {messages.map((message) => (
+      {messages.isPending && <LoadingSpinner className="m-auto" />}
+      {messages.data?.map((message) => (
         <Message
           key={message._id}
           message={message}
@@ -90,3 +78,11 @@ export const ChatFeed = () => {
     </div>
   )
 }
+
+/* {chatCompletion && user && ( <Message className="rounded bg-gold-4 px-2"
+        message={getMessageShape({ _id: '_instructions' as Id<'messages'>, _creationTime: 0, series:
+        0, threadId: thread?._id as Id<'threads'>, role: 'system', name: 'Instructions', content:
+        thread?.instructions, userId: user.data?._id as Id<'users'>,
+          })}
+        />
+      )} */

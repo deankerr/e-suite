@@ -25,5 +25,5 @@ export const useChatDeck = () => {
     removeLocalChatData(slug)
   }
 
-  return { deck, add, remove }
+  return { deck, setDeck, add, remove }
 }

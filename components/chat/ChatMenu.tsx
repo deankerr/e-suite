@@ -38,6 +38,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const [dialog, setDialog] = useState('')
 
   const { updateThreadConfig, closeChat } = useChat()
+  const isNewChat = thread.slug.startsWith('_')
 
   return (
     <Popover.Root
@@ -52,21 +53,25 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
 
       <Popover.Content align="start" alignOffset={0} sideOffset={5} className="z-30 w-80">
         <Command>
-          <CommandInput value={search} onValueChange={setSearch} />
+          {page === 'listModels' && <CommandInput value={search} onValueChange={setSearch} />}
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
 
             {!page && (
               <>
                 <CommandGroup heading={`Actions: ${thread.title ?? 'new thread'}`}>
-                  <CommandItem onSelect={() => setDialog('updateTitle')}>
-                    <PencilIcon className="mr-2 size-4" />
-                    Edit Title
-                  </CommandItem>
-                  <CommandItem onSelect={() => setDialog('deleteThread')}>
-                    <Trash2Icon className="mr-2 size-4" />
-                    Delete Thread
-                  </CommandItem>
+                  {!isNewChat && (
+                    <>
+                      <CommandItem onSelect={() => setDialog('updateTitle')}>
+                        <PencilIcon className="mr-2 size-4" />
+                        Edit Title
+                      </CommandItem>
+                      <CommandItem onSelect={() => setDialog('deleteThread')}>
+                        <Trash2Icon className="mr-2 size-4" />
+                        Delete Thread
+                      </CommandItem>
+                    </>
+                  )}
                   <CommandItem onSelect={() => setPage('listModels')}>
                     <BoxIcon className="mr-2 size-4" />
                     <div className="line-clamp-1 grow">{currentModel?.name ?? 'Model'}</div>

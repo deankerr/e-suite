@@ -1,12 +1,15 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { useMutation } from 'convex/react'
+import { useRouter } from 'next/navigation'
 import { useLocalStorage } from 'react-use'
 
 import { api } from '@/convex/_generated/api'
-import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
+import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { useThread } from '@/lib/queries'
 
 import type { EThread } from '@/convex/shared/types'
+
+const configUseChatDeck = false
 
 const useChatContextApi = ({
   slug,
@@ -15,6 +18,7 @@ const useChatContextApi = ({
   slug: string
   onClose?: (slug: string) => void
 }) => {
+  const router = useRouter()
   const [localThread, setLocalThread, removeLocalThread] = useLocalStorage<EThread>(
     `chat-${slug}`,
     {
@@ -24,9 +28,10 @@ const useChatContextApi = ({
       updatedAtTime: 0,
       userId: '',
       config: {
-        ui: defaultChatInferenceConfig,
+        ui: slug === '_image' ? defaultImageInferenceConfig : defaultChatInferenceConfig,
         saved: [],
       },
+      title: slug === '_image' ? 'New Generation' : 'New Chat',
     },
   )
 
@@ -49,12 +54,12 @@ const useChatContextApi = ({
       })
 
       if (newThreadId !== thread._id) {
-        console.log('change thread id')
-        setCurrentId(newThreadId)
         removeLocalThread()
+        if (configUseChatDeck) setCurrentId(newThreadId)
+        else router.push(`/c/${newThreadId}`)
       }
     },
-    [thread, createMessage, removeLocalThread],
+    [thread, createMessage, removeLocalThread, router],
   )
 
   const removeMessage = useCallback(
@@ -73,12 +78,12 @@ const useChatContextApi = ({
       })
 
       if (newThreadId !== thread._id) {
-        console.log('change thread id')
-        setCurrentId(newThreadId)
         removeLocalThread()
+        if (configUseChatDeck) setCurrentId(newThreadId)
+        else router.push(`/c/${newThreadId}`)
       }
     },
-    [thread, run, removeLocalThread],
+    [thread, run, removeLocalThread, router],
   )
 
   const updateThreadConfig = useCallback(
@@ -96,7 +101,8 @@ const useChatContextApi = ({
 
   const closeChat = useCallback(() => {
     if (onClose) onClose(slug)
-  }, [onClose, slug])
+    router.push('/c')
+  }, [onClose, router, slug])
 
   return {
     thread: useMemo(() => thread, [thread]),
@@ -104,7 +110,7 @@ const useChatContextApi = ({
     removeMessage,
     runInference,
     updateThreadConfig,
-    closeChat: onClose ? closeChat : undefined,
+    closeChat,
   }
 }
 

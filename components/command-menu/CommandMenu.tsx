@@ -26,6 +26,8 @@ type CommandMenuProps = {
   asDialog?: boolean
 }
 
+const configUseChatDeck = false
+
 export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
   const [open, setOpen] = useAtom(commandMenuOpenAtom)
   useKey(
@@ -33,8 +35,8 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
     () => setOpen(!open),
   )
 
-  const isChatDeckMode = usePathname().endsWith('/c')
-  const { deck, add } = useChatDeck()
+  const isChatDeckMode = usePathname().endsWith('/c') && configUseChatDeck
+  const { deck, add, setDeck } = useChatDeck()
   const router = useRouter()
   const goto = (path: string) => {
     router.push(`${path}`)
@@ -55,21 +57,27 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
         <CommandGroup>
           <CommandItem
             onSelect={() => {
-              add()
+              setDeck(['_chat'])
               goto('/c')
             }}
           >
             <MessageSquarePlusIcon className="mr-2 size-4" />
             Start new Chat
           </CommandItem>
-          <CommandItem>
+          <CommandItem
+          onSelect={() => {
+            setDeck(['_image'])
+            goto('/c')
+          }}>
             <ImagePlusIcon className="mr-2 size-4" />
             Start new Generation
           </CommandItem>
-          <CommandItem onSelect={() => goto('/c')}>
-            <MessageSquarePlusIcon className="mr-2 size-4" />
-            Chat Deck
-          </CommandItem>
+          {configUseChatDeck && (
+            <CommandItem onSelect={() => goto('/c')}>
+              <MessageSquarePlusIcon className="mr-2 size-4" />
+              Chat Deck
+            </CommandItem>
+          )}
         </CommandGroup>
 
         <CommandSeparator />
@@ -120,7 +128,6 @@ const CommandDialog = ({ children, ...props }: React.ComponentProps<typeof Dialo
         <Inset side="top" className="p-3">
           <div className="pt-0.5 flex-between">
             <AppLogoTitle />
-
             <UserButton />
           </div>
         </Inset>

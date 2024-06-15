@@ -19,7 +19,7 @@ import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = () => {
   const { sendMessage, runInference, updateThreadConfig, thread } = useChat()
-  const storageKey = `prompt-editor-${thread?.slug || ''}`
+  const storageKey = thread?.slug ? `prompt-editor-${thread.slug}` : ''
 
   const handleSendMessage = async () => {
     if (!thread) return
@@ -62,10 +62,9 @@ export const MessageInput = () => {
     editor.onChange()
   }
 
-  if (!thread) return null
   return (
-    <div className="flex w-full shrink-0 flex-col justify-center gap-2 border-t border-grayA-3 px-5 pb-2 pt-2">
-      {thread && <TextEditor storageKey={storageKey} editor={editor} />}
+    <div className="flex w-full shrink-0 flex-col justify-center gap-2 border-t border-grayA-3 px-3 pb-2 pt-2">
+      <TextEditor storageKey={storageKey} editor={editor} />
 
       <div className="shrink-0 gap-2 flex-between">
         <div className="shrink-0 gap-3 flex-start">
@@ -74,7 +73,7 @@ export const MessageInput = () => {
           </Button>
         </div>
 
-        {thread.config.ui.type === 'text-to-image' && (
+        {thread && thread.config.ui.type === 'text-to-image' && (
           <div className="shrink-0 gap-3 flex-between">
             <QuantityControl
               n={thread.config.ui.n}
@@ -92,7 +91,7 @@ export const MessageInput = () => {
         )}
 
         <div className="shrink-0 gap-3 flex-end">
-          <Button color="gray">Add</Button>
+          {/* <Button color="gray">Add</Button> */}
           <Button onClick={handleSendMessage}>
             Send
             <SendHorizonalIcon className="size-5" />
