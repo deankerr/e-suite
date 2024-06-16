@@ -7,16 +7,22 @@ export function getMessageShape(message: Doc<'messages'>): EMessage {
   return pick(message, [
     '_id',
     '_creationTime',
-    'threadId',
+    'series',
+
     'role',
     'name',
     'content',
+
     'inference',
-    'series',
-    'userId',
+    // 'files',
     'metadata',
+
+    'speechId',
+    'threadId',
+    'userId',
   ])
 }
+
 export function getThreadShape(thread: Doc<'threads'>): EThread {
   return pick(thread, [
     '_id',

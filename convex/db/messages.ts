@@ -17,7 +17,6 @@ import { generateSlug } from '../utils'
 import { getThreadBySlugOrId } from './threads'
 
 import type { Id } from '../_generated/dataModel'
-import type { EMessage } from '../shared/types'
 import type { Ent, QueryCtx } from '../types'
 
 const getNextMessageSeries = async (thread: Ent<'threads'>) => {
@@ -41,10 +40,19 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['
   return fileAttachmentRecordWithContentSchema.array().parse(filesWithContent)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
   return jobs
+}
+
+const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const shape = getMessageShape(message)
+  return {
+    ...shape,
+    files: await getFileAttachmentContent(ctx, message.files),
+    jobs: await getMessageJobs(ctx, message),
+    speech: message.speechId ? await ctx.table('speech').get(message.speechId) : undefined,
+  }
 }
 
 //* get single message by slug:series
@@ -62,11 +70,7 @@ export const getSeries = query({
         q.eq('threadId', thread._id).eq('series', args.series),
       )
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (message) => {
-        const shape = getMessageShape(message)
-        const files = await getFileAttachmentContent(ctx, message.files)
-        return { ...shape, files }
-      })
+      .map(async (message) => await getMessageEdges(ctx, message))
 
     return {
       thread: getThreadShape(thread),
@@ -81,7 +85,7 @@ export const list = query({
     limit: z.number().max(200).default(50),
     order: z.enum(['asc', 'desc']).default('desc'),
   },
-  handler: async (ctx, args): Promise<EMessage[]> => {
+  handler: async (ctx, args) => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
     if (!threadId) return []
 
@@ -90,11 +94,7 @@ export const list = query({
       .order(args.order)
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(args.limit)
-      .map(async (message) => {
-        const shape = getMessageShape(message)
-        const files = await getFileAttachmentContent(ctx, message.files)
-        return { ...shape, files }
-      })
+      .map(async (message) => await getMessageEdges(ctx, message))
 
     return messages.reverse()
   },

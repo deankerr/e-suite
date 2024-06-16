@@ -1,6 +1,5 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
-import { v } from 'convex/values'
 import { ms } from 'itty-time'
 import { z } from 'zod'
 
@@ -32,6 +31,7 @@ const sharedModelFields = {
     tokenOutput: z.number().optional(),
     imageInput: z.number().optional(),
     imageOutput: z.number().optional(),
+    // {unit, price, in/out}[]
   }),
 
   moderated: z.boolean(),
@@ -48,83 +48,6 @@ export const chatModelFields = {
   maxOutputTokens: z.number().optional(),
 }
 const chat_models = defineEnt(zodToConvexFields(chatModelFields))
-
-export const imageModelFields = {
-  ...sharedModelFields,
-  architecture: z.enum(['SD', 'SDXL']),
-  sizes: z.object({
-    portrait: z.tuple([z.number(), z.number()]),
-    landscape: z.tuple([z.number(), z.number()]),
-    square: z.tuple([z.number(), z.number()]),
-  }),
-  civitaiModelId: z.string().optional(),
-}
-const image_models = defineEnt(zodToConvexFields(imageModelFields))
-
-export const jobAttributeFields = {
-  threadId: zid('threads').optional(),
-  messageId: zid('messages').optional(),
-  imageId: zid('images').optional(),
-
-  url: z.string().optional(),
-  width: z.number().optional(),
-}
-export const jobFields = {
-  name: z.string(),
-  status: z.enum(['queued', 'active', 'complete', 'failed']),
-  errors: z
-    .object({
-      code: z.string(),
-      message: z.string(),
-      fatal: z.boolean(),
-    })
-    .array()
-    .optional(),
-
-  queuedTime: z.number(),
-  startedTime: z.number().optional(),
-  endedTime: z.number().optional(),
-
-  ...jobAttributeFields,
-}
-
-const jobs = defineEnt(zodToConvexFields(jobFields))
-  .index('status', ['status'])
-  .index('threadId', ['threadId'])
-  .index('messageId', ['messageId'])
-  .index('imageId', ['imageId'])
-
-// TODO migrate
-const speech = defineEnt({
-  jobId: v.optional(v.id('_scheduled_functions')),
-  parameters: v.object({
-    Engine: v.optional(v.string()),
-    VoiceId: v.optional(v.string()),
-    model_id: v.optional(v.string()),
-    provider: v.string(),
-    voice_id: v.optional(v.string()),
-    voice_settings: v.optional(
-      v.object({
-        similarity_boost: v.float64(),
-        stability: v.float64(),
-      }),
-    ),
-  }),
-  storageId: v.id('_storage'),
-  text: v.string(),
-  textHash: v.string(),
-  voiceRef: v.string(),
-})
-
-// Votes
-// export const generationVoteFields = {
-//   vote: z.enum(generationVoteNames),
-
-//   userId: zid('users').optional(),
-//   ip: z.string().optional(),
-//   constituent: z.string().uuid(),
-//   metadata: z.any().optional(),
-// }
 
 export const fileFields = {
   fileId: zid('_storage'),
@@ -148,13 +71,57 @@ export const imageFields = {
 
   generationData: z.tuple([z.string(), z.string()]).array(),
 }
-
 const images = defineEnt(zodToConvexFields(imageFields))
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
   .edges('files', { ref: true })
   .index('originUrl', ['originUrl'])
+
+export const imageModelFields = {
+  ...sharedModelFields,
+  architecture: z.enum(['SD', 'SDXL']),
+  sizes: z.object({
+    portrait: z.tuple([z.number(), z.number()]),
+    landscape: z.tuple([z.number(), z.number()]),
+    square: z.tuple([z.number(), z.number()]),
+  }),
+  civitaiModelId: z.string().optional(),
+}
+const image_models = defineEnt(zodToConvexFields(imageModelFields))
+
+export const jobAttributeFields = {
+  threadId: zid('threads').optional(),
+  messageId: zid('messages').optional(),
+  imageId: zid('images').optional(),
+
+  url: z.string().optional(),
+  width: z.number().optional(),
+  resourceKey: z.string().optional(),
+}
+export const jobFields = {
+  name: z.string(),
+  status: z.enum(['queued', 'active', 'complete', 'failed']),
+  errors: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+      fatal: z.boolean(),
+    })
+    .array()
+    .optional(),
+
+  queuedTime: z.number(),
+  startedTime: z.number().optional(),
+  endedTime: z.number().optional(),
+
+  ...jobAttributeFields,
+}
+const jobs = defineEnt(zodToConvexFields(jobFields))
+  .index('status', ['status'])
+  .index('threadId', ['threadId'])
+  .index('messageId', ['messageId'])
+  .index('imageId', ['imageId'])
 
 export const messageFields = {
   role: messageRolesEnum,
@@ -165,6 +132,7 @@ export const messageFields = {
   files: fileAttachmentRecordSchema.array().optional(),
 
   metadata: metadataKVSchema.array().optional(),
+
   speechId: zid('speech').optional(),
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
@@ -173,6 +141,16 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edge('thread')
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
+
+const speechFields = {
+  text: z.string(),
+  textHash: z.string(),
+  resourceKey: z.string(),
+  parameters: z.any().optional(),
+  fileId: zid('_storage'),
+  voiceRef: z.string().optional(), // identify previous version
+}
+const speech = defineEnt(zodToConvexFields(speechFields))
 
 export const threadFields = {
   title: zThreadTitle.optional(),
@@ -233,12 +211,10 @@ const schema = defineEntSchema(
     image_models,
 
     messages,
+    speech,
     threads,
     users,
     users_api_keys,
-
-    // TODO migrate
-    speech,
   },
   {
     schemaValidation: false,
@@ -247,3 +223,37 @@ const schema = defineEntSchema(
 
 export default schema
 export const entDefinitions = getEntDefinitions(schema)
+
+// Votes
+// export const generationVoteFields = {
+//   vote: z.enum(generationVoteNames),
+
+//   userId: zid('users').optional(),
+//   ip: z.string().optional(),
+//   constituent: z.string().uuid(),
+//   metadata: z.any().optional(),
+// }
+
+/*
+const speech = defineEnt({
+  jobId: v.optional(v.id('_scheduled_functions')),
+  parameters: v.object({
+    Engine: v.optional(v.string()),
+    VoiceId: v.optional(v.string()),
+    model_id: v.optional(v.string()),
+    provider: v.string(),
+    voice_id: v.optional(v.string()),
+    voice_settings: v.optional(
+      v.object({
+        similarity_boost: v.float64(),
+        stability: v.float64(),
+      }),
+    ),
+  }),
+  storageId: v.id('_storage'),
+  text: v.string(),
+  textHash: v.string(),
+  voiceRef: v.string(),
+})
+
+*/

@@ -118,3 +118,15 @@ export const OpenAIImageModels = [
     creatorName: 'OpenAI',
   },
 ]
+
+const voices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']
+
+export const getNormalizedVoiceModelData = () => {
+  return voices.map((voice) => ({
+    resourceKey: `openai::${voice}`,
+    endpointModelId: voice,
+    creatorName: 'OpenAI',
+    endpoint: 'openai',
+    hidden: false,
+  }))
+}

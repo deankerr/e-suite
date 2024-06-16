@@ -19,6 +19,28 @@ http.route({
 
 http.route({ pathPrefix: '/i/', method: 'GET', handler: serveOptimizedImage })
 
+http.route({
+  pathPrefix: '/speech/',
+  method: 'GET',
+  handler: httpAction(async (ctx, request) => {
+    const id = request.url.split('/').pop()
+    if (!id) return new Response('invalid request', { status: 400 })
+
+    const speech = await ctx.runQuery(internal.db.speech.get, {
+      speechId: id,
+    })
+    if (!speech) return new Response('invalid speech id', { status: 400 })
+
+    const blob = await ctx.storage.get(speech.fileId)
+    return new Response(blob, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        Vary: 'origin',
+      },
+    })
+  }),
+})
+
 // TODO temp, add db integration, access control
 const chatEnabled = false
 http.route({

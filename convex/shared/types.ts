@@ -1,3 +1,4 @@
+import type { Doc } from '../_generated/dataModel'
 import type { EFileAttachmentRecordWithContent, EInferenceConfig, EMessageRole } from './structures'
 
 export type EThread = {
@@ -36,4 +37,8 @@ export type EMessage = {
   metadata?: { key: string; value: string }[]
 
   userId: string
+
+  speechId?: string
+  speech?: Doc<'speech'> | null
+  jobs?: Doc<'jobs'>[]
 }

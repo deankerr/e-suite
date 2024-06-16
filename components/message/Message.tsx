@@ -1,14 +1,17 @@
 import { Fragment } from 'react'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'
-import { ImageIcon, LinkIcon, MessageSquareIcon } from 'lucide-react'
+import { ImageIcon, LinkIcon, MessageSquareIcon, PlayIcon, Volume2Icon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
+import { useGlobalAudioPlayer } from 'react-use-audio-player'
 
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
-import { cn } from '@/lib/utils'
+import { api } from '@/convex/_generated/api'
+import { cn, getConvexSiteUrl } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
 
@@ -26,6 +29,10 @@ export const Message = ({
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const title = textToImage ? textToImage.prompt : message?.name || message.role
   const Icon = textToImage ? ImageIcon : MessageSquareIcon
+
+  const generateSpeech = useMutation(api.db.speech.generate)
+
+  const { load } = useGlobalAudioPlayer()
   return (
     <div {...props} className={cn('shrink-0 space-y-1 py-2 text-sm', className)}>
       <div className="gap-2 border-b px-1 font-medium flex-between">
@@ -35,7 +42,9 @@ export const Message = ({
               <Icon className="size-4" />
             </IconButton>
           </MessageMenu>
-          <div className="truncate capitalize">{title}</div>
+          <div className="truncate capitalize" onClick={() => console.log(message)}>
+            {title}
+          </div>
 
           <div className="text-xs text-gray-11">
             {formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })}
@@ -43,10 +52,40 @@ export const Message = ({
         </div>
 
         <div className="gap-2 flex-end">
+          {message.speech && (
+            <IconButton
+              variant="ghost"
+              color="green"
+              size="1"
+              onClick={() =>
+                load(`${getConvexSiteUrl()}/speech/${message.speech?._id}`, {
+                  autoplay: true,
+                  format: 'mp3',
+                })
+              }
+            >
+              <PlayIcon className="size-5" />
+            </IconButton>
+          )}
+
+          <IconButton
+            variant="ghost"
+            color={message.speech ? 'green' : 'gray'}
+            size="1"
+            onClick={() =>
+              void generateSpeech({
+                messageId: message._id,
+                resourceKey: 'openai::alloy',
+              })
+            }
+          >
+            <Volume2Icon className="size-5" />
+          </IconButton>
+
           {slug && (
             <IconButton variant="ghost" color="gray" size="1">
               <Link href={`/c/${slug}/${message.series}`}>
-                <LinkIcon className="size-4" />
+                <LinkIcon className="size-5 scale-90" />
               </Link>
             </IconButton>
           )}
