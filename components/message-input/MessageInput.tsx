@@ -7,9 +7,9 @@ import { withReact } from 'slate-react'
 import { useChat } from '@/components/chat/ChatProvider'
 import { TextEditor } from '@/components/text-editor/TextEditor'
 import {
-  deserialize,
   getEditorStorageText,
   removeEditorStorageText,
+  replaceEditorText,
 } from '@/components/text-editor/utils'
 import { getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
@@ -58,37 +58,50 @@ export const MessageInput = () => {
   const [editor] = useState(() => withReact(createEditor()))
   const resetEditorValue = () => {
     removeEditorStorageText(storageKey)
-    editor.children = deserialize('')
-    editor.onChange()
+    replaceEditorText(editor, '')
   }
 
   return (
     <div className="flex w-full shrink-0 flex-col justify-center gap-2 border-t border-grayA-3 px-3 pb-2 pt-2">
-      <TextEditor storageKey={storageKey} editor={editor} />
+      <TextEditor
+        storageKey={storageKey}
+        editor={editor}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            void handleSendMessage()
+          }
+        }}
+      />
 
       <div className="shrink-0 gap-2 flex-between">
         <div className="shrink-0 gap-3 flex-start">
-          <Button color="gray" variant="soft" disabled>
-            User
-          </Button>
-        </div>
+          {thread && thread.config.ui.type === 'chat-completion' && (
+            <Button color="gray" variant="soft" disabled>
+              User
+            </Button>
+          )}
 
-        {thread && thread.config.ui.type === 'text-to-image' && (
-          <div className="shrink-0 gap-3 flex-between">
-            <QuantityControl
-              n={thread.config.ui.n}
-              onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
-            />
-            <DimensionsControl
-              width={thread.config.ui.width}
-              height={thread.config.ui.height}
-              onValueChange={async (size: string) => {
-                const { width, height } = getWidthHeightForEndpoint(size, thread.config.ui.endpoint)
-                void handleUpdateTTIConfig({ width, height })
-              }}
-            />
-          </div>
-        )}
+          {thread && thread.config.ui.type === 'text-to-image' && (
+            <div className="shrink-0 gap-3 flex-between">
+              <QuantityControl
+                n={thread.config.ui.n}
+                onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
+              />
+              <DimensionsControl
+                width={thread.config.ui.width}
+                height={thread.config.ui.height}
+                onValueChange={async (size: string) => {
+                  const { width, height } = getWidthHeightForEndpoint(
+                    size,
+                    thread.config.ui.endpoint,
+                  )
+                  void handleUpdateTTIConfig({ width, height })
+                }}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="shrink-0 gap-3 flex-end">
           {/* <Button color="gray">Add</Button> */}

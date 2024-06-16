@@ -1,6 +1,9 @@
 import Image from 'next/image'
 
 import BioBg from '@/assets/svg/bio-bg.svg'
+import Halfmoon from '@/assets/svg/halfmoon.svg'
+import HalftoneLinesCircle from '@/assets/svg/halftone-lines-circle.svg'
+import HalftoneStriped from '@/assets/svg/halftone-striped.svg'
 import HexBg from '@/assets/svg/hex-bg.svg'
 import HexMono from '@/assets/svg/hex-mono.svg'
 import Hex from '@/assets/svg/hex.svg'
@@ -18,6 +21,9 @@ export default function Page() {
         <SvgImage key={i} noun={i + 1} className="h-40 w-40" />
       ))}
       <Image src={Noun3_1} alt="" className="h-40 w-40" />
+      <Image src={Halfmoon} alt="" className="h-40 w-40" />
+      <Image src={HalftoneLinesCircle} alt="" className="h-40 w-40" />
+      <Image src={HalftoneStriped} alt="" className="h-40 w-40" />
       <Image src={BioBg} alt="" className="h-40 w-40" />
       <Image src={HexBg} alt="" className="h-40 w-40" />
       <Image src={HexMono} alt="" className="h-40 w-40" />

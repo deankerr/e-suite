@@ -1,6 +1,6 @@
 import { IconButton } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
-import { LinkIcon, MessagesSquareIcon, SidebarIcon, XIcon } from 'lucide-react'
+import { ImagesIcon, LinkIcon, MessagesSquareIcon, SidebarIcon, XIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
@@ -11,6 +11,7 @@ export const ChatHeader = () => {
   const toggleSidebar = useSetAtom(showSidebarAtom)
   const { thread, closeChat } = useChat()
 
+  const Icon = thread?.config.ui.type === 'text-to-image' ? ImagesIcon : MessagesSquareIcon
   return (
     <div className="h-10 shrink-0 border-b border-grayA-3 flex-between">
       <div className="shrink-0 gap-2 pl-3 flex-start">
@@ -18,7 +19,7 @@ export const ChatHeader = () => {
           <>
             <ChatMenu thread={thread}>
               <IconButton variant="ghost">
-                <MessagesSquareIcon className="size-5" />
+                <Icon className="size-5" />
               </IconButton>
             </ChatMenu>
             <div className="text-sm font-semibold">{thread?.title ?? 'Untitled'}</div>

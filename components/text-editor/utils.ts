@@ -1,4 +1,7 @@
-import { Descendant, Node } from 'slate'
+import { Editor, Node, Transforms } from 'slate'
+
+import type { BaseEditor, Descendant } from 'slate'
+import type { ReactEditor } from 'slate-react'
 
 // Define a serializing function that takes a value and returns a string.
 export const serialize = (value: Descendant[]) => {
@@ -27,4 +30,31 @@ export const getEditorStorageText = (storageKey: string) => {
 
 export const removeEditorStorageText = (storageKey: string) => {
   localStorage.removeItem(storageKey)
+}
+
+export const replaceEditorText = (editor: BaseEditor & ReactEditor, newText: string) => {
+  // clear all previous text
+  Transforms.delete(editor, {
+    at: {
+      anchor: Editor.start(editor, []),
+      focus: Editor.end(editor, []),
+    },
+  })
+
+  // insert new text
+  if (newText && newText !== '') {
+    // don't insert empty text - results in strange visual behavior
+    Transforms.insertNodes(
+      editor,
+      [
+        {
+          type: 'paragraph',
+          children: [{ text: newText }],
+        },
+      ],
+      {
+        at: [0],
+      },
+    )
+  }
 }

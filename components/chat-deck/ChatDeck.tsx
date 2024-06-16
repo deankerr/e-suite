@@ -15,10 +15,12 @@ export const ChatDeck = ({ className, ...props }: React.ComponentProps<'div'>) =
       )}
     >
       {deck.map((slug) => (
-        <div key={slug} className="flex-[1_0_min(100vw,40rem)] snap-center">
+        <div key={slug} className="w-full">
           <Chat slug={slug} onClose={() => remove(slug)} />
         </div>
       ))}
     </div>
   )
 }
+
+// className="flex-[1_0_min(100vw,40rem)] snap-center"

@@ -1,11 +1,10 @@
 import { IconButton } from '@radix-ui/themes'
 import { CircleIcon, ScanEyeIcon } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 
-import HexLogo from '@/assets/svg/hex.svg'
 import { CommandMenu } from '@/components/command-menu/CommandMenu'
 import { UserButtons } from '@/components/layout/UserButtons'
+import { Logo } from '@/components/ui/Logo'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +18,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
         className,
       )}
     >
-      <Image src={HexLogo} alt="logo" className="size-8 flex-none" priority />
+      <Logo />
       <CommandMenu />
       {/* <IconButton variant="ghost" className="shrink-0" asChild>
         <Link href={`/c`}>
