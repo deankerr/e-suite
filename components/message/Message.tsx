@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
-import { IconButton } from '@radix-ui/themes'
+import { DropdownMenu, IconButton } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
-import { ImageIcon, LinkIcon, MessageSquareIcon, Trash2Icon } from 'lucide-react'
+import { ImageIcon, LinkIcon, MessageSquareIcon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
 
@@ -27,10 +27,14 @@ export const Message = ({
   const title = textToImage ? textToImage.prompt : message?.name || message.role
   const Icon = textToImage ? ImageIcon : MessageSquareIcon
   return (
-    <div {...props} className={cn('shrink-0 space-y-1 overflow-hidden py-2 text-sm', className)}>
+    <div {...props} className={cn('shrink-0 space-y-1 py-2 text-sm', className)}>
       <div className="gap-2 border-b px-1 font-medium flex-between">
         <div className="gap-2 flex-start">
-          <Icon className="-mr-0.5 size-4 flex-none text-accent-11" />
+          <MessageMenu message={message} removeMessage={removeMessage}>
+            <IconButton variant="ghost">
+              <Icon className="size-4" />
+            </IconButton>
+          </MessageMenu>
           <div className="truncate capitalize">{title}</div>
 
           <div className="text-xs text-gray-11">
@@ -44,17 +48,6 @@ export const Message = ({
               <Link href={`/c/${slug}/${message.series}`}>
                 <LinkIcon className="size-4" />
               </Link>
-            </IconButton>
-          )}
-
-          {removeMessage && (
-            <IconButton
-              variant="ghost"
-              color="red"
-              size="1"
-              onClick={() => removeMessage(message._id)}
-            >
-              <Trash2Icon className="size-4" />
             </IconButton>
           )}
         </div>
@@ -111,5 +104,29 @@ export const Message = ({
         </div>
       )}
     </div>
+  )
+}
+
+const MessageMenu = ({
+  message,
+  removeMessage,
+  children,
+}: {
+  message: EMessage
+  removeMessage?: (messageId: string) => void
+  children: React.ReactNode
+}) => {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>{children}</DropdownMenu.Trigger>
+
+      <DropdownMenu.Content variant="soft">
+        {removeMessage && (
+          <DropdownMenu.Item color="red" onClick={() => removeMessage(message._id)}>
+            Delete
+          </DropdownMenu.Item>
+        )}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   )
 }
