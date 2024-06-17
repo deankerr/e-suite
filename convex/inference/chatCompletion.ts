@@ -67,7 +67,8 @@ export const run = internalAction({
         jobId: args.jobId,
       })
       const { message, messages, inference } = input
-      const { type, endpoint, endpointModelId, ...parameters } = inference
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { type, endpoint, endpointModelId, resourceKey, ...parameters } = inference
       const api = createOpenAiClient(endpoint)
 
       console.log(type, endpoint, parameters)

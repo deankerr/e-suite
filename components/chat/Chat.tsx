@@ -3,7 +3,7 @@ import { Card, Inset } from '@radix-ui/themes'
 import { ChatFeed } from '@/components/chat/ChatFeed'
 import { ChatHeader } from '@/components/chat/ChatHeader'
 import { ChatProvider } from '@/components/chat/ChatProvider'
-import { ChatSidebar } from '@/components/chat/ChatSidebar'
+import { Sidebar } from '@/components/chat/sidebars/Sidebar'
 import { MessageInput } from '@/components/message-input/MessageInput'
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
@@ -21,7 +21,7 @@ const Component = () => {
     <Shell>
       <ChatHeader />
       <div className="flex h-full overflow-hidden">
-        <ChatSidebar />
+        <Sidebar />
         <div className="flex h-full w-full flex-col overflow-hidden">
           <ChatFeed />
           <MessageInput />
