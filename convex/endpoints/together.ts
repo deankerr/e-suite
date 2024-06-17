@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ChatModelDataRecord } from '../db/endpoints'
+import type { ParsedChatModelData } from '../db/endpoints'
 import type { MutationCtx } from '../types'
 
 export const fetchModelData = async (ctx: ActionCtx) => {
@@ -38,7 +38,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
   )
 
   const models = chatModelList
-    .map((raw): ChatModelDataRecord | null => {
+    .map((raw): ParsedChatModelData | null => {
       const parsed = modelDataRecordSchema.safeParse(raw)
       if (!parsed.success) {
         console.error([raw.name, ...parsed.error.issues])
@@ -67,9 +67,10 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
         moderated: false,
         available: true,
         hidden: false,
+        internalScore: 0,
       }
     })
-    .filter(Boolean) as ChatModelDataRecord[]
+    .filter(Boolean) as ParsedChatModelData[]
 
   console.log('together: processed', models.length, 'models')
   return models

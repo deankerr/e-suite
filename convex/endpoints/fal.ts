@@ -70,5 +70,8 @@ export const falImageModelData = [
 ]
 
 export const getNormalizedModelData = (): ImageModelDataRecord[] => {
-  return falImageModelData
+  return falImageModelData.map((data) => ({
+    ...data,
+    internalScore: 0,
+  }))
 }

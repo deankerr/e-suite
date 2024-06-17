@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ChatModelDataRecord } from '../db/endpoints'
+import type { ParsedChatModelData } from '../db/endpoints'
 import type { MutationCtx } from '../types'
 
 export const fetchModelData = async (ctx: ActionCtx) => {
@@ -28,13 +28,13 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
   const list = modelDataListSchema.parse(JSON.parse(cached.data))
 
   const models = list.data
-    .map((raw): ChatModelDataRecord | null => {
+    .map((raw): ParsedChatModelData | null => {
       const parsed = modelDataRecordSchema.strict().safeParse(raw)
       if (!parsed.success) {
         console.error(parsed.error.issues)
         return null
       }
-      if (filteredModelIds.includes(parsed.data.id)) return null
+      if (excludedModelIds.includes(parsed.data.id)) return null
 
       const d = parsed.data
       return {
@@ -59,9 +59,10 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
         moderated: d.top_provider.is_moderated,
         available: true,
         hidden: false,
+        internalScore: 0,
       }
     })
-    .filter(Boolean) as ChatModelDataRecord[]
+    .filter(Boolean) as ParsedChatModelData[]
 
   console.log('openrouter: processed', models.length, 'models')
   return models
@@ -94,18 +95,19 @@ const modelDataRecordSchema = z.object({
   per_request_limits: z.null(),
 })
 
-const filteredModelIds = [
+const excludedModelIds = [
   'meta-llama/llama-guard-2-8b',
   'openrouter/auto',
-  'openai/gpt-4o-2024-05-13',
+  'openai/gpt-3.5-turbo-0125',
+  'openai/gpt-3.5-turbo-0301',
   'openai/gpt-3.5-turbo-0613',
-  'anthropic/claude-instant-1.1',
   'openai/gpt-3.5-turbo-1106',
+  'openai/gpt-4-0314',
   'openai/gpt-4-1106-preview',
   'openai/gpt-4-32k-0314',
+  'openai/gpt-4o-2024-05-13',
   'anthropic/claude-1',
   'anthropic/claude-1.2',
   'anthropic/claude-instant-1.0',
-  'openai/gpt-3.5-turbo-0301',
-  'openai/gpt-4-0314',
+  'anthropic/claude-instant-1.1',
 ]

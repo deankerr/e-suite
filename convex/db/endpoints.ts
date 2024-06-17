@@ -8,47 +8,120 @@ import * as Together from '../endpoints/together'
 import { internalAction, internalMutation } from '../functions'
 import { chatModelFields, endpointDataCacheFields, imageModelFields } from '../schema'
 
-//* endpoint model data management
+//* chat models
 const chatModelSchema = z.object(chatModelFields)
-export type ChatModelDataRecord = z.infer<typeof chatModelSchema>
-const imageModelSchema = z.object(imageModelFields)
-export type ImageModelDataRecord = z.infer<typeof imageModelSchema>
+export type ParsedChatModelData = z.infer<typeof chatModelSchema>
 
 export const importEndpointChatModelData = internalMutation({
   args: {
     purgeExisting: z.boolean(),
+    replaceExisting: z.boolean(),
   },
   handler: async (ctx, args) => {
     if (args.purgeExisting) {
       await ctx.table('chat_models').map(async (model) => await model.delete())
+      console.log('purged existing chat models')
     }
-    ;``
+
     const existingModels = await ctx.table('chat_models')
     console.log('chat models existing:', existingModels.length)
 
-    const openai = OpenAi.getNormalizedModelData()
-    const openaiNew = openai.filter(
-      (model) => !existingModels.some((m) => m.resourceKey === model.resourceKey),
-    )
-    const openaiIds = await ctx.table('chat_models').insertMany(openaiNew)
-    console.log('openai: imported', openaiIds.length, 'models')
+    const parsedModels = [
+      OpenAi.getNormalizedModelData(),
+      await OpenRouter.getNormalizedModelData(ctx),
+      await Together.getNormalizedModelData(ctx),
+    ]
+      .flat()
+      .map((data): ParsedChatModelData => {
+        const { tags, score } = getDefaultChatModelTags(data)
+        return {
+          ...data,
+          resourceKey: data.resourceKey.toLowerCase(),
+          tags,
+          internalScore: score + getEndpointScore(data.endpoint),
+        }
+      })
 
-    const or = await OpenRouter.getNormalizedModelData(ctx)
-    const orNew = or.filter(
-      (model) => !existingModels.some((m) => m.resourceKey === model.resourceKey),
-    )
-    const orIds = await ctx.table('chat_models').insertMany(orNew)
-    console.log('openrouter: imported', orIds.length, 'models')
+    for (const data of parsedModels) {
+      const existing = existingModels.find((model) => model.resourceKey === data.resourceKey)
+      if (existing) {
+        if (args.replaceExisting) {
+          console.log('replace:', data.resourceKey)
+          await existing.replace(data)
+        }
+        continue
+      }
 
-    const together = await Together.getNormalizedModelData(ctx)
-    const togetherNew = together.filter(
-      (model) => !existingModels.some((m) => m.resourceKey === model.resourceKey),
-    )
-    const togetherIds = await ctx.table('chat_models').insertMany(togetherNew)
-    console.log('together: imported', togetherIds.length, 'models')
+      console.log('create:', data.resourceKey)
+      await ctx.table('chat_models').insert(data)
+    }
   },
 })
 
+const getDefaultChatModelTags = (data: ParsedChatModelData) => {
+  const defaultTags = defaultChatModelTags.filter((tag) =>
+    tag.includes.some((tag) => data.endpointModelId.includes(tag)),
+  )
+  return {
+    tags: defaultTags.map((tag) => tag.tag),
+    score: defaultTags.map((tag) => tag.score).reduce((a, b) => a + b, 0),
+  }
+}
+
+const getEndpointScore = (endpoint: string) => endpointScores[endpoint] ?? 0
+
+const endpointScores: Record<string, number> = {
+  openai: 2,
+  together: 1,
+  openrouter: 0,
+}
+
+const defaultChatModelTags = [
+  {
+    tag: 'flagship',
+    includes: [
+      'gpt-4o',
+      'opus',
+      'sonnet',
+      'haiku',
+      'command',
+      'gemini',
+      'llama-3',
+      'mixtral',
+      'mistral',
+      'qwen-2',
+    ],
+    score: 10,
+  },
+  { tag: 'multimodal', includes: ['gpt-4o', 'vision', 'llava', 'gemini'], score: 5 },
+
+  { tag: 'online', includes: ['online'], score: 1 },
+  { tag: 'free', includes: ['free'], score: -1 },
+  { tag: 'code', includes: ['code'], score: -1 },
+  {
+    tag: 'roleplay',
+    includes: [
+      'mytho',
+      'lumimaid',
+      'noromaid',
+      'psyfighter',
+      'slerp',
+      'lzlv',
+      'fimbulvetr',
+      'rose',
+      'toppy',
+      'weaver',
+    ],
+    score: -1,
+  },
+  { tag: 'legacy', includes: ['gpt-3.5', 'palm-2', 'claude-2', 'claude-instant'], score: -10 },
+  { tag: 'vintage', includes: ['alpaca', 'vicuna'], score: -10 },
+  { tag: 'expensive', includes: ['gpt-4-32k'], score: -30 },
+]
+
+//* image models
+const imageModelSchema = z.object(imageModelFields)
+export type ImageModelDataRecord = z.infer<typeof imageModelSchema>
 export const importEndpointImageModelData = internalMutation({
   args: {
     purgeExisting: z.boolean(),
@@ -56,6 +129,7 @@ export const importEndpointImageModelData = internalMutation({
   handler: async (ctx, args) => {
     if (args.purgeExisting) {
       await ctx.table('image_models').map(async (model) => await model.delete())
+      console.log('purged existing image models')
     }
 
     const existingModels = await ctx.table('image_models')

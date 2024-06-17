@@ -64,6 +64,7 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
       moderated: false,
       available: true,
       hidden: false,
+      internalScore: 0,
     }
   })
 }

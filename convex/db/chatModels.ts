@@ -5,6 +5,6 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     const models = await ctx.table('chat_models').map((model) => getChatModelShape(model))
-    return models.sort((a, b) => a.name.localeCompare(b.name))
+    return models.sort((a, b) => b.internalScore - a.internalScore)
   },
 })

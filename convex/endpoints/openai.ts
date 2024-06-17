@@ -1,8 +1,7 @@
-import type { ChatModelDataRecord } from '../db/endpoints'
+import type { ParsedChatModelData } from '../db/endpoints'
 
 export const openaiChatModelData = [
   {
-    slug: 'openai/gpt-4o',
     name: 'GPT-4o',
     description: '',
 
@@ -20,7 +19,6 @@ export const openaiChatModelData = [
     pricing: {},
   },
   {
-    slug: 'openai/gpt-4-turbo',
     name: 'GPT-4 Turbo with Vision',
     description: '',
 
@@ -38,7 +36,6 @@ export const openaiChatModelData = [
     pricing: {},
   },
   {
-    slug: 'openai/gpt-4',
     name: 'GPT-4',
     description: '',
 
@@ -55,7 +52,6 @@ export const openaiChatModelData = [
     endpointModelId: 'gpt-4',
   },
   {
-    slug: 'openai/gpt-4-32k',
     name: 'GPT-4 32k',
     description: '',
 
@@ -72,7 +68,6 @@ export const openaiChatModelData = [
     endpointModelId: 'gpt-4-32k',
   },
   {
-    slug: 'openai/gpt-3.5-turbo',
     name: 'GPT-3.5 Turbo',
     description: '',
 
@@ -92,14 +87,15 @@ export const openaiChatModelData = [
 
 export const getNormalizedModelData = () => {
   const models = openaiChatModelData.map(
-    (raw): ChatModelDataRecord => ({
+    (raw): ParsedChatModelData => ({
       ...raw,
-      resourceKey: `openai::${raw.slug}`,
+      resourceKey: `openai::openai/${raw.endpointModelId}`,
       endpoint: 'openai',
       pricing: {},
       moderated: false,
       available: true,
       hidden: false,
+      internalScore: 0,
     }),
   )
 

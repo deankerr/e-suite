@@ -13,6 +13,7 @@ import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
 const timeToDelete = ms('1 day')
 
+//* Models
 const sharedModelFields = {
   resourceKey: z.string(),
   name: z.string(),
@@ -37,6 +38,7 @@ const sharedModelFields = {
   moderated: z.boolean(),
   available: z.boolean(),
   hidden: z.boolean(),
+  internalScore: z.number(),
 }
 
 export const chatModelFields = {
@@ -48,6 +50,18 @@ export const chatModelFields = {
   maxOutputTokens: z.number().optional(),
 }
 const chat_models = defineEnt(zodToConvexFields(chatModelFields))
+
+export const imageModelFields = {
+  ...sharedModelFields,
+  architecture: z.enum(['SD', 'SDXL']),
+  sizes: z.object({
+    portrait: z.tuple([z.number(), z.number()]),
+    landscape: z.tuple([z.number(), z.number()]),
+    square: z.tuple([z.number(), z.number()]),
+  }),
+  civitaiModelId: z.string().optional(),
+}
+const image_models = defineEnt(zodToConvexFields(imageModelFields))
 
 export const fileFields = {
   fileId: zid('_storage'),
@@ -77,18 +91,6 @@ const images = defineEnt(zodToConvexFields(imageFields))
   })
   .edges('files', { ref: true })
   .index('originUrl', ['originUrl'])
-
-export const imageModelFields = {
-  ...sharedModelFields,
-  architecture: z.enum(['SD', 'SDXL']),
-  sizes: z.object({
-    portrait: z.tuple([z.number(), z.number()]),
-    landscape: z.tuple([z.number(), z.number()]),
-    square: z.tuple([z.number(), z.number()]),
-  }),
-  civitaiModelId: z.string().optional(),
-}
-const image_models = defineEnt(zodToConvexFields(imageModelFields))
 
 export const jobAttributeFields = {
   threadId: zid('threads').optional(),
