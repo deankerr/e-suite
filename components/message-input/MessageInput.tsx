@@ -42,6 +42,17 @@ export const MessageInput = () => {
     }
   }
 
+  const handleAddMessage = async () => {
+    if (!thread) return
+    const prompt = getEditorStorageText(storageKey)
+    if (!prompt) return console.warn('prompt is empty')
+
+    await sendMessage({
+      message: { content: prompt },
+    })
+    resetEditorValue()
+  }
+
   const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
     if (thread?.config.ui.type !== 'text-to-image') return
     await updateThreadConfig({
@@ -104,7 +115,9 @@ export const MessageInput = () => {
         </div>
 
         <div className="shrink-0 gap-3 flex-end">
-          {/* <Button color="gray">Add</Button> */}
+          <Button color="gray" onClick={handleAddMessage}>
+            Add
+          </Button>
           <Button onClick={handleSendMessage}>
             Send
             <SendHorizonalIcon className="size-5" />
