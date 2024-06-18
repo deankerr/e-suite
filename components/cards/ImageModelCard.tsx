@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { EndpointBadge } from '@/app/admin/Badges'
 import { cn } from '@/lib/utils'
 
-import type { EImageModel } from '@/convex/shared/shape'
+import type { EImageModel } from '@/convex/shared/types'
 
 export const ImageModelCard = ({
   model,

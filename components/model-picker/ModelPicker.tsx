@@ -10,7 +10,7 @@ import {
   CommandLoading,
 } from '@/components/ui/Command'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { EChatModel } from '@/convex/shared/shape'
+import { EChatModel } from '@/convex/shared/types'
 import { useChatModels } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 

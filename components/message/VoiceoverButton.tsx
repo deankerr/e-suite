@@ -61,3 +61,59 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
     </IconButton>
   )
 }
+
+export const VoiceoverButtonNew = ({ message }: { message: EMessage }) => {
+  const { load, src, playing, stop } = useGlobalAudioPlayer()
+  const generateVoiceover = useMutation(api.db.voiceover.generate)
+
+  const { voiceover } = message
+  const url = voiceover?.fileUrl
+
+  const isPlaying = src === url && playing
+  const isReady = !!url
+  const isAvailable = (message.content?.length ?? 0) > 0
+
+  const handleClick = () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
+
+    if (!isAvailable) return
+
+    if (url) {
+      load(url, {
+        autoplay: true,
+        format: 'mp3',
+      })
+      return
+    }
+
+    if (!voiceover) {
+      void generateVoiceover({
+        messageId: message._id,
+        resourceKey: 'openai::alloy',
+      })
+    }
+  }
+
+  const Icon = isPlaying
+    ? StopCircleIcon
+    : isReady
+      ? PlayIcon
+      : isAvailable
+        ? Volume2Icon
+        : VolumeXIcon
+
+  return (
+    <IconButton
+      variant="outline"
+      color={isReady ? 'green' : 'gray'}
+      size="1"
+      onClick={handleClick}
+      disabled={!isAvailable}
+    >
+      <Icon className="size-5" />
+    </IconButton>
+  )
+}

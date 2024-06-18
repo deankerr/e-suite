@@ -3,10 +3,8 @@ import { z } from 'zod'
 
 import { mutation, query } from '../functions'
 import { threadFields } from '../schema'
-import { getThreadShape } from '../shared/shape'
 
-import type { Id } from '../_generated/dataModel'
-import type { EThread } from '../shared/types'
+import type { Doc, Id } from '../_generated/dataModel'
 import type { QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
@@ -21,22 +19,21 @@ export const get = query({
   args: {
     slugOrId: z.string(),
   },
-  handler: async (ctx, args): Promise<EThread | null> => {
+  handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    return thread ? getThreadShape(thread) : null
+    return thread as Doc<'threads'> | null
   },
 })
 
 export const list = query({
   args: {},
-  handler: async (ctx): Promise<EThread[]> => {
+  handler: async (ctx) => {
     const userId = ctx.viewerId
     if (!userId) return []
 
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(getThreadShape)
 
     return threads
   },

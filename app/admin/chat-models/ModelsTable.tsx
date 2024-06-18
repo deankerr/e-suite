@@ -2,7 +2,7 @@ import { Table } from '@radix-ui/themes'
 
 import { cn } from '@/lib/utils'
 
-import type { EChatModel } from '@/convex/shared/shape'
+import type { EChatModel } from '@/convex/shared/types'
 
 export const ModelsTable = ({
   models,

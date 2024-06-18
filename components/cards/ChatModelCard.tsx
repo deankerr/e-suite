@@ -11,7 +11,7 @@ import OpenAiLogo from '@/assets/logos/openai.svg'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { cn } from '@/lib/utils'
 
-import type { EChatModel } from '@/convex/shared/shape'
+import type { EChatModel } from '@/convex/shared/types'
 import type { StaticImport } from 'next/dist/shared/lib/get-img-props'
 
 export const ChatModelCard = ({

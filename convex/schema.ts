@@ -136,6 +136,15 @@ export const messageFields = {
   metadata: metadataKVSchema.array().optional(),
 
   speechId: zid('speech').optional(),
+
+  voiceover: z
+    .object({
+      text: z.string().optional(),
+      textHash: z.string(),
+      resourceKey: z.string(),
+      speechFileId: zid('speech_files').optional(),
+    })
+    .optional(),
 }
 const messages = defineEnt(zodToConvexFields(messageFields))
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -153,6 +162,20 @@ const speechFields = {
   voiceRef: z.string().optional(), // identify previous version
 }
 const speech = defineEnt(zodToConvexFields(speechFields))
+
+export const speechFileFields = {
+  textHash: z.string(),
+  resourceKey: z.string(),
+  status: z.enum(['pending', 'complete', 'error']),
+  fileId: zid('_storage').optional(),
+  fileUrl: z.string().optional(),
+  error: z.string().optional(),
+  updatedAtTime: z.number(),
+}
+const speech_files = defineEnt(zodToConvexFields(speechFileFields)).index('textHash_resourceKey', [
+  'textHash',
+  'resourceKey',
+])
 
 export const threadFields = {
   title: zThreadTitle.optional(),
@@ -214,6 +237,7 @@ const schema = defineEntSchema(
 
     messages,
     speech,
+    speech_files,
     threads,
     users,
     users_api_keys,

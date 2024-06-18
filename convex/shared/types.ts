@@ -1,44 +1,53 @@
-import type { Doc } from '../_generated/dataModel'
-import type { EFileAttachmentRecordWithContent, EInferenceConfig, EMessageRole } from './structures'
+import { Doc } from '../_generated/dataModel'
 
-export type EThread = {
-  _id: string
-  _creationTime: number
+import type { api } from '../_generated/api'
+import type { getMessageEdges } from '../db/messages'
+import type { FunctionReturnType } from 'convex/server'
 
-  title?: string
-  slug: string
-  instructions?: string
+export type EThread = Omit<Doc<'threads'>, '_id' | 'userId'> & { _id: string; userId: string }
+export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
+export type EChatModel = Doc<'chat_models'>
+export type EImageModel = Doc<'image_models'>
 
-  config: {
-    ui: EInferenceConfig
-    saved: {
-      inference: EInferenceConfig
-      name: string
-      command?: string
-    }[]
-  }
+// export type EThread = {
+//   _id: string
+//   _creationTime: number
 
-  updatedAtTime: number
-  userId: string
-}
+//   title?: string
+//   slug: string
+//   instructions?: string
 
-export type EMessage = {
-  _id: string
-  _creationTime: number
-  threadId: string
-  series: number
+//   config: {
+//     ui: EInferenceConfig
+//     saved: {
+//       inference: EInferenceConfig
+//       name: string
+//       command?: string
+//     }[]
+//   }
 
-  role: EMessageRole
-  name?: string
-  content?: string
+//   updatedAtTime: number
+//   userId: string
+// }
 
-  inference?: EInferenceConfig
-  files?: EFileAttachmentRecordWithContent[]
-  metadata?: { key: string; value: string }[]
+// export type EMessage = {
+//   _id: string
+//   _creationTime: number
+//   threadId: string
+//   series: number
 
-  userId: string
+//   role: EMessageRole
+//   name?: string
+//   content?: string
 
-  speechId?: string
-  speech?: Doc<'speech'> | null
-  jobs?: Doc<'jobs'>[]
-}
+//   inference?: EInferenceConfig
+//   files?: EFileAttachmentRecordWithContent[]
+//   metadata?: { key: string; value: string }[]
+
+//   userId: string
+
+//   jobs?: Doc<'jobs'>[]
+//   speechId?: string
+//   speech?: Doc<'speech'> | null
+//   voiceover?: Doc<'messages'>['voiceover']
+// }

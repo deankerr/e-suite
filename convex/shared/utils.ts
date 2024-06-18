@@ -3,6 +3,12 @@ import { z } from 'zod'
 
 import type { Value } from 'convex/values'
 
+export function env(name: string) {
+  const value = process.env[name]
+  insist(value, `Environment variable is undefined: ${name}`)
+  return value
+}
+
 export function insist<T>(
   condition: T,
   message: string,
@@ -12,10 +18,16 @@ export function insist<T>(
     throw new ConvexError({ ...data, message: `assertion failed: ${message}`, fatal: true })
 }
 
-export function env(name: string) {
-  const value = process.env[name]
-  insist(value, `Environment variable is undefined: ${name}`)
-  return value
+export const getErrorMessage = (err: unknown) => {
+  if (err instanceof ConvexError) {
+    return err.message
+  }
+
+  if (err instanceof Error) {
+    return err.message
+  }
+
+  return `Unknown error: ${String(err).slice(0, 100)}`
 }
 
 export function hasDelimiter(text: string) {

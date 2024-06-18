@@ -9,9 +9,8 @@ import { ModelPicker } from '@/components/model-picker/ModelPicker'
 import { useChatModels } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-import type { EChatModel } from '@/convex/shared/shape'
 import type { EChatCompletionInference } from '@/convex/shared/structures'
-import type { EThread } from '@/convex/shared/types'
+import type { EChatModel, EThread } from '@/convex/shared/types'
 
 export const ChatSidebar = ({
   thread,

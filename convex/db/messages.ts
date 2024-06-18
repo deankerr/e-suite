@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { internalMutation, mutation, query } from '../functions'
 import { createJob } from '../jobs'
 import { defaultChatInferenceConfig } from '../shared/defaults'
-import { getMessageShape, getThreadShape } from '../shared/shape'
 import {
   fileAttachmentRecordWithContentSchema,
   inferenceSchema,
@@ -14,6 +13,7 @@ import {
 } from '../shared/structures'
 import { zMessageName, zMessageTextContent } from '../shared/utils'
 import { generateSlug } from '../utils'
+import { getSpeechFile } from './speechFiles'
 import { getThreadBySlugOrId } from './threads'
 
 import type { Id } from '../_generated/dataModel'
@@ -22,6 +22,11 @@ import type { Ent, QueryCtx } from '../types'
 const getNextMessageSeries = async (thread: Ent<'threads'>) => {
   const prev = await thread.edge('messages').order('desc').first()
   return (prev?.series ?? 0) + 1
+}
+
+export const getMessage = async (ctx: QueryCtx, messageId: string) => {
+  const id = ctx.unsafeDb.normalizeId('messages', messageId)
+  return id ? await ctx.table('messages').get(id) : null
 }
 
 const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['files']) => {
@@ -45,14 +50,22 @@ const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   return jobs
 }
 
-const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const shape = getMessageShape(message)
+export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  // const shape = getMessageShape(message)
   return {
-    ...shape,
+    ...message,
     files: await getFileAttachmentContent(ctx, message.files),
     jobs: await getMessageJobs(ctx, message),
     speech: message.speechId ? await ctx.table('speech').get(message.speechId) : undefined,
+    voiceover: message.voiceover?.speechFileId
+      ? await getSpeechFile(ctx, message.voiceover.speechFileId)
+      : undefined,
   }
+}
+
+export const getShapedMessage = async (ctx: QueryCtx, messageId: string) => {
+  const message = await getMessage(ctx, messageId)
+  return message ? await getMessageEdges(ctx, message) : null
 }
 
 //* get single message by slug:series
@@ -73,7 +86,7 @@ export const getSeries = query({
       .map(async (message) => await getMessageEdges(ctx, message))
 
     return {
-      thread: getThreadShape(thread),
+      thread,
       messages: messages.reverse(),
     }
   },

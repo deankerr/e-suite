@@ -6,7 +6,7 @@ import { getVoiceModelsHelper } from '../db/speech'
 import { internalAction, internalMutation } from '../functions'
 import { acquireJob, handleJobError, jobResultSuccess } from '../jobs'
 import { createOpenAiClient } from '../lib/openai'
-import { insist } from '../shared/utils'
+import { getErrorMessage, insist } from '../shared/utils'
 import { generateSha256Hash } from '../utils'
 
 import type OpenAI from 'openai'
@@ -89,5 +89,47 @@ export const complete = internalMutation({
     await ctx.table('messages').getX(messageId).patch({ speechId })
 
     await jobResultSuccess(ctx, { jobId })
+  },
+})
+
+export const runNow = internalAction({
+  args: {
+    speechFileId: zid('speech_files'),
+    text: z.string(),
+    textHash: z.string(),
+    resourceKey: z.string(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const voiceModels = getVoiceModelsHelper()
+      const voice = voiceModels.find(
+        (model) => model.resourceKey === args.resourceKey,
+      )?.endpointModelId
+
+      const api = createOpenAiClient('openai')
+      const mp3 = await api.audio.speech.create({
+        model: 'tts-1',
+        voice: (voice ?? 'alloy') as OpenAI.Audio.Speech.SpeechCreateParams['voice'],
+        input: args.text,
+      })
+
+      const blob = await mp3.blob()
+      const fileId = await ctx.storage.store(blob)
+      const fileUrl = (await ctx.storage.getUrl(fileId)) || ''
+
+      await ctx.runMutation(internal.db.speechFiles.update, {
+        speechFileId: args.speechFileId,
+        fileId,
+        fileUrl,
+        status: 'complete',
+      })
+    } catch (err) {
+      console.error(err)
+      await ctx.runMutation(internal.db.speechFiles.update, {
+        speechFileId: args.speechFileId,
+        status: 'error',
+        error: getErrorMessage(err),
+      })
+    }
   },
 })
