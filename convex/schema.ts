@@ -153,16 +153,6 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
 
-const speechFields = {
-  text: z.string(),
-  textHash: z.string(),
-  resourceKey: z.string(),
-  parameters: z.any().optional(),
-  fileId: zid('_storage'),
-  voiceRef: z.string().optional(), // identify previous version
-}
-const speech = defineEnt(zodToConvexFields(speechFields))
-
 export const speechFileFields = {
   textHash: z.string(),
   resourceKey: z.string(),
@@ -236,7 +226,6 @@ const schema = defineEntSchema(
     image_models,
 
     messages,
-    speech,
     speech_files,
     threads,
     users,
@@ -259,27 +248,3 @@ export const entDefinitions = getEntDefinitions(schema)
 //   constituent: z.string().uuid(),
 //   metadata: z.any().optional(),
 // }
-
-/*
-const speech = defineEnt({
-  jobId: v.optional(v.id('_scheduled_functions')),
-  parameters: v.object({
-    Engine: v.optional(v.string()),
-    VoiceId: v.optional(v.string()),
-    model_id: v.optional(v.string()),
-    provider: v.string(),
-    voice_id: v.optional(v.string()),
-    voice_settings: v.optional(
-      v.object({
-        similarity_boost: v.float64(),
-        stability: v.float64(),
-      }),
-    ),
-  }),
-  storageId: v.id('_storage'),
-  text: v.string(),
-  textHash: v.string(),
-  voiceRef: v.string(),
-})
-
-*/

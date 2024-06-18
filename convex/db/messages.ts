@@ -56,7 +56,6 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
     ...message,
     files: await getFileAttachmentContent(ctx, message.files),
     jobs: await getMessageJobs(ctx, message),
-    speech: message.speechId ? await ctx.table('speech').get(message.speechId) : undefined,
     voiceover: message.voiceover?.speechFileId
       ? await getSpeechFile(ctx, message.voiceover.speechFileId)
       : undefined,

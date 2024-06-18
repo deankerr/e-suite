@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
-import { VoiceoverButton, VoiceoverButtonNew } from '@/components/message/VoiceoverButton'
+import { VoiceoverButton } from '@/components/message/VoiceoverButton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { cn } from '@/lib/utils'
 
@@ -47,7 +47,6 @@ export const Message = ({
         </div>
 
         <div className="gap-2 flex-end">
-          <VoiceoverButtonNew message={message} />
           <VoiceoverButton message={message} />
 
           {slug && (
