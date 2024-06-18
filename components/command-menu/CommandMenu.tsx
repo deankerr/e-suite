@@ -65,10 +65,11 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
             Start new Chat
           </CommandItem>
           <CommandItem
-          onSelect={() => {
-            setDeck(['_image'])
-            goto('/c')
-          }}>
+            onSelect={() => {
+              setDeck(['_image'])
+              goto('/c')
+            }}
+          >
             <ImagePlusIcon className="mr-2 size-4" />
             Start new Generation
           </CommandItem>
