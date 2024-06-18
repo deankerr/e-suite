@@ -1,6 +1,8 @@
 import { ConvexError } from 'convex/values'
 import { z } from 'zod'
 
+import { Doc } from '../_generated/dataModel'
+
 import type { Value } from 'convex/values'
 
 export function env(name: string) {
@@ -28,6 +30,10 @@ export const getErrorMessage = (err: unknown) => {
   }
 
   return `Unknown error: ${String(err).slice(0, 100)}`
+}
+
+export const hasActiveJobName = (jobs: Doc<'jobs'>[], name: string) => {
+  return jobs.filter((j) => j.name === name).some((j) => ['active', 'queued'].includes(j.status))
 }
 
 export function hasDelimiter(text: string) {

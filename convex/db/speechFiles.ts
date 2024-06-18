@@ -7,10 +7,17 @@ import { internalMutation, internalQuery } from '../functions'
 import { speechFileFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
 
-export const createSpeech = async (
+export const generateSpeech = async (
   ctx: MutationCtx,
   args: { text: string; textHash: string; resourceKey: string },
 ) => {
+  const existingSpeechFile = await ctx
+    .table('speech_files', 'textHash_resourceKey', (q) =>
+      q.eq('textHash', args.textHash).eq('resourceKey', args.resourceKey),
+    )
+    .first()
+  if (existingSpeechFile) return existingSpeechFile._id
+
   const speechFileId = await ctx.table('speech_files').insert({
     textHash: args.textHash,
     resourceKey: args.resourceKey,
@@ -35,14 +42,6 @@ export const getSpeechFile = async (
   const speechFile = await ctx.table('speech_files').get(speechFileId)
   return speechFile ?? undefined
 }
-
-//? remove
-export const create = internalMutation({
-  args: speechFileFields,
-  handler: async (ctx, args) => {
-    return await ctx.table('speech_files').insert(args)
-  },
-})
 
 export const update = internalMutation({
   args: {

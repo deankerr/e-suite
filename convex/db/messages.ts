@@ -45,7 +45,7 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['
   return fileAttachmentRecordWithContentSchema.array().parse(filesWithContent)
 }
 
-const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+export const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
   return jobs
 }

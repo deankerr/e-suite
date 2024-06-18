@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 import { mutation } from '../functions'
-import { insist } from '../shared/utils'
+import { hasActiveJobName, insist } from '../shared/utils'
 import { generateSha256Hash } from '../utils'
-import { getMessage } from './messages'
-import { createSpeech } from './speechFiles'
+import { getMessage, getMessageJobs } from './messages'
+import { generateSpeech } from './speechFiles'
 
 export const generate = mutation({
   args: {
@@ -14,23 +14,22 @@ export const generate = mutation({
   handler: async (ctx, args) => {
     const message = await getMessage(ctx, args.messageId)
     insist(message, 'invalid message id')
-
-    if (message.voiceover) {
-      // TODO error retrying etc.
-      return null
-    }
+    insist(!message.voiceover, 'voiceover already exists')
 
     const text = message.content
     insist(text, 'invalid message content')
 
-    // TODO assess if text replacements needed
+    // check for text generation in progress
+    const jobs = await getMessageJobs(ctx, message)
+    insist(!hasActiveJobName(jobs, 'inference/chat-completion'), 'text generation in progress')
 
     const textHash = await generateSha256Hash(text)
 
-    // TODO check for existing voiceover hash matches
-    // TODO check for incomplete text
-
-    const speechFileId = await createSpeech(ctx, { text, textHash, resourceKey: args.resourceKey })
+    const speechFileId = await generateSpeech(ctx, {
+      text,
+      textHash,
+      resourceKey: args.resourceKey,
+    })
     await ctx
       .table('messages')
       .getX(message._id)

@@ -5,6 +5,7 @@ import { useGlobalAudioPlayer } from 'react-use-audio-player'
 
 import { api } from '@/convex/_generated/api'
 import { EMessage } from '@/convex/shared/types'
+import { hasActiveJobName } from '@/convex/shared/utils'
 
 export const VoiceoverButton = ({ message }: { message: EMessage }) => {
   const { load, src, playing, stop } = useGlobalAudioPlayer()
@@ -15,7 +16,9 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
 
   const isPlaying = src === url && playing
   const isReady = !!url
-  const isAvailable = (message.content?.length ?? 0) > 0
+  const isAvailable =
+    (message.content?.length ?? 0) > 0 &&
+    !hasActiveJobName(message.jobs, 'inference/chat-completion')
 
   const handleClick = () => {
     if (isPlaying) {
