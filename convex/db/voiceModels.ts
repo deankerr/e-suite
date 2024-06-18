@@ -1,4 +1,5 @@
 import AwsVoicesJson from '../endpoints/aws.voices.json'
+import * as ElevenLabs from '../endpoints/elevenlabs'
 import * as OpenAi from '../endpoints/openai'
 import { query } from '../functions'
 
@@ -12,6 +13,7 @@ export const getVoiceModelsHelper = () => {
       name: data.Name,
       creatorName: 'AWS Polly',
     })),
+    ElevenLabs.getVoiceModelData(),
   ].flat()
   return models
 }

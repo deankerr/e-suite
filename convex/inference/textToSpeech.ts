@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { ActionCtx } from '../_generated/server'
 import { getVoiceModelsHelper } from '../db/voiceModels'
+import * as ElevenLabs from '../endpoints/elevenlabs'
 import { internalAction } from '../functions'
 import { createOpenAiClient } from '../lib/openai'
 import { getErrorMessage } from '../shared/utils'
@@ -25,15 +26,18 @@ export const runNow = internalAction({
         endpointModelId: 'alloy',
       }
 
-      // const blob = await tts({ text: args.text })
-
       const fileId =
         voice.endpoint === 'aws'
           ? await ctx.runAction(internal.endpoints.aws.textToSpeech, {
               text: args.text,
               endpointModelId: voice.endpointModelId,
             })
-          : await openAiTTS(ctx, { text: args.text, voice: voice.endpointModelId })
+          : voice.endpoint === 'elevenlabs'
+            ? await ElevenLabs.textToSpeech(ctx, {
+                text: args.text,
+                endpointModelId: voice.endpointModelId,
+              })
+            : await openAiTTS(ctx, { text: args.text, voice: voice.endpointModelId })
 
       const fileUrl = (await ctx.storage.getUrl(fileId)) || ''
 

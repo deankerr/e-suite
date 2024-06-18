@@ -14,6 +14,7 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
   const { voiceover } = message
   const url = voiceover?.fileUrl
 
+  const isError = voiceover?.error
   const isPlaying = src === url && playing
   const isReady = !!url
   const isAvailable =
@@ -54,7 +55,7 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
   return (
     <IconButton
       variant="outline"
-      color={isReady ? 'green' : 'gray'}
+      color={isError ? 'red' : isReady ? 'green' : 'gray'}
       size="1"
       onClick={handleClick}
       disabled={!isAvailable}
