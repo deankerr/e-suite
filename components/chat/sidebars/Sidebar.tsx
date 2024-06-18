@@ -15,7 +15,11 @@ export const Sidebar = ({ className, ...props }: React.ComponentProps<'div'>) =>
       {...props}
       className={cn('h-full w-80 shrink-0 overflow-hidden border-r border-grayA-3', className)}
     >
-      {thread === undefined && <LoadingSpinner />}
+      {thread === undefined && (
+        <div className="flex h-full items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
 
       {thread && thread.config.ui.type === 'chat-completion' && (
         <ChatSidebar key={thread.config.ui.resourceKey} thread={thread} config={thread.config.ui} />

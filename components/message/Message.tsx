@@ -1,17 +1,15 @@
 import { Fragment } from 'react'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'
-import { ImageIcon, LinkIcon, MessageSquareIcon, PlayIcon, Volume2Icon } from 'lucide-react'
+import { ImageIcon, LinkIcon, MessageSquareIcon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
-import { useGlobalAudioPlayer } from 'react-use-audio-player'
 
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
+import { VoiceoverButton } from '@/components/message/VoiceoverButton'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
-import { api } from '@/convex/_generated/api'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
 
@@ -30,9 +28,6 @@ export const Message = ({
   const title = textToImage ? textToImage.prompt : message?.name || message.role
   const Icon = textToImage ? ImageIcon : MessageSquareIcon
 
-  const generateSpeech = useMutation(api.db.speech.generate)
-
-  const { load } = useGlobalAudioPlayer()
   return (
     <div {...props} className={cn('shrink-0 space-y-1 py-2 text-sm', className)}>
       <div className="gap-2 border-b px-1 font-medium flex-between">
@@ -52,35 +47,7 @@ export const Message = ({
         </div>
 
         <div className="gap-2 flex-end">
-          {message.speech && (
-            <IconButton
-              variant="ghost"
-              color="green"
-              size="1"
-              onClick={() =>
-                load(`${getConvexSiteUrl()}/speech/${message.speech?._id}`, {
-                  autoplay: true,
-                  format: 'mp3',
-                })
-              }
-            >
-              <PlayIcon className="size-5" />
-            </IconButton>
-          )}
-
-          <IconButton
-            variant="ghost"
-            color={message.speech ? 'green' : 'gray'}
-            size="1"
-            onClick={() =>
-              void generateSpeech({
-                messageId: message._id,
-                resourceKey: 'openai::alloy',
-              })
-            }
-          >
-            <Volume2Icon className="size-5" />
-          </IconButton>
+          <VoiceoverButton message={message} />
 
           {slug && (
             <IconButton variant="ghost" color="gray" size="1">
