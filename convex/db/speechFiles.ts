@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { Doc, Id } from '../_generated/dataModel'
 import { internalMutation, internalQuery } from '../functions'
-import { speechFileFields } from '../schema'
 import { MutationCtx, QueryCtx } from '../types'
 
 export const generateSpeech = async (

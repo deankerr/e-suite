@@ -63,3 +63,8 @@ export const useImageModels = () => {
   const result = useQuery(api.db.imageModels.list, {})
   return result
 }
+
+export const useVoiceModels = () => {
+  const result = useQuery(api.db.voiceModels.list, {})
+  return result
+}

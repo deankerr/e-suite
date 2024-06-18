@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
-import { BoxIcon, ChevronLeftIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import { BoxIcon, ChevronLeftIcon, PencilIcon, SpeechIcon, Trash2Icon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import {
@@ -12,7 +12,7 @@ import {
   CommandList,
 } from '@/components/ui/Command'
 import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dialogs'
-import { useChatModels, useImageModels } from '@/lib/queries'
+import { useChatModels, useImageModels, useVoiceModels } from '@/lib/queries'
 import { endpointCode } from '@/lib/utils'
 
 import type { EThread } from '@/convex/shared/types'
@@ -22,6 +22,7 @@ type ChatMenuProps = { thread: EThread } & React.ComponentProps<typeof Popover.R
 export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const { data: chatModels } = useChatModels()
   const { data: imageModels } = useImageModels()
+  const { data: voiceModels } = useVoiceModels()
 
   const config = thread.config
 
@@ -31,6 +32,10 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
       : imageModels?.find((model) => model.resourceKey === config.ui.resourceKey)
 
   const modelList = config.ui.type === 'chat-completion' ? chatModels : imageModels
+
+  const currentDefaultVoiceModel = voiceModels?.find(
+    (model) => model.resourceKey === thread.voiceovers?.default,
+  )
 
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -72,9 +77,19 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                       </CommandItem>
                     </>
                   )}
-                  <CommandItem onSelect={() => setPage('listModels')}>
+                  <CommandItem value="model menu" onSelect={() => setPage('listModels')}>
                     <BoxIcon className="mr-2 size-4" />
                     <div className="line-clamp-1 grow">{currentModel?.name ?? 'Model'}</div>
+                    <div className="text-xs text-gray-10">change</div>
+                  </CommandItem>
+
+                  <CommandItem value="voice model menu" onSelect={() => setPage('listVoiceModels')}>
+                    <SpeechIcon className="mr-2 size-4" />
+                    <div className="line-clamp-1 grow">
+                      {currentDefaultVoiceModel
+                        ? `${currentDefaultVoiceModel.creatorName}: ${currentDefaultVoiceModel.name}`
+                        : 'Voice Model'}
+                    </div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
                 </CommandGroup>
@@ -102,6 +117,36 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                             endpoint: model.endpoint,
                             endpointModelId: model.endpointModelId,
                           },
+                        },
+                      })
+                      setOpen(false)
+                    }}
+                  >
+                    <div className="grow truncate">{model.name}</div>
+                    <div className="shrink-0 text-xs text-gray-10">
+                      {endpointCode(model.endpoint)}
+                    </div>
+                  </CommandItem>
+                ))}
+              </>
+            )}
+
+            {page === 'listVoiceModels' && (
+              <>
+                <CommandItem onSelect={() => setPage('')} className="text-gray-10">
+                  <ChevronLeftIcon className="mr-2 size-4" />
+                  return
+                </CommandItem>
+
+                {voiceModels?.map((model) => (
+                  <CommandItem
+                    key={model.resourceKey}
+                    value={`${model.name} ${model.endpoint}`}
+                    onSelect={() => {
+                      void updateThreadConfig({
+                        voiceovers: {
+                          ...thread.voiceovers,
+                          default: model.resourceKey,
                         },
                       })
                       setOpen(false)

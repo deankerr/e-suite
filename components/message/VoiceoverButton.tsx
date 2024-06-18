@@ -39,7 +39,6 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
     if (!voiceover) {
       void generateVoiceover({
         messageId: message._id,
-        resourceKey: 'openai::alloy',
       })
     }
   }

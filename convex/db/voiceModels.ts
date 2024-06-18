@@ -6,7 +6,7 @@ export const getVoiceModelsHelper = () => {
   return models
 }
 
-export const getModels = query({
+export const list = query({
   args: {},
   handler: async () => {
     return getVoiceModelsHelper()

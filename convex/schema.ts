@@ -170,6 +170,12 @@ const speech_files = defineEnt(zodToConvexFields(speechFileFields)).index('textH
 export const threadFields = {
   title: zThreadTitle.optional(),
   instructions: zMessageTextContent.optional(),
+  voiceovers: z
+    .object({
+      default: z.string(),
+    })
+    .optional(),
+
   config: z.object({
     ui: inferenceSchema,
     saved: z
