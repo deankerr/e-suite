@@ -135,8 +135,6 @@ export const messageFields = {
 
   metadata: metadataKVSchema.array().optional(),
 
-  speechId: zid('speech').optional(),
-
   voiceover: z
     .object({
       text: z.string().optional(),

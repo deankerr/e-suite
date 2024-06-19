@@ -1,13 +1,14 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
+import { Chat, Code, Image, Link as LinkIcon } from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
-import { ImageIcon, LinkIcon, MessageSquareIcon } from 'lucide-react'
 import Markdown from 'markdown-to-jsx'
 import Link from 'next/link'
 
 import { GoldSparkles } from '@/components/effects/GoldSparkles'
 import { ImageCard } from '@/components/images/ImageCard'
 import { VoiceoverButton } from '@/components/message/VoiceoverButton'
+import { Pre } from '@/components/util/Pre'
 import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
 import { cn } from '@/lib/utils'
 
@@ -26,40 +27,52 @@ export const Message = ({
 } & React.ComponentProps<'div'>) => {
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const title = textToImage ? textToImage.prompt : message?.name || message.role
-  const Icon = textToImage ? ImageIcon : MessageSquareIcon
+  const Icon = textToImage ? Image : Chat
 
+  const [showJson, setShowJson] = useState(false)
   return (
     <div {...props} className={cn('shrink-0 space-y-1 py-2 text-sm', className)}>
-      <div className="gap-2 border-b px-1 font-medium flex-between">
-        <div className="gap-2 flex-start">
-          <MessageMenu message={message} removeMessage={removeMessage}>
-            <IconButton variant="ghost">
-              <Icon className="size-4" />
-            </IconButton>
-          </MessageMenu>
-          <div className="truncate capitalize" onClick={() => console.log(message)}>
-            {title}
-          </div>
+      <div className="border-b font-medium flex-between">
+        <MessageMenu message={message} removeMessage={removeMessage}>
+          <IconButton variant="ghost" size="2" className="m-0">
+            <Icon className="size-5" />
+          </IconButton>
+        </MessageMenu>
 
-          <div className="text-xs text-gray-11">
-            {formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })}
-          </div>
+        <div className="self-end truncate pb-1 capitalize" onClick={() => console.log(message)}>
+          {title}
         </div>
 
-        <div className="gap-2 flex-end">
+        <div className="self-end truncate pb-1.5 pl-1.5 text-xs text-gray-11">
+          {formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })}
+        </div>
+
+        <div className="grow flex-end">
+          <IconButton
+            variant="ghost"
+            size="2"
+            className="m-0"
+            color="gray"
+            onClick={() => setShowJson(!showJson)}
+          >
+            <Code className="size-5" />
+          </IconButton>
+
           <VoiceoverButton message={message} />
 
           {slug && (
-            <IconButton variant="ghost" color="gray" size="1">
+            <IconButton variant="ghost" size="2" className="m-0" color="gray">
               <Link href={`/c/${slug}/${message.series}`}>
-                <LinkIcon className="size-5 scale-90" />
+                <LinkIcon className="size-5" />
               </Link>
             </IconButton>
           )}
         </div>
       </div>
 
-      {message.files && message.files.length > 0 && (
+      {showJson && <Pre>{JSON.stringify(message, null, 2)}</Pre>}
+
+      {!showJson && message.files && message.files.length > 0 && (
         <div
           className={cn(
             'mx-auto flex justify-center py-1',
@@ -94,8 +107,12 @@ export const Message = ({
         </div>
       )}
 
-      {message.content && (
-        <div className="prose prose-sm prose-stone prose-invert mx-auto max-w-none px-1 prose-pre:p-0">
+      {!showJson && message.content && (
+        <div
+          className={cn(
+            'prose prose-sm prose-stone prose-invert mx-auto max-w-none px-1 prose-pre:p-0',
+          )}
+        >
           <Markdown
             options={{
               wrapper: Fragment,
