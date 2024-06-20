@@ -8,7 +8,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
   const files = message.files
   if (!(textToImage || files)) return null
   return (
-    <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
+    <div className="w-fit max-w-full rounded-lg">
       <div
         className={cn(
           'mx-auto flex justify-center py-1',

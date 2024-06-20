@@ -3,10 +3,14 @@ import { Avatar as AvatarRadix } from '@radix-ui/themes'
 
 import { AccentColors } from '@/lib/types'
 
-const fallbackIcons: Record<string, React.ReactNode> = {
-  user: <User className="size-5" />,
-  assistant: <HeadCircuit className="size-5" />,
+import type { Icon } from '@phosphor-icons/react/dist/lib/types'
+
+const fallbackIcons: Record<string, Icon> = {
+  user: User,
+  assistant: HeadCircuit,
 }
+
+const fallbackIcon = Question
 
 const colors: Record<string, AccentColors> = {
   user: 'mint',
@@ -14,7 +18,17 @@ const colors: Record<string, AccentColors> = {
 }
 
 export const Avatar = ({ role }: { role: string }) => {
-  const fallback = fallbackIcons[role] ?? <Question className="size-5" />
+  const Fallback = fallbackIcons[role] ?? fallbackIcon
   const color = colors[role] ?? 'gray'
-  return <AvatarRadix size="2" color={color} className="bg-gray-2" fallback={fallback} />
+  return (
+    <AvatarRadix
+      size={{
+        initial: '1',
+        sm: '2',
+      }}
+      color={color}
+      className="bg-gray-2"
+      fallback={<Fallback className="size-4 sm:size-5" />}
+    />
+  )
 }

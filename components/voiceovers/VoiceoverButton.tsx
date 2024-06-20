@@ -14,7 +14,10 @@ import { EMessage } from '@/convex/shared/types'
 import { hasActiveJobName } from '@/convex/shared/utils'
 import { voiceoverQueueAtom } from '@/lib/atoms'
 
-export const VoiceoverButton = ({ message }: { message: EMessage }) => {
+export const VoiceoverButton = ({
+  message,
+  ...props
+}: { message: EMessage } & React.ComponentProps<typeof IconButton>) => {
   const { src, playing, stop, isLoading, play } = useGlobalAudioPlayer()
 
   const { voiceover } = message
@@ -33,24 +36,24 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
   const isEnqueued = voiceoverQueue.includes(message._id)
 
   const icon = isError ? (
-    <FileX className="size-5" />
+    <FileX className="size-5 scale-90" />
   ) : isPlaying ? (
-    <Stop className="size-5" />
+    <Stop className="size-5 scale-90" />
   ) : isGenerating || (isCurrent && isLoading) ? (
     <CircleNotch className="size-5 animate-spin" />
   ) : isReady ? (
-    <Play className="size-5" />
+    <Play className="size-5 scale-90" />
   ) : isAvailable ? (
-    <SpeakerHigh className="size-5" />
+    <SpeakerHigh className="size-5 scale-90" />
   ) : (
-    <SpeakerSlash className="size-5" />
+    <SpeakerSlash className="size-5 scale-90" />
   )
 
   return (
     <IconButton
       variant="ghost"
-      size="2"
-      className="m-0"
+      size="1"
+      {...props}
       color={isEnqueued ? 'grass' : isCurrent ? 'green' : 'gray'}
       onClick={() => {
         if (isPlaying) return stop()

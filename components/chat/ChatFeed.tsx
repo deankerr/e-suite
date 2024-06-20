@@ -59,7 +59,7 @@ export const ChatFeed = () => {
   return (
     <div
       ref={scrollRef}
-      className="flex w-full grow flex-col overflow-y-auto overflow-x-hidden px-3 py-1"
+      className="flex w-full grow flex-col overflow-y-auto overflow-x-hidden px-2 py-1"
     >
       {messages.isPending && <LoadingSpinner className="m-auto" />}
       {messages.data?.map((message, i) => (
