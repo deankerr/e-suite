@@ -1,16 +1,9 @@
 import { useState } from 'react'
 import { PaperPlaneRight } from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@radix-ui/themes'
-import { createEditor } from 'slate'
-import { withReact } from 'slate-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
-import { TextEditor } from '@/components/text-editor/TextEditor'
-import {
-  getEditorStorageText,
-  removeEditorStorageText,
-  replaceEditorText,
-} from '@/components/text-editor/utils'
+import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
 import { QuantityControl } from './QuantityControl'
@@ -19,11 +12,11 @@ import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = () => {
   const { sendMessage, runInference, updateThreadConfig, thread } = useChat()
-  const storageKey = thread?.slug ? `prompt-editor-${thread.slug}` : ''
+  const [input, setInput] = useState('')
 
   const handleSendMessage = async () => {
     if (!thread) return
-    const prompt = getEditorStorageText(storageKey)
+    const prompt = input
     if (!prompt) return console.warn('prompt is empty')
 
     if (thread.config.ui.type === 'chat-completion') {
@@ -31,26 +24,26 @@ export const MessageInput = () => {
         message: { content: prompt },
         inference: thread.config.ui,
       })
-      resetEditorValue()
+      setInput('')
     }
 
     if (thread.config.ui.type === 'text-to-image') {
       await runInference({
         inference: { ...thread.config.ui, prompt },
       })
-      resetEditorValue()
+      setInput('')
     }
   }
 
   const handleAddMessage = async () => {
     if (!thread) return
-    const prompt = getEditorStorageText(storageKey)
+    const prompt = input
     if (!prompt) return console.warn('prompt is empty')
 
     await sendMessage({
       message: { content: prompt },
     })
-    resetEditorValue()
+    setInput('')
   }
 
   const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
@@ -66,17 +59,11 @@ export const MessageInput = () => {
     })
   }
 
-  const [editor] = useState(() => withReact(createEditor()))
-  const resetEditorValue = () => {
-    removeEditorStorageText(storageKey)
-    replaceEditorText(editor, '')
-  }
-
   return (
     <div className="flex w-full shrink-0 flex-col justify-center gap-2 border-t border-grayA-3 px-3 pb-2 pt-2">
-      <TextEditor
-        storageKey={storageKey}
-        editor={editor}
+      <TextareaAutosize
+        value={input}
+        onValueChange={(value) => setInput(value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()
