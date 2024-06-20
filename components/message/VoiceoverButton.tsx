@@ -74,7 +74,7 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
       onClick={handleClick}
       disabled={isError || isGenerating || !isAvailable}
     >
-      <Icon className={cn('size-5', isGenerating && 'animate-spin')} />
+      <Icon className={cn('size-4', isGenerating && 'animate-spin')} />
     </IconButton>
   )
 }

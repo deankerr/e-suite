@@ -64,12 +64,13 @@ export const ChatFeed = () => {
   return (
     <div
       ref={scrollRef}
-      className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-3 py-1"
+      className="flex w-full grow flex-col overflow-y-auto overflow-x-hidden px-3 py-1"
     >
       {messages.isPending && <LoadingSpinner className="m-auto" />}
-      {messages.data?.map((message) => (
+      {messages.data?.map((message, i) => (
         <Message
           key={message._id}
+          timeline={i !== messages.data.length - 1}
           message={message}
           slug={thread?.slug}
           removeMessage={removeMessage}

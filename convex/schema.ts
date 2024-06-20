@@ -134,7 +134,6 @@ export const messageFields = {
   files: fileAttachmentRecordSchema.array().optional(),
 
   metadata: metadataKVSchema.array().optional(),
-
   voiceover: z
     .object({
       text: z.string().optional(),

@@ -43,6 +43,7 @@ import type * as lib_clerk from "../lib/clerk.js";
 import type * as lib_openai from "../lib/openai.js";
 import type * as lib_paramInputs from "../lib/paramInputs.js";
 import type * as lib_sharp from "../lib/sharp.js";
+import type * as migrate from "../migrate.js";
 import type * as providers_fal_fast_animatediff from "../providers/fal/fast_animatediff.js";
 import type * as providers_fal_fast_lightning_sdxl from "../providers/fal/fast_lightning_sdxl.js";
 import type * as providers_fal_hyper_sdxl from "../providers/fal/hyper_sdxl.js";
@@ -100,6 +101,7 @@ declare const fullApi: ApiFromModules<{
   "lib/openai": typeof lib_openai;
   "lib/paramInputs": typeof lib_paramInputs;
   "lib/sharp": typeof lib_sharp;
+  migrate: typeof migrate;
   "providers/fal/fast_animatediff": typeof providers_fal_fast_animatediff;
   "providers/fal/fast_lightning_sdxl": typeof providers_fal_fast_lightning_sdxl;
   "providers/fal/hyper_sdxl": typeof providers_fal_hyper_sdxl;
