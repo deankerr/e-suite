@@ -5,11 +5,13 @@ import Link from 'next/link'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
+import { VoiceoverAutoplayButton } from '@/components/chat/VoiceoverAutoplayButton'
 import { showSidebarAtom } from '@/lib/atoms'
 
 export const ChatHeader = () => {
-  const toggleSidebar = useSetAtom(showSidebarAtom)
   const { thread, closeChat } = useChat()
+
+  const toggleSidebar = useSetAtom(showSidebarAtom)
 
   const Icon = thread?.config.ui.type === 'text-to-image' ? ImagesIcon : MessagesSquareIcon
   return (
@@ -30,6 +32,7 @@ export const ChatHeader = () => {
       <div className="shrink-0 gap-2 pl-3 pr-3 flex-end">
         {thread && (
           <>
+            <VoiceoverAutoplayButton threadId={thread._id} />
             <IconButton variant="ghost" color="gray" onClick={() => toggleSidebar()}>
               <SidebarIcon className="size-5" />
             </IconButton>

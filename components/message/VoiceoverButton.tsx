@@ -30,6 +30,7 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
 
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
   const isCurrent = voiceoverQueue[0] === message._id || src === url
+  const isEnqueued = voiceoverQueue.includes(message._id)
 
   const icon = isError ? (
     <FileX className="size-4" />
@@ -50,7 +51,7 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
       variant="ghost"
       size="2"
       className="m-0"
-      color="gray"
+      color={isEnqueued ? 'grass' : isCurrent ? 'green' : 'gray'}
       onClick={() => {
         if (isPlaying) return stop()
         if (isCurrent) return play()

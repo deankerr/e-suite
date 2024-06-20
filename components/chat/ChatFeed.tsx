@@ -9,7 +9,8 @@ import type { EMessage } from '@/convex/shared/types'
 
 export const ChatFeed = () => {
   const { thread, messages, removeMessage } = useChat()
-  useVoiceoverPlayer()
+  useVoiceoverPlayer(thread?._id)
+
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scrollPanelTo = useCallback(
