@@ -26,7 +26,11 @@ export const generate = mutation({
 
     const textHash = await generateSha256Hash(text)
     const thread = await message.edgeX('thread')
-    const resourceKey = thread.voiceovers?.default ?? fallbackResourceKey
+    const resourceKey =
+      thread.voiceovers?.names?.find((n) => n.name === message.name)?.resourceKey ??
+      thread.voiceovers?.default ??
+      fallbackResourceKey
+    console.log('🚀 ~ handler: ~ resourceKey:', resourceKey)
 
     const speechFileId = await generateSpeech(ctx, {
       text,
@@ -40,5 +44,25 @@ export const generate = mutation({
         speechFileId,
       },
     })
+  },
+})
+
+export const remove = mutation({
+  args: {
+    messageId: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const message = await getMessage(ctx, args.messageId)
+    insist(message, 'invalid message id')
+    insist(message.voiceover?.speechFileId, 'invalid message id')
+
+    const speechFile = await ctx.table('speech_files').getX(message.voiceover.speechFileId)
+    await ctx
+      .table('messages', 'speechId')
+      .filter((q) => q.eq(q.field('voiceover.speechFileId'), speechFile._id))
+      .map((m) => m.patch({ voiceover: undefined }))
+
+    if (speechFile.fileId) await ctx.storage.delete(speechFile.fileId)
+    await speechFile.delete()
   },
 })

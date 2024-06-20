@@ -10,4 +10,4 @@ export const chatDeckAtom = atomWithStorage<string[]>('chat-deck', [])
 export const showSidebarAtom = atomWithToggleAndStorage('show-sidebar', false)
 
 export const voiceoverQueueAtom = atom<string[]>([])
-export const voiceoverAutoplayThreadIdAtom = atom('')
+export const voiceoverAutoplayThreadIdAtom = atomWithStorage('voiceover-autoplay', '')

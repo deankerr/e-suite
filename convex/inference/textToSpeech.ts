@@ -21,7 +21,9 @@ export const runNow = internalAction({
   handler: async (ctx, args) => {
     try {
       const voiceModels = getVoiceModelsHelper()
-      const voice = voiceModels.find((model) => model.resourceKey === args.resourceKey) ?? {
+      const voice = voiceModels.find(
+        (model) => model.resourceKey === args.resourceKey.toLowerCase(),
+      ) ?? {
         endpoint: 'openai',
         endpointModelId: 'alloy',
       }

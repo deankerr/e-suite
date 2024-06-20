@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DotsThreeVertical } from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import { useMutation } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 
@@ -9,6 +10,7 @@ import { ImageGallery } from '@/components/message/ImageGallery'
 import { Markdown } from '@/components/message/Markdown'
 import { VoiceoverButton } from '@/components/message/VoiceoverButton'
 import { Pre } from '@/components/util/Pre'
+import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
@@ -25,6 +27,7 @@ export const Message = ({
   removeMessage?: (messageId: string) => void
 }) => {
   const [showJson, setShowJson] = useState(false)
+  const removeVoiceover = useMutation(api.db.voiceover.remove)
 
   return (
     <div className="flex gap-3">
@@ -74,6 +77,15 @@ export const Message = ({
             <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
               toggle show json
             </DropdownMenu.Item>
+
+            {message.voiceover && (
+              <DropdownMenu.Item
+                color="red"
+                onClick={() => void removeVoiceover({ messageId: message._id })}
+              >
+                Delete Voiceover
+              </DropdownMenu.Item>
+            )}
 
             {removeMessage && (
               <DropdownMenu.Item color="red" onClick={() => removeMessage(message._id)}>

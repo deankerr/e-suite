@@ -149,6 +149,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edge('thread')
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
+  .index('speechId', ['voiceover.speechFileId'])
 
 export const speechFileFields = {
   textHash: z.string(),
@@ -170,6 +171,13 @@ export const threadFields = {
   voiceovers: z
     .object({
       default: z.string(),
+      names: z
+        .object({
+          name: z.string(),
+          resourceKey: z.string(),
+        })
+        .array()
+        .optional(),
     })
     .optional(),
 
