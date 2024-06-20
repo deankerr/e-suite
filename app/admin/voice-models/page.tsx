@@ -65,7 +65,9 @@ export default function Page() {
             <Table.Root size="1" variant="surface">
               <Table.Header>
                 <Table.Row>
-                  <Table.ColumnHeaderCell maxWidth="40px">sample</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell maxWidth="60px" justify="center">
+                    sample
+                  </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>resourceKey</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>name</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>creatorName</Table.ColumnHeaderCell>
@@ -77,7 +79,7 @@ export default function Page() {
               <Table.Body>
                 {modelsList.map((model) => (
                   <Table.Row key={model.resourceKey}>
-                    <Table.Cell maxWidth="40px" justify="end">
+                    <Table.Cell maxWidth="60px" justify="center">
                       <IconButton
                         variant="surface"
                         size="1"

@@ -30,7 +30,6 @@ export const messageContent = mutation({
       thread.voiceovers?.names?.find((n) => n.name === message.name)?.resourceKey ??
       thread.voiceovers?.default ??
       fallbackResourceKey
-    console.log('🚀 ~ handler: ~ resourceKey:', resourceKey)
 
     const speechFileId = await generateSpeech(ctx, {
       text,

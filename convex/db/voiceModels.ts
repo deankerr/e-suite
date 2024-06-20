@@ -7,7 +7,7 @@ export const getVoiceModelsHelper = () => {
   const models = [
     OpenAi.getNormalizedVoiceModelData(),
     AwsVoicesJson.filter((data) => data.LanguageCode.startsWith('en-')).map((data) => ({
-      resourceKey: `aws::${data.Id.toLowerCase()}`,
+      resourceKey: `aws::${data.Id}`,
       endpoint: 'aws',
       endpointModelId: data.Id,
       name: data.Name,
