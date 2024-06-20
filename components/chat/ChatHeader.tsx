@@ -1,6 +1,6 @@
+import { Chats, Images, Link as LinkIcon, Sidebar, X } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
-import { ImagesIcon, LinkIcon, MessagesSquareIcon, SidebarIcon, XIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
@@ -13,7 +13,7 @@ export const ChatHeader = () => {
 
   const toggleSidebar = useSetAtom(showSidebarAtom)
 
-  const Icon = thread?.config.ui.type === 'text-to-image' ? ImagesIcon : MessagesSquareIcon
+  const Icon = thread?.config.ui.type === 'text-to-image' ? Images : Chats
   return (
     <div className="h-10 shrink-0 border-b border-grayA-3 flex-between">
       <div className="shrink-0 gap-2 pl-3 flex-start">
@@ -34,7 +34,7 @@ export const ChatHeader = () => {
           <>
             <VoiceoverAutoplayButton threadId={thread._id} />
             <IconButton variant="ghost" color="gray" onClick={() => toggleSidebar()}>
-              <SidebarIcon className="size-5" />
+              <Sidebar className="size-5" />
             </IconButton>
             <Link href={`/c/${thread?.slug}`}>
               <LinkIcon className="size-5 text-gray-11" />
@@ -44,7 +44,7 @@ export const ChatHeader = () => {
 
         {closeChat && (
           <IconButton variant="ghost" color="gray" onClick={closeChat}>
-            <XIcon className="size-5" />
+            <X className="size-5" />
           </IconButton>
         )}
       </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import { PaperPlaneRight } from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@radix-ui/themes'
-import { SendHorizonalIcon } from 'lucide-react'
 import { createEditor } from 'slate'
 import { withReact } from 'slate-react'
 
@@ -120,7 +120,7 @@ export const MessageInput = () => {
           </Button>
           <Button onClick={handleSendMessage}>
             Send
-            <SendHorizonalIcon className="size-5" />
+            <PaperPlaneRight className="size-5" />
           </Button>
         </div>
       </div>

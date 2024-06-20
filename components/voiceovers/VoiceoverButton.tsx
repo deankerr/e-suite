@@ -33,17 +33,17 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
   const isEnqueued = voiceoverQueue.includes(message._id)
 
   const icon = isError ? (
-    <FileX className="size-4" />
+    <FileX className="size-5" />
   ) : isPlaying ? (
-    <Stop className="size-4" />
+    <Stop className="size-5" />
   ) : isGenerating || (isCurrent && isLoading) ? (
-    <CircleNotch className="size-4 animate-spin" />
+    <CircleNotch className="size-5 animate-spin" />
   ) : isReady ? (
-    <Play className="size-4" />
+    <Play className="size-5" />
   ) : isAvailable ? (
-    <SpeakerHigh className="size-4" />
+    <SpeakerHigh className="size-5" />
   ) : (
-    <SpeakerSlash className="size-4" />
+    <SpeakerSlash className="size-5" />
   )
 
   return (

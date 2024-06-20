@@ -1,5 +1,5 @@
+import { NumberZero, Nut } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
-import { CircleIcon, ScanEyeIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { CommandMenu } from '@/components/command-menu/CommandMenu'
@@ -20,23 +20,18 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
     >
       <Logo />
       <CommandMenu />
-      {/* <IconButton variant="ghost" className="shrink-0" asChild>
-        <Link href={`/c`}>
-          <MessagesSquareIcon />
-        </Link>
-      </IconButton> */}
 
       <div className="grow">{/* spacer */}</div>
 
       <NonSecureAdminRoleOnly>
         <IconButton variant="ghost" className="shrink-0" asChild>
           <Link href={`/c/none`}>
-            <CircleIcon />
+            <NumberZero className="size-6" />
           </Link>
         </IconButton>
         <IconButton variant="ghost" className="shrink-0" asChild>
           <Link href={`/admin`}>
-            <ScanEyeIcon />
+            <Nut className="size-6" />
           </Link>
         </IconButton>
       </NonSecureAdminRoleOnly>

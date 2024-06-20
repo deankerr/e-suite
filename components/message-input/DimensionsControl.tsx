@@ -1,5 +1,5 @@
+import { Rectangle, Square } from '@phosphor-icons/react/dist/ssr'
 import { SegmentedControl } from '@radix-ui/themes'
-import { RectangleHorizontalIcon, RectangleVerticalIcon, SquareIcon } from 'lucide-react'
 
 export const DimensionsControl = ({
   width,
@@ -11,13 +11,13 @@ export const DimensionsControl = ({
   return (
     <SegmentedControl.Root value={value} {...props}>
       <SegmentedControl.Item value="portrait">
-        <RectangleVerticalIcon className="size-5" />
+        <Rectangle className="size-5 rotate-90 -scale-y-75" />
       </SegmentedControl.Item>
       <SegmentedControl.Item value="square">
-        <SquareIcon className="size-5" />
+        <Square className="size-5" />
       </SegmentedControl.Item>
       <SegmentedControl.Item value="landscape">
-        <RectangleHorizontalIcon className="size-5" />
+        <Rectangle className="size-5 -scale-y-75" />
       </SegmentedControl.Item>
     </SegmentedControl.Root>
   )

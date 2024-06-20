@@ -96,7 +96,7 @@ export const Message = ({
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" className="m-0" color="gray">
-              <DotsThreeVertical className="size-5" />
+              <DotsThreeVertical className="size-6" />
             </IconButton>
           </DropdownMenu.Trigger>
 

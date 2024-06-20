@@ -1,10 +1,11 @@
 'use client'
 
 import { UserButton } from '@clerk/nextjs'
+import { List } from '@phosphor-icons/react/dist/ssr'
 import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
-import { ImagePlusIcon, MenuIcon, MessageSquarePlusIcon } from 'lucide-react'
+import { ImagePlusIcon, MessageSquarePlusIcon } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
@@ -120,7 +121,7 @@ const CommandDialog = ({ children, ...props }: React.ComponentProps<typeof Dialo
     <Dialog.Root {...props}>
       <Dialog.Trigger>
         <IconButton variant="ghost" className="shrink-0">
-          <MenuIcon />
+          <List className="size-6" />
         </IconButton>
       </Dialog.Trigger>
       <Dialog.Content aria-describedby={undefined}>
