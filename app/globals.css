@@ -33,6 +33,10 @@
 
 @tailwind utilities;
 
+:root {
+  --nav-rail-height: 3rem;
+}
+
 .wt-title-1 {
   @apply text-3xl font-semibold tracking-tight;
 }

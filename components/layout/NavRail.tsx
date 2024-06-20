@@ -14,7 +14,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
     <nav
       {...props}
       className={cn(
-        '-mb-2 w-full shrink-0 gap-3 p-2 flex-start sm:-mr-2 sm:mb-0 sm:w-auto sm:flex-col-start',
+        'h-12 w-full shrink-0 gap-4 p-2.5 flex-start sm:h-full sm:w-12 sm:py-3 sm:flex-col-start',
         className,
       )}
     >

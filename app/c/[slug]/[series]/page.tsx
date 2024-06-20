@@ -12,7 +12,7 @@ export default function Page({ params }: { params: { slug: string; series: strin
     series: Number(params.series),
   })
   return (
-    <div className="w-full p-2">
+    <div className="h-full w-full p-2 pt-0 sm:pl-0 sm:pt-2">
       <Card className="grid h-full w-full">
         <Inset side="all" className="flex flex-col">
           {/* <div className="h-10 shrink-0 border-b border-grayA-3 flex-between"></div> */}
