@@ -9,7 +9,7 @@ import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 
 export const useVoiceoverPlayer = (threadId?: string) => {
   const { load, src, isLoading, stop } = useGlobalAudioPlayer()
-  const generateVoiceover = useMutation(api.db.voiceover.generate)
+  const generateVoiceover = useMutation(api.db.voiceover.messageContent)
 
   const { messages } = useChat()
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)

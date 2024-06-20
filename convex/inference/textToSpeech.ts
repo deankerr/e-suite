@@ -7,7 +7,7 @@ import { getVoiceModelsHelper } from '../db/voiceModels'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import { internalAction } from '../functions'
 import { createOpenAiClient } from '../lib/openai'
-import { getErrorMessage } from '../shared/utils'
+import { getErrorMessage, insist } from '../shared/utils'
 
 import type OpenAI from 'openai'
 
@@ -21,12 +21,8 @@ export const runNow = internalAction({
   handler: async (ctx, args) => {
     try {
       const voiceModels = getVoiceModelsHelper()
-      const voice = voiceModels.find(
-        (model) => model.resourceKey === args.resourceKey.toLowerCase(),
-      ) ?? {
-        endpoint: 'openai',
-        endpointModelId: 'alloy',
-      }
+      const voice = voiceModels.find((model) => model.resourceKey === args.resourceKey)
+      insist(voice, 'voice model not found')
 
       const fileId =
         voice.endpoint === 'aws'

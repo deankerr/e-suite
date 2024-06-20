@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { useVoiceoverPlayer } from '@/lib/useVoiceoverPlayer'
+import { useVoiceoverPlayer } from '@/components/voiceovers/useVoiceoverPlayer'
 
 import type { EMessage } from '@/convex/shared/types'
 

@@ -124,5 +124,7 @@ export const getNormalizedVoiceModelData = () => {
     name: voice,
     creatorName: 'OpenAI',
     endpoint: 'openai',
+    accent: '',
+    gender: '',
   }))
 }

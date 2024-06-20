@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { Doc, Id } from '../_generated/dataModel'
-import { internalMutation, internalQuery } from '../functions'
+import { internalMutation, internalQuery, query } from '../functions'
 import { MutationCtx, QueryCtx } from '../types'
 
 export const generateSpeech = async (
@@ -69,5 +69,14 @@ export const get = internalQuery({
         q.eq('textHash', args.textHash).eq('resourceKey', args.resourceKey),
       )
       .uniqueX()
+  },
+})
+
+export const getById = query({
+  args: {
+    speechFileId: zid('speech_files'),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('speech_files').get(args.speechFileId)
   },
 })

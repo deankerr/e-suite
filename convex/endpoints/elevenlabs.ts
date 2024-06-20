@@ -43,11 +43,64 @@ export const textToSpeech = async (
 }
 
 export const getVoiceModelData = () => {
-  return ElevenLabsVoicesJson.voices.map((voice) => ({
-    resourceKey: `elevenlabs::${voice.voice_id}`,
-    endpointModelId: voice.voice_id,
-    name: voice.name,
+  return [
+    ...ElevenLabsVoicesJson.voices.map((voice) => ({
+      resourceKey: `elevenlabs::${voice.voice_id}`,
+      endpointModelId: voice.voice_id,
+      name: voice.name,
+      creatorName: 'ElevenLabs',
+      endpoint: 'elevenlabs',
+      accent: voice.labels.accent,
+      gender: voice.labels.gender,
+    })),
+    ...customVoices,
+  ]
+}
+
+const customVoices = [
+  {
+    resourceKey: 'elevenlabs::93mdWNEl4OgOfPEIGf9G',
+    endpointModelId: '93mdWNEl4OgOfPEIGf9G',
+    name: 'Russell Brand',
     creatorName: 'ElevenLabs',
     endpoint: 'elevenlabs',
-  }))
-}
+    accent: 'British',
+    gender: 'Male',
+  },
+  {
+    resourceKey: 'elevenlabs::LOXLsai008fkodRE9NJ9',
+    endpointModelId: 'LOXLsai008fkodRE9NJ9',
+    name: 'JC Denton',
+    creatorName: 'ElevenLabs',
+    endpoint: 'elevenlabs',
+    accent: 'American',
+    gender: 'Male',
+  },
+  {
+    resourceKey: 'elevenlabs::QtNaZ74f9KgOviNdPqgJ',
+    endpointModelId: 'QtNaZ74f9KgOviNdPqgJ',
+    name: 'Roger The Alien',
+    creatorName: 'ElevenLabs',
+    endpoint: 'elevenlabs',
+    accent: 'American',
+    gender: 'Male',
+  },
+  {
+    resourceKey: 'elevenlabs::WJ59VcEA1rqrPDvjJQ23',
+    endpointModelId: 'WJ59VcEA1rqrPDvjJQ23',
+    name: 'Hank Hill',
+    creatorName: 'ElevenLabs',
+    endpoint: 'elevenlabs',
+    accent: 'American',
+    gender: 'Male',
+  },
+  {
+    resourceKey: 'elevenlabs::iWkxbWX4HfF4h5W74WhN',
+    endpointModelId: 'iWkxbWX4HfF4h5W74WhN',
+    name: 'Lois Griffin',
+    creatorName: 'ElevenLabs',
+    endpoint: 'elevenlabs',
+    accent: 'American',
+    gender: 'Female',
+  },
+]

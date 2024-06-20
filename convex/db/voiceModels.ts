@@ -12,6 +12,8 @@ export const getVoiceModelsHelper = () => {
       endpointModelId: data.Id,
       name: data.Name,
       creatorName: 'AWS Polly',
+      accent: data.LanguageName,
+      gender: data.Gender,
     })),
     ElevenLabs.getVoiceModelData(),
   ].flat()

@@ -8,7 +8,7 @@ import { generateSpeech } from './speechFiles'
 
 const fallbackResourceKey = 'openai::alloy'
 
-export const generate = mutation({
+export const messageContent = mutation({
   args: {
     messageId: z.string(),
   },
@@ -44,6 +44,27 @@ export const generate = mutation({
         speechFileId,
       },
     })
+  },
+})
+
+export const text = mutation({
+  args: {
+    text: z.string(),
+    resourceKey: z.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.viewer()
+    insist(user?.role === 'admin', 'not authorized')
+    insist(args.text && args.resourceKey, 'invalid input')
+
+    const textHash = await generateSha256Hash(args.text)
+    const speechFileId = await generateSpeech(ctx, {
+      text: args.text,
+      textHash,
+      resourceKey: args.resourceKey,
+    })
+
+    return speechFileId
   },
 })
 

@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
-import { VoiceoverAutoplayButton } from '@/components/chat/VoiceoverAutoplayButton'
+import { VoiceoverAutoplayButton } from '@/components/voiceovers/VoiceoverAutoplayButton'
 import { showSidebarAtom } from '@/lib/atoms'
 
 export const ChatHeader = () => {
