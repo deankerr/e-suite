@@ -5,7 +5,7 @@ import { useLocalStorage } from 'react-use'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { useThread } from '@/lib/queries'
+import { useMessages, useThread } from '@/lib/queries'
 
 import type { EThread } from '@/convex/shared/types'
 
@@ -39,6 +39,7 @@ const useChatContextApi = ({
   const { data: queriedThread } = useThread(currentId)
 
   const thread = currentId.startsWith('_') ? localThread : queriedThread
+  const messages = useMessages(thread?._id)
 
   const createMessage = useMutation(api.db.messages.create)
   const apiRemoveMessage = useMutation(api.db.messages.remove)
@@ -106,6 +107,7 @@ const useChatContextApi = ({
 
   return {
     thread: useMemo(() => thread, [thread]),
+    messages: useMemo(() => messages, [messages]),
     sendMessage,
     removeMessage,
     runInference,

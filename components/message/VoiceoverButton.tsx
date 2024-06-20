@@ -7,17 +7,15 @@ import {
   Stop,
 } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
+import { useAtom } from 'jotai'
 import { useGlobalAudioPlayer } from 'react-use-audio-player'
 
-import { api } from '@/convex/_generated/api'
 import { EMessage } from '@/convex/shared/types'
 import { hasActiveJobName } from '@/convex/shared/utils'
-import { cn } from '@/lib/utils'
+import { voiceoverQueueAtom } from '@/lib/atoms'
 
 export const VoiceoverButton = ({ message }: { message: EMessage }) => {
-  const { load, src, playing, stop, isLoading } = useGlobalAudioPlayer()
-  const generateVoiceover = useMutation(api.db.voiceover.generate)
+  const { src, playing, stop, isLoading, play } = useGlobalAudioPlayer()
 
   const { voiceover } = message
   const url = voiceover?.fileUrl
@@ -30,40 +28,22 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
     !hasActiveJobName(message.jobs, 'inference/chat-completion')
   const isGenerating = voiceover?.status === 'pending'
 
-  const handleClick = () => {
-    if (isPlaying) {
-      stop()
-      return
-    }
+  const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
+  const isCurrent = voiceoverQueue[0] === message._id || src === url
 
-    if (!isAvailable) return
-
-    if (url) {
-      load(url, {
-        autoplay: true,
-        format: 'mp3',
-      })
-      return
-    }
-
-    if (!voiceover) {
-      void generateVoiceover({
-        messageId: message._id,
-      })
-    }
-  }
-
-  const Icon = isError
-    ? FileX
-    : isPlaying
-      ? Stop
-      : isGenerating || isLoading
-        ? CircleNotch
-        : isReady
-          ? Play
-          : isAvailable
-            ? SpeakerHigh
-            : SpeakerSlash
+  const icon = isError ? (
+    <FileX className="size-4" />
+  ) : isPlaying ? (
+    <Stop className="size-4" />
+  ) : isGenerating || (isCurrent && isLoading) ? (
+    <CircleNotch className="size-4 animate-spin" />
+  ) : isReady ? (
+    <Play className="size-4" />
+  ) : isAvailable ? (
+    <SpeakerHigh className="size-4" />
+  ) : (
+    <SpeakerSlash className="size-4" />
+  )
 
   return (
     <IconButton
@@ -71,10 +51,15 @@ export const VoiceoverButton = ({ message }: { message: EMessage }) => {
       size="2"
       className="m-0"
       color="gray"
-      onClick={handleClick}
-      disabled={isError || isGenerating || !isAvailable}
+      onClick={() => {
+        if (isPlaying) return stop()
+        if (isCurrent) return play()
+
+        setVoiceoverQueue([message._id])
+      }}
+      disabled={isError || isGenerating || !isAvailable || (isCurrent && isLoading)}
     >
-      <Icon className={cn('size-4', isGenerating && 'animate-spin')} />
+      {icon}
     </IconButton>
   )
 }

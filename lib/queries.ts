@@ -23,7 +23,12 @@ export const useMessages = (threadId?: string) => {
         }
       : 'skip',
   )
-  // if (!threadId) return
+
+  if (!threadId) {
+    result.data = []
+    result.isSuccess = true
+    result.isPending = false
+  }
   return result
 }
 

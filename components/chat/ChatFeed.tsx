@@ -3,19 +3,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { useMessages } from '@/lib/queries'
+import { useVoiceoverPlayer } from '@/lib/useVoiceoverPlayer'
 
 import type { EMessage } from '@/convex/shared/types'
 
 export const ChatFeed = () => {
-  const { thread, removeMessage } = useChat()
-  const messages = useMessages(thread?._id)
-  if (!thread?._id) {
-    messages.data = []
-    messages.isSuccess = true
-    messages.isPending = false
-  }
-
+  const { thread, messages, removeMessage } = useChat()
+  useVoiceoverPlayer()
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scrollPanelTo = useCallback(

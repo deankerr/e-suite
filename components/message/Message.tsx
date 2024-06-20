@@ -62,7 +62,7 @@ export const Message = ({
       </div>
 
       {/* menu */}
-      <div className="shrink-0 flex-col-center">
+      <div className="shrink-0 pt-1.5 flex-col-start">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" className="m-0" color="gray">
