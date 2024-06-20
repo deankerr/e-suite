@@ -15,6 +15,10 @@ const textToImageModels = {
     body: HyperSdxl.textToImagePostBody,
     response: HyperSdxl.textToImagePostResponse,
   },
+  'fal-ai/stable-diffusion-v3-medium': {
+    body: HyperSdxl.textToImagePostBody,
+    response: HyperSdxl.textToImagePostResponse,
+  },
   'fal-ai/fast-lightning-sdxl': {
     body: FastLightningSdxl.textToImagePostBody,
     response: FastLightningSdxl.textToImagePostResponse,

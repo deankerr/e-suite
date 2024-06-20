@@ -53,7 +53,7 @@ const chat_models = defineEnt(zodToConvexFields(chatModelFields))
 
 export const imageModelFields = {
   ...sharedModelFields,
-  architecture: z.enum(['SD', 'SDXL']),
+  architecture: z.enum(['SD', 'SDXL', 'SD3']),
   sizes: z.object({
     portrait: z.tuple([z.number(), z.number()]),
     landscape: z.tuple([z.number(), z.number()]),

@@ -8,6 +8,26 @@ const sdxlSizes = {
 
 export const falImageModelData = [
   {
+    resourceKey: 'fal::stable-diffusion-v3-medium',
+    name: 'Stable Diffusion V3 Medium',
+    description: '',
+
+    creatorName: '',
+    link: '',
+    license: '',
+    tags: [],
+
+    architecture: 'SD3' as const,
+    sizes: sdxlSizes,
+
+    endpoint: 'fal',
+    endpointModelId: 'fal-ai/stable-diffusion-v3-medium',
+    pricing: {},
+    moderated: false,
+    available: true,
+    hidden: false,
+  },
+  {
     resourceKey: 'fal::fal-ai/hyper-sdxl',
     name: 'Hyper SDXL',
     description: '',

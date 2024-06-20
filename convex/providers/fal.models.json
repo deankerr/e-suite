@@ -1,5 +1,13 @@
 [
   {
+    "cover_image": "https://storage.googleapis.com/falserverless/landing/sd13-sample-03.webp",
+    "description": "Run SD3 at the speed of light",
+    "link": "https://fal.ai/models/fal-ai/stable-diffusion-v3-medium/api",
+    "model_id": "fal-ai/stable-diffusion-v3-medium",
+    "name": "Stable Diffusion V3 Medium",
+    "tags": "text-to-image inference optimized"
+  },
+  {
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/fast-sdxl.jpeg",
     "description": "Run SDXL at the speed of light",
     "link": "https://fal.ai/models/stable-diffusion-xl",
