@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { DotsThreeVertical } from '@phosphor-icons/react/dist/ssr'
-import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import { DotsThreeVertical, WarningCircle } from '@phosphor-icons/react/dist/ssr'
+import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
@@ -9,8 +9,10 @@ import { Avatar } from '@/components/message/Avatar'
 import { ImageGallery } from '@/components/message/ImageGallery'
 import { Markdown } from '@/components/message/Markdown'
 import { VoiceoverButton } from '@/components/message/VoiceoverButton'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
 import { api } from '@/convex/_generated/api'
+import { hasActiveJobName } from '@/convex/shared/utils'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
@@ -29,6 +31,8 @@ export const Message = ({
   const [showJson, setShowJson] = useState(false)
   const removeVoiceover = useMutation(api.db.voiceover.remove)
 
+  const showChatLoader =
+    hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
   return (
     <div className="flex gap-3">
       {/* timeline */}
@@ -53,13 +57,36 @@ export const Message = ({
         </div>
 
         {/* content */}
-        <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
-          <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
-            <Markdown>{message.content}</Markdown>
+        {message.content && (
+          <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
+            <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
+              <Markdown>{message.content}</Markdown>
+            </div>
           </div>
+        )}
 
-          <ImageGallery message={message} />
-        </div>
+        {showChatLoader && (
+          <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
+            <LoadingSpinner variant="ping" className="mx-1 -mb-0.5 mt-0.5 w-5" />
+          </div>
+        )}
+
+        <ImageGallery message={message} />
+
+        {message.jobs
+          .flatMap((job) => job.errors)
+          .map(
+            (error, i) =>
+              error && (
+                <Callout.Root key={i} color="red" size="1">
+                  <Callout.Icon>
+                    <WarningCircle className="size-5" />
+                  </Callout.Icon>
+                  <Callout.Text className="border-b border-red-6 pb-1">{error.code}</Callout.Text>
+                  <Callout.Text>{error.message}</Callout.Text>
+                </Callout.Root>
+              ),
+          )}
 
         {showJson && <Pre>{JSON.stringify(message, null, 2)}</Pre>}
       </div>
