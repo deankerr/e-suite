@@ -136,7 +136,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', ...fontFamily.sans],
-        mono: ['var(--font-jetbrains-mono)', ...fontFamily.mono],
+        mono: ['var(--font-ibm-plex-mono)', ...fontFamily.mono],
       },
       maxWidth: {
         '8xl': '96rem',

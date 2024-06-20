@@ -45,6 +45,7 @@ const useChatContextApi = ({
   const apiRemoveMessage = useMutation(api.db.messages.remove)
   const run = useMutation(api.db.messages.run)
   const updateThread = useMutation(api.db.threads.update)
+  const updateMessage = useMutation(api.db.messages.update)
 
   const sendMessage = useCallback(
     async (args: Omit<Parameters<typeof createMessage>[0], 'threadId'>) => {
@@ -100,6 +101,13 @@ const useChatContextApi = ({
     [currentId, thread, setLocalThread, updateThread],
   )
 
+  const updateMessageContent = useCallback(
+    async (args: Parameters<typeof updateMessage>[0]) => {
+      await updateMessage(args)
+    },
+    [updateMessage],
+  )
+
   const closeChat = useCallback(() => {
     if (onClose) onClose(slug)
     router.push('/c')
@@ -112,6 +120,7 @@ const useChatContextApi = ({
     removeMessage,
     runInference,
     updateThreadConfig,
+    updateMessageContent,
     closeChat,
   }
 }

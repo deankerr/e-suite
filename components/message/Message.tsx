@@ -6,6 +6,7 @@ import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 
 import { Avatar } from '@/components/message/Avatar'
+import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
 import { Markdown } from '@/components/message/Markdown'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
@@ -29,12 +30,13 @@ export const Message = ({
   removeMessage?: (messageId: string) => void
 }) => {
   const [showJson, setShowJson] = useState(false)
+  const [editing, setEditing] = useState(false)
   const removeVoiceover = useMutation(api.db.voiceover.remove)
 
   const showChatLoader =
     hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
   return (
-    <div className="mx-auto flex max-w-full gap-1.5 sm:gap-3">
+    <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}
       <div className="flex shrink-0 justify-center py-2">
         <div className={cn('absolute inset-y-0 w-0.5 bg-grayA-2', !timeline && 'hidden')}></div>
@@ -44,9 +46,9 @@ export const Message = ({
       </div>
 
       {/* message */}
-      <div className="max-w-3xl space-y-1 py-2 text-sm">
+      <div className="w-full space-y-1 py-2 text-sm">
         {/* title row */}
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           <div className="space-x-2">
             <span className="font-medium text-gray-11">{message.name ?? message.role}</span>
             <Link
@@ -72,8 +74,12 @@ export const Message = ({
               </DropdownMenu.Trigger>
 
               <DropdownMenu.Content variant="soft">
+                <DropdownMenu.Item onClick={() => setEditing(!editing)}>
+                  {editing ? 'Cancel Edit' : 'Edit'}
+                </DropdownMenu.Item>
+
                 <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
-                  toggle show json
+                  Show JSON
                 </DropdownMenu.Item>
 
                 {message.voiceover && (
@@ -96,8 +102,8 @@ export const Message = ({
         </div>
 
         {/* content */}
-        {message.content && (
-          <div className="w-fit max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 text-xs">
+        {message.content && !editing && (
+          <div className="w-fit max-w-full space-y-1 rounded-lg bg-grayA-2 p-3">
             <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
               <Markdown>{message.content}</Markdown>
             </div>
@@ -107,6 +113,8 @@ export const Message = ({
             </div>
           </div>
         )}
+
+        {editing && <Editor message={message} onClose={() => setEditing(false)} />}
 
         {showChatLoader && (
           <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">

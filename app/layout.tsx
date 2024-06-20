@@ -5,7 +5,7 @@ import { dark } from '@clerk/themes'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { PartyBoy } from '@/components/effects/PartyBoy'
@@ -34,15 +34,16 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const jetBrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-jetbrains-mono',
+  weight: ['400', '700'],
+  variable: '--font-ibm-plex-mono',
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn('', inter.variable, jetBrainsMono.variable)}>
+    <html lang="en" className={cn(inter.variable, ibmPlexMono.variable)}>
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
