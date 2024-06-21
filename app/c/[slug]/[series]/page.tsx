@@ -15,10 +15,12 @@ export default function Page({ params }: { params: { slug: string; series: strin
     <div className="h-full w-full p-2 pt-0 sm:pl-0 sm:pt-2">
       <Card className="grid h-full w-full">
         <Inset side="all" className="flex flex-col">
-          {/* <div className="h-10 shrink-0 border-b border-grayA-3 flex-between"></div> */}
-
           <div className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-5 py-1">
-            {result.data?.messages[0] ? <Message message={result.data?.messages[0]} /> : null}
+            {result.data?.messages[0] ? (
+              <div className="m-auto">
+                <Message message={result.data?.messages[0]} timeline={false} />
+              </div>
+            ) : null}
           </div>
         </Inset>
       </Card>

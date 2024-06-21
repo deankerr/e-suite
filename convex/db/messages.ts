@@ -190,6 +190,7 @@ export const run = mutation({
   args: {
     threadId: z.string().optional(),
     inference: inferenceSchema,
+    content: z.string().optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -220,6 +221,7 @@ export const run = mutation({
       series: nextSeriesNumber + 1,
       userId: user._id,
       inference: args.inference,
+      content: args.content,
     })
 
     const jobName =

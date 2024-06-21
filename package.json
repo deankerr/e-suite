@@ -76,6 +76,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animated": "^1.1.1",
     "three": "^0.165.0",
+    "yet-another-react-lightbox": "^3.20.0",
     "zod": "^3.23.8",
     "zod-form-data": "^2.0.2",
     "zod-validation-error": "^3.3.0"

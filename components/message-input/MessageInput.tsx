@@ -30,6 +30,7 @@ export const MessageInput = () => {
     if (thread.config.ui.type === 'text-to-image') {
       await runInference({
         inference: { ...thread.config.ui, prompt },
+        content: `**${thread.config.ui.endpointModelId}**\n\n${prompt}`,
       })
       setInput('')
     }
