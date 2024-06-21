@@ -22,7 +22,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
 
   const width = textToImage?.width ?? 1024
   const height = textToImage?.height ?? 1024
-  const n = textToImage?.n ?? 1
+  const n = Math.max(textToImage?.n ?? 1, files?.length ?? 0)
 
   const imageFrames = Array.from({ length: n }, (_, i) => {
     const file = files?.[i]
@@ -32,6 +32,8 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
 
     return { width, height, type: 'placeholder' as const }
   })
+
+  const hasJobErrors = message.jobs.some((job) => job.status === 'failed')
 
   const slides = files
     ?.filter(
@@ -61,12 +63,12 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
               className="cursor-pointer"
               onClick={() => setOpen(true)}
             />
-          ) : (
+          ) : !hasJobErrors ? (
             <ImageGeneratingEffect
               key={i}
               style={{ aspectRatio: width / height, width: width, maxWidth: '100%' }}
             />
-          ),
+          ) : null,
         )}
       </div>
       <Lightbox

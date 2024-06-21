@@ -36,7 +36,8 @@ export const messageContent = mutation({
       textHash,
       resourceKey,
     })
-    await ctx.table('messages').getX(message._id).patch({
+    // TODO remove this relation
+    await ctx.skipRules.table('messages').getX(message._id).patch({
       voiceover: {
         textHash,
         resourceKey,

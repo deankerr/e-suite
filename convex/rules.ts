@@ -12,6 +12,18 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return key.userId === ctx.viewerId
       },
     },
+    threads: {
+      write: async ({ operation, ent: thread, value }) => {
+        if (operation === 'create') return ctx.viewerId === value.userId
+        return ctx.viewerId === thread.userId
+      },
+    },
+    messages: {
+      write: async ({ operation, ent: message, value }) => {
+        if (operation === 'create') return ctx.viewerId === value.userId
+        return ctx.viewerId === message.userId
+      },
+    },
   })
 }
 
