@@ -1,12 +1,10 @@
-import Lightbox from 'yet-another-react-lightbox'
-
-import { GoldSparkles } from '@/components/effects/GoldSparkles'
-
 import 'yet-another-react-lightbox/styles.css'
 
 import { useState } from 'react'
+import Lightbox from 'yet-another-react-lightbox'
 
 import { ImageCard } from '@/components/images/ImageCard'
+import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import NextJsImage from '@/components/images/NextJsImage'
 import { Id } from '@/convex/_generated/dataModel'
 import { EMessage } from '@/convex/shared/types'
@@ -14,11 +12,26 @@ import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/shared/structures'
 
+const showLoader = false
+
 export const ImageGallery = ({ message }: { message: EMessage }) => {
   const [open, setOpen] = useState(false)
-
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const files = message.files
+  if (!(textToImage || files)) return null
+
+  const width = textToImage?.width ?? 1024
+  const height = textToImage?.height ?? 1024
+  const n = textToImage?.n ?? 1
+
+  const imageFrames = Array.from({ length: n }, (_, i) => {
+    const file = files?.[i]
+    if (file?.type === 'image') {
+      return file
+    }
+
+    return { width, height, type: 'placeholder' as const }
+  })
 
   const slides = files
     ?.filter(
@@ -31,7 +44,6 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
       blurDataURL: file.image.blurDataUrl,
     }))
 
-  if (!(textToImage || files)) return null
   return (
     <div className="w-fit max-w-full rounded-lg">
       <div
@@ -40,33 +52,22 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           files?.length !== 0 ? 'grid grid-cols-2 gap-2' : '',
         )}
       >
-        {files?.map((file, i) => {
-          if (file.type === 'image_url') {
-            const width = textToImage?.width ?? 1024
-            const height = textToImage?.height ?? 1024
-            return (
-              <div
-                key={i}
-                className="overflow-hidden rounded-xl"
-                style={{ aspectRatio: width / height, width: width, maxWidth: '100%' }}
-              >
-                <GoldSparkles />
-              </div>
-            )
-          }
-
-          if (file.type === 'image') {
-            return (
-              <ImageCard
-                key={file.id}
-                image={file.image}
-                sizes="(max-width: 56rem) 50vw, 28rem"
-                className="cursor-pointer"
-                onClick={() => setOpen(true)}
-              />
-            )
-          }
-        })}
+        {imageFrames.map((frame, i) =>
+          !showLoader && frame.type === 'image' ? (
+            <ImageCard
+              key={frame.image._id}
+              image={frame.image}
+              sizes="(max-width: 56rem) 50vw, 28rem"
+              className="cursor-pointer"
+              onClick={() => setOpen(true)}
+            />
+          ) : (
+            <ImageGeneratingEffect
+              key={i}
+              style={{ aspectRatio: width / height, width: width, maxWidth: '100%' }}
+            />
+          ),
+        )}
       </div>
       <Lightbox
         open={open}

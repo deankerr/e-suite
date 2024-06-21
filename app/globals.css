@@ -5,8 +5,8 @@
 
 .radix-themes {
   /* fonts */
-  --default-font-family: var(--font-inter);
-  --code-font-family: var(--font-jetbrains-mono);
+  --default-font-family: var(--font-sans);
+  --code-font-family: var(--font-mono);
 
   /* add pointer cursor to controls */
   --cursor-button: pointer;
@@ -75,7 +75,7 @@
   filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(-70deg) saturate(5);
 }
 
-.colorize-svg {
+.colorize-orange {
   filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(0deg) saturate(5);
 }
 

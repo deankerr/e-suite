@@ -30,14 +30,14 @@ export const viewport: Viewport = {
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-sans',
 })
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
   weight: ['400'],
-  variable: '--font-ibm-plex-mono',
+  variable: '--font-mono',
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

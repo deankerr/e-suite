@@ -135,8 +135,8 @@ const config: Config = {
         '2xs': '16rem',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', ...fontFamily.sans],
-        mono: ['var(--font-ibm-plex-mono)', ...fontFamily.mono],
+        sans: ['var(--font-sans)', ...fontFamily.sans],
+        mono: ['var(--font-mono)', ...fontFamily.mono],
       },
       maxWidth: {
         '8xl': '96rem',
@@ -152,7 +152,7 @@ const config: Config = {
         },
       },
       animation: {
-        shimmerDown: 'shimmerDown 3s linear infinite',
+        shimmerDown: 'shimmerDown 8s linear infinite',
         starfieldDown: 'starfieldDown 20s linear infinite',
       },
     },
