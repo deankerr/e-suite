@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
+import { ImageGrid } from '@/components/message/ImageGrid'
 import { Markdown } from '@/components/message/Markdown'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
@@ -107,7 +108,7 @@ export const Message = ({
         </div>
 
         {/* content */}
-        <ImageGallery message={message} />
+        {!timeline ? <ImageGrid message={message} /> : <ImageGallery message={message} />}
 
         {message.content && !editing && (
           <div className="w-fit max-w-full space-y-1 rounded-lg bg-grayA-2 p-3">

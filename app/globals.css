@@ -78,3 +78,50 @@
 .colorize-svg {
   filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(0deg) saturate(5);
 }
+
+.noisey {
+  position: absolute;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  animation: starfield1 10s infinite linear;
+  background-image: url('/black-noise.png');
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+@keyframes noisey {
+  0% {
+    translate: -4% -15% 0;
+  }
+  10% {
+    translate: -14% -19% 0;
+  }
+  20% {
+    translate: 1% 6% 0;
+  }
+  30% {
+    translate: 13% 11% 0;
+  }
+  40% {
+    translate: -14% -6% 0;
+  }
+  50% {
+    translate: -5% 15% 0;
+  }
+  60% {
+    translate: -1% -7% 0;
+  }
+  70% {
+    translate: 10% -7% 0;
+  }
+  80% {
+    translate: 19% 5% 0;
+  }
+  90% {
+    translate: 0% 4% 0;
+  }
+  100% {
+    translate: 0% 0% 0;
+  }
+}

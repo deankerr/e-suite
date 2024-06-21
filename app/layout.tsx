@@ -8,7 +8,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
-import { PartyBoy } from '@/components/effects/PartyBoy'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { HighlightLoader } from '@/components/util/HighlightLoader'
 import { cn, environment } from '@/lib/utils'
@@ -37,7 +36,7 @@ const inter = Inter({
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
-  weight: ['400', '700'],
+  weight: ['400'],
   variable: '--font-ibm-plex-mono',
 })
 
@@ -49,7 +48,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ClientProviders>
             <Theme accentColor="orange" appearance="dark" panelBackground="solid">
               {children}
-              <PartyBoy />
               <Toaster position="top-right" theme="light" closeButton richColors />
               <HighlightLoader />
             </Theme>

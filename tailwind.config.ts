@@ -142,13 +142,18 @@ const config: Config = {
         '8xl': '96rem',
       },
       keyframes: {
-        shimmer: {
-          from: { backgroundPosition: '200% 0' },
-          to: { backgroundPosition: '-200% 0' },
+        shimmerDown: {
+          from: { transform: 'translateY(0)' },
+          to: { transform: 'translateY(150%)' },
+        },
+        starfieldDown: {
+          from: { transform: 'translateY(0)' },
+          to: { transform: 'translateY(100%)' },
         },
       },
       animation: {
-        shimmer: 'shimmer 8s ease-in-out infinite',
+        shimmerDown: 'shimmerDown 3s linear infinite',
+        starfieldDown: 'starfieldDown 20s linear infinite',
       },
     },
     container: {
