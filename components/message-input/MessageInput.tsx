@@ -4,6 +4,7 @@ import { Button } from '@radix-ui/themes'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
+import { useViewerDetails } from '@/lib/queries'
 import { getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
 import { QuantityControl } from './QuantityControl'
@@ -12,7 +13,10 @@ import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = () => {
   const { sendMessage, runInference, updateThreadConfig, thread } = useChat()
+  const { isOwner } = useViewerDetails(thread?.userId)
   const [input, setInput] = useState('')
+
+  if (!thread || !isOwner) return null
 
   const handleSendMessage = async () => {
     if (!thread) return
@@ -103,9 +107,11 @@ export const MessageInput = () => {
         </div>
 
         <div className="shrink-0 gap-3 flex-end">
-          <Button color="gray" onClick={handleAddMessage}>
-            Add
-          </Button>
+          {thread.config.ui.type === 'chat-completion' && (
+            <Button color="gray" onClick={handleAddMessage}>
+              Add
+            </Button>
+          )}
           <Button onClick={handleSendMessage}>
             Send
             <PaperPlaneRight className="size-5" />

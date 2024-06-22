@@ -11,6 +11,7 @@ export const SliderWithInput = ({
   min,
   max,
   step,
+  disabled,
   ...props
 }: {
   label: string
@@ -32,6 +33,7 @@ export const SliderWithInput = ({
           min={min}
           max={max}
           step={step}
+          disabled={disabled}
         />
       </div>
 
@@ -46,6 +48,7 @@ export const SliderWithInput = ({
         min={min}
         max={max}
         step={step}
+        disabled={disabled}
       />
     </Label>
   )

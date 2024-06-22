@@ -20,6 +20,7 @@ export const useMessages = (threadId?: string) => {
     threadId
       ? {
           threadId,
+          limit: 25,
         }
       : 'skip',
   )

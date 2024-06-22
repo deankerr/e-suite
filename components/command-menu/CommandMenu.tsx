@@ -1,6 +1,5 @@
 'use client'
 
-import { UserButton } from '@clerk/nextjs'
 import { List } from '@phosphor-icons/react/dist/ssr'
 import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
@@ -10,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
 import { useChatDeck } from '@/components/chat-deck/useChatDeck'
+import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import {
   Command,
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/Command'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { commandMenuOpenAtom } from '@/lib/atoms'
-import { useUserThreadsList } from '@/lib/queries'
+import { useUserThreadsList, useViewerDetails } from '@/lib/queries'
 
 type CommandMenuProps = {
   asDialog?: boolean
@@ -44,6 +44,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
     setOpen(false)
   }
 
+  const { user } = useViewerDetails()
   const threads = useUserThreadsList()
   const threadsAvailable = (threads.data ?? []).filter((thread) =>
     isChatDeckMode ? !deck.some((slug) => thread.slug === slug) : true,
@@ -55,54 +56,62 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
       <CommandList className="h-[400px] max-h-[80lvh]">
         <CommandEmpty>No results found.</CommandEmpty>
 
-        <CommandGroup>
-          <CommandItem
-            onSelect={() => {
-              setDeck(['_chat'])
-              goto('/c')
-            }}
-          >
-            <MessageSquarePlusIcon className="mr-2 size-4" />
-            Start new Chat
-          </CommandItem>
-          <CommandItem
-            onSelect={() => {
-              setDeck(['_image'])
-              goto('/c')
-            }}
-          >
-            <ImagePlusIcon className="mr-2 size-4" />
-            Start new Generation
-          </CommandItem>
-          {configUseChatDeck && (
-            <CommandItem onSelect={() => goto('/c')}>
-              <MessageSquarePlusIcon className="mr-2 size-4" />
-              Chat Deck
-            </CommandItem>
-          )}
-        </CommandGroup>
+        {user.isSuccess && !user.data && (
+          <CommandItem disabled>Log in to start using e/suite</CommandItem>
+        )}
 
-        <CommandSeparator />
-        <CommandGroup heading="Threads">
-          {threadsAvailable.map((thread) => (
+        {user.data && (
+          <CommandGroup>
             <CommandItem
-              key={thread._id}
-              value={thread.title ?? 'new thread ' + thread.slug}
-              className="h-11 gap-2"
               onSelect={() => {
-                if (isChatDeckMode) add(thread.slug)
-                else goto(`/c/${thread.slug}`)
-                setOpen(false)
+                setDeck(['_chat'])
+                goto('/c')
               }}
             >
-              <div className="grow truncate">{thread.title ?? 'new thread'}</div>
-              <div className="max-w-16 shrink-0 text-right text-xs text-gray-10">
-                {formatDistanceToNow(new Date(thread.updatedAtTime), { addSuffix: true })}
-              </div>
+              <MessageSquarePlusIcon className="mr-2 size-4" />
+              Start new Chat
             </CommandItem>
-          ))}
-          {threads.isPending && <LoadingSpinner />}
-        </CommandGroup>
+            <CommandItem
+              onSelect={() => {
+                setDeck(['_image'])
+                goto('/c')
+              }}
+            >
+              <ImagePlusIcon className="mr-2 size-4" />
+              Start new Generation
+            </CommandItem>
+            {configUseChatDeck && (
+              <CommandItem onSelect={() => goto('/c')}>
+                <MessageSquarePlusIcon className="mr-2 size-4" />
+                Chat Deck
+              </CommandItem>
+            )}
+          </CommandGroup>
+        )}
+
+        <CommandSeparator />
+        {threadsAvailable.length > 0 && (
+          <CommandGroup heading="Threads">
+            {threadsAvailable.map((thread) => (
+              <CommandItem
+                key={thread._id}
+                value={thread.title ?? 'new thread ' + thread.slug}
+                className="h-11 gap-2"
+                onSelect={() => {
+                  if (isChatDeckMode) add(thread.slug)
+                  else goto(`/c/${thread.slug}`)
+                  setOpen(false)
+                }}
+              >
+                <div className="grow truncate">{thread.title ?? 'new thread'}</div>
+                <div className="max-w-16 shrink-0 text-right text-xs text-gray-10">
+                  {formatDistanceToNow(new Date(thread.updatedAtTime), { addSuffix: true })}
+                </div>
+              </CommandItem>
+            ))}
+            {threads.isPending && <LoadingSpinner />}
+          </CommandGroup>
+        )}
       </CommandList>
     </Command>
   )
@@ -130,7 +139,7 @@ const CommandDialog = ({ children, ...props }: React.ComponentProps<typeof Dialo
         <Inset side="top" className="p-3">
           <div className="pt-0.5 flex-between">
             <AppLogoTitle />
-            <UserButton />
+            <UserButtons />
           </div>
         </Inset>
 

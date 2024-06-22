@@ -4,11 +4,13 @@ import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useVoiceoverPlayer } from '@/components/voiceovers/useVoiceoverPlayer'
+import { useViewerDetails } from '@/lib/queries'
 
 import type { EMessage } from '@/convex/shared/types'
 
 export const ChatFeed = () => {
   const { thread, messages, removeMessage } = useChat()
+  const { isOwner } = useViewerDetails(thread?.userId)
   useVoiceoverPlayer(thread?._id)
 
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -68,6 +70,7 @@ export const ChatFeed = () => {
           timeline={i !== messages.data.length - 1}
           message={message}
           slug={thread?.slug}
+          showMenu={isOwner}
           removeMessage={removeMessage}
         />
       ))}

@@ -6,7 +6,7 @@ import { useChat } from '@/components/chat/ChatProvider'
 import { BasicTextArea } from '@/components/form/BasicTextArea'
 import { SliderWithInput } from '@/components/form/SliderWithInput'
 import { ModelPicker } from '@/components/model-picker/ModelPicker'
-import { useChatModels } from '@/lib/queries'
+import { useChatModels, useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
 import type { EChatCompletionInference } from '@/convex/shared/structures'
@@ -20,6 +20,8 @@ export const ChatSidebar = ({
   config: EChatCompletionInference
 }) => {
   const { updateThreadConfig } = useChat()
+  const { isOwner } = useViewerDetails(thread?.userId)
+
   const { data: chatModels } = useChatModels()
   const model = chatModels?.find((model) => model.resourceKey === config.resourceKey)
   const parameters = model ? getModelParams(model) : undefined
@@ -30,7 +32,10 @@ export const ChatSidebar = ({
     <div className="flex h-full flex-col overflow-hidden p-1">
       <div className="p-2">
         <button
-          className="mx-auto flex min-h-28 w-full flex-col items-start gap-1 rounded border border-grayA-3 px-3 py-3 text-start hover:bg-grayA-2"
+          className={cn(
+            'mx-auto flex min-h-28 w-full flex-col items-start gap-1 rounded border border-grayA-3 px-3 py-3 text-start hover:bg-grayA-2',
+            !isOwner && 'pointer-events-none',
+          )}
           onClick={() => setShowModelPicker(!showModelPicker)}
         >
           {model ? (
@@ -86,6 +91,7 @@ export const ChatSidebar = ({
               min={1}
               max={model.contextLength || defaultMaxTokens}
               step={1}
+              disabled
             />
 
             {parameters.map((param) => (
@@ -96,10 +102,16 @@ export const ChatSidebar = ({
                 max={param.max}
                 step={param.step}
                 defaultValue={param.defaultValue}
+                disabled
               />
             ))}
 
-            <BasicTextArea label="Stop Sequences" rows={2} defaultValue={model.stop.join(', ')} />
+            <BasicTextArea
+              label="Stop Sequences"
+              rows={2}
+              defaultValue={model.stop.join(', ')}
+              disabled
+            />
           </div>
         </div>
       )}

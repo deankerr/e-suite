@@ -14,6 +14,7 @@ import { Pre } from '@/components/util/Pre'
 import { VoiceoverButton } from '@/components/voiceovers/VoiceoverButton'
 import { api } from '@/convex/_generated/api'
 import { hasActiveJobName } from '@/convex/shared/utils'
+import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
@@ -24,20 +25,25 @@ export const Message = ({
   message,
   timeline = true,
   slug,
+  showMenu = true,
   removeMessage,
 }: {
   message: EMessage
   timeline?: boolean
   slug?: string
+  showMenu?: boolean
   removeMessage?: (messageId: string) => void
 }) => {
   const [showJson, setShowJson] = useState(false)
   const [editing, setEditing] = useState(false)
+  const { isOwner } = useViewerDetails(message.userId)
   const removeVoiceover = useMutation(api.db.voiceover.remove)
 
   const isTextToImage = message.inference?.type === 'text-to-image'
   const showChatLoader =
     hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
+
+  const timeString = formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}
@@ -56,12 +62,16 @@ export const Message = ({
 
           <div className="space-x-2">
             <span className="font-medium text-gray-11">{message.name ?? message.role}</span>
-            <Link
-              href={`/c/${slug}/${message.series}`}
-              className="text-xs text-gray-11 hover:underline"
-            >
-              {formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })}
-            </Link>
+            {slug ? (
+              <Link
+                href={`/c/${slug}/${message.series}`}
+                className="text-xs text-gray-11 hover:underline"
+              >
+                {timeString}
+              </Link>
+            ) : (
+              <span className="text-xs text-gray-11">{timeString}</span>
+            )}
           </div>
 
           <div>
@@ -71,38 +81,40 @@ export const Message = ({
               className={cn('-my-1 mx-0', !message.content && 'hidden')}
             />
 
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <IconButton variant="ghost" size="1" className="-my-1 mx-0" color="gray">
-                  <DotsThree className="size-5 scale-110" weight="bold" />
-                </IconButton>
-              </DropdownMenu.Trigger>
+            {showMenu && isOwner && (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost" size="1" className="-my-1 mx-0" color="gray">
+                    <DotsThree className="size-5 scale-110" weight="bold" />
+                  </IconButton>
+                </DropdownMenu.Trigger>
 
-              <DropdownMenu.Content variant="soft">
-                <DropdownMenu.Item onClick={() => setEditing(!editing)}>
-                  {editing ? 'Cancel Edit' : 'Edit'}
-                </DropdownMenu.Item>
-
-                <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
-                  Show JSON
-                </DropdownMenu.Item>
-
-                {message.voiceover && (
-                  <DropdownMenu.Item
-                    color="red"
-                    onClick={() => void removeVoiceover({ messageId: message._id })}
-                  >
-                    Delete Voiceover
+                <DropdownMenu.Content variant="soft">
+                  <DropdownMenu.Item onClick={() => setEditing(!editing)}>
+                    {editing ? 'Cancel Edit' : 'Edit'}
                   </DropdownMenu.Item>
-                )}
 
-                {removeMessage && (
-                  <DropdownMenu.Item color="red" onClick={() => removeMessage(message._id)}>
-                    Delete
+                  <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
+                    Show JSON
                   </DropdownMenu.Item>
-                )}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+
+                  {message.voiceover && (
+                    <DropdownMenu.Item
+                      color="red"
+                      onClick={() => void removeVoiceover({ messageId: message._id })}
+                    >
+                      Delete Voiceover
+                    </DropdownMenu.Item>
+                  )}
+
+                  {removeMessage && (
+                    <DropdownMenu.Item color="red" onClick={() => removeMessage(message._id)}>
+                      Delete
+                    </DropdownMenu.Item>
+                  )}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            )}
           </div>
         </div>
 
