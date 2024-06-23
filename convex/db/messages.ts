@@ -165,7 +165,13 @@ export const create = mutation({
 
     const inference = inferenceCommand?.inference ?? args.inference
 
-    if (!inference) return { threadId: thread._id, messageId: userMessageId }
+    if (!inference)
+      return {
+        threadId: thread._id,
+        slug: thread.slug,
+        messageId: userMessageId,
+        series: nextSeriesNumber,
+      }
 
     const asstMessage = await ctx
       .table('messages')
