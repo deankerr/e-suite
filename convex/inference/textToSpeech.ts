@@ -24,6 +24,7 @@ export const runNow = internalAction({
       const voice = voiceModels.find((model) => model.resourceKey === args.resourceKey)
       insist(voice, 'voice model not found')
 
+      console.log('[tts]', voice.resourceKey, args.text)
       const fileId =
         voice.endpoint === 'aws'
           ? await ctx.runAction(internal.endpoints.aws.textToSpeech, {

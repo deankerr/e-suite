@@ -94,7 +94,7 @@ export const getSeries = query({
 export const list = query({
   args: {
     threadId: z.string(),
-    limit: z.number().max(200).default(50),
+    limit: z.number().max(200).default(25),
     order: z.enum(['asc', 'desc']).default('desc'),
   },
   handler: async (ctx, args) => {
@@ -190,6 +190,7 @@ export const run = mutation({
   args: {
     threadId: z.string().optional(),
     inference: inferenceSchema,
+    name: z.string().optional(),
     content: z.string().optional(),
   },
   handler: async (ctx, args) => {
@@ -222,6 +223,7 @@ export const run = mutation({
       userId: user._id,
       inference: args.inference,
       content: args.content,
+      name: args.name,
     })
 
     const jobName =
@@ -271,6 +273,9 @@ export const streamCompletionContent = internalMutation({
     content: z.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.table('messages').getX(args.messageId).patch({ content: args.content })
+    return await ctx.skipRules
+      .table('messages')
+      .getX(args.messageId)
+      .patch({ content: args.content })
   },
 })

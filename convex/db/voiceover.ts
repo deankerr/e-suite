@@ -24,7 +24,10 @@ export const messageContent = mutation({
     const jobs = await getMessageJobs(ctx, message)
     insist(!hasActiveJobName(jobs, 'inference/chat-completion'), 'text generation in progress')
 
-    const textHash = await generateSha256Hash(text)
+    const processedText = replaceUrlsWithDetails(text)
+    console.log(processedText)
+
+    const textHash = await generateSha256Hash(processedText)
     const thread = await message.edgeX('thread')
     const resourceKey =
       thread.voiceovers?.names?.find((n) => n.name === message.name)?.resourceKey ??
@@ -32,7 +35,7 @@ export const messageContent = mutation({
       fallbackResourceKey
 
     const speechFileId = await generateSpeech(ctx, {
-      text,
+      text: processedText,
       textHash,
       resourceKey,
     })
@@ -87,3 +90,40 @@ export const remove = mutation({
     await speechFile.delete()
   },
 })
+
+export const getUrlDetails = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g
+  const urls = text.match(urlRegex)
+  if (!urls) return []
+
+  return urls
+    .map((url) => {
+      try {
+        const urlObj = new URL(url)
+        const hostname = urlObj.hostname
+        const fileType = urlObj.pathname.includes('.')
+          ? urlObj.pathname.split('.').pop()
+          : undefined
+        return { url, hostname, fileType }
+      } catch (error) {
+        console.error('Invalid URL:', url)
+        return null
+      }
+    })
+    .filter(
+      (result): result is { url: string; hostname: string; fileType: string | undefined } =>
+        result !== null,
+    )
+}
+
+export const replaceUrlsWithDetails = (text: string): string => {
+  const urls = getUrlDetails(text)
+  let result = text
+
+  urls.forEach(({ url, hostname, fileType }) => {
+    const replacement = fileType ? `(URL: ${hostname} , ${fileType})` : `(URL: ${hostname})`
+    result = result.replace(url, replacement)
+  })
+
+  return result.trim()
+}
