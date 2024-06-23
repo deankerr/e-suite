@@ -39,13 +39,14 @@ export const Message = ({
   const { isOwner } = useViewerDetails(message.userId)
   const removeVoiceover = useMutation(api.db.voiceover.remove)
 
-  const isTextToImage = message.inference?.type === 'text-to-image'
+  const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
+
   const showChatLoader =
     hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
 
   const timeString = formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })
-  const role = isTextToImage ? 'images' : message.role
-  const name = isTextToImage ? 'text to image' : message?.name ?? message.role
+  const role = textToImage ? 'images' : message.role
+  const name = textToImage ? textToImage.endpointModelId : message?.name ?? message.role
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}

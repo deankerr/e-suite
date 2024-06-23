@@ -16,7 +16,7 @@ const fallbackIcon = Question
 const colors: Record<string, AccentColors> = {
   user: 'mint',
   assistant: 'orange',
-  images: 'gold',
+  images: 'orange',
 }
 
 export const Avatar = ({

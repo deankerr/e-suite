@@ -70,7 +70,9 @@ export const createJob = async <
     .table('jobs')
     .insert({ ...args, name, status: 'queued', queuedTime: Date.now() })
 
-  await ctx.scheduler.runAfter(0, internal.jobs.processJobs, {})
+  // ! temporary fix for simultaneous document mutation error
+  const jitter = name === 'files/create-image-from-url' ? Math.random() * 1000 : 0
+  await ctx.scheduler.runAfter(jitter, internal.jobs.processJobs, {})
   return jobId
 }
 
