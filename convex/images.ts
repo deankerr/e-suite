@@ -118,7 +118,6 @@ export const serveOptimizedImage = httpAction(async (ctx, request) => {
     return new Response(blob)
   }
 
-  console.log('targetWidth', targetWidth, 'not found')
   // create optimized file for width
   const fileId = await ctx.runAction(internal.images.optimize, {
     imageId: imageFiles.image._id,
