@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { ActionCtx } from '../_generated/server'
-import { getVoiceModelsHelper } from '../db/voiceModels'
+import { getVoiceModels } from '../db/voiceModels'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import { internalAction } from '../functions'
 import { createOpenAiClient } from '../lib/openai'
@@ -20,7 +20,7 @@ export const runNow = internalAction({
   },
   handler: async (ctx, args) => {
     try {
-      const voiceModels = getVoiceModelsHelper()
+      const voiceModels = getVoiceModels()
       const voice = voiceModels.find((model) => model.resourceKey === args.resourceKey)
       insist(voice, 'voice model not found')
 

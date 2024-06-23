@@ -15,7 +15,10 @@ export const generateSpeech = async (
       q.eq('textHash', args.textHash).eq('resourceKey', args.resourceKey),
     )
     .first()
-  if (existingSpeechFile) return existingSpeechFile._id
+  if (existingSpeechFile) {
+    console.log('existing speech', existingSpeechFile.resourceKey, existingSpeechFile.textHash)
+    return existingSpeechFile._id
+  }
 
   const speechFileId = await ctx.table('speech_files').insert({
     textHash: args.textHash,

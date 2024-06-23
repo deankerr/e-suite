@@ -5,6 +5,7 @@ import { hasActiveJobName, insist } from '../shared/utils'
 import { generateSha256Hash } from '../utils'
 import { getMessage, getMessageJobs } from './messages'
 import { generateSpeech } from './speechFiles'
+import { getVoiceModels } from './voiceModels'
 
 const fallbackResourceKey = 'openai::alloy'
 
@@ -17,22 +18,47 @@ export const messageContent = mutation({
     insist(message, 'invalid message id')
     insist(!message.voiceover, 'voiceover already exists')
 
-    const text = message.content
-    insist(text, 'invalid message content')
+    const originalText = message.content
+    insist(originalText, 'invalid message content')
 
     // check for text generation in progress
     const jobs = await getMessageJobs(ctx, message)
     insist(!hasActiveJobName(jobs, 'inference/chat-completion'), 'text generation in progress')
 
-    const processedText = replaceUrlsWithDetails(text)
-    console.log(processedText)
+    const processedText = replaceUrlsWithDetails(originalText)
 
     const textHash = await generateSha256Hash(processedText)
     const thread = await message.edgeX('thread')
-    const resourceKey =
-      thread.voiceovers?.names?.find((n) => n.name === message.name)?.resourceKey ??
-      thread.voiceovers?.default ??
-      fallbackResourceKey
+    let resourceKey = thread.voiceovers?.default ?? fallbackResourceKey
+
+    // TODO: extract to function
+    if (message.name) {
+      const voiceover = thread.voiceovers?.names?.find((n) => n.name === message.name)
+      if (voiceover?.resourceKey) {
+        resourceKey = voiceover.resourceKey
+      } else {
+        // * choose a random unassigned resource key if the name is not found
+        const assignedVoices = thread.voiceovers?.names?.map((n) => n.resourceKey) ?? []
+        const voices = getVoiceModels().filter(
+          (voice) => voice.endpoint !== 'elevenlabs' && !assignedVoices.includes(voice.resourceKey),
+        )
+        resourceKey =
+          voices[Math.floor(Math.random() * voices.length)]?.resourceKey ?? fallbackResourceKey
+
+        await ctx.skipRules
+          .table('threads')
+          .getX(thread._id)
+          .patch({
+            voiceovers: {
+              ...thread.voiceovers,
+              default: thread.voiceovers?.default ?? fallbackResourceKey,
+              names: [...(thread.voiceovers?.names ?? []), { name: message.name, resourceKey }],
+            },
+          })
+
+        console.log('added voiceover:', message.name, resourceKey)
+      }
+    }
 
     const speechFileId = await generateSpeech(ctx, {
       text: processedText,

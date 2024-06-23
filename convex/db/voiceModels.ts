@@ -3,7 +3,7 @@ import * as ElevenLabs from '../endpoints/elevenlabs'
 import * as OpenAi from '../endpoints/openai'
 import { query } from '../functions'
 
-export const getVoiceModelsHelper = () => {
+export const getVoiceModels = () => {
   const models = [
     OpenAi.getNormalizedVoiceModelData(),
     AwsVoicesJson.filter((data) => data.LanguageCode.startsWith('en-')).map((data) => ({
@@ -23,6 +23,6 @@ export const getVoiceModelsHelper = () => {
 export const list = query({
   args: {},
   handler: async () => {
-    return getVoiceModelsHelper()
+    return getVoiceModels()
   },
 })
