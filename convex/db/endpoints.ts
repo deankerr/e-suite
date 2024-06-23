@@ -81,9 +81,7 @@ const defaultChatModelTags = [
     tag: 'flagship',
     includes: [
       'gpt-4o',
-      'opus',
-      'sonnet',
-      'haiku',
+      'claude-3',
       'command',
       'gemini',
       'llama-3',
@@ -93,7 +91,7 @@ const defaultChatModelTags = [
     ],
     score: 10,
   },
-  { tag: 'multimodal', includes: ['gpt-4o', 'vision', 'llava', 'gemini'], score: 5 },
+  { tag: 'multimodal', includes: ['gpt-4o', 'vision', 'llava', 'gemini', 'claude-3'], score: 5 },
 
   { tag: 'online', includes: ['online'], score: 1 },
   { tag: 'free', includes: ['free'], score: -1 },
@@ -115,7 +113,7 @@ const defaultChatModelTags = [
     score: -1,
   },
   { tag: 'legacy', includes: ['gpt-3.5', 'palm-2', 'claude-2', 'claude-instant'], score: -10 },
-  { tag: 'vintage', includes: ['alpaca', 'vicuna'], score: -10 },
+  { tag: 'vintage', includes: ['alpaca'], score: -10 },
   { tag: 'expensive', includes: ['gpt-4-32k'], score: -30 },
 ]
 

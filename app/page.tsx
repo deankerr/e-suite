@@ -1,9 +1,12 @@
-import NextLink from 'next/link'
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Page() {
-  return (
-    <div>
-      <NextLink href="/c">Chat</NextLink>
-    </div>
-  )
+  const router = useRouter()
+  useEffect(() => {
+    router.push('/c')
+  }, [router])
+  return <div></div>
 }

@@ -98,6 +98,7 @@ const modelDataRecordSchema = z.object({
 const excludedModelIds = [
   'meta-llama/llama-guard-2-8b',
   'openrouter/auto',
+  'openrouter/flavor-of-the-week',
   'openai/gpt-3.5-turbo-0125',
   'openai/gpt-3.5-turbo-0301',
   'openai/gpt-3.5-turbo-0613',
@@ -105,6 +106,7 @@ const excludedModelIds = [
   'openai/gpt-4-0314',
   'openai/gpt-4-1106-preview',
   'openai/gpt-4-32k-0314',
+  'openai/gpt-4-32k',
   'openai/gpt-4o-2024-05-13',
   'anthropic/claude-1',
   'anthropic/claude-1.2',

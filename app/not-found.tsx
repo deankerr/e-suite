@@ -1,4 +1,4 @@
-import { Link, Quote } from '@radix-ui/themes'
+import { Link } from '@radix-ui/themes'
 import NextLink from 'next/link'
 
 export const metadata = {
@@ -7,9 +7,9 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <div className="h-screen gap-8 flex-col-center">
-      <Quote className="font-serif text-7xl font-semibold">404</Quote>
-      <div className="text-xl font-medium">Page not found.</div>
+    <div className="h-screen flex-col-center">
+      <h1 className="wt-title-1 mb-1">404</h1>
+      <div className="">This page could not be found.</div>
       <Link asChild>
         <NextLink href="/">Return Home</NextLink>
       </Link>

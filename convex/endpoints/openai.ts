@@ -51,22 +51,22 @@ export const openaiChatModelData = [
 
     endpointModelId: 'gpt-4',
   },
-  {
-    name: 'GPT-4 32k',
-    description: '',
+  // {
+  //   name: 'GPT-4 32k',
+  //   description: '',
 
-    creatorName: 'OpenAI',
-    link: 'https://openai.com/',
-    license: '',
-    tags: [],
+  //   creatorName: 'OpenAI',
+  //   link: 'https://openai.com/',
+  //   license: '',
+  //   tags: [],
 
-    numParameters: 0,
-    contextLength: 32768,
-    tokenizer: 'GPT',
-    stop: [],
+  //   numParameters: 0,
+  //   contextLength: 32768,
+  //   tokenizer: 'GPT',
+  //   stop: [],
 
-    endpointModelId: 'gpt-4-32k',
-  },
+  //   endpointModelId: 'gpt-4-32k',
+  // },
   {
     name: 'GPT-3.5 Turbo',
     description: '',
