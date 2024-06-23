@@ -16,7 +16,7 @@ const fallbackIcon = Question
 const colors: Record<string, AccentColors> = {
   user: 'mint',
   assistant: 'orange',
-  images: 'sky',
+  images: 'gold',
 }
 
 export const Avatar = ({
@@ -29,7 +29,7 @@ export const Avatar = ({
     <AvatarRadix
       size={{
         initial: '1',
-        sm: '2',
+        xs: '2',
       }}
       color={color}
       fallback={<Fallback className="size-4 sm:size-5" />}

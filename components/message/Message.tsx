@@ -44,6 +44,8 @@ export const Message = ({
     hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
 
   const timeString = formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })
+  const role = isTextToImage ? 'images' : message.role
+  const name = isTextToImage ? 'text to image' : message?.name ?? message.role
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}
@@ -51,17 +53,17 @@ export const Message = ({
         <div className={cn('absolute inset-y-0 w-0.5 bg-grayA-2', !timeline && 'hidden')}></div>
 
         {/* avatar */}
-        <Avatar role={isTextToImage ? 'images' : message.role} />
+        <Avatar role={role} />
       </div>
 
       {/* message */}
       <div className="w-full space-y-1 py-2 text-sm">
         {/* title row */}
         <div className="flex items-center gap-2">
-          <Avatar role={isTextToImage ? 'images' : message.role} className="flex sm:hidden" />
+          <Avatar role={role} className="flex sm:hidden" />
 
           <div className="space-x-2">
-            <span className="font-medium text-gray-11">{message.name ?? message.role}</span>
+            <span className="font-medium text-gray-11">{name}</span>
             {slug ? (
               <Link
                 href={`/c/${slug}/${message.series}`}
@@ -122,7 +124,7 @@ export const Message = ({
         <ImageGallery message={message} />
 
         {message.content && !editing && (
-          <div className="w-fit max-w-full space-y-1 rounded-lg bg-grayA-2 p-3">
+          <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
             <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
               <Markdown>{message.content}</Markdown>
             </div>
