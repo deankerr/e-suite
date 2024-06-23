@@ -16,7 +16,7 @@ export const MessageInput = () => {
   const { isOwner } = useViewerDetails(thread?.userId)
   const [input, setInput] = useState('')
 
-  if (!thread || !isOwner) return null
+  if (!thread || (!isOwner && !thread.slug.startsWith('_'))) return null
 
   const handleSendMessage = async () => {
     if (!thread) return

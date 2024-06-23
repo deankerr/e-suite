@@ -50,7 +50,7 @@ const useChatContextApi = ({
   const sendMessage = useCallback(
     async (args: Omit<Parameters<typeof createMessage>[0], 'threadId'>) => {
       if (!thread) return
-      const { threadId: newThreadId } = await createMessage({
+      const { threadId: newThreadId, slug: newSlug } = await createMessage({
         ...args,
         threadId: thread._id,
       })
@@ -58,7 +58,7 @@ const useChatContextApi = ({
       if (newThreadId !== thread._id) {
         removeLocalThread()
         if (configUseChatDeck) setCurrentId(newThreadId)
-        else router.push(`/c/${newThreadId}`)
+        else router.push(`/c/${newSlug}`)
       }
     },
     [thread, createMessage, removeLocalThread, router],
@@ -74,7 +74,7 @@ const useChatContextApi = ({
   const runInference = useCallback(
     async (args: Omit<Parameters<typeof run>[0], 'threadId'>) => {
       if (!thread) return
-      const { threadId: newThreadId } = await run({
+      const { threadId: newThreadId, slug: newSlug } = await run({
         ...args,
         threadId: thread._id,
       })
@@ -82,7 +82,7 @@ const useChatContextApi = ({
       if (newThreadId !== thread._id) {
         removeLocalThread()
         if (configUseChatDeck) setCurrentId(newThreadId)
-        else router.push(`/c/${newThreadId}`)
+        else router.push(`/c/${newSlug}`)
       }
     },
     [thread, run, removeLocalThread, router],

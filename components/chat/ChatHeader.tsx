@@ -20,7 +20,7 @@ export const ChatHeader = () => {
       <div className="shrink-0 gap-2 pl-3 flex-start">
         {thread && (
           <>
-            {isOwner ? (
+            {isOwner || thread.slug.startsWith('_') ? (
               <ChatMenu thread={thread}>
                 <IconButton variant="ghost">
                   <Icon className="size-5" />
