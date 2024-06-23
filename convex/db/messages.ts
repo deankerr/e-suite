@@ -67,7 +67,7 @@ export const getShapedMessage = async (ctx: QueryCtx, messageId: string) => {
   return message ? await getMessageEdges(ctx, message) : null
 }
 
-//* get single message by slug:series
+// * get single message by slug:series
 export const getSeries = query({
   args: {
     slug: z.string(),
@@ -152,11 +152,11 @@ export const create = mutation({
       userId: user._id,
     })
 
-    //* saved run commands
+    // * saved inference commands
     const inferenceCommand = thread.config.saved.find(
       (c) => c.command && args.message.content?.startsWith(c.command),
     )
-    //^ mutate inference prompt
+    // ! mutate inference prompt
     if (inferenceCommand && inferenceCommand.inference.type === 'text-to-image') {
       const content = args.message.content ?? ''
       const command = inferenceCommand.command ?? ''
@@ -167,21 +167,31 @@ export const create = mutation({
 
     if (!inference) return { threadId: thread._id, messageId: userMessageId }
 
-    const asstMessageId = await ctx.table('messages').insert({
-      role: 'assistant',
-      threadId: thread._id,
-      series: nextSeriesNumber + 1,
-      userId: user._id,
-      inference,
-    })
+    const asstMessage = await ctx
+      .table('messages')
+      .insert({
+        role: 'assistant',
+        threadId: thread._id,
+        series: nextSeriesNumber + 1,
+        userId: user._id,
+        inference,
+      })
+      .get()
 
     const jobName =
       inference.type === 'chat-completion' ? 'inference/chat-completion' : 'inference/text-to-image'
+
     const jobId = await createJob(ctx, jobName, {
-      messageId: asstMessageId,
+      messageId: asstMessage._id,
     })
 
-    return { threadId: thread._id, messageId: asstMessageId, jobId }
+    return {
+      threadId: thread._id,
+      slug: thread.slug,
+      messageId: asstMessage._id,
+      series: asstMessage.series,
+      jobId,
+    }
   },
 })
 
@@ -216,25 +226,35 @@ export const run = mutation({
 
     const nextSeriesNumber = await getNextMessageSeries(thread)
 
-    const asstMessageId = await ctx.table('messages').insert({
-      role: 'assistant',
-      threadId: thread._id,
-      series: nextSeriesNumber + 1,
-      userId: user._id,
-      inference: args.inference,
-      content: args.content,
-      name: args.name,
-    })
+    const asstMessage = await ctx
+      .table('messages')
+      .insert({
+        role: 'assistant',
+        threadId: thread._id,
+        series: nextSeriesNumber + 1,
+        userId: user._id,
+        inference: args.inference,
+        content: args.content,
+        name: args.name,
+      })
+      .get()
 
     const jobName =
       args.inference.type === 'chat-completion'
         ? 'inference/chat-completion'
         : 'inference/text-to-image'
+
     const jobId = await createJob(ctx, jobName, {
-      messageId: asstMessageId,
+      messageId: asstMessage._id,
     })
 
-    return { threadId: thread._id, messageId: asstMessageId, jobId }
+    return {
+      threadId: thread._id,
+      slug: thread.slug,
+      messageId: asstMessage._id,
+      series: asstMessage.series,
+      jobId,
+    }
   },
 })
 
