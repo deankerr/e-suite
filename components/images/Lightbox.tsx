@@ -1,18 +1,29 @@
+import 'yet-another-react-lightbox/styles.css'
+
 import Image, { StaticImageData } from 'next/image'
-import {
+import LightboxComponent, {
   isImageFitCover,
   isImageSlide,
+  LightboxExternalProps,
   RenderSlideProps,
   Slide,
   useLightboxProps,
   useLightboxState,
 } from 'yet-another-react-lightbox'
 
+/**
+ * The purpose of this intermediate component is to load the Lightbox and
+ * its CSS dynamically only when the lightbox becomes interactive
+ */
+export default function Lightbox(props: LightboxExternalProps) {
+  return <LightboxComponent render={{ slide: NextJsImage }} {...props} />
+}
+
 function isNextJsImage(slide: Slide): slide is StaticImageData {
   return isImageSlide(slide) && typeof slide.width === 'number' && typeof slide.height === 'number'
 }
 
-export default function NextJsImage({ slide, offset, rect }: RenderSlideProps) {
+function NextJsImage({ slide, offset, rect }: RenderSlideProps) {
   const {
     on: { click },
     carousel: { imageFit },

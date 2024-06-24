@@ -1,21 +1,22 @@
-import 'yet-another-react-lightbox/styles.css'
-
 import { useState } from 'react'
-import Lightbox from 'yet-another-react-lightbox'
+import dynamic from 'next/dynamic'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
-import NextJsImage from '@/components/images/NextJsImage'
 import { Id } from '@/convex/_generated/dataModel'
 import { EMessage } from '@/convex/shared/types'
 import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/shared/structures'
 
+const Lightbox = dynamic(() => import('@/components/images/Lightbox'))
+
 const showLoader = false
 
 export const ImageGallery = ({ message }: { message: EMessage }) => {
   const [open, setOpen] = useState(false)
+  const [slideIndex, setSlideIndex] = useState(0)
+
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const files = message.files
   if (!(textToImage || files)) return null
@@ -61,7 +62,10 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
               image={frame.image}
               sizes="(max-width: 56rem) 50vw, 28rem"
               className="cursor-pointer"
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true)
+                setSlideIndex(i)
+              }}
             />
           ) : !hasJobErrors ? (
             <ImageGeneratingEffect
@@ -75,11 +79,8 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
         open={open}
         close={() => setOpen(false)}
         slides={slides}
-        carousel={{
-          padding: '10%',
-        }}
+        index={slideIndex}
         controller={{ closeOnBackdropClick: true }}
-        render={{ slide: NextJsImage }}
       />
     </div>
   )
