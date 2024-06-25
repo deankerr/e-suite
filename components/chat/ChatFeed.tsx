@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { Code } from '@phosphor-icons/react/dist/ssr'
+import { IconButton } from '@radix-ui/themes'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { ScrollContainer } from '@/components/ui/ScrollContainer'
+import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
+import { Pre } from '@/components/util/Pre'
 import { useVoiceoverPlayer } from '@/components/voiceovers/useVoiceoverPlayer'
 import { useViewerDetails } from '@/lib/queries'
 
@@ -21,21 +25,35 @@ export const ChatFeed = () => {
     latestMessageRef.current.scrollIntoView({ behavior: 'instant' })
   }, [initialScroll, messages])
 
+  const [showJson, setShowJson] = useState(false)
+
   if (messages === null) return <div>Error</div>
   return (
     <ScrollContainer className="flex flex-col px-2">
+      <NonSecureAdminRoleOnly>
+        <IconButton
+          variant="ghost"
+          color="ruby"
+          className="fixed right-3 z-20"
+          onClick={() => setShowJson(!showJson)}
+        >
+          <Code className="size-5" />
+        </IconButton>
+      </NonSecureAdminRoleOnly>
       {messages.isPending && <LoadingSpinner className="m-auto" />}
-      {messages.data?.map((message, i) => (
-        <div key={message._id} ref={latestMessageRef}>
-          <Message
-            timeline={i !== messages.data.length - 1}
-            message={message}
-            slug={thread?.slug}
-            showMenu={isOwner}
-            removeMessage={removeMessage}
-          />
-        </div>
-      ))}
+      {!showJson &&
+        messages.data?.map((message, i) => (
+          <div key={message._id} ref={latestMessageRef}>
+            <Message
+              timeline={i !== messages.data.length - 1}
+              message={message}
+              slug={thread?.slug}
+              showMenu={isOwner}
+              removeMessage={removeMessage}
+            />
+          </div>
+        ))}
+      {showJson && <Pre>{JSON.stringify(thread, null, 2)}</Pre>}
     </ScrollContainer>
   )
 }

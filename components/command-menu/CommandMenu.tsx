@@ -1,6 +1,6 @@
 'use client'
 
-import { List } from '@phosphor-icons/react/dist/ssr'
+import { Chat, ImagesSquare, List } from '@phosphor-icons/react/dist/ssr'
 import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
@@ -96,16 +96,26 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
               <CommandItem
                 key={thread._id}
                 value={thread.title ?? 'new thread ' + thread.slug}
-                className="h-11 gap-2"
+                // className="h-11"
                 onSelect={() => {
                   if (isChatDeckMode) add(thread.slug)
                   else goto(`/c/${thread.slug}`)
                   setOpen(false)
                 }}
               >
-                <div className="grow truncate">{thread.title ?? 'new thread'}</div>
-                <div className="max-w-16 shrink-0 text-right text-xs text-gray-10">
-                  {formatDistanceToNow(new Date(thread.updatedAtTime), { addSuffix: true })}
+                <div className="w-full space-y-0.5">
+                  <div className="flex w-full">
+                    <div className="shrink-0 pr-1">
+                      {thread.model?.type === 'chat' ? <Chat /> : <ImagesSquare />}
+                    </div>
+                    <div className="grow truncate">{thread.title ?? 'Untitled'}</div>
+                    <div className="shrink-0 pl-1 text-right text-xs text-gray-10">
+                      {formatDistanceToNow(new Date(thread.updatedAtTime), { addSuffix: true })
+                        .replace('about', '')
+                        .trim()}
+                    </div>
+                  </div>
+                  <div className="gap-1 text-xs text-gray-11 flex-start">{thread.model?.name}</div>
                 </div>
               </CommandItem>
             ))}

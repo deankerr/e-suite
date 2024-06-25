@@ -10,7 +10,7 @@ import { chatModelFields, endpointDataCacheFields, imageModelFields } from '../s
 
 //* chat models
 const chatModelSchema = z.object(chatModelFields)
-export type ParsedChatModelData = z.infer<typeof chatModelSchema>
+export type ParsedChatModelData = z.infer<typeof chatModelSchema> & { resourceKey: string }
 
 export const importEndpointChatModelData = internalMutation({
   args: {
@@ -119,7 +119,7 @@ const defaultChatModelTags = [
 
 //* image models
 const imageModelSchema = z.object(imageModelFields)
-export type ImageModelDataRecord = z.infer<typeof imageModelSchema>
+export type ImageModelDataRecord = z.infer<typeof imageModelSchema> & { resourceKey: string }
 export const importEndpointImageModelData = internalMutation({
   args: {
     purgeExisting: z.boolean(),

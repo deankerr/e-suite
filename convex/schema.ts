@@ -15,7 +15,6 @@ const timeToDelete = ms('1 day')
 
 //* Models
 const sharedModelFields = {
-  resourceKey: z.string(),
   name: z.string(),
   description: z.string(),
   creatorName: z.string(),
@@ -49,7 +48,11 @@ export const chatModelFields = {
   stop: z.string().array(),
   maxOutputTokens: z.number().optional(),
 }
-const chat_models = defineEnt(zodToConvexFields(chatModelFields))
+const chat_models = defineEnt(zodToConvexFields(chatModelFields)).field(
+  'resourceKey',
+  zodToConvex(z.string()),
+  { unique: true },
+)
 
 export const imageModelFields = {
   ...sharedModelFields,
@@ -61,7 +64,11 @@ export const imageModelFields = {
   }),
   civitaiModelId: z.string().optional(),
 }
-const image_models = defineEnt(zodToConvexFields(imageModelFields))
+const image_models = defineEnt(zodToConvexFields(imageModelFields)).field(
+  'resourceKey',
+  zodToConvex(z.string()),
+  { unique: true },
+)
 
 export const fileFields = {
   fileId: zid('_storage'),

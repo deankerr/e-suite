@@ -8,6 +8,8 @@ import { defaultChatInferenceConfig } from '../shared/defaults'
 import { EInferenceConfig, inferenceSchema } from '../shared/structures'
 import { createError, zMessageName, zMessageTextContent } from '../shared/utils'
 import { generateSlug } from '../utils'
+import { getChatModelByResourceKey } from './chatModels'
+import { getImageModelByResourceKey } from './imageModels'
 import { getMessageCommand, getNextMessageSeries } from './messages'
 
 import type { Doc, Id } from '../_generated/dataModel'
@@ -50,7 +52,14 @@ export const get = query({
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    return thread as Doc<'threads'> | null
+    if (!thread) return null
+
+    const model =
+      thread.config.ui.type === 'chat-completion'
+        ? await getChatModelByResourceKey(ctx, thread.config.ui.resourceKey)
+        : await getImageModelByResourceKey(ctx, thread.config.ui.resourceKey)
+
+    return { ...thread, model } as Doc<'threads'>
   },
 })
 
@@ -63,6 +72,13 @@ export const list = query({
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map(async (thread) => {
+        const model =
+          thread.config.ui.type === 'chat-completion'
+            ? await getChatModelByResourceKey(ctx, thread.config.ui.resourceKey)
+            : await getImageModelByResourceKey(ctx, thread.config.ui.resourceKey)
+        return { ...thread, model }
+      })
 
     return threads
   },
