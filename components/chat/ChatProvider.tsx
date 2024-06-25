@@ -41,16 +41,25 @@ const useChatContextApi = ({
   const thread = currentId.startsWith('_') ? localThread : queriedThread
   const messages = useMessages(thread?._id)
 
-  const createMessage = useMutation(api.db.messages.create)
+  const sendCreateMessage = useMutation(api.db.messages.create)
+  const sendAppendMessage = useMutation(api.db.threads.append)
   const apiRemoveMessage = useMutation(api.db.messages.remove)
-  const run = useMutation(api.db.messages.run)
+
   const updateThread = useMutation(api.db.threads.update)
   const updateMessage = useMutation(api.db.messages.update)
 
-  const sendMessage = useCallback(
-    async (args: Omit<Parameters<typeof createMessage>[0], 'threadId'>) => {
+  const appendMessage = useCallback(
+    async (args: Omit<Parameters<typeof sendAppendMessage>[0], 'threadId'>) => {
       if (!thread) return
-      const { threadId: newThreadId, slug: newSlug } = await createMessage({
+      await sendAppendMessage({ ...args, threadId: thread._id })
+    },
+    [sendAppendMessage, thread],
+  )
+
+  const createMessage = useCallback(
+    async (args: Omit<Parameters<typeof sendCreateMessage>[0], 'threadId'>) => {
+      if (!thread) return
+      const { threadId: newThreadId, slug: newSlug } = await sendCreateMessage({
         ...args,
         threadId: thread._id,
       })
@@ -61,7 +70,7 @@ const useChatContextApi = ({
         else router.push(`/c/${newSlug}`)
       }
     },
-    [thread, createMessage, removeLocalThread, router],
+    [thread, sendCreateMessage, removeLocalThread, router],
   )
 
   const removeMessage = useCallback(
@@ -69,23 +78,6 @@ const useChatContextApi = ({
       await apiRemoveMessage({ messageId })
     },
     [apiRemoveMessage],
-  )
-
-  const runInference = useCallback(
-    async (args: Omit<Parameters<typeof run>[0], 'threadId'>) => {
-      if (!thread) return
-      const { threadId: newThreadId, slug: newSlug } = await run({
-        ...args,
-        threadId: thread._id,
-      })
-
-      if (newThreadId !== thread._id) {
-        removeLocalThread()
-        if (configUseChatDeck) setCurrentId(newThreadId)
-        else router.push(`/c/${newSlug}`)
-      }
-    },
-    [thread, run, removeLocalThread, router],
   )
 
   const updateThreadConfig = useCallback(
@@ -116,9 +108,9 @@ const useChatContextApi = ({
   return {
     thread: useMemo(() => thread, [thread]),
     messages: useMemo(() => messages, [messages]),
-    sendMessage,
+    appendMessage,
+    createMessage,
     removeMessage,
-    runInference,
     updateThreadConfig,
     updateMessageContent,
     closeChat,

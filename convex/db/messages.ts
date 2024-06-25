@@ -3,23 +3,19 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
-import { createJob } from '../jobs'
-import { defaultChatInferenceConfig } from '../shared/defaults'
 import {
   fileAttachmentRecordWithContentSchema,
-  inferenceSchema,
   messageRolesEnum,
   metadataKVSchema,
 } from '../shared/structures'
-import { zMessageName, zMessageTextContent } from '../shared/utils'
-import { generateSlug } from '../utils'
+import { zMessageName, zMessageTextContent, zStringToMessageRole } from '../shared/utils'
 import { getSpeechFile } from './speechFiles'
-import { getThreadBySlugOrId } from './threads'
+import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
 import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
 
-const getNextMessageSeries = async (thread: Ent<'threads'>) => {
+export const getNextMessageSeries = async (thread: Ent<'threads'>) => {
   const prev = await thread.edge('messages').order('desc').first()
   return (prev?.series ?? 0) + 1
 }
@@ -67,6 +63,24 @@ export const getShapedMessage = async (ctx: QueryCtx, messageId: string) => {
   return message ? await getMessageEdges(ctx, message) : null
 }
 
+export const getMessageCommand = (thread: Ent<'threads'>, text?: string) => {
+  if (!text) return null
+
+  const config = thread.config.saved.find(
+    (c) => c.command !== undefined && text.startsWith(c.command),
+  )
+  if (!config) return null
+
+  const command = config.command ?? ''
+  const textWithoutCommand = text.slice(command.length).trim()
+
+  if (config.inference.type === 'text-to-image') {
+    config.inference.prompt = textWithoutCommand
+  }
+
+  return { ...config, content: textWithoutCommand }
+}
+
 // * get single message by slug:series
 export const getSeries = query({
   args: {
@@ -112,154 +126,37 @@ export const list = query({
   },
 })
 
-// TODO dedupe/clarify run
 export const create = mutation({
   args: {
     threadId: z.string().optional(),
-    message: z.object({
-      name: zMessageName.optional(),
-      content: zMessageTextContent.optional(),
-    }),
-    inference: inferenceSchema.optional(),
+    role: zStringToMessageRole,
+    name: zMessageName.optional(),
+    content: zMessageTextContent,
+    metadata: metadataKVSchema.array().optional(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
-    const thread = args.threadId
-      ? await ctx
-          .table('threads')
-          .getX(args.threadId as Id<'threads'>)
-          .patch({ updatedAtTime: Date.now() })
-          .get()
-      : await ctx
-          .table('threads')
-          .insert({
-            userId: user._id,
-            slug: await generateSlug(ctx),
-            updatedAtTime: Date.now(),
-            config: {
-              ui: args.inference ?? defaultChatInferenceConfig,
-              saved: [],
-            },
-          })
-          .get()
-
-    const nextSeriesNumber = await getNextMessageSeries(thread)
-    const userMessageId = await ctx.table('messages').insert({
-      ...args.message,
-      role: 'user',
-      threadId: thread._id,
-      series: nextSeriesNumber,
+    const thread = await getOrCreateThread(ctx, {
+      threadId: args.threadId ?? '',
       userId: user._id,
     })
 
-    // * saved inference commands
-    const inferenceCommand = thread.config.saved.find(
-      (c) => c.command && args.message.content?.startsWith(c.command),
-    )
-    // ! mutate inference prompt
-    if (inferenceCommand && inferenceCommand.inference.type === 'text-to-image') {
-      const content = args.message.content ?? ''
-      const command = inferenceCommand.command ?? ''
-      inferenceCommand.inference.prompt = content.replace(command, '').trim()
-    }
-
-    const inference = inferenceCommand?.inference ?? args.inference
-
-    if (!inference)
-      return {
-        threadId: thread._id,
-        slug: thread.slug,
-        messageId: userMessageId,
-        series: nextSeriesNumber,
-      }
-
-    const asstMessage = await ctx
-      .table('messages')
-      .insert({
-        role: 'assistant',
-        threadId: thread._id,
-        series: nextSeriesNumber + 1,
-        userId: user._id,
-        inference,
-      })
-      .get()
-
-    const jobName =
-      inference.type === 'chat-completion' ? 'inference/chat-completion' : 'inference/text-to-image'
-
-    const jobId = await createJob(ctx, jobName, {
-      messageId: asstMessage._id,
+    const series = await getNextMessageSeries(thread)
+    const messageId = await ctx.table('messages').insert({
+      role: args.role,
+      name: args.name,
+      content: args.content,
+      metadata: args.metadata,
+      threadId: thread._id,
+      series,
+      userId: user._id,
     })
 
     return {
       threadId: thread._id,
       slug: thread.slug,
-      messageId: asstMessage._id,
-      series: asstMessage.series,
-      jobId,
-    }
-  },
-})
-
-// TODO dedupe/clarify create
-export const run = mutation({
-  args: {
-    threadId: z.string().optional(),
-    inference: inferenceSchema,
-    name: z.string().optional(),
-    content: z.string().optional(),
-  },
-  handler: async (ctx, args) => {
-    const user = await ctx.viewerX()
-    const thread = args.threadId
-      ? await ctx
-          .table('threads')
-          .getX(args.threadId as Id<'threads'>)
-          .patch({ updatedAtTime: Date.now() })
-          .get()
-      : await ctx
-          .table('threads')
-          .insert({
-            userId: user._id,
-            slug: await generateSlug(ctx),
-            updatedAtTime: Date.now(),
-            config: {
-              ui: args.inference ?? defaultChatInferenceConfig,
-              saved: [],
-            },
-          })
-          .get()
-
-    const nextSeriesNumber = await getNextMessageSeries(thread)
-
-    const asstMessage = await ctx
-      .table('messages')
-      .insert({
-        role: 'assistant',
-        threadId: thread._id,
-        series: nextSeriesNumber + 1,
-        userId: user._id,
-        inference: args.inference,
-        content: args.content,
-        name: args.name,
-      })
-      .get()
-
-    const jobName =
-      args.inference.type === 'chat-completion'
-        ? 'inference/chat-completion'
-        : 'inference/text-to-image'
-
-    const jobId = await createJob(ctx, jobName, {
-      messageId: asstMessage._id,
-    })
-
-    return {
-      threadId: thread._id,
-      slug: thread.slug,
-      messageId: asstMessage._id,
-      series: asstMessage.series,
-      jobId,
+      messageId: messageId,
+      series,
     }
   },
 })

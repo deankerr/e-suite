@@ -11,6 +11,17 @@ export function env(name: string) {
   return value
 }
 
+export function createError(
+  message: string,
+  {
+    fatal = false,
+    code = 'unhandled',
+    data,
+  }: { fatal?: boolean; code?: string; data?: Record<string, Value> } = {},
+) {
+  return new ConvexError({ message, fatal, code, data })
+}
+
 export function insist<T>(
   condition: T,
   message: string,
@@ -57,3 +68,6 @@ export const zTruncate = (max: number, min = 0) =>
 export const zThreadTitle = zTruncate(256, 1)
 export const zMessageName = zTruncate(64)
 export const zMessageTextContent = zTruncate(32767)
+export const zStringToMessageRole = z
+  .string()
+  .transform((value) => z.enum(['user', 'assistant', 'system']).parse(value))

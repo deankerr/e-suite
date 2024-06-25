@@ -12,19 +12,26 @@ import { QuantityControl } from './QuantityControl'
 import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = () => {
-  const { sendMessage, runInference, updateThreadConfig, thread } = useChat()
+  const { appendMessage, updateThreadConfig, thread } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
   const [input, setInput] = useState('')
 
   if (!thread || (!isOwner && !thread.slug.startsWith('_'))) return null
 
-  const handleSendMessage = async () => {
+  const handleAppendMessage = async (runInference: boolean) => {
     if (!thread) return
     const prompt = input
     if (!prompt) return console.warn('prompt is empty')
 
+    if (!runInference) {
+      await appendMessage({
+        message: { content: prompt },
+      })
+      return
+    }
+
     if (thread.config.ui.type === 'chat-completion') {
-      await sendMessage({
+      await appendMessage({
         message: { content: prompt },
         inference: thread.config.ui,
       })
@@ -32,23 +39,11 @@ export const MessageInput = () => {
     }
 
     if (thread.config.ui.type === 'text-to-image') {
-      await runInference({
+      await appendMessage({
         inference: { ...thread.config.ui, prompt },
-        content: `**${thread.config.ui.endpointModelId}**\n\n${prompt}`,
       })
       setInput('')
     }
-  }
-
-  const handleAddMessage = async () => {
-    if (!thread) return
-    const prompt = input
-    if (!prompt) return console.warn('prompt is empty')
-
-    await sendMessage({
-      message: { content: prompt },
-    })
-    setInput('')
   }
 
   const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
@@ -72,7 +67,7 @@ export const MessageInput = () => {
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()
-            void handleSendMessage()
+            void handleAppendMessage(true)
           }
         }}
       />
@@ -108,11 +103,11 @@ export const MessageInput = () => {
 
         <div className="shrink-0 gap-3 flex-end">
           {thread.config.ui.type === 'chat-completion' && (
-            <Button color="gray" onClick={handleAddMessage}>
+            <Button color="gray" onClick={() => void handleAppendMessage(false)}>
               Add
             </Button>
           )}
-          <Button onClick={handleSendMessage}>
+          <Button onClick={() => void handleAppendMessage(true)}>
             Send
             <PaperPlaneRight className="size-5" />
           </Button>
