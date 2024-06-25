@@ -1,80 +1,42 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { ScrollContainer } from '@/components/ui/ScrollContainer'
 import { useVoiceoverPlayer } from '@/components/voiceovers/useVoiceoverPlayer'
 import { useViewerDetails } from '@/lib/queries'
-
-import type { EMessage } from '@/convex/shared/types'
 
 export const ChatFeed = () => {
   const { thread, messages, removeMessage } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
   useVoiceoverPlayer(thread?._id)
 
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  const scrollPanelTo = useCallback(
-    (position: 'start' | 'end', options?: ScrollIntoViewOptions) => {
-      const scroll = scrollRef.current
-      if (!scroll) return
-
-      const top = position === 'start' ? 0 : scroll.scrollHeight
-      scroll.scrollTo({
-        top,
-        behavior: 'smooth',
-        ...options,
-      })
-    },
-    [],
-  )
-
-  // scroll to latest message if content/files are updated
-  const trackLatestMessage = true
-  const [latestMessage, setLatestMessage] = useState<EMessage | null>(null)
-  const latest = messages.data?.at(-1)
+  const latestMessageRef = useRef<HTMLDivElement>(null)
+  const [initialScroll, setInitialScroll] = useState(false)
 
   useEffect(() => {
-    if (!trackLatestMessage || !latest) {
-      setLatestMessage(null)
-      return
-    }
-
-    const isNewMessage = latest._id !== latestMessage?._id
-
-    if (isNewMessage) {
-      scrollPanelTo('end', { behavior: latestMessage === null ? 'instant' : 'smooth' })
-      setLatestMessage(latest)
-      return
-    } else {
-      const contentHasChanged = latest.content !== latestMessage?.content
-      const filesHaveChanged = latest.files && latest.files.length !== latestMessage?.files?.length
-      if (contentHasChanged || filesHaveChanged) {
-        scrollPanelTo('end')
-        setLatestMessage(latest)
-      }
-    }
-  }, [trackLatestMessage, latestMessage, latest, scrollPanelTo])
+    if (initialScroll || latestMessageRef.current === null) return
+    setInitialScroll(true)
+    latestMessageRef.current.scrollIntoView({ behavior: 'instant' })
+  }, [initialScroll, messages])
 
   if (messages === null) return <div>Error</div>
   return (
-    <div
-      ref={scrollRef}
-      className="flex w-full grow flex-col overflow-y-auto overflow-x-hidden px-2 py-1"
-    >
+    <ScrollContainer className="flex flex-col px-2">
       {messages.isPending && <LoadingSpinner className="m-auto" />}
       {messages.data?.map((message, i) => (
-        <Message
-          key={message._id}
-          timeline={i !== messages.data.length - 1}
-          message={message}
-          slug={thread?.slug}
-          showMenu={isOwner}
-          removeMessage={removeMessage}
-        />
+        <div key={message._id} ref={latestMessageRef}>
+          <Message
+            timeline={i !== messages.data.length - 1}
+            message={message}
+            slug={thread?.slug}
+            showMenu={isOwner}
+            removeMessage={removeMessage}
+          />
+        </div>
       ))}
-    </div>
+    </ScrollContainer>
   )
 }
 
