@@ -1,39 +1,7 @@
-import { useQuery } from 'convex-helpers/react'
 import { useQuery as useCachedQuery } from 'convex-helpers/react/cache/hooks'
 
 import { api } from '@/convex/_generated/api'
 import { EChatModel, EImageModel, EThread, EUser, EVoiceModel } from '@/convex/shared/types'
-
-export const useThread = (slugOrId: string) => {
-  const result = useQuery(
-    api.db.threads.get,
-    slugOrId
-      ? {
-          slugOrId,
-        }
-      : 'skip',
-  )
-  return result
-}
-
-export const useMessages = (threadId?: string) => {
-  const result = useQuery(
-    api.db.messages.list,
-    threadId
-      ? {
-          threadId,
-          limit: 25,
-        }
-      : 'skip',
-  )
-
-  if (!threadId) {
-    result.data = []
-    result.isSuccess = true
-    result.isPending = false
-  }
-  return result
-}
 
 export const useUserThreadsList = (): EThread[] | undefined => {
   const result = useCachedQuery(api.db.threads.list, {})

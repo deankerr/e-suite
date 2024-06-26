@@ -1,4 +1,4 @@
-import { Chats, Images, Sidebar, X } from '@phosphor-icons/react/dist/ssr'
+import { Chats, Images, Sidebar } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
 

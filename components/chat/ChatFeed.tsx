@@ -42,7 +42,7 @@ export const ChatFeed = () => {
           </IconButton>
         </div>
       </NonSecureAdminRoleOnly>
-      {/* {messages.isPending && <LoadingSpinner className="m-auto" />} */}
+      {messages === undefined && <LoadingSpinner className="m-auto" />}
       {messages?.map((message, i) => (
         <div key={message._id} ref={latestMessageRef}>
           <Message

@@ -1,11 +1,8 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation } from 'convex/react'
-import { useRouter } from 'next/navigation'
-import { useLocalStorage } from 'react-use'
 
 import { api } from '@/convex/_generated/api'
-import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 
 import type { EMessage, EThread } from '@/convex/shared/types'
 
@@ -41,6 +38,8 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const sendUpdateMessage = useMutation(api.db.messages.update)
   const sendRemoveMessage = useMutation(api.db.messages.remove)
 
+  const sendRemoveVoiceover = useMutation(api.db.voiceover.remove)
+
   const appendMessage = useCallback(
     async (args: Omit<Parameters<typeof sendAppendMessage>[0], 'threadId'>) => {
       if (!thread) return
@@ -71,6 +70,13 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
     [sendRemoveMessage],
   )
 
+  const removeVoiceover = useCallback(
+    async (args: Parameters<typeof sendRemoveVoiceover>[0]) => {
+      await sendRemoveVoiceover(args)
+    },
+    [sendRemoveVoiceover],
+  )
+
   return {
     thread,
     messages,
@@ -78,5 +84,6 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
     updateThread,
     updateMessage,
     removeMessage,
+    removeVoiceover,
   }
 }
