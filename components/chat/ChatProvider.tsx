@@ -32,6 +32,7 @@ const useChatContextApi = ({
         saved: [],
       },
       title: slug === '_image' ? 'New Generation' : 'New Chat',
+      model: null,
     },
   )
 
@@ -106,7 +107,7 @@ const useChatContextApi = ({
   }, [onClose, router, slug])
 
   return {
-    thread: useMemo(() => thread, [thread]),
+    thread: useMemo(() => thread, [thread]) as EThread | null | undefined,
     messages: useMemo(() => messages, [messages]),
     appendMessage,
     createMessage,

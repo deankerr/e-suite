@@ -1,37 +1,51 @@
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { ChatSidebar } from '@/components/chat/sidebars/ChatSidebar'
+import { ImageSidebar } from '@/components/chat/sidebars/ImageSidebar'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { showSidebarAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const Sidebar = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const { thread } = useChat()
-  const showSidebar = useAtomValue(showSidebarAtom)
+  const [showSidebar, setShowSidebar] = useAtom(showSidebarAtom)
   if (!showSidebar) return null
   return (
-    <div
-      {...props}
-      className={cn('h-full w-80 shrink-0 overflow-hidden border-r border-grayA-3', className)}
-    >
-      {thread === undefined && (
-        <div className="flex h-full items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      )}
+    <>
+      <div
+        className="absolute inset-0 bg-overlay opacity-50 lg:hidden"
+        onClick={() => setShowSidebar(false)}
+      ></div>
+      <div
+        {...props}
+        className={cn(
+          'absolute right-0 h-full w-80 shrink-0 overflow-hidden border-l border-grayA-3 bg-panel-solid lg:static',
+          className,
+        )}
+      >
+        {thread === undefined && (
+          <div className="flex h-full items-center justify-center">
+            <LoadingSpinner />
+          </div>
+        )}
 
-      {thread && thread.config.ui.type === 'chat-completion' && (
-        <ChatSidebar key={thread.config.ui.resourceKey} thread={thread} config={thread.config.ui} />
-      )}
+        {thread && thread.config.ui.type === 'chat-completion' && (
+          <ChatSidebar
+            key={thread.config.ui.resourceKey}
+            thread={thread}
+            config={thread.config.ui}
+          />
+        )}
 
-      {/* {thread && thread.config.ui.type === 'text-to-image' && (
-        <ImageSidebar
-          key={thread.config.ui.resourceKey}
-          thread={thread}
-          config={thread.config.ui}
-        />
-      )} */}
-    </div>
+        {thread && thread.config.ui.type === 'text-to-image' && (
+          <ImageSidebar
+            key={thread.config.ui.resourceKey}
+            thread={thread}
+            config={thread.config.ui}
+          />
+        )}
+      </div>
+    </>
   )
 }

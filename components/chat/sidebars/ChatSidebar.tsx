@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge } from '@radix-ui/themes'
+import { Badge, Tabs } from '@radix-ui/themes'
 import { ChevronsUpDownIcon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
@@ -30,91 +30,106 @@ export const ChatSidebar = ({
 
   return (
     <div className="flex h-full flex-col overflow-hidden p-1">
-      <div className="p-2">
-        <button
-          className={cn(
-            'mx-auto flex min-h-28 w-full flex-col items-start gap-1 rounded border border-grayA-3 px-3 py-3 text-start hover:bg-grayA-2',
-            !isOwner && 'pointer-events-none',
-          )}
-          onClick={() => setShowModelPicker(!showModelPicker)}
-        >
-          {model ? (
-            <>
-              <div className="line-clamp-2 shrink-0">{model.name}</div>
-              <div className="w-full grow font-mono text-xs text-gray-11">
-                {model.endpointModelId}
+      <Tabs.Root defaultValue="model">
+        <Tabs.List>
+          <Tabs.Trigger value="model">Model</Tabs.Trigger>
+          <Tabs.Trigger value="commands">Commands</Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value="model">
+          <div className="p-2">
+            <button
+              className={cn(
+                'mx-auto flex min-h-28 w-full flex-col items-start gap-1 rounded border border-grayA-3 px-3 py-3 text-start hover:bg-grayA-2',
+                !isOwner && 'pointer-events-none',
+              )}
+              onClick={() => setShowModelPicker(!showModelPicker)}
+            >
+              {model ? (
+                <>
+                  <div className="line-clamp-2 shrink-0">{model.name}</div>
+                  <div className="w-full grow font-mono text-xs text-gray-11">
+                    {model.endpointModelId}
+                  </div>
+                  <div>
+                    <Badge size="1" color="gray" className="shrink-0">
+                      {model.endpoint}
+                    </Badge>
+                  </div>
+                </>
+              ) : (
+                <div className="text-lg font-medium">Select Model</div>
+              )}
+
+              <div className="absolute inset-y-0 right-0 flex px-2">
+                <ChevronsUpDownIcon className="m-auto" />
               </div>
-              <div>
-                <Badge size="1" color="gray" className="shrink-0">
-                  {model.endpoint}
-                </Badge>
-              </div>
-            </>
-          ) : (
-            <div className="text-lg font-medium">Select Model</div>
-          )}
+            </button>
 
-          <div className="absolute inset-y-0 right-0 flex px-2">
-            <ChevronsUpDownIcon className="m-auto" />
-          </div>
-        </button>
-
-        {showModelPicker && (
-          <ModelPicker
-            className=""
-            onSelect={(model) => {
-              void updateThreadConfig({
-                config: {
-                  ...thread.config,
-                  ui: {
-                    ...config,
-                    resourceKey: model.resourceKey,
-                    endpoint: model.endpoint,
-                    endpointModelId: model.endpointModelId,
-                  },
-                },
-              })
-              setShowModelPicker(false)
-            }}
-          />
-        )}
-      </div>
-
-      {model && parameters && !showModelPicker && (
-        <div className="rounded p-2">
-          <div className={cn('grid gap-6 border border-grayA-3 p-4')}>
-            <SliderWithInput
-              label="Max Tokens"
-              defaultValue={
-                defaultMaxTokens > model.contextLength ? model.contextLength : defaultMaxTokens
-              }
-              min={1}
-              max={model.contextLength || defaultMaxTokens}
-              step={1}
-              disabled
-            />
-
-            {parameters.map((param) => (
-              <SliderWithInput
-                key={param.id}
-                label={param.label}
-                min={param.min}
-                max={param.max}
-                step={param.step}
-                defaultValue={param.defaultValue}
-                disabled
+            {showModelPicker && chatModels && (
+              <ModelPicker
+                models={chatModels}
+                onSelect={(model) => {
+                  void updateThreadConfig({
+                    config: {
+                      ...thread.config,
+                      ui: {
+                        ...config,
+                        resourceKey: model.resourceKey,
+                        endpoint: model.endpoint,
+                        endpointModelId: model.endpointModelId,
+                      },
+                    },
+                  })
+                  setShowModelPicker(false)
+                }}
               />
-            ))}
-
-            <BasicTextArea
-              label="Stop Sequences"
-              rows={2}
-              defaultValue={model.stop.join(', ')}
-              disabled
-            />
+            )}
           </div>
-        </div>
-      )}
+
+          {model && parameters && !showModelPicker && (
+            <div className="rounded p-2">
+              <div className={cn('grid gap-6 border border-grayA-3 p-4')}>
+                <SliderWithInput
+                  label="Max Tokens"
+                  defaultValue={
+                    defaultMaxTokens > model.contextLength ? model.contextLength : defaultMaxTokens
+                  }
+                  min={1}
+                  max={model.contextLength || defaultMaxTokens}
+                  step={1}
+                  disabled
+                />
+
+                {parameters.map((param) => (
+                  <SliderWithInput
+                    key={param.id}
+                    label={param.label}
+                    min={param.min}
+                    max={param.max}
+                    step={param.step}
+                    defaultValue={param.defaultValue}
+                    disabled
+                  />
+                ))}
+
+                <BasicTextArea
+                  label="Stop Sequences"
+                  rows={2}
+                  defaultValue={model.stop.join(', ')}
+                  disabled
+                />
+              </div>
+            </div>
+          )}
+        </Tabs.Content>
+
+        <Tabs.Content value="commands">
+          <div className="p-2">
+            <div className="text-lg font-medium">Commands</div>
+          </div>
+        </Tabs.Content>
+      </Tabs.Root>
     </div>
   )
 }

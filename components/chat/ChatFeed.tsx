@@ -31,29 +31,34 @@ export const ChatFeed = () => {
   return (
     <ScrollContainer className="flex flex-col px-2">
       <NonSecureAdminRoleOnly>
-        <IconButton
-          variant="ghost"
-          color="ruby"
-          className="fixed right-3 z-20"
-          onClick={() => setShowJson(!showJson)}
-        >
-          <Code className="size-5" />
-        </IconButton>
+        <div className="pointer-events-none sticky top-0 z-20 w-full py-1">
+          <IconButton
+            variant="ghost"
+            color="ruby"
+            className="pointer-events-auto"
+            onClick={() => setShowJson(!showJson)}
+          >
+            <Code className="size-5" />
+          </IconButton>
+        </div>
       </NonSecureAdminRoleOnly>
       {messages.isPending && <LoadingSpinner className="m-auto" />}
-      {!showJson &&
-        messages.data?.map((message, i) => (
-          <div key={message._id} ref={latestMessageRef}>
-            <Message
-              timeline={i !== messages.data.length - 1}
-              message={message}
-              slug={thread?.slug}
-              showMenu={isOwner}
-              removeMessage={removeMessage}
-            />
-          </div>
-        ))}
-      {showJson && <Pre>{JSON.stringify(thread, null, 2)}</Pre>}
+      {messages.data?.map((message, i) => (
+        <div key={message._id} ref={latestMessageRef}>
+          <Message
+            timeline={i !== messages.data.length - 1}
+            message={message}
+            slug={thread?.slug}
+            showMenu={isOwner}
+            removeMessage={removeMessage}
+          />
+        </div>
+      ))}
+      {showJson && (
+        <Pre className="fixed inset-0 mb-24 mt-10 bg-panel-solid">
+          {JSON.stringify(thread, null, 2)}
+        </Pre>
+      )}
     </ScrollContainer>
   )
 }

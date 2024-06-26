@@ -8,7 +8,7 @@ const sdxlSizes = {
 
 export const falImageModelData = [
   {
-    resourceKey: 'fal::stable-diffusion-v3-medium',
+    resourceKey: 'fal::fal-ai/stable-diffusion-v3-medium',
     name: 'Stable Diffusion V3 Medium',
     description: '',
 

@@ -13,7 +13,7 @@ import { getImageModelByResourceKey } from './imageModels'
 import { getMessageCommand, getNextMessageSeries } from './messages'
 
 import type { Doc, Id } from '../_generated/dataModel'
-import type { MutationCtx, QueryCtx } from '../types'
+import type { Ent, MutationCtx, QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   const id = ctx.unsafeDb.normalizeId('threads', slugOrId)
@@ -46,6 +46,14 @@ export const getOrCreateThread = async (
     .get()
 }
 
+export const getThreadExtras = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
+  const model =
+    thread.config.ui.type === 'chat-completion'
+      ? await getChatModelByResourceKey(ctx, thread.config.ui.resourceKey)
+      : await getImageModelByResourceKey(ctx, thread.config.ui.resourceKey)
+  return { ...thread, model }
+}
+
 export const get = query({
   args: {
     slugOrId: z.string(),
@@ -54,12 +62,7 @@ export const get = query({
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return null
 
-    const model =
-      thread.config.ui.type === 'chat-completion'
-        ? await getChatModelByResourceKey(ctx, thread.config.ui.resourceKey)
-        : await getImageModelByResourceKey(ctx, thread.config.ui.resourceKey)
-
-    return { ...thread, model } as Doc<'threads'>
+    return (await getThreadExtras(ctx, thread)) as Doc<'threads'>
   },
 })
 
@@ -72,13 +75,7 @@ export const list = query({
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (thread) => {
-        const model =
-          thread.config.ui.type === 'chat-completion'
-            ? await getChatModelByResourceKey(ctx, thread.config.ui.resourceKey)
-            : await getImageModelByResourceKey(ctx, thread.config.ui.resourceKey)
-        return { ...thread, model }
-      })
+      .map(async (thread) => await getThreadExtras(ctx, thread))
 
     return threads
   },

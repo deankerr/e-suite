@@ -21,11 +21,11 @@ const Component = () => {
     <Shell>
       <ChatHeader />
       <div className="flex h-full overflow-hidden">
-        <Sidebar />
         <div className="flex h-full w-full flex-col overflow-hidden">
           <ChatFeed />
           <MessageInput />
         </div>
+        <Sidebar />
       </div>
     </Shell>
   )

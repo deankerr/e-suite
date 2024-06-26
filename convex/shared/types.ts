@@ -1,10 +1,11 @@
-import { Doc } from '../_generated/dataModel'
-
-import type { api } from '../_generated/api'
+import type { Doc } from '../_generated/dataModel'
 import type { getMessageEdges } from '../db/messages'
-import type { FunctionReturnType } from 'convex/server'
+import type { getThreadExtras } from '../db/threads'
 
-export type EThread = Omit<Doc<'threads'>, '_id' | 'userId'> & { _id: string; userId: string }
+export type EThread = Omit<Awaited<ReturnType<typeof getThreadExtras>>, '_id' | 'userId'> & {
+  _id: string
+  userId: string
+}
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
 export type EChatModel = Doc<'chat_models'>
 export type EImageModel = Doc<'image_models'>
