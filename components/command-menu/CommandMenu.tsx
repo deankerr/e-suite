@@ -46,9 +46,10 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
 
   const { user } = useViewerDetails()
   const threads = useUserThreadsList()
-  const threadsAvailable = (threads.data ?? []).filter((thread) =>
-    isChatDeckMode ? !deck.some((slug) => thread.slug === slug) : true,
-  )
+  const threadsAvailable =
+    threads?.filter((thread) =>
+      isChatDeckMode ? !deck.some((slug) => thread.slug === slug) : true,
+    ) ?? []
 
   const menu = (
     <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
@@ -56,11 +57,9 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
       <CommandList className="h-[400px] max-h-[80lvh]">
         <CommandEmpty>No results found.</CommandEmpty>
 
-        {user.isSuccess && !user.data && (
-          <CommandItem disabled>Log in to start using e/suite</CommandItem>
-        )}
+        {!user && <CommandItem disabled>Log in to start using e/suite</CommandItem>}
 
-        {user.data && (
+        {user && (
           <CommandGroup>
             <CommandItem
               onSelect={() => {
@@ -119,7 +118,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
                 </div>
               </CommandItem>
             ))}
-            {threads.isPending && <LoadingSpinner />}
+            {!threads && <LoadingSpinner />}
           </CommandGroup>
         )}
       </CommandList>

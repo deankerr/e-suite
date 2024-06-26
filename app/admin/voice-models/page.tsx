@@ -37,7 +37,7 @@ export default function Page() {
   const voiceModels = useVoiceModels()
   const [searchValue, setSearchValue] = useState('')
 
-  const sortResults = fuzzysort.go(searchValue, voiceModels.data ?? [], {
+  const sortResults = fuzzysort.go(searchValue, voiceModels ?? [], {
     keys: ['resourceKey', 'name', 'creatorName'],
     all: true,
   })
@@ -54,9 +54,7 @@ export default function Page() {
           <div className="space-y-2 py-2">
             <SearchField value={searchValue} onValueChange={setSearchValue} />
             <div className="px-1 font-mono text-sm">
-              {voiceModels.isPending && 'loading...'}
-              {voiceModels.isError && 'error'}
-              {voiceModels.isSuccess && `models: ${sortResults.length}`}
+              {voiceModels && `models: ${sortResults.length}`}
               {sampleFileId && <div>Sample: {sampleFileId}</div>}
             </div>
           </div>

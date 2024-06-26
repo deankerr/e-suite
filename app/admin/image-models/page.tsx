@@ -11,7 +11,7 @@ export default function Page() {
     <AdminPageWrapper className="">
       <div className="flex gap-3">
         <div className="flex grow flex-wrap gap-2">
-          {imageModels.data?.map((model) => <ImageModelCard key={model._id} model={model} />)}
+          {imageModels?.map((model) => <ImageModelCard key={model._id} model={model} />)}
         </div>
       </div>
     </AdminPageWrapper>

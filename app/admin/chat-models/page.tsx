@@ -14,7 +14,7 @@ export default function Page() {
   const chatModels = useChatModels()
   const [searchValue, setSearchValue] = useState('')
 
-  const sortResults = fuzzysort.go(searchValue, chatModels.data ?? [], {
+  const sortResults = fuzzysort.go(searchValue, chatModels ?? [], {
     keys: ['resourceKey', 'name', 'creatorName'],
     all: true,
   })
@@ -32,9 +32,7 @@ export default function Page() {
           <div className="space-y-2 py-2">
             <SearchField value={searchValue} onValueChange={setSearchValue} />
             <div className="px-1 font-mono text-sm">
-              {chatModels.isPending && 'loading...'}
-              {chatModels.isError && 'error'}
-              {chatModels.isSuccess && `chat models: ${sortResults.length}`}
+              {chatModels && `chat models: ${sortResults.length}`}
             </div>
           </div>
 

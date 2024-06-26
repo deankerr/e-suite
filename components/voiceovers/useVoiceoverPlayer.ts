@@ -15,7 +15,7 @@ export const useVoiceoverPlayer = (threadId?: string) => {
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
 
   const currentMessageId = voiceoverQueue[0]
-  const currentUrl = messages.data?.find((m) => m._id === currentMessageId)?.voiceover?.fileUrl
+  const currentUrl = messages?.find((m) => m._id === currentMessageId)?.voiceover?.fileUrl
   const currentUrlIsLoaded = currentUrl === src
 
   const latestMessageId = useRef('')
@@ -43,8 +43,8 @@ export const useVoiceoverPlayer = (threadId?: string) => {
   }, [currentMessageId, currentUrl, generateVoiceover])
 
   useEffect(() => {
-    const last = messages.data?.at(-1)
-    if (!last || !messages.data) return
+    const last = messages?.at(-1)
+    if (!last || !messages) return
     if (!latestMessageId.current) {
       latestMessageId.current = last._id
       return
@@ -52,8 +52,8 @@ export const useVoiceoverPlayer = (threadId?: string) => {
     if (latestMessageId.current !== last._id) {
       if (isAutoplay) {
         // enqueue all new messages after latestMessageId
-        const newMessages = messages.data.slice(
-          messages.data.findIndex((m) => m._id === latestMessageId.current) + 1,
+        const newMessages = messages.slice(
+          messages.findIndex((m) => m._id === latestMessageId.current) + 1,
         )
         setVoiceoverQueue((q) => [...q, ...newMessages.map((m) => m._id)])
       }

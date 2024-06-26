@@ -31,18 +31,18 @@ export const SlashCommandCard = ({
 
       <Label className="grid text-xs font-semibold">
         Model
-        {imageModels.isSuccess ? (
-          <ModelPickerCombobox picker={<ModelPicker models={imageModels.data} />}>
+        {imageModels ? (
+          <ModelPickerCombobox picker={<ModelPicker models={imageModels} />}>
             <Button variant="surface">
-              {imageModels.data.find((m) => m.resourceKey === command.inference.resourceKey)
-                ?.name ?? 'Select Model'}
+              {imageModels.find((m) => m.resourceKey === command.inference.resourceKey)?.name ??
+                'Select Model'}
             </Button>
           </ModelPickerCombobox>
-        ) : imageModels.isPending ? (
+        ) : (
           <Button variant="surface" disabled>
             <LoadingSpinner className="bg-gray-11" />
           </Button>
-        ) : null}
+        )}
       </Label>
 
       {command.inference.type === 'text-to-image' && (

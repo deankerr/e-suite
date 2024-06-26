@@ -19,10 +19,10 @@ export const ChatSidebar = ({
   thread: EThread
   config: EChatCompletionInference
 }) => {
-  const { updateThreadConfig } = useChat()
+  const { updateThread } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
-  const { data: chatModels } = useChatModels()
+  const chatModels = useChatModels()
   const model = chatModels?.find((model) => model.resourceKey === config.resourceKey)
   const parameters = model ? getModelParams(model) : undefined
 
@@ -70,7 +70,7 @@ export const ChatSidebar = ({
               <ModelPicker
                 models={chatModels}
                 onSelect={(model) => {
-                  void updateThreadConfig({
+                  void updateThread({
                     config: {
                       ...thread.config,
                       ui: {

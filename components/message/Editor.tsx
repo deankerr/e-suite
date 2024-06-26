@@ -14,7 +14,7 @@ export const Editor = ({
   ...props
 }: { message: EMessage; onClose: () => unknown } & React.ComponentProps<'div'>) => {
   const [content, setContent] = useState(message.content)
-  const { updateMessageContent } = useChat()
+  const { updateMessage } = useChat()
 
   return (
     <div {...props} className={cn('w-full rounded-lg bg-grayA-2', className)}>
@@ -29,7 +29,7 @@ export const Editor = ({
           color="green"
           className=""
           onClick={() => {
-            void updateMessageContent({
+            void updateMessage({
               messageId: message._id,
               role: message.role,
               name: message.name,

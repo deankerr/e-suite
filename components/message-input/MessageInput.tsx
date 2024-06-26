@@ -12,7 +12,7 @@ import { QuantityControl } from './QuantityControl'
 import type { ETextToImageInference } from '@/convex/shared/structures'
 
 export const MessageInput = () => {
-  const { appendMessage, updateThreadConfig, thread } = useChat()
+  const { appendMessage, updateThread, thread } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
   const [input, setInput] = useState('')
 
@@ -48,7 +48,7 @@ export const MessageInput = () => {
 
   const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
     if (thread?.config.ui.type !== 'text-to-image') return
-    await updateThreadConfig({
+    await updateThread({
       config: {
         ...thread.config,
         ui: {

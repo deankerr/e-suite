@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@clerk/nextjs'
+import { ConvexQueryCacheProvider } from 'convex-helpers/react/cache/provider'
 import { ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { createStore, Provider as Jotai } from 'jotai'
@@ -16,12 +17,14 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
   const store = createStore()
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-      <Jotai store={store}>
-        {environment === 'dev' && process.env.NEXT_PUBLIC_JOTAI_DEVTOOLS && (
-          <JotaiDevTools theme="dark" store={store} />
-        )}
-        {children}
-      </Jotai>
+      <ConvexQueryCacheProvider debug>
+        <Jotai store={store}>
+          {environment === 'dev' && process.env.NEXT_PUBLIC_JOTAI_DEVTOOLS && (
+            <JotaiDevTools theme="dark" store={store} />
+          )}
+          {children}
+        </Jotai>
+      </ConvexQueryCacheProvider>
     </ConvexProviderWithClerk>
   )
 }

@@ -20,9 +20,9 @@ import type { EThread } from '@/convex/shared/types'
 type ChatMenuProps = { thread: EThread } & React.ComponentProps<typeof Popover.Root>
 
 export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
-  const { data: chatModels } = useChatModels()
-  const { data: imageModels } = useImageModels()
-  const { data: voiceModels } = useVoiceModels()
+  const chatModels = useChatModels()
+  const imageModels = useImageModels()
+  const voiceModels = useVoiceModels()
 
   const config = thread.config
 
@@ -42,7 +42,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
 
-  const { updateThreadConfig, closeChat } = useChat()
+  const { updateThread } = useChat()
   const isNewChat = thread.slug.startsWith('_')
 
   return (
@@ -108,7 +108,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                     key={model._id}
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
-                      void updateThreadConfig({
+                      void updateThread({
                         config: {
                           ...config,
                           ui: {
@@ -143,7 +143,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                     key={model.resourceKey}
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
-                      void updateThreadConfig({
+                      void updateThread({
                         voiceovers: {
                           ...thread.voiceovers,
                           default: model.resourceKey,
@@ -171,7 +171,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
         <DeleteThreadDialog
           threadId={thread._id}
           defaultOpen
-          onSuccess={() => closeChat?.()}
+          // onSuccess={() => closeChat?.()}
           onClose={() => setDialog('')}
         />
       )}

@@ -38,6 +38,8 @@ export const getOrCreateThread = async (
       userId: args.userId,
       slug: await generateSlug(ctx),
       updatedAtTime: Date.now(),
+      inference: args.uiConfig ?? defaultChatInferenceConfig,
+      slashCommands: [],
       config: {
         ui: args.uiConfig ?? defaultChatInferenceConfig,
         saved: [],
@@ -62,7 +64,7 @@ export const get = query({
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return null
 
-    return (await getThreadExtras(ctx, thread)) as Doc<'threads'>
+    return await getThreadExtras(ctx, thread)
   },
 })
 

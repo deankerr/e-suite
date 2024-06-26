@@ -1,6 +1,8 @@
 import type { Doc } from '../_generated/dataModel'
 import type { getMessageEdges } from '../db/messages'
 import type { getThreadExtras } from '../db/threads'
+import type { getVoiceModels } from '../db/voiceModels'
+import type { getViewer } from '../users'
 
 export type EThread = Omit<Awaited<ReturnType<typeof getThreadExtras>>, '_id' | 'userId'> & {
   _id: string
@@ -9,6 +11,9 @@ export type EThread = Omit<Awaited<ReturnType<typeof getThreadExtras>>, '_id' | 
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
 export type EChatModel = Doc<'chat_models'>
 export type EImageModel = Doc<'image_models'>
+export type EVoiceModel = Awaited<ReturnType<typeof getVoiceModels>>[number]
+
+export type EUser = Awaited<ReturnType<typeof getViewer>>
 
 // export type EThread = {
 //   _id: string

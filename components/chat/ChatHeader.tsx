@@ -9,7 +9,7 @@ import { showSidebarAtom } from '@/lib/atoms'
 import { useViewerDetails } from '@/lib/queries'
 
 export const ChatHeader = () => {
-  const { thread, closeChat } = useChat()
+  const { thread } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const toggleSidebar = useSetAtom(showSidebarAtom)
@@ -46,11 +46,11 @@ export const ChatHeader = () => {
           </>
         )}
 
-        {closeChat && (
+        {/* {closeChat && (
           <IconButton variant="ghost" color="gray" onClick={closeChat}>
             <X className="size-6" />
           </IconButton>
-        )}
+        )} */}
       </div>
     </div>
   )

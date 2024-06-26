@@ -3,6 +3,7 @@ import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { useLocalStorage } from 'react-use'
 
+import { useCreateChatContextApi } from '@/components/chat/useCreateChatContext'
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { useMessages, useThread } from '@/lib/queries'
@@ -27,6 +28,8 @@ const useChatContextApi = ({
       _creationTime: 0,
       updatedAtTime: 0,
       userId: '',
+      inference: defaultChatInferenceConfig,
+      slashCommands: [],
       config: {
         ui: slug === '_image' ? defaultImageInferenceConfig : defaultChatInferenceConfig,
         saved: [],
@@ -107,7 +110,7 @@ const useChatContextApi = ({
   }, [onClose, router, slug])
 
   return {
-    thread: useMemo(() => thread, [thread]) as EThread | null | undefined,
+    thread: useMemo(() => thread, [thread]),
     messages: useMemo(() => messages, [messages]),
     appendMessage,
     createMessage,
@@ -118,7 +121,7 @@ const useChatContextApi = ({
   }
 }
 
-type ChatContext = ReturnType<typeof useChatContextApi>
+type ChatContext = ReturnType<typeof useCreateChatContextApi>
 const ChatContext = createContext<ChatContext | undefined>(undefined)
 
 export const ChatProvider = ({
@@ -129,7 +132,7 @@ export const ChatProvider = ({
   onClose?: (slug: string) => void
   children: React.ReactNode
 }) => {
-  const api = useChatContextApi(props)
+  const api = useCreateChatContextApi({ slug: props.slug })
 
   return <ChatContext.Provider value={api}>{children}</ChatContext.Provider>
 }

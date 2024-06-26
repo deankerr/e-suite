@@ -42,21 +42,24 @@ export const ChatFeed = () => {
           </IconButton>
         </div>
       </NonSecureAdminRoleOnly>
-      {messages.isPending && <LoadingSpinner className="m-auto" />}
-      {messages.data?.map((message, i) => (
+      {/* {messages.isPending && <LoadingSpinner className="m-auto" />} */}
+      {messages?.map((message, i) => (
         <div key={message._id} ref={latestMessageRef}>
           <Message
-            timeline={i !== messages.data.length - 1}
+            timeline={i !== messages.length - 1}
             message={message}
             slug={thread?.slug}
             showMenu={isOwner}
-            removeMessage={removeMessage}
+            removeMessage={() => void removeMessage({ messageId: message._id })}
           />
         </div>
       ))}
       {showJson && (
         <Pre className="fixed inset-0 mb-24 mt-10 bg-panel-solid">
+          thread
           {JSON.stringify(thread, null, 2)}
+          messages
+          {JSON.stringify(messages, null, 2)}
         </Pre>
       )}
     </ScrollContainer>
