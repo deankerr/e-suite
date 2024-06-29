@@ -6,7 +6,6 @@ type SpriteKeys =
   | 'game-icons-thumb-down'
   | 'game-icons-thumb-up'
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type SpriteIconProps = { icon: SpriteKeys | (string & {}) }
 
 export const SpriteIcon = ({ icon, ...props }: SpriteIconProps & SVGProps<SVGSVGElement>) => {
