@@ -252,6 +252,9 @@ importers:
       eslint-config-next:
         specifier: ^14.2.4
         version: 14.2.4(eslint@8.57.0)(typescript@5.5.2)
+      howler:
+        specifier: ^2.2.4
+        version: 2.2.4
       jotai-devtools:
         specifier: ^0.10.0
         version: 0.10.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
@@ -273,6 +276,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.5
         version: 0.6.5(@ianvs/prettier-plugin-sort-imports@4.3.0(prettier@3.3.2))(prettier@3.3.2)
+      rehowl:
+        specifier: ^1.0.1
+        version: 1.0.1(howler@2.2.4)(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.4
@@ -4754,6 +4760,12 @@ packages:
   regexp.prototype.flags@1.5.2:
     resolution: {integrity: sha512-NcDiDkTLuPR+++OCKB0nWafEmhg/Da8aUPLPMQbK+bxKKCm1/S5he+AqYa4PlMCVBalb4/yxIRub6qkEx5yJbw==}
     engines: {node: '>= 0.4'}
+
+  rehowl@1.0.1:
+    resolution: {integrity: sha512-p0ZNLX7VWiFt9eBoM4FuPHN9IFZYKeMpxcMi6oXRDuN3Wjwy46cYdfqAvgPPAucdnRic1mfChVeb6WPlN3wR4A==}
+    peerDependencies:
+      howler: ^2.2.0
+      react: ^16.0.0 || ^17.0.0 || ^18.0.0
 
   remeda@2.2.1:
     resolution: {integrity: sha512-/nC9lgpfV45nfN5nySynVZ7etCg5OCDlW3+Ga908306TxMv52bV7Av5TcOQq55oFQSDrbNdV1Jw92Nyxu6oIkQ==}
@@ -10658,6 +10670,11 @@ snapshots:
       define-properties: 1.2.1
       es-errors: 1.3.0
       set-function-name: 2.0.2
+
+  rehowl@1.0.1(howler@2.2.4)(react@18.3.1):
+    dependencies:
+      howler: 2.2.4
+      react: 18.3.1
 
   remeda@2.2.1:
     dependencies:

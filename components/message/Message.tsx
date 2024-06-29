@@ -4,6 +4,7 @@ import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 
+import { AudioButton } from '@/components/audio/AudioButton'
 import { useChat } from '@/components/chat/ChatProvider'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
@@ -12,6 +13,7 @@ import { Markdown } from '@/components/message/Markdown'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
 import { VoiceoverButton } from '@/components/voiceovers/VoiceoverButton'
+import { VoiceoverPlayer } from '@/components/voiceovers/VoiceoverPlayer'
 import { hasActiveJobName } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
@@ -77,11 +79,7 @@ export const Message = ({
           </div>
 
           <div>
-            <VoiceoverButton
-              message={message}
-              variant="ghost"
-              className={cn('-my-1 mx-0', !message.content && 'hidden')}
-            />
+            <VoiceoverPlayer message={message} />
 
             {showMenu && isOwner && (
               <DropdownMenu.Root>
