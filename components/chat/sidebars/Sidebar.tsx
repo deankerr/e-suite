@@ -30,19 +30,19 @@ export const Sidebar = ({ className, ...props }: React.ComponentProps<'div'>) =>
           </div>
         )}
 
-        {thread && thread.config.ui.type === 'chat-completion' && (
+        {thread && thread.inference.type === 'chat-completion' && (
           <ChatSidebar
-            key={thread.config.ui.resourceKey}
+            key={thread.inference.resourceKey}
             thread={thread}
-            config={thread.config.ui}
+            config={thread.inference}
           />
         )}
 
-        {thread && thread.config.ui.type === 'text-to-image' && (
+        {thread && thread.inference.type === 'text-to-image' && (
           <ImageSidebar
-            key={thread.config.ui.resourceKey}
+            key={thread.inference.resourceKey}
             thread={thread}
-            config={thread.config.ui}
+            config={thread.inference}
           />
         )}
       </div>

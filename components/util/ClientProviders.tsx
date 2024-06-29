@@ -17,7 +17,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
   const store = createStore()
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-      <ConvexQueryCacheProvider debug>
+      <ConvexQueryCacheProvider>
         <Jotai store={store}>
           {environment === 'dev' && process.env.NEXT_PUBLIC_JOTAI_DEVTOOLS && (
             <JotaiDevTools theme="dark" store={store} />

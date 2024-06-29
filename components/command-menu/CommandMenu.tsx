@@ -63,8 +63,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
           <CommandGroup>
             <CommandItem
               onSelect={() => {
-                setDeck(['_chat'])
-                goto('/c')
+                goto('/chat')
               }}
             >
               <MessageSquarePlusIcon className="mr-2 size-4" />
@@ -72,8 +71,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
             </CommandItem>
             <CommandItem
               onSelect={() => {
-                setDeck(['_image'])
-                goto('/c')
+                goto('/generate')
               }}
             >
               <ImagePlusIcon className="mr-2 size-4" />

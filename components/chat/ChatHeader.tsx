@@ -14,7 +14,7 @@ export const ChatHeader = () => {
 
   const toggleSidebar = useSetAtom(showSidebarAtom)
 
-  const Icon = thread?.config.ui.type === 'text-to-image' ? Images : Chats
+  const Icon = thread?.inference.type === 'text-to-image' ? Images : Chats
   return (
     <div className="h-10 shrink-0 border-b border-grayA-3 flex-start">
       {thread && (

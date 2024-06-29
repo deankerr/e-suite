@@ -9,6 +9,7 @@ import MetaLogo from '@/assets/logos/meta.svg'
 import MistralAiLogo from '@/assets/logos/mistral.svg'
 import OpenAiLogo from '@/assets/logos/openai.svg'
 import { LinkButton } from '@/components/ui/LinkButton'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/shared/types'
@@ -60,6 +61,10 @@ export const ChatModelCard = ({
       </div>
     </Card>
   )
+}
+
+export const ChatModelCardSkeleton = () => {
+  return <Skeleton className="h-40 w-72 max-w-full shrink-0 animate-pulse" />
 }
 
 const llmAuthorLogos: Record<string, string | StaticImport> = {

@@ -10,7 +10,7 @@ import { EThread } from '@/convex/shared/types'
 import { useImageModels } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-type SlashCommand = EThread['config']['saved'][number]
+type SlashCommand = EThread['slashCommands'][number]
 
 export const SlashCommandCard = ({
   command,

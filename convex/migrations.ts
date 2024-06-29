@@ -24,8 +24,8 @@ export const threadConfig = internalMutation(async (ctx) => {
   const threads = await ctx.skipRules.table('threads')
   await asyncMap(threads, async (t) => {
     await t.patch({
-      inference: t.config.ui,
-      slashCommands: t.config.saved.map((c) => ({
+      inference: t.config!.ui,
+      slashCommands: t.config!.saved.map((c) => ({
         id: nanoid(),
         command: c.command ?? '',
         inference: c.inference,

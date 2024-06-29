@@ -66,7 +66,7 @@ export const getShapedMessage = async (ctx: QueryCtx, messageId: string) => {
 export const getMessageCommand = (thread: Ent<'threads'>, text?: string) => {
   if (!text) return null
 
-  const config = thread.config.saved.find(
+  const config = thread.slashCommands.find(
     (c) => c.command !== undefined && text.startsWith(c.command),
   )
   if (!config) return null

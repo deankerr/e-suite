@@ -23,7 +23,7 @@ export const ImageSidebar = ({ thread }: { thread: EThread; config: ETextToImage
           <div className="font-medium">Commands</div>
 
           <div className="flex flex-col gap-3">
-            {thread.config.saved.map((command, i) => (
+            {thread.slashCommands.map((command, i) => (
               <SlashCommandCard key={i} command={command} />
             ))}
           </div>

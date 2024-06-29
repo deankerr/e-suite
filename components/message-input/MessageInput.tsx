@@ -30,31 +30,28 @@ export const MessageInput = () => {
       return
     }
 
-    if (thread.config.ui.type === 'chat-completion') {
+    if (thread.inference.type === 'chat-completion') {
       await appendMessage({
         message: { content: prompt },
-        inference: thread.config.ui,
+        inference: thread.inference,
       })
       setInput('')
     }
 
-    if (thread.config.ui.type === 'text-to-image') {
+    if (thread.inference.type === 'text-to-image') {
       await appendMessage({
-        inference: { ...thread.config.ui, prompt },
+        inference: { ...thread.inference, prompt },
       })
       setInput('')
     }
   }
 
   const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
-    if (thread?.config.ui.type !== 'text-to-image') return
+    if (thread?.inference.type !== 'text-to-image') return
     await updateThread({
-      config: {
-        ...thread.config,
-        ui: {
-          ...thread.config.ui,
-          ...parameters,
-        },
+      inference: {
+        ...thread.inference,
+        ...parameters,
       },
     })
   }
@@ -74,25 +71,25 @@ export const MessageInput = () => {
 
       <div className="shrink-0 gap-2 flex-between">
         <div className="shrink-0 gap-3 flex-start">
-          {thread && thread.config.ui.type === 'chat-completion' && (
+          {thread && thread.inference.type === 'chat-completion' && (
             <Button color="gray" variant="soft" disabled>
               User
             </Button>
           )}
 
-          {thread && thread.config.ui.type === 'text-to-image' && (
+          {thread && thread.inference.type === 'text-to-image' && (
             <div className="shrink-0 gap-3 flex-between">
               <QuantityControl
-                n={thread.config.ui.n}
+                n={thread.inference.n}
                 onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
               />
               <DimensionsControl
-                width={thread.config.ui.width}
-                height={thread.config.ui.height}
+                width={thread.inference.width}
+                height={thread.inference.height}
                 onValueChange={async (size: string) => {
                   const { width, height } = getWidthHeightForEndpoint(
                     size,
-                    thread.config.ui.endpoint,
+                    thread.inference.endpoint,
                   )
                   void handleUpdateTTIConfig({ width, height })
                 }}
@@ -102,7 +99,7 @@ export const MessageInput = () => {
         </div>
 
         <div className="shrink-0 gap-3 flex-end">
-          {thread.config.ui.type === 'chat-completion' && (
+          {thread.inference.type === 'chat-completion' && (
             <Button color="gray" onClick={() => void handleAppendMessage(false)}>
               Add
             </Button>

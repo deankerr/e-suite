@@ -71,14 +71,11 @@ export const ChatSidebar = ({
                 models={chatModels}
                 onSelect={(model) => {
                   void updateThread({
-                    config: {
-                      ...thread.config,
-                      ui: {
-                        ...config,
-                        resourceKey: model.resourceKey,
-                        endpoint: model.endpoint,
-                        endpointModelId: model.endpointModelId,
-                      },
+                    inference: {
+                      ...thread.inference,
+                      resourceKey: model.resourceKey,
+                      endpoint: model.endpoint,
+                      endpointModelId: model.endpointModelId,
                     },
                   })
                   setShowModelPicker(false)

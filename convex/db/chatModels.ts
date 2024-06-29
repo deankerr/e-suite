@@ -12,7 +12,9 @@ export const getChatModelByResourceKey = async (ctx: QueryCtx, resourceKey: stri
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const models = await ctx.table('chat_models').map((model) => ({ ...model, type: 'chat' }))
+    const models = await ctx
+      .table('chat_models')
+      .map((model) => ({ ...model, type: 'chat', description: '' }))
     return models.sort((a, b) => b.internalScore - a.internalScore)
   },
 })

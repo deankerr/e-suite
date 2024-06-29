@@ -12,7 +12,7 @@ import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
 import { getMessageCommand, getNextMessageSeries } from './messages'
 
-import type { Doc, Id } from '../_generated/dataModel'
+import type { Id } from '../_generated/dataModel'
 import type { Ent, MutationCtx, QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
@@ -50,9 +50,9 @@ export const getOrCreateThread = async (
 
 export const getThreadExtras = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   const model =
-    thread.config.ui.type === 'chat-completion'
-      ? await getChatModelByResourceKey(ctx, thread.config.ui.resourceKey)
-      : await getImageModelByResourceKey(ctx, thread.config.ui.resourceKey)
+    thread.inference.type === 'chat-completion'
+      ? await getChatModelByResourceKey(ctx, thread.inference.resourceKey)
+      : await getImageModelByResourceKey(ctx, thread.inference.resourceKey)
   return { ...thread, model }
 }
 

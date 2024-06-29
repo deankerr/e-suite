@@ -24,14 +24,14 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const imageModels = useImageModels()
   const voiceModels = useVoiceModels()
 
-  const config = thread.config
+  const config = thread.inference
 
   const currentModel =
-    config.ui.type === 'chat-completion'
-      ? chatModels?.find((model) => model.resourceKey === config.ui.resourceKey)
-      : imageModels?.find((model) => model.resourceKey === config.ui.resourceKey)
+    config.type === 'chat-completion'
+      ? chatModels?.find((model) => model.resourceKey === config.resourceKey)
+      : imageModels?.find((model) => model.resourceKey === config.resourceKey)
 
-  const modelList = config.ui.type === 'chat-completion' ? chatModels : imageModels
+  const modelList = config.type === 'chat-completion' ? chatModels : imageModels
 
   const currentDefaultVoiceModel = voiceModels?.find(
     (model) => model.resourceKey === thread.voiceovers?.default,
@@ -109,14 +109,11 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
                       void updateThread({
-                        config: {
+                        inference: {
                           ...config,
-                          ui: {
-                            ...config.ui,
-                            resourceKey: model.resourceKey,
-                            endpoint: model.endpoint,
-                            endpointModelId: model.endpointModelId,
-                          },
+                          resourceKey: model.resourceKey,
+                          endpoint: model.endpoint,
+                          endpointModelId: model.endpointModelId,
                         },
                       })
                       setOpen(false)
