@@ -1,35 +1,12 @@
-import { useCallback, useMemo } from 'react'
-import { useQuery } from 'convex-helpers/react/cache/hooks'
+import { useCallback } from 'react'
 import { useMutation } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
-
-import type { EMessage, EThread } from '@/convex/shared/types'
-
-const useThreadQuery = ({ slug = '' }: { slug?: string }): EThread | null | undefined => {
-  const thread = useQuery(api.db.threads.get, {
-    slugOrId: slug,
-  })
-
-  return useMemo(() => {
-    return thread
-  }, [thread])
-}
-
-const useMessagesQuery = ({ threadId = '' }: { threadId?: string }): EMessage[] | undefined => {
-  const messages = useQuery(api.db.messages.list, {
-    threadId,
-    limit: 25,
-  })
-
-  return useMemo(() => {
-    return messages
-  }, [messages])
-}
+import { useMessages, useThread } from '@/lib/queries'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
-  const thread = useThreadQuery({ slug })
-  const messages = useMessagesQuery({ threadId: thread?._id })
+  const thread = useThread({ slug })
+  const messages = useMessages({ threadId: thread?._id })
 
   const sendAppendMessage = useMutation(api.db.threads.append)
   const sendUpdateThread = useMutation(api.db.threads.update)
