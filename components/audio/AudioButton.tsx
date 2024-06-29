@@ -18,10 +18,12 @@ const icon: Record<string, Icon> = {
 export const AudioButton = ({
   src,
   initialPlaying = true,
+  onEnd,
   ...props
 }: {
   src: string
   initialPlaying?: boolean
+  onEnd?: () => void
 } & React.ComponentProps<typeof IconButton>) => {
   const [playing, setPlaying] = useState(initialPlaying)
 
@@ -51,7 +53,14 @@ export const AudioButton = ({
 
   return (
     <>
-      <Play howl={howl} stop={!playing} onEnd={() => setPlaying(false)} />
+      <Play
+        howl={howl}
+        stop={!playing}
+        onEnd={() => {
+          setPlaying(false)
+          onEnd?.()
+        }}
+      />
       <IconButton
         variant="ghost"
         size="1"

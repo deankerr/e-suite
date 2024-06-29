@@ -1,12 +1,39 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
+import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
+import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 import { useMessages, useThread } from '@/lib/queries'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const thread = useThread({ slug })
   const messages = useMessages({ threadId: thread?._id })
+
+  const latestMessageId = useRef('')
+  const shouldAutoplayVoiceovers = useAtomValue(voiceoverAutoplayThreadIdAtom) === thread?._id
+  const setVoiceoverQueue = useSetAtom(voiceoverQueueAtom)
+
+  useEffect(() => {
+    const newLatestMessage = messages?.at(-1)
+    if (!latestMessageId.current) {
+      latestMessageId.current = newLatestMessage?._id ?? ''
+    }
+    if (!messages || !newLatestMessage) return
+    // find the latestMessageId in current messages, then all messages after that are new messages
+    const newMessages = messages.slice(
+      messages.findIndex((message) => message._id === latestMessageId.current) + 1,
+    )
+    if (shouldAutoplayVoiceovers) {
+      // add to queue if not already in it
+      setVoiceoverQueue((prev) => [
+        ...prev,
+        ...newMessages.map(({ _id }) => _id).filter((id) => !prev.includes(id)),
+      ])
+    }
+
+    latestMessageId.current = newLatestMessage._id
+  }, [messages, setVoiceoverQueue, shouldAutoplayVoiceovers])
 
   const sendAppendMessage = useMutation(api.db.threads.append)
   const sendUpdateThread = useMutation(api.db.threads.update)

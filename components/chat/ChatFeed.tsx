@@ -8,13 +8,11 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { ScrollContainer } from '@/components/ui/ScrollContainer'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { Pre } from '@/components/util/Pre'
-import { useVoiceoverPlayer } from '@/components/voiceovers/useVoiceoverPlayer'
 import { useViewerDetails } from '@/lib/queries'
 
 export const ChatFeed = () => {
   const { thread, messages, removeMessage } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
-  useVoiceoverPlayer(thread?._id)
 
   const latestMessageRef = useRef<HTMLDivElement>(null)
   const [initialScroll, setInitialScroll] = useState(false)

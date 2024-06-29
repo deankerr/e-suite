@@ -4,15 +4,12 @@ import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 
-import { AudioButton } from '@/components/audio/AudioButton'
-import { useChat } from '@/components/chat/ChatProvider'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
 import { Markdown } from '@/components/message/Markdown'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
-import { VoiceoverButton } from '@/components/voiceovers/VoiceoverButton'
 import { VoiceoverPlayer } from '@/components/voiceovers/VoiceoverPlayer'
 import { hasActiveJobName } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
@@ -38,7 +35,7 @@ export const Message = ({
   const [showJson, setShowJson] = useState(false)
   const [editing, setEditing] = useState(false)
   const { isOwner } = useViewerDetails(message.userId)
-  const { removeVoiceover } = useChat()
+  // const { removeVoiceover } = useChat()
 
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
 
@@ -101,7 +98,8 @@ export const Message = ({
                   {message.voiceover && (
                     <DropdownMenu.Item
                       color="red"
-                      onClick={() => void removeVoiceover({ messageId: message._id })}
+                      disabled
+                      // onClick={() => void removeVoiceover({ messageId: message._id })}
                     >
                       Delete Voiceover
                     </DropdownMenu.Item>
