@@ -2,6 +2,7 @@ import { Badge, Card, Inset } from '@radix-ui/themes'
 import Image from 'next/image'
 
 import { EndpointBadge } from '@/app/admin/Badges'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
 import type { EImageModel } from '@/convex/shared/types'
@@ -41,4 +42,8 @@ export const ImageModelCard = ({
       </Inset>
     </Card>
   )
+}
+
+export const ImageModelCardSkeleton = () => {
+  return <Skeleton className="h-64 w-40 shrink-0 animate-pulse" />
 }

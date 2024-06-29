@@ -1,6 +1,7 @@
 import { zid } from 'convex-helpers/server/zod'
 
 import { internal } from '../_generated/api'
+import { getImageModelByResourceKey } from '../db/imageModels'
 import { internalAction, internalMutation } from '../functions'
 import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs'
 import { fal } from '../providers/fal'
@@ -91,6 +92,14 @@ export const complete = internalMutation({
           messageId: args.messageId,
         })
       }
+    }
+
+    // set thread title
+    const thread = await ctx.skipRules.table('threads').getX(message.threadId)
+    if (!thread.title && message.inference?.type === 'text-to-image') {
+      const model = await getImageModelByResourceKey(ctx, message.inference.resourceKey)
+      const title = model?.name ?? 'Generation'
+      await thread.patch({ title })
     }
 
     await jobResultSuccess(ctx, { jobId: args.jobId })
