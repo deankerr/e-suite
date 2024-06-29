@@ -15,7 +15,7 @@ const icon: Record<string, Icon> = {
   unavailable: Icons.SpeakerNone,
 }
 
-export const AudioButton = ({
+const AudioButton = ({
   src,
   initialPlaying = true,
   onEnd,
@@ -75,3 +75,5 @@ export const AudioButton = ({
     </>
   )
 }
+
+export default AudioButton

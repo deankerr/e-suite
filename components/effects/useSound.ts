@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { useAudioPlayer } from 'react-use-audio-player'
 import * as R from 'remeda'
 
 const soundsSrc = {
@@ -8,22 +7,23 @@ const soundsSrc = {
 } as const
 
 export const useSound = () => {
-  const { load, cleanup } = useAudioPlayer()
+  // TODO fix
+  // const { load, cleanup } = useAudioPlayer()
 
   const play = (key: keyof typeof soundsSrc) => {
-    load(soundsSrc[key], {
-      autoplay: true,
-      initialVolume: 0.3,
-    })
+    // load(soundsSrc[key], {
+    //   autoplay: true,
+    //   initialVolume: 0.3,
+    // })
   }
 
   const playSound = R.mapValues(soundsSrc, (_, key) => () => play(key))
 
   useEffect(() => {
     return () => {
-      cleanup()
+      // cleanup()
     }
-  }, [cleanup])
+  }, [])
 
   return { playSound }
 }

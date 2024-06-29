@@ -3,12 +3,21 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
+import dynamic from 'next/dynamic'
 
-import { AudioButton } from '@/components/audio/AudioButton'
 import { api } from '@/convex/_generated/api'
 import { EMessage } from '@/convex/shared/types'
 import { hasActiveJobName } from '@/convex/shared/utils'
 import { voiceoverQueueAtom } from '@/lib/atoms'
+
+const AudioButton = dynamic(() => import('@/components/audio/AudioButton'), {
+  ssr: false,
+  loading: () => (
+    <IconButton variant="ghost" size="1">
+      <Icons.SpeakerHigh className="size-5" />
+    </IconButton>
+  ),
+})
 
 export const VoiceoverPlayer = ({
   message,
@@ -27,7 +36,6 @@ export const VoiceoverPlayer = ({
   const isGenerating = voiceover?.status === 'pending'
 
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
-  const isQueued = voiceoverQueue.includes(message._id)
   const shouldAutoplay = voiceoverQueue[0] === message._id
 
   const removeFromQueue = () => {
@@ -72,7 +80,6 @@ export const VoiceoverPlayer = ({
           <Icons.SpeakerSlash className="size-5" />
         </IconButton>
       )}
-      {shouldAutoplay ? <div>S</div> : isQueued ? <div>Q</div> : null}
     </>
   )
 }

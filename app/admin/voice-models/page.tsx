@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Play } from '@phosphor-icons/react/dist/ssr'
+import { useState } from 'react'
+import { Play as PlayIcon } from '@phosphor-icons/react/dist/ssr'
 import { IconButton, Table, Tabs } from '@radix-ui/themes'
 import { useMutation, useQuery } from 'convex/react'
 import fuzzysort from 'fuzzysort'
-import { useGlobalAudioPlayer } from 'react-use-audio-player'
+import { Play, useHowl } from 'rehowl'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { SearchField } from '@/components/form/SearchField'
@@ -14,7 +14,6 @@ import { Id } from '@/convex/_generated/dataModel'
 import { useVoiceModels } from '@/lib/queries'
 
 export default function Page() {
-  const { load } = useGlobalAudioPlayer()
   const textVoiceover = useMutation(api.db.voiceover.text)
   const [sampleFileId, setSampleFileId] = useState('')
   const sampleFile = useQuery(
@@ -24,15 +23,10 @@ export default function Page() {
 
   const url = sampleFile?.fileUrl
 
-  useEffect(() => {
-    if (url) {
-      load(url, {
-        autoplay: true,
-        format: 'mp3',
-        onend: () => setSampleFileId(''),
-      })
-    }
-  }, [load, url])
+  const { howl } = useHowl({
+    src: url ?? 'none',
+    format: ['mp3'],
+  })
 
   const voiceModels = useVoiceModels()
   const [searchValue, setSearchValue] = useState('')
@@ -45,6 +39,12 @@ export default function Page() {
 
   return (
     <AdminPageWrapper>
+      <Play
+        howl={howl}
+        onEnd={() => {
+          setSampleFileId('')
+        }}
+      />
       <Tabs.Root defaultValue="table">
         <Tabs.List>
           <Tabs.Trigger value="table">Table</Tabs.Trigger>
@@ -94,7 +94,7 @@ export default function Page() {
                             })
                         }}
                       >
-                        <Play className="size-4" />
+                        <PlayIcon className="size-4" />
                       </IconButton>
                     </Table.Cell>
                     <Table.Cell className="break-all font-mono">{model.resourceKey}</Table.Cell>

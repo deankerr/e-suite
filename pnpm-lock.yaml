@@ -116,6 +116,9 @@ importers:
       fuzzysort:
         specifier: ^3.0.2
         version: 3.0.2
+      howler:
+        specifier: ^2.2.4
+        version: 2.2.4
       itty-time:
         specifier: ^1.0.6
         version: 1.0.6
@@ -170,9 +173,9 @@ importers:
       react-use:
         specifier: ^17.5.0
         version: 17.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-use-audio-player:
-        specifier: ^2.2.0
-        version: 2.2.0(react@18.3.1)
+      rehowl:
+        specifier: ^1.0.1
+        version: 1.0.1(howler@2.2.4)(react@18.3.1)
       remeda:
         specifier: ^2.2.1
         version: 2.2.1
@@ -252,9 +255,6 @@ importers:
       eslint-config-next:
         specifier: ^14.2.4
         version: 14.2.4(eslint@8.57.0)(typescript@5.5.2)
-      howler:
-        specifier: ^2.2.4
-        version: 2.2.4
       jotai-devtools:
         specifier: ^0.10.0
         version: 0.10.0(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
@@ -276,9 +276,6 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.5
         version: 0.6.5(@ianvs/prettier-plugin-sort-imports@4.3.0(prettier@3.3.2))(prettier@3.3.2)
-      rehowl:
-        specifier: ^1.0.1
-        version: 1.0.1(howler@2.2.4)(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.4
@@ -4715,11 +4712,6 @@ packages:
     peerDependencies:
       react: '*'
       tslib: '*'
-
-  react-use-audio-player@2.2.0:
-    resolution: {integrity: sha512-IMM+WiZAq1KUvTwq0sAdRdjEzyG4jzz1tK/JtC/+LLt3z/uJk3AFRLL3pgbOgS/2SnfVzFKCxR7pnBsu6nUFvg==}
-    peerDependencies:
-      react: '>=16.8'
 
   react-use-measure@2.1.1:
     resolution: {integrity: sha512-nocZhN26cproIiIduswYpV5y5lQpSQS1y/4KuvUCjSKmw7ZWIS/+g3aFnX3WdBkyuGUtTLif3UTqnLLhbDoQig==}
@@ -10605,11 +10597,6 @@ snapshots:
     dependencies:
       react: 18.3.1
       tslib: 2.6.3
-
-  react-use-audio-player@2.2.0(react@18.3.1):
-    dependencies:
-      howler: 2.2.4
-      react: 18.3.1
 
   react-use-measure@2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
