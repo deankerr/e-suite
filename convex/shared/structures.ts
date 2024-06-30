@@ -45,7 +45,9 @@ export const chatCompletionInferenceSchema = z.object({
   endpoint: z.string(),
   endpointModelId: z.string(),
   stream: z.boolean().optional(),
+
   maxHistoryMessages: z.number().optional(),
+  excludeHistoryMessagesByName: z.string().array().optional(),
 
   max_tokens: z.number().optional(),
   stop: z.string().array().optional(),

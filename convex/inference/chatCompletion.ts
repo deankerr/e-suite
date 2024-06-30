@@ -1,3 +1,4 @@
+import { filter } from 'convex-helpers/server/filter'
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
@@ -35,22 +36,26 @@ export const init = internalMutation({
       },
     )
 
-    const messages = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', message.threadId))
+    const rawMessages = await filter(
+      ctx.unsafeDb
+        .query('messages')
+        .withIndex('threadId', (q) => q.eq('threadId', message.threadId)),
+      async (m) => {
+        if (m.deletionTime !== undefined) return false
+        if (m._creationTime > message._creationTime) return false
+        if (!m.content) return false
+        if (m.name && inference.excludeHistoryMessagesByName?.includes(m.name)) return false
+        return true
+      },
+    )
       .order('desc')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('deletionTime'), undefined),
-          q.lt(q.field('_creationTime'), message._creationTime),
-          q.neq(q.field('content'), undefined),
-        ),
-      )
       .take(inference.maxHistoryMessages ?? defaultMaxHistoryMessages)
-      .map((message) => msgSchema.parse(message))
+
+    const messages = rawMessages.map((m) => msgSchema.parse(m))
 
     const thread = await ctx.table('threads').getX(message.threadId)
     if (thread.instructions) {
-      messages.push(msgSchema.parse({ role: 'system', content: thread.instructions }))
+      messages.push({ role: 'system', content: thread.instructions })
     }
 
     return { message, messages: messages.toReversed(), inference }
