@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Code } from '@phosphor-icons/react/dist/ssr'
-import { IconButton } from '@radix-ui/themes'
+import { Button, IconButton } from '@radix-ui/themes'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
@@ -9,6 +9,10 @@ import { ScrollContainer } from '@/components/ui/ScrollContainer'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { Pre } from '@/components/util/Pre'
 import { useViewerDetails } from '@/lib/queries'
+
+const config = {
+  initialHistoryMessages: 25,
+}
 
 export const ChatFeed = () => {
   const { thread, messages, removeMessage } = useChat()
@@ -29,7 +33,7 @@ export const ChatFeed = () => {
   return (
     <ScrollContainer className="flex flex-col px-2">
       <NonSecureAdminRoleOnly>
-        <div className="pointer-events-none sticky top-0 z-20 w-full py-1">
+        <div className="pointer-events-none fixed top-6 z-20 w-full py-1">
           <IconButton
             variant="ghost"
             color="ruby"
@@ -37,10 +41,17 @@ export const ChatFeed = () => {
             onClick={() => setShowJson(!showJson)}
           >
             <Code className="size-5" />
+            {messages?.length}
           </IconButton>
         </div>
       </NonSecureAdminRoleOnly>
+
       {messages === undefined && <LoadingSpinner className="m-auto" />}
+
+      {messages && messages.length >= config.initialHistoryMessages && initialScroll && (
+        <Button>loader 1</Button>
+      )}
+
       {messages?.map((message, i) => (
         <div key={message._id} ref={latestMessageRef}>
           <Message

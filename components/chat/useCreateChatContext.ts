@@ -1,14 +1,25 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMutation } from 'convex/react'
 import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
-import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
-import { useMessages, useThread } from '@/lib/queries'
+import { loadMaxAtom, voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
+import { useMessages, usePaginatedMessages, useThread } from '@/lib/queries'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
+  const loadMax = useAtomValue(loadMaxAtom)
+  // const [messagesQueryLimit, setMessagesQueryLimit] = useState(25)
+
   const thread = useThread({ slug })
-  const messages = useMessages({ threadId: thread?._id })
+  const messageResults = useMessages({
+    threadId: loadMax !== -1 ? thread?._id : undefined,
+    limit: loadMax,
+  })
+
+  const pageResults = usePaginatedMessages({
+    threadId: loadMax === -1 ? thread?._id : undefined,
+  })
+  const messages = loadMax === -1 ? pageResults.results : messageResults
 
   const latestMessageId = useRef('')
   const shouldAutoplayVoiceovers = useAtomValue(voiceoverAutoplayThreadIdAtom) === thread?._id

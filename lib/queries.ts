@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery as useCachedQuery } from 'convex-helpers/react/cache/hooks'
-import { useQuery as useConvexQuery } from 'convex/react'
+import { useQuery as useConvexQuery, usePaginatedQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 import {
@@ -25,15 +25,34 @@ export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | un
   }, [thread])
 }
 
-export const useMessages = ({ threadId = '' }: { threadId?: string }): EMessage[] | undefined => {
-  const messages = useQuery(api.db.messages.list, {
-    threadId,
-    limit: 25,
-  })
+export const useMessages = ({
+  threadId,
+  limit = 25,
+}: {
+  threadId?: string
+  limit?: number
+}): EMessage[] | undefined => {
+  const messages = useQuery(
+    api.db.messages.list,
+    threadId
+      ? {
+          threadId,
+          limit,
+        }
+      : 'skip',
+  )
 
   return useMemo(() => {
     return messages
   }, [messages])
+}
+
+export const usePaginatedMessages = ({ threadId }: { threadId?: string }) => {
+  const result = usePaginatedQuery(api.db.messages.paginate, threadId ? { threadId } : 'skip', {
+    initialNumItems: 200,
+  })
+
+  return result
 }
 
 export const useUserThreadsList = (): EThread[] | undefined => {

@@ -11,3 +11,5 @@ export const showSidebarAtom = atomWithToggleAndStorage('show-sidebar', false)
 
 export const voiceoverQueueAtom = atom<string[]>([])
 export const voiceoverAutoplayThreadIdAtom = atom('')
+
+export const loadMaxAtom = atomWithStorage<number>('load-max', 25)

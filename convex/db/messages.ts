@@ -9,6 +9,7 @@ import {
   metadataKVSchema,
 } from '../shared/structures'
 import { zMessageName, zMessageTextContent, zStringToMessageRole } from '../shared/utils'
+import { emptyPage, zPaginationOptValidator } from '../utils'
 import { getSpeechFile } from './speechFiles'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
@@ -125,6 +126,28 @@ export const list = query({
       .map(async (message) => await getMessageEdges(ctx, message))
 
     return messages.reverse()
+  },
+})
+
+export const paginate = query({
+  args: {
+    threadId: z.string(),
+    order: z.enum(['asc', 'desc']).default('desc'),
+    paginationOpts: zPaginationOptValidator,
+  },
+  handler: async (ctx, args) => {
+    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
+    if (!threadId) return emptyPage()
+
+    const results = await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
+      .order(args.order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(args.paginationOpts)
+      .map(async (message) => await getMessageEdges(ctx, message))
+
+    results.page.reverse()
+    return results
   },
 })
 

@@ -21,24 +21,32 @@ export const MessageInput = () => {
   const handleAppendMessage = async (runInference: boolean) => {
     if (!thread) return
     const prompt = input
-    if (!prompt) return console.warn('prompt is empty')
 
     if (!runInference) {
-      await appendMessage({
-        message: { content: prompt },
-      })
+      if (prompt) {
+        await appendMessage({
+          message: { content: prompt },
+        })
+      }
       return
     }
 
     if (thread.inference.type === 'chat-completion') {
-      await appendMessage({
-        message: { content: prompt },
-        inference: thread.inference,
-      })
+      if (prompt) {
+        await appendMessage({
+          message: { content: prompt },
+          inference: thread.inference,
+        })
+      } else {
+        await appendMessage({
+          inference: thread.inference,
+        })
+      }
+
       setInput('')
     }
 
-    if (thread.inference.type === 'text-to-image') {
+    if (thread.inference.type === 'text-to-image' && prompt) {
       await appendMessage({
         inference: { ...thread.inference, prompt },
       })
