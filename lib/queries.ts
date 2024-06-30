@@ -11,8 +11,8 @@ import {
   EVoiceModel,
 } from '@/convex/shared/types'
 
-const canUseCachedQuery = true
-const useQuery = !canUseCachedQuery ? useConvexQuery : useCachedQuery
+const shouldUseCachedQuery = false
+const useQuery = shouldUseCachedQuery ? useCachedQuery : useConvexQuery
 
 export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | undefined => {
   const thread = useQuery(api.db.threads.get, {
