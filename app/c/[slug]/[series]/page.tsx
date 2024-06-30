@@ -6,6 +6,8 @@ import { useQuery } from 'convex-helpers/react'
 import { Message } from '@/components/message/Message'
 import { api } from '@/convex/_generated/api'
 
+export const dynamic = 'force-dynamic'
+
 export default function Page({ params }: { params: { slug: string; series: string } }) {
   const result = useQuery(api.db.messages.getSeries, {
     slug: params.slug,
