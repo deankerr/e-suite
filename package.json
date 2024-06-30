@@ -55,6 +55,7 @@
     "jotai-suspense": "^0.3.0",
     "ky": "^1.4.0",
     "lucide-react": "^0.399.0",
+    "magic-regexp": "^0.8.0",
     "markdown-to-jsx": "^7.4.7",
     "match-sorter": "^6.3.4",
     "mini-svg-data-uri": "^1.4.4",

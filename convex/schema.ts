@@ -180,6 +180,7 @@ export const threadFields = {
     .object({
       id: z.string(),
       command: z.string(),
+      commandType: z.enum(['startsWith', 'includesWord']),
       inference: inferenceSchema,
     })
     .array(),
