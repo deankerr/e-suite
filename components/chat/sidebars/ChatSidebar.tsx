@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Badge, Tabs } from '@radix-ui/themes'
+import { Badge, Button, Tabs } from '@radix-ui/themes'
 import { ChevronsUpDownIcon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { BasicTextArea } from '@/components/form/BasicTextArea'
 import { SliderWithInput } from '@/components/form/SliderWithInput'
 import { ModelPicker } from '@/components/model-picker/ModelPicker'
+import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { useChatModels, useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -27,12 +28,15 @@ export const ChatSidebar = ({
   const parameters = model ? getModelParams(model) : undefined
 
   const [showModelPicker, setShowModelPicker] = useState(false)
+  const [instructionText, setInstructionText] = useState(thread.instructions)
+  const isInstructionDirty = instructionText !== thread.instructions
 
   return (
     <div className="flex h-full flex-col overflow-hidden p-1">
       <Tabs.Root defaultValue="model">
         <Tabs.List>
           <Tabs.Trigger value="model">Model</Tabs.Trigger>
+          <Tabs.Trigger value="instructions">Instructions</Tabs.Trigger>
           <Tabs.Trigger value="commands">Commands</Tabs.Trigger>
         </Tabs.List>
 
@@ -119,6 +123,37 @@ export const ChatSidebar = ({
               </div>
             </div>
           )}
+        </Tabs.Content>
+
+        <Tabs.Content value="instructions">
+          <div className="space-y-2 p-2">
+            <div className="font-medium">Instructions</div>
+            <TextareaAutosize
+              minRows={4}
+              rows={4}
+              maxRows={10}
+              placeholder="System message..."
+              value={instructionText}
+              onValueChange={setInstructionText}
+            />
+            <div className="gap-2 flex-end">
+              <Button
+                color="gray"
+                disabled={!isInstructionDirty}
+                onClick={() => setInstructionText(thread.instructions)}
+              >
+                Revert
+              </Button>
+              <Button
+                disabled={!isInstructionDirty}
+                onClick={() => {
+                  void updateThread({ instructions: instructionText })
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
         </Tabs.Content>
 
         <Tabs.Content value="commands">
