@@ -70,22 +70,37 @@ export const textToImageInferenceSchema = z.object({
   n: z.number(),
 })
 
+export const soundGenerationInferenceSchema = z.object({
+  type: z.literal('sound-generation'),
+  resourceKey: z.string(),
+  endpoint: z.string(),
+  endpointModelId: z.string(),
+
+  prompt: z.string(),
+  duration_seconds: z.number().optional(),
+  prompt_influence: z.number().optional(),
+  n: z.number().optional(),
+})
+
 export type EInferenceConfig = z.infer<typeof inferenceSchema>
 export const inferenceSchema = z.discriminatedUnion('type', [
   chatCompletionInferenceSchema,
   textToImageInferenceSchema,
+  soundGenerationInferenceSchema,
 ])
 
 export type EFileAttachmentRecord = z.infer<typeof fileAttachmentRecordSchema>
 export const fileAttachmentRecordSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('image'), id: zid('images') }),
   z.object({ type: z.literal('image_url'), url: z.string() }),
+  z.object({ type: z.literal('sound_effect'), url: z.string(), fileId: z.string() }),
 ])
 
 export type EFileAttachmentRecordWithContent = z.infer<typeof fileAttachmentRecordWithContentSchema>
 export const fileAttachmentRecordWithContentSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('image'), id: zid('images'), image: imageSchema }),
   z.object({ type: z.literal('image_url'), url: z.string() }),
+  z.object({ type: z.literal('sound_effect'), url: z.string(), fileId: z.string() }),
 ])
 
 export type EMessageRole = keyof typeof messageRole

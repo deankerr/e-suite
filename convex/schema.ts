@@ -158,6 +158,13 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .index('threadId_series', ['threadId', 'series'])
   .index('speechId', ['voiceover.speechFileId'])
 
+export const soundEffectFileFields = {
+  text: z.string(),
+  fileId: zid('_storage').optional(),
+  fileUrl: z.string().optional(),
+}
+const sound_effect_files = defineEnt(zodToConvexFields(soundEffectFileFields))
+
 export const speechFileFields = {
   textHash: z.string(),
   resourceKey: z.string(),
@@ -243,6 +250,7 @@ const schema = defineEntSchema(
     image_models,
 
     messages,
+    sound_effect_files,
     speech_files,
     threads,
     users,

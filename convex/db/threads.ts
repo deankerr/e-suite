@@ -6,7 +6,7 @@ import { createJob } from '../jobs'
 import { threadFields } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
 import { EInferenceConfig, inferenceSchema } from '../shared/structures'
-import { createError, zMessageName, zMessageTextContent } from '../shared/utils'
+import { createError, insist, zMessageName, zMessageTextContent } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
@@ -48,7 +48,9 @@ export const getThreadExtras = async (ctx: QueryCtx, thread: Ent<'threads'>) => 
   const model =
     thread.inference.type === 'chat-completion'
       ? await getChatModelByResourceKey(ctx, thread.inference.resourceKey)
-      : await getImageModelByResourceKey(ctx, thread.inference.resourceKey)
+      : thread.inference.type === 'text-to-image'
+        ? await getImageModelByResourceKey(ctx, thread.inference.resourceKey)
+        : null
   return { ...thread, model }
 }
 
@@ -140,7 +142,15 @@ export const append = mutation({
       .get()
 
     const jobName =
-      inference.type === 'chat-completion' ? 'inference/chat-completion' : 'inference/text-to-image'
+      inference.type === 'chat-completion'
+        ? 'inference/chat-completion'
+        : inference.type === 'text-to-image'
+          ? 'inference/text-to-image'
+          : inference.type === 'sound-generation'
+            ? 'inference/sound-generation'
+            : null
+
+    insist(jobName, 'invalid inference job')
 
     const jobId = await createJob(ctx, jobName, {
       messageId: asstMessage._id,

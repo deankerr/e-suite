@@ -49,6 +49,13 @@ export const jobDefinitions = {
     }),
   },
 
+  'inference/sound-generation': {
+    handler: 'inference/soundGeneration:run',
+    required: z.object({
+      messageId: zid('messages'),
+    }),
+  },
+
   'inference/thread-title-completion': {
     handler: 'inference/threadTitleCompletion:run',
     required: z.object({

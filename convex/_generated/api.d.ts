@@ -35,6 +35,7 @@ import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as images from "../images.js";
 import type * as inference_chatCompletion from "../inference/chatCompletion.js";
+import type * as inference_soundGeneration from "../inference/soundGeneration.js";
 import type * as inference_textToImage from "../inference/textToImage.js";
 import type * as inference_textToSpeech from "../inference/textToSpeech.js";
 import type * as inference_threadTitleCompletion from "../inference/threadTitleCompletion.js";
@@ -93,6 +94,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   images: typeof images;
   "inference/chatCompletion": typeof inference_chatCompletion;
+  "inference/soundGeneration": typeof inference_soundGeneration;
   "inference/textToImage": typeof inference_textToImage;
   "inference/textToSpeech": typeof inference_textToSpeech;
   "inference/threadTitleCompletion": typeof inference_threadTitleCompletion;

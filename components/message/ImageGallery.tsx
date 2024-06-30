@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
+import { Pre } from '@/components/util/Pre'
 import { Id } from '@/convex/_generated/dataModel'
 import { EMessage } from '@/convex/shared/types'
 import { cn } from '@/lib/utils'
@@ -18,8 +19,10 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
   const [slideIndex, setSlideIndex] = useState(0)
 
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
-  const files = message.files
-  if (!(textToImage || files)) return null
+  const files = message.files?.filter((file) => file.type !== 'sound_effect')
+  const imageFiles =
+    message.files?.filter((file) => file.type === 'image' || file.type === 'image_url') ?? []
+  if (!(textToImage || imageFiles.length)) return null
 
   const width = textToImage?.width ?? 1024
   const height = textToImage?.height ?? 1024
@@ -55,6 +58,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           files?.length !== 0 ? 'grid grid-cols-2 gap-2' : '',
         )}
       >
+        <Pre json={JSON.stringify(imageFrames, null, 2)} />
         {imageFrames.map((frame, i) =>
           !showLoader && frame.type === 'image' ? (
             <ImageCard

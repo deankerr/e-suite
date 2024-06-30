@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { PaperPlaneRight } from '@phosphor-icons/react/dist/ssr'
-import { Button } from '@radix-ui/themes'
+import * as Icons from '@phosphor-icons/react/dist/ssr'
+import { Button, IconButton } from '@radix-ui/themes'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
@@ -107,6 +107,24 @@ export const MessageInput = () => {
         </div>
 
         <div className="shrink-0 gap-3 flex-end">
+          <IconButton
+            color="gray"
+            onClick={() => {
+              if (!input) return
+              void appendMessage({
+                inference: {
+                  type: 'sound-generation',
+                  resourceKey: 'elevenlabs::sound-generation',
+                  endpoint: 'elevenlabs',
+                  endpointModelId: 'sound-generation',
+                  prompt: input,
+                },
+              })
+            }}
+          >
+            <Icons.CassetteTape className="size-5" />
+          </IconButton>
+
           {thread.inference.type === 'chat-completion' && (
             <Button color="gray" onClick={() => void handleAppendMessage(false)}>
               Add
@@ -114,7 +132,7 @@ export const MessageInput = () => {
           )}
           <Button onClick={() => void handleAppendMessage(true)}>
             Send
-            <PaperPlaneRight className="size-5" />
+            <Icons.PaperPlaneRight className="size-5" />
           </Button>
         </div>
       </div>

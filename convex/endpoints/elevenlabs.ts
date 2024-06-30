@@ -104,3 +104,31 @@ const customVoices = [
     gender: 'Female',
   },
 ]
+
+export const soundGeneration = async (ctx: ActionCtx, { text }: { text: string }) => {
+  try {
+    const apiKey = getElevenlabsApiKey()
+    const blob = await ky
+      .post(`https://api.elevenlabs.io/v1/sound-generation`, {
+        headers: {
+          'xi-api-key': apiKey,
+        },
+        json: {
+          text,
+        },
+        timeout: 2 * 60 * 1000,
+      })
+      .blob()
+
+    const fileId = await ctx.storage.store(blob)
+    return fileId
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(err.message)
+      console.log(err.stack, err.cause, err.name)
+    }
+
+    console.error(err)
+    throw err
+  }
+}

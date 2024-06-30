@@ -47,6 +47,8 @@ export const Message = ({
   const timeString = formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })
   const role = textToImage ? 'images' : message.role
   const name = textToImage ? textToImage.endpointModelId : message?.name ?? message.role
+
+  const soundEffects = message.files?.filter((file) => file.type === 'sound_effect')
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}
@@ -137,6 +139,8 @@ export const Message = ({
         )}
 
         {editing && <Editor message={message} onClose={() => setEditing(false)} />}
+
+        {soundEffects && <div>{soundEffects.map((sfx) => sfx.url)}</div>}
 
         {showChatLoader && (
           <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
