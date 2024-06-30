@@ -4,6 +4,7 @@ import { ChatFeed } from '@/components/chat/ChatFeed'
 import { ChatHeader } from '@/components/chat/ChatHeader'
 import { ChatProvider } from '@/components/chat/ChatProvider'
 import { Sidebar } from '@/components/chat/sidebars/Sidebar'
+import { MessageFeed } from '@/components/message-feed/MessageFeed'
 import { MessageInput } from '@/components/message-input/MessageInput'
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
@@ -22,7 +23,8 @@ const Component = () => {
       <ChatHeader />
       <div className="flex h-full overflow-hidden">
         <div className="flex h-full w-full flex-col overflow-hidden">
-          <ChatFeed />
+          {/* <ChatFeed /> */}
+          <MessageFeed />
           <MessageInput />
         </div>
         <Sidebar />

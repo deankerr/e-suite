@@ -21,12 +21,14 @@ const showTokenInfo = false
 
 export const Message = ({
   message,
+  idx,
   timeline = true,
   slug,
   showMenu = true,
   removeMessage,
 }: {
   message: EMessage
+  idx?: number
   timeline?: boolean
   slug?: string
   showMenu?: boolean
@@ -63,6 +65,8 @@ export const Message = ({
 
           <div className="space-x-2">
             <span className="font-medium text-gray-11">{name}</span>
+            <span className="font-mono font-medium text-iris-10">{message.series}</span>
+            <span className="font-mono font-medium text-bronze-10">{idx}</span>
             {slug ? (
               <Link
                 href={`/c/${slug}/${message.series}`}

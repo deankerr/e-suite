@@ -1,11 +1,11 @@
-import { ArrowDownLeft, ArrowUpRight, Chats, Images, Sidebar } from '@phosphor-icons/react/dist/ssr'
+import { Chats, Images, Sidebar } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
-import { useAtom, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
 import { VoiceoverAutoplayButton } from '@/components/voiceovers/VoiceoverAutoplayButton'
-import { loadMaxAtom, showSidebarAtom } from '@/lib/atoms'
+import { showSidebarAtom } from '@/lib/atoms'
 import { useViewerDetails } from '@/lib/queries'
 
 export const ChatHeader = () => {
@@ -13,7 +13,6 @@ export const ChatHeader = () => {
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const toggleSidebar = useSetAtom(showSidebarAtom)
-  const [loadMax, setLoadMax] = useAtom(loadMaxAtom)
 
   const Icon = thread?.inference.type === 'text-to-image' ? Images : Chats
   return (
@@ -46,17 +45,7 @@ export const ChatHeader = () => {
             </IconButton>
           </>
         )}
-        <IconButton
-          variant="ghost"
-          color={loadMax === -1 ? 'pink' : 'gray'}
-          onClick={() => setLoadMax((l) => (l === 25 ? 200 : l === 200 ? -1 : 25))}
-        >
-          {loadMax === 25 ? (
-            <ArrowUpRight className="size-6" />
-          ) : (
-            <ArrowDownLeft className="size-6" />
-          )}
-        </IconButton>
+
         {/* {closeChat && (
           <IconButton variant="ghost" color="gray" onClick={closeChat}>
             <X className="size-6" />

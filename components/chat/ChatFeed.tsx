@@ -4,6 +4,7 @@ import { Button, IconButton } from '@radix-ui/themes'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { Message } from '@/components/message/Message'
+import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { ScrollContainer } from '@/components/ui/ScrollContainer'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
@@ -15,7 +16,7 @@ const config = {
 }
 
 export const ChatFeed = () => {
-  const { thread, messages, removeMessage } = useChat()
+  const { thread, messages, page, removeMessage } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const latestMessageRef = useRef<HTMLDivElement>(null)
@@ -28,6 +29,8 @@ export const ChatFeed = () => {
   }, [initialScroll, messages])
 
   const [showJson, setShowJson] = useState(false)
+
+  const [canLoadMore, setCanLoadMore] = useState(true)
 
   if (messages === null) return <div>Error</div>
   return (
@@ -49,7 +52,17 @@ export const ChatFeed = () => {
       {messages === undefined && <LoadingSpinner className="m-auto" />}
 
       {messages && messages.length >= config.initialHistoryMessages && initialScroll && (
-        <Button>loader 1</Button>
+        <InfiniteScroll
+          hasMore={page.status !== 'Exhausted' && canLoadMore}
+          isLoading={page.isLoading}
+          next={() => {
+            console.log('load more', page.isLoading, page.status)
+            page.loadMore(25)
+            setCanLoadMore(false)
+          }}
+        >
+          <Button onClick={() => page.loadMore(25)}>{page.status}</Button>
+        </InfiniteScroll>
       )}
 
       {messages?.map((message, i) => (

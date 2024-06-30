@@ -139,6 +139,8 @@ export const paginate = query({
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
     if (!threadId) return emptyPage()
 
+    // console.log(args.paginationOpts)
+
     const results = await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
       .order(args.order)
@@ -146,7 +148,6 @@ export const paginate = query({
       .paginate(args.paginationOpts)
       .map(async (message) => await getMessageEdges(ctx, message))
 
-    results.page.reverse()
     return results
   },
 })
