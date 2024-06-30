@@ -40,10 +40,6 @@ export const getOrCreateThread = async (
       updatedAtTime: Date.now(),
       inference: args.uiConfig ?? defaultChatInferenceConfig,
       slashCommands: [],
-      config: {
-        ui: args.uiConfig ?? defaultChatInferenceConfig,
-        saved: [],
-      },
     })
     .get()
 }

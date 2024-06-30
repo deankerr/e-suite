@@ -196,20 +196,6 @@ export const threadFields = {
     })
     .optional(),
 
-  // TODO remove after prod migration
-  config: z
-    .object({
-      ui: inferenceSchema,
-      saved: z
-        .object({
-          inference: inferenceSchema,
-          name: zMessageName,
-          command: zMessageName.optional(),
-        })
-        .array(),
-    })
-    .optional(),
-
   updatedAtTime: z.number(),
   metadata: metadataKVSchema.array().optional(),
 }

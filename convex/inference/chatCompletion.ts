@@ -7,7 +7,7 @@ import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs
 import { createOpenAiClient } from '../lib/openai'
 import { hasDelimiter, insist } from '../shared/utils'
 
-const temp_config_messageHistory = 20
+const defaultMaxHistoryMessages = 20
 
 const msgSchema = z.object({
   role: z.enum(['system', 'assistant', 'user']),
@@ -45,7 +45,7 @@ export const init = internalMutation({
           q.neq(q.field('content'), undefined),
         ),
       )
-      .take(temp_config_messageHistory)
+      .take(inference.maxHistoryMessages ?? defaultMaxHistoryMessages)
       .map((message) => msgSchema.parse(message))
 
     const thread = await ctx.table('threads').getX(message.threadId)
@@ -67,7 +67,7 @@ export const run = internalAction({
         jobId: args.jobId,
       })
       const { message, messages, inference } = input
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       const { type, endpoint, endpointModelId, resourceKey, ...parameters } = inference
       const api = createOpenAiClient(endpoint)
 
