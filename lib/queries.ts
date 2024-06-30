@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useQuery as useCachedQuery } from 'convex-helpers/react/cache/hooks'
 import { useQuery as useConvexQuery, usePaginatedQuery } from 'convex/react'
 
@@ -11,18 +10,16 @@ import {
   EUser,
   EVoiceModel,
 } from '@/convex/shared/types'
-import { environment } from '@/lib/utils'
 
-const useQuery = environment === 'dev' ? useConvexQuery : useCachedQuery
+const canUseCachedQuery = true
+const useQuery = !canUseCachedQuery ? useConvexQuery : useCachedQuery
 
 export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | undefined => {
   const thread = useQuery(api.db.threads.get, {
     slugOrId: slug,
   })
 
-  return useMemo(() => {
-    return thread
-  }, [thread])
+  return thread
 }
 
 export const useMessages = ({
@@ -42,9 +39,7 @@ export const useMessages = ({
       : 'skip',
   )
 
-  return useMemo(() => {
-    return messages
-  }, [messages])
+  return messages
 }
 
 export const usePaginatedMessages = ({ threadId }: { threadId?: string }) => {
