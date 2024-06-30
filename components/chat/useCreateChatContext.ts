@@ -12,7 +12,7 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const page = usePaginatedMessages({
     threadId: thread?._id,
   })
-  const messages = page.results.toReversed()
+  const messages = page.results
 
   const latestMessageId = useRef('')
   const shouldAutoplayVoiceovers = useAtomValue(voiceoverAutoplayThreadIdAtom) === thread?._id

@@ -30,7 +30,6 @@ export const Virtualized = () => {
         <Message
           key={message._id}
           timeline={index !== messages.length - 1}
-          idx={index}
           message={message}
           slug={thread?.slug}
           showMenu={isOwner}

@@ -1,6 +1,5 @@
 import { Card, Inset } from '@radix-ui/themes'
 
-import { ChatFeed } from '@/components/chat/ChatFeed'
 import { ChatHeader } from '@/components/chat/ChatHeader'
 import { ChatProvider } from '@/components/chat/ChatProvider'
 import { Sidebar } from '@/components/chat/sidebars/Sidebar'
@@ -23,7 +22,6 @@ const Component = () => {
       <ChatHeader />
       <div className="flex h-full overflow-hidden">
         <div className="flex h-full w-full flex-col overflow-hidden">
-          {/* <ChatFeed /> */}
           <MessageFeed />
           <MessageInput />
         </div>

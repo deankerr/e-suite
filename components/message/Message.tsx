@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { DotsThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow, FormatDistanceToNowOptions } from 'date-fns'
 import Link from 'next/link'
 
 import { Avatar } from '@/components/message/Avatar'
@@ -21,14 +21,14 @@ const showTokenInfo = false
 
 export const Message = ({
   message,
-  idx,
+
   timeline = true,
   slug,
   showMenu = true,
   removeMessage,
 }: {
   message: EMessage
-  idx?: number
+
   timeline?: boolean
   slug?: string
   showMenu?: boolean
@@ -65,8 +65,6 @@ export const Message = ({
 
           <div className="space-x-2">
             <span className="font-medium text-gray-11">{name}</span>
-            <span className="font-mono font-medium text-iris-10">{message.series}</span>
-            <span className="font-mono font-medium text-bronze-10">{idx}</span>
             {slug ? (
               <Link
                 href={`/c/${slug}/${message.series}`}
