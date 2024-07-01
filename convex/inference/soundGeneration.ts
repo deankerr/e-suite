@@ -18,9 +18,10 @@ export const init = internalMutation({
     insist(messageId, 'no messageId', { code: 'invalid_job_input' })
 
     const message = await ctx.table('messages').getX(messageId)
+
     const inference = message?.inference
     insist(
-      inference && inference.type === 'sound-generation',
+      inference && inference.type === 'sound-generation' && inference.prompt,
       'sound-generation message lacks parameters',
       {
         code: 'invalid_job_input',

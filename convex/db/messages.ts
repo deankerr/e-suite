@@ -3,12 +3,7 @@ import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
-import {
-  EImage,
-  fileAttachmentRecordWithContentSchema,
-  messageRolesEnum,
-  metadataKVSchema,
-} from '../shared/structures'
+import { EImage, messageRolesEnum, metadataKVSchema } from '../shared/structures'
 import { zMessageName, zMessageTextContent, zStringToMessageRole } from '../shared/utils'
 import { emptyPage, zPaginationOptValidator } from '../utils'
 import { getSpeechFile } from './speechFiles'
@@ -85,7 +80,7 @@ export const getMessageCommand = (thread: Ent<'threads'>, text?: string) => {
   const command = config.command ?? ''
   const textWithoutCommand = text.slice(command.length).trim()
 
-  if (config.inference.type === 'text-to-image') {
+  if ('prompt' in config.inference) {
     config.inference.prompt = textWithoutCommand
   }
 

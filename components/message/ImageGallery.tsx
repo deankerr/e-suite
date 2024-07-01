@@ -55,7 +55,6 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           files?.length !== 0 ? 'grid grid-cols-2 gap-2' : '',
         )}
       >
-        <Pre json={JSON.stringify(imageFrames, null, 2)} />
         {imageFrames.map((frame, i) =>
           !showLoader && frame.type === 'image' ? (
             <ImageCard
