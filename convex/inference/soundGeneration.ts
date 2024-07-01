@@ -73,7 +73,7 @@ export const complete = internalMutation({
   handler: async (ctx, args) => {
     const { jobId, messageId, fileId, fileUrl, prompt } = args
 
-    await ctx.table('sound_effect_files').insert({
+    const id = await ctx.table('sound_effect_files').insert({
       fileId,
       fileUrl,
       text: prompt,
@@ -81,7 +81,7 @@ export const complete = internalMutation({
 
     const message = await ctx.skipRules.table('messages').getX(messageId)
     await message.patch({
-      files: [...(message?.files || []), { type: 'sound_effect', fileId, url: fileUrl }],
+      files: [...(message?.files || []), { type: 'sound_effect', id }],
     })
 
     await jobResultSuccess(ctx, { jobId })

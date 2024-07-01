@@ -160,8 +160,8 @@ const messages = defineEnt(zodToConvexFields(messageFields))
 
 export const soundEffectFileFields = {
   text: z.string(),
-  fileId: zid('_storage').optional(),
-  fileUrl: z.string().optional(),
+  fileId: zid('_storage'),
+  fileUrl: z.string(),
 }
 const sound_effect_files = defineEnt(zodToConvexFields(soundEffectFileFields))
 

@@ -1,4 +1,4 @@
-import { ImageSquare, Question, Robot, User } from '@phosphor-icons/react/dist/ssr'
+import { CassetteTape, ImageSquare, Question, Robot, User } from '@phosphor-icons/react/dist/ssr'
 import { Avatar as AvatarRadix } from '@radix-ui/themes'
 
 import { AccentColors } from '@/lib/types'
@@ -9,6 +9,7 @@ const fallbackIcons: Record<string, Icon> = {
   user: User,
   assistant: Robot,
   images: ImageSquare,
+  sounds: CassetteTape,
 }
 
 const fallbackIcon = Question
@@ -17,6 +18,7 @@ const colors: Record<string, AccentColors> = {
   user: 'mint',
   assistant: 'orange',
   images: 'orange',
+  sounds: 'orange',
 }
 
 export const Avatar = ({

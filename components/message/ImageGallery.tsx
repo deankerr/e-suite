@@ -39,16 +39,13 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
 
   const hasJobErrors = message.jobs.some((job) => job.status === 'failed')
 
-  const slides = files
-    ?.filter(
-      (file): file is { type: 'image'; image: EImage; id: Id<'images'> } => file.type === 'image',
-    )
-    .map((file) => ({
-      src: `/i/${file.image._id}.webp`,
-      width: file.image.width,
-      height: file.image.height,
-      blurDataURL: file.image.blurDataUrl,
-    }))
+  const definitelyImageFiles = imageFiles.filter((file) => file.type === 'image')
+  const slides = definitelyImageFiles.map((file) => ({
+    src: `/i/${file?.image?._id}.webp`,
+    width: file?.image?.width ?? 1024,
+    height: file?.image?.height ?? 1024,
+    blurDataURL: file?.image?.blurDataUrl ?? '',
+  }))
 
   return (
     <div className="w-fit max-w-full rounded-lg">

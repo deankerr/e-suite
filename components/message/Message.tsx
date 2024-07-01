@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { DotsThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
-import { formatDistanceToNow, FormatDistanceToNowOptions } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 
+import AudioPlayer from '@/components/audio/AudioPlayer'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
@@ -40,15 +41,23 @@ export const Message = ({
   // const { removeVoiceover } = useChat()
 
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
+  const soundGeneration = message.inference?.type === 'sound-generation' ? message.inference : null
 
   const showChatLoader =
     hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
 
   const timeString = formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })
-  const role = textToImage ? 'images' : message.role
-  const name = textToImage ? textToImage.endpointModelId : message?.name ?? message.role
+  const role = textToImage ? 'images' : soundGeneration ? 'sounds' : message.role
+  const name = textToImage
+    ? textToImage.endpointModelId
+    : soundGeneration
+      ? 'elevenlabs/sound-generation'
+      : message?.name ?? message.role
 
-  const soundEffects = message.files?.filter((file) => file.type === 'sound_effect')
+  const soundEffects = message.files?.filter((file) => file.type === 'sound_effect') ?? []
+  const showSoundEffectLoader =
+    hasActiveJobName(message.jobs, 'inference/sound-generation') && !soundEffects.length
+
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}
@@ -140,9 +149,21 @@ export const Message = ({
 
         {editing && <Editor message={message} onClose={() => setEditing(false)} />}
 
-        {soundEffects && <div>{soundEffects.map((sfx) => sfx.url)}</div>}
+        {soundEffects.length > 0 && (
+          <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
+            {soundEffects.map((sfx) =>
+              sfx.soundEffect ? (
+                <AudioPlayer
+                  key={sfx.id}
+                  url={sfx.soundEffect.fileUrl}
+                  titleText={sfx.soundEffect.text}
+                />
+              ) : null,
+            )}
+          </div>
+        )}
 
-        {showChatLoader && (
+        {(showChatLoader || showSoundEffectLoader) && (
           <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
             <LoadingSpinner variant="ping" className="mx-1 -mb-0.5 mt-0.5 w-5" />
           </div>

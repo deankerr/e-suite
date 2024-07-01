@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
 import {
+  EImage,
   fileAttachmentRecordWithContentSchema,
   messageRolesEnum,
   metadataKVSchema,
@@ -32,14 +33,21 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['
     if (file.type === 'image') {
       return {
         ...file,
-        image: await ctx.table('images').get(file.id),
+        image: (await ctx.table('images').getX(file.id)) as EImage, // TODO refactor
+      }
+    }
+
+    if (file.type === 'sound_effect') {
+      return {
+        ...file,
+        soundEffect: await ctx.table('sound_effect_files').getX(file.id),
       }
     }
 
     return file
   })
-  // ? replace
-  return fileAttachmentRecordWithContentSchema.array().parse(filesWithContent)
+
+  return filesWithContent
 }
 
 export const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {

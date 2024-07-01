@@ -14,6 +14,12 @@ export const imageFileSchema = z.object({
   imageId: zid('images'),
 })
 
+export const soundEffectFileSchema = z.object({
+  fileId: zid('_storage'),
+  fileUrl: z.string(),
+  text: z.string(),
+})
+
 export const userSchema = z.object({
   _id: zid('users'),
   _creationTime: z.number(),
@@ -93,14 +99,14 @@ export type EFileAttachmentRecord = z.infer<typeof fileAttachmentRecordSchema>
 export const fileAttachmentRecordSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('image'), id: zid('images') }),
   z.object({ type: z.literal('image_url'), url: z.string() }),
-  z.object({ type: z.literal('sound_effect'), url: z.string(), fileId: z.string() }),
+  z.object({ type: z.literal('sound_effect'), id: zid('sound_effect_files') }),
 ])
 
 export type EFileAttachmentRecordWithContent = z.infer<typeof fileAttachmentRecordWithContentSchema>
 export const fileAttachmentRecordWithContentSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('image'), id: zid('images'), image: imageSchema }),
   z.object({ type: z.literal('image_url'), url: z.string() }),
-  z.object({ type: z.literal('sound_effect'), url: z.string(), fileId: z.string() }),
+  z.object({ type: z.literal('sound_effect'), soundEffect: soundEffectFileSchema }),
 ])
 
 export type EMessageRole = keyof typeof messageRole
