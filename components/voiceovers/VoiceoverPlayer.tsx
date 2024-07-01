@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
@@ -38,9 +38,9 @@ export const VoiceoverPlayer = ({
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
   const shouldAutoplay = voiceoverQueue[0] === message._id
 
-  const removeFromQueue = () => {
+  const removeFromQueue = useCallback(() => {
     setVoiceoverQueue((prev) => prev.filter((id) => id !== message._id))
-  }
+  }, [message._id, setVoiceoverQueue])
 
   useEffect(() => {
     setShouldPlay(shouldAutoplay)
@@ -51,6 +51,12 @@ export const VoiceoverPlayer = ({
       generateVoiceover({ messageId: message._id }).catch((err) => console.error(err))
     }
   }, [generateVoiceover, message._id, shouldPlay, voiceover])
+
+  useEffect(() => {
+    if (shouldAutoplay && !isAvailable) {
+      removeFromQueue()
+    }
+  }, [isAvailable, message._id, removeFromQueue, shouldAutoplay])
 
   return (
     <>
@@ -75,11 +81,7 @@ export const VoiceoverPlayer = ({
         <IconButton variant="ghost" size="1" color="red" {...props}>
           <Icons.FileX className="size-5" />
         </IconButton>
-      ) : (
-        <IconButton variant="ghost" size="1" disabled {...props}>
-          <Icons.SpeakerSlash className="size-5" />
-        </IconButton>
-      )}
+      ) : null}
     </>
   )
 }
