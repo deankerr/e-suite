@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#111110',
+  themeColor: '#17120E',
   colorScheme: 'dark',
 }
 
@@ -43,6 +43,17 @@ const ibmPlexMono = IBM_Plex_Mono({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={cn(inter.variable, ibmPlexMono.variable)}>
+      <head>
+        {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
+          // eslint-disable-next-line @next/next/no-sync-scripts
+          <script
+            data-project-id="nbXksKI7xQWFFu6T8ARpgvCnWU91V2zWxIWYOqaZ"
+            data-is-production-environment="false"
+            src="https://snippet.meticulous.ai/v1/meticulous.js"
+          />
+        )}
+      </head>
+
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
