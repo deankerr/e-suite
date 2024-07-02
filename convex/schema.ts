@@ -1,56 +1,49 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
-import { brandedString, deprecated, literals, partial } from 'convex-helpers/validators'
+import { literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
-import { z } from 'zod'
-
-import {
-  fileAttachmentRecordSchema,
-  inferenceSchema,
-  messageRolesEnum,
-  metadataKVSchema,
-} from './shared/structures'
-import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
 const timeToDelete = ms('1 day')
 
 // * Inference Config Shared Schema
 const inferenceSchemaV = v.union(
   v.object({
+    type: v.literal('chat-completion'),
+    resourceKey: v.string(),
     endpoint: v.string(),
     endpointModelId: v.string(),
     excludeHistoryMessagesByName: v.optional(v.array(v.string())),
-    maxHistoryMessages: v.optional(v.float64()),
-    max_tokens: v.optional(v.float64()),
-    repetition_penalty: v.optional(v.float64()),
-    resourceKey: v.string(),
-    stop: v.optional(v.array(v.string())),
+    maxHistoryMessages: v.optional(v.number()),
+
     stream: v.optional(v.boolean()),
-    temperature: v.optional(v.float64()),
-    top_k: v.optional(v.float64()),
-    top_p: v.optional(v.float64()),
-    type: v.literal('chat-completion'),
+    temperature: v.optional(v.number()),
+    max_tokens: v.optional(v.number()),
+    top_p: v.optional(v.number()),
+    top_k: v.optional(v.number()),
+    stop: v.optional(v.array(v.string())),
+    repetition_penalty: v.optional(v.number()),
   }),
   v.object({
-    endpoint: v.string(),
-    endpointModelId: v.string(),
-    height: v.float64(),
-    n: v.float64(),
-    prompt: v.string(),
-    resourceKey: v.string(),
     type: v.literal('text-to-image'),
-    width: v.float64(),
-  }),
-  v.object({
-    duration_seconds: v.optional(v.float64()),
+    resourceKey: v.string(),
     endpoint: v.string(),
     endpointModelId: v.string(),
-    n: v.optional(v.float64()),
+
     prompt: v.string(),
-    prompt_influence: v.optional(v.float64()),
-    resourceKey: v.string(),
+    width: v.number(),
+    height: v.number(),
+    n: v.number(),
+  }),
+  v.object({
     type: v.literal('sound-generation'),
+    resourceKey: v.string(),
+    endpoint: v.string(),
+    endpointModelId: v.string(),
+
+    prompt: v.string(),
+    duration_seconds: v.optional(v.number()),
+    prompt_influence: v.optional(v.number()),
+    n: v.optional(v.number()),
   }),
 )
 
@@ -183,7 +176,7 @@ const jobs = defineEnt(jobFields)
   .index('imageId', ['imageId'])
 
 export const messageFields = {
-  role: v.union(v.literal('system'), v.literal('assistant'), v.literal('user')),
+  role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
   content: v.optional(v.string()),
 
@@ -231,36 +224,38 @@ const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
 ])
 
 export const threadFields = {
-  title: zThreadTitle.optional(),
-  instructions: zMessageTextContent.optional(),
-  inference: inferenceSchema,
-  slashCommands: z
-    .object({
-      id: z.string(),
-      command: z.string(),
-      commandType: z.enum(['startsWith', 'includesWord']),
-      inference: inferenceSchema,
-    })
-    .array(),
-  voiceovers: z
-    .object({
-      default: z.string(),
-      names: z
-        .object({
-          name: z.string(),
-          resourceKey: z.string(),
-        })
-        .array()
-        .optional(),
-    })
-    .optional(),
+  title: v.optional(v.string()),
+  instructions: v.optional(v.string()),
+  inference: inferenceSchemaV,
+  slashCommands: v.array(
+    v.object({
+      command: v.string(),
+      commandType: v.union(v.literal('startsWith'), v.literal('includesWord')),
+      id: v.string(),
+      inference: inferenceSchemaV,
+    }),
+  ),
 
-  updatedAtTime: z.number(),
-  metadata: metadataKVSchema.array().optional(),
+  voiceovers: v.optional(
+    v.object({
+      default: v.string(),
+      names: v.optional(
+        v.array(
+          v.object({
+            name: v.string(),
+            resourceKey: v.string(),
+          }),
+        ),
+      ),
+    }),
+  ),
+
+  updatedAtTime: v.number(),
+  metadata: v.optional(v.array(v.object({ key: v.string(), value: v.string() }))),
 }
-const threads = defineEnt(zodToConvexFields(threadFields))
+const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('slug', zodToConvex(z.string()), { unique: true })
+  .field('slug', v.string(), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edge('user')
 
