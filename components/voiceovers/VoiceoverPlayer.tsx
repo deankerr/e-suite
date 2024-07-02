@@ -63,13 +63,20 @@ export const VoiceoverPlayer = ({
       {shouldPlay && src ? (
         <AudioButton src={src} initialPlaying={shouldPlay} onEnd={removeFromQueue} {...props} />
       ) : isGenerating ? (
-        <IconButton variant="ghost" size="1" onClick={() => setShouldPlay(!shouldPlay)} {...props}>
+        <IconButton
+          variant="ghost"
+          size="1"
+          color="gray"
+          onClick={() => setShouldPlay(!shouldPlay)}
+          {...props}
+        >
           <Icons.CircleNotch className="size-5 animate-spin" />
         </IconButton>
       ) : isAvailable ? (
         <IconButton
           variant="ghost"
           size="1"
+          color="gray"
           onClick={() => {
             setShouldPlay(true)
           }}

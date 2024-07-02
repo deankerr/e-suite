@@ -19,17 +19,20 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const setVoiceoverQueue = useSetAtom(voiceoverQueueAtom)
 
   useEffect(() => {
-    const newLatestMessage = messages?.at(-1)
+    const newLatestMessage = messages?.at(0)
     if (!latestMessageId.current) {
       latestMessageId.current = newLatestMessage?._id ?? ''
     }
     if (!messages || !newLatestMessage) return
-    // find the latestMessageId in current messages, then all messages after that are new messages
-    const newMessages = messages.slice(
-      messages.findIndex((message) => message._id === latestMessageId.current) + 1,
-    )
+
+    const newMessages = messages
+      .slice(
+        0,
+        messages.findIndex((message) => message._id === latestMessageId.current),
+      )
+      .reverse()
+
     if (shouldAutoplayVoiceovers) {
-      // add to queue if not already in it
       setVoiceoverQueue((prev) => [
         ...prev,
         ...newMessages.map(({ _id }) => _id).filter((id) => !prev.includes(id)),

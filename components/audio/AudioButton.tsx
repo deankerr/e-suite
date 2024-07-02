@@ -64,7 +64,7 @@ const AudioButton = ({
       <IconButton
         variant="ghost"
         size="1"
-        color={howlState === 'loaded' ? 'green' : 'gray'}
+        color="gray"
         onClick={() => {
           play()
         }}
