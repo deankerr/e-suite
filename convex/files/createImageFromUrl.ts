@@ -1,16 +1,13 @@
-import { zid } from 'convex-helpers/server/zod'
 import { v } from 'convex/values'
-import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { acquireJob, handleJobError, jobResultSuccess } from '../jobs'
-import { fileAttachmentRecordSchema } from '../shared/structures'
 import { insist } from '../shared/utils'
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -60,10 +57,13 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs'),
-    messageId: zid('messages'),
-    url: z.string(),
-    file: fileAttachmentRecordSchema,
+    jobId: v.id('jobs'),
+    messageId: v.id('messages'),
+    url: v.string(),
+    file: v.object({
+      id: v.id('images'),
+      type: v.literal('image'),
+    }),
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

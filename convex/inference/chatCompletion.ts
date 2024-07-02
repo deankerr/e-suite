@@ -1,5 +1,4 @@
 import { filter } from 'convex-helpers/server/filter'
-import { zid } from 'convex-helpers/server/zod'
 import { v } from 'convex/values'
 import { z } from 'zod'
 
@@ -19,7 +18,7 @@ const msgSchema = z.object({
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -135,9 +134,9 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs'),
-    messageId: zid('messages'),
-    text: z.string(),
+    jobId: v.id('jobs'),
+    messageId: v.id('messages'),
+    text: v.string(),
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

@@ -1,6 +1,6 @@
 import { zid } from 'convex-helpers/server/zod'
+import { literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
-import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { Doc, Id } from '../_generated/dataModel'
@@ -48,11 +48,11 @@ export const getSpeechFile = async (
 
 export const update = internalMutation({
   args: {
-    speechFileId: zid('speech_files'),
-    status: z.enum(['pending', 'complete', 'error']),
-    fileId: zid('_storage').optional(),
-    fileUrl: z.string().optional(),
-    error: z.string().optional(),
+    speechFileId: v.id('speech_files'),
+    status: literals('pending', 'complete', 'error'),
+    fileId: v.optional(v.id('_storage')),
+    fileUrl: v.optional(v.string()),
+    error: v.optional(v.string()),
   },
   handler: async (ctx, { speechFileId, ...args }) => {
     return await ctx

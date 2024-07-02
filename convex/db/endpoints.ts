@@ -15,8 +15,8 @@ export type ParsedChatModelData = Infer<typeof chatModelSchema> & { resourceKey:
 
 export const importEndpointChatModelData = internalMutation({
   args: {
-    purgeExisting: z.boolean(),
-    replaceExisting: z.boolean(),
+    purgeExisting: v.boolean(),
+    replaceExisting: v.boolean(),
   },
   handler: async (ctx, args) => {
     if (args.purgeExisting) {
@@ -123,7 +123,7 @@ const imageModelSchema = v.object(imageModelFields)
 export type ImageModelDataRecord = Infer<typeof imageModelSchema> & { resourceKey: string }
 export const importEndpointImageModelData = internalMutation({
   args: {
-    purgeExisting: z.boolean(),
+    purgeExisting: v.boolean(),
   },
   handler: async (ctx, args) => {
     if (args.purgeExisting) {
@@ -157,7 +157,7 @@ export const fetchEndpointModelData = internalAction(async (ctx) => {
 })
 
 export const cacheEndpointModelData = internalMutation({
-  args: { endpoint: z.string(), name: z.string(), data: z.string() },
+  args: { endpoint: v.string(), name: v.string(), data: v.string() },
   handler: async (ctx, args) => {
     return await ctx.table('endpoint_data_cache').insert(args)
   },

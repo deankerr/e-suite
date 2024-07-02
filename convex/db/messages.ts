@@ -1,6 +1,7 @@
 import { asyncMap } from 'convex-helpers'
 import { filter } from 'convex-helpers/server/filter'
 import { zid } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
@@ -261,8 +262,8 @@ export const remove = mutation({
 
 export const streamCompletionContent = internalMutation({
   args: {
-    messageId: zid('messages'),
-    content: z.string(),
+    messageId: v.id('messages'),
+    content: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx.skipRules

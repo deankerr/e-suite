@@ -1,6 +1,4 @@
-import { zid } from 'convex-helpers/server/zod'
 import { v } from 'convex/values'
-import { z } from 'zod'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
@@ -13,12 +11,12 @@ const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 
 
 export const createImageFile = internalMutation({
   args: {
-    fileId: zid('_storage'),
-    isOriginFile: z.boolean(),
-    format: z.string(),
-    width: z.number(),
-    height: z.number(),
-    imageId: zid('images'),
+    fileId: v.id('_storage'),
+    isOriginFile: v.boolean(),
+    format: v.string(),
+    width: v.number(),
+    height: v.number(),
+    imageId: v.id('images'),
   },
   handler: async (ctx, args) => {
     return await ctx.table('files').insert({ ...args, category: 'image' })
@@ -27,24 +25,24 @@ export const createImageFile = internalMutation({
 
 // TODO remove after custom function refactor
 const zImageFields = {
-  originUrl: z.string(),
+  originUrl: v.string(),
 
-  width: z.number(),
-  height: z.number(),
-  blurDataUrl: z.string(),
-  color: z.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
 
-  generationData: z.array(z.string()),
-  messageId: zid('messages'),
+  generationData: v.array(v.string()),
+  messageId: v.id('messages'),
 }
 
 export const createImage = internalMutation({
   args: {
     ...zImageFields,
-    format: z.string(),
-    fileId: zid('_storage'),
-    originUrl: z.string(),
-    messageId: zid('messages'),
+    format: v.string(),
+    fileId: v.id('_storage'),
+    originUrl: v.string(),
+    messageId: v.id('messages'),
   },
   handler: async (ctx, args) => {
     const { fileId, format, originUrl, ...imageArgs } = args

@@ -47,7 +47,7 @@ const inferenceSchemaV = v.union(
   }),
 )
 
-const fileAttachmentRecordSchemaV = v.array(
+export const fileAttachmentRecordSchemaV = v.array(
   v.union(
     v.object({
       id: v.id('images'),

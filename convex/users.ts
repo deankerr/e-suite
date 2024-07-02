@@ -1,23 +1,22 @@
-import { zid } from 'convex-helpers/server/zod'
-import z from 'zod'
+import { literals, partial } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from './functions'
-import { userFields } from './schema'
 import { userSchema } from './shared/structures'
 import { generateRandomString } from './utils'
 
-const userBySchema = z.union([
-  z.object({ id: zid('users') }),
-  z.object({ tokenIdentifier: z.string() }),
-])
+const userBySchema = v.union(
+  v.object({ id: v.id('users') }),
+  v.object({ tokenIdentifier: v.string() }),
+)
 
 export const create = internalMutation({
   args: {
-    fields: z.object({
-      tokenIdentifier: z.string(),
-      name: z.string(),
-      imageUrl: z.string(),
-      role: z.enum(['user', 'admin']),
+    fields: v.object({
+      tokenIdentifier: v.string(),
+      name: v.string(),
+      imageUrl: v.string(),
+      role: literals('user', 'admin'),
     }),
   },
   handler: async (ctx, { fields }) => await ctx.table('users').insert({ ...fields }),
@@ -26,9 +25,9 @@ export const create = internalMutation({
 export const update = internalMutation({
   args: {
     by: userBySchema,
-    fields: z
-      .object({ name: z.string(), imageUrl: z.string(), role: z.enum(['user', 'admin']) })
-      .partial(),
+    fields: v.object(
+      partial({ name: v.string(), imageUrl: v.string(), role: literals('user', 'admin') }),
+    ),
   },
   handler: async (ctx, { by, fields }) => {
     if ('id' in by) return await ctx.table('users').getX(by.id).patch(fields)

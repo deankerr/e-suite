@@ -1,6 +1,6 @@
 import { entsTableFactory, scheduledDeleteFactory } from 'convex-ents'
-import { customCtx, customMutation, customQuery, NoOp } from 'convex-helpers/server/customFunctions'
-import { zCustomAction, zCustomMutation, zCustomQuery } from 'convex-helpers/server/zod'
+import { customCtx, customMutation, customQuery } from 'convex-helpers/server/customFunctions'
+import { zCustomMutation, zCustomQuery } from 'convex-helpers/server/zod'
 import { ConvexError, v } from 'convex/values'
 
 import {
@@ -39,7 +39,7 @@ export const authOnlyMutation = zCustomMutation(
   }),
 )
 
-export const internalMutation = zCustomMutation(
+export const internalMutation = customMutation(
   baseInternalMutation,
   customCtx(async (baseCtx) => {
     return await mutationCtx(baseCtx)
