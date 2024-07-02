@@ -65,6 +65,7 @@ import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
+import type * as zschema from "../zschema.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -126,6 +127,7 @@ declare const fullApi: ApiFromModules<{
   types: typeof types;
   users: typeof users;
   utils: typeof utils;
+  zschema: typeof zschema;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

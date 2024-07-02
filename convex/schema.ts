@@ -15,7 +15,64 @@ import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
 const timeToDelete = ms('1 day')
 
-//* Models
+// * Inference Config Shared Schema
+const inferenceSchemaV = v.union(
+  v.object({
+    endpoint: v.string(),
+    endpointModelId: v.string(),
+    excludeHistoryMessagesByName: v.optional(v.array(v.string())),
+    maxHistoryMessages: v.optional(v.float64()),
+    max_tokens: v.optional(v.float64()),
+    repetition_penalty: v.optional(v.float64()),
+    resourceKey: v.string(),
+    stop: v.optional(v.array(v.string())),
+    stream: v.optional(v.boolean()),
+    temperature: v.optional(v.float64()),
+    top_k: v.optional(v.float64()),
+    top_p: v.optional(v.float64()),
+    type: v.literal('chat-completion'),
+  }),
+  v.object({
+    endpoint: v.string(),
+    endpointModelId: v.string(),
+    height: v.float64(),
+    n: v.float64(),
+    prompt: v.string(),
+    resourceKey: v.string(),
+    type: v.literal('text-to-image'),
+    width: v.float64(),
+  }),
+  v.object({
+    duration_seconds: v.optional(v.float64()),
+    endpoint: v.string(),
+    endpointModelId: v.string(),
+    n: v.optional(v.float64()),
+    prompt: v.string(),
+    prompt_influence: v.optional(v.float64()),
+    resourceKey: v.string(),
+    type: v.literal('sound-generation'),
+  }),
+)
+
+// * File Attachment Schema
+const fileAttachmentRecordSchemaV = v.array(
+  v.union(
+    v.object({
+      id: v.id('images'),
+      type: v.literal('image'),
+    }),
+    v.object({
+      type: v.literal('image_url'),
+      url: v.string(),
+    }),
+    v.object({
+      id: v.id('sound_effect_files'),
+      type: v.literal('sound_effect'),
+    }),
+  ),
+)
+
+// * Models
 const sharedModelFields = {
   name: v.string(),
   description: v.string(),
@@ -126,26 +183,26 @@ const jobs = defineEnt(jobFields)
   .index('imageId', ['imageId'])
 
 export const messageFields = {
-  role: messageRolesEnum,
-  name: zMessageName.optional(),
-  content: zMessageTextContent.optional(),
+  role: v.union(v.literal('system'), v.literal('assistant'), v.literal('user')),
+  name: v.optional(v.string()),
+  content: v.optional(v.string()),
 
-  inference: inferenceSchema.optional(),
-  files: fileAttachmentRecordSchema.array().optional(),
+  inference: v.optional(inferenceSchemaV),
+  files: v.optional(fileAttachmentRecordSchemaV),
 
-  metadata: metadataKVSchema.array().optional(),
-  voiceover: z
-    .object({
-      text: z.string().optional(),
-      textHash: z.string(),
-      resourceKey: z.string(),
-      speechFileId: zid('speech_files').optional(),
-    })
-    .optional(),
+  metadata: v.optional(v.array(v.object({ key: v.string(), value: v.string() }))),
+  voiceover: v.optional(
+    v.object({
+      resourceKey: v.string(),
+      speechFileId: v.optional(v.id('speech_files')),
+      text: v.optional(v.string()),
+      textHash: v.string(),
+    }),
+  ),
 }
-const messages = defineEnt(zodToConvexFields(messageFields))
+const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('series', zodToConvex(z.number()), { index: true })
+  .field('series', v.number(), { index: true })
   .edge('thread')
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
