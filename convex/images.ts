@@ -66,7 +66,7 @@ export const createImage = internalMutation({
 
 export const getImageWithFiles = internalQuery({
   args: {
-    imageId: z.string(),
+    imageId: v.string(),
   },
   handler: async (ctx, args) => {
     const imageId = ctx.unsafeDb.normalizeId('images', args.imageId)

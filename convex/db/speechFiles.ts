@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
@@ -63,8 +64,8 @@ export const update = internalMutation({
 
 export const get = internalQuery({
   args: {
-    textHash: z.string(),
-    resourceKey: z.string(),
+    textHash: v.string(),
+    resourceKey: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx
