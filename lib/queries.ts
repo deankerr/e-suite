@@ -50,6 +50,27 @@ export const usePaginatedMessages = ({ threadId }: { threadId?: string }) => {
   return result
 }
 
+export const useMessagesQuery = ({
+  slugOrId,
+  hasAssistantRole = false,
+  hasImageFiles = false,
+  hasSoundEffectFiles = false,
+}: {
+  slugOrId?: string
+  hasAssistantRole?: boolean
+  hasImageFiles?: boolean
+  hasSoundEffectFiles?: boolean
+}) => {
+  const result = usePaginatedQuery(
+    api.db.messages.content,
+    slugOrId ? { slugOrId, hasImageFiles, hasSoundEffectFiles, hasAssistantRole } : 'skip',
+    {
+      initialNumItems: 25,
+    },
+  )
+  return result
+}
+
 export const useUserThreadsList = (): EThread[] | undefined => {
   const result = useQuery(api.db.threads.list, {})
   result?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)

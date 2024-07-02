@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { ArrowDown } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import { useInView } from 'react-intersection-observer'
@@ -11,7 +11,7 @@ import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
 export const MessageFeed = () => {
-  const { thread, messages, page, removeMessage } = useChat()
+  const { thread, messages, loadMoreMessages, page, removeMessage } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -20,8 +20,7 @@ export const MessageFeed = () => {
 
   const loadMore = () => {
     if (page.status === 'CanLoadMore') {
-      console.log('load')
-      page.loadMore(25)
+      loadMoreMessages()
     }
   }
 
@@ -30,6 +29,11 @@ export const MessageFeed = () => {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
   }
+
+  useEffect(() => {
+    console.log(page.status, messages.length)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page.status])
 
   return (
     <div className="flex h-full flex-col overflow-hidden" key={thread?._id}>

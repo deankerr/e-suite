@@ -1,4 +1,5 @@
 import { asyncMap } from 'convex-helpers'
+import { filter } from 'convex-helpers/server/filter'
 import { zid } from 'convex-helpers/server/zod'
 import { z } from 'zod'
 
@@ -9,7 +10,7 @@ import { emptyPage, zPaginationOptValidator } from '../utils'
 import { getSpeechFile } from './speechFiles'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
-import type { Id } from '../_generated/dataModel'
+import type { Doc, Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
 
 export const getNextMessageSeries = async (thread: Ent<'threads'>) => {
@@ -22,7 +23,7 @@ export const getMessage = async (ctx: QueryCtx, messageId: string) => {
   return id ? await ctx.table('messages').get(id) : null
 }
 
-const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['files']) => {
+const getFileAttachmentContent = async (ctx: QueryCtx, files?: Doc<'messages'>['files']) => {
   if (!files) return undefined
   const filesWithContent = await asyncMap(files, async (file) => {
     if (file.type === 'image') {
@@ -45,17 +46,17 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['
   return filesWithContent
 }
 
-export const getMessageJobs = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', message._id))
+export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
+  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
   return jobs
 }
 
-export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) => {
   // const shape = getMessageShape(message)
   return {
     ...message,
     files: await getFileAttachmentContent(ctx, message.files),
-    jobs: await getMessageJobs(ctx, message),
+    jobs: await getMessageJobs(ctx, message._id),
     voiceover: message.voiceover?.speechFileId
       ? await getSpeechFile(ctx, message.voiceover.speechFileId)
       : undefined,
@@ -142,8 +143,6 @@ export const paginate = query({
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
     if (!threadId) return emptyPage()
 
-    // console.log(args.paginationOpts)
-
     const results = await ctx
       .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
       .order(args.order)
@@ -152,6 +151,49 @@ export const paginate = query({
       .map(async (message) => await getMessageEdges(ctx, message))
 
     return results
+  },
+})
+
+export const content = query({
+  args: {
+    slugOrId: z.string(),
+    hasAssistantRole: z.boolean(),
+    hasImageFiles: z.boolean(),
+    hasSoundEffectFiles: z.boolean(),
+    paginationOpts: zPaginationOptValidator,
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return emptyPage()
+
+    // NOTE using unsafeDb for super filter
+    const initQuery =
+      args.hasImageFiles || args.hasSoundEffectFiles || args.hasAssistantRole
+        ? ctx.unsafeDb
+            .query('messages')
+            .withIndex('threadId_role', (q) => q.eq('threadId', thread._id).eq('role', 'assistant'))
+        : ctx.unsafeDb.query('messages').withIndex('threadId', (q) => q.eq('threadId', thread._id))
+
+    const results = await filter(initQuery, async (message) => {
+      if (args.hasImageFiles) {
+        if (!message.files) return false
+        if (!message.files.some((file) => file.type === 'image')) return false
+      }
+
+      if (args.hasSoundEffectFiles) {
+        if (!message.files) return false
+        if (!message.files.some((file) => file.type === 'sound_effect')) return false
+      }
+
+      return true
+    })
+      .order('desc')
+      .paginate(args.paginationOpts)
+
+    return {
+      ...results,
+      page: await asyncMap(results.page, async (message) => await getMessageEdges(ctx, message)),
+    }
   },
 })
 

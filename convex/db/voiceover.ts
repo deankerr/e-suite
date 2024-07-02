@@ -22,7 +22,7 @@ export const messageContent = mutation({
     insist(originalText, 'invalid message content')
 
     // check for text generation in progress
-    const jobs = await getMessageJobs(ctx, message)
+    const jobs = await getMessageJobs(ctx, message._id)
     insist(!hasActiveJobName(jobs, 'inference/chat-completion'), 'text generation in progress')
 
     const processedText = replaceUrlsWithDetails(originalText)

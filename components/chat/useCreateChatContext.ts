@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMutation } from 'convex/react'
 import { useAtomValue, useSetAtom } from 'jotai'
 
@@ -6,14 +6,27 @@ import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { EChatCompletionInference, ETextToImageInference } from '@/convex/shared/structures'
 import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
-import { usePaginatedMessages, useThread } from '@/lib/queries'
+import { useMessagesQuery, useThread } from '@/lib/queries'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
+  const [queryOptions, setQueryOptions] = useState({
+    hasAssistantRole: false,
+    hasImageFiles: false,
+    hasSoundEffectFiles: false,
+  })
+
   const thread = useThread({ slug })
 
-  const page = usePaginatedMessages({
-    threadId: thread?._id,
+  const page = useMessagesQuery({
+    slugOrId: thread?._id,
+    ...queryOptions,
   })
+
+  const hasQueryFilters = Object.values(queryOptions).some((value) => value)
+  const loadMoreMessages = useCallback(() => {
+    page.loadMore(hasQueryFilters ? 500 : 50)
+  }, [page, hasQueryFilters])
+
   const messages = page.results
 
   const latestMessageId = useRef('')
@@ -121,8 +134,11 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   )
 
   return {
+    queryOptions,
+    setQueryOptions,
     thread,
     messages,
+    loadMoreMessages,
     page,
     appendMessage,
     updateThread,

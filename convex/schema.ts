@@ -157,6 +157,7 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
   .index('speechId', ['voiceover.speechFileId'])
+  .index('threadId_role', ['threadId', 'role'])
 
 export const soundEffectFileFields = {
   text: z.string(),
