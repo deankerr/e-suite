@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
 
-import type { EImage } from '@/convex/shared/structures'
+import type { EImage } from '@/convex/shared/types'
 
 type ImageCardProps = { image: EImage; sizes?: string } & React.ComponentPropsWithoutRef<'div'>
 

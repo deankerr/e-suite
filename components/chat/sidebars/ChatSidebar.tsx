@@ -11,15 +11,14 @@ import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { useChatModels, useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-import type { EChatCompletionInference } from '@/convex/shared/structures'
-import type { EChatModel, EThread } from '@/convex/shared/types'
+import type { ChatCompletionConfig, EChatModel, EThread } from '@/convex/shared/types'
 
 export const ChatSidebar = ({
   thread,
   config,
 }: {
   thread: EThread
-  config: EChatCompletionInference
+  config: ChatCompletionConfig
 }) => {
   const { updateThread, queryOptions, setQueryOptions } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)

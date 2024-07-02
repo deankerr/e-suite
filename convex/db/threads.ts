@@ -4,9 +4,8 @@ import { v } from 'convex/values'
 
 import { mutation, query } from '../functions'
 import { createJob } from '../jobs'
-import { inferenceSchemaV, threadFields } from '../schema'
+import { inferenceConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
-import { EInferenceConfig } from '../shared/structures'
 import { createError, insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
@@ -14,6 +13,7 @@ import { getImageModelByResourceKey } from './imageModels'
 import { getMessageCommand, getNextMessageSeries } from './messages'
 
 import type { Id } from '../_generated/dataModel'
+import type { InferenceConfig } from '../shared/types'
 import type { Ent, MutationCtx, QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
@@ -26,7 +26,7 @@ export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
 
 export const getOrCreateThread = async (
   ctx: MutationCtx,
-  args: { threadId: string; userId: Id<'users'>; uiConfig?: EInferenceConfig },
+  args: { threadId: string; userId: Id<'users'>; uiConfig?: InferenceConfig },
 ) => {
   const thread = await getThreadBySlugOrId(ctx, args.threadId)
   if (thread) {
@@ -91,7 +91,7 @@ export const append = mutation({
         content: v.optional(v.string()),
       }),
     ),
-    inference: v.optional(inferenceSchemaV),
+    inference: v.optional(inferenceConfigV),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()

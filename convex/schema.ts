@@ -6,45 +6,51 @@ import { ms } from 'itty-time'
 const timeToDelete = ms('1 day')
 
 // * shared schemas
-export const inferenceSchemaV = v.union(
-  v.object({
-    type: v.literal('chat-completion'),
-    resourceKey: v.string(),
-    endpoint: v.string(),
-    endpointModelId: v.string(),
-    excludeHistoryMessagesByName: v.optional(v.array(v.string())),
-    maxHistoryMessages: v.optional(v.number()),
+export const chatCompletionConfigV = v.object({
+  type: v.literal('chat-completion'),
+  resourceKey: v.string(),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+  excludeHistoryMessagesByName: v.optional(v.array(v.string())),
+  maxHistoryMessages: v.optional(v.number()),
 
-    stream: v.optional(v.boolean()),
-    temperature: v.optional(v.number()),
-    max_tokens: v.optional(v.number()),
-    top_p: v.optional(v.number()),
-    top_k: v.optional(v.number()),
-    stop: v.optional(v.array(v.string())),
-    repetition_penalty: v.optional(v.number()),
-  }),
-  v.object({
-    type: v.literal('text-to-image'),
-    resourceKey: v.string(),
-    endpoint: v.string(),
-    endpointModelId: v.string(),
+  stream: v.optional(v.boolean()),
+  temperature: v.optional(v.number()),
+  max_tokens: v.optional(v.number()),
+  top_p: v.optional(v.number()),
+  top_k: v.optional(v.number()),
+  stop: v.optional(v.array(v.string())),
+  repetition_penalty: v.optional(v.number()),
+})
 
-    prompt: v.string(),
-    width: v.number(),
-    height: v.number(),
-    n: v.number(),
-  }),
-  v.object({
-    type: v.literal('sound-generation'),
-    resourceKey: v.string(),
-    endpoint: v.string(),
-    endpointModelId: v.string(),
+export const textToImageConfigV = v.object({
+  type: v.literal('text-to-image'),
+  resourceKey: v.string(),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
 
-    prompt: v.string(),
-    duration_seconds: v.optional(v.number()),
-    prompt_influence: v.optional(v.number()),
-    n: v.optional(v.number()),
-  }),
+  prompt: v.string(),
+  width: v.number(),
+  height: v.number(),
+  n: v.number(),
+})
+
+export const soundGenerationConfigV = v.object({
+  type: v.literal('sound-generation'),
+  resourceKey: v.string(),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+
+  prompt: v.string(),
+  duration_seconds: v.optional(v.number()),
+  prompt_influence: v.optional(v.number()),
+  n: v.optional(v.number()),
+})
+
+export const inferenceConfigV = v.union(
+  chatCompletionConfigV,
+  textToImageConfigV,
+  soundGenerationConfigV,
 )
 
 export const fileAttachmentRecordSchemaV = v.array(
@@ -181,7 +187,7 @@ export const messageFields = {
   name: v.optional(v.string()),
   content: v.optional(v.string()),
 
-  inference: v.optional(inferenceSchemaV),
+  inference: v.optional(inferenceConfigV),
   files: v.optional(fileAttachmentRecordSchemaV),
 
   metadata: v.optional(kvListV),
@@ -227,13 +233,13 @@ const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  inference: inferenceSchemaV,
+  inference: inferenceConfigV,
   slashCommands: v.array(
     v.object({
       id: v.string(),
       command: v.string(),
       commandType: literals('startsWith', 'includesWord'),
-      inference: inferenceSchemaV,
+      inference: inferenceConfigV,
     }),
   ),
 

@@ -6,7 +6,6 @@ import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from '../functions'
 import { kvListV } from '../schema'
-import { EImage } from '../shared/structures'
 import { zStringToMessageRole } from '../shared/utils'
 import { emptyPage } from '../utils'
 import { getSpeechFile } from './speechFiles'
@@ -31,7 +30,7 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Doc<'messages'>['
     if (file.type === 'image') {
       return {
         ...file,
-        image: (await ctx.table('images').get(file.id)) as EImage | null,
+        image: await ctx.table('images').get(file.id),
       }
     }
 

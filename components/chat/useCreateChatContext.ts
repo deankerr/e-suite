@@ -4,9 +4,10 @@ import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { EChatCompletionInference, ETextToImageInference } from '@/convex/shared/structures'
 import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 import { useMessagesQuery, useThread } from '@/lib/queries'
+
+import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/shared/types'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const [queryOptions, setQueryOptions] = useState({
@@ -106,7 +107,7 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
 
   // * mutation helpers
   const setChatInferenceConfig = useCallback(
-    (args: Partial<EChatCompletionInference>) => {
+    (args: Partial<ChatCompletionConfig>) => {
       if (!thread) return
       const current =
         thread.inference.type === 'chat-completion' ? thread.inference : defaultChatInferenceConfig
@@ -120,7 +121,7 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   )
 
   const setImageInferenceConfig = useCallback(
-    (args: Partial<ETextToImageInference>) => {
+    (args: Partial<TextToImageConfig>) => {
       if (!thread) return
       const current =
         thread.inference.type === 'text-to-image' ? thread.inference : defaultImageInferenceConfig

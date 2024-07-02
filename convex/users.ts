@@ -2,7 +2,6 @@ import { literals, partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from './functions'
-import { userSchema } from './shared/structures'
 import { generateRandomString } from './utils'
 
 const userBySchema = v.union(
@@ -45,7 +44,7 @@ export const remove = internalMutation({
   },
 })
 
-//* Users API Keys
+// * Users API Keys
 export const generateNewApiKey = mutation({
   args: {},
   handler: async (ctx) => {
@@ -63,11 +62,9 @@ export const generateNewApiKey = mutation({
   },
 })
 
-//* queries
 export const getViewer = query({
   args: {},
   handler: async (ctx) => {
-    const user = await ctx.viewer()
-    return user ? userSchema.parse(user) : null
+    return await ctx.viewer()
   },
 })

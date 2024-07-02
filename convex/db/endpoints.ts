@@ -1,5 +1,4 @@
 import { Infer, v } from 'convex/values'
-import { z } from 'zod'
 
 import * as Fal from '../endpoints/fal'
 import * as OpenAi from '../endpoints/openai'
@@ -7,7 +6,7 @@ import * as OpenRouter from '../endpoints/openrouter'
 import * as Sinkin from '../endpoints/sinkin'
 import * as Together from '../endpoints/together'
 import { internalAction, internalMutation } from '../functions'
-import { chatModelFields, endpointDataCacheFields, imageModelFields } from '../schema'
+import { chatModelFields, imageModelFields } from '../schema'
 
 //* chat models
 const chatModelSchema = v.object(chatModelFields)

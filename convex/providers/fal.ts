@@ -6,7 +6,7 @@ import * as HyperSdxl from './fal/hyper_sdxl'
 import * as SDLora from './fal/lora'
 import * as PixartSigma from './fal/pixart_sigma'
 
-import type { ETextToImageInference } from '../shared/structures'
+import type { TextToImageConfig } from '../shared/types'
 import type { TextToImageHandler } from './types'
 
 //* Model config
@@ -40,7 +40,7 @@ falClient.config({
 export const textToImage: TextToImageHandler = async ({
   parameters,
 }: {
-  parameters: ETextToImageInference
+  parameters: TextToImageConfig
 }) => {
   try {
     const { endpointModelId, width, height, prompt, n } = parameters

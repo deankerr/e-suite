@@ -2,7 +2,14 @@ import type { Doc } from '../_generated/dataModel'
 import type { getMessageEdges } from '../db/messages'
 import type { getThreadExtras } from '../db/threads'
 import type { getVoiceModels } from '../db/voiceModels'
+import type {
+  chatCompletionConfigV,
+  inferenceConfigV,
+  soundGenerationConfigV,
+  textToImageConfigV,
+} from '../schema'
 import type { getViewer } from '../users'
+import type { Infer } from 'convex/values'
 
 export type EThread = Omit<Awaited<ReturnType<typeof getThreadExtras>>, '_id' | 'userId'> & {
   _id: string
@@ -14,6 +21,12 @@ export type EImageModel = Doc<'image_models'>
 export type EVoiceModel = Awaited<ReturnType<typeof getVoiceModels>>[number]
 
 export type EUser = Awaited<ReturnType<typeof getViewer>>
+export type EImage = Doc<'images'>
+
+export type ChatCompletionConfig = Infer<typeof chatCompletionConfigV>
+export type TextToImageConfig = Infer<typeof textToImageConfigV>
+export type SoundGenerationConfig = Infer<typeof soundGenerationConfigV>
+export type InferenceConfig = Infer<typeof inferenceConfigV>
 
 // export type EThread = {
 //   _id: string
