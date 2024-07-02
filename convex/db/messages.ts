@@ -3,11 +3,11 @@ import { filter } from 'convex-helpers/server/filter'
 import { literals } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
-import { EImage, messageRolesEnum, metadataKVSchema } from '../shared/structures'
-import { zMessageName, zMessageTextContent, zStringToMessageRole } from '../shared/utils'
+import { kvListV } from '../schema'
+import { EImage } from '../shared/structures'
+import { zStringToMessageRole } from '../shared/utils'
 import { emptyPage } from '../utils'
 import { getSpeechFile } from './speechFiles'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
@@ -199,11 +199,11 @@ export const content = query({
 
 export const create = mutation({
   args: {
-    threadId: z.string().optional(),
-    role: zStringToMessageRole,
-    name: zMessageName.optional(),
-    content: zMessageTextContent,
-    metadata: metadataKVSchema.array().optional(),
+    threadId: v.optional(v.string()),
+    role: v.string(),
+    name: v.optional(v.string()),
+    content: v.string(),
+    metadata: v.optional(kvListV),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -214,7 +214,7 @@ export const create = mutation({
 
     const series = await getNextMessageSeries(thread)
     const messageId = await ctx.table('messages').insert({
-      role: args.role,
+      role: zStringToMessageRole.parse(args.role),
       name: args.name,
       content: args.content,
       metadata: args.metadata,
@@ -234,12 +234,12 @@ export const create = mutation({
 
 export const update = mutation({
   args: {
-    messageId: z.string(),
+    messageId: v.id('messages'),
 
-    role: messageRolesEnum,
-    name: zMessageName.optional(),
-    content: zMessageTextContent.optional(),
-    metadata: metadataKVSchema.array().optional(),
+    role: literals('assistant', 'user', 'system'),
+    name: v.optional(v.string()),
+    content: v.optional(v.string()),
+    metadata: v.optional(kvListV),
   },
   handler: async (ctx, args) => {
     return await ctx
@@ -251,7 +251,7 @@ export const update = mutation({
 
 export const remove = mutation({
   args: {
-    messageId: z.string(),
+    messageId: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx

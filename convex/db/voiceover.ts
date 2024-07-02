@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { v } from 'convex/values'
 
 import { mutation } from '../functions'
 import { hasActiveJobName, insist } from '../shared/utils'
@@ -11,7 +11,7 @@ const fallbackResourceKey = 'openai::alloy'
 
 export const messageContent = mutation({
   args: {
-    messageId: z.string(),
+    messageId: v.string(),
   },
   handler: async (ctx, args) => {
     const message = await getMessage(ctx, args.messageId)
@@ -78,8 +78,8 @@ export const messageContent = mutation({
 
 export const text = mutation({
   args: {
-    text: z.string(),
-    resourceKey: z.string(),
+    text: v.string(),
+    resourceKey: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewer()
@@ -99,7 +99,7 @@ export const text = mutation({
 
 export const remove = mutation({
   args: {
-    messageId: z.string(),
+    messageId: v.string(),
   },
   handler: async (ctx, args) => {
     const message = await getMessage(ctx, args.messageId)

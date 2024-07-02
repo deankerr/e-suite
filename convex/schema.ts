@@ -6,7 +6,7 @@ import { ms } from 'itty-time'
 const timeToDelete = ms('1 day')
 
 // * shared schemas
-const inferenceSchemaV = v.union(
+export const inferenceSchemaV = v.union(
   v.object({
     type: v.literal('chat-completion'),
     resourceKey: v.string(),
@@ -64,7 +64,7 @@ export const fileAttachmentRecordSchemaV = v.array(
   ),
 )
 
-const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
+export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
 
 // * Models
 const sharedModelFields = {

@@ -1,4 +1,3 @@
-import { zid } from 'convex-helpers/server/zod'
 import { literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 

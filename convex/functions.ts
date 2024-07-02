@@ -120,7 +120,7 @@ export const query = customQuery(baseQuery, {
   },
 })
 
-export const mutation = zCustomMutation(baseMutation, {
+export const mutation = customMutation(baseMutation, {
   args: { apiKey: v.optional(v.string()) },
   input: async (baseCtx, { apiKey }) => {
     const ctx = {
