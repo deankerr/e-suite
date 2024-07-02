@@ -1,5 +1,7 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { brandedString, deprecated, literals, partial } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 import { ms } from 'itty-time'
 import { z } from 'zod'
 
@@ -15,60 +17,50 @@ const timeToDelete = ms('1 day')
 
 //* Models
 const sharedModelFields = {
-  name: z.string(),
-  description: z.string(),
-  creatorName: z.string(),
-  link: z.string(),
+  name: v.string(),
+  description: v.string(),
+  creatorName: v.string(),
+  link: v.string(),
 
-  license: z.string(),
-  tags: z.string().array(),
-  coverImageUrl: z.string().optional(),
+  license: v.string(),
+  tags: v.array(v.string()),
+  coverImageUrl: v.optional(v.string()),
 
-  endpoint: z.string(),
-  endpointModelId: z.string(),
-  pricing: z.object({
-    tokenInput: z.number().optional(),
-    tokenOutput: z.number().optional(),
-    imageInput: z.number().optional(),
-    imageOutput: z.number().optional(),
-    // {unit, price, in/out}[]
-  }),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+  pricing: v.object({}),
 
-  moderated: z.boolean(),
-  available: z.boolean(),
-  hidden: z.boolean(),
-  internalScore: z.number(),
+  moderated: v.boolean(),
+  available: v.boolean(),
+  hidden: v.boolean(),
+  internalScore: v.number(),
 }
 
 export const chatModelFields = {
   ...sharedModelFields,
-  numParameters: z.number(),
-  contextLength: z.number(),
-  tokenizer: z.string(),
-  stop: z.string().array(),
-  maxOutputTokens: z.number().optional(),
+  numParameters: v.number(),
+  contextLength: v.number(),
+  tokenizer: v.string(),
+  stop: v.array(v.string()),
+  maxOutputTokens: v.optional(v.number()),
 }
-const chat_models = defineEnt(zodToConvexFields(chatModelFields)).field(
-  'resourceKey',
-  zodToConvex(z.string()),
-  { unique: true },
-)
+const chat_models = defineEnt(chatModelFields).field('resourceKey', v.string(), {
+  unique: true,
+})
 
 export const imageModelFields = {
   ...sharedModelFields,
-  architecture: z.enum(['SD', 'SDXL', 'SD3']),
-  sizes: z.object({
-    portrait: z.tuple([z.number(), z.number()]),
-    landscape: z.tuple([z.number(), z.number()]),
-    square: z.tuple([z.number(), z.number()]),
+  architecture: literals('SD', 'SDXL', 'SD3'),
+  sizes: v.object({
+    portrait: v.array(v.number()),
+    landscape: v.array(v.number()),
+    square: v.array(v.number()),
   }),
-  civitaiModelId: z.string().optional(),
+  civitaiModelId: v.optional(v.string()),
 }
-const image_models = defineEnt(zodToConvexFields(imageModelFields)).field(
-  'resourceKey',
-  zodToConvex(z.string()),
-  { unique: true },
-)
+const image_models = defineEnt(imageModelFields).field('resourceKey', v.string(), {
+  unique: true,
+})
 
 export const fileFields = {
   fileId: zid('_storage'),
@@ -91,6 +83,7 @@ export const imageFields = {
   color: z.string(),
 
   generationData: z.tuple([z.string(), z.string()]).array(),
+  messageId: zid('messages'), // ? added by accident?
 }
 const images = defineEnt(zodToConvexFields(imageFields))
   .deletion('scheduled', {
@@ -258,7 +251,7 @@ const schema = defineEntSchema(
     users_api_keys,
   },
   {
-    schemaValidation: false,
+    schemaValidation: true,
   },
 )
 

@@ -1,3 +1,4 @@
+import { Infer, v } from 'convex/values'
 import { z } from 'zod'
 
 import * as Fal from '../endpoints/fal'
@@ -9,8 +10,8 @@ import { internalAction, internalMutation } from '../functions'
 import { chatModelFields, endpointDataCacheFields, imageModelFields } from '../schema'
 
 //* chat models
-const chatModelSchema = z.object(chatModelFields)
-export type ParsedChatModelData = z.infer<typeof chatModelSchema> & { resourceKey: string }
+const chatModelSchema = v.object(chatModelFields)
+export type ParsedChatModelData = Infer<typeof chatModelSchema> & { resourceKey: string }
 
 export const importEndpointChatModelData = internalMutation({
   args: {
@@ -118,8 +119,8 @@ const defaultChatModelTags = [
 ]
 
 //* image models
-const imageModelSchema = z.object(imageModelFields)
-export type ImageModelDataRecord = z.infer<typeof imageModelSchema> & { resourceKey: string }
+const imageModelSchema = v.object(imageModelFields)
+export type ImageModelDataRecord = Infer<typeof imageModelSchema> & { resourceKey: string }
 export const importEndpointImageModelData = internalMutation({
   args: {
     purgeExisting: z.boolean(),
