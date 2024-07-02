@@ -20,7 +20,7 @@ export default function Page({ params }: { params: { slug: string; series: strin
           <div className="flex w-full grow flex-col gap-2 overflow-y-auto overflow-x-hidden px-5 py-1">
             {result.data?.messages[0] ? (
               <div className="m-auto">
-                <Message message={result.data?.messages[0]} timeline={false} />
+                <Message message={result.data?.messages[0]} showTimeline={false} />
               </div>
             ) : null}
           </div>

@@ -45,6 +45,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
     [imageFiles],
   )
 
+  if (frames.length === 0) return null
   return (
     <div className="w-fit max-w-full rounded-lg">
       <div

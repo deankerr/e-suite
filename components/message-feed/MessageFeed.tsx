@@ -35,12 +35,11 @@ export const MessageFeed = () => {
     <div className="flex h-full flex-col overflow-hidden" key={thread?._id}>
       <div
         ref={containerRef}
-        className="flex flex-1 flex-col-reverse overflow-y-auto scroll-smooth"
+        className="flex flex-1 flex-col-reverse overflow-y-auto scroll-smooth px-2"
       >
         {messages.map((message, index) => (
           <div key={message._id} ref={index === 0 ? latestMessageRef : null}>
             <Message
-              timeline={index !== messages.length - 1}
               message={message}
               slug={thread?.slug}
               showMenu={isOwner}

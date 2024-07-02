@@ -13,7 +13,7 @@ import { Pre } from '@/components/util/Pre'
 import { VoiceoverPlayer } from '@/components/voiceovers/VoiceoverPlayer'
 import { hasActiveJobName } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
-import { cn, formatTimeToDisplayShort } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
 
@@ -22,14 +22,14 @@ const showTokenInfo = false
 export const Message = ({
   message,
 
-  timeline = true,
+  showTimeline = false,
   slug,
   showMenu = true,
   removeMessage,
 }: {
   message: EMessage
 
-  timeline?: boolean
+  showTimeline?: boolean
   slug?: string
   showMenu?: boolean
   removeMessage?: (messageId: string) => void
@@ -60,7 +60,7 @@ export const Message = ({
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
       {/* timeline */}
       <div className="hidden shrink-0 justify-center py-2 sm:flex">
-        <div className={cn('absolute inset-y-0 w-0.5 bg-grayA-2', !timeline && 'hidden')}></div>
+        <div className={cn('absolute inset-y-0 w-0.5 bg-grayA-2', !showTimeline && 'hidden')}></div>
 
         {/* avatar */}
         <Avatar role={role} />
@@ -72,13 +72,12 @@ export const Message = ({
         <div className="flex items-center gap-2">
           <Avatar role={role} className="flex sm:hidden" />
 
-          <div className="space-x-2">
-            <span className="font-medium text-gray-11">{name}</span>
-            <TimeSinceLink
-              time={message._creationTime}
-              href={`/c/${slug}/${message.series}`}
-              className="text-xs text-gray-11 hover:underline"
-            />
+          <div className="space-x-1">
+            <span className={cn('font-medium text-gray-11', !message.name && 'font-mono')}>
+              {name}
+            </span>
+            <span className="text-gray-10">·</span>
+            <TimeSinceLink time={message._creationTime} href={`/c/${slug}/${message.series}`} />
           </div>
 
           <div>
@@ -126,7 +125,7 @@ export const Message = ({
         <ImageGallery message={message} />
 
         {message.content && !editing && (
-          <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
+          <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-2 sm:w-fit">
             <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
               <Markdown>{message.content}</Markdown>
             </div>

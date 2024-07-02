@@ -29,7 +29,6 @@ export const Virtualized = () => {
       itemContent={(index, message) => (
         <Message
           key={message._id}
-          timeline={index !== messages.length - 1}
           message={message}
           slug={thread?.slug}
           showMenu={isOwner}
