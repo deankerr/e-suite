@@ -78,7 +78,7 @@ export const get = internalQuery({
 
 export const getById = query({
   args: {
-    speechFileId: zid('speech_files'),
+    speechFileId: v.id('speech_files'),
   },
   handler: async (ctx, args) => {
     return await ctx.table('speech_files').get(args.speechFileId)

@@ -1,4 +1,5 @@
 import { omit } from 'convex-helpers'
+import { v } from 'convex/values'
 import { z } from 'zod'
 
 import { mutation, query } from '../functions'
@@ -56,7 +57,7 @@ export const getThreadExtras = async (ctx: QueryCtx, thread: Ent<'threads'>) => 
 
 export const get = query({
   args: {
-    slugOrId: z.string(),
+    slugOrId: v.string(),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)

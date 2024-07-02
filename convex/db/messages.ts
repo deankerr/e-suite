@@ -1,13 +1,14 @@
 import { asyncMap } from 'convex-helpers'
 import { filter } from 'convex-helpers/server/filter'
-import { zid } from 'convex-helpers/server/zod'
+import { literals } from 'convex-helpers/validators'
+import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { z } from 'zod'
 
 import { internalMutation, mutation, query } from '../functions'
 import { EImage, messageRolesEnum, metadataKVSchema } from '../shared/structures'
 import { zMessageName, zMessageTextContent, zStringToMessageRole } from '../shared/utils'
-import { emptyPage, zPaginationOptValidator } from '../utils'
+import { emptyPage } from '../utils'
 import { getSpeechFile } from './speechFiles'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
@@ -92,8 +93,8 @@ export const getMessageCommand = (thread: Ent<'threads'>, text?: string) => {
 // * get single message by slug:series
 export const getSeries = query({
   args: {
-    slug: z.string(),
-    series: z.number(),
+    slug: v.string(),
+    series: v.number(),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slug)
@@ -115,9 +116,9 @@ export const getSeries = query({
 
 export const list = query({
   args: {
-    threadId: z.string(),
-    limit: z.number().max(200).default(25),
-    order: z.enum(['asc', 'desc']).default('desc'),
+    threadId: v.string(),
+    limit: v.number(),
+    order: literals('asc', 'desc'),
   },
   handler: async (ctx, args) => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
@@ -136,9 +137,9 @@ export const list = query({
 
 export const paginate = query({
   args: {
-    threadId: z.string(),
-    order: z.enum(['asc', 'desc']).default('desc'),
-    paginationOpts: zPaginationOptValidator,
+    threadId: v.string(),
+    order: literals('asc', 'desc'),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
@@ -157,11 +158,11 @@ export const paginate = query({
 
 export const content = query({
   args: {
-    slugOrId: z.string(),
-    hasAssistantRole: z.boolean(),
-    hasImageFiles: z.boolean(),
-    hasSoundEffectFiles: z.boolean(),
-    paginationOpts: zPaginationOptValidator,
+    slugOrId: v.string(),
+    hasAssistantRole: v.boolean(),
+    hasImageFiles: v.boolean(),
+    hasSoundEffectFiles: v.boolean(),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)

@@ -93,7 +93,7 @@ async function mutationCtx(baseCtx: BaseMutationCtx) {
   return { ...ctx, table, viewer, viewerX, viewerId }
 }
 
-export const query = zCustomQuery(baseQuery, {
+export const query = customQuery(baseQuery, {
   args: { apiKey: v.optional(v.string()) },
   input: async (baseCtx: BaseQueryCtx, { apiKey }: { apiKey?: string }) => {
     const ctx = {

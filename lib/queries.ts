@@ -35,6 +35,7 @@ export const useMessages = ({
       ? {
           threadId,
           limit,
+          order: 'desc',
         }
       : 'skip',
   )
@@ -43,9 +44,13 @@ export const useMessages = ({
 }
 
 export const usePaginatedMessages = ({ threadId }: { threadId?: string }) => {
-  const result = usePaginatedQuery(api.db.messages.paginate, threadId ? { threadId } : 'skip', {
-    initialNumItems: 25,
-  })
+  const result = usePaginatedQuery(
+    api.db.messages.paginate,
+    threadId ? { threadId, order: 'desc' } : 'skip',
+    {
+      initialNumItems: 25,
+    },
+  )
 
   return result
 }
