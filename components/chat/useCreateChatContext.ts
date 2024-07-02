@@ -3,6 +3,8 @@ import { useMutation } from 'convex/react'
 import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
+import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
+import { EChatCompletionInference, ETextToImageInference } from '@/convex/shared/structures'
 import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 import { usePaginatedMessages, useThread } from '@/lib/queries'
 
@@ -42,6 +44,7 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
     latestMessageId.current = newLatestMessage._id
   }, [messages, setVoiceoverQueue, shouldAutoplayVoiceovers])
 
+  // * mutations
   const sendAppendMessage = useMutation(api.db.threads.append)
   const sendUpdateThread = useMutation(api.db.threads.update)
 
@@ -88,6 +91,35 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
     [sendRemoveVoiceover],
   )
 
+  // * mutation helpers
+  const setChatInferenceConfig = useCallback(
+    (args: Partial<EChatCompletionInference>) => {
+      if (!thread) return
+      const current =
+        thread.inference.type === 'chat-completion' ? thread.inference : defaultChatInferenceConfig
+      const updated = {
+        ...current,
+        ...args,
+      }
+      void updateThread({ inference: updated })
+    },
+    [thread, updateThread],
+  )
+
+  const setImageInferenceConfig = useCallback(
+    (args: Partial<ETextToImageInference>) => {
+      if (!thread) return
+      const current =
+        thread.inference.type === 'text-to-image' ? thread.inference : defaultImageInferenceConfig
+      const updated = {
+        ...current,
+        ...args,
+      }
+      void updateThread({ inference: updated })
+    },
+    [thread, updateThread],
+  )
+
   return {
     thread,
     messages,
@@ -97,5 +129,7 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
     updateMessage,
     removeMessage,
     removeVoiceover,
+    setChatInferenceConfig,
+    setImageInferenceConfig,
   }
 }

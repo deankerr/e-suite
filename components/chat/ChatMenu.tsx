@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Popover from '@radix-ui/react-popover'
-import { BoxIcon, ChevronLeftIcon, PencilIcon, SpeechIcon, Trash2Icon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import {
@@ -25,13 +25,12 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const voiceModels = useVoiceModels()
 
   const config = thread.inference
+  const uiMode = config.type === 'chat-completion' ? 'chat' : 'image'
 
   const currentModel =
     config.type === 'chat-completion'
       ? chatModels?.find((model) => model.resourceKey === config.resourceKey)
       : imageModels?.find((model) => model.resourceKey === config.resourceKey)
-
-  const modelList = config.type === 'chat-completion' ? chatModels : imageModels
 
   const currentDefaultVoiceModel = voiceModels?.find(
     (model) => model.resourceKey === thread.voiceovers?.default,
@@ -42,7 +41,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
   const [page, setPage] = useState('')
   const [dialog, setDialog] = useState('')
 
-  const { updateThread } = useChat()
+  const { updateThread, setChatInferenceConfig, setImageInferenceConfig } = useChat()
   const isNewChat = thread.slug.startsWith('_')
 
   return (
@@ -58,7 +57,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
 
       <Popover.Content align="start" alignOffset={0} sideOffset={5} className="z-30 w-80">
         <Command>
-          {page === 'listModels' && <CommandInput value={search} onValueChange={setSearch} />}
+          {page.startsWith('list') && <CommandInput value={search} onValueChange={setSearch} />}
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
 
@@ -68,23 +67,28 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
                   {!isNewChat && (
                     <>
                       <CommandItem onSelect={() => setDialog('updateTitle')}>
-                        <PencilIcon className="mr-2 size-4" />
+                        <Icons.Pencil className="mr-2 size-4" />
                         Edit Title
                       </CommandItem>
                       <CommandItem onSelect={() => setDialog('deleteThread')}>
-                        <Trash2Icon className="mr-2 size-4" />
+                        <Icons.Trash className="mr-2 size-4" />
                         Delete Thread
                       </CommandItem>
                     </>
                   )}
-                  <CommandItem value="model menu" onSelect={() => setPage('listModels')}>
-                    <BoxIcon className="mr-2 size-4" />
+                  <CommandItem
+                    value="model menu"
+                    onSelect={() =>
+                      setPage(uiMode === 'chat' ? 'listChatModels' : 'listImageModels')
+                    }
+                  >
+                    <Icons.CodesandboxLogo className="mr-2 size-4" />
                     <div className="line-clamp-1 grow">{currentModel?.name ?? 'Model'}</div>
                     <div className="text-xs text-gray-10">change</div>
                   </CommandItem>
 
                   <CommandItem value="voice model menu" onSelect={() => setPage('listVoiceModels')}>
-                    <SpeechIcon className="mr-2 size-4" />
+                    <Icons.UserSound className="mr-2 size-4" />
                     <div className="line-clamp-1 grow">
                       {currentDefaultVoiceModel
                         ? `${currentDefaultVoiceModel.creatorName}: ${currentDefaultVoiceModel.name}`
@@ -96,25 +100,59 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
               </>
             )}
 
-            {page === 'listModels' && (
+            {page === 'listChatModels' && (
               <>
                 <CommandItem onSelect={() => setPage('')} className="text-gray-10">
-                  <ChevronLeftIcon className="mr-2 size-4" />
+                  <Icons.CaretLeft className="mr-2 size-4" />
                   return
                 </CommandItem>
+                <CommandItem onSelect={() => setPage('listImageModels')} className="text-gray-10">
+                  <Icons.Swap className="mr-2 size-4" />
+                  show image models
+                </CommandItem>
 
-                {modelList?.map((model) => (
+                {chatModels?.map((model) => (
                   <CommandItem
                     key={model._id}
                     value={`${model.name} ${model.endpoint}`}
                     onSelect={() => {
-                      void updateThread({
-                        inference: {
-                          ...config,
-                          resourceKey: model.resourceKey,
-                          endpoint: model.endpoint,
-                          endpointModelId: model.endpointModelId,
-                        },
+                      setChatInferenceConfig({
+                        resourceKey: model.resourceKey,
+                        endpoint: model.endpoint,
+                        endpointModelId: model.endpointModelId,
+                      })
+                      setOpen(false)
+                    }}
+                  >
+                    <div className="grow truncate">{model.name}</div>
+                    <div className="shrink-0 text-xs text-gray-10">
+                      {endpointCode(model.endpoint)}
+                    </div>
+                  </CommandItem>
+                ))}
+              </>
+            )}
+
+            {page === 'listImageModels' && (
+              <>
+                <CommandItem onSelect={() => setPage('')} className="text-gray-10">
+                  <Icons.CaretLeft className="mr-2 size-4" />
+                  return
+                </CommandItem>
+                <CommandItem onSelect={() => setPage('listChatModels')} className="text-gray-10">
+                  <Icons.Swap className="mr-2 size-4" />
+                  show chat models
+                </CommandItem>
+
+                {imageModels?.map((model) => (
+                  <CommandItem
+                    key={model._id}
+                    value={`${model.name} ${model.endpoint}`}
+                    onSelect={() => {
+                      setImageInferenceConfig({
+                        resourceKey: model.resourceKey,
+                        endpoint: model.endpoint,
+                        endpointModelId: model.endpointModelId,
                       })
                       setOpen(false)
                     }}
@@ -131,7 +169,7 @@ export const ChatMenu = ({ thread, children, ...props }: ChatMenuProps) => {
             {page === 'listVoiceModels' && (
               <>
                 <CommandItem onSelect={() => setPage('')} className="text-gray-10">
-                  <ChevronLeftIcon className="mr-2 size-4" />
+                  <Icons.CaretLeft className="mr-2 size-4" />
                   return
                 </CommandItem>
 
