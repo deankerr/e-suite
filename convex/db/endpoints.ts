@@ -157,7 +157,7 @@ export const fetchEndpointModelData = internalAction(async (ctx) => {
 })
 
 export const cacheEndpointModelData = internalMutation({
-  args: endpointDataCacheFields,
+  args: { endpoint: z.string(), name: z.string(), data: z.string() },
   handler: async (ctx, args) => {
     return await ctx.table('endpoint_data_cache').insert(args)
   },

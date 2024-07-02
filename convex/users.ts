@@ -13,7 +13,12 @@ const userBySchema = z.union([
 
 export const create = internalMutation({
   args: {
-    fields: z.object({ tokenIdentifier: z.string(), ...userFields }),
+    fields: z.object({
+      tokenIdentifier: z.string(),
+      name: z.string(),
+      imageUrl: z.string(),
+      role: z.enum(['user', 'admin']),
+    }),
   },
   handler: async (ctx, { fields }) => await ctx.table('users').insert({ ...fields }),
 })
@@ -21,7 +26,9 @@ export const create = internalMutation({
 export const update = internalMutation({
   args: {
     by: userBySchema,
-    fields: z.object(userFields).partial(),
+    fields: z
+      .object({ name: z.string(), imageUrl: z.string(), role: z.enum(['user', 'admin']) })
+      .partial(),
   },
   handler: async (ctx, { by, fields }) => {
     if ('id' in by) return await ctx.table('users').getX(by.id).patch(fields)

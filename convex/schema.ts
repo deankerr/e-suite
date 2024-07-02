@@ -93,33 +93,33 @@ const images = defineEnt(imageFields)
   .index('originUrl', ['originUrl'])
 
 export const jobAttributeFields = {
-  threadId: zid('threads').optional(),
-  messageId: zid('messages').optional(),
-  imageId: zid('images').optional(),
+  threadId: v.optional(v.id('threads')),
+  messageId: v.optional(v.id('messages')),
+  imageId: v.optional(v.id('images')),
 
-  url: z.string().optional(),
-  width: z.number().optional(),
-  resourceKey: z.string().optional(),
+  url: v.optional(v.string()),
+  width: v.optional(v.number()),
+  resourceKey: v.optional(v.string()),
 }
 export const jobFields = {
-  name: z.string(),
-  status: z.enum(['queued', 'active', 'complete', 'failed']),
-  errors: z
-    .object({
-      code: z.string(),
-      message: z.string(),
-      fatal: z.boolean(),
-    })
-    .array()
-    .optional(),
-
-  queuedTime: z.number(),
-  startedTime: z.number().optional(),
-  endedTime: z.number().optional(),
+  name: v.string(),
+  status: literals('queued', 'active', 'complete', 'failed'),
+  errors: v.optional(
+    v.array(
+      v.object({
+        code: v.string(),
+        message: v.string(),
+        fatal: v.boolean(),
+      }),
+    ),
+  ),
+  queuedTime: v.number(),
+  startedTime: v.optional(v.number()),
+  endedTime: v.optional(v.number()),
 
   ...jobAttributeFields,
 }
-const jobs = defineEnt(zodToConvexFields(jobFields))
+const jobs = defineEnt(jobFields)
   .index('status', ['status'])
   .index('threadId', ['threadId'])
   .index('messageId', ['messageId'])
@@ -153,22 +153,22 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .index('threadId_role', ['threadId', 'role'])
 
 export const soundEffectFileFields = {
-  text: z.string(),
-  fileId: zid('_storage'),
-  fileUrl: z.string(),
+  text: v.string(),
+  fileId: v.id('_storage'),
+  fileUrl: v.string(),
 }
-const sound_effect_files = defineEnt(zodToConvexFields(soundEffectFileFields))
+const sound_effect_files = defineEnt(soundEffectFileFields)
 
 export const speechFileFields = {
-  textHash: z.string(),
-  resourceKey: z.string(),
-  status: z.enum(['pending', 'complete', 'error']),
-  fileId: zid('_storage').optional(),
-  fileUrl: z.string().optional(),
-  error: z.string().optional(),
-  updatedAtTime: z.number(),
+  textHash: v.string(),
+  resourceKey: v.string(),
+  status: literals('pending', 'complete', 'error'),
+  fileId: v.optional(v.id('_storage')),
+  fileUrl: v.optional(v.string()),
+  error: v.optional(v.string()),
+  updatedAtTime: v.number(),
 }
-const speech_files = defineEnt(zodToConvexFields(speechFileFields)).index('textHash_resourceKey', [
+const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
   'textHash',
   'resourceKey',
 ])
@@ -208,31 +208,31 @@ const threads = defineEnt(zodToConvexFields(threadFields))
   .edge('user')
 
 export const userFields = {
-  name: z.string(),
-  imageUrl: z.string(),
-  role: z.enum(['user', 'admin']),
+  name: v.string(),
+  imageUrl: v.string(),
+  role: literals('user', 'admin'),
 }
-const users = defineEnt(zodToConvexFields(userFields))
+const users = defineEnt(userFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
+  .field('tokenIdentifier', v.string(), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true, deletion: 'soft' })
   .edges('messages', { ref: true })
 
 export const usersApiKeysFields = {
-  valid: z.boolean(),
+  valid: v.boolean(),
 }
-const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
+const users_api_keys = defineEnt(usersApiKeysFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('secret', zodToConvex(z.string()), { unique: true })
+  .field('secret', v.string(), { unique: true })
   .edge('user')
 
 export const endpointDataCacheFields = {
-  endpoint: z.string(),
-  name: z.string(),
-  data: z.string(),
+  endpoint: v.string(),
+  name: v.string(),
+  data: v.string(),
 }
-const endpoint_data_cache = defineEnt(zodToConvexFields(endpointDataCacheFields))
+const endpoint_data_cache = defineEnt(endpointDataCacheFields)
 
 const schema = defineEntSchema(
   {
