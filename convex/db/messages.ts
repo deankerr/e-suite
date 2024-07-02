@@ -28,14 +28,14 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Ent<'messages'>['
     if (file.type === 'image') {
       return {
         ...file,
-        image: (await ctx.table('images').getX(file.id)) as EImage, // TODO refactor
+        image: (await ctx.table('images').get(file.id)) as EImage | null,
       }
     }
 
     if (file.type === 'sound_effect') {
       return {
         ...file,
-        soundEffect: await ctx.table('sound_effect_files').getX(file.id),
+        soundEffect: await ctx.table('sound_effect_files').get(file.id),
       }
     }
 
