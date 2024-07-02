@@ -1,10 +1,8 @@
 'use node'
 
-import { zid } from 'convex-helpers/server/zod'
-import { ConvexError } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import ky from 'ky'
 import sharp from 'sharp'
-import { z } from 'zod'
 
 import { internalAction } from '../functions'
 
@@ -38,7 +36,7 @@ const BLUR_SATURATION = 1.4
 
 export const storeImageFromUrl = internalAction({
   args: {
-    url: z.string(),
+    url: v.string(),
   },
   handler: async (ctx, args): Promise<StoredImageFileWithBlurData> => {
     const inputArrayBuffer = await ky.get(args.url).arrayBuffer()
@@ -52,8 +50,8 @@ export const storeImageFromUrl = internalAction({
 
 export const convertToWebpAndResize = internalAction({
   args: {
-    fileId: zid('_storage'),
-    width: z.number(),
+    fileId: v.id('_storage'),
+    width: v.number(),
   },
   handler: async (ctx, args): Promise<StoredImageFile> => {
     const inputBlob = await ctx.storage.get(args.fileId)

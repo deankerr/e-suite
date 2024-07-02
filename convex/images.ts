@@ -1,10 +1,10 @@
 import { zid } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { internalAction, internalMutation, internalQuery } from './functions'
-import { imageFields } from './schema'
 import { imageFileSchema } from './shared/structures'
 
 import type { Id } from './_generated/dataModel'
@@ -89,9 +89,9 @@ export const getImageWithFiles = internalQuery({
 //* actions
 export const optimize = internalAction({
   args: {
-    imageId: zid('images'),
-    originFileId: zid('_storage'),
-    width: z.number(),
+    imageId: v.id('images'),
+    originFileId: v.id('_storage'),
+    width: v.number(),
   },
   handler: async (ctx, args): Promise<Id<'_storage'>> => {
     const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.convertToWebpAndResize, {
@@ -111,7 +111,7 @@ export const optimize = internalAction({
   },
 })
 
-//* http
+// * http
 export const serveOptimizedImage = httpAction(async (ctx, request) => {
   const imageRequest = parseRequestUrl(request.url, '/i')
   if (!imageRequest || !imageRequest.id) return new Response('invalid request', { status: 400 })

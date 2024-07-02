@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
@@ -25,7 +26,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     try {

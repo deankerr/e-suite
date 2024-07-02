@@ -1,5 +1,4 @@
-import { zid } from 'convex-helpers/server/zod'
-import { z } from 'zod'
+import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { ActionCtx } from '../_generated/server'
@@ -13,10 +12,10 @@ import type OpenAI from 'openai'
 
 export const runNow = internalAction({
   args: {
-    speechFileId: zid('speech_files'),
-    text: z.string(),
-    textHash: z.string(),
-    resourceKey: z.string(),
+    speechFileId: v.id('speech_files'),
+    text: v.string(),
+    textHash: v.string(),
+    resourceKey: v.string(),
   },
   handler: async (ctx, args) => {
     try {

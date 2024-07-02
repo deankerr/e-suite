@@ -1,4 +1,5 @@
 import { zid } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
@@ -28,7 +29,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     const input = await ctx.runMutation(internal.files.optimizeImageFile.init, {

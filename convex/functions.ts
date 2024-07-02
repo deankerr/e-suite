@@ -46,8 +46,8 @@ export const internalMutation = zCustomMutation(
   }),
 )
 
-export const action = zCustomAction(baseAction, NoOp)
-export const internalAction = zCustomAction(baseInternalAction, NoOp)
+export const action = baseAction
+export const internalAction = baseInternalAction
 
 async function queryCtx(baseCtx: BaseQueryCtx) {
   const ctx = {
