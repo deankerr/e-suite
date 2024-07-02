@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Badge, Button, Tabs } from '@radix-ui/themes'
+import { Label } from '@radix-ui/react-label'
+import { Badge, Button, Checkbox, Tabs } from '@radix-ui/themes'
 import { ChevronsUpDownIcon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
@@ -20,12 +21,11 @@ export const ChatSidebar = ({
   thread: EThread
   config: EChatCompletionInference
 }) => {
-  const { updateThread } = useChat()
+  const { updateThread, queryOptions, setQueryOptions } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const chatModels = useChatModels()
   const model = chatModels?.find((model) => model.resourceKey === config.resourceKey)
-  const parameters = model ? getModelParams(model) : undefined
 
   const [showModelPicker, setShowModelPicker] = useState(false)
   const [instructionText, setInstructionText] = useState(thread.instructions)
@@ -36,8 +36,7 @@ export const ChatSidebar = ({
       <Tabs.Root defaultValue="model">
         <Tabs.List>
           <Tabs.Trigger value="model">Model</Tabs.Trigger>
-          <Tabs.Trigger value="instructions">Instructions</Tabs.Trigger>
-          <Tabs.Trigger value="commands">Commands</Tabs.Trigger>
+          <Tabs.Trigger value="view">View</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="model">
@@ -88,46 +87,8 @@ export const ChatSidebar = ({
             )}
           </div>
 
-          {model && parameters && !showModelPicker && (
-            <div className="rounded p-2">
-              <div className={cn('grid gap-6 border border-grayA-3 p-4')}>
-                <SliderWithInput
-                  label="Max Tokens"
-                  defaultValue={
-                    defaultMaxTokens > model.contextLength ? model.contextLength : defaultMaxTokens
-                  }
-                  min={1}
-                  max={model.contextLength || defaultMaxTokens}
-                  step={1}
-                  disabled
-                />
-
-                {parameters.map((param) => (
-                  <SliderWithInput
-                    key={param.id}
-                    label={param.label}
-                    min={param.min}
-                    max={param.max}
-                    step={param.step}
-                    defaultValue={param.defaultValue}
-                    disabled
-                  />
-                ))}
-
-                <BasicTextArea
-                  label="Stop Sequences"
-                  rows={2}
-                  defaultValue={model.stop.join(', ')}
-                  disabled
-                />
-              </div>
-            </div>
-          )}
-        </Tabs.Content>
-
-        <Tabs.Content value="instructions">
-          <div className="space-y-2 p-2">
-            <div className="font-medium">Instructions</div>
+          <div className={cn('p-2', showModelPicker && 'hidden')}>
+            <div className="text-sm font-medium">Instructions</div>
             <TextareaAutosize
               minRows={4}
               rows={4}
@@ -135,17 +96,18 @@ export const ChatSidebar = ({
               placeholder="System message..."
               value={instructionText}
               onValueChange={setInstructionText}
+              disabled={!isOwner}
             />
-            <div className="gap-2 flex-end">
+            <div className="mt-2 gap-2 flex-end">
               <Button
                 color="gray"
-                disabled={!isInstructionDirty}
+                disabled={!isInstructionDirty || !isOwner}
                 onClick={() => setInstructionText(thread.instructions)}
               >
                 Revert
               </Button>
               <Button
-                disabled={!isInstructionDirty}
+                disabled={!isInstructionDirty || !isOwner}
                 onClick={() => {
                   void updateThread({ instructions: instructionText })
                 }}
@@ -154,14 +116,81 @@ export const ChatSidebar = ({
               </Button>
             </div>
           </div>
+
+          {model && !showModelPicker && <ParameterControls model={model} />}
         </Tabs.Content>
 
-        <Tabs.Content value="commands">
-          <div className="p-2">
-            <div className="text-lg font-medium">Commands</div>
+        <Tabs.Content value="view">
+          <div className="space-y-1 p-2 text-sm">
+            <Label className="gap-2 flex-start">
+              <Checkbox
+                checked={queryOptions.hasAssistantRole}
+                onCheckedChange={(checked) =>
+                  setQueryOptions({ ...queryOptions, hasAssistantRole: Boolean(checked) })
+                }
+              />
+              Assistant
+            </Label>
+            <Label className="gap-2 flex-start">
+              <Checkbox
+                checked={queryOptions.hasImageFiles}
+                onCheckedChange={(checked) =>
+                  setQueryOptions({ ...queryOptions, hasImageFiles: Boolean(checked) })
+                }
+              />
+              Has images
+            </Label>
+            <Label className="gap-2 flex-start">
+              <Checkbox
+                checked={queryOptions.hasSoundEffectFiles}
+                onCheckedChange={(checked) =>
+                  setQueryOptions({ ...queryOptions, hasSoundEffectFiles: Boolean(checked) })
+                }
+              />
+              Has sound effects
+            </Label>
           </div>
         </Tabs.Content>
       </Tabs.Root>
+    </div>
+  )
+}
+
+const ParameterControls = ({ model }: { model: EChatModel }) => {
+  const parameters = getModelParams(model)
+  return (
+    <div className="hidden rounded p-2">
+      <div className={cn('grid gap-6 border border-grayA-3 p-4')}>
+        <SliderWithInput
+          label="Max Tokens"
+          defaultValue={
+            defaultMaxTokens > model.contextLength ? model.contextLength : defaultMaxTokens
+          }
+          min={1}
+          max={model.contextLength || defaultMaxTokens}
+          step={1}
+          disabled
+        />
+
+        {parameters.map((param) => (
+          <SliderWithInput
+            key={param.id}
+            label={param.label}
+            min={param.min}
+            max={param.max}
+            step={param.step}
+            defaultValue={param.defaultValue}
+            disabled
+          />
+        ))}
+
+        <BasicTextArea
+          label="Stop Sequences"
+          rows={2}
+          defaultValue={model.stop.join(', ')}
+          disabled
+        />
+      </div>
     </div>
   )
 }

@@ -167,25 +167,23 @@ export const content = query({
     if (!thread) return emptyPage()
 
     // NOTE using unsafeDb for super filter
-    const initQuery =
-      args.hasImageFiles || args.hasSoundEffectFiles || args.hasAssistantRole
-        ? ctx.unsafeDb
-            .query('messages')
-            .withIndex('threadId_role', (q) => q.eq('threadId', thread._id).eq('role', 'assistant'))
-        : ctx.unsafeDb.query('messages').withIndex('threadId', (q) => q.eq('threadId', thread._id))
+    // TODO handle deleted
+    const hasFilter = args.hasImageFiles || args.hasSoundEffectFiles || args.hasAssistantRole
+    const initQuery = hasFilter
+      ? ctx.unsafeDb
+          .query('messages')
+          .withIndex('threadId_role', (q) => q.eq('threadId', thread._id).eq('role', 'assistant'))
+      : ctx.unsafeDb.query('messages').withIndex('threadId', (q) => q.eq('threadId', thread._id))
 
     const results = await filter(initQuery, async (message) => {
-      if (args.hasImageFiles) {
-        if (!message.files) return false
-        if (!message.files.some((file) => file.type === 'image')) return false
-      }
+      if (!hasFilter) return true
 
-      if (args.hasSoundEffectFiles) {
-        if (!message.files) return false
-        if (!message.files.some((file) => file.type === 'sound_effect')) return false
-      }
+      if (args.hasAssistantRole) return true
+      if (args.hasImageFiles && message.files?.some((file) => file.type === 'image')) return true
+      if (args.hasSoundEffectFiles && message.files?.some((file) => file.type === 'sound_effect'))
+        return true
 
-      return true
+      return false
     })
       .order('desc')
       .paginate(args.paginationOpts)
