@@ -1,4 +1,5 @@
 import { clsx } from 'clsx'
+import { format, formatDistanceToNowStrict, isThisYear } from 'date-fns'
 import { atom, WritableAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { twMerge } from 'tailwind-merge'
@@ -102,4 +103,20 @@ export function endpointCode(endpoint: string) {
     default:
       return endpoint.slice(0, 2).toUpperCase()
   }
+}
+
+export function formatTimeToDisplayShort(time: number) {
+  const date = new Date(time)
+
+  if (isThisYear(date)) {
+    return formatDistanceToNowStrict(date, { addSuffix: false })
+      .replace(/ seconds?/, 's')
+      .replace(/ minutes?/, 'm')
+      .replace(/ hours?/, 'h')
+      .replace(/ days?/, 'd')
+      .replace(/ months?/, 'mo')
+      .replace(/ years?/, 'y')
+  }
+
+  return format(date, 'MMM d, yyyy')
 }

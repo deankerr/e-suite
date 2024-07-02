@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import { DotsThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
-import { formatDistanceToNow } from 'date-fns'
-import Link from 'next/link'
 
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
 import { Markdown } from '@/components/message/Markdown'
+import { TimeSinceLink } from '@/components/message/TimeSinceLink'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
 import { VoiceoverPlayer } from '@/components/voiceovers/VoiceoverPlayer'
 import { hasActiveJobName } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
-import { cn } from '@/lib/utils'
+import { cn, formatTimeToDisplayShort } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/shared/types'
 
@@ -46,7 +45,6 @@ export const Message = ({
   const showChatLoader =
     hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
 
-  const timeString = formatDistanceToNow(new Date(message._creationTime), { addSuffix: true })
   const role = textToImage ? 'images' : soundGeneration ? 'sounds' : message.role
   const name = textToImage
     ? textToImage.endpointModelId
@@ -76,16 +74,11 @@ export const Message = ({
 
           <div className="space-x-2">
             <span className="font-medium text-gray-11">{name}</span>
-            {slug ? (
-              <Link
-                href={`/c/${slug}/${message.series}`}
-                className="text-xs text-gray-11 hover:underline"
-              >
-                {timeString}
-              </Link>
-            ) : (
-              <span className="text-xs text-gray-11">{timeString}</span>
-            )}
+            <TimeSinceLink
+              time={message._creationTime}
+              href={`/c/${slug}/${message.series}`}
+              className="text-xs text-gray-11 hover:underline"
+            />
           </div>
 
           <div>
