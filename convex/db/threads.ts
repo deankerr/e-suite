@@ -13,8 +13,7 @@ import { getImageModelByResourceKey } from './imageModels'
 import { getMessageCommand, getNextMessageSeries } from './messages'
 
 import type { Id } from '../_generated/dataModel'
-import type { InferenceConfig } from '../shared/types'
-import type { Ent, MutationCtx, QueryCtx } from '../types'
+import type { Ent, InferenceConfig, MutationCtx, QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   const id = ctx.unsafeDb.normalizeId('threads', slugOrId)

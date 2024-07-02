@@ -9,7 +9,7 @@ import { getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
 import { QuantityControl } from './QuantityControl'
 
-import type { TextToImageConfig } from '@/convex/shared/types'
+import type { TextToImageConfig } from '@/convex/types'
 
 export const MessageInput = () => {
   const { appendMessage, updateThread, thread } = useChat()

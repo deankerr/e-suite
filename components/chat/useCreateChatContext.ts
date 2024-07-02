@@ -7,7 +7,7 @@ import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/conve
 import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 import { useMessagesQuery, useThread } from '@/lib/queries'
 
-import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/shared/types'
+import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const [queryOptions, setQueryOptions] = useState({

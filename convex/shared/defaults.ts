@@ -1,4 +1,4 @@
-import type { ChatCompletionConfig, TextToImageConfig } from './types'
+import type { ChatCompletionConfig, TextToImageConfig } from '../types'
 
 export const defaultChatInferenceConfig: ChatCompletionConfig = {
   type: 'chat-completion',

@@ -6,8 +6,8 @@ import { useAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 
 import { api } from '@/convex/_generated/api'
-import { EMessage } from '@/convex/shared/types'
 import { hasActiveJobName } from '@/convex/shared/utils'
+import { EMessage } from '@/convex/types'
 import { voiceoverQueueAtom } from '@/lib/atoms'
 
 const AudioButton = dynamic(() => import('@/components/audio/AudioButton'), {

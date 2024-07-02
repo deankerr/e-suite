@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
-import { EMessage } from '@/convex/shared/types'
+import { EMessage } from '@/convex/types'
 import { cn } from '@/lib/utils'
 
 const Lightbox = dynamic(() => import('@/components/images/Lightbox'))

@@ -12,7 +12,7 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
-import type { EChatModel } from '@/convex/shared/types'
+import type { EChatModel } from '@/convex/types'
 import type { StaticImport } from 'next/dist/shared/lib/get-img-props'
 
 export const ChatModelCard = ({

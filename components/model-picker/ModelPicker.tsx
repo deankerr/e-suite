@@ -8,7 +8,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/Command'
-import { EChatModel, EImageModel } from '@/convex/shared/types'
+import { EChatModel, EImageModel } from '@/convex/types'
 import { cn } from '@/lib/utils'
 
 export const ModelPicker = <T extends EChatModel | EImageModel>({

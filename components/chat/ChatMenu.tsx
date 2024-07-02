@@ -15,7 +15,7 @@ import { DeleteThreadDialog, UpdateThreadTitleDialog } from '@/components/ui/dia
 import { useChatModels, useImageModels, useVoiceModels } from '@/lib/queries'
 import { endpointCode } from '@/lib/utils'
 
-import type { EThread } from '@/convex/shared/types'
+import type { EThread } from '@/convex/types'
 
 type ChatMenuProps = { thread: EThread } & React.ComponentProps<typeof Popover.Root>
 

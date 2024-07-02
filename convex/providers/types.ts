@@ -1,4 +1,4 @@
-import type { TextToImageConfig } from '../shared/types'
+import type { TextToImageConfig } from '../types'
 
 export type TextToImageHandlerResult = {
   result: { urls: string[] } & Record<string, any>

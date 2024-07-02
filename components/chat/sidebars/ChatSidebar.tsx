@@ -11,7 +11,7 @@ import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { useChatModels, useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-import type { ChatCompletionConfig, EChatModel, EThread } from '@/convex/shared/types'
+import type { ChatCompletionConfig, EChatModel, EThread } from '@/convex/types'
 
 export const ChatSidebar = ({
   thread,

@@ -2,14 +2,7 @@ import { useQuery as useCachedQuery } from 'convex-helpers/react/cache/hooks'
 import { useQuery as useConvexQuery, usePaginatedQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
-import {
-  EChatModel,
-  EImageModel,
-  EMessage,
-  EThread,
-  EUser,
-  EVoiceModel,
-} from '@/convex/shared/types'
+import { EChatModel, EImageModel, EMessage, EThread, EUser, EVoiceModel } from '@/convex/types'
 
 const shouldUseCachedQuery = false
 const useQuery = shouldUseCachedQuery ? useCachedQuery : useConvexQuery

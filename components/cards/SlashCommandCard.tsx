@@ -6,7 +6,7 @@ import { DimensionsControl } from '@/components/message-input/DimensionsControl'
 import { QuantityControl } from '@/components/message-input/QuantityControl'
 import { ModelPicker, ModelPickerCombobox } from '@/components/model-picker/ModelPicker'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { EThread } from '@/convex/shared/types'
+import { EThread } from '@/convex/types'
 import { useImageModels } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 

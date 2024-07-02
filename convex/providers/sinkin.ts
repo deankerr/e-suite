@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { env } from '../shared/utils'
 
-import type { TextToImageConfig } from '../shared/types'
+import type { TextToImageConfig } from '../types'
 import type { TextToImageHandler } from './types'
 
 const api = ky.extend({

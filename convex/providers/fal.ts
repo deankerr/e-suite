@@ -6,7 +6,7 @@ import * as HyperSdxl from './fal/hyper_sdxl'
 import * as SDLora from './fal/lora'
 import * as PixartSigma from './fal/pixart_sigma'
 
-import type { TextToImageConfig } from '../shared/types'
+import type { TextToImageConfig } from '../types'
 import type { TextToImageHandler } from './types'
 
 //* Model config

@@ -316,13 +316,3 @@ const schema = defineEntSchema(
 
 export default schema
 export const entDefinitions = getEntDefinitions(schema)
-
-// Votes
-// export const generationVoteFields = {
-//   vote: z.enum(generationVoteNames),
-
-//   userId: zid('users').optional(),
-//   ip: z.string().optional(),
-//   constituent: z.string().uuid(),
-//   metadata: z.any().optional(),
-// }
