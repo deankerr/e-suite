@@ -25,9 +25,22 @@ export const createImageFile = internalMutation({
   },
 })
 
+// TODO remove after custom function refactor
+const zImageFields = {
+  originUrl: z.string(),
+
+  width: z.number(),
+  height: z.number(),
+  blurDataUrl: z.string(),
+  color: z.string(),
+
+  generationData: z.array(z.string()),
+  messageId: zid('messages'),
+}
+
 export const createImage = internalMutation({
   args: {
-    ...imageFields,
+    ...zImageFields,
     format: z.string(),
     fileId: zid('_storage'),
     originUrl: z.string(),

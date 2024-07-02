@@ -63,29 +63,29 @@ const image_models = defineEnt(imageModelFields).field('resourceKey', v.string()
 })
 
 export const fileFields = {
-  fileId: zid('_storage'),
-  isOriginFile: z.boolean(),
+  fileId: v.id('_storage'),
+  isOriginFile: v.boolean(),
 
-  category: z.enum(['image']),
-  format: z.string(),
+  category: v.literal('image'),
+  format: v.string(),
 
-  width: z.number().optional(),
-  height: z.number().optional(),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
 }
-const files = defineEnt(zodToConvexFields(fileFields)).edge('image')
+const files = defineEnt(fileFields).edge('image')
 
 export const imageFields = {
-  originUrl: z.string(),
+  originUrl: v.string(),
 
-  width: z.number(),
-  height: z.number(),
-  blurDataUrl: z.string(),
-  color: z.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
 
-  generationData: z.tuple([z.string(), z.string()]).array(),
-  messageId: zid('messages'), // ? added by accident?
+  generationData: v.array(v.string()),
+  messageId: v.id('messages'), // ? added by accident?
 }
-const images = defineEnt(zodToConvexFields(imageFields))
+const images = defineEnt(imageFields)
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
