@@ -167,7 +167,6 @@ export const content = query({
     if (!thread) return emptyPage()
 
     // NOTE using unsafeDb for super filter
-    // TODO handle deleted
     const hasFilter = args.hasImageFiles || args.hasSoundEffectFiles || args.hasAssistantRole
     const initQuery = hasFilter
       ? ctx.unsafeDb
@@ -176,6 +175,7 @@ export const content = query({
       : ctx.unsafeDb.query('messages').withIndex('threadId', (q) => q.eq('threadId', thread._id))
 
     const results = await filter(initQuery, async (message) => {
+      if (message.deletionTime) return false
       if (!hasFilter) return true
 
       if (args.hasAssistantRole) return true

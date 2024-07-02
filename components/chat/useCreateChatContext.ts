@@ -24,7 +24,7 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
 
   const hasQueryFilters = Object.values(queryOptions).some((value) => value)
   const loadMoreMessages = useCallback(() => {
-    page.loadMore(hasQueryFilters ? 500 : 50)
+    page.loadMore(hasQueryFilters ? 100 : 50)
   }, [page, hasQueryFilters])
 
   const messages = page.results
