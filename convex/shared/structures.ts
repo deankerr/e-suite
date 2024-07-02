@@ -42,7 +42,7 @@ export const imageSchema = z.object({
   color: z.string(),
 })
 
-export const metadataKVSchema = z.object({ key: z.string(), value: z.string() })
+export const metadataKVSchema = z.object({ k: z.string(), v: z.string() })
 
 export type EChatCompletionInference = z.infer<typeof chatCompletionInferenceSchema>
 export const chatCompletionInferenceSchema = z.object({

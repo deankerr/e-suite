@@ -5,7 +5,7 @@ import { ms } from 'itty-time'
 
 const timeToDelete = ms('1 day')
 
-// * Inference Config Shared Schema
+// * shared schemas
 const inferenceSchemaV = v.union(
   v.object({
     type: v.literal('chat-completion'),
@@ -47,7 +47,6 @@ const inferenceSchemaV = v.union(
   }),
 )
 
-// * File Attachment Schema
 const fileAttachmentRecordSchemaV = v.array(
   v.union(
     v.object({
@@ -64,6 +63,8 @@ const fileAttachmentRecordSchemaV = v.array(
     }),
   ),
 )
+
+const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
 
 // * Models
 const sharedModelFields = {
@@ -183,7 +184,7 @@ export const messageFields = {
   inference: v.optional(inferenceSchemaV),
   files: v.optional(fileAttachmentRecordSchemaV),
 
-  metadata: v.optional(v.array(v.object({ key: v.string(), value: v.string() }))),
+  metadata: v.optional(kvListV),
   voiceover: v.optional(
     v.object({
       resourceKey: v.string(),
@@ -229,9 +230,9 @@ export const threadFields = {
   inference: inferenceSchemaV,
   slashCommands: v.array(
     v.object({
-      command: v.string(),
-      commandType: v.union(v.literal('startsWith'), v.literal('includesWord')),
       id: v.string(),
+      command: v.string(),
+      commandType: literals('startsWith', 'includesWord'),
       inference: inferenceSchemaV,
     }),
   ),
@@ -251,7 +252,7 @@ export const threadFields = {
   ),
 
   updatedAtTime: v.number(),
-  metadata: v.optional(v.array(v.object({ key: v.string(), value: v.string() }))),
+  metadata: v.optional(kvListV),
 }
 const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
