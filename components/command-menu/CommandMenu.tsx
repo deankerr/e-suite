@@ -5,10 +5,9 @@ import { Dialog, IconButton, Inset } from '@radix-ui/themes'
 import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
 import { ImagePlusIcon, MessageSquarePlusIcon } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useKey } from 'react-use'
 
-import { useChatDeck } from '@/components/chat-deck/useChatDeck'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
 import {
@@ -27,8 +26,6 @@ type CommandMenuProps = {
   asDialog?: boolean
 }
 
-const configUseChatDeck = false
-
 export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
   const [open, setOpen] = useAtom(commandMenuOpenAtom)
   useKey(
@@ -36,8 +33,6 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
     () => setOpen(!open),
   )
 
-  const isChatDeckMode = usePathname().endsWith('/c') && configUseChatDeck
-  const { deck, add, setDeck } = useChatDeck()
   const router = useRouter()
   const goto = (path: string) => {
     router.push(`${path}`)
@@ -46,10 +41,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
 
   const { user } = useViewerDetails()
   const threads = useUserThreadsList()
-  const threadsAvailable =
-    threads?.filter((thread) =>
-      isChatDeckMode ? !deck.some((slug) => thread.slug === slug) : true,
-    ) ?? []
+  const threadsAvailable = threads ?? []
 
   const menu = (
     <Command className="border-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
@@ -77,12 +69,6 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
               <ImagePlusIcon className="mr-2 size-4" />
               Start new Generation
             </CommandItem>
-            {configUseChatDeck && (
-              <CommandItem onSelect={() => goto('/c')}>
-                <MessageSquarePlusIcon className="mr-2 size-4" />
-                Chat Deck
-              </CommandItem>
-            )}
           </CommandGroup>
         )}
 
@@ -95,8 +81,7 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
                 value={thread.title ?? 'new thread ' + thread.slug}
                 // className="h-11"
                 onSelect={() => {
-                  if (isChatDeckMode) add(thread.slug)
-                  else goto(`/c/${thread.slug}`)
+                  goto(`/c/${thread.slug}`)
                   setOpen(false)
                 }}
               >
