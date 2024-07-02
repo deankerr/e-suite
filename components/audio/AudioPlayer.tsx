@@ -1,28 +1,28 @@
 import { useRef, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton } from '@radix-ui/themes'
+import { Card, IconButton, Inset } from '@radix-ui/themes'
 import AudioMotionAnalyzer from 'audiomotion-analyzer'
-import { ConvexError } from 'convex/values'
-import { Howl, Howler } from 'howler'
+import { Howler } from 'howler'
+import Image from 'next/image'
+import Link from 'next/link'
 import { Play, useHowl } from 'rehowl'
 
 import { cn } from '@/lib/utils'
+import MeshBg from './AudiPlayerMeshBg.svg'
 
 export default function AudioPlayer({ url, titleText }: { url: string; titleText: string }) {
   const [playing, setPlaying] = useState(false)
+  const [loop, setLoop] = useState(false)
+  const { howl } = useHowl({ src: [url], format: ['mp3'], preload: true })
 
   const visualizerRef = useRef<HTMLDivElement>(null)
   const [audioMotion, setAudioMotion] = useState<AudioMotionAnalyzer | null>(null)
-
-  const { howl } = useHowl({ src: [url], format: ['mp3'], preload: true })
-  const node = (howl as any)?._sounds?.[0]?._node as AudioNode
 
   const createAudioMotion = () => {
     if (!visualizerRef.current || audioMotion) return
 
     const node = (howl as any)._sounds[0]._node as AudioNode
-    if (!node)
-      throw new ConvexError({ message: 'node missing', data: JSON.stringify(howl, null, 2) })
+    if (!node) return console.error('audio node missing')
 
     const newAudioMotion = new AudioMotionAnalyzer(visualizerRef.current, {
       audioCtx: Howler.ctx,
@@ -38,55 +38,91 @@ export default function AudioPlayer({ url, titleText }: { url: string; titleText
       frequencyScale: 'log',
       showPeaks: true,
       smoothing: 0.7,
-      ledBars: false,
-      gradient: 'orangered',
+      ledBars: true,
+      radial: false,
+      gradient: 'classic',
     })
 
     setAudioMotion(newAudioMotion)
   }
 
+  const stop = () => {
+    setPlaying(false)
+    audioMotion?.destroy()
+    setAudioMotion(null)
+  }
+
+  const overlayCn =
+    'rounded-lg bg-black/5 p-1.5 text-sm font-medium text-white h-fit backdrop-blur-2xl'
+
   return (
-    <div className="mx-auto aspect-[8/5] w-80 overflow-hidden rounded-lg border border-orangeA-5 bg-gradient-to-bl from-orangeA-8 to-tomato-3">
-      <div ref={visualizerRef} className="h-full w-full"></div>
+    <Card className="mx-auto aspect-[8/5] w-80">
+      <Inset>
+        <Image src={MeshBg} alt="" className="-scale-x-100" />
+      </Inset>
+
+      {/* visualizer */}
+      <div ref={visualizerRef} className="absolute inset-0"></div>
 
       {/* overlay */}
-      <div className="absolute inset-0 grid p-3">
-        <div className="w-full">
-          <div className="text-small w-fit rounded-lg bg-grayA-2 p-1">
-            <Icons.Waveform className="inline size-6" /> sound effect
+      <div className="absolute inset-0 grid grid-rows-3 gap-1 p-3">
+        <div className="flex justify-between">
+          <div className={overlayCn}>
+            <Icons.Waveform className="inline size-5" /> sound effect
+          </div>
+
+          <div className="space-x-1">
+            <IconButton
+              variant={loop ? 'outline' : 'ghost'}
+              color="gray"
+              highContrast
+              className="m-0"
+              onClick={() => setLoop(!loop)}
+            >
+              <Icons.Repeat className="size-5" />
+            </IconButton>
+
+            <Link href={url} target="_blank">
+              <IconButton variant="ghost" color="gray" highContrast className="m-0">
+                <Icons.DownloadSimple className="size-5" />
+              </IconButton>
+            </Link>
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="flex-center">
           <IconButton
-            variant="soft"
+            variant="solid"
             size="4"
             radius="full"
             color="orange"
             onClick={() => {
-              if (!node) return
+              if (playing) return stop()
+
               if (!audioMotion) createAudioMotion()
               setPlaying(true)
             }}
-            disabled={!node}
+            className="outline outline-grayA-3 brightness-110 hover:outline-grayA-5"
           >
-            {playing ? <Icons.Stop className="size-7" /> : <Icons.Play className="size-7" />}
+            {playing ? <Icons.Stop className="size-6" /> : <Icons.Play className="size-6" />}
           </IconButton>
         </div>
 
-        <div className="w-full">
-          <div className="mx-auto w-fit rounded-lg bg-grayA-2 p-2 font-medium">{titleText}</div>
+        <div className="flex-col-end">
+          <div className={cn(overlayCn, 'mx-auto line-clamp-2 text-center text-base')}>
+            {titleText}
+          </div>
         </div>
       </div>
 
       <Play
         howl={howl}
         stop={!playing}
+        loop={loop}
         onEnd={() => {
-          setPlaying(false)
-          // onEnd?.()
+          if (!loop) stop()
         }}
       />
-    </div>
+    </Card>
   )
 }

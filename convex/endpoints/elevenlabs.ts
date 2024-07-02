@@ -105,7 +105,14 @@ const customVoices = [
   },
 ]
 
-export const soundGeneration = async (ctx: ActionCtx, { text }: { text: string }) => {
+export const soundGeneration = async (
+  ctx: ActionCtx,
+  {
+    text,
+    duration_seconds,
+    prompt_influence,
+  }: { text: string; duration_seconds?: number; prompt_influence?: number },
+) => {
   try {
     const apiKey = getElevenlabsApiKey()
     const blob = await ky
@@ -115,6 +122,8 @@ export const soundGeneration = async (ctx: ActionCtx, { text }: { text: string }
         },
         json: {
           text,
+          duration_seconds,
+          prompt_influence,
         },
         timeout: 2 * 60 * 1000,
       })

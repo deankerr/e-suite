@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, jobResultSuccess } from '../jobs'
+import { acquireJob, handleJobError, jobResultSuccess } from '../jobs'
 import { insist } from '../shared/utils'
 
 export const init = internalMutation({
@@ -43,10 +43,16 @@ export const run = internalAction({
       })
       if (!message) return
 
-      const { inference } = message
+      const {
+        inference: { prompt, duration_seconds, prompt_influence },
+      } = message
 
-      console.log('[sfx]', inference.prompt)
-      const fileId = await ElevenLabs.soundGeneration(ctx, { text: inference.prompt })
+      console.log('[sfx]', prompt)
+      const fileId = await ElevenLabs.soundGeneration(ctx, {
+        text: prompt,
+        duration_seconds,
+        prompt_influence,
+      })
       const fileUrl = (await ctx.storage.getUrl(fileId)) || ''
 
       await ctx.runMutation(internal.inference.soundGeneration.complete, {
@@ -54,11 +60,10 @@ export const run = internalAction({
         messageId: message._id,
         fileId,
         fileUrl,
-        prompt: inference.prompt,
+        prompt,
       })
     } catch (err) {
-      console.error(err)
-      throw err
+      return await handleJobError(ctx, { err, jobId: args.jobId })
     }
   },
 })
