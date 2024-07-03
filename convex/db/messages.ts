@@ -1,11 +1,10 @@
 import { asyncMap } from 'convex-helpers'
 import { filter } from 'convex-helpers/server/filter'
-import { literals } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from '../functions'
-import { kvListV } from '../schema'
+import { kvListV, messageFields } from '../schema'
 import { zStringToMessageRole } from '../shared/utils'
 import { emptyPage } from '../utils'
 import { getSpeechFile } from './speechFiles'
@@ -117,7 +116,7 @@ export const list = query({
   args: {
     threadId: v.string(),
     limit: v.number(),
-    order: literals('asc', 'desc'),
+    order: v.union(v.literal('asc'), v.literal('desc')),
   },
   handler: async (ctx, args) => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
@@ -137,7 +136,7 @@ export const list = query({
 export const paginate = query({
   args: {
     threadId: v.string(),
-    order: literals('asc', 'desc'),
+    order: v.union(v.literal('asc'), v.literal('desc')),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
@@ -235,7 +234,7 @@ export const update = mutation({
   args: {
     messageId: v.id('messages'),
 
-    role: literals('assistant', 'user', 'system'),
+    role: messageFields.role,
     name: v.optional(v.string()),
     content: v.optional(v.string()),
     metadata: v.optional(kvListV),

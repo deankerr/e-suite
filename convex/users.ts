@@ -1,7 +1,8 @@
-import { literals, partial } from 'convex-helpers/validators'
+import { partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from './functions'
+import { userFields } from './schema'
 import { generateRandomString } from './utils'
 
 const userBySchema = v.union(
@@ -12,10 +13,8 @@ const userBySchema = v.union(
 export const create = internalMutation({
   args: {
     fields: v.object({
+      ...userFields,
       tokenIdentifier: v.string(),
-      name: v.string(),
-      imageUrl: v.string(),
-      role: literals('user', 'admin'),
     }),
   },
   handler: async (ctx, { fields }) => await ctx.table('users').insert({ ...fields }),
@@ -24,9 +23,7 @@ export const create = internalMutation({
 export const update = internalMutation({
   args: {
     by: userBySchema,
-    fields: v.object(
-      partial({ name: v.string(), imageUrl: v.string(), role: literals('user', 'admin') }),
-    ),
+    fields: v.object(partial(userFields)),
   },
   handler: async (ctx, { by, fields }) => {
     if ('id' in by) return await ctx.table('users').getX(by.id).patch(fields)

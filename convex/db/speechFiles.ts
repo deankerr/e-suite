@@ -45,10 +45,11 @@ export const getSpeechFile = async (
   return speechFile ?? undefined
 }
 
+const statusV = literals('pending', 'complete', 'error')
 export const update = internalMutation({
   args: {
     speechFileId: v.id('speech_files'),
-    status: literals('pending', 'complete', 'error'),
+    status: statusV,
     fileId: v.optional(v.id('_storage')),
     fileUrl: v.optional(v.string()),
     error: v.optional(v.string()),
