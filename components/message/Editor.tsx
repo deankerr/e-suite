@@ -4,7 +4,7 @@ import { IconButton } from '@radix-ui/themes'
 
 import { useChat } from '@/components/chat/ChatProvider'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
-import { EMessage } from '@/convex/shared/types'
+import { EMessage } from '@/convex/types'
 import { cn } from '@/lib/utils'
 
 export const Editor = ({

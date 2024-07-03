@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { Infer, v } from 'convex/values'
 
 import * as Fal from '../endpoints/fal'
 import * as OpenAi from '../endpoints/openai'
@@ -6,16 +6,16 @@ import * as OpenRouter from '../endpoints/openrouter'
 import * as Sinkin from '../endpoints/sinkin'
 import * as Together from '../endpoints/together'
 import { internalAction, internalMutation } from '../functions'
-import { chatModelFields, endpointDataCacheFields, imageModelFields } from '../schema'
+import { chatModelFields, imageModelFields } from '../schema'
 
 //* chat models
-const chatModelSchema = z.object(chatModelFields)
-export type ParsedChatModelData = z.infer<typeof chatModelSchema> & { resourceKey: string }
+const chatModelSchema = v.object(chatModelFields)
+export type ParsedChatModelData = Infer<typeof chatModelSchema> & { resourceKey: string }
 
 export const importEndpointChatModelData = internalMutation({
   args: {
-    purgeExisting: z.boolean(),
-    replaceExisting: z.boolean(),
+    purgeExisting: v.boolean(),
+    replaceExisting: v.boolean(),
   },
   handler: async (ctx, args) => {
     if (args.purgeExisting) {
@@ -118,11 +118,11 @@ const defaultChatModelTags = [
 ]
 
 //* image models
-const imageModelSchema = z.object(imageModelFields)
-export type ImageModelDataRecord = z.infer<typeof imageModelSchema> & { resourceKey: string }
+const imageModelSchema = v.object(imageModelFields)
+export type ImageModelDataRecord = Infer<typeof imageModelSchema> & { resourceKey: string }
 export const importEndpointImageModelData = internalMutation({
   args: {
-    purgeExisting: z.boolean(),
+    purgeExisting: v.boolean(),
   },
   handler: async (ctx, args) => {
     if (args.purgeExisting) {
@@ -156,7 +156,7 @@ export const fetchEndpointModelData = internalAction(async (ctx) => {
 })
 
 export const cacheEndpointModelData = internalMutation({
-  args: endpointDataCacheFields,
+  args: { endpoint: v.string(), name: v.string(), data: v.string() },
   handler: async (ctx, args) => {
     return await ctx.table('endpoint_data_cache').insert(args)
   },

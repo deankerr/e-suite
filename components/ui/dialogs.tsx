@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 
-import type { EThread } from '@/convex/shared/types'
+import type { EThread } from '@/convex/types'
 
 type DeleteDialogProps = {
   threadId: string

@@ -1,6 +1,6 @@
 import { zid } from 'convex-helpers/server/zod'
 import { makeFunctionReference } from 'convex/server'
-import { ConvexError } from 'convex/values'
+import { ConvexError, Infer, v } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from './_generated/api'
@@ -64,10 +64,10 @@ export const jobDefinitions = {
   },
 }
 
-const jobAttributesObject = z.object(jobAttributeFields)
+const jobAttributesObject = v.object(jobAttributeFields)
 export const createJob = async <
   J extends keyof typeof jobDefinitions,
-  A extends z.infer<typeof jobAttributesObject>,
+  A extends Infer<typeof jobAttributesObject>,
 >(
   ctx: MutationCtx,
   name: J,
@@ -148,7 +148,17 @@ export const processJobs = internalMutation({
   },
 })
 
-export const resultError = internalMutation(jobResultError)
+export const resultError = internalMutation(async (ctx, argsUnkn) => {
+  const args = argsUnkn as {
+    jobId: Id<'jobs'>
+    error: { code: string; message: string; fatal: boolean }
+  }
+  const job = await ctx.table('jobs').getX(args.jobId)
+
+  const errors = job.errors ?? []
+  // TODO fatal check, job retrier
+  await job.patch({ status: 'failed', errors: [...errors, args.error], endedTime: Date.now() })
+})
 
 const getJobDefinition = (jobName: string) => {
   const jobDefinition = jobDefinitions[jobName as keyof typeof jobDefinitions]

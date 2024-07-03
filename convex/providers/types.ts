@@ -1,4 +1,4 @@
-import type { ETextToImageInference } from '../shared/structures'
+import type { TextToImageConfig } from '../types'
 
 export type TextToImageHandlerResult = {
   result: { urls: string[] } & Record<string, any>
@@ -15,5 +15,5 @@ export type TextToImageHandlerError = {
 }
 
 export type TextToImageHandler = (args: {
-  parameters: ETextToImageInference
+  parameters: TextToImageConfig
 }) => Promise<TextToImageHandlerResult | TextToImageHandlerError>

@@ -5,7 +5,7 @@ import { EndpointBadge } from '@/app/admin/Badges'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
-import type { EImageModel } from '@/convex/shared/types'
+import type { EImageModel } from '@/convex/types'
 
 export const ImageModelCard = ({
   model,

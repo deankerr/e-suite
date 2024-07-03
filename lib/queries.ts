@@ -2,14 +2,7 @@ import { useQuery as useCachedQuery } from 'convex-helpers/react/cache/hooks'
 import { useQuery as useConvexQuery, usePaginatedQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
-import {
-  EChatModel,
-  EImageModel,
-  EMessage,
-  EThread,
-  EUser,
-  EVoiceModel,
-} from '@/convex/shared/types'
+import { EChatModel, EImageModel, EMessage, EThread, EUser, EVoiceModel } from '@/convex/types'
 
 const shouldUseCachedQuery = false
 const useQuery = shouldUseCachedQuery ? useCachedQuery : useConvexQuery
@@ -35,6 +28,7 @@ export const useMessages = ({
       ? {
           threadId,
           limit,
+          order: 'desc',
         }
       : 'skip',
   )
@@ -43,9 +37,13 @@ export const useMessages = ({
 }
 
 export const usePaginatedMessages = ({ threadId }: { threadId?: string }) => {
-  const result = usePaginatedQuery(api.db.messages.paginate, threadId ? { threadId } : 'skip', {
-    initialNumItems: 25,
-  })
+  const result = usePaginatedQuery(
+    api.db.messages.paginate,
+    threadId ? { threadId, order: 'desc' } : 'skip',
+    {
+      initialNumItems: 25,
+    },
+  )
 
   return result
 }

@@ -1,6 +1,5 @@
 import { makeActionRetrier } from 'convex-helpers/server/retries'
 import { customAlphabet } from 'nanoid/non-secure'
-import { z } from 'zod'
 
 import type { MutationCtx } from './types'
 
@@ -31,16 +30,6 @@ export const generateSha256Hash = async (input: string) => {
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
   return hashHex
 }
-
-export type ZPaginationOptValidator = z.infer<typeof zPaginationOptValidator>
-export const zPaginationOptValidator = z.object({
-  numItems: z.number(),
-  cursor: z.union([z.string(), z.null()]),
-  endCursor: z.optional(z.union([z.string(), z.null()])),
-  id: z.optional(z.number()),
-  maximumRowsRead: z.optional(z.number()),
-  maximumBytesRead: z.optional(z.number()),
-})
 
 // see https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
 // permanent loading state for a paginated query until a different result is returned

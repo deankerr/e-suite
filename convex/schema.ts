@@ -1,98 +1,148 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { zid, zodToConvex, zodToConvexFields } from 'convex-helpers/server/zod'
+import { literals } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 import { ms } from 'itty-time'
-import { z } from 'zod'
-
-import {
-  fileAttachmentRecordSchema,
-  inferenceSchema,
-  messageRolesEnum,
-  metadataKVSchema,
-} from './shared/structures'
-import { zMessageName, zMessageTextContent, zThreadTitle } from './shared/utils'
 
 const timeToDelete = ms('1 day')
 
-//* Models
+// * shared schemas
+export const chatCompletionConfigV = v.object({
+  type: v.literal('chat-completion'),
+  resourceKey: v.string(),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+  excludeHistoryMessagesByName: v.optional(v.array(v.string())),
+  maxHistoryMessages: v.optional(v.number()),
+
+  stream: v.optional(v.boolean()),
+  temperature: v.optional(v.number()),
+  max_tokens: v.optional(v.number()),
+  top_p: v.optional(v.number()),
+  top_k: v.optional(v.number()),
+  stop: v.optional(v.array(v.string())),
+  repetition_penalty: v.optional(v.number()),
+})
+
+export const textToImageConfigV = v.object({
+  type: v.literal('text-to-image'),
+  resourceKey: v.string(),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+
+  prompt: v.string(),
+  width: v.number(),
+  height: v.number(),
+  n: v.number(),
+})
+
+export const soundGenerationConfigV = v.object({
+  type: v.literal('sound-generation'),
+  resourceKey: v.string(),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+
+  prompt: v.string(),
+  duration_seconds: v.optional(v.number()),
+  prompt_influence: v.optional(v.number()),
+  n: v.optional(v.number()),
+})
+
+export const inferenceConfigV = v.union(
+  chatCompletionConfigV,
+  textToImageConfigV,
+  soundGenerationConfigV,
+)
+
+export const fileAttachmentRecordSchemaV = v.array(
+  v.union(
+    v.object({
+      id: v.id('images'),
+      type: v.literal('image'),
+    }),
+    v.object({
+      type: v.literal('image_url'),
+      url: v.string(),
+    }),
+    v.object({
+      id: v.id('sound_effect_files'),
+      type: v.literal('sound_effect'),
+    }),
+  ),
+)
+
+export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
+
+// * Models
 const sharedModelFields = {
-  name: z.string(),
-  description: z.string(),
-  creatorName: z.string(),
-  link: z.string(),
+  name: v.string(),
+  description: v.string(),
+  creatorName: v.string(),
+  link: v.string(),
 
-  license: z.string(),
-  tags: z.string().array(),
-  coverImageUrl: z.string().optional(),
+  license: v.string(),
+  tags: v.array(v.string()),
+  coverImageUrl: v.optional(v.string()),
 
-  endpoint: z.string(),
-  endpointModelId: z.string(),
-  pricing: z.object({
-    tokenInput: z.number().optional(),
-    tokenOutput: z.number().optional(),
-    imageInput: z.number().optional(),
-    imageOutput: z.number().optional(),
-    // {unit, price, in/out}[]
-  }),
+  endpoint: v.string(),
+  endpointModelId: v.string(),
+  pricing: v.object({}),
 
-  moderated: z.boolean(),
-  available: z.boolean(),
-  hidden: z.boolean(),
-  internalScore: z.number(),
+  moderated: v.boolean(),
+  available: v.boolean(),
+  hidden: v.boolean(),
+  internalScore: v.number(),
 }
 
 export const chatModelFields = {
   ...sharedModelFields,
-  numParameters: z.number(),
-  contextLength: z.number(),
-  tokenizer: z.string(),
-  stop: z.string().array(),
-  maxOutputTokens: z.number().optional(),
+  numParameters: v.number(),
+  contextLength: v.number(),
+  tokenizer: v.string(),
+  stop: v.array(v.string()),
+  maxOutputTokens: v.optional(v.number()),
 }
-const chat_models = defineEnt(zodToConvexFields(chatModelFields)).field(
-  'resourceKey',
-  zodToConvex(z.string()),
-  { unique: true },
-)
+const chat_models = defineEnt(chatModelFields).field('resourceKey', v.string(), {
+  unique: true,
+})
 
 export const imageModelFields = {
   ...sharedModelFields,
-  architecture: z.enum(['SD', 'SDXL', 'SD3']),
-  sizes: z.object({
-    portrait: z.tuple([z.number(), z.number()]),
-    landscape: z.tuple([z.number(), z.number()]),
-    square: z.tuple([z.number(), z.number()]),
+  architecture: literals('SD', 'SDXL', 'SD3'),
+  sizes: v.object({
+    portrait: v.array(v.number()),
+    landscape: v.array(v.number()),
+    square: v.array(v.number()),
   }),
-  civitaiModelId: z.string().optional(),
+  civitaiModelId: v.optional(v.string()),
 }
-const image_models = defineEnt(zodToConvexFields(imageModelFields)).field(
-  'resourceKey',
-  zodToConvex(z.string()),
-  { unique: true },
-)
+const image_models = defineEnt(imageModelFields).field('resourceKey', v.string(), {
+  unique: true,
+})
 
 export const fileFields = {
-  fileId: zid('_storage'),
-  isOriginFile: z.boolean(),
+  fileId: v.id('_storage'),
+  isOriginFile: v.boolean(),
 
-  category: z.enum(['image']),
-  format: z.string(),
+  category: v.literal('image'),
+  format: v.string(),
 
-  width: z.number().optional(),
-  height: z.number().optional(),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
 }
-const files = defineEnt(zodToConvexFields(fileFields)).edge('image')
+const files = defineEnt(fileFields).edge('image')
 
 export const imageFields = {
-  originUrl: z.string(),
+  originUrl: v.string(),
 
-  width: z.number(),
-  height: z.number(),
-  blurDataUrl: z.string(),
-  color: z.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
 
-  generationData: z.tuple([z.string(), z.string()]).array(),
+  generationData: v.array(v.string()),
+  messageId: v.id('messages'), // ? added by accident?
 }
-const images = defineEnt(zodToConvexFields(imageFields))
+const images = defineEnt(imageFields)
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
@@ -100,59 +150,59 @@ const images = defineEnt(zodToConvexFields(imageFields))
   .index('originUrl', ['originUrl'])
 
 export const jobAttributeFields = {
-  threadId: zid('threads').optional(),
-  messageId: zid('messages').optional(),
-  imageId: zid('images').optional(),
+  threadId: v.optional(v.id('threads')),
+  messageId: v.optional(v.id('messages')),
+  imageId: v.optional(v.id('images')),
 
-  url: z.string().optional(),
-  width: z.number().optional(),
-  resourceKey: z.string().optional(),
+  url: v.optional(v.string()),
+  width: v.optional(v.number()),
+  resourceKey: v.optional(v.string()),
 }
 export const jobFields = {
-  name: z.string(),
-  status: z.enum(['queued', 'active', 'complete', 'failed']),
-  errors: z
-    .object({
-      code: z.string(),
-      message: z.string(),
-      fatal: z.boolean(),
-    })
-    .array()
-    .optional(),
-
-  queuedTime: z.number(),
-  startedTime: z.number().optional(),
-  endedTime: z.number().optional(),
+  name: v.string(),
+  status: literals('queued', 'active', 'complete', 'failed'),
+  errors: v.optional(
+    v.array(
+      v.object({
+        code: v.string(),
+        message: v.string(),
+        fatal: v.boolean(),
+      }),
+    ),
+  ),
+  queuedTime: v.number(),
+  startedTime: v.optional(v.number()),
+  endedTime: v.optional(v.number()),
 
   ...jobAttributeFields,
 }
-const jobs = defineEnt(zodToConvexFields(jobFields))
+const jobs = defineEnt(jobFields)
   .index('status', ['status'])
   .index('threadId', ['threadId'])
   .index('messageId', ['messageId'])
   .index('imageId', ['imageId'])
 
 export const messageFields = {
-  role: messageRolesEnum,
-  name: zMessageName.optional(),
-  content: zMessageTextContent.optional(),
+  role: literals('system', 'assistant', 'user'),
+  name: v.optional(v.string()),
+  content: v.optional(v.string()),
 
-  inference: inferenceSchema.optional(),
-  files: fileAttachmentRecordSchema.array().optional(),
+  inference: v.optional(inferenceConfigV),
+  files: v.optional(fileAttachmentRecordSchemaV),
 
-  metadata: metadataKVSchema.array().optional(),
-  voiceover: z
-    .object({
-      text: z.string().optional(),
-      textHash: z.string(),
-      resourceKey: z.string(),
-      speechFileId: zid('speech_files').optional(),
-    })
-    .optional(),
+  metadata: v.optional(kvListV),
+  voiceover: v.optional(
+    v.object({
+      resourceKey: v.string(),
+      speechFileId: v.optional(v.id('speech_files')),
+      text: v.optional(v.string()),
+      textHash: v.string(),
+    }),
+  ),
 }
-const messages = defineEnt(zodToConvexFields(messageFields))
+const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('series', zodToConvex(z.number()), { index: true })
+  .field('series', v.number(), { index: true })
   .edge('thread')
   .edge('user')
   .index('threadId_series', ['threadId', 'series'])
@@ -160,86 +210,88 @@ const messages = defineEnt(zodToConvexFields(messageFields))
   .index('threadId_role', ['threadId', 'role'])
 
 export const soundEffectFileFields = {
-  text: z.string(),
-  fileId: zid('_storage'),
-  fileUrl: z.string(),
+  text: v.string(),
+  fileId: v.id('_storage'),
+  fileUrl: v.string(),
 }
-const sound_effect_files = defineEnt(zodToConvexFields(soundEffectFileFields))
+const sound_effect_files = defineEnt(soundEffectFileFields)
 
 export const speechFileFields = {
-  textHash: z.string(),
-  resourceKey: z.string(),
-  status: z.enum(['pending', 'complete', 'error']),
-  fileId: zid('_storage').optional(),
-  fileUrl: z.string().optional(),
-  error: z.string().optional(),
-  updatedAtTime: z.number(),
+  textHash: v.string(),
+  resourceKey: v.string(),
+  status: literals('pending', 'complete', 'error'),
+  fileId: v.optional(v.id('_storage')),
+  fileUrl: v.optional(v.string()),
+  error: v.optional(v.string()),
+  updatedAtTime: v.number(),
 }
-const speech_files = defineEnt(zodToConvexFields(speechFileFields)).index('textHash_resourceKey', [
+const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
   'textHash',
   'resourceKey',
 ])
 
 export const threadFields = {
-  title: zThreadTitle.optional(),
-  instructions: zMessageTextContent.optional(),
-  inference: inferenceSchema,
-  slashCommands: z
-    .object({
-      id: z.string(),
-      command: z.string(),
-      commandType: z.enum(['startsWith', 'includesWord']),
-      inference: inferenceSchema,
-    })
-    .array(),
-  voiceovers: z
-    .object({
-      default: z.string(),
-      names: z
-        .object({
-          name: z.string(),
-          resourceKey: z.string(),
-        })
-        .array()
-        .optional(),
-    })
-    .optional(),
+  title: v.optional(v.string()),
+  instructions: v.optional(v.string()),
+  inference: inferenceConfigV,
+  slashCommands: v.array(
+    v.object({
+      id: v.string(),
+      command: v.string(),
+      commandType: literals('startsWith', 'includesWord'),
+      inference: inferenceConfigV,
+    }),
+  ),
 
-  updatedAtTime: z.number(),
-  metadata: metadataKVSchema.array().optional(),
+  voiceovers: v.optional(
+    v.object({
+      default: v.string(),
+      names: v.optional(
+        v.array(
+          v.object({
+            name: v.string(),
+            resourceKey: v.string(),
+          }),
+        ),
+      ),
+    }),
+  ),
+
+  updatedAtTime: v.number(),
+  metadata: v.optional(kvListV),
 }
-const threads = defineEnt(zodToConvexFields(threadFields))
+const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('slug', zodToConvex(z.string()), { unique: true })
+  .field('slug', v.string(), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edge('user')
 
 export const userFields = {
-  name: z.string(),
-  imageUrl: z.string(),
-  role: z.enum(['user', 'admin']),
+  name: v.string(),
+  imageUrl: v.string(),
+  role: literals('user', 'admin'),
 }
-const users = defineEnt(zodToConvexFields(userFields))
+const users = defineEnt(userFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('tokenIdentifier', zodToConvex(z.string()), { unique: true })
+  .field('tokenIdentifier', v.string(), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true, deletion: 'soft' })
   .edges('messages', { ref: true })
 
 export const usersApiKeysFields = {
-  valid: z.boolean(),
+  valid: v.boolean(),
 }
-const users_api_keys = defineEnt(zodToConvexFields(usersApiKeysFields))
+const users_api_keys = defineEnt(usersApiKeysFields)
   .deletion('scheduled', { delayMs: timeToDelete })
-  .field('secret', zodToConvex(z.string()), { unique: true })
+  .field('secret', v.string(), { unique: true })
   .edge('user')
 
 export const endpointDataCacheFields = {
-  endpoint: z.string(),
-  name: z.string(),
-  data: z.string(),
+  endpoint: v.string(),
+  name: v.string(),
+  data: v.string(),
 }
-const endpoint_data_cache = defineEnt(zodToConvexFields(endpointDataCacheFields))
+const endpoint_data_cache = defineEnt(endpointDataCacheFields)
 
 const schema = defineEntSchema(
   {
@@ -258,19 +310,9 @@ const schema = defineEntSchema(
     users_api_keys,
   },
   {
-    schemaValidation: false,
+    schemaValidation: true,
   },
 )
 
 export default schema
 export const entDefinitions = getEntDefinitions(schema)
-
-// Votes
-// export const generationVoteFields = {
-//   vote: z.enum(generationVoteNames),
-
-//   userId: zid('users').optional(),
-//   ip: z.string().optional(),
-//   constituent: z.string().uuid(),
-//   metadata: z.any().optional(),
-// }

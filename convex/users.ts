@@ -1,19 +1,21 @@
-import { zid } from 'convex-helpers/server/zod'
-import z from 'zod'
+import { partial } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from './functions'
 import { userFields } from './schema'
-import { userSchema } from './shared/structures'
 import { generateRandomString } from './utils'
 
-const userBySchema = z.union([
-  z.object({ id: zid('users') }),
-  z.object({ tokenIdentifier: z.string() }),
-])
+const userBySchema = v.union(
+  v.object({ id: v.id('users') }),
+  v.object({ tokenIdentifier: v.string() }),
+)
 
 export const create = internalMutation({
   args: {
-    fields: z.object({ tokenIdentifier: z.string(), ...userFields }),
+    fields: v.object({
+      ...userFields,
+      tokenIdentifier: v.string(),
+    }),
   },
   handler: async (ctx, { fields }) => await ctx.table('users').insert({ ...fields }),
 })
@@ -21,7 +23,7 @@ export const create = internalMutation({
 export const update = internalMutation({
   args: {
     by: userBySchema,
-    fields: z.object(userFields).partial(),
+    fields: v.object(partial(userFields)),
   },
   handler: async (ctx, { by, fields }) => {
     if ('id' in by) return await ctx.table('users').getX(by.id).patch(fields)
@@ -39,7 +41,7 @@ export const remove = internalMutation({
   },
 })
 
-//* Users API Keys
+// * Users API Keys
 export const generateNewApiKey = mutation({
   args: {},
   handler: async (ctx) => {
@@ -57,11 +59,9 @@ export const generateNewApiKey = mutation({
   },
 })
 
-//* queries
 export const getViewer = query({
   args: {},
   handler: async (ctx) => {
-    const user = await ctx.viewer()
-    return user ? userSchema.parse(user) : null
+    return await ctx.viewer()
   },
 })

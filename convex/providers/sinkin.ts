@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { env } from '../shared/utils'
 
-import type { ETextToImageInference } from '../shared/structures'
+import type { TextToImageConfig } from '../types'
 import type { TextToImageHandler } from './types'
 
 const api = ky.extend({
@@ -15,7 +15,7 @@ const api = ky.extend({
 export const textToImage: TextToImageHandler = async ({
   parameters,
 }: {
-  parameters: ETextToImageInference
+  parameters: TextToImageConfig
 }) => {
   const { endpointModelId, prompt, width, height, n } = parameters
   const model = endpointModelId

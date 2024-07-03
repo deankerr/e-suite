@@ -58,7 +58,6 @@ import type * as providers_types from "../providers/types.js";
 import type * as rules from "../rules.js";
 import type * as shared_defaults from "../shared/defaults.js";
 import type * as shared_structures from "../shared/structures.js";
-import type * as shared_types from "../shared/types.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
@@ -117,7 +116,6 @@ declare const fullApi: ApiFromModules<{
   rules: typeof rules;
   "shared/defaults": typeof shared_defaults;
   "shared/structures": typeof shared_structures;
-  "shared/types": typeof shared_types;
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;

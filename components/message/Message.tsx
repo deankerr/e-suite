@@ -15,7 +15,7 @@ import { hasActiveJobName } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-import type { EMessage } from '@/convex/shared/types'
+import type { EMessage } from '@/convex/types'
 
 const showTokenInfo = false
 

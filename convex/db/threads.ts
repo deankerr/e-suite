@@ -1,19 +1,19 @@
 import { omit } from 'convex-helpers'
-import { z } from 'zod'
+import { partial } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 
 import { mutation, query } from '../functions'
 import { createJob } from '../jobs'
-import { threadFields } from '../schema'
+import { inferenceConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
-import { EInferenceConfig, inferenceSchema } from '../shared/structures'
-import { createError, insist, zMessageName, zMessageTextContent } from '../shared/utils'
+import { createError, insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
 import { getMessageCommand, getNextMessageSeries } from './messages'
 
 import type { Id } from '../_generated/dataModel'
-import type { Ent, MutationCtx, QueryCtx } from '../types'
+import type { Ent, InferenceConfig, MutationCtx, QueryCtx } from '../types'
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   const id = ctx.unsafeDb.normalizeId('threads', slugOrId)
@@ -25,7 +25,7 @@ export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
 
 export const getOrCreateThread = async (
   ctx: MutationCtx,
-  args: { threadId: string; userId: Id<'users'>; uiConfig?: EInferenceConfig },
+  args: { threadId: string; userId: Id<'users'>; uiConfig?: InferenceConfig },
 ) => {
   const thread = await getThreadBySlugOrId(ctx, args.threadId)
   if (thread) {
@@ -56,7 +56,7 @@ export const getThreadExtras = async (ctx: QueryCtx, thread: Ent<'threads'>) => 
 
 export const get = query({
   args: {
-    slugOrId: z.string(),
+    slugOrId: v.string(),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
@@ -83,14 +83,14 @@ export const list = query({
 
 export const append = mutation({
   args: {
-    threadId: z.string().optional(),
-    message: z
-      .object({
-        name: zMessageName.optional(),
-        content: zMessageTextContent.optional(),
-      })
-      .optional(),
-    inference: inferenceSchema.optional(),
+    threadId: v.optional(v.string()),
+    message: v.optional(
+      v.object({
+        name: v.optional(v.string()),
+        content: v.optional(v.string()),
+      }),
+    ),
+    inference: v.optional(inferenceConfigV),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -166,10 +166,10 @@ export const append = mutation({
   },
 })
 
-const updateArgs = z.object(omit(threadFields, ['updatedAtTime'])).partial()
+const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime'])))
 export const update = mutation({
   args: {
-    threadId: z.string(),
+    threadId: v.string(),
     fields: updateArgs,
   },
   handler: async (ctx, args) => {
@@ -182,7 +182,7 @@ export const update = mutation({
 
 export const remove = mutation({
   args: {
-    threadId: z.string(),
+    threadId: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx

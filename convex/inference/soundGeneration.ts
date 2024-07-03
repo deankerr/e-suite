@@ -1,5 +1,4 @@
-import { zid } from 'convex-helpers/server/zod'
-import { z } from 'zod'
+import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import * as ElevenLabs from '../endpoints/elevenlabs'
@@ -9,7 +8,7 @@ import { insist } from '../shared/utils'
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -34,7 +33,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     try {
@@ -70,11 +69,11 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs'),
-    messageId: zid('messages'),
-    prompt: z.string(),
-    fileId: zid('_storage'),
-    fileUrl: z.string(),
+    jobId: v.id('jobs'),
+    messageId: v.id('messages'),
+    prompt: v.string(),
+    fileId: v.id('_storage'),
+    fileUrl: v.string(),
   },
   handler: async (ctx, args) => {
     const { jobId, messageId, fileId, fileUrl, prompt } = args

@@ -1,4 +1,4 @@
-import { zid } from 'convex-helpers/server/zod'
+import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { getImageModelByResourceKey } from '../db/imageModels'
@@ -6,12 +6,12 @@ import { internalAction, internalMutation } from '../functions'
 import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs'
 import { fal } from '../providers/fal'
 import { sinkin } from '../providers/sinkin'
-import { fileAttachmentRecordSchema } from '../shared/structures'
+import { fileAttachmentRecordSchemaV } from '../schema'
 import { insist } from '../shared/utils'
 
 export const init = internalMutation({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     const job = await acquireJob(ctx, args.jobId)
@@ -35,7 +35,7 @@ export const init = internalMutation({
 
 export const run = internalAction({
   args: {
-    jobId: zid('jobs'),
+    jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
     try {
@@ -76,9 +76,9 @@ export const run = internalAction({
 
 export const complete = internalMutation({
   args: {
-    jobId: zid('jobs'),
-    messageId: zid('messages'),
-    files: fileAttachmentRecordSchema.array(),
+    jobId: v.id('jobs'),
+    messageId: v.id('messages'),
+    files: fileAttachmentRecordSchemaV,
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

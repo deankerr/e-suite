@@ -1,5 +1,5 @@
-import { zid } from 'convex-helpers/server/zod'
-import { z } from 'zod'
+import { literals } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { Doc, Id } from '../_generated/dataModel'
@@ -45,13 +45,14 @@ export const getSpeechFile = async (
   return speechFile ?? undefined
 }
 
+const statusV = literals('pending', 'complete', 'error')
 export const update = internalMutation({
   args: {
-    speechFileId: zid('speech_files'),
-    status: z.enum(['pending', 'complete', 'error']),
-    fileId: zid('_storage').optional(),
-    fileUrl: z.string().optional(),
-    error: z.string().optional(),
+    speechFileId: v.id('speech_files'),
+    status: statusV,
+    fileId: v.optional(v.id('_storage')),
+    fileUrl: v.optional(v.string()),
+    error: v.optional(v.string()),
   },
   handler: async (ctx, { speechFileId, ...args }) => {
     return await ctx
@@ -63,8 +64,8 @@ export const update = internalMutation({
 
 export const get = internalQuery({
   args: {
-    textHash: z.string(),
-    resourceKey: z.string(),
+    textHash: v.string(),
+    resourceKey: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx
@@ -77,7 +78,7 @@ export const get = internalQuery({
 
 export const getById = query({
   args: {
-    speechFileId: zid('speech_files'),
+    speechFileId: v.id('speech_files'),
   },
   handler: async (ctx, args) => {
     return await ctx.table('speech_files').get(args.speechFileId)

@@ -2,10 +2,11 @@ import { Tabs } from '@radix-ui/themes'
 
 import { ImageModelCard } from '@/components/cards/ImageModelCard'
 import { SlashCommandCard } from '@/components/cards/SlashCommandCard'
-import { ETextToImageInference } from '@/convex/shared/structures'
-import { EImageModel, EThread } from '@/convex/shared/types'
+import { EImageModel, EThread } from '@/convex/types'
 
-export const ImageSidebar = ({ thread }: { thread: EThread; config: ETextToImageInference }) => {
+import type { TextToImageConfig } from '@/convex/types'
+
+export const ImageSidebar = ({ thread }: { thread: EThread; config: TextToImageConfig }) => {
   const model = thread.model?.type === 'image' ? (thread.model as EImageModel) : null
 
   return (

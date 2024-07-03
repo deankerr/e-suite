@@ -1,12 +1,12 @@
 import { asyncMap } from 'convex-helpers'
 import { filter } from 'convex-helpers/server/filter'
-import { zid } from 'convex-helpers/server/zod'
-import { z } from 'zod'
+import { paginationOptsValidator } from 'convex/server'
+import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from '../functions'
-import { EImage, messageRolesEnum, metadataKVSchema } from '../shared/structures'
-import { zMessageName, zMessageTextContent, zStringToMessageRole } from '../shared/utils'
-import { emptyPage, zPaginationOptValidator } from '../utils'
+import { kvListV, messageFields } from '../schema'
+import { zStringToMessageRole } from '../shared/utils'
+import { emptyPage } from '../utils'
 import { getSpeechFile } from './speechFiles'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
@@ -29,7 +29,7 @@ const getFileAttachmentContent = async (ctx: QueryCtx, files?: Doc<'messages'>['
     if (file.type === 'image') {
       return {
         ...file,
-        image: (await ctx.table('images').get(file.id)) as EImage | null,
+        image: await ctx.table('images').get(file.id),
       }
     }
 
@@ -91,8 +91,8 @@ export const getMessageCommand = (thread: Ent<'threads'>, text?: string) => {
 // * get single message by slug:series
 export const getSeries = query({
   args: {
-    slug: z.string(),
-    series: z.number(),
+    slug: v.string(),
+    series: v.number(),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slug)
@@ -114,9 +114,9 @@ export const getSeries = query({
 
 export const list = query({
   args: {
-    threadId: z.string(),
-    limit: z.number().max(200).default(25),
-    order: z.enum(['asc', 'desc']).default('desc'),
+    threadId: v.string(),
+    limit: v.number(),
+    order: v.union(v.literal('asc'), v.literal('desc')),
   },
   handler: async (ctx, args) => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
@@ -135,9 +135,9 @@ export const list = query({
 
 export const paginate = query({
   args: {
-    threadId: z.string(),
-    order: z.enum(['asc', 'desc']).default('desc'),
-    paginationOpts: zPaginationOptValidator,
+    threadId: v.string(),
+    order: v.union(v.literal('asc'), v.literal('desc')),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
@@ -156,11 +156,11 @@ export const paginate = query({
 
 export const content = query({
   args: {
-    slugOrId: z.string(),
-    hasAssistantRole: z.boolean(),
-    hasImageFiles: z.boolean(),
-    hasSoundEffectFiles: z.boolean(),
-    paginationOpts: zPaginationOptValidator,
+    slugOrId: v.string(),
+    hasAssistantRole: v.boolean(),
+    hasImageFiles: v.boolean(),
+    hasSoundEffectFiles: v.boolean(),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
@@ -197,11 +197,11 @@ export const content = query({
 
 export const create = mutation({
   args: {
-    threadId: z.string().optional(),
-    role: zStringToMessageRole,
-    name: zMessageName.optional(),
-    content: zMessageTextContent,
-    metadata: metadataKVSchema.array().optional(),
+    threadId: v.optional(v.string()),
+    role: v.string(),
+    name: v.optional(v.string()),
+    content: v.string(),
+    metadata: v.optional(kvListV),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -212,7 +212,7 @@ export const create = mutation({
 
     const series = await getNextMessageSeries(thread)
     const messageId = await ctx.table('messages').insert({
-      role: args.role,
+      role: zStringToMessageRole.parse(args.role),
       name: args.name,
       content: args.content,
       metadata: args.metadata,
@@ -232,12 +232,12 @@ export const create = mutation({
 
 export const update = mutation({
   args: {
-    messageId: z.string(),
+    messageId: v.id('messages'),
 
-    role: messageRolesEnum,
-    name: zMessageName.optional(),
-    content: zMessageTextContent.optional(),
-    metadata: metadataKVSchema.array().optional(),
+    role: messageFields.role,
+    name: v.optional(v.string()),
+    content: v.optional(v.string()),
+    metadata: v.optional(kvListV),
   },
   handler: async (ctx, args) => {
     return await ctx
@@ -249,7 +249,7 @@ export const update = mutation({
 
 export const remove = mutation({
   args: {
-    messageId: z.string(),
+    messageId: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx
@@ -261,8 +261,8 @@ export const remove = mutation({
 
 export const streamCompletionContent = internalMutation({
   args: {
-    messageId: zid('messages'),
-    content: z.string(),
+    messageId: v.id('messages'),
+    content: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx.skipRules

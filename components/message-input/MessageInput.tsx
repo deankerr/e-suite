@@ -9,7 +9,7 @@ import { getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
 import { QuantityControl } from './QuantityControl'
 
-import type { ETextToImageInference } from '@/convex/shared/structures'
+import type { TextToImageConfig } from '@/convex/types'
 
 export const MessageInput = () => {
   const { appendMessage, updateThread, thread } = useChat()
@@ -54,7 +54,7 @@ export const MessageInput = () => {
     }
   }
 
-  const handleUpdateTTIConfig = async (parameters: Partial<ETextToImageInference>) => {
+  const handleUpdateTTIConfig = async (parameters: Partial<TextToImageConfig>) => {
     if (thread?.inference.type !== 'text-to-image') return
     await updateThread({
       inference: {

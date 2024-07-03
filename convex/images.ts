@@ -1,10 +1,8 @@
-import { zid } from 'convex-helpers/server/zod'
-import { z } from 'zod'
+import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { internalAction, internalMutation, internalQuery } from './functions'
-import { imageFields } from './schema'
 import { imageFileSchema } from './shared/structures'
 
 import type { Id } from './_generated/dataModel'
@@ -13,25 +11,38 @@ const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 
 
 export const createImageFile = internalMutation({
   args: {
-    fileId: zid('_storage'),
-    isOriginFile: z.boolean(),
-    format: z.string(),
-    width: z.number(),
-    height: z.number(),
-    imageId: zid('images'),
+    fileId: v.id('_storage'),
+    isOriginFile: v.boolean(),
+    format: v.string(),
+    width: v.number(),
+    height: v.number(),
+    imageId: v.id('images'),
   },
   handler: async (ctx, args) => {
     return await ctx.table('files').insert({ ...args, category: 'image' })
   },
 })
 
+// TODO remove after custom function refactor
+const zImageFields = {
+  originUrl: v.string(),
+
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
+
+  generationData: v.array(v.string()),
+  messageId: v.id('messages'),
+}
+
 export const createImage = internalMutation({
   args: {
-    ...imageFields,
-    format: z.string(),
-    fileId: zid('_storage'),
-    originUrl: z.string(),
-    messageId: zid('messages'),
+    ...zImageFields,
+    format: v.string(),
+    fileId: v.id('_storage'),
+    originUrl: v.string(),
+    messageId: v.id('messages'),
   },
   handler: async (ctx, args) => {
     const { fileId, format, originUrl, ...imageArgs } = args
@@ -53,7 +64,7 @@ export const createImage = internalMutation({
 
 export const getImageWithFiles = internalQuery({
   args: {
-    imageId: z.string(),
+    imageId: v.string(),
   },
   handler: async (ctx, args) => {
     const imageId = ctx.unsafeDb.normalizeId('images', args.imageId)
@@ -76,9 +87,9 @@ export const getImageWithFiles = internalQuery({
 //* actions
 export const optimize = internalAction({
   args: {
-    imageId: zid('images'),
-    originFileId: zid('_storage'),
-    width: z.number(),
+    imageId: v.id('images'),
+    originFileId: v.id('_storage'),
+    width: v.number(),
   },
   handler: async (ctx, args): Promise<Id<'_storage'>> => {
     const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.convertToWebpAndResize, {
@@ -98,7 +109,7 @@ export const optimize = internalAction({
   },
 })
 
-//* http
+// * http
 export const serveOptimizedImage = httpAction(async (ctx, request) => {
   const imageRequest = parseRequestUrl(request.url, '/i')
   if (!imageRequest || !imageRequest.id) return new Response('invalid request', { status: 400 })
