@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { Doc } from '../_generated/dataModel'
 
+import type { ChatCompletionConfig, InferenceConfig } from '../types'
 import type { Value } from 'convex/values'
 
 export function env(name: string) {
@@ -71,3 +72,7 @@ export const zMessageTextContent = zTruncate(32767)
 export const zStringToMessageRole = z
   .string()
   .transform((value) => z.enum(['user', 'assistant', 'system']).parse(value))
+
+export const getChatConfig = (inference?: InferenceConfig): ChatCompletionConfig | null => {
+  return inference?.type === 'chat-completion' ? inference : null
+}

@@ -21,6 +21,8 @@ export const chatCompletionConfigV = v.object({
   top_k: v.optional(v.number()),
   stop: v.optional(v.array(v.string())),
   repetition_penalty: v.optional(v.number()),
+  frequency_penalty: v.optional(v.number()),
+  presence_penalty: v.optional(v.number()),
 })
 
 export const textToImageConfigV = v.object({
