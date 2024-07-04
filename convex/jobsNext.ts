@@ -1,6 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
+import { internalMutation } from './functions'
 import { jobAttributeFields } from './schema'
 import { createError, insist } from './shared/utils'
 
@@ -14,7 +15,13 @@ export const createJob = async (
   args: { name: string; fields: Infer<typeof jobAttributesObject> },
 ) => {
   // TODO job names/definitions
-  if (args.name !== 'inference/chat-completion-ai') {
+  const jobHandlers = {
+    'inference/chat-completion-ai': internal.inference.chatCompletionAi.run,
+    'files/ingestImageUrl': internal.files.ingestImageUrl.run,
+  }
+
+  const handler = jobHandlers?.[args.name as keyof typeof jobHandlers]
+  if (!handler) {
     throw createError('invalid job name')
   }
 
@@ -26,7 +33,7 @@ export const createJob = async (
   })
 
   // TODO queue management
-  await ctx.scheduler.runAfter(0, internal.inference.chatCompletionAi.run, { jobId })
+  await ctx.scheduler.runAfter(0, handler, { jobId })
 
   return jobId
 }
@@ -47,3 +54,11 @@ export const completeJob = async (ctx: MutationCtx, args: { jobId: Id<'jobs'> })
   const job = await ctx.table('jobs').getX(args.jobId)
   await job.patch({ status: 'complete', endedTime: Date.now() })
 }
+
+export const createJobM = internalMutation({
+  args: {
+    name: v.string(),
+    fields: jobAttributesObject,
+  },
+  handler: createJob,
+})

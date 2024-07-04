@@ -2,6 +2,7 @@ import { omit } from 'convex-helpers'
 import { partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
+import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
 import { createJob } from '../jobs'
 import { createJob as createJobNext } from '../jobsNext'
@@ -117,6 +118,13 @@ export const append = mutation({
           userId: user._id,
         })
         .get()
+
+      if (userMessage.content) {
+        await ctx.scheduler.runAfter(0, internal.files.links.analyzeUrlsInText, {
+          text: userMessage.content,
+          messageId: userMessage._id,
+        })
+      }
 
       if (!inference)
         return {

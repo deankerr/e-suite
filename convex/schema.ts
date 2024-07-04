@@ -141,8 +141,8 @@ export const imageFields = {
   blurDataUrl: v.string(),
   color: v.string(),
 
-  generationData: v.array(v.string()),
-  messageId: v.id('messages'), // ? added by accident?
+  generationData: v.optional(v.array(v.string())),
+  messageId: v.optional(v.id('messages')),
 }
 const images = defineEnt(imageFields)
   .deletion('scheduled', {
@@ -150,6 +150,7 @@ const images = defineEnt(imageFields)
   })
   .edges('files', { ref: true })
   .index('originUrl', ['originUrl'])
+  .index('messageId', ['messageId'])
 
 export const jobAttributeFields = {
   threadId: v.optional(v.id('threads')),
