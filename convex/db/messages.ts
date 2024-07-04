@@ -271,3 +271,16 @@ export const streamCompletionContent = internalMutation({
       .patch({ content: args.content })
   },
 })
+
+export const streamText = internalMutation({
+  args: {
+    messageId: v.id('messages'),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.skipRules
+      .table('messages')
+      .getX(args.messageId)
+      .patch({ content: args.content })
+  },
+})

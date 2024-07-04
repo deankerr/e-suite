@@ -4,6 +4,7 @@ import { v } from 'convex/values'
 
 import { mutation, query } from '../functions'
 import { createJob } from '../jobs'
+import { createJob as createJobNext } from '../jobsNext'
 import { inferenceConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
 import { createError, insist } from '../shared/utils'
@@ -140,6 +141,26 @@ export const append = mutation({
         inference,
       })
       .get()
+
+    // TODO new job system
+    if (inference.endpoint === 'anthropic') {
+      const jobName = 'inference/chat-completion-ai'
+
+      const jobId = await createJobNext(ctx, {
+        name: jobName,
+        fields: {
+          messageId: asstMessage._id,
+        },
+      })
+
+      return {
+        threadId: thread._id,
+        slug: thread.slug,
+        messageId: asstMessage._id,
+        series: asstMessage.series,
+        jobId,
+      }
+    }
 
     const jobName =
       inference.type === 'chat-completion'
