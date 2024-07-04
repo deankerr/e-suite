@@ -3,6 +3,7 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { internalAction, internalMutation, internalQuery } from './functions'
+import { imageFields } from './schema'
 import { imageFileSchema } from './shared/structures'
 
 import type { Id } from './_generated/dataModel'
@@ -38,16 +39,15 @@ const zImageFields = {
 
 export const createImage = internalMutation({
   args: {
-    ...zImageFields,
-    format: v.string(),
+    ...imageFields,
     fileId: v.id('_storage'),
-    originUrl: v.string(),
-    messageId: v.id('messages'),
+    format: v.string(),
   },
   handler: async (ctx, args) => {
     const { fileId, format, originUrl, ...imageArgs } = args
 
     const imageId = await ctx.table('images').insert({ ...imageArgs, originUrl })
+
     await ctx.table('files').insert({
       category: 'image',
       format,
