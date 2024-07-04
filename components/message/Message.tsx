@@ -3,6 +3,7 @@ import { DotsThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
 
 import AudioPlayer from '@/components/audio/AudioPlayer'
+import { ImageCard } from '@/components/images/ImageCard'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
@@ -152,6 +153,14 @@ export const Message = ({
                 />
               ) : null,
             )}
+          </div>
+        )}
+
+        {message.images.length > 0 && (
+          <div className="grid max-w-full grid-cols-2 gap-1">
+            {message.images.map((image) => (
+              <ImageCard key={image._id} image={image} sizes="(max-width: 56rem) 50vw, 28rem" />
+            ))}
           </div>
         )}
 

@@ -34,6 +34,7 @@ export const run = internalAction({
       messageId: job.messageId,
       originUrl: url,
     })
+    console.log('image ingested', url)
 
     await ctx.runMutation(internal.files.ingestImageUrl.complete, {
       jobId: job._id,

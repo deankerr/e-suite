@@ -52,7 +52,12 @@ export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) =
 }
 
 export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) => {
-  // const shape = getMessageShape(message)
+  // get non-generated images
+  const images = await ctx
+    .table('images', 'messageId', (q) => q.eq('messageId', message._id))
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .filter((q) => q.eq(q.field('generationData'), undefined))
+
   return {
     ...message,
     files: await getFileAttachmentContent(ctx, message.files),
@@ -60,6 +65,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) =
     voiceover: message.voiceover?.speechFileId
       ? await getSpeechFile(ctx, message.voiceover.speechFileId)
       : undefined,
+    images,
   }
 }
 
