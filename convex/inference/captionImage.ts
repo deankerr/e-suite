@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { claimJob, completeJob } from '../jobsNext'
+import { claimJob, completeJob } from '../jobs'
 import { insist } from '../shared/utils'
 
 fal.config({

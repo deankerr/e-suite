@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { claimJob, completeJob, createJob as createJobNext, handleJobError } from '../jobsNext'
+import { claimJob, completeJob, createJob as createJobNext, handleJobError } from '../jobs'
 import { createOpenAiClient } from '../lib/openai'
 import { getChatConfig, hasDelimiter, insist } from '../shared/utils'
 

@@ -1,35 +1,31 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { getImageModelByResourceKey } from '../db/imageModels'
+import * as fal from '../endpoints/fal'
+import * as sinkin from '../endpoints/sinkin'
 import { internalAction, internalMutation } from '../functions'
-import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs'
-import { fal } from '../providers/fal'
-import { sinkin } from '../providers/sinkin'
-import { fileAttachmentRecordSchemaV } from '../schema'
-import { insist } from '../shared/utils'
+import { claimJob, completeJob, createJob, handleJobError } from '../jobs'
+import { getTextToImageConfig, insist } from '../shared/utils'
 
-export const init = internalMutation({
+export const start = internalMutation({
   args: {
     jobId: v.id('jobs'),
   },
   handler: async (ctx, args) => {
-    const job = await acquireJob(ctx, args.jobId)
+    const job = await claimJob(ctx, args)
+    insist(job.messageId, 'required: messageId', { code: 'invalid_job' })
 
-    const messageId = job.messageId
-    insist(messageId, 'no messageId', { code: 'invalid_job_input' })
+    const message = await ctx.table('messages').getX(job.messageId)
+    const textToImageConfig = getTextToImageConfig(message?.inference)
+    insist(textToImageConfig, 'required: text-to-image config', {
+      code: 'invalid_job',
+    })
 
-    const message = await ctx.table('messages').getX(messageId)
-    const inference = message?.inference
-    insist(
-      inference && inference.type === 'text-to-image',
-      'text-to-image message lacks parameters',
-      {
-        code: 'invalid_job_input',
-      },
-    )
-
-    return { ...message, inference }
+    return {
+      job,
+      messageId: message._id,
+      textToImageConfig,
+    }
   },
 })
 
@@ -39,37 +35,47 @@ export const run = internalAction({
   },
   handler: async (ctx, args) => {
     try {
-      const message = await ctx.runMutation(internal.inference.textToImage.init, {
-        jobId: args.jobId,
+      const { job, messageId, textToImageConfig } = await ctx.runMutation(
+        internal.inference.textToImage.start,
+        args,
+      )
+
+      const endpointHandlers = {
+        fal: fal.textToImage,
+        sinkin: sinkin.textToImage,
+      }
+      const handler = endpointHandlers[textToImageConfig.endpoint as keyof typeof endpointHandlers]
+      if (!handler) {
+        await ctx.runMutation(internal.jobs.fail, {
+          jobId: job._id,
+          jobError: {
+            message: `unknown endpoint: ${textToImageConfig.endpoint}`,
+            code: 'invalid_job',
+            fatal: true,
+          },
+        })
+        return
+      }
+
+      const result = await handler({
+        textToImageConfig,
       })
-      if (!message) return
 
-      const { inference } = message
-
-      const { result, error } =
-        inference.endpoint === 'sinkin'
-          ? await sinkin.textToImage({
-              parameters: inference,
-            })
-          : await fal.textToImage({
-              parameters: inference,
-            })
-
-      if (error) {
-        await ctx.runMutation(internal.jobs.resultError, {
-          jobId: args.jobId,
-          error: { code: 'endpoint_error', message: error.message, fatal: true },
+      if (result.error) {
+        await ctx.runMutation(internal.jobs.fail, {
+          jobId: job._id,
+          jobError: result.error,
         })
         return
       }
 
       await ctx.runMutation(internal.inference.textToImage.complete, {
-        jobId: args.jobId,
-        messageId: message._id,
-        files: result.urls.map((url) => ({ type: 'image_url' as const, url })),
+        jobId: job._id,
+        messageId,
+        images: result.images,
       })
-    } catch (err) {
-      return await handleJobError(ctx, { err, jobId: args.jobId })
+    } catch (error) {
+      await handleJobError(ctx, { jobId: args.jobId, error })
     }
   },
 })
@@ -78,30 +84,23 @@ export const complete = internalMutation({
   args: {
     jobId: v.id('jobs'),
     messageId: v.id('messages'),
-    files: fileAttachmentRecordSchemaV,
+    images: v.array(
+      v.object({
+        url: v.string(),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
-    const message = await ctx.skipRules.table('messages').getX(args.messageId)
-    const files = (message.files ?? []).concat(args.files)
-    await message.patch({ files })
-
-    for (const file of files) {
-      if (file.type === 'image_url') {
-        await createJob(ctx, 'files/create-image-from-url', {
-          url: file.url,
+    for (const image of args.images) {
+      await createJob(ctx, {
+        name: 'files/ingestImageUrl',
+        fields: {
+          url: image.url,
           messageId: args.messageId,
-        })
-      }
+        },
+      })
     }
 
-    // set thread title
-    const thread = await ctx.skipRules.table('threads').getX(message.threadId)
-    if (!thread.title && message.inference?.type === 'text-to-image') {
-      const model = await getImageModelByResourceKey(ctx, message.inference.resourceKey)
-      const title = model?.name ?? 'Generation'
-      await thread.patch({ title })
-    }
-
-    await jobResultSuccess(ctx, { jobId: args.jobId })
+    await completeJob(ctx, args)
   },
 })

@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { createFalClient } from '../endpoints/fal'
 import { internalAction, internalMutation } from '../functions'
-import { claimJob, completeJob } from '../jobsNext'
+import { claimJob, completeJob } from '../jobs'
 import { insist } from '../shared/utils'
 
 export const start = internalMutation({

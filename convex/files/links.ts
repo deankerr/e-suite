@@ -65,7 +65,7 @@ export const analyzeUrlsInText = internalAction({
 
     for (const result of results) {
       if (result.isImage) {
-        await ctx.runMutation(internal.jobsNext.createJobM, {
+        await ctx.runMutation(internal.jobs.createJobM, {
           name: 'files/ingestImageUrl',
           fields: {
             url: result.url,

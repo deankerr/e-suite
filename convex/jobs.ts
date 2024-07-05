@@ -1,168 +1,122 @@
-import { zid } from 'convex-helpers/server/zod'
-import { makeFunctionReference } from 'convex/server'
-import { ConvexError, Infer, v } from 'convex/values'
-import { z } from 'zod'
+import { ConvexError, v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { internalMutation } from './functions'
-import { jobAttributeFields } from './schema'
-import { insist } from './shared/utils'
+import { jobAttributeFields, jobErrorV } from './schema'
+import { createError, insist } from './shared/utils'
 
 import type { Id } from './_generated/dataModel'
 import type { ActionCtx } from './_generated/server'
 import type { MutationCtx } from './types'
+import type { Infer } from 'convex/values'
 
-export const jobDefinitions = {
-  'files/create-image-from-url': {
-    handler: 'files/createImageFromUrl:run',
-    required: z.object({
-      url: z.string(),
-      messageId: zid('messages'),
-    }),
-  },
-
-  'files/optimize-image-file': {
-    handler: 'files/optimizeImageFile:run',
-    required: z.object({
-      imageId: zid('images'),
-    }),
-  },
-
-  'inference/chat-completion': {
-    handler: 'inference/chatCompletion:run',
-    required: z.object({
-      messageId: zid('messages'),
-    }),
-  },
-
-  'inference/text-to-image': {
-    handler: 'inference/textToImage:run',
-    required: z.object({
-      messageId: zid('messages'),
-    }),
-  },
-
-  'inference/text-to-speech': {
-    handler: 'inference/textToSpeech:run',
-    required: z.object({
-      messageId: zid('messages'),
-    }),
-  },
-
-  'inference/sound-generation': {
-    handler: 'inference/soundGeneration:run',
-    required: z.object({
-      messageId: zid('messages'),
-    }),
-  },
-
-  'inference/thread-title-completion': {
-    handler: 'inference/threadTitleCompletion:run',
-    required: z.object({
-      threadId: zid('threads'),
-    }),
-  },
+const jobHandlers = {
+  'files/ingestImageUrl': internal.files.ingestImageUrl.run,
+  'inference/chat-completion-ai': internal.inference.chatCompletionAi.run,
+  'inference/chat': internal.inference.chat.run,
+  'inference/captionImage': internal.inference.captionImage.run,
+  'inference/assessNsfw': internal.inference.assessNsfw.run,
+  'inference/textToImage': internal.inference.textToImage.run,
+  'inference/threadTitleCompletion': internal.inference.threadTitleCompletion.run,
+  'inference/textToAudio': internal.inference.textToAudio.run,
 }
 
 const jobAttributesObject = v.object(jobAttributeFields)
-export const createJob = async <
-  J extends keyof typeof jobDefinitions,
-  A extends Infer<typeof jobAttributesObject>,
->(
+export const createJob = async (
   ctx: MutationCtx,
-  name: J,
-  args: A,
+  args: { name: string; fields: Infer<typeof jobAttributesObject> },
 ) => {
-  const jobId = await ctx
-    .table('jobs')
-    .insert({ ...args, name, status: 'queued', queuedTime: Date.now() })
+  const handler = jobHandlers?.[args.name as keyof typeof jobHandlers]
+  if (!handler) {
+    throw createError('invalid job name', {
+      code: 'invalid_job',
+      fatal: true,
+      data: { name: args.name },
+    })
+  }
 
-  // ! temporary fix for simultaneous document mutation error
-  const jitter = name === 'files/create-image-from-url' ? Math.random() * 1000 : 0
-  await ctx.scheduler.runAfter(jitter, internal.jobs.processJobs, {})
+  const jobId = await ctx.table('jobs').insert({
+    ...args.fields,
+    name: args.name,
+    status: 'queued',
+    queuedTime: Date.now(),
+  })
+
+  // TODO queue management
+  await ctx.scheduler.runAfter(0, handler, { jobId })
+
   return jobId
 }
 
-export const acquireJob = async (ctx: MutationCtx, jobId: Id<'jobs'>) => {
-  const job = await ctx.table('jobs').getX(jobId)
-  insist(job.status === 'queued', `job ${jobId} is not queued: ${job.status}`, {
-    code: 'invalid_acquire_job',
+export const claimJob = async (ctx: MutationCtx, args: { jobId: Id<'jobs'> }) => {
+  const job = await ctx.table('jobs').getX(args.jobId)
+  insist(job.status === 'queued', 'invalid claim status', {
+    jobId: args.jobId,
+    jobStatus: job.status,
+    code: 'invalid_job',
   })
 
   await job.patch({ status: 'active', startedTime: Date.now() })
   return job
 }
 
-export const jobResultSuccess = async (ctx: MutationCtx, args: { jobId: Id<'jobs'> }) => {
+export const completeJob = async (ctx: MutationCtx, args: { jobId: Id<'jobs'> }) => {
   const job = await ctx.table('jobs').getX(args.jobId)
   await job.patch({ status: 'complete', endedTime: Date.now() })
 }
 
-export const jobResultError = async (
-  ctx: MutationCtx,
-  args: { jobId: Id<'jobs'>; error: { code: string; message: string; fatal: boolean } },
-) => {
-  const job = await ctx.table('jobs').getX(args.jobId)
-
-  const errors = job.errors ?? []
-  // TODO fatal check, job retrier
-  await job.patch({ status: 'failed', errors: [...errors, args.error], endedTime: Date.now() })
-}
-
 export const handleJobError = async (
   ctx: ActionCtx,
-  { err, jobId }: { err: unknown; jobId: Id<'jobs'> },
+  { jobId, error }: { jobId: Id<'jobs'>; error: unknown },
 ) => {
-  // return on known fatal errors to stop retrying job, throw otherwise
-  if (err instanceof ConvexError && err.data.code) {
-    if (err.data.code === 'invalid_acquire_job') return console.warn(err.message)
-
-    await ctx.runMutation(internal.jobs.resultError, {
-      jobId,
-      error: { code: err.data.code, message: err.data.message, fatal: err.data.fatal },
-    })
-
-    if (err.data.fatal) return console.error(err)
-    else throw err
+  if (error instanceof ConvexError) {
+    const jobError = {
+      code: error.data?.code ?? 'unhandled',
+      message: error.message,
+      fatal: error.data?.fatal ?? false,
+      status: error.data?.status,
+    }
+    return await ctx.runMutation(internal.jobs.fail, { jobId, jobError })
   }
 
-  const message = err instanceof Error ? err.message : 'unknown error'
-  await ctx.runMutation(internal.jobs.resultError, {
-    jobId,
-    error: { code: 'unhandled', message, fatal: false },
-  })
+  if (error instanceof Error) {
+    const jobError = {
+      code: 'unhandled',
+      message: error.message,
+      fatal: false,
+    }
+    return await ctx.runMutation(internal.jobs.fail, { jobId, jobError })
+  }
 
-  throw err
+  const jobError = {
+    code: 'unhandled',
+    message: 'unknown error',
+    fatal: false,
+  }
+  return await ctx.runMutation(internal.jobs.fail, { jobId, jobError })
 }
 
-export const processJobs = internalMutation({
-  args: {},
-  handler: async (ctx) => {
-    // check for queued jobs to start
-    const queuedJobs = await ctx.table('jobs', 'status', (q) => q.eq('status', 'queued'))
-    for (const job of queuedJobs) {
-      // TODO - actual job queue management. for now just start all jobs
-      const def = getJobDefinition(job.name)
-      if (!def) return
-      const handler = makeFunctionReference<'action'>(def.handler)
-      await ctx.scheduler.runAfter(0, handler, { jobId: job._id })
-    }
+export const fail = internalMutation({
+  args: {
+    jobId: v.id('jobs'),
+    jobError: jobErrorV,
+  },
+  handler: async (ctx, { jobId, jobError }) => {
+    const job = await ctx.table('jobs').getX(jobId)
+    const prevErrors = job.errors ?? []
+
+    return await job.patch({
+      status: 'failed',
+      endedTime: Date.now(),
+      errors: [...prevErrors, jobError],
+    })
   },
 })
 
-export const resultError = internalMutation(async (ctx, argsUnkn) => {
-  const args = argsUnkn as {
-    jobId: Id<'jobs'>
-    error: { code: string; message: string; fatal: boolean }
-  }
-  const job = await ctx.table('jobs').getX(args.jobId)
-
-  const errors = job.errors ?? []
-  // TODO fatal check, job retrier
-  await job.patch({ status: 'failed', errors: [...errors, args.error], endedTime: Date.now() })
+export const createJobM = internalMutation({
+  args: {
+    name: v.string(),
+    fields: jobAttributesObject,
+  },
+  handler: createJob,
 })
-
-const getJobDefinition = (jobName: string) => {
-  const jobDefinition = jobDefinitions[jobName as keyof typeof jobDefinitions]
-  return jobDefinition
-}
