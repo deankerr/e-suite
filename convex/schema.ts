@@ -74,6 +74,13 @@ export const fileAttachmentRecordSchemaV = v.array(
 
 export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
 
+export const jobErrorV = v.object({
+  code: v.string(),
+  message: v.string(),
+  fatal: v.boolean(),
+  status: v.optional(v.number()),
+})
+
 // * Models
 const sharedModelFields = {
   name: v.string(),
@@ -171,15 +178,7 @@ export const jobAttributeFields = {
 export const jobFields = {
   name: v.string(),
   status: literals('queued', 'active', 'complete', 'failed'),
-  errors: v.optional(
-    v.array(
-      v.object({
-        code: v.string(),
-        message: v.string(),
-        fatal: v.boolean(),
-      }),
-    ),
-  ),
+  errors: v.optional(v.array(jobErrorV)),
   queuedTime: v.number(),
   startedTime: v.optional(v.number()),
   endedTime: v.optional(v.number()),

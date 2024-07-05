@@ -7,6 +7,7 @@ import type {
   chatCompletionConfigV,
   entDefinitions,
   inferenceConfigV,
+  jobErrorV,
   soundGenerationConfigV,
   textToImageConfigV,
 } from './schema'
@@ -39,3 +40,16 @@ export type ChatCompletionConfig = Infer<typeof chatCompletionConfigV>
 export type TextToImageConfig = Infer<typeof textToImageConfigV>
 export type SoundGenerationConfig = Infer<typeof soundGenerationConfigV>
 export type InferenceConfig = Infer<typeof inferenceConfigV>
+
+export type JobError = Infer<typeof jobErrorV>
+export type TextToImageHandlerResult =
+  | {
+      images: {
+        url: string
+      }[]
+      error: undefined
+    }
+  | {
+      images: undefined
+      error: JobError
+    }

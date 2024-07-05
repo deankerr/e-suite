@@ -170,6 +170,23 @@ export const append = mutation({
       }
     }
 
+    if (inference.endpoint === 'fal') {
+      const jobId = await createJobNext(ctx, {
+        name: 'inference/textToImageNext',
+        fields: {
+          messageId: asstMessage._id,
+        },
+      })
+
+      return {
+        threadId: thread._id,
+        slug: thread.slug,
+        messageId: asstMessage._id,
+        series: asstMessage.series,
+        jobId,
+      }
+    }
+
     const jobName =
       inference.type === 'chat-completion'
         ? 'inference/chat-completion'
