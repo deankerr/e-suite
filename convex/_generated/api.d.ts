@@ -45,6 +45,7 @@ import type * as inference_textToImage from "../inference/textToImage.js";
 import type * as inference_textToImageNext from "../inference/textToImageNext.js";
 import type * as inference_textToSpeech from "../inference/textToSpeech.js";
 import type * as inference_threadTitleCompletion from "../inference/threadTitleCompletion.js";
+import type * as inference_threadTitleCompletionNext from "../inference/threadTitleCompletionNext.js";
 import type * as jobs from "../jobs.js";
 import type * as jobsNext from "../jobsNext.js";
 import type * as lib_clerk from "../lib/clerk.js";
@@ -110,6 +111,7 @@ declare const fullApi: ApiFromModules<{
   "inference/textToImageNext": typeof inference_textToImageNext;
   "inference/textToSpeech": typeof inference_textToSpeech;
   "inference/threadTitleCompletion": typeof inference_threadTitleCompletion;
+  "inference/threadTitleCompletionNext": typeof inference_threadTitleCompletionNext;
   jobs: typeof jobs;
   jobsNext: typeof jobsNext;
   "lib/clerk": typeof lib_clerk;

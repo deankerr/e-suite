@@ -22,6 +22,7 @@ export const createJob = async (
     'inference/captionImage': internal.inference.captionImage.run,
     'inference/assessNsfw': internal.inference.assessNsfw.run,
     'inference/textToImageNext': internal.inference.textToImageNext.run,
+    'inference/threadTitleCompletionNext': internal.inference.threadTitleCompletionNext.run,
   }
 
   const handler = jobHandlers?.[args.name as keyof typeof jobHandlers]

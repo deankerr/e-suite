@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { acquireJob, createJob, handleJobError, jobResultSuccess } from '../jobs'
+import { createJob as createJobNext } from '../jobsNext'
 import { createOpenAiClient } from '../lib/openai'
 import { hasDelimiter, insist } from '../shared/utils'
 
@@ -145,8 +146,11 @@ export const complete = internalMutation({
     //* title generation
     const thread = await ctx.skipRules.table('threads').getX(message.threadId)
     if (!thread.title) {
-      await createJob(ctx, 'inference/thread-title-completion', {
-        threadId: message.threadId,
+      await createJobNext(ctx, {
+        name: 'inference/threadTitleCompletionNext',
+        fields: {
+          threadId: message.threadId,
+        },
       })
     }
     await jobResultSuccess(ctx, { jobId: args.jobId })
