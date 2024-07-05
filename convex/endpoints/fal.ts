@@ -1,4 +1,14 @@
+import * as falClient from '@fal-ai/serverless-client'
+
 import type { ImageModelDataRecord } from '../db/endpoints'
+
+export const createFalClient = () => {
+  falClient.config({
+    credentials: process.env.FAL_API_KEY!,
+  })
+
+  return falClient
+}
 
 const sdxlSizes = {
   portrait: [832, 1216],

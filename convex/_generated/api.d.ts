@@ -36,6 +36,7 @@ import type * as files_optimizeImageFile from "../files/optimizeImageFile.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as images from "../images.js";
+import type * as inference_assessNsfw from "../inference/assessNsfw.js";
 import type * as inference_captionImage from "../inference/captionImage.js";
 import type * as inference_chatCompletion from "../inference/chatCompletion.js";
 import type * as inference_chatCompletionAi from "../inference/chatCompletionAi.js";
@@ -99,6 +100,7 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   http: typeof http;
   images: typeof images;
+  "inference/assessNsfw": typeof inference_assessNsfw;
   "inference/captionImage": typeof inference_captionImage;
   "inference/chatCompletion": typeof inference_chatCompletion;
   "inference/chatCompletionAi": typeof inference_chatCompletionAi;

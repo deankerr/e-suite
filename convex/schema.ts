@@ -146,6 +146,7 @@ export const imageFields = {
       modelId: v.string(),
     }),
   ),
+  nsfwProbability: v.optional(v.number()),
 
   generationData: v.optional(v.array(v.string())),
   messageId: v.optional(v.id('messages')),
