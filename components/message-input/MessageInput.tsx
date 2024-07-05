@@ -125,11 +125,9 @@ export const MessageInput = () => {
             <Icons.CassetteTape className="size-5" />
           </IconButton>
 
-          {thread.inference.type === 'chat-completion' && (
-            <Button color="gray" onClick={() => void handleAppendMessage(false)}>
-              Add
-            </Button>
-          )}
+          <Button color="gray" onClick={() => void handleAppendMessage(false)}>
+            Add
+          </Button>
           <Button onClick={() => void handleAppendMessage(true)}>
             Send
             <Icons.PaperPlaneRight className="size-5" />
