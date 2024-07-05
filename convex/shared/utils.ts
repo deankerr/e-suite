@@ -3,7 +3,12 @@ import { z } from 'zod'
 
 import { Doc } from '../_generated/dataModel'
 
-import type { ChatCompletionConfig, InferenceConfig, TextToImageConfig } from '../types'
+import type {
+  ChatCompletionConfig,
+  InferenceConfig,
+  TextToAudioConfig,
+  TextToImageConfig,
+} from '../types'
 import type { Value } from 'convex/values'
 
 export function env(name: string) {
@@ -79,4 +84,8 @@ export const getChatConfig = (inference?: InferenceConfig): ChatCompletionConfig
 
 export const getTextToImageConfig = (inference?: InferenceConfig): TextToImageConfig | null => {
   return inference?.type === 'text-to-image' ? inference : null
+}
+
+export const getTextToAudioConfig = (inference?: InferenceConfig): TextToAudioConfig | null => {
+  return inference?.type === 'sound-generation' ? inference : null
 }

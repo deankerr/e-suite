@@ -38,7 +38,7 @@ export type EVoiceModel = Awaited<ReturnType<typeof getVoiceModels>>[number]
 
 export type ChatCompletionConfig = Infer<typeof chatCompletionConfigV>
 export type TextToImageConfig = Infer<typeof textToImageConfigV>
-export type SoundGenerationConfig = Infer<typeof soundGenerationConfigV>
+export type TextToAudioConfig = Infer<typeof soundGenerationConfigV>
 export type InferenceConfig = Infer<typeof inferenceConfigV>
 
 export type JobError = Infer<typeof jobErrorV>

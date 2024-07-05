@@ -41,6 +41,7 @@ import type * as inference_captionImage from "../inference/captionImage.js";
 import type * as inference_chatCompletion from "../inference/chatCompletion.js";
 import type * as inference_chatCompletionAi from "../inference/chatCompletionAi.js";
 import type * as inference_soundGeneration from "../inference/soundGeneration.js";
+import type * as inference_textToAudio from "../inference/textToAudio.js";
 import type * as inference_textToImage from "../inference/textToImage.js";
 import type * as inference_textToImageNext from "../inference/textToImageNext.js";
 import type * as inference_textToSpeech from "../inference/textToSpeech.js";
@@ -107,6 +108,7 @@ declare const fullApi: ApiFromModules<{
   "inference/chatCompletion": typeof inference_chatCompletion;
   "inference/chatCompletionAi": typeof inference_chatCompletionAi;
   "inference/soundGeneration": typeof inference_soundGeneration;
+  "inference/textToAudio": typeof inference_textToAudio;
   "inference/textToImage": typeof inference_textToImage;
   "inference/textToImageNext": typeof inference_textToImageNext;
   "inference/textToSpeech": typeof inference_textToSpeech;

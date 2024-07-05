@@ -187,12 +187,24 @@ export const append = mutation({
       }
     }
 
-    const jobName =
-      inference.type === 'chat-completion'
-        ? 'inference/chat-completion'
-        : inference.type === 'sound-generation'
-          ? 'inference/sound-generation'
-          : null
+    if (inference.type === 'sound-generation') {
+      const jobId = await createJobNext(ctx, {
+        name: 'inference/textToAudio',
+        fields: {
+          messageId: asstMessage._id,
+        },
+      })
+
+      return {
+        threadId: thread._id,
+        slug: thread.slug,
+        messageId: asstMessage._id,
+        series: asstMessage.series,
+        jobId,
+      }
+    }
+
+    const jobName = inference.type === 'chat-completion' ? 'inference/chat-completion' : null
 
     insist(jobName, 'invalid inference job')
 
