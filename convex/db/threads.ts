@@ -150,7 +150,6 @@ export const append = mutation({
       })
       .get()
 
-    // TODO new job system
     if (inference.endpoint === 'anthropic') {
       const jobName = 'inference/chat-completion-ai'
 
@@ -170,46 +169,19 @@ export const append = mutation({
       }
     }
 
-    if (inference.type === 'text-to-image') {
-      const jobId = await createJobNext(ctx, {
-        name: 'inference/textToImageNext',
-        fields: {
-          messageId: asstMessage._id,
-        },
-      })
-
-      return {
-        threadId: thread._id,
-        slug: thread.slug,
-        messageId: asstMessage._id,
-        series: asstMessage.series,
-        jobId,
-      }
+    const jobNameMap: Record<string, string> = {
+      'chat-completion': 'inference/chat',
+      'text-to-image': 'inference/textToImage',
+      'sound-generation': 'inference/textToAudio',
     }
+    const jobName = jobNameMap[inference.type]
+    insist(jobName, 'invalid inference type')
 
-    if (inference.type === 'sound-generation') {
-      const jobId = await createJobNext(ctx, {
-        name: 'inference/textToAudio',
-        fields: {
-          messageId: asstMessage._id,
-        },
-      })
-
-      return {
-        threadId: thread._id,
-        slug: thread.slug,
+    const jobId = await createJobNext(ctx, {
+      name: jobName,
+      fields: {
         messageId: asstMessage._id,
-        series: asstMessage.series,
-        jobId,
-      }
-    }
-
-    const jobName = inference.type === 'chat-completion' ? 'inference/chat-completion' : null
-
-    insist(jobName, 'invalid inference job')
-
-    const jobId = await createJob(ctx, jobName, {
-      messageId: asstMessage._id,
+      },
     })
 
     return {
