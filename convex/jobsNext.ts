@@ -18,6 +18,7 @@ export const createJob = async (
   const jobHandlers = {
     'inference/chat-completion-ai': internal.inference.chatCompletionAi.run,
     'files/ingestImageUrl': internal.files.ingestImageUrl.run,
+    'inference/captionImage': internal.inference.captionImage.run,
   }
 
   const handler = jobHandlers?.[args.name as keyof typeof jobHandlers]

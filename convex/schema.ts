@@ -135,11 +135,17 @@ const files = defineEnt(fileFields).edge('image')
 
 export const imageFields = {
   originUrl: v.string(),
-
   width: v.number(),
   height: v.number(),
   blurDataUrl: v.string(),
   color: v.string(),
+
+  caption: v.optional(
+    v.object({
+      text: v.optional(v.string()),
+      modelId: v.string(),
+    }),
+  ),
 
   generationData: v.optional(v.array(v.string())),
   messageId: v.optional(v.id('messages')),

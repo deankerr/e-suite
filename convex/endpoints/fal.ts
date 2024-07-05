@@ -95,3 +95,15 @@ export const getNormalizedModelData = (): ImageModelDataRecord[] => {
     internalScore: 0,
   }))
 }
+
+export const visionModels = [
+  'fal-ai/llavav15-13b',
+  'fal-ai/llava-next',
+  // 'fal-ai/moondream/batched',
+  'fal-ai/idefics-2-8b',
+  'fal-ai/internlm-xcomposer-2-7b',
+  'fal-ai/llava-phi-3-mini',
+  // 'fal-ai/mantis-llava-7b-v11',
+  'fal-ai/qwen-vl-chat-7b-int4',
+  'fal-ai/llava-llama3-8b-v11',
+]

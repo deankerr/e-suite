@@ -2,7 +2,9 @@ import { v } from 'convex/values'
 
 import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
+import { visionModels } from './endpoints/fal'
 import { internalAction, internalMutation, internalQuery } from './functions'
+import { createJob } from './jobsNext'
 import { imageFields } from './schema'
 import { imageFileSchema } from './shared/structures'
 
@@ -24,19 +26,6 @@ export const createImageFile = internalMutation({
   },
 })
 
-// TODO remove after custom function refactor
-const zImageFields = {
-  originUrl: v.string(),
-
-  width: v.number(),
-  height: v.number(),
-  blurDataUrl: v.string(),
-  color: v.string(),
-
-  generationData: v.array(v.string()),
-  messageId: v.id('messages'),
-}
-
 export const createImage = internalMutation({
   args: {
     ...imageFields,
@@ -46,7 +35,10 @@ export const createImage = internalMutation({
   handler: async (ctx, args) => {
     const { fileId, format, originUrl, ...imageArgs } = args
 
-    const imageId = await ctx.table('images').insert({ ...imageArgs, originUrl })
+    const modelId = visionModels[Math.floor(Math.random() * visionModels.length)] as string
+    const imageId = await ctx
+      .table('images')
+      .insert({ ...imageArgs, originUrl, caption: { modelId } })
 
     await ctx.table('files').insert({
       category: 'image',
@@ -56,6 +48,13 @@ export const createImage = internalMutation({
       width: imageArgs.width,
       height: imageArgs.height,
       imageId,
+    })
+
+    await createJob(ctx, {
+      name: 'inference/captionImage',
+      fields: {
+        imageId,
+      },
     })
 
     return imageId
