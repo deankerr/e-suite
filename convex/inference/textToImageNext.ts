@@ -2,17 +2,16 @@ import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import * as fal from '../endpoints/fal'
+import * as sinkin from '../endpoints/sinkin'
 import { internalAction, internalMutation } from '../functions'
 import { claimJob, completeJob, createJob, handleJobError } from '../jobsNext'
-import { createError, getTextToImageConfig, insist } from '../shared/utils'
-
-import type { MutationCtx } from '../types'
+import { getTextToImageConfig, insist } from '../shared/utils'
 
 export const start = internalMutation({
   args: {
     jobId: v.id('jobs'),
   },
-  handler: async (ctx: MutationCtx, args) => {
+  handler: async (ctx, args) => {
     const job = await claimJob(ctx, args)
     insist(job.messageId, 'required: messageId', { code: 'invalid_job' })
 
@@ -41,9 +40,24 @@ export const run = internalAction({
         args,
       )
 
-      if (textToImageConfig.endpoint !== 'fal') throw createError('not implemented')
+      const endpointHandlers = {
+        fal: fal.textToImage,
+        sinkin: sinkin.textToImage,
+      }
+      const handler = endpointHandlers[textToImageConfig.endpoint as keyof typeof endpointHandlers]
+      if (!handler) {
+        await ctx.runMutation(internal.jobsNext.fail, {
+          jobId: job._id,
+          jobError: {
+            message: `unknown endpoint: ${textToImageConfig.endpoint}`,
+            code: 'invalid_job',
+            fatal: true,
+          },
+        })
+        return
+      }
 
-      const result = await fal.textToImage({
+      const result = await handler({
         textToImageConfig,
       })
 
