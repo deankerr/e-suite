@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import dynamic from 'next/dynamic'
 
+import { Image } from '@/components/images/Image'
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { EMessage } from '@/convex/types'
@@ -78,8 +79,9 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           }
 
           return (
-            <ImageCard
+            <Image
               key={frame.image._id}
+              alt=""
               image={frame.image}
               sizes="(max-width: 56rem) 50vw, 28rem"
               className="cursor-pointer"
