@@ -4,7 +4,7 @@ import { internal } from './_generated/api'
 import { httpAction } from './_generated/server'
 import { visionModels } from './endpoints/fal'
 import { internalAction, internalMutation, internalQuery } from './functions'
-import { createJob } from './jobsNext'
+import { createJob } from './jobs'
 import { imageFields } from './schema'
 import { imageFileSchema } from './shared/structures'
 

@@ -3,7 +3,7 @@ import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import { internalAction, internalMutation } from '../functions'
-import { claimJob, completeJob, handleJobError } from '../jobsNext'
+import { claimJob, completeJob, handleJobError } from '../jobs'
 import { getTextToAudioConfig, insist } from '../shared/utils'
 
 export const start = internalMutation({

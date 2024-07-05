@@ -5,7 +5,7 @@ import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
-import { claimJob, completeJob } from '../jobsNext'
+import { claimJob, completeJob } from '../jobs'
 import { getChatConfig, hasDelimiter, insist } from '../shared/utils'
 
 import type { Id } from '../_generated/dataModel'
