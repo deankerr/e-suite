@@ -142,7 +142,9 @@ export const processJobs = internalMutation({
     const queuedJobs = await ctx.table('jobs', 'status', (q) => q.eq('status', 'queued'))
     for (const job of queuedJobs) {
       // TODO - actual job queue management. for now just start all jobs
-      const handler = makeFunctionReference<'action'>(getJobDefinition(job.name).handler)
+      const def = getJobDefinition(job.name)
+      if (!def) return
+      const handler = makeFunctionReference<'action'>(def.handler)
       await ctx.scheduler.runAfter(0, handler, { jobId: job._id })
     }
   },
@@ -162,6 +164,5 @@ export const resultError = internalMutation(async (ctx, argsUnkn) => {
 
 const getJobDefinition = (jobName: string) => {
   const jobDefinition = jobDefinitions[jobName as keyof typeof jobDefinitions]
-  if (!jobDefinition) throw new ConvexError({ message: 'invalid job name', jobName })
   return jobDefinition
 }
