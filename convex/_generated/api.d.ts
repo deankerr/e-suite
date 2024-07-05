@@ -38,6 +38,7 @@ import type * as http from "../http.js";
 import type * as images from "../images.js";
 import type * as inference_assessNsfw from "../inference/assessNsfw.js";
 import type * as inference_captionImage from "../inference/captionImage.js";
+import type * as inference_chat from "../inference/chat.js";
 import type * as inference_chatCompletion from "../inference/chatCompletion.js";
 import type * as inference_chatCompletionAi from "../inference/chatCompletionAi.js";
 import type * as inference_soundGeneration from "../inference/soundGeneration.js";
@@ -105,6 +106,7 @@ declare const fullApi: ApiFromModules<{
   images: typeof images;
   "inference/assessNsfw": typeof inference_assessNsfw;
   "inference/captionImage": typeof inference_captionImage;
+  "inference/chat": typeof inference_chat;
   "inference/chatCompletion": typeof inference_chatCompletion;
   "inference/chatCompletionAi": typeof inference_chatCompletionAi;
   "inference/soundGeneration": typeof inference_soundGeneration;

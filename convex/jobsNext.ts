@@ -13,10 +13,11 @@ import type { Infer } from 'convex/values'
 const jobHandlers = {
   'files/ingestImageUrl': internal.files.ingestImageUrl.run,
   'inference/chat-completion-ai': internal.inference.chatCompletionAi.run,
+  'inference/chat': internal.inference.chat.run,
   'inference/captionImage': internal.inference.captionImage.run,
   'inference/assessNsfw': internal.inference.assessNsfw.run,
-  'inference/textToImageNext': internal.inference.textToImageNext.run,
-  'inference/threadTitleCompletionNext': internal.inference.threadTitleCompletionNext.run,
+  'inference/textToImage': internal.inference.textToImageNext.run,
+  'inference/threadTitleCompletion': internal.inference.threadTitleCompletionNext.run,
   'inference/textToAudio': internal.inference.textToAudio.run,
 }
 
@@ -27,7 +28,11 @@ export const createJob = async (
 ) => {
   const handler = jobHandlers?.[args.name as keyof typeof jobHandlers]
   if (!handler) {
-    throw createError('invalid job name')
+    throw createError('invalid job name', {
+      code: 'invalid_job',
+      fatal: true,
+      data: { name: args.name },
+    })
   }
 
   const jobId = await ctx.table('jobs').insert({
