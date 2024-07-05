@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { Doc } from '../_generated/dataModel'
 
-import type { ChatCompletionConfig, InferenceConfig } from '../types'
+import type { ChatCompletionConfig, InferenceConfig, TextToImageConfig } from '../types'
 import type { Value } from 'convex/values'
 
 export function env(name: string) {
@@ -75,4 +75,8 @@ export const zStringToMessageRole = z
 
 export const getChatConfig = (inference?: InferenceConfig): ChatCompletionConfig | null => {
   return inference?.type === 'chat-completion' ? inference : null
+}
+
+export const getTextToImageConfig = (inference?: InferenceConfig): TextToImageConfig | null => {
+  return inference?.type === 'text-to-image' ? inference : null
 }

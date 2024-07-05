@@ -1,13 +1,99 @@
-import * as falClient from '@fal-ai/serverless-client'
+import * as client from '@fal-ai/serverless-client'
+import { z } from 'zod'
 
 import type { ImageModelDataRecord } from '../db/endpoints'
+import type { TextToImageConfig, TextToImageHandlerResult } from '../types'
+
+client.config({
+  credentials: process.env.FAL_API_KEY!,
+})
+
+export const textToImage = async ({
+  textToImageConfig,
+}: {
+  textToImageConfig: TextToImageConfig
+}): Promise<TextToImageHandlerResult> => {
+  try {
+    const { endpointModelId, prompt } = textToImageConfig
+
+    const input = {
+      prompt,
+      image_size: {
+        width: textToImageConfig.width,
+        height: textToImageConfig.height,
+      },
+      num_images: textToImageConfig.n,
+
+      prompt_expansion: false,
+      expand_prompt: false,
+      enable_safety_checker: false,
+    }
+
+    console.log('[textToImage] [input] [fal]', endpointModelId, input)
+    const response = await client.subscribe(endpointModelId, {
+      input,
+    })
+    console.log('[textToImage] [output] [fal]', response)
+
+    const { images } = z
+      .object({
+        images: z
+          .object({
+            url: z.string(),
+          })
+          .array(),
+      })
+      .parse(response)
+
+    return { images, error: undefined }
+  } catch (err) {
+    console.error(err)
+
+    if (err instanceof client.ValidationError) {
+      return {
+        error: {
+          code: 'endpoint_error',
+          message: `${err.name}: ${JSON.stringify(err.body.detail)}`,
+          status: err.status,
+          fatal: true,
+        },
+        images: undefined,
+      }
+    }
+
+    if (err instanceof client.ApiError) {
+      return {
+        error: {
+          code: 'endpoint_error',
+          message: `${err.name}: ${err.body?.detail}`,
+          status: err.status,
+          fatal: true,
+        },
+        images: undefined,
+      }
+    }
+
+    if (err instanceof Error) {
+      return {
+        error: {
+          code: 'unhandled',
+          message: err.message,
+          fatal: true,
+        },
+        images: undefined,
+      }
+    }
+
+    throw err
+  }
+}
 
 export const createFalClient = () => {
-  falClient.config({
+  client.config({
     credentials: process.env.FAL_API_KEY!,
   })
 
-  return falClient
+  return client
 }
 
 const sdxlSizes = {
