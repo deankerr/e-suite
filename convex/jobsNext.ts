@@ -10,21 +10,21 @@ import type { ActionCtx } from './_generated/server'
 import type { MutationCtx } from './types'
 import type { Infer } from 'convex/values'
 
+const jobHandlers = {
+  'files/ingestImageUrl': internal.files.ingestImageUrl.run,
+  'inference/chat-completion-ai': internal.inference.chatCompletionAi.run,
+  'inference/captionImage': internal.inference.captionImage.run,
+  'inference/assessNsfw': internal.inference.assessNsfw.run,
+  'inference/textToImageNext': internal.inference.textToImageNext.run,
+  'inference/threadTitleCompletionNext': internal.inference.threadTitleCompletionNext.run,
+  'inference/textToAudio': internal.inference.textToAudio.run,
+}
+
 const jobAttributesObject = v.object(jobAttributeFields)
 export const createJob = async (
   ctx: MutationCtx,
   args: { name: string; fields: Infer<typeof jobAttributesObject> },
 ) => {
-  // TODO job names/definitions
-  const jobHandlers = {
-    'inference/chat-completion-ai': internal.inference.chatCompletionAi.run,
-    'files/ingestImageUrl': internal.files.ingestImageUrl.run,
-    'inference/captionImage': internal.inference.captionImage.run,
-    'inference/assessNsfw': internal.inference.assessNsfw.run,
-    'inference/textToImageNext': internal.inference.textToImageNext.run,
-    'inference/threadTitleCompletionNext': internal.inference.threadTitleCompletionNext.run,
-  }
-
   const handler = jobHandlers?.[args.name as keyof typeof jobHandlers]
   if (!handler) {
     throw createError('invalid job name')
