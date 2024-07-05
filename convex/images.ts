@@ -57,6 +57,13 @@ export const createImage = internalMutation({
       },
     })
 
+    await createJob(ctx, {
+      name: 'inference/assessNsfw',
+      fields: {
+        imageId,
+      },
+    })
+
     return imageId
   },
 })
