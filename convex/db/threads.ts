@@ -170,7 +170,7 @@ export const append = mutation({
       }
     }
 
-    if (inference.endpoint === 'fal') {
+    if (inference.type === 'text-to-image') {
       const jobId = await createJobNext(ctx, {
         name: 'inference/textToImageNext',
         fields: {
@@ -190,11 +190,9 @@ export const append = mutation({
     const jobName =
       inference.type === 'chat-completion'
         ? 'inference/chat-completion'
-        : inference.type === 'text-to-image'
-          ? 'inference/text-to-image'
-          : inference.type === 'sound-generation'
-            ? 'inference/sound-generation'
-            : null
+        : inference.type === 'sound-generation'
+          ? 'inference/sound-generation'
+          : null
 
     insist(jobName, 'invalid inference job')
 

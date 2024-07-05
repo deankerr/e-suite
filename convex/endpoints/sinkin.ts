@@ -6,7 +6,92 @@ import { env } from '../shared/utils'
 
 import type { ActionCtx } from '../_generated/server'
 import type { ImageModelDataRecord } from '../db/endpoints'
-import type { MutationCtx } from '../types'
+import type { MutationCtx, TextToImageConfig, TextToImageHandlerResult } from '../types'
+
+const api = ky.extend({
+  prefixUrl: 'https://sinkin.ai/m',
+  timeout: 1000 * 60,
+  retry: 0,
+})
+
+export const textToImage = async ({
+  textToImageConfig,
+}: {
+  textToImageConfig: TextToImageConfig
+}): Promise<TextToImageHandlerResult> => {
+  const { endpointModelId, prompt, width, height, n } = textToImageConfig
+  const body = new URLSearchParams()
+  body.set('model_id', endpointModelId)
+  body.set('prompt', prompt)
+  body.set('width', String(width))
+  body.set('height', String(height))
+  body.set('num_images', String(n))
+  body.set('access_token', env('SINKIN_API_KEY'))
+
+  console.log('[textToImage] [input] [sinkin]', body)
+  const response = await api
+    .post('inference', {
+      body,
+    })
+    .json()
+  console.log('[textToImage] [output] [sinkin]', response)
+
+  const result = textToImageResponseSchema.safeParse(response)
+  if (!result.success) {
+    return {
+      error: {
+        message: `failed to parse response: ${JSON.stringify(result.error.issues)}`,
+        code: 'invalid_response',
+        fatal: true,
+      },
+      images: undefined,
+    }
+  }
+
+  if ('images' in result.data) {
+    // # success
+    const { images } = result.data
+    return {
+      images: images.map((image) => ({ url: image })),
+      error: undefined,
+    }
+  }
+
+  // # content rejection error
+  if (result.data.error_code === 41) {
+    return {
+      error: {
+        message: result.data.message,
+        code: 'endpoint_refused',
+        fatal: true,
+      },
+      images: undefined,
+    }
+  }
+
+  // # other errors
+  return {
+    error: {
+      message: result.data.message,
+      code: 'endpoint_error',
+      fatal: true,
+    },
+    images: undefined,
+  }
+}
+
+const textToImageResponseSchema = z.union([
+  z.object({
+    inf_id: z.string(),
+    credit_cost: z.number(),
+    error_code: z.number(),
+    images: z.string().array(),
+  }),
+  z.object({
+    error_code: z.number(),
+    message: z.string(),
+  }),
+])
 
 export const fetchModelData = async (ctx: ActionCtx) => {
   console.log('https://sinkin.ai/api/models')
