@@ -43,8 +43,7 @@ export const Message = ({
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const soundGeneration = message.inference?.type === 'sound-generation' ? message.inference : null
 
-  const showChatLoader =
-    hasActiveJobName(message.jobs, 'inference/chat-completion') && !message.content
+  const showChatLoader = hasActiveJobName(message.jobs, 'inference/chat') && !message.content
 
   const role = textToImage ? 'images' : soundGeneration ? 'sounds' : message.role
   const name = textToImage
@@ -55,7 +54,7 @@ export const Message = ({
 
   const soundEffects = message.files?.filter((file) => file.type === 'sound_effect') ?? []
   const showSoundEffectLoader =
-    hasActiveJobName(message.jobs, 'inference/sound-generation') && !soundEffects.length
+    hasActiveJobName(message.jobs, 'inference/textToAudio') && !soundEffects.length
 
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
@@ -121,10 +120,15 @@ export const Message = ({
             )}
           </div>
         </div>
+        {/* message content */}
 
-        {/* content */}
-        <ImageGallery message={message} />
+        {(showChatLoader || showSoundEffectLoader) && (
+          <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
+            <LoadingSpinner variant="ping" className="mx-1 -mb-0.5 mt-0.5 w-5" />
+          </div>
+        )}
 
+        {/* text */}
         {message.content && !editing && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-2 sm:w-fit">
             <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
@@ -142,6 +146,14 @@ export const Message = ({
 
         {editing && <Editor message={message} onClose={() => setEditing(false)} />}
 
+        {/* images */}
+        {textToImage && (
+          <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-2 sm:w-fit">
+            {textToImage.prompt}
+          </div>
+        )}
+        <ImageGallery message={message} />
+
         {soundEffects.length > 0 && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
             {soundEffects.map((sfx) =>
@@ -153,21 +165,6 @@ export const Message = ({
                 />
               ) : null,
             )}
-          </div>
-        )}
-
-        {message.images.length > 0 && (
-          <div className="grid max-w-full grid-cols-2 gap-1">
-            {message.images.map((image) => (
-              // eslint-disable-next-line jsx-a11y/alt-text
-              <Image key={image._id} image={image} sizes="(max-width: 56rem) 50vw, 28rem" />
-            ))}
-          </div>
-        )}
-
-        {(showChatLoader || showSoundEffectLoader) && (
-          <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
-            <LoadingSpinner variant="ping" className="mx-1 -mb-0.5 mt-0.5 w-5" />
           </div>
         )}
 
