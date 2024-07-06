@@ -3,7 +3,6 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import dynamic from 'next/dynamic'
 
 import { Image } from '@/components/images/Image'
-import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { EMessage } from '@/convex/types'
 import { cn } from '@/lib/utils'
@@ -17,10 +16,15 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
   const [initialSlideIndex, setInitialSlideIndex] = useState(0)
 
   const textToImageConfig = message.inference?.type === 'text-to-image' ? message.inference : null
-  const imageFiles = useMemo(
-    () => message.files?.filter((file) => file.type === 'image') ?? [],
-    [message.files],
-  )
+  const imageFiles = useMemo(() => {
+    // NOTE mapping new image structure to 'files'
+    const imageFiles = message.files?.filter((file) => file.type === 'image') ?? []
+    const images = message.images.map((image) => ({
+      image,
+      type: 'image' as const,
+    }))
+    return [...imageFiles, ...images]
+  }, [message.files, message.images])
   const nShowImagesGenerating = Math.max(0, (textToImageConfig?.n ?? 0) - imageFiles.length)
 
   const frames = Array.from({ length: imageFiles.length + nShowImagesGenerating }, (_, i) => {
@@ -49,12 +53,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
   if (frames.length === 0) return null
   return (
     <div className="w-fit max-w-full rounded-lg">
-      <div
-        className={cn(
-          'mx-auto flex justify-center py-1',
-          frames.length > 1 ? 'grid grid-cols-2 gap-2' : '',
-        )}
-      >
+      <div className={cn('mx-auto flex justify-center py-1', 'grid grid-cols-2 gap-2')}>
         {frames.map((frame, i) => {
           if (frame.type === 'placeholder') {
             if (hasJobErrors) return null
