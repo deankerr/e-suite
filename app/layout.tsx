@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={cn(inter.variable, ibmPlexMono.variable)}>
       <head>
-        {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
+        {process.env.VERCEL_ENV === 'preview' && (
           // eslint-disable-next-line @next/next/no-sync-scripts
           <script
             data-project-id="nbXksKI7xQWFFu6T8ARpgvCnWU91V2zWxIWYOqaZ"
@@ -60,7 +60,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Theme accentColor="orange" appearance="dark" panelBackground="solid">
               {children}
               <Toaster position="top-right" theme="light" closeButton richColors />
-              <HighlightLoader />
             </Theme>
           </ClientProviders>
         </ClerkProvider>

@@ -3,7 +3,6 @@ import { DotsThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
 
 import AudioPlayer from '@/components/audio/AudioPlayer'
-import { Image } from '@/components/images/Image'
 import { Avatar } from '@/components/message/Avatar'
 import { Editor } from '@/components/message/Editor'
 import { ImageGallery } from '@/components/message/ImageGallery'
@@ -22,14 +21,12 @@ const showTokenInfo = false
 
 export const Message = ({
   message,
-
   showTimeline = false,
   slug,
   showMenu = true,
   removeMessage,
 }: {
   message: EMessage
-
   showTimeline?: boolean
   slug?: string
   showMenu?: boolean
@@ -120,8 +117,8 @@ export const Message = ({
             )}
           </div>
         </div>
-        {/* message content */}
 
+        {/* message content */}
         {(showChatLoader || showSoundEffectLoader) && (
           <div className="w-fit max-w-full rounded-lg bg-grayA-2 p-2">
             <LoadingSpinner variant="ping" className="mx-1 -mb-0.5 mt-0.5 w-5" />
@@ -132,7 +129,7 @@ export const Message = ({
         {message.content && !editing && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-2 sm:w-fit">
             <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
-              <Markdown>{message.content}</Markdown>
+              <Markdown text={message.content} />
             </div>
 
             {showTokenInfo && (
