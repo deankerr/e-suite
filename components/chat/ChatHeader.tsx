@@ -4,6 +4,7 @@ import { useSetAtom } from 'jotai'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
+import { FilterControl } from '@/components/chat/FilterControl'
 import { VoiceoverAutoplayButton } from '@/components/voiceovers/VoiceoverAutoplayButton'
 import { showSidebarAtom } from '@/lib/atoms'
 import { useViewerDetails } from '@/lib/queries'
@@ -16,7 +17,7 @@ export const ChatHeader = () => {
 
   const Icon = thread?.inference.type === 'text-to-image' ? Images : Chats
   return (
-    <div className="h-10 shrink-0 border-b border-grayA-3 flex-start">
+    <div className="h-11 shrink-0 border-b border-grayA-3 flex-start">
       {thread && (
         <>
           <div className="shrink-0 pl-2 pr-1">
@@ -37,6 +38,7 @@ export const ChatHeader = () => {
       )}
 
       <div className="shrink-0 gap-2 pl-1 pr-2 flex-end">
+        <FilterControl />
         {thread?._id && (
           <>
             <VoiceoverAutoplayButton threadId={thread._id} />
