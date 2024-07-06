@@ -22,11 +22,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { commandMenuOpenAtom } from '@/lib/atoms'
 import { useUserThreadsList, useViewerDetails } from '@/lib/queries'
 
-type CommandMenuProps = {
-  asDialog?: boolean
-}
-
-export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
+export const CommandMenu = () => {
   const [open, setOpen] = useAtom(commandMenuOpenAtom)
   useKey(
     (e) => e.key === 'k' && e.metaKey,
@@ -108,12 +104,10 @@ export const CommandMenu = ({ asDialog = true }: CommandMenuProps) => {
     </Command>
   )
 
-  return asDialog ? (
+  return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       {menu}
     </CommandDialog>
-  ) : (
-    menu
   )
 }
 
