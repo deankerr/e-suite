@@ -245,11 +245,8 @@ export const update = mutation({
     content: v.optional(v.string()),
     metadata: v.optional(kvListV),
   },
-  handler: async (ctx, args) => {
-    return await ctx
-      .table('messages')
-      .getX(args.messageId as Id<'messages'>)
-      .patch(args)
+  handler: async (ctx, { messageId, ...fields }) => {
+    return await ctx.table('messages').getX(messageId).patch(fields)
   },
 })
 
@@ -262,19 +259,6 @@ export const remove = mutation({
       .table('messages')
       .getX(args.messageId as Id<'messages'>)
       .delete()
-  },
-})
-
-export const streamCompletionContent = internalMutation({
-  args: {
-    messageId: v.id('messages'),
-    content: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.skipRules
-      .table('messages')
-      .getX(args.messageId)
-      .patch({ content: args.content })
   },
 })
 
