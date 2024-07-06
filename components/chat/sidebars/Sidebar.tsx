@@ -1,21 +1,19 @@
-import { useAtom } from 'jotai'
-
 import { useChat } from '@/components/chat/ChatProvider'
 import { ChatSidebar } from '@/components/chat/sidebars/ChatSidebar'
 import { ImageSidebar } from '@/components/chat/sidebars/ImageSidebar'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { showSidebarAtom } from '@/lib/atoms'
+import { useChatState } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const Sidebar = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const { thread } = useChat()
-  const [showSidebar, setShowSidebar] = useAtom(showSidebarAtom)
-  if (!showSidebar) return null
+  const [chatState, setChatState] = useChatState(thread?.slug ?? '')
+  if (!chatState.sidebarOpen) return null
   return (
     <>
       <div
         className="absolute inset-0 bg-overlay opacity-50 lg:hidden"
-        onClick={() => setShowSidebar(false)}
+        onClick={() => setChatState((state) => ({ ...state, sidebarOpen: false }))}
       ></div>
       <div
         {...props}

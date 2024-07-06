@@ -137,12 +137,21 @@ importers:
       howler:
         specifier: ^2.2.4
         version: 2.2.4
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
       itty-time:
         specifier: ^1.0.6
         version: 1.0.6
       jotai:
         specifier: ^2.8.4
         version: 2.8.4(@types/react@18.3.3)(react@18.3.1)
+      jotai-immer:
+        specifier: ^0.4.1
+        version: 0.4.1(immer@10.1.1)(jotai@2.8.4(@types/react@18.3.3)(react@18.3.1))
+      jotai-optics:
+        specifier: ^0.4.0
+        version: 0.4.0(jotai@2.8.4(@types/react@18.3.3)(react@18.3.1))(optics-ts@2.4.1)
       jotai-suspense:
         specifier: ^0.3.0
         version: 0.3.0(jotai@2.8.4(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
@@ -4068,6 +4077,9 @@ packages:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
 
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+
   immer@9.0.21:
     resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
 
@@ -4297,6 +4309,18 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=17.0.0'
+
+  jotai-immer@0.4.1:
+    resolution: {integrity: sha512-nQTt1HBKie/5OJDck1qLpV1PeBA6bjJLAczEYAx70PD8R4Mbu7gtexfBUCzJh6W6ecsOfwHksAYAesVth6SN9A==}
+    peerDependencies:
+      immer: '>=9.0.0'
+      jotai: '>=2.0.0'
+
+  jotai-optics@0.4.0:
+    resolution: {integrity: sha512-osbEt9AgS55hC4YTZDew2urXKZkaiLmLqkTS/wfW5/l0ib8bmmQ7kBXSFaosV6jDDWSp00IipITcJARFHdp42g==}
+    peerDependencies:
+      jotai: '>=2.0.0'
+      optics-ts: '>=2.0.0'
 
   jotai-suspense@0.3.0:
     resolution: {integrity: sha512-SMfqyduyGp+KLTXdrPBheL0Ho/Yr5L+k6b2vlyCe2UK2ByRQ/F3OW5l6yU7SS4YcUT6XWKmC4WM6nIXydnGypA==}
@@ -4921,6 +4945,9 @@ packages:
   opener@1.5.2:
     resolution: {integrity: sha512-ur5UIdyw5Y7yEj9wLzhqXiy6GZ3Mwx0yGI+5sMn2r0N0v3cKJvUmFH5yPP+WXh9e0xfyzyJX95D8l088DNFj7A==}
     hasBin: true
+
+  optics-ts@2.4.1:
+    resolution: {integrity: sha512-HaYzMHvC80r7U/LqAd4hQyopDezC60PO2qF5GuIwALut2cl5rK1VWHsqTp0oqoJJWjiv6uXKqsO+Q2OO0C3MmQ==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -10791,6 +10818,8 @@ snapshots:
 
   ignore@5.3.1: {}
 
+  immer@10.1.1: {}
+
   immer@9.0.21: {}
 
   immutable@4.3.6: {}
@@ -11022,6 +11051,16 @@ snapshots:
       - '@types/react'
       - react-dom
       - redux
+
+  jotai-immer@0.4.1(immer@10.1.1)(jotai@2.8.4(@types/react@18.3.3)(react@18.3.1)):
+    dependencies:
+      immer: 10.1.1
+      jotai: 2.8.4(@types/react@18.3.3)(react@18.3.1)
+
+  jotai-optics@0.4.0(jotai@2.8.4(@types/react@18.3.3)(react@18.3.1))(optics-ts@2.4.1):
+    dependencies:
+      jotai: 2.8.4(@types/react@18.3.3)(react@18.3.1)
+      optics-ts: 2.4.1
 
   jotai-suspense@0.3.0(jotai@2.8.4(@types/react@18.3.3)(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -11858,6 +11897,8 @@ snapshots:
       yaml: 2.4.5
 
   opener@1.5.2: {}
+
+  optics-ts@2.4.1: {}
 
   optionator@0.9.4:
     dependencies:
