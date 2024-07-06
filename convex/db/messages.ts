@@ -118,48 +118,6 @@ export const getSeries = query({
   },
 })
 
-export const list = query({
-  args: {
-    threadId: v.string(),
-    limit: v.number(),
-    order: v.union(v.literal('asc'), v.literal('desc')),
-  },
-  handler: async (ctx, args) => {
-    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    if (!threadId) return []
-
-    const messages = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
-      .order(args.order)
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(args.limit)
-      .map(async (message) => await getMessageEdges(ctx, message))
-
-    return messages.reverse()
-  },
-})
-
-export const paginate = query({
-  args: {
-    threadId: v.string(),
-    order: v.union(v.literal('asc'), v.literal('desc')),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
-    const threadId = ctx.unsafeDb.normalizeId('threads', args.threadId)
-    if (!threadId) return emptyPage()
-
-    const results = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', threadId))
-      .order(args.order)
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .paginate(args.paginationOpts)
-      .map(async (message) => await getMessageEdges(ctx, message))
-
-    return results
-  },
-})
-
 export const content = query({
   args: {
     slugOrId: v.string(),

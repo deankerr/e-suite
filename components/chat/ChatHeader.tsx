@@ -1,19 +1,18 @@
 import { Chats, Images, Sidebar } from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
-import { useSetAtom } from 'jotai'
 
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
 import { FilterControl } from '@/components/chat/FilterControl'
 import { VoiceoverAutoplayButton } from '@/components/voiceovers/VoiceoverAutoplayButton'
-import { showSidebarAtom } from '@/lib/atoms'
+import { useChatState } from '@/lib/atoms'
 import { useViewerDetails } from '@/lib/queries'
 
 export const ChatHeader = () => {
   const { thread } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
-  const toggleSidebar = useSetAtom(showSidebarAtom)
+  const [chatState, setChatState] = useChatState(thread?.slug ?? '')
 
   const Icon = thread?.inference.type === 'text-to-image' ? Images : Chats
   return (
@@ -38,12 +37,21 @@ export const ChatHeader = () => {
       )}
 
       <div className="shrink-0 gap-2 pl-1 pr-2 flex-end">
-        <FilterControl />
-        {thread?._id && (
+        {thread && (
           <>
+            <FilterControl slug={thread.slug} />
             <VoiceoverAutoplayButton threadId={thread._id} />
-            <IconButton variant="ghost" color="gray" onClick={() => toggleSidebar()}>
-              <Sidebar className="size-6" />
+            <IconButton
+              variant="ghost"
+              color="gray"
+              onClick={() =>
+                setChatState((state) => ({ ...state, sidebarOpen: !state.sidebarOpen }))
+              }
+            >
+              <Sidebar
+                className="size-6 -scale-x-100"
+                weight={chatState.sidebarOpen ? 'fill' : 'regular'}
+              />
             </IconButton>
           </>
         )}
