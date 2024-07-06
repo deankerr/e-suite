@@ -1,22 +1,32 @@
-import { Fragment } from 'react'
-import MarkdownToJsx from 'markdown-to-jsx'
+import { memo } from 'react'
+import ReactMarkdown from 'react-markdown'
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import { SyntaxHighlightedCode } from '@/components/util/SyntaxHighlightedCode'
-
-export const Markdown = ({ children }: { children?: string }) => {
-  if (!children) return null
+const Component = (props: { text?: string }) => {
+  if (!props.text) return null
 
   return (
-    <MarkdownToJsx
-      options={{
-        wrapper: Fragment,
-        disableParsingRawHTML: true,
-        overrides: {
-          code: SyntaxHighlightedCode,
+    <ReactMarkdown
+      components={{
+        code(props) {
+          const { children, className, node, ref, ...rest } = props
+          const match = /language-(\w+)/.exec(className || '')
+          return match ? (
+            <SyntaxHighlighter {...rest} PreTag="div" language={match[1]} style={tomorrow}>
+              {String(children).replace(/\n$/, '')}
+            </SyntaxHighlighter>
+          ) : (
+            <code {...rest} className={className}>
+              {children}
+            </code>
+          )
         },
       }}
     >
-      {children}
-    </MarkdownToJsx>
+      {props.text}
+    </ReactMarkdown>
   )
 }
+
+export const Markdown = memo(Component)
