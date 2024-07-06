@@ -9,7 +9,6 @@ import { IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ClientProviders } from '@/components/util/ClientProviders'
-import { HighlightLoader } from '@/components/util/HighlightLoader'
 import { cn, environment } from '@/lib/utils'
 
 import type { Metadata, Viewport } from 'next'
