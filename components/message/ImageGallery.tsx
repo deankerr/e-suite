@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import dynamic from 'next/dynamic'
 
-import { Image } from '@/components/images/Image'
+import { ImageBR } from '@/components/images/ImageBR'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { EMessage } from '@/convex/types'
 import { cn } from '@/lib/utils'
@@ -78,7 +78,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           }
 
           return (
-            <Image
+            <ImageBR
               key={frame.image._id}
               alt=""
               image={frame.image}

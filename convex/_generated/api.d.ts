@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as db_admin_see from "../db/admin/see.js";
 import type * as db_chatModels from "../db/chatModels.js";
 import type * as db_endpoints from "../db/endpoints.js";
 import type * as db_imageModels from "../db/imageModels.js";
@@ -65,6 +66,7 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "db/admin/see": typeof db_admin_see;
   "db/chatModels": typeof db_chatModels;
   "db/endpoints": typeof db_endpoints;
   "db/imageModels": typeof db_imageModels;

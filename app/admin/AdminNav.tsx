@@ -11,6 +11,7 @@ const routes = [
   { path: '/admin/voice-models', label: 'voice models' },
   { path: '/admin/svg', label: 'svg' },
   { path: '/admin/typography', label: 'typography' },
+  { path: '/admin/images', label: 'images' },
 ]
 
 export const AdminNav = () => {
