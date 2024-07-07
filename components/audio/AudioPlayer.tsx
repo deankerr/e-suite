@@ -58,7 +58,7 @@ export default function AudioPlayer({ url, titleText }: { url: string; titleText
   return (
     <Card className="mx-auto aspect-[8/5] w-80">
       <Inset>
-        <Image src={MeshBg} alt="" className="-scale-x-100" />
+        <Image unoptimized src={MeshBg} alt="" className="-scale-x-100" />
       </Inset>
 
       {/* visualizer */}
