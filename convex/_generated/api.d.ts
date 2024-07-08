@@ -45,6 +45,7 @@ import type * as inference_textToSpeech from "../inference/textToSpeech.js";
 import type * as inference_threadTitleCompletion from "../inference/threadTitleCompletion.js";
 import type * as jobs from "../jobs.js";
 import type * as lib_clerk from "../lib/clerk.js";
+import type * as lib_fetch from "../lib/fetch.js";
 import type * as lib_openai from "../lib/openai.js";
 import type * as lib_paramInputs from "../lib/paramInputs.js";
 import type * as lib_sharp from "../lib/sharp.js";
@@ -97,6 +98,7 @@ declare const fullApi: ApiFromModules<{
   "inference/threadTitleCompletion": typeof inference_threadTitleCompletion;
   jobs: typeof jobs;
   "lib/clerk": typeof lib_clerk;
+  "lib/fetch": typeof lib_fetch;
   "lib/openai": typeof lib_openai;
   "lib/paramInputs": typeof lib_paramInputs;
   "lib/sharp": typeof lib_sharp;

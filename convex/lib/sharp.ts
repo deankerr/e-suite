@@ -1,10 +1,10 @@
 'use node'
 
 import { ConvexError, v } from 'convex/values'
-import ky from 'ky'
 import sharp from 'sharp'
 
 import { internalAction } from '../functions'
+import { fetch } from '../lib/fetch'
 
 import type { Id } from '../_generated/dataModel'
 import type { FormatEnum } from 'sharp'
@@ -39,7 +39,7 @@ export const storeImageFromUrl = internalAction({
     url: v.string(),
   },
   handler: async (ctx, args): Promise<StoredImageFileWithBlurData> => {
-    const inputArrayBuffer = await ky.get(args.url).arrayBuffer()
+    const inputArrayBuffer = await fetch.get(args.url).arrayBuffer()
     const metadata = await createBlurData(inputArrayBuffer)
     const blob = new Blob([inputArrayBuffer], { type: `image/${metadata.format}` })
 

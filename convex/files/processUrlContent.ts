@@ -1,9 +1,9 @@
 import { v } from 'convex/values'
 import fastContentTypeParse from 'fast-content-type-parse'
-import ky from 'ky'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
+import { fetch } from '../lib/fetch'
 
 export const run = internalAction({
   args: {
@@ -32,7 +32,14 @@ export const run = internalAction({
 
 async function fetchContentTypeData(url: URL | string) {
   try {
-    const response = await ky(url.toString(), { method: 'HEAD' })
+    const response = await fetch.head(url.toString())
+
+    const contentLength = parseInt(response.headers.get('content-length') || '0', 10)
+    if (contentLength > 10 * 1024 * 1024) {
+      // 10 MB limit
+      throw new Error('Response too large')
+    }
+
     const contentTypeHeader = response.headers.get('content-type')
     const { type, parameters } = fastContentTypeParse.parse(contentTypeHeader || '')
     return {
