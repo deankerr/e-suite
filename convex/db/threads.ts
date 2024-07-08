@@ -4,10 +4,10 @@ import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
-import { createJob as createJobNext } from '../jobs'
+import { createJob } from '../jobs'
 import { inferenceConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
-import { createError, insist } from '../shared/utils'
+import { createError, extractValidUrlsFromText, insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
@@ -119,10 +119,13 @@ export const append = mutation({
         .get()
 
       if (userMessage.content) {
-        await ctx.scheduler.runAfter(0, internal.files.links.analyzeUrlsInText, {
-          text: userMessage.content,
-          messageId: userMessage._id,
-        })
+        const urls = extractValidUrlsFromText(userMessage.content)
+        if (urls.length > 0) {
+          await ctx.scheduler.runAfter(0, internal.files.processUrlContent.run, {
+            urls: urls.map((url) => url.toString()),
+            messageId: userMessage._id,
+          })
+        }
       }
 
       if (!inference)
@@ -152,7 +155,7 @@ export const append = mutation({
     if (inference.endpoint === 'anthropic') {
       const jobName = 'inference/chat-completion-ai'
 
-      const jobId = await createJobNext(ctx, {
+      const jobId = await createJob(ctx, {
         name: jobName,
         fields: {
           messageId: asstMessage._id,
@@ -176,7 +179,7 @@ export const append = mutation({
     const jobName = jobNameMap[inference.type]
     insist(jobName, 'invalid inference type')
 
-    const jobId = await createJobNext(ctx, {
+    const jobId = await createJob(ctx, {
       name: jobName,
       fields: {
         messageId: asstMessage._id,

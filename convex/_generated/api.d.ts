@@ -31,7 +31,7 @@ import type * as endpoints_openrouter from "../endpoints/openrouter.js";
 import type * as endpoints_sinkin from "../endpoints/sinkin.js";
 import type * as endpoints_together from "../endpoints/together.js";
 import type * as files_ingestImageUrl from "../files/ingestImageUrl.js";
-import type * as files_links from "../files/links.js";
+import type * as files_processUrlContent from "../files/processUrlContent.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as images from "../images.js";
@@ -83,7 +83,7 @@ declare const fullApi: ApiFromModules<{
   "endpoints/sinkin": typeof endpoints_sinkin;
   "endpoints/together": typeof endpoints_together;
   "files/ingestImageUrl": typeof files_ingestImageUrl;
-  "files/links": typeof files_links;
+  "files/processUrlContent": typeof files_processUrlContent;
   functions: typeof functions;
   http: typeof http;
   images: typeof images;

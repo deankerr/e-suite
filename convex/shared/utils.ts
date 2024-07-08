@@ -37,7 +37,7 @@ export function insist<T>(
     throw new ConvexError({ ...data, message: `assertion failed: ${message}`, fatal: true })
 }
 
-export const getErrorMessage = (err: unknown) => {
+export function getErrorMessage(err: unknown) {
   if (err instanceof ConvexError) {
     return err.message
   }
@@ -49,7 +49,7 @@ export const getErrorMessage = (err: unknown) => {
   return `Unknown error: ${String(err).slice(0, 100)}`
 }
 
-export const hasActiveJobName = (jobs: Doc<'jobs'>[], name: string) => {
+export function hasActiveJobName(jobs: Doc<'jobs'>[], name: string) {
   return jobs.filter((j) => j.name === name).some((j) => ['active', 'queued'].includes(j.status))
 }
 
@@ -78,14 +78,28 @@ export const zStringToMessageRole = z
   .string()
   .transform((value) => z.enum(['user', 'assistant', 'system']).parse(value))
 
-export const getChatConfig = (inference?: InferenceConfig): ChatCompletionConfig | null => {
+export function getChatConfig(inference?: InferenceConfig): ChatCompletionConfig | null {
   return inference?.type === 'chat-completion' ? inference : null
 }
 
-export const getTextToImageConfig = (inference?: InferenceConfig): TextToImageConfig | null => {
+export function getTextToImageConfig(inference?: InferenceConfig): TextToImageConfig | null {
   return inference?.type === 'text-to-image' ? inference : null
 }
 
-export const getTextToAudioConfig = (inference?: InferenceConfig): TextToAudioConfig | null => {
+export function getTextToAudioConfig(inference?: InferenceConfig): TextToAudioConfig | null {
   return inference?.type === 'sound-generation' ? inference : null
+}
+
+export function extractValidUrlsFromText(text: string): URL[] {
+  const urlRegex = /(https?:\/\/[^\s]+)/g
+  const matches = text.match(urlRegex) || []
+  return matches
+    .map((url) => {
+      try {
+        return new URL(url)
+      } catch {
+        return null
+      }
+    })
+    .filter((url): url is URL => url !== null)
 }
