@@ -4,6 +4,7 @@ import { IconButton } from '@radix-ui/themes'
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { useChat } from '@/components/chat/ChatProvider'
 import { FilterControl } from '@/components/chat/FilterControl'
+import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
 import { VoiceoverAutoplayButton } from '@/components/voiceovers/VoiceoverAutoplayButton'
 import { useChatState } from '@/lib/atoms'
 import { useViewerDetails } from '@/lib/queries'
@@ -39,7 +40,9 @@ export const ChatHeader = () => {
       <div className="shrink-0 gap-2 pl-1 pr-2 flex-end">
         {thread && (
           <>
-            <FilterControl slug={thread.slug} />
+            <NonSecureAdminRoleOnly>
+              <FilterControl slug={thread.slug} />
+            </NonSecureAdminRoleOnly>
             <VoiceoverAutoplayButton threadId={thread._id} />
             <IconButton
               variant="ghost"
