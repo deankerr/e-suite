@@ -14,13 +14,17 @@ export const run = internalAction({
     const urlData = await Promise.all(args.urls.map(fetchContentTypeData))
     for (const url of urlData) {
       if (url.type.startsWith('image')) {
-        await ctx.runMutation(internal.jobs.createJobM, {
-          name: 'files/ingestImageUrl',
-          fields: {
-            url: url.url,
-            messageId: args.messageId,
-          },
-        })
+        try {
+          await ctx.runMutation(internal.jobs.createJobM, {
+            name: 'files/ingestImageUrl',
+            fields: {
+              url: url.url,
+              messageId: args.messageId,
+            },
+          })
+        } catch (error) {
+          console.error(`Error creating job for ${url.url}:`, error)
+        }
       }
     }
   },
