@@ -235,22 +235,6 @@ const audio = defineEnt(audioFields)
     filterFields: ['threadId', 'userId', 'generationData.modelId'],
   })
 
-// # "migrate" to speech (delete)
-// NOTE need to refactor/disable voiceover generation after migration
-export const speechFileFields = {
-  textHash: v.string(),
-  resourceKey: v.string(),
-  status: literals('pending', 'complete', 'error'),
-  fileId: v.optional(v.id('_storage')),
-  fileUrl: v.optional(v.string()),
-  error: v.optional(v.string()),
-  updatedAtTime: v.number(),
-}
-const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
-  'textHash',
-  'resourceKey',
-])
-
 // # new - speech - full migration
 export const speechFields = {
   fileId: v.optional(v.id('_storage')),
@@ -296,7 +280,7 @@ export const messageFields = {
   voiceover: v.optional(
     v.object({
       resourceKey: v.string(),
-      speechFileId: v.optional(v.id('speech_files')),
+      speechFileId: v.optional(v.id('speech')),
       text: v.optional(v.string()),
       textHash: v.string(),
     }),
@@ -400,7 +384,6 @@ const schema = defineEntSchema(
 
     messages,
     speech,
-    speech_files,
     threads,
     users,
     users_api_keys,

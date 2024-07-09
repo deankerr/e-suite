@@ -59,20 +59,20 @@ export const messageContent = mutation({
         console.log('added voiceover:', message.name, resourceKey)
       }
     }
+    ///
+    // const speechFileId = await generateSpeech(ctx, {
+    //   text: processedText,
+    //   textHash,
+    //   resourceKey,
+    // })
 
-    const speechFileId = await generateSpeech(ctx, {
-      text: processedText,
-      textHash,
-      resourceKey,
-    })
-    // TODO remove this relation
-    await ctx.skipRules.table('messages').getX(message._id).patch({
-      voiceover: {
-        textHash,
-        resourceKey,
-        speechFileId,
-      },
-    })
+    // await ctx.skipRules.table('messages').getX(message._id).patch({
+    //   voiceover: {
+    //     textHash,
+    //     resourceKey,
+    //     speechFileId,
+    //   },
+    // })
   },
 })
 
@@ -106,14 +106,14 @@ export const remove = mutation({
     insist(message, 'invalid message id')
     insist(message.voiceover?.speechFileId, 'invalid message id')
 
-    const speechFile = await ctx.table('speech_files').getX(message.voiceover.speechFileId)
-    await ctx
-      .table('messages', 'speechId')
-      .filter((q) => q.eq(q.field('voiceover.speechFileId'), speechFile._id))
-      .map((m) => m.patch({ voiceover: undefined }))
+    // const speechFile = await ctx.table('speech_files').getX(message.voiceover.speechFileId)
+    // await ctx
+    //   .table('messages', 'speechId')
+    //   .filter((q) => q.eq(q.field('voiceover.speechFileId'), speechFile._id))
+    //   .map((m) => m.patch({ voiceover: undefined }))
 
-    if (speechFile.fileId) await ctx.storage.delete(speechFile.fileId)
-    await speechFile.delete()
+    // if (speechFile.fileId) await ctx.storage.delete(speechFile.fileId)
+    // await speechFile.delete()
   },
 })
 

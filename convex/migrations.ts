@@ -179,6 +179,7 @@ export const step3_deleteSpeechFiles = internalMutation(async (ctx) => {
   await asyncMap(sf, async (s) => await s.delete())
 })
 
+// ? may need
 export const ensureImg = internalMutation(async (ctx) => {
   const images = await ctx.table('images').filter((q) => q.eq(q.field('threadId'), undefined))
   console.log(images.length)
@@ -195,4 +196,22 @@ export const ensureImg = internalMutation(async (ctx) => {
       userId: message.userId,
     })
   }
+})
+
+// TODO
+export const delMsgVoiceovers = internalMutation({
+  args: {
+    cursor: v.union(v.string(), v.null()),
+    numItems: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { page, isDone, continueCursor } = await ctx.skipRules.table('messages').paginate(args)
+
+    for (const message of page) {
+      if (!message.voiceover) continue
+      await message.patch({ voiceover: undefined })
+    }
+
+    return { cursor: continueCursor, isDone }
+  },
 })
