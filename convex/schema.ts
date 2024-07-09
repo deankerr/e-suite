@@ -1,5 +1,5 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { literals } from 'convex-helpers/validators'
+import { literals, partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 
@@ -128,44 +128,7 @@ const image_models = defineEnt(imageModelFields).field('resourceKey', v.string()
   unique: true,
 })
 
-export const fileFields = {
-  fileId: v.id('_storage'),
-  isOriginFile: v.boolean(),
-
-  category: v.literal('image'),
-  format: v.string(),
-
-  width: v.optional(v.number()),
-  height: v.optional(v.number()),
-}
-const files = defineEnt(fileFields).edge('image')
-
-export const imageFields = {
-  originUrl: v.string(),
-  width: v.number(),
-  height: v.number(),
-  blurDataUrl: v.string(),
-  color: v.string(),
-
-  caption: v.optional(
-    v.object({
-      text: v.optional(v.string()),
-      modelId: v.string(),
-    }),
-  ),
-  nsfwProbability: v.optional(v.number()),
-
-  generationData: v.optional(v.array(v.string())),
-  messageId: v.optional(v.id('messages')),
-}
-const images = defineEnt(imageFields)
-  .deletion('scheduled', {
-    delayMs: timeToDelete,
-  })
-  .edges('files', { ref: true })
-  .index('originUrl', ['originUrl'])
-  .index('messageId', ['messageId'])
-
+// * Jobs
 export const jobAttributeFields = {
   threadId: v.optional(v.id('threads')),
   messageId: v.optional(v.id('messages')),
@@ -191,13 +154,168 @@ const jobs = defineEnt(jobFields)
   .index('messageId', ['messageId'])
   .index('imageId', ['imageId'])
 
+// * Files
+// # migrate to image
+// NOTE delete alternate/optimized files, only keep originals
+export const fileFields = {
+  fileId: v.id('_storage'),
+  isOriginFile: v.boolean(),
+
+  category: v.literal('image'),
+  format: v.string(),
+
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
+}
+const files = defineEnt(fileFields).edge('image')
+
+// # new Image fields
+const newImageFields = {
+  fileId: v.id('_storage'),
+  sourceUrl: v.string(),
+  format: v.string(),
+  captionText: v.optional(v.string()), // main caption, searchable
+  captionModelId: v.optional(v.string()),
+  // alternate/regenerated captions
+  captions: v.optional(
+    v.array(
+      v.object({
+        text: v.optional(v.string()),
+        modelId: v.string(),
+      }),
+    ),
+  ),
+  // inference parameter data - not present on eg. message images uploaded/linked by user
+  generationData: v.optional(
+    v.union(
+      v.object({
+        prompt: v.string(),
+        modelId: v.string(),
+        modelName: v.string(),
+        endpointId: v.string(),
+      }),
+      v.array(v.string()), // TODO old format, remove union after migration
+    ),
+  ),
+
+  // edges
+  threadId: v.optional(v.id('threads')),
+  userId: v.optional(v.id('users')),
+}
+
+export const imageFields = {
+  ...partial(newImageFields),
+
+  originUrl: v.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
+
+  caption: v.optional(
+    v.object({
+      text: v.optional(v.string()),
+      modelId: v.string(),
+    }),
+  ),
+  nsfwProbability: v.optional(v.number()),
+
+  messageId: v.optional(v.id('messages')),
+}
+const images = defineEnt(imageFields)
+  .deletion('scheduled', {
+    delayMs: timeToDelete,
+  })
+  .edges('files', { ref: true })
+  .index('originUrl', ['originUrl'])
+  .index('messageId', ['messageId'])
+// TODO after migration: add image indexes/edges
+
+// # migrate to audio
+export const soundEffectFileFields = {
+  text: v.string(),
+  fileId: v.id('_storage'),
+  fileUrl: v.string(),
+}
+const sound_effect_files = defineEnt(soundEffectFileFields)
+
+// # new - audio - full migration
+export const audioFields = {
+  fileId: v.id('_storage'),
+
+  generationData: v.object({
+    prompt: v.string(),
+    modelId: v.string(),
+    modelName: v.string(),
+    endpointId: v.string(),
+  }),
+}
+const audio = defineEnt(audioFields)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .edge('message')
+  .edge('thread')
+  .edge('user')
+  .searchIndex('prompt', {
+    searchField: 'generationData.prompt',
+    filterFields: ['threadId', 'userId', 'generationData.modelId'],
+  })
+
+// # "migrate" to speech (delete)
+// NOTE need to refactor/disable voiceover generation after migration
+export const speechFileFields = {
+  textHash: v.string(),
+  resourceKey: v.string(),
+  status: literals('pending', 'complete', 'error'),
+  fileId: v.optional(v.id('_storage')),
+  fileUrl: v.optional(v.string()),
+  error: v.optional(v.string()),
+  updatedAtTime: v.number(),
+}
+const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
+  'textHash',
+  'resourceKey',
+])
+
+// # new - speech - full migration
+export const speechFields = {
+  fileId: v.optional(v.id('_storage')),
+  resourceKey: v.string(),
+  textHash: v.string(),
+}
+const speech = defineEnt(speechFields)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .edge('message')
+  .edge('thread')
+  .edge('user')
+  .index('textHash_resourceKey', ['textHash', 'resourceKey'])
+
+// * Messages
+// # new message fields
+export const newMessageFields = {
+  contentType: literals('text', 'image', 'audio'),
+
+  text: v.optional(v.string()), // main text content, searchable. may represent something like an image description rather than a "written message"
+  references: v.optional(
+    v.array(
+      v.object({
+        url: v.string(),
+        contentType: literals('image', 'unknown'),
+        imageId: v.optional(v.id('images')),
+      }),
+    ),
+  ),
+  hasImageReference: v.boolean(),
+}
+
 export const messageFields = {
+  ...partial(newMessageFields),
+
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
-  content: v.optional(v.string()),
+  content: v.optional(v.string()), // TODO migrate to text
 
   inference: v.optional(inferenceConfigV),
-  files: v.optional(fileAttachmentRecordSchemaV),
+  files: v.optional(fileAttachmentRecordSchemaV), // TODO migrate generations to edges, user input images to attachments
 
   metadata: v.optional(kvListV),
   voiceover: v.optional(
@@ -214,31 +332,18 @@ const messages = defineEnt(messageFields)
   .field('series', v.number(), { index: true })
   .edge('thread')
   .edge('user')
+  .edges('audio', { ref: true, deletion: 'soft' }) // # new
+  .edges('speech', { ref: true, deletion: 'soft' }) // # new
   .index('threadId_series', ['threadId', 'series'])
   .index('speechId', ['voiceover.speechFileId'])
   .index('threadId_role', ['threadId', 'role'])
+// # draft
+// .index('inferenceType', ['threadId', 'role', 'inference.type'])
+// .searchIndex('text', {
+//   searchField: 'text'
+// })
 
-export const soundEffectFileFields = {
-  text: v.string(),
-  fileId: v.id('_storage'),
-  fileUrl: v.string(),
-}
-const sound_effect_files = defineEnt(soundEffectFileFields)
-
-export const speechFileFields = {
-  textHash: v.string(),
-  resourceKey: v.string(),
-  status: literals('pending', 'complete', 'error'),
-  fileId: v.optional(v.id('_storage')),
-  fileUrl: v.optional(v.string()),
-  error: v.optional(v.string()),
-  updatedAtTime: v.number(),
-}
-const speech_files = defineEnt(speechFileFields).index('textHash_resourceKey', [
-  'textHash',
-  'resourceKey',
-])
-
+// * Threads
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
@@ -274,7 +379,10 @@ const threads = defineEnt(threadFields)
   .field('slug', v.string(), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edge('user')
+  .edges('audio', { ref: true, deletion: 'soft' }) // # new
+  .edges('speech', { ref: true, deletion: 'soft' }) // # new
 
+// * Users
 export const userFields = {
   name: v.string(),
   imageUrl: v.string(),
@@ -285,7 +393,9 @@ const users = defineEnt(userFields)
   .field('tokenIdentifier', v.string(), { unique: true })
   .edges('users_api_keys', { ref: true })
   .edges('threads', { ref: true, deletion: 'soft' })
-  .edges('messages', { ref: true })
+  .edges('messages', { ref: true, deletion: 'soft' }) // # new
+  .edges('audio', { ref: true, deletion: 'soft' }) // # new
+  .edges('speech', { ref: true, deletion: 'soft' }) // # new
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -295,6 +405,7 @@ const users_api_keys = defineEnt(usersApiKeysFields)
   .field('secret', v.string(), { unique: true })
   .edge('user')
 
+// * Endpoint Data
 export const endpointDataCacheFields = {
   endpoint: v.string(),
   name: v.string(),
@@ -302,8 +413,10 @@ export const endpointDataCacheFields = {
 }
 const endpoint_data_cache = defineEnt(endpointDataCacheFields)
 
+// * Schema
 const schema = defineEntSchema(
   {
+    audio,
     chat_models,
     endpoint_data_cache,
     files,
@@ -313,6 +426,7 @@ const schema = defineEntSchema(
 
     messages,
     sound_effect_files,
+    speech,
     speech_files,
     threads,
     users,
