@@ -17,11 +17,8 @@ export const start = internalMutation({
     insist(job.imageId, 'required: imageId', { code: 'invalid_job', fatal: true })
     const imageId = job.imageId
     const image = await ctx.skipRules.table('images').getX(imageId)
-    const imageFile = await ctx.skipRules
-      .table('files', 'imageId', (q) => q.eq('imageId', imageId))
-      .firstX()
 
-    return { job, image, imageFile }
+    return { job, image }
   },
 })
 
@@ -31,11 +28,11 @@ export const run = internalAction({
   },
   handler: async (ctx, args): Promise<void> => {
     try {
-      const { job, image, imageFile } = await ctx.runMutation(internal.inference.assessNsfw.start, {
+      const { job, image } = await ctx.runMutation(internal.inference.assessNsfw.start, {
         jobId: args.jobId,
       })
 
-      const url = await ctx.storage.getUrl(imageFile.fileId)
+      const url = await ctx.storage.getUrl(image.fileId)
       insist(url, 'required: url', { code: 'invalid_job', fatal: true })
 
       console.log('[nsfw]', url)

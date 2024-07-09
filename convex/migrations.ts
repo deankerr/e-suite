@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { asyncMap } from 'convex-helpers'
 import { makeFunctionReference } from 'convex/server'
 import { v } from 'convex/values'
@@ -176,4 +177,22 @@ export const step2_migrateMessageBatch = internalMutation(async (ctx, args) => {
 export const step3_deleteSpeechFiles = internalMutation(async (ctx) => {
   const sf = await ctx.table('speech_files')
   await asyncMap(sf, async (s) => await s.delete())
+})
+
+export const ensureImg = internalMutation(async (ctx) => {
+  const images = await ctx.table('images').filter((q) => q.eq(q.field('threadId'), undefined))
+  console.log(images.length)
+
+  for (const image of images) {
+    const message = await ctx.skipRules.table('messages').get(image.messageId)
+    if (!message) {
+      await image.delete()
+      continue
+    }
+
+    await image.patch({
+      threadId: message.threadId,
+      userId: message.userId,
+    })
+  }
 })

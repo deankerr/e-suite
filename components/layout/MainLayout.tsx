@@ -1,6 +1,6 @@
 import { NavRail } from '@/components/layout/NavRail'
 
-const maintenanceMode = true
+const maintenanceMode = false
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   if (maintenanceMode) return 'brb'
