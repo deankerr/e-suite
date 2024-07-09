@@ -215,3 +215,43 @@ export const delMsgVoiceovers = internalMutation({
     return { cursor: continueCursor, isDone }
   },
 })
+
+export const mImageFields = internalMutation({
+  args: {
+    cursor: v.union(v.string(), v.null()),
+    numItems: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { page, isDone, continueCursor } = await ctx.skipRules.table('images').paginate(args)
+
+    for (const image of page) {
+      await image.patch({
+        originUrl: undefined,
+        caption: undefined,
+      })
+    }
+
+    return { cursor: continueCursor, isDone }
+  },
+})
+
+export const mMessageFields = internalMutation({
+  args: {
+    cursor: v.union(v.string(), v.null()),
+    numItems: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { page, isDone, continueCursor } = await ctx.skipRules.table('messages').paginate(args)
+
+    for (const message of page) {
+      if (message.content !== undefined || message.files !== undefined) {
+        await message.patch({
+          content: undefined,
+          files: undefined,
+        })
+      }
+    }
+
+    return { cursor: continueCursor, isDone }
+  },
+})

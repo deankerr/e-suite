@@ -122,9 +122,10 @@ export const content = query({
       if (!hasFilter) return true
 
       if (args.hasAssistantRole) return true
-      if (args.hasImageFiles && message.files?.some((file) => file.type === 'image')) return true
-      if (args.hasSoundEffectFiles && message.files?.some((file) => file.type === 'sound_effect'))
-        return true
+      // TODO restore
+      // if (args.hasImageFiles && message.files?.some((file) => file.type === 'image')) return true
+      // if (args.hasSoundEffectFiles && message.files?.some((file) => file.type === 'sound_effect'))
+      //   return true
 
       return false
     })
@@ -143,7 +144,7 @@ export const create = mutation({
     threadId: v.optional(v.string()),
     role: v.string(),
     name: v.optional(v.string()),
-    content: v.string(),
+    text: v.string(),
     metadata: v.optional(kvListV),
   },
   handler: async (ctx, args) => {
@@ -155,13 +156,15 @@ export const create = mutation({
 
     const series = await getNextMessageSeries(thread)
     const messageId = await ctx.table('messages').insert({
+      contentType: 'text',
       role: zStringToMessageRole.parse(args.role),
       name: args.name,
-      content: args.content,
+      text: args.text,
       metadata: args.metadata,
       threadId: thread._id,
       series,
       userId: user._id,
+      hasImageReference: false,
     })
 
     return {
@@ -179,7 +182,7 @@ export const update = mutation({
 
     role: messageFields.role,
     name: v.optional(v.string()),
-    content: v.optional(v.string()),
+    text: v.optional(v.string()),
     metadata: v.optional(kvListV),
   },
   handler: async (ctx, { messageId, ...fields }) => {
@@ -202,12 +205,9 @@ export const remove = mutation({
 export const streamText = internalMutation({
   args: {
     messageId: v.id('messages'),
-    content: v.string(),
+    text: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.skipRules
-      .table('messages')
-      .getX(args.messageId)
-      .patch({ content: args.content })
+    return await ctx.skipRules.table('messages').getX(args.messageId).patch({ text: args.text })
   },
 })

@@ -35,7 +35,7 @@ export const start = internalMutation({
       async (message) => {
         if (
           message.deletionTime ||
-          !message.content ||
+          !message.text ||
           (message.name && chatConfig.excludeHistoryMessagesByName?.includes(message.name))
         ) {
           return false
@@ -54,7 +54,7 @@ export const start = internalMutation({
       messages: rawMessages
         .map((message) => ({
           role: message.role,
-          content: message.content || '',
+          content: message.text || '',
         }))
         .reverse(),
       system,
@@ -87,7 +87,7 @@ export const run = internalAction({
         if (hasDelimiter(delta)) {
           await ctx.runMutation(internal.db.messages.streamText, {
             messageId: message._id,
-            content: text,
+            text,
           })
         }
       }
@@ -109,7 +109,7 @@ export const complete = internalMutation({
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
-    await message.patch({ content: args.text })
+    await message.patch({ text: args.text })
 
     await completeJob(ctx, { jobId: args.jobId })
   },

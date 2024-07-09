@@ -1,4 +1,3 @@
-import { omit } from 'convex-helpers'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
@@ -45,11 +44,11 @@ export const run = internalAction({
   },
 })
 
-const fields = omit(imageFields, ['threadId', 'userId'])
 export const complete = internalMutation({
   args: {
     jobId: v.id('jobs'),
-    ...fields,
+    messageId: v.id('messages'),
+    ...imageFields,
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)

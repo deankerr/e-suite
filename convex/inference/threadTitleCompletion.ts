@@ -22,7 +22,7 @@ export const start = internalMutation({
       .filter((q) =>
         q.and(
           q.eq(q.field('deletionTime'), undefined),
-          q.neq(q.field('content'), undefined),
+          q.neq(q.field('text'), undefined),
           q.neq(q.field('role'), 'system'),
         ),
       )
@@ -51,7 +51,7 @@ export const run = internalAction({
       const message = prompt.replace(
         '%%%',
         messages
-          .map((message) => message.content)
+          .map((message) => message.text)
           .join('\n')
           .slice(0, 500),
       )

@@ -12,10 +12,20 @@ const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 
 export const createImage = internalMutation({
   args: {
     ...imageFields,
+    messageId: v.id('messages'),
   },
   handler: async (ctx, args) => {
+    const message = await ctx.table('messages').getX(args.messageId)
+
     const modelId = visionModels[Math.floor(Math.random() * visionModels.length)] as string
-    const imageId = await ctx.table('images').insert({ ...args, captionModelId: modelId })
+    const imageId = await ctx
+      .table('images')
+      .insert({
+        ...args,
+        captionModelId: modelId,
+        userId: message.userId,
+        threadId: message.threadId,
+      })
 
     await createJob(ctx, {
       name: 'inference/captionImage',

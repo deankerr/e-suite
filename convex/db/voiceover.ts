@@ -18,7 +18,7 @@ export const messageContent = mutation({
     insist(message, 'invalid message id')
     insist(!message.voiceover, 'voiceover already exists')
 
-    const originalText = message.content
+    const originalText = message.text
     insist(originalText, 'invalid message content')
 
     // check for text generation in progress
