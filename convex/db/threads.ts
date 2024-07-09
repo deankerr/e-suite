@@ -88,7 +88,7 @@ export const append = mutation({
     message: v.optional(
       v.object({
         name: v.optional(v.string()),
-        content: v.optional(v.string()),
+        text: v.optional(v.string()),
       }),
     ),
     inference: v.optional(inferenceConfigV),
@@ -101,7 +101,7 @@ export const append = mutation({
       uiConfig: args.inference,
     })
 
-    const messageCommand = getMessageCommand(thread, args.message?.content)
+    const messageCommand = getMessageCommand(thread, args.message?.text)
     const inference = messageCommand?.inference ?? args.inference
 
     let series = await getNextMessageSeries(thread)
@@ -115,11 +115,13 @@ export const append = mutation({
           threadId: thread._id,
           series: series++,
           userId: user._id,
+          contentType: 'text',
+          hasImageReference: false,
         })
         .get()
 
-      if (userMessage.content) {
-        const urls = extractValidUrlsFromText(userMessage.content)
+      if (userMessage.text) {
+        const urls = extractValidUrlsFromText(userMessage.text)
         if (urls.length > 0) {
           await ctx.scheduler.runAfter(0, internal.files.processUrlContent.run, {
             urls: urls.map((url) => url.toString()),
@@ -149,6 +151,8 @@ export const append = mutation({
         series,
         userId: user._id,
         inference,
+        contentType: 'text', // TODO update
+        hasImageReference: false,
       })
       .get()
 

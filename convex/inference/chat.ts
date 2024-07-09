@@ -36,7 +36,7 @@ export const start = internalMutation({
       async (m) => {
         if (m.deletionTime !== undefined) return false
         if (m._creationTime > message._creationTime) return false
-        if (!m.content) return false
+        if (!m.text) return false
         if (m.name && chatConfig.excludeHistoryMessagesByName?.includes(m.name)) return false
         return true
       },
@@ -102,7 +102,7 @@ export const run = internalAction({
             if (hasDelimiter(text)) {
               await ctx.runMutation(internal.db.messages.streamText, {
                 messageId: message._id,
-                content: body,
+                text: body,
               })
             }
           }
@@ -133,7 +133,7 @@ export const complete = internalMutation({
   },
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
-    await message.patch({ content: args.text })
+    await message.patch({ text: args.text })
 
     // * title generation
     const thread = await ctx.skipRules.table('threads').getX(message.threadId)
