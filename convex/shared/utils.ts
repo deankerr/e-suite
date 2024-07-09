@@ -49,8 +49,10 @@ export function getErrorMessage(err: unknown) {
   return `Unknown error: ${String(err).slice(0, 100)}`
 }
 
-export function hasActiveJobName(jobs: Doc<'jobs'>[], name: string) {
-  return jobs.filter((j) => j.name === name).some((j) => ['active', 'queued'].includes(j.status))
+export function hasActiveJob(jobs: Doc<'jobs'>[], name?: string) {
+  return jobs
+    .filter((j) => (name ? j.name === name : true))
+    .some((j) => ['active', 'queued'].includes(j.status))
 }
 
 export function hasDelimiter(text: string) {

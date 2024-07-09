@@ -11,7 +11,7 @@ import { TimeSinceLink } from '@/components/message/TimeSinceLink'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
 import { VoiceoverPlayer } from '@/components/voiceovers/VoiceoverPlayer'
-import { hasActiveJobName } from '@/convex/shared/utils'
+import { hasActiveJob } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -35,12 +35,11 @@ export const Message = ({
   const [showJson, setShowJson] = useState(false)
   const [editing, setEditing] = useState(false)
   const { isOwner } = useViewerDetails(message.userId)
-  // const { removeVoiceover } = useChat()
 
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const soundGeneration = message.inference?.type === 'sound-generation' ? message.inference : null
 
-  const showChatLoader = hasActiveJobName(message.jobs, 'inference/chat') && !message.text
+  const showChatLoader = hasActiveJob(message.jobs, 'inference/chat') && !message.text
 
   const role = textToImage ? 'images' : soundGeneration ? 'sounds' : message.role
   const name = textToImage
@@ -50,7 +49,7 @@ export const Message = ({
       : message?.name ?? message.role
 
   const showSoundEffectLoader =
-    hasActiveJobName(message.jobs, 'inference/textToAudio') && !message.audio.length
+    hasActiveJob(message.jobs, 'inference/textToAudio') && !message.audio.length
 
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
@@ -95,16 +94,6 @@ export const Message = ({
                   <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
                     Show JSON
                   </DropdownMenu.Item>
-
-                  {message.voiceover && (
-                    <DropdownMenu.Item
-                      color="red"
-                      disabled
-                      // onClick={() => void removeVoiceover({ messageId: message._id })}
-                    >
-                      Delete Voiceover
-                    </DropdownMenu.Item>
-                  )}
 
                   {removeMessage && (
                     <DropdownMenu.Item color="red" onClick={() => removeMessage(message._id)}>

@@ -133,9 +133,10 @@ export const jobAttributeFields = {
   threadId: v.optional(v.id('threads')),
   messageId: v.optional(v.id('messages')),
   imageId: v.optional(v.id('images')),
+  speechId: v.optional(v.id('speech')),
 
   url: v.optional(v.string()),
-  width: v.optional(v.number()),
+  text: v.optional(v.string()),
   resourceKey: v.optional(v.string()),
 }
 export const jobFields = {
@@ -223,12 +224,7 @@ export const speechFields = {
   resourceKey: v.string(),
   textHash: v.string(),
 }
-const speech = defineEnt(speechFields)
-  .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('message')
-  .edge('thread')
-  .edge('user')
-  .index('textHash_resourceKey', ['textHash', 'resourceKey'])
+const speech = defineEnt(speechFields).index('textHash_resourceKey', ['textHash', 'resourceKey'])
 
 // * Messages
 export const messageFields = {
@@ -268,7 +264,6 @@ const messages = defineEnt(messageFields)
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
-  .edges('speech', { ref: true, deletion: 'soft' })
   .index('threadId_series', ['threadId', 'series'])
   .index('speechId', ['voiceover.speechFileId'])
   .index('threadId_role', ['threadId', 'role'])
@@ -316,7 +311,6 @@ const threads = defineEnt(threadFields)
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
-  .edges('speech', { ref: true, deletion: 'soft' })
 
 // * Users
 export const userFields = {
@@ -332,7 +326,6 @@ const users = defineEnt(userFields)
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
-  .edges('speech', { ref: true, deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),

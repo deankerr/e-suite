@@ -66,8 +66,6 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   const sendUpdateMessage = useMutation(api.db.messages.update)
   const sendRemoveMessage = useMutation(api.db.messages.remove)
 
-  const sendRemoveVoiceover = useMutation(api.db.voiceover.remove)
-
   const appendMessage = useCallback(
     async (args: Omit<Parameters<typeof sendAppendMessage>[0], 'threadId'>) => {
       if (!thread) return
@@ -96,13 +94,6 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
       await sendRemoveMessage(args)
     },
     [sendRemoveMessage],
-  )
-
-  const removeVoiceover = useCallback(
-    async (args: Parameters<typeof sendRemoveVoiceover>[0]) => {
-      await sendRemoveVoiceover(args)
-    },
-    [sendRemoveVoiceover],
   )
 
   // * mutation helpers
@@ -145,7 +136,6 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
     updateThread,
     updateMessage,
     removeMessage,
-    removeVoiceover,
     setChatInferenceConfig,
     setImageInferenceConfig,
   }

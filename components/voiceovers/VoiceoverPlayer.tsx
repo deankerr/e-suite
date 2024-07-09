@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { useAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 
 import { api } from '@/convex/_generated/api'
-import { hasActiveJobName } from '@/convex/shared/utils'
+import { hasActiveJob } from '@/convex/shared/utils'
 import { EMessage } from '@/convex/types'
 import { voiceoverQueueAtom } from '@/lib/atoms'
+
+import type { Id } from '@/convex/_generated/dataModel'
 
 const AudioButton = dynamic(() => import('@/components/audio/AudioButton'), {
   ssr: false,
@@ -23,16 +25,18 @@ export const VoiceoverPlayer = ({
   message,
   ...props
 }: { message: EMessage } & React.ComponentProps<typeof IconButton>) => {
-  const generateVoiceover = useMutation(api.db.voiceover.messageContent)
+  const generateVoiceover = useMutation(api.db.speech.messageText)
   const [shouldPlay, setShouldPlay] = useState(false)
-
-  const { voiceover } = message
-  const src = voiceover?.url
+  const [speechId, setSpeechId] = useState<string | null>(null)
+  const speech = useQuery(
+    api.db.speech.get,
+    speechId ? { speechId: speechId as Id<'speech'> } : 'skip',
+  )
 
   const isAvailable =
-    (message.text?.length ?? 0) > 0 && !hasActiveJobName(message.jobs, 'inference/chat-completion')
+    (message.text?.length ?? 0) > 0 && !hasActiveJob(message.jobs, 'inference/chat-completion')
 
-  const isGenerating = hasActiveJobName(message.jobs, 'inference/text-to-audio')
+  const isGenerating = hasActiveJob(message.jobs, 'inference/text-to-audio')
   const isError = false
 
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
@@ -47,10 +51,14 @@ export const VoiceoverPlayer = ({
   }, [shouldAutoplay])
 
   useEffect(() => {
-    if (shouldPlay && !voiceover) {
-      generateVoiceover({ messageId: message._id }).catch((err) => console.error(err))
+    if (shouldPlay && !speechId) {
+      generateVoiceover({ messageId: message._id })
+        .then((result) => {
+          setSpeechId(result)
+        })
+        .catch((err) => console.error(err))
     }
-  }, [generateVoiceover, message._id, shouldPlay, voiceover])
+  }, [generateVoiceover, message._id, shouldPlay, speechId])
 
   useEffect(() => {
     if (shouldAutoplay && !isAvailable) {
@@ -60,8 +68,13 @@ export const VoiceoverPlayer = ({
 
   return (
     <>
-      {shouldPlay && src ? (
-        <AudioButton src={src} initialPlaying={shouldPlay} onEnd={removeFromQueue} {...props} />
+      {shouldPlay && speech?.fileUrl ? (
+        <AudioButton
+          src={speech.fileUrl}
+          initialPlaying={shouldPlay}
+          onEnd={removeFromQueue}
+          {...props}
+        />
       ) : isGenerating ? (
         <IconButton
           variant="ghost"
