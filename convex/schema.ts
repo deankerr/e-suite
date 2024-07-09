@@ -155,20 +155,6 @@ const jobs = defineEnt(jobFields)
   .index('imageId', ['imageId'])
 
 // * Files
-// # migrate to image
-// NOTE delete alternate/optimized files, only keep originals
-export const fileFields = {
-  fileId: v.id('_storage'),
-  isOriginFile: v.boolean(),
-
-  category: v.literal('image'),
-  format: v.string(),
-
-  width: v.optional(v.number()),
-  height: v.optional(v.number()),
-}
-const files = defineEnt(fileFields).edge('image')
-
 // # new Image fields
 const newImageFields = {
   fileId: v.id('_storage'),
@@ -187,31 +173,29 @@ const newImageFields = {
   ),
   // inference parameter data - not present on eg. message images uploaded/linked by user
   generationData: v.optional(
-    v.union(
-      v.object({
-        prompt: v.string(),
-        modelId: v.string(),
-        modelName: v.string(),
-        endpointId: v.string(),
-      }),
-      v.array(v.string()), // TODO old format, remove union after migration
-    ),
+    v.object({
+      prompt: v.string(),
+      modelId: v.string(),
+      modelName: v.string(),
+      endpointId: v.string(),
+    }),
   ),
 
   // edges
-  threadId: v.optional(v.id('threads')),
-  userId: v.optional(v.id('users')),
+  threadId: v.id('threads'),
+  userId: v.id('users'),
 }
 
 export const imageFields = {
-  ...partial(newImageFields),
+  ...newImageFields,
 
-  originUrl: v.string(),
+  originUrl: v.optional(v.string()), // TODO remove
   width: v.number(),
   height: v.number(),
   blurDataUrl: v.string(),
   color: v.string(),
 
+  // TODO remove
   caption: v.optional(
     v.object({
       text: v.optional(v.string()),
@@ -220,24 +204,15 @@ export const imageFields = {
   ),
   nsfwProbability: v.optional(v.number()),
 
-  messageId: v.optional(v.id('messages')),
+  messageId: v.id('messages'),
 }
 const images = defineEnt(imageFields)
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
-  .edges('files', { ref: true })
   .index('originUrl', ['originUrl'])
   .index('messageId', ['messageId'])
 // TODO after migration: add image indexes/edges
-
-// # migrate to audio
-export const soundEffectFileFields = {
-  text: v.string(),
-  fileId: v.id('_storage'),
-  fileUrl: v.string(),
-}
-const sound_effect_files = defineEnt(soundEffectFileFields)
 
 // # new - audio - full migration
 export const audioFields = {
@@ -419,13 +394,11 @@ const schema = defineEntSchema(
     audio,
     chat_models,
     endpoint_data_cache,
-    files,
     jobs,
     images,
     image_models,
 
     messages,
-    sound_effect_files,
     speech,
     speech_files,
     threads,

@@ -20,14 +20,11 @@ export const start = internalMutation({
     insist(job.imageId, 'required: imageId', { code: 'invalid_job', fatal: true })
     const imageId = job.imageId
     const image = await ctx.skipRules.table('images').getX(imageId)
-    const imageFile = await ctx.skipRules
-      .table('files', 'imageId', (q) => q.eq('imageId', imageId))
-      .firstX()
 
-    const modelId = image.caption?.modelId
+    const modelId = image.captionModelId
     insist(modelId, 'required: modelId', { code: 'invalid_job', fatal: true })
 
-    return { job, image, imageFile, modelId }
+    return { job, image, modelId }
   },
 })
 
@@ -37,14 +34,11 @@ export const run = internalAction({
   },
   handler: async (ctx, args): Promise<void> => {
     try {
-      const { job, image, imageFile, modelId } = await ctx.runMutation(
-        internal.inference.captionImage.start,
-        {
-          jobId: args.jobId,
-        },
-      )
+      const { job, image, modelId } = await ctx.runMutation(internal.inference.captionImage.start, {
+        jobId: args.jobId,
+      })
 
-      const url = await ctx.storage.getUrl(imageFile.fileId)
+      const url = await ctx.storage.getUrl(image.fileId)
       insist(url, 'required: url', { code: 'invalid_job', fatal: true })
 
       console.log('[caption]', modelId, url)
@@ -100,15 +94,10 @@ export const complete = internalMutation({
     modelId: v.string(),
   },
   handler: async (ctx, args) => {
-    await ctx
-      .table('images')
-      .getX(args.imageId)
-      .patch({
-        caption: {
-          text: args.text,
-          modelId: args.modelId,
-        },
-      })
+    await ctx.table('images').getX(args.imageId).patch({
+      captionText: args.text,
+      captionModelId: args.modelId,
+    })
 
     await completeJob(ctx, args)
   },

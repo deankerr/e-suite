@@ -47,13 +47,11 @@ export const run = internalAction({
         duration_seconds,
         prompt_influence,
       })
-      const fileUrl = (await ctx.storage.getUrl(fileId)) || ''
 
       await ctx.runMutation(internal.inference.textToAudio.complete, {
         jobId: args.jobId,
         messageId,
         fileId,
-        fileUrl,
         prompt,
       })
     } catch (error) {
@@ -68,20 +66,23 @@ export const complete = internalMutation({
     messageId: v.id('messages'),
     prompt: v.string(),
     fileId: v.id('_storage'),
-    fileUrl: v.string(),
   },
   handler: async (ctx, args) => {
-    const { jobId, messageId, fileId, fileUrl, prompt } = args
-
-    const id = await ctx.table('sound_effect_files').insert({
-      fileId,
-      fileUrl,
-      text: prompt,
-    })
+    const { jobId, messageId, fileId, prompt } = args
 
     const message = await ctx.skipRules.table('messages').getX(messageId)
-    await message.patch({
-      files: [...(message?.files || []), { type: 'sound_effect', id }],
+
+    await ctx.table('audio').insert({
+      fileId,
+      generationData: {
+        prompt,
+        modelId: 'elevenlabs/eleven_monolingual_v1',
+        modelName: 'eleven_monolingual_v1',
+        endpointId: 'elevenlabs/sound-generation',
+      },
+      messageId,
+      threadId: message.threadId,
+      userId: message.userId,
     })
 
     await completeJob(ctx, { jobId })

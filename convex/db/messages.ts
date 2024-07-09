@@ -23,49 +23,28 @@ export const getMessage = async (ctx: QueryCtx, messageId: string) => {
   return id ? await ctx.table('messages').get(id) : null
 }
 
-const getFileAttachmentContent = async (ctx: QueryCtx, files?: Doc<'messages'>['files']) => {
-  if (!files) return undefined
-  const filesWithContent = await asyncMap(files, async (file) => {
-    if (file.type === 'image') {
-      return {
-        ...file,
-        image: await ctx.table('images').get(file.id),
-      }
-    }
-
-    if (file.type === 'sound_effect') {
-      return {
-        ...file,
-        soundEffect: await ctx.table('sound_effect_files').get(file.id),
-      }
-    }
-
-    return file
-  })
-
-  return filesWithContent
-}
-
 export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
   const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
   return jobs
 }
 
 export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) => {
-  // get non-generated images
   const images = await ctx
     .table('images', 'messageId', (q) => q.eq('messageId', message._id))
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .filter((q) => q.eq(q.field('generationData'), undefined))
+
+  const audio = await ctx
+    .table('audio', 'messageId', (q) => q.eq('messageId', message._id))
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
 
   return {
     ...message,
-    files: await getFileAttachmentContent(ctx, message.files),
     jobs: await getMessageJobs(ctx, message._id),
     voiceover: message.voiceover?.speechFileId
       ? await getSpeechFile(ctx, message.voiceover.speechFileId)
       : undefined,
     images,
+    audio,
   }
 }
 
