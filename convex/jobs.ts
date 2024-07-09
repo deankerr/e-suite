@@ -19,6 +19,7 @@ const jobHandlers = {
   'inference/textToImage': internal.inference.textToImage.run,
   'inference/threadTitleCompletion': internal.inference.threadTitleCompletion.run,
   'inference/textToAudio': internal.inference.textToAudio.run,
+  'inference/textToSpeech': internal.inference.textToSpeech.run,
 }
 
 const jobAttributesObject = v.object(jobAttributeFields)

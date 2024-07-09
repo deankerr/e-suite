@@ -7,7 +7,6 @@ import { internalMutation, mutation, query } from '../functions'
 import { kvListV, messageFields } from '../schema'
 import { zStringToMessageRole } from '../shared/utils'
 import { emptyPage } from '../utils'
-import { getSpeechFile } from './speechFiles'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
 import type { Doc, Id } from '../_generated/dataModel'
@@ -44,9 +43,6 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) =
   return {
     ...message,
     jobs: await getMessageJobs(ctx, message._id),
-    voiceover: message.voiceover?.speechFileId
-      ? await getSpeechFile(ctx, message.voiceover.speechFileId)
-      : undefined,
     images,
     audio,
   }
