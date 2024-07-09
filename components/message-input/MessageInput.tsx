@@ -25,7 +25,7 @@ export const MessageInput = () => {
     if (!runInference) {
       if (prompt) {
         await appendMessage({
-          message: { content: prompt },
+          message: { text: prompt },
         })
       }
       return
@@ -34,7 +34,7 @@ export const MessageInput = () => {
     if (thread.inference.type === 'chat-completion') {
       if (prompt) {
         await appendMessage({
-          message: { content: prompt },
+          message: { text: prompt },
           inference: thread.inference,
         })
       } else {

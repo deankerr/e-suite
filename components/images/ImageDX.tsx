@@ -20,7 +20,7 @@ export const ImageDX = ({
     ? `${imageRef.current.naturalWidth}x${imageRef.current.naturalHeight}`
     : ''
 
-  const { caption, nsfwProbability } = image
+  const { captionText, captionModelId, nsfwProbability } = image
 
   const [expandCaptionCard, setExpandCaptionCard] = useState(false)
 
@@ -55,7 +55,7 @@ export const ImageDX = ({
         )}
       >
         <div className={cn('h-full overflow-y-auto pb-1', !expandCaptionCard && 'overflow-hidden')}>
-          {caption?.text}
+          {captionText}
         </div>
         <div
           className={cn(
@@ -63,7 +63,7 @@ export const ImageDX = ({
             !expandCaptionCard && 'hidden',
           )}
         >
-          <div className="truncate">{caption?.modelId}</div>
+          <div className="truncate">{captionModelId}</div>
           {nsfwProbability ? (
             <div className="shrink-0">{`NSFW: ${Math.round(nsfwProbability * 100)}%`}</div>
           ) : null}
