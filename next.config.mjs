@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+// @ts-check
 
 import MillionLint from '@million/lint'
 import bundleAnalyzer from '@next/bundle-analyzer'
@@ -10,7 +10,16 @@ function getBackendUrl() {
 }
 
 const backendUrl = getBackendUrl()
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: '*',
+      },
+    ],
+  },
   rewrites: async () => [
     {
       source: '/i/:slug',

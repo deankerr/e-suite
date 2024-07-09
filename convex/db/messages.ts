@@ -36,6 +36,10 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) =
   const audio = await ctx
     .table('audio', 'messageId', (q) => q.eq('messageId', message._id))
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .map(async (a) => ({
+      ...a,
+      fileUrl: a.fileId ? await ctx.storage.getUrl(a.fileId) : undefined,
+    }))
 
   return {
     ...message,

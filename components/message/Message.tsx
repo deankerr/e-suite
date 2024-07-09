@@ -151,9 +151,15 @@ export const Message = ({
 
         {message.audio.length > 0 && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
-            {message.audio.map((sfx) => (
-              <AudioPlayer key={sfx._id} url={sfx.fileId} titleText={sfx.generationData.prompt} />
-            ))}
+            {message.audio.map((sfx) =>
+              sfx.fileUrl ? (
+                <AudioPlayer
+                  key={sfx._id}
+                  url={sfx.fileUrl}
+                  titleText={sfx.generationData.prompt}
+                />
+              ) : null,
+            )}
           </div>
         )}
 

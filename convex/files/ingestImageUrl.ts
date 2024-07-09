@@ -50,7 +50,7 @@ export const complete = internalMutation({
     messageId: v.id('messages'),
     ...imageFields,
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, { jobId, ...args }) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
     await ctx.table('images').insert({
       ...args,
@@ -59,6 +59,6 @@ export const complete = internalMutation({
     })
     console.log('[image]', args.sourceUrl)
 
-    await completeJob(ctx, args)
+    await completeJob(ctx, { jobId })
   },
 })

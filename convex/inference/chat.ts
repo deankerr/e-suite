@@ -10,11 +10,17 @@ import { getChatConfig, hasDelimiter, insist } from '../shared/utils'
 
 const defaultMaxHistoryMessages = 20
 
-const msgSchema = z.object({
-  role: z.enum(['system', 'assistant', 'user']),
-  name: z.string().optional(),
-  content: z.string(),
-})
+const msgSchema = z
+  .object({
+    role: z.enum(['system', 'assistant', 'user']),
+    name: z.string().optional(),
+    text: z.string(),
+  })
+  .transform((m) => ({
+    role: m.role,
+    name: m.name,
+    content: m.text,
+  }))
 
 export const start = internalMutation({
   args: {
@@ -48,7 +54,7 @@ export const start = internalMutation({
 
     const thread = await ctx.table('threads').getX(message.threadId)
     if (thread.instructions) {
-      messages.push({ role: 'system', content: thread.instructions })
+      messages.push({ role: 'system', name: undefined, content: thread.instructions })
     }
 
     return { message, messages: messages.toReversed(), chatConfig }
