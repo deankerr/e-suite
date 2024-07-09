@@ -12,7 +12,7 @@ import type OpenAI from 'openai'
 
 export const runNow = internalAction({
   args: {
-    speechFileId: v.id('speech_files'),
+    speechFileId: v.id('speech'),
     text: v.string(),
     textHash: v.string(),
     resourceKey: v.string(),
