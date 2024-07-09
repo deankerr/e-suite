@@ -1,6 +1,10 @@
 import { NavRail } from '@/components/layout/NavRail'
 
+const maintenanceMode = true
+
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  if (maintenanceMode) return 'brb'
+
   return (
     <>
       <div className="fixed flex h-svh w-full flex-col sm:flex-row">
