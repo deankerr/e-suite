@@ -14,19 +14,11 @@ import { Id } from '@/convex/_generated/dataModel'
 import { useVoiceModels } from '@/lib/queries'
 
 export default function Page() {
-  const textVoiceover = useMutation(api.db.voiceover.text)
-  const [sampleFileId, setSampleFileId] = useState('')
-  const sampleFile = useQuery(
-    api.db.speechFiles.getById,
-    sampleFileId ? { speechFileId: sampleFileId as Id<'speech_files'> } : 'skip',
-  )
-
-  const url = sampleFile?.fileUrl
-
-  const { howl } = useHowl({
-    src: url ?? 'none',
-    format: ['mp3'],
-  })
+  // const textVoiceover = useMutation(api.db.voiceover.text)
+  // const { howl } = useHowl({
+  //   src: url ?? 'none',
+  //   format: ['mp3'],
+  // })
 
   const voiceModels = useVoiceModels()
   const [searchValue, setSearchValue] = useState('')
@@ -39,12 +31,12 @@ export default function Page() {
 
   return (
     <AdminPageWrapper>
-      <Play
+      {/* <Play
         howl={howl}
         onEnd={() => {
           setSampleFileId('')
         }}
-      />
+      /> */}
       <Tabs.Root defaultValue="table">
         <Tabs.List>
           <Tabs.Trigger value="table">Table</Tabs.Trigger>
@@ -55,7 +47,7 @@ export default function Page() {
             <SearchField value={searchValue} onValueChange={setSearchValue} />
             <div className="px-1 font-mono text-sm">
               {voiceModels && `models: ${sortResults.length}`}
-              {sampleFileId && <div>Sample: {sampleFileId}</div>}
+              {/* {sampleFileId && <div>Sample: {sampleFileId}</div>} */}
             </div>
           </div>
 
@@ -81,18 +73,18 @@ export default function Page() {
                       <IconButton
                         variant="surface"
                         size="1"
-                        onClick={() => {
-                          textVoiceover({
-                            text: 'Hi, my name is Werner Brandes. My voice is my passport. Verify Me.',
-                            resourceKey: model.resourceKey,
-                          })
-                            .then((fileId) => {
-                              setSampleFileId(fileId)
-                            })
-                            .catch((err) => {
-                              console.error(err)
-                            })
-                        }}
+                        // onClick={() => {
+                        //   textVoiceover({
+                        //     text: 'Hi, my name is Werner Brandes. My voice is my passport. Verify Me.',
+                        //     resourceKey: model.resourceKey,
+                        //   })
+                        //     .then((fileId) => {
+                        //       setSampleFileId(fileId)
+                        //     })
+                        //     .catch((err) => {
+                        //       console.error(err)
+                        //     })
+                        // }}
                       >
                         <PlayIcon className="size-4" />
                       </IconButton>

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import * as Icons from '@phosphor-icons/react/dist/ssr'
 import dynamic from 'next/dynamic'
 
 import { ImageBR } from '@/components/images/ImageBR'
@@ -16,20 +15,12 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
   const [initialSlideIndex, setInitialSlideIndex] = useState(0)
 
   const textToImageConfig = message.inference?.type === 'text-to-image' ? message.inference : null
-  const imageFiles = useMemo(() => {
-    // NOTE mapping new image structure to 'files'
-    const imageFiles = message.files?.filter((file) => file.type === 'image') ?? []
-    const images = message.images.map((image) => ({
-      image,
-      type: 'image' as const,
-    }))
-    return [...imageFiles, ...images]
-  }, [message.files, message.images])
-  const nShowImagesGenerating = Math.max(0, (textToImageConfig?.n ?? 0) - imageFiles.length)
+  const images = useMemo(() => message.images, [message.images])
+  const nShowImagesGenerating = Math.max(0, (textToImageConfig?.n ?? 0) - images.length)
 
-  const frames = Array.from({ length: imageFiles.length + nShowImagesGenerating }, (_, i) => {
-    const file = imageFiles[i]
-    if (file && !devShowLoaders) return file
+  const frames = Array.from({ length: images.length + nShowImagesGenerating }, (_, i) => {
+    const image = images[i]
+    if (image && !devShowLoaders) return { ...image, type: 'image' as const }
     return {
       width: textToImageConfig?.width ?? 1024,
       height: textToImageConfig?.height ?? 1024,
@@ -41,13 +32,13 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
 
   const slides = useMemo(
     () =>
-      imageFiles.map((file) => ({
-        src: `/i/${file?.image?._id}.webp`,
-        width: file?.image?.width ?? 1024,
-        height: file?.image?.height ?? 1024,
-        blurDataURL: file?.image?.blurDataUrl ?? '',
+      images.map((image) => ({
+        src: `/i/${image._id}.webp`,
+        width: image.width ?? 1024,
+        height: image.height ?? 1024,
+        blurDataURL: image.blurDataUrl ?? '',
       })),
-    [imageFiles],
+    [images],
   )
 
   if (frames.length === 0) return null
@@ -69,19 +60,11 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
             )
           }
 
-          if (frame.image === null || typeof frame.image.deletionTime !== 'undefined') {
-            return (
-              <div key={i}>
-                <Icons.FileX className="size-6 text-red-11" />
-              </div>
-            )
-          }
-
           return (
             <ImageBR
-              key={frame.image._id}
+              key={frame._id}
               alt=""
-              image={frame.image}
+              image={frame}
               sizes="(max-width: 56rem) 50vw, 28rem"
               className="cursor-pointer"
               onClick={() => {

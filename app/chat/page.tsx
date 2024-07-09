@@ -12,8 +12,6 @@ import { api } from '@/convex/_generated/api'
 import { useChatModels } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-export const dynamic = 'force-dynamic'
-
 const prioritizedModelKeys = [
   'openrouter::anthropic/claude-3.5-sonnet',
   'openai::openai/gpt-4o',
@@ -85,7 +83,7 @@ export default function Page() {
 
                 sendAppendMessage({
                   message: {
-                    content: message,
+                    text: message,
                   },
                   inference: {
                     type: 'chat-completion',

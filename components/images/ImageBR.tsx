@@ -19,7 +19,7 @@ export const ImageBR = ({
     ? `${imageRef.current.naturalWidth}x${imageRef.current.naturalHeight}`
     : ''
 
-  const { caption, nsfwProbability } = image
+  const { captionText, captionModelId, nsfwProbability } = image
 
   return (
     <div className="space-y-2">
@@ -35,13 +35,13 @@ export const ImageBR = ({
       </Card>
 
       {/* caption card */}
-      {(caption || nsfwProbability) && (
+      {(captionText || captionModelId || nsfwProbability) && (
         <Card size="1">
           <div className="max-h-24 overflow-y-auto break-all pb-1 text-xs">
-            {caption?.text ? caption.text : <LoadingSpinner variant="dots" className="w-4" />}
+            {captionText ? captionText : <LoadingSpinner variant="dots" className="w-4" />}
           </div>
           <div className="border-t border-grayA-3 pt-1 font-mono text-xs text-gray-11 flex-between">
-            {caption?.modelId}
+            {captionModelId}
             <span>{nsfwProbability ? `NSFW: ${Math.round(nsfwProbability * 100)}%` : null}</span>
           </div>
         </Card>

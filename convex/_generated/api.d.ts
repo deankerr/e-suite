@@ -50,7 +50,6 @@ import type * as lib_openai from "../lib/openai.js";
 import type * as lib_paramInputs from "../lib/paramInputs.js";
 import type * as lib_sharp from "../lib/sharp.js";
 import type * as migrations from "../migrations.js";
-import type * as refactoredSchemaDraft from "../refactoredSchemaDraft.js";
 import type * as rules from "../rules.js";
 import type * as shared_defaults from "../shared/defaults.js";
 import type * as shared_structures from "../shared/structures.js";
@@ -104,7 +103,6 @@ declare const fullApi: ApiFromModules<{
   "lib/paramInputs": typeof lib_paramInputs;
   "lib/sharp": typeof lib_sharp;
   migrations: typeof migrations;
-  refactoredSchemaDraft: typeof refactoredSchemaDraft;
   rules: typeof rules;
   "shared/defaults": typeof shared_defaults;
   "shared/structures": typeof shared_structures;

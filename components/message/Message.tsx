@@ -40,7 +40,7 @@ export const Message = ({
   const textToImage = message.inference?.type === 'text-to-image' ? message.inference : null
   const soundGeneration = message.inference?.type === 'sound-generation' ? message.inference : null
 
-  const showChatLoader = hasActiveJobName(message.jobs, 'inference/chat') && !message.content
+  const showChatLoader = hasActiveJobName(message.jobs, 'inference/chat') && !message.text
 
   const role = textToImage ? 'images' : soundGeneration ? 'sounds' : message.role
   const name = textToImage
@@ -49,9 +49,8 @@ export const Message = ({
       ? 'elevenlabs/sound-generation'
       : message?.name ?? message.role
 
-  const soundEffects = message.files?.filter((file) => file.type === 'sound_effect') ?? []
   const showSoundEffectLoader =
-    hasActiveJobName(message.jobs, 'inference/textToAudio') && !soundEffects.length
+    hasActiveJobName(message.jobs, 'inference/textToAudio') && !message.audio.length
 
   return (
     <div className="mx-auto flex w-full max-w-3xl gap-1.5 sm:gap-3">
@@ -126,16 +125,15 @@ export const Message = ({
         )}
 
         {/* text */}
-        {message.content && !editing && (
+        {message.text && !editing && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-2 sm:w-fit">
             <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
-              <Markdown text={message.content} />
+              <Markdown text={message.text} />
             </div>
 
             {showTokenInfo && (
               <div className="text-[0.66rem] leading-3 text-gray-10">
-                {message.content.length} characters, ~{Math.ceil(message.content.length / 3.5)}{' '}
-                tokens
+                {message.text.length} characters, ~{Math.ceil(message.text.length / 3.5)} tokens
               </div>
             )}
           </div>
@@ -151,17 +149,11 @@ export const Message = ({
         )}
         <ImageGallery message={message} />
 
-        {soundEffects.length > 0 && (
+        {message.audio.length > 0 && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
-            {soundEffects.map((sfx) =>
-              sfx.soundEffect ? (
-                <AudioPlayer
-                  key={sfx.id}
-                  url={sfx.soundEffect.fileUrl}
-                  titleText={sfx.soundEffect.text}
-                />
-              ) : null,
-            )}
+            {message.audio.map((sfx) => (
+              <AudioPlayer key={sfx._id} url={sfx.fileId} titleText={sfx.generationData.prompt} />
+            ))}
           </div>
         )}
 

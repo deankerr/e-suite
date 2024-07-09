@@ -85,7 +85,7 @@ export default function Page() {
 
                 sendAppendMessage({
                   message: {
-                    content: message,
+                    text: message,
                   },
                   inference: {
                     type: 'text-to-image',

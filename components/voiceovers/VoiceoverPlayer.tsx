@@ -27,13 +27,13 @@ export const VoiceoverPlayer = ({
   const [shouldPlay, setShouldPlay] = useState(false)
 
   const { voiceover } = message
-  const src = voiceover?.fileUrl
+  const src = voiceover?.url
 
   const isAvailable =
-    (message.content?.length ?? 0) > 0 &&
-    !hasActiveJobName(message.jobs, 'inference/chat-completion')
-  const isError = voiceover?.status === 'error'
-  const isGenerating = voiceover?.status === 'pending'
+    (message.text?.length ?? 0) > 0 && !hasActiveJobName(message.jobs, 'inference/chat-completion')
+
+  const isGenerating = hasActiveJobName(message.jobs, 'inference/text-to-audio')
+  const isError = false
 
   const [voiceoverQueue, setVoiceoverQueue] = useAtom(voiceoverQueueAtom)
   const shouldAutoplay = voiceoverQueue[0] === message._id

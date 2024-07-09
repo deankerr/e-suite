@@ -34,12 +34,12 @@ export const generateSpeech = async (
   // return speechFileId
 }
 
-export const getSpeechFile = async (
-  ctx: QueryCtx,
-  speechFileId: Id<'speech'>,
-): Promise<Doc<'speech'> | undefined> => {
+export const getSpeechFile = async (ctx: QueryCtx, speechFileId: Id<'speech'>) => {
   const speechFile = await ctx.table('speech').get(speechFileId)
-  return speechFile ?? undefined
+  if (speechFile) {
+    const url = speechFile.fileId ? await ctx.storage.getUrl(speechFile.fileId) : ''
+    return { ...speechFile, url }
+  }
 }
 
 const statusV = literals('pending', 'complete', 'error')

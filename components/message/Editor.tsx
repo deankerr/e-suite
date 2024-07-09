@@ -13,7 +13,7 @@ export const Editor = ({
   className,
   ...props
 }: { message: EMessage; onClose: () => unknown } & React.ComponentProps<'div'>) => {
-  const [content, setContent] = useState(message.content)
+  const [content, setContent] = useState(message.text)
   const { updateMessage } = useChat()
 
   return (
@@ -33,7 +33,7 @@ export const Editor = ({
               messageId: message._id,
               role: message.role,
               name: message.name,
-              content,
+              text: content,
             })
             onClose()
           }}
