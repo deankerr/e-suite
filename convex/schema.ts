@@ -32,9 +32,10 @@ export const textToImageConfigV = v.object({
   endpointModelId: v.string(),
 
   prompt: v.string(),
+  n: v.number(),
   width: v.number(),
   height: v.number(),
-  n: v.number(),
+  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
 })
 
 export const soundGenerationConfigV = v.object({

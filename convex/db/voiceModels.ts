@@ -16,7 +16,9 @@ export const getVoiceModels = () => {
       gender: data.Gender,
     })),
     ElevenLabs.getVoiceModelData(),
-  ].flat()
+  ]
+    .flat()
+    .map((model) => ({ ...model, type: 'voice' as const }))
   return models
 }
 

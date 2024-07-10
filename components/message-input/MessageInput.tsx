@@ -5,11 +5,10 @@ import { Button, IconButton } from '@radix-ui/themes'
 import { useChat } from '@/components/chat/ChatProvider'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { useViewerDetails } from '@/lib/queries'
-import { getWidthHeightForEndpoint } from '@/lib/utils'
 import { DimensionsControl } from './DimensionsControl'
 import { QuantityControl } from './QuantityControl'
 
-import type { TextToImageConfig } from '@/convex/types'
+import type { EModel, TextToImageConfig } from '@/convex/types'
 
 export const MessageInput = () => {
   const { appendMessage, updateThread, thread } = useChat()
@@ -17,6 +16,8 @@ export const MessageInput = () => {
   const [input, setInput] = useState('')
 
   if (!thread || (!isOwner && !thread.slug.startsWith('_'))) return null
+  const size =
+    (thread.inference.type === 'text-to-image' ? thread.inference.size : undefined) ?? 'square'
 
   const handleAppendMessage = async (runInference: boolean) => {
     if (!thread) return
@@ -47,8 +48,9 @@ export const MessageInput = () => {
     }
 
     if (thread.inference.type === 'text-to-image' && prompt) {
+      const [width, height] = getWidthAndHeightForModelSize(thread.model, size)
       await appendMessage({
-        inference: { ...thread.inference, prompt },
+        inference: { ...thread.inference, width, height, prompt },
       })
       setInput('')
     }
@@ -92,14 +94,10 @@ export const MessageInput = () => {
                 onValueChange={(n) => void handleUpdateTTIConfig({ n: Number(n) })}
               />
               <DimensionsControl
-                width={thread.inference.width}
-                height={thread.inference.height}
-                onValueChange={async (size: string) => {
-                  const { width, height } = getWidthHeightForEndpoint(
-                    size,
-                    thread.inference.endpoint,
-                  )
-                  void handleUpdateTTIConfig({ width, height })
+                value={size}
+                onValueChange={async (size: 'portrait' | 'square' | 'landscape') => {
+                  const [width, height] = getWidthAndHeightForModelSize(thread.model, size)
+                  void handleUpdateTTIConfig({ width, height, size })
                 }}
               />
             </div>
@@ -136,4 +134,14 @@ export const MessageInput = () => {
       </div>
     </div>
   )
+}
+
+const getWidthAndHeightForModelSize = (
+  model: EModel | null,
+  size: 'portrait' | 'square' | 'landscape',
+): [width: number, height: number] => {
+  if (model?.type === 'image') {
+    return model.sizes[size] as [width: number, height: number]
+  }
+  return [512, 512]
 }
