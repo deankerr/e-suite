@@ -56,8 +56,13 @@ export const complete = internalMutation({
       ...args,
       threadId: message.threadId,
       userId: message.userId,
+      sourceType: message.role === 'assistant' ? 'textToImage' : 'user',
     })
     console.log('[image]', args.sourceUrl)
+
+    if (!message.hasImageContent) {
+      await message.patch({ hasImageContent: true })
+    }
 
     await completeJob(ctx, { jobId })
   },

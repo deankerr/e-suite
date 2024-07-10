@@ -1,32 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
 import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
-import { useMessagesQuery, useThread } from '@/lib/queries'
+import { useChatState, voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
+import { useMessagesList, useThread } from '@/lib/queries'
 
 import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
 
 export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
-  const [queryOptions, setQueryOptions] = useState({
-    hasAssistantRole: false,
-    hasImageFiles: false,
-    hasSoundEffectFiles: false,
-  })
-
   const thread = useThread({ slug })
 
-  const page = useMessagesQuery({
-    slugOrId: thread?._id,
-    ...queryOptions,
+  const [chatState] = useChatState(slug ?? '')
+
+  const page = useMessagesList({
+    slugOrId: thread?.slug,
+    filters: chatState.queryFilters,
   })
 
-  const hasQueryFilters = Object.values(queryOptions).some((value) => value)
   const loadMoreMessages = useCallback(() => {
-    page.loadMore(hasQueryFilters ? 100 : 50)
-  }, [page, hasQueryFilters])
+    page.loadMore(50)
+  }, [page])
 
   const messages = page.results
 
@@ -126,8 +121,6 @@ export const useCreateChatContextApi = ({ slug }: { slug?: string }) => {
   )
 
   return {
-    queryOptions,
-    setQueryOptions,
     thread,
     messages,
     loadMoreMessages,
