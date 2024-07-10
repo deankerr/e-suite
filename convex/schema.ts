@@ -247,15 +247,6 @@ export const messageFields = {
 
   inference: v.optional(inferenceConfigV),
 
-  voiceover: v.optional(
-    v.object({
-      resourceKey: v.string(),
-      speechFileId: v.optional(v.id('speech')),
-      text: v.optional(v.string()),
-      textHash: v.string(),
-    }),
-  ),
-
   metadata: v.optional(kvListV),
 }
 const messages = defineEnt(messageFields)
@@ -266,13 +257,8 @@ const messages = defineEnt(messageFields)
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
   .index('threadId_series', ['threadId', 'series'])
-  .index('speechId', ['voiceover.speechFileId'])
   .index('threadId_role', ['threadId', 'role'])
-// # draft
-// .index('inferenceType', ['threadId', 'role', 'inference.type'])
-// .searchIndex('text', {
-//   searchField: 'text'
-// })
+  .index('threadId_contentType', ['threadId', 'contentType', 'hasImageReference'])
 
 // * Threads
 export const threadFields = {
