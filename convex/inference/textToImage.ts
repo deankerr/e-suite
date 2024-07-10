@@ -1,6 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
+import { getImageModelByResourceKey } from '../db/imageModels'
 import * as fal from '../endpoints/fal'
 import * as sinkin from '../endpoints/sinkin'
 import { internalAction, internalMutation } from '../functions'
@@ -98,6 +99,17 @@ export const complete = internalMutation({
           url: image.url,
           messageId: args.messageId,
         },
+      })
+    }
+
+    const message = await ctx.skipRules.table('messages').getX(args.messageId)
+    const thread = await message.edgeX('thread')
+    if (!thread.title && message.inference?.type === 'text-to-image') {
+      const model = await getImageModelByResourceKey(ctx, message.inference.resourceKey)
+      const name = model?.name ?? 'Text To Image'
+      const title = `${name} - ${message.inference.prompt}`
+      await ctx.skipRules.table('threads').getX(thread._id).patch({
+        title,
       })
     }
 
