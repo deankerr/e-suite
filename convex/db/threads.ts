@@ -143,6 +143,20 @@ export const append = mutation({
       throw createError('No message or inference provided', { fatal: true, code: 'bad_request' })
     }
 
+    const jobNameMap: Record<string, string> = {
+      'chat-completion': 'inference/chat',
+      'text-to-image': 'inference/textToImage',
+      'sound-generation': 'inference/textToAudio',
+    }
+    const jobName = jobNameMap[inference.type]
+    insist(jobName, 'invalid inference type')
+
+    const contentTypeMap: Record<string, 'text' | 'image' | 'audio'> = {
+      'chat-completion': 'text',
+      'text-to-image': 'image',
+      'sound-generation': 'audio',
+    }
+
     const asstMessage = await ctx
       .table('messages')
       .insert({
@@ -151,37 +165,10 @@ export const append = mutation({
         series,
         userId: user._id,
         inference,
-        contentType: 'text', // TODO update
+        contentType: contentTypeMap[inference.type] ?? 'text',
         hasImageReference: false,
       })
       .get()
-
-    if (inference.endpoint === 'anthropic') {
-      const jobName = 'inference/chat-completion-ai'
-
-      const jobId = await createJob(ctx, {
-        name: jobName,
-        fields: {
-          messageId: asstMessage._id,
-        },
-      })
-
-      return {
-        threadId: thread._id,
-        slug: thread.slug,
-        messageId: asstMessage._id,
-        series: asstMessage.series,
-        jobId,
-      }
-    }
-
-    const jobNameMap: Record<string, string> = {
-      'chat-completion': 'inference/chat',
-      'text-to-image': 'inference/textToImage',
-      'sound-generation': 'inference/textToAudio',
-    }
-    const jobName = jobNameMap[inference.type]
-    insist(jobName, 'invalid inference type')
 
     const jobId = await createJob(ctx, {
       name: jobName,
