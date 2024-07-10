@@ -1,10 +1,13 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
+import { getImageModelByResourceKey } from '../db/imageModels'
 import { internalAction, internalMutation } from '../functions'
 import { claimJob, completeJob } from '../jobs'
 import { imageFields } from '../schema'
-import { insist } from '../shared/utils'
+import { getTextToImageConfig, insist } from '../shared/utils'
+
+import type { Ent, MutationCtx } from '../types'
 
 export const claim = internalMutation({
   args: {
@@ -52,11 +55,13 @@ export const complete = internalMutation({
   },
   handler: async (ctx, { jobId, ...args }) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
+
     await ctx.table('images').insert({
       ...args,
       threadId: message.threadId,
       userId: message.userId,
       sourceType: message.role === 'assistant' ? 'textToImage' : 'user',
+      generationData: await getGenerationData(ctx, message),
     })
     console.log('[image]', args.sourceUrl)
 
@@ -67,3 +72,19 @@ export const complete = internalMutation({
     await completeJob(ctx, { jobId })
   },
 })
+
+const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>) => {
+  const textToImageConfig = getTextToImageConfig(message.inference)
+  if (!textToImageConfig) {
+    return undefined
+  }
+
+  const model = await getImageModelByResourceKey(ctx, textToImageConfig.endpointModelId)
+
+  return {
+    prompt: textToImageConfig.prompt,
+    endpointId: textToImageConfig.endpoint,
+    modelId: textToImageConfig.endpointModelId,
+    modelName: model?.name ?? textToImageConfig.endpointModelId,
+  }
+}
