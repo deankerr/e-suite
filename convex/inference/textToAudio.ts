@@ -76,9 +76,9 @@ export const complete = internalMutation({
       fileId,
       generationData: {
         prompt,
-        modelId: 'elevenlabs/eleven_monolingual_v1',
-        modelName: 'eleven_monolingual_v1',
-        endpointId: 'elevenlabs/sound-generation',
+        modelId: 'sound-generation',
+        modelName: 'ElevenLabs Sound Generation',
+        endpointId: 'elevenlabs',
       },
       messageId,
       threadId: message.threadId,
