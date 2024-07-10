@@ -158,8 +158,10 @@ const jobs = defineEnt(jobFields)
 
 // * images
 export const imageFields = {
-  fileId: v.id('_storage'),
+  sourceType: v.optional(v.union(v.literal('textToImage'), v.literal('user'))),
   sourceUrl: v.string(),
+
+  fileId: v.id('_storage'),
   format: v.string(),
   width: v.number(),
   height: v.number(),
@@ -197,6 +199,7 @@ const images = defineEnt(imageFields)
   .edge('thread')
   .edge('user')
   .index('sourceUrl', ['sourceUrl'])
+  .index('threadId_sourceType', ['threadId', 'sourceType'])
 
 // * audio
 export const audioFields = {
@@ -243,10 +246,11 @@ export const messageFields = {
       }),
     ),
   ),
-  hasImageReference: v.boolean(),
 
   inference: v.optional(inferenceConfigV),
 
+  hasImageReference: v.boolean(),
+  hasImageContent: v.optional(v.boolean()),
   metadata: v.optional(kvListV),
 }
 const messages = defineEnt(messageFields)
@@ -258,7 +262,9 @@ const messages = defineEnt(messageFields)
   .edges('images', { ref: true, deletion: 'soft' })
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
-  .index('threadId_contentType', ['threadId', 'contentType', 'hasImageReference'])
+  .index('threadId_role_hasImageContent', ['threadId', 'role', 'hasImageContent'])
+  .index('threadId_hasImageContent', ['threadId', 'hasImageContent'])
+  .index('threadId_contentType', ['threadId', 'contentType'])
 
 // * Threads
 export const threadFields = {

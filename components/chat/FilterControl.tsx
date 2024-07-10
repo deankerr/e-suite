@@ -4,17 +4,12 @@ import { Button, Checkbox, Popover, Radio, Separator } from '@radix-ui/themes'
 
 import { useChatState } from '@/lib/atoms'
 
-const defaultFilters = {
-  role: 'any' as const,
-  image: false,
-  audio: false,
-}
-
 export const FilterControl = (props: { slug: string }) => {
   const [chatState, setChatState] = useChatState(props.slug)
-  const filters = chatState.queryFilters ?? defaultFilters
 
-  const className = 'flex items-center py-2 rounded-md pl-1.5 pr-4 cursor-pointer hover:bg-grayA-2'
+  const className =
+    'flex items-center py-1 rounded-md pl-1.5 pr-4 cursor-pointer hover:bg-grayA-2 shrink-0'
+
   return (
     <Popover.Root>
       <Popover.Trigger>
@@ -25,7 +20,7 @@ export const FilterControl = (props: { slug: string }) => {
       </Popover.Trigger>
 
       <Popover.Content size="1" className="px-1.5 py-2 text-sm">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col">
           <Label className={className}>
             <Radio
               value="all"
@@ -40,73 +35,78 @@ export const FilterControl = (props: { slug: string }) => {
             <span className="font-medium">All</span>
           </Label>
 
-          <Separator size="4" my="1" />
-
           <Label className={className}>
-            <Checkbox
+            <Radio
+              value="images"
               className="mr-2"
-              checked={filters.image}
-              onCheckedChange={(checked) => {
+              checked={chatState.queryFilters?.hasContent === 'image'}
+              onClick={() => {
                 setChatState((state) => {
                   state.queryFilters = {
-                    ...filters,
-                    image: Boolean(checked),
+                    hasContent: 'image',
                   }
                 })
               }}
             />
             <Icons.Images className="mr-1 size-4" />
-            Images
+            <span className="font-medium">Images</span>
           </Label>
+
           <Label className={className}>
-            <Checkbox
+            <Radio
+              value="audio"
               className="mr-2"
-              checked={filters.audio}
-              onCheckedChange={(checked) => {
+              checked={chatState.queryFilters?.hasContent === 'audio'}
+              onClick={() => {
                 setChatState((state) => {
                   state.queryFilters = {
-                    ...filters,
-                    audio: Boolean(checked),
+                    hasContent: 'audio',
+                    role: undefined,
                   }
                 })
               }}
             />
             <Icons.CassetteTape className="mr-1 size-4" />
-            Audio
+            <span className="font-medium">Audio</span>
           </Label>
 
           <Separator size="4" my="1" />
 
-          <Label className={className}>
-            <Checkbox
-              className="mr-2"
-              checked={filters.role === 'ai'}
-              onCheckedChange={(checked) => {
-                setChatState((state) => {
-                  state.queryFilters = {
-                    ...filters,
-                    role: checked ? 'ai' : 'any',
-                  }
-                })
-              }}
-            />
-            <Icons.Robot className="mr-1 size-4" />
-            AI
-          </Label>
-          <Label className={className}>
-            <Checkbox
-              className="mr-2"
-              disabled
-              // checked={filters.role.user}
-              // onCheckedChange={(checked) => {
-              //   setChatState((state) => {
-              //     state.filter.role.user = Boolean(checked)
-              //   })
-              // }}
-            />
-            <Icons.User className="mr-1 size-4" />
-            User
-          </Label>
+          <div className="grid grid-cols-2">
+            <Label className={className}>
+              <Checkbox
+                className="mr-2"
+                checked={chatState.queryFilters?.role === 'assistant'}
+                onCheckedChange={(checked) => {
+                  setChatState((state) => {
+                    state.queryFilters = {
+                      ...state.queryFilters,
+                      role: checked ? 'assistant' : undefined,
+                    }
+                  })
+                }}
+              />
+              <Icons.Robot className="mr-1 size-4" />
+              AI
+            </Label>
+
+            <Label className={className}>
+              <Checkbox
+                className="mr-2"
+                checked={chatState.queryFilters?.role === 'user'}
+                onCheckedChange={(checked) => {
+                  setChatState((state) => {
+                    state.queryFilters = {
+                      ...state.queryFilters,
+                      role: checked ? 'user' : undefined,
+                    }
+                  })
+                }}
+              />
+              <Icons.User className="mr-1 size-4" />
+              User
+            </Label>
+          </div>
         </div>
       </Popover.Content>
     </Popover.Root>

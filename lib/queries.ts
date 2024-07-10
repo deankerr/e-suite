@@ -15,20 +15,19 @@ export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | un
   return thread
 }
 
-export const useMessagesQuery = ({
+export const useMessagesList = ({
   slugOrId,
-  hasAssistantRole = false,
-  hasImageFiles = false,
-  hasSoundEffectFiles = false,
+  filters,
 }: {
   slugOrId?: string
-  hasAssistantRole?: boolean
-  hasImageFiles?: boolean
-  hasSoundEffectFiles?: boolean
+  filters?: {
+    role?: 'user' | 'assistant'
+    hasContent?: 'image' | 'audio'
+  }
 }) => {
   const result = usePaginatedQuery(
-    api.db.messages.content,
-    slugOrId ? { slugOrId, hasImageFiles, hasSoundEffectFiles, hasAssistantRole } : 'skip',
+    api.db.messages.list,
+    slugOrId ? { slugOrId, filters } : 'skip',
     {
       initialNumItems: 25,
     },

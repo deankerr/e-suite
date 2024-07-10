@@ -14,9 +14,8 @@ export const voiceoverAutoplayThreadIdAtom = atom('')
 type ChatState = {
   sidebarOpen: boolean
   queryFilters?: {
-    role: 'any' | 'user' | 'ai'
-    image: boolean
-    audio: boolean
+    role?: 'user' | 'assistant'
+    hasContent?: 'image' | 'audio'
   }
 }
 

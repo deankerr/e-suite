@@ -1,5 +1,3 @@
-import { asyncMap } from 'convex-helpers'
-import { filter } from 'convex-helpers/server/filter'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 
@@ -27,24 +25,30 @@ export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) =
   return jobs
 }
 
-export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) => {
-  const images = await ctx
-    .table('images', 'messageId', (q) => q.eq('messageId', message._id))
-    .filter((q) => q.eq(q.field('deletionTime'), undefined))
-
+export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
   const audio = await ctx
-    .table('audio', 'messageId', (q) => q.eq('messageId', message._id))
+    .table('audio', 'messageId', (q) => q.eq('messageId', messageId))
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
     .map(async (a) => ({
       ...a,
       fileUrl: a.fileId ? await ctx.storage.getUrl(a.fileId) : undefined,
     }))
+  return audio
+}
 
+export const getMessageImages = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
+  const images = await ctx
+    .table('images', 'messageId', (q) => q.eq('messageId', messageId))
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
+  return images
+}
+
+export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) => {
   return {
     ...message,
     jobs: await getMessageJobs(ctx, message._id),
-    images,
-    audio,
+    images: await getMessageImages(ctx, message._id),
+    audio: await getMessageAudio(ctx, message._id),
   }
 }
 
@@ -97,45 +101,46 @@ export const getSeries = query({
   },
 })
 
-export const content = query({
+export const list = query({
   args: {
     slugOrId: v.string(),
-    hasAssistantRole: v.boolean(),
-    hasImageFiles: v.boolean(),
-    hasSoundEffectFiles: v.boolean(),
     paginationOpts: paginationOptsValidator,
+    filters: v.optional(
+      v.object({
+        role: v.optional(v.union(v.literal('assistant'), v.literal('user'))),
+        hasContent: v.optional(v.union(v.literal('image'), v.literal('audio'))),
+      }),
+    ),
   },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+  handler: async (ctx, { slugOrId, paginationOpts, filters = {} }) => {
+    const thread = await getThreadBySlugOrId(ctx, slugOrId)
     if (!thread) return emptyPage()
 
-    // NOTE using unsafeDb for super filter
-    const hasFilter = args.hasImageFiles || args.hasSoundEffectFiles || args.hasAssistantRole
-    const initQuery = hasFilter
-      ? ctx.unsafeDb
-          .query('messages')
-          .withIndex('threadId_role', (q) => q.eq('threadId', thread._id).eq('role', 'assistant'))
-      : ctx.unsafeDb.query('messages').withIndex('threadId', (q) => q.eq('threadId', thread._id))
+    const baseQuery =
+      filters.hasContent === 'image'
+        ? filters.role
+          ? ctx.table('messages', 'threadId_role_hasImageContent', (q) =>
+              q.eq('threadId', thread._id).eq('role', filters.role!).eq('hasImageContent', true),
+            )
+          : ctx.table('messages', 'threadId_hasImageContent', (q) =>
+              q.eq('threadId', thread._id).eq('hasImageContent', true),
+            )
+        : filters.hasContent === 'audio'
+          ? ctx.table('messages', 'threadId_contentType', (q) =>
+              q.eq('threadId', thread._id).eq('contentType', 'audio'),
+            )
+          : filters.role
+            ? ctx.table('messages', 'threadId_role', (q) =>
+                q.eq('threadId', thread._id).eq('role', filters.role!),
+              )
+            : ctx.table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
 
-    const results = await filter(initQuery, async (message) => {
-      if (message.deletionTime) return false
-      if (!hasFilter) return true
-
-      if (args.hasAssistantRole) return true
-      // TODO restore
-      // if (args.hasImageFiles && message.files?.some((file) => file.type === 'image')) return true
-      // if (args.hasSoundEffectFiles && message.files?.some((file) => file.type === 'sound_effect'))
-      //   return true
-
-      return false
-    })
+    const result = await baseQuery
       .order('desc')
-      .paginate(args.paginationOpts)
+      .paginate(paginationOpts)
+      .map((message) => getMessageEdges(ctx, message))
 
-    return {
-      ...results,
-      page: await asyncMap(results.page, async (message) => await getMessageEdges(ctx, message)),
-    }
+    return result
   },
 })
 

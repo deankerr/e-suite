@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Label } from '@radix-ui/react-label'
-import { Badge, Button, Checkbox, Tabs } from '@radix-ui/themes'
+import { Badge, Button, Tabs } from '@radix-ui/themes'
 import { ChevronsUpDownIcon } from 'lucide-react'
 
 import { useChat } from '@/components/chat/ChatProvider'
@@ -20,7 +19,7 @@ export const ChatSidebar = ({
   thread: EThread
   config: ChatCompletionConfig
 }) => {
-  const { updateThread, queryOptions, setQueryOptions } = useChat()
+  const { updateThread } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const chatModels = useChatModels()
@@ -35,7 +34,6 @@ export const ChatSidebar = ({
       <Tabs.Root defaultValue="model">
         <Tabs.List>
           <Tabs.Trigger value="model">Model</Tabs.Trigger>
-          <Tabs.Trigger value="view">View</Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="model">
@@ -117,38 +115,6 @@ export const ChatSidebar = ({
           </div>
 
           {model && !showModelPicker && <ParameterControls model={model} />}
-        </Tabs.Content>
-
-        <Tabs.Content value="view">
-          <div className="space-y-1 p-2 text-sm">
-            <Label className="gap-2 flex-start">
-              <Checkbox
-                checked={queryOptions.hasAssistantRole}
-                onCheckedChange={(checked) =>
-                  setQueryOptions({ ...queryOptions, hasAssistantRole: Boolean(checked) })
-                }
-              />
-              Assistant
-            </Label>
-            <Label className="gap-2 flex-start">
-              <Checkbox
-                checked={queryOptions.hasImageFiles}
-                onCheckedChange={(checked) =>
-                  setQueryOptions({ ...queryOptions, hasImageFiles: Boolean(checked) })
-                }
-              />
-              Has images
-            </Label>
-            <Label className="gap-2 flex-start">
-              <Checkbox
-                checked={queryOptions.hasSoundEffectFiles}
-                onCheckedChange={(checked) =>
-                  setQueryOptions({ ...queryOptions, hasSoundEffectFiles: Boolean(checked) })
-                }
-              />
-              Has sound effects
-            </Label>
-          </div>
         </Tabs.Content>
       </Tabs.Root>
     </div>
