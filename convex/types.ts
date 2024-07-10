@@ -1,4 +1,6 @@
 import type { Doc, TableNames } from './_generated/dataModel'
+import type { getChatModelByResourceKey } from './db/chatModels'
+import type { getImageModelByResourceKey } from './db/imageModels'
 import type { getMessageEdges } from './db/messages'
 import type { getThreadExtras } from './db/threads'
 import type { getVoiceModels } from './db/voiceModels'
@@ -32,9 +34,10 @@ export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
 export type EImage = Doc<'images'>
 export type EUser = Awaited<ReturnType<typeof getViewer>>
 
-export type EChatModel = Doc<'chat_models'>
-export type EImageModel = Doc<'image_models'>
+export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
+export type EImageModel = NonNullable<Awaited<ReturnType<typeof getImageModelByResourceKey>>>
 export type EVoiceModel = Awaited<ReturnType<typeof getVoiceModels>>[number]
+export type EModel = EChatModel | EImageModel | EVoiceModel
 
 export type ChatCompletionConfig = Infer<typeof chatCompletionConfigV>
 export type TextToImageConfig = Infer<typeof textToImageConfigV>

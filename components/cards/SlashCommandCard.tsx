@@ -54,7 +54,7 @@ export const SlashCommandCard = ({
 
           <Label className="text-xs font-semibold">
             Dimensions
-            <DimensionsControl width={command.inference.width} height={command.inference.height} />
+            <DimensionsControl value={command.inference.size ?? 'square'} />
           </Label>
         </div>
       )}

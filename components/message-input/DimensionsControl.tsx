@@ -1,15 +1,9 @@
 import { Rectangle, Square } from '@phosphor-icons/react/dist/ssr'
 import { SegmentedControl } from '@radix-ui/themes'
 
-export const DimensionsControl = ({
-  width,
-  height,
-  ...props
-}: { width: number; height: number } & React.ComponentProps<typeof SegmentedControl.Root>) => {
-  const ar = width / height
-  const value = ar < 1 ? 'portrait' : ar > 1 ? 'landscape' : 'square'
+export const DimensionsControl = (props: React.ComponentProps<typeof SegmentedControl.Root>) => {
   return (
-    <SegmentedControl.Root value={value} {...props}>
+    <SegmentedControl.Root {...props}>
       <SegmentedControl.Item value="portrait">
         <Rectangle className="size-5 rotate-90 -scale-y-75" />
       </SegmentedControl.Item>
