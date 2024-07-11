@@ -35,6 +35,18 @@
 
 :root {
   --nav-rail-height: 3rem;
+  --card-1: #1b1d1eb3;
+  --card-1-light: #3f4547b3;
+
+  --card-2: #1e1d1bb3;
+}
+
+.bg-card-1 {
+  background-color: #1b1d1eb3;
+}
+
+.bg-card-2 {
+  background-color: #1e1d1bb3;
 }
 
 .wt-title-1 {
@@ -61,14 +73,6 @@
   width: 0.5rem !important;
   height: 0.5rem !important;
   opacity: 0.1;
-}
-
-.bg-card-1 {
-  background-color: #1b1d1eb3;
-}
-
-.bg-card-2 {
-  background-color: #1e1d1bb3;
 }
 
 .colorize-pink {

@@ -10,7 +10,7 @@ export const ImageSidebar = ({ thread }: { thread: EThread; config: TextToImageC
   const model = thread.model?.type === 'image' ? (thread.model as EImageModel) : null
 
   return (
-    <Tabs.Root defaultValue="commands">
+    <Tabs.Root defaultValue="model">
       <Tabs.List>
         <Tabs.Trigger value="model">Model</Tabs.Trigger>
         <Tabs.Trigger value="commands">Commands</Tabs.Trigger>

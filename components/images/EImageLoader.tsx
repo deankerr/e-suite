@@ -23,12 +23,12 @@ export const EImageLoader = forwardRef<
       blurDataURL={image.blurDataUrl}
       width={image.width}
       height={image.height}
-      sizes="(max-width: 768px) 100vw, 50vw"
       className={cn('rounded-lg object-contain', className)}
       style={{
         width: '100%',
         height: '100%',
       }}
+      draggable={false}
     />
   )
 })
