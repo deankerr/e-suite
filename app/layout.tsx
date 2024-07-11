@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
 
-      <body>
+      <body className="overscroll-y-none">
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <Theme accentColor="orange" appearance="dark" panelBackground="solid">

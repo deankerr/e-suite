@@ -33,12 +33,13 @@ export default function Page({ params }: { params: { slug: string; series: strin
   if (textToImageConfig) {
     return (
       <div className="fixed flex h-svh w-full flex-col">
-        <div className="flex h-12 w-full shrink-0 items-center gap-2 border-b px-2">
+        <div className="flex h-12 w-full shrink-0 items-center border-b px-2">
           <div className="flex items-center gap-1 text-lg font-semibold tracking-tight">
             <Logo className="size-7" /> e/suite
           </div>
 
-          <Separator orientation="vertical" size="2" mx="1" />
+          <Separator orientation="vertical" size="2" ml="2" mr="2" />
+
           <CommandMenu
             button={
               <IconButton variant="ghost" size="1" className="shrink-0">
@@ -46,10 +47,11 @@ export default function Page({ params }: { params: { slug: string; series: strin
               </IconButton>
             }
           />
-          <Separator orientation="vertical" size="2" mx="1" />
 
-          <div className="flex items-center gap-1 font-medium">
-            <Icons.ImagesSquare className="size-5" />
+          <Separator orientation="vertical" size="2" ml="2" mr="2" />
+
+          <div className="flex items-center gap-1 text-sm font-medium md:text-base">
+            <Icons.ImagesSquare className="size-5 shrink-0" />
             {thread.title}
           </div>
         </div>

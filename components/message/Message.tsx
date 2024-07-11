@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DotsThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { Callout, DropdownMenu, IconButton } from '@radix-ui/themes'
+import Link from 'next/link'
 
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { Avatar } from '@/components/message/Avatar'
@@ -76,7 +77,9 @@ export const Message = ({
             <TimeSinceLink time={message._creationTime} href={`/c/${slug}/${message.series}`} />
             <NonSecureAdminRoleOnly>
               <span className="text-gray-10">·</span>
-              <span className="font-mono text-xs text-gray-10">#{message.series}</span>
+              <Link href={`/dev/image-page/${slug}/${message.series}`}>
+                <span className="font-mono text-xs text-gray-10">#{message.series}</span>
+              </Link>
             </NonSecureAdminRoleOnly>
           </div>
 

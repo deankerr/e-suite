@@ -54,7 +54,7 @@ export const ImageModelCardH = ({
   ...props
 }: { model: EImageModel } & React.ComponentProps<'div'>) => {
   return (
-    <Card {...props} className={cn('h-32 w-full max-w-80 shrink-0', className)}>
+    <Card {...props} className={cn('h-32 w-full shrink-0', className)}>
       <div className="absolute inset-y-0 right-0 h-full w-32 border-l border-grayA-3">
         {model.coverImageUrl && (
           <Image
