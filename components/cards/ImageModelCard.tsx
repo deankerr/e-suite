@@ -44,6 +44,10 @@ export const ImageModelCard = ({
   )
 }
 
+export const ImageModelCardSkeleton = () => {
+  return <Skeleton className="h-64 w-40 shrink-0 animate-pulse" />
+}
+
 export const ImageModelCardH = ({
   model,
   className,
@@ -78,6 +82,10 @@ export const ImageModelCardH = ({
   )
 }
 
-export const ImageModelCardSkeleton = () => {
-  return <Skeleton className="h-64 w-40 shrink-0 animate-pulse" />
+export const ImageModelCardHSkeleton = () => {
+  return (
+    <Skeleton className="mx-auto h-32 w-full max-w-80 shrink-0 animate-pulse border border-grayA-4">
+      <Skeleton className="absolute inset-y-0 right-0 h-full w-32 animate-none border-l border-grayA-3" />
+    </Skeleton>
+  )
 }
