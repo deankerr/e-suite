@@ -3,7 +3,6 @@ import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/imageModels'
-import { visionModels } from '../endpoints/fal'
 import { internalQuery } from '../functions'
 import { createJob } from '../jobs'
 import { getTextToImageConfig } from '../shared/utils'
@@ -20,7 +19,8 @@ export const createImage = async (
 ) => {
   const message = await ctx.skipRules.table('messages').getX(args.messageId)
 
-  const modelId = visionModels[Math.floor(Math.random() * visionModels.length)] as string
+  // const modelId = visionModels[Math.floor(Math.random() * visionModels.length)] as string
+  const modelId = 'fal-ai/idefics-2-8b'
 
   const imageId = await ctx.table('images').insert({
     ...args,
