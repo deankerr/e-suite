@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server'
 
-import { serveOptimizedImage } from './images'
+import { serve } from './db/images'
 import { handleWebhook } from './lib/clerk'
 
 const http = httpRouter()
@@ -11,6 +11,6 @@ http.route({
   handler: handleWebhook,
 })
 
-http.route({ pathPrefix: '/i/', method: 'GET', handler: serveOptimizedImage })
+http.route({ pathPrefix: '/i/', method: 'GET', handler: serve })
 
 export default http

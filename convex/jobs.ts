@@ -121,3 +121,22 @@ export const createJobM = internalMutation({
   },
   handler: createJob,
 })
+
+export const processQueuedJobs = internalMutation({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit = 100 }) => {
+    const jobs = await ctx.table('jobs').order('desc').take(limit)
+
+    for (const job of jobs) {
+      const handler = jobHandlers?.[job.name as keyof typeof jobHandlers]
+      if (!handler) {
+        console.error('invalid job name', { name: job.name })
+        continue
+      }
+
+      await ctx.scheduler.runAfter(0, handler, { jobId: job._id })
+    }
+  },
+})
