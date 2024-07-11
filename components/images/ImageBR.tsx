@@ -6,11 +6,13 @@ import { Card } from '@radix-ui/themes'
 import { EImageLoader } from '@/components/images/EImageLoader'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
+import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
 
 export const ImageBR = ({
   image,
+  className,
   ...props
 }: { image: EImage } & Partial<React.ComponentPropsWithoutRef<typeof EImageLoader>>) => {
   const imageRef = useRef<HTMLImageElement>(null)
@@ -22,7 +24,7 @@ export const ImageBR = ({
   const { captionText, captionModelId, nsfwProbability } = image
 
   return (
-    <div className="space-y-2">
+    <div className={cn('space-y-2', className)}>
       <Card>
         <EImageLoader ref={imageRef} image={image} {...props} className="mx-auto" />
 
