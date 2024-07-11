@@ -28,17 +28,17 @@ export const GenerationPage = ({
     <div
       {...props}
       className={cn(
-        'h-full w-full space-y-4 overflow-y-auto md:grid md:grid-cols-[1fr_20rem] md:space-y-0',
+        'h-full w-full space-y-4 overflow-y-auto overscroll-y-contain md:grid md:grid-cols-[1fr_20rem] md:space-y-0',
         className,
       )}
     >
       {/* image grid */}
-      <div className="grid max-h-full grid-cols-2 grid-rows-2 gap-2 self-start overflow-hidden">
+      <div className="grid-cols-2 grid-rows-2 gap-2 space-y-4 self-start overflow-hidden md:grid md:max-h-full md:space-y-0">
         {message.images.map((image) => (
           <div key={image._id} className="[&_>_div]:odd:ml-auto">
             <div
               style={{ aspectRatio: image.width / image.height }}
-              className="relative flex max-h-full flex-col overflow-hidden rounded-xl border-2"
+              className="relative flex max-h-full flex-col overflow-hidden rounded-xl border"
             >
               {/* upper overlay */}
               <div className="absolute inset-x-0 top-0 z-10">
@@ -62,7 +62,7 @@ export const GenerationPage = ({
               </div>
 
               {/* lower overlay */}
-              <div className="absolute inset-x-0 bottom-0 z-10 max-h-[75%] gap-2">
+              <div className="absolute inset-x-0 bottom-0 z-10 max-h-full gap-2">
                 <div className="flex h-full items-end justify-between p-1">
                   {/* vote buttons */}
                   <div
@@ -71,16 +71,16 @@ export const GenerationPage = ({
                       showCaption ? 'hidden' : '',
                     )}
                   >
-                    <Button variant="ghost" color="blue" size="1" className="m-0 shrink-0">
+                    <Button variant="ghost" color="blue" size="1" className="m-0">
                       <Icons.SketchLogo size={16} />5
                     </Button>
-                    <Button variant="ghost" color="green" size="1" className="m-0 shrink-0">
+                    <Button variant="ghost" color="green" size="1" className="m-0">
                       <Icons.ThumbsUp size={16} />1
                     </Button>
-                    <Button variant="ghost" color="yellow" size="1" className="m-0 shrink-0">
+                    <Button variant="ghost" color="yellow" size="1" className="m-0">
                       <Icons.MaskSad size={16} />1
                     </Button>
-                    <Button variant="ghost" color="red" size="1" className="m-0 shrink-0">
+                    <Button variant="ghost" color="red" size="1" className="m-0">
                       <Icons.Biohazard size={16} />4
                     </Button>
                   </div>
