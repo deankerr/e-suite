@@ -60,7 +60,7 @@ export const ImageModelCardH = ({
           <Image
             src={model.coverImageUrl}
             alt={`${model.name} cover image`}
-            className="w-full object-cover"
+            className="w-full object-cover object-top"
             fill
             sizes="13rem"
             draggable={false}
@@ -68,7 +68,7 @@ export const ImageModelCardH = ({
         )}
       </div>
 
-      <div className="flex h-full w-56 flex-col justify-between">
+      <div className="mr-32 flex h-full flex-col justify-between">
         <div className="flex gap-2">
           <EndpointBadge endpoint={model.endpoint} variant="surface" />
           <Badge color="orange" variant="surface">

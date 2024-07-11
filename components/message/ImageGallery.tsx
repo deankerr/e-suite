@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 
-import { ImageBR } from '@/components/images/ImageBR'
+import { EImageLite } from '@/components/images/EImageLite'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { EMessage } from '@/convex/types'
 import { cn } from '@/lib/utils'
@@ -61,12 +61,11 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           }
 
           return (
-            <ImageBR
+            <EImageLite
               key={frame._id}
-              alt=""
               image={frame}
               sizes="(max-width: 56rem) 50vw, 28rem"
-              className="cursor-pointer"
+              className="w-80 max-w-full cursor-pointer"
               onClick={() => {
                 setOpen(true)
                 setInitialSlideIndex(i)
