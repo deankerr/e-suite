@@ -1,3 +1,5 @@
+import { v } from 'convex/values'
+
 import { query } from '../functions'
 import { QueryCtx } from '../types'
 
@@ -8,6 +10,15 @@ export const getImageModelByResourceKey = async (ctx: QueryCtx, resourceKey: str
   if (!model) return null
   return { ...model, type: 'image' as const }
 }
+
+export const get = query({
+  args: {
+    resourceKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await getImageModelByResourceKey(ctx, args.resourceKey)
+  },
+})
 
 export const list = query({
   args: {},

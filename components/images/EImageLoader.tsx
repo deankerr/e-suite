@@ -7,10 +7,6 @@ import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
 
-// const imageLoader = ({ src, width }: { src: string; width: number; quality?: number }) => {
-//   return `/i/${src}.webp?w=${width}`
-// }
-
 export const EImageLoader = forwardRef<
   HTMLImageElement,
   { image: EImage } & Partial<React.ComponentPropsWithoutRef<typeof NextImage>>
@@ -21,14 +17,18 @@ export const EImageLoader = forwardRef<
     <NextImage
       {...props}
       ref={ref}
-      // loader={imageLoader}
       src={src}
       alt={props.alt ?? ''}
       placeholder={image.blurDataUrl ? 'blur' : 'empty'}
       blurDataURL={image.blurDataUrl}
       width={image.width}
       height={image.height}
-      className={cn('rounded-lg', className)}
+      sizes="(max-width: 768px) 100vw, 50vw"
+      className={cn('rounded-lg object-contain', className)}
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
     />
   )
 })

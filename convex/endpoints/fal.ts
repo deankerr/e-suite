@@ -112,6 +112,7 @@ export const falImageModelData = [
     link: '',
     license: '',
     tags: [],
+    coverImageUrl: 'https://storage.googleapis.com/falserverless/landing/sd3-sample-03.webp',
 
     architecture: 'SD3' as const,
     sizes: sdxlSizes,
@@ -132,6 +133,7 @@ export const falImageModelData = [
     link: '',
     license: '',
     tags: [],
+    coverImageUrl: 'https://fal.media/files/kangaroo/LM0fy_9qT_8FlKrWhR7Zt.jpeg',
 
     architecture: 'SDXL' as const,
     sizes: sdxlSizes,
@@ -152,6 +154,8 @@ export const falImageModelData = [
     link: '',
     license: '',
     tags: [],
+    coverImageUrl:
+      'https://storage.googleapis.com/falserverless/gallery/dreamshaper-sdxl-lightning.jpeg',
 
     architecture: 'SDXL' as const,
     sizes: sdxlSizes,
@@ -172,6 +176,7 @@ export const falImageModelData = [
     link: '',
     license: '',
     tags: [],
+    coverImageUrl: 'https://storage.googleapis.com/falserverless/gallery/pixart-sigma.jpeg',
 
     architecture: 'SDXL' as const,
     sizes: sdxlSizes,
@@ -188,7 +193,7 @@ export const falImageModelData = [
 export const getNormalizedModelData = (): ImageModelDataRecord[] => {
   return falImageModelData.map((data) => ({
     ...data,
-    internalScore: 0,
+    internalScore: 1,
   }))
 }
 

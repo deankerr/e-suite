@@ -44,6 +44,40 @@ export const ImageModelCard = ({
   )
 }
 
+export const ImageModelCardH = ({
+  model,
+  className,
+  ...props
+}: { model: EImageModel } & React.ComponentProps<'div'>) => {
+  return (
+    <Card {...props} className={cn('h-32 w-full max-w-80 shrink-0', className)}>
+      <div className="absolute inset-y-0 right-0 h-full w-32 border-l border-grayA-3">
+        {model.coverImageUrl && (
+          <Image
+            src={model.coverImageUrl}
+            alt={`${model.name} cover image`}
+            className="w-full object-cover"
+            fill
+            sizes="13rem"
+            draggable={false}
+          />
+        )}
+      </div>
+
+      <div className="flex h-full w-56 flex-col justify-between">
+        <div className="flex gap-2">
+          <EndpointBadge endpoint={model.endpoint} variant="surface" />
+          <Badge color="orange" variant="surface">
+            {model.architecture}
+          </Badge>
+        </div>
+
+        <div className="text-base font-medium">{model.name}</div>
+      </div>
+    </Card>
+  )
+}
+
 export const ImageModelCardSkeleton = () => {
   return <Skeleton className="h-64 w-40 shrink-0 animate-pulse" />
 }

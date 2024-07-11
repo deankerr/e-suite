@@ -101,6 +101,31 @@ export const getSeries = query({
   },
 })
 
+export const getSlugMessage = query({
+  args: {
+    slug: v.string(),
+    series: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slug)
+    if (!thread) return null
+
+    const messageEnt = await ctx.table('messages').get('threadId_series', thread._id, args.series)
+    if (!messageEnt || messageEnt.deletionTime) {
+      return {
+        thread,
+        message: null,
+      }
+    }
+
+    const message = await getMessageEdges(ctx, messageEnt)
+    return {
+      thread,
+      message,
+    }
+  },
+})
+
 export const list = query({
   args: {
     slugOrId: v.string(),
