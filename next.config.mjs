@@ -14,6 +14,7 @@ const backendUrl = getBackendUrl()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: false,
     remotePatterns: [
       {
         hostname: '*',
@@ -23,7 +24,7 @@ const nextConfig = {
   },
   rewrites: async () => [
     {
-      source: '/i/:slug',
+      source: '/convex/:slug',
       destination: `${backendUrl}/i/:slug`,
     },
   ],
