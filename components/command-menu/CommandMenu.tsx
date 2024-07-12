@@ -2,11 +2,11 @@
 
 import { Chat, ImagesSquare, List } from '@phosphor-icons/react/dist/ssr'
 import { Dialog, IconButton, Inset } from '@radix-ui/themes'
+import { useKeyboardEvent } from '@react-hookz/web'
 import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
 import { ImagePlusIcon, MessageSquarePlusIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useKey } from 'react-use'
 
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
@@ -24,10 +24,13 @@ import { useUserThreadsList, useViewerDetails } from '@/lib/queries'
 
 export const CommandMenu = (props: { button?: React.ReactNode }) => {
   const [open, setOpen] = useAtom(commandMenuOpenAtom)
-  useKey(
-    (e) => e.key === 'k' && e.metaKey,
-    () => setOpen(!open),
-  )
+
+  useKeyboardEvent('k', (e) => {
+    if (e.metaKey || e.ctrlKey) {
+      e.preventDefault()
+      setOpen(!open)
+    }
+  })
 
   const router = useRouter()
   const goto = (path: string) => {

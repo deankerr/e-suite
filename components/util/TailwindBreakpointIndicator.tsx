@@ -1,6 +1,6 @@
 'use client'
 
-import { useWindowSize } from '@uidotdev/usehooks'
+import { useWindowSize } from '@react-hookz/web'
 
 import { cn } from '@/lib/utils'
 
