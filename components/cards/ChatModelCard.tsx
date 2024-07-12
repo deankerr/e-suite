@@ -22,6 +22,7 @@ export const ChatModelCard = ({
 }: { model: EChatModel } & React.ComponentProps<'div'>) => {
   const logoSrc = llmAuthorLogos[model.creatorName.toLowerCase()]
 
+  const url = URL.canParse(model.link) ? new URL(model.link) : null
   return (
     <Card {...props} className={cn('flex h-40 w-72 max-w-full shrink-0 flex-col', className)}>
       <div>
@@ -47,11 +48,11 @@ export const ChatModelCard = ({
       <div className={cn('flex shrink-0 flex-wrap items-end gap-2')}>
         <EndpointBadge endpoint={model.endpoint} />
 
-        {model.link.includes('civitai.com/') ? (
+        {url?.host.endsWith('civitai.com') ? (
           <LinkButton href={model.link} color={endpointTokens('civitai').color}>
             {endpointTokens('civitai').name}
           </LinkButton>
-        ) : model.link.includes('huggingface.co/') ? (
+        ) : url?.host.endsWith('huggingface.co') ? (
           <LinkButton href={model.link} color={endpointTokens('huggingface').color}>
             {endpointTokens('huggingface').name}
           </LinkButton>
