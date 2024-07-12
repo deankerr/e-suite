@@ -4,7 +4,7 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 
-import { EImageLoader } from '@/components/images/EImageLoader'
+import { Image } from '@/components/images/Image'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { cn } from '@/lib/utils'
 
@@ -26,8 +26,11 @@ export const EImageLite = ({
       >
         {/* image */}
         <div className="relative flex-grow">
-          <EImageLoader
-            image={image}
+          <Image
+            src={image._id}
+            width={image.width}
+            height={image.height}
+            alt={image._id}
             className="absolute inset-0 rounded-lg"
             sizes={sizes}
             priority={priority}
