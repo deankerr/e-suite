@@ -1,8 +1,9 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { IconButton, Separator } from '@radix-ui/themes'
+import { Button, IconButton, Separator } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
+import Link from 'next/link'
 
 import { CommandMenu } from '@/components/command-menu/CommandMenu'
 import { GenerationPage } from '@/components/pages/GenerationPage'
@@ -53,6 +54,20 @@ export default function Page({ params }: { params: { slug: string; series: strin
           <div className="flex items-center gap-1 text-sm font-medium md:text-base">
             <Icons.ImagesSquare className="size-5 shrink-0" />
             {thread.title}
+          </div>
+
+          <div className="flex grow items-center justify-end gap-2 px-4">
+            <Link href={`/dev/image-page/${thread.slug}/${message.series - 1}`}>
+              <Button variant="surface">
+                <Icons.ArrowLeft size={24} />
+              </Button>
+            </Link>
+
+            <Link href={`/dev/image-page/${thread.slug}/${message.series + 1}`}>
+              <Button variant="surface">
+                <Icons.ArrowRight size={24} />
+              </Button>
+            </Link>
           </div>
         </div>
         <div className="h-[calc(100%-3rem)]">
