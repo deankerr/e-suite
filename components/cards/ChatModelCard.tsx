@@ -10,7 +10,7 @@ import MistralAiLogo from '@/assets/logos/mistral.svg'
 import OpenAiLogo from '@/assets/logos/openai.svg'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { cn } from '@/lib/utils'
+import { cn, isValidUrl } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/types'
 import type { StaticImport } from 'next/dist/shared/lib/get-img-props'
@@ -22,7 +22,7 @@ export const ChatModelCard = ({
 }: { model: EChatModel } & React.ComponentProps<'div'>) => {
   const logoSrc = llmAuthorLogos[model.creatorName.toLowerCase()]
 
-  const url = URL.canParse(model.link) ? new URL(model.link) : null
+  const url = isValidUrl(model.link) ? new URL(model.link) : null
   return (
     <Card {...props} className={cn('flex h-40 w-72 max-w-full shrink-0 flex-col', className)}>
       <div>

@@ -1,4 +1,4 @@
-import { environment } from '@/lib/utils'
+import { environment, isValidUrl } from '@/lib/utils'
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL!
 export default function imageLoader({
@@ -13,7 +13,7 @@ export default function imageLoader({
   const url = new URL(baseUrl)
 
   // external/public image
-  if (URL.canParse(src) || src.startsWith('/')) {
+  if (isValidUrl(src) || src.startsWith('/')) {
     url.searchParams.append('image', src)
   } else {
     // backend image

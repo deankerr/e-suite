@@ -88,3 +88,12 @@ export function formatTimeToDisplayShort(time: number) {
 
   return format(date, 'MMM d, yyyy')
 }
+
+export function isValidUrl(url: string) {
+  try {
+    new URL(url)
+    return true
+  } catch {
+    return false
+  }
+}
