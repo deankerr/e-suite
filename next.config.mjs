@@ -19,6 +19,7 @@ const nextConfig = {
         hostname: '*',
       },
     ],
+    unoptimized: true,
   },
   rewrites: async () => [
     {
