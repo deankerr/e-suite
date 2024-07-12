@@ -20,12 +20,8 @@ const nextConfig = {
         hostname: '*',
       },
     ],
-<<<<<<< HEAD
-    unoptimized: true,
-=======
     loader: 'custom',
     loaderFile: './lib/image-loader.ts',
->>>>>>> 8503539b (add global image-loader, integrate Chat/Lightbox)
   },
   rewrites: async () => [
     {
