@@ -1,9 +1,6 @@
 import { Card, Heading, Text } from '@radix-ui/themes'
-import { useTitle } from 'react-use'
 
 export default function Page() {
-  useTitle('admin - type')
-
   return (
     <div className="space-y-3 p-3">
       <p>type</p>
@@ -130,7 +127,7 @@ export default function Page() {
           <div className="wt-title-1">Card Title</div>
         </Card>
 
-        <Card className=" h-60 w-96">
+        <Card className="h-60 w-96">
           <div className="wt-title-2">Card Title</div>
         </Card>
 
@@ -139,7 +136,7 @@ export default function Page() {
         </Card>
 
         <Card className="card-bg-1 h-60 w-96">
-          <div className="wt-title-4 ">Card Title</div>
+          <div className="wt-title-4">Card Title</div>
         </Card>
       </div>
     </div>
