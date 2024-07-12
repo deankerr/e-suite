@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 
-import { EImageLite } from '@/components/images/EImageLite'
+import { Image } from '@/components/images/Image'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { EMessage } from '@/convex/types'
 import { cn } from '@/lib/utils'
@@ -34,7 +34,7 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
   const slides = useMemo(
     () =>
       images.map((image) => ({
-        src: `/i/${image._id}`,
+        src: `${image._id}`,
         width: image.width ?? 1024,
         height: image.height ?? 1024,
         blurDataURL: image.blurDataUrl ?? '',
@@ -62,11 +62,16 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
           }
 
           return (
-            <EImageLite
+            <Image
               key={frame._id}
-              image={frame}
+              alt="generation"
+              src={frame._id}
+              width={frame.width}
+              height={frame.height}
+              placeholder={frame.blurDataUrl ? 'blur' : 'empty'}
+              blurDataURL={frame.blurDataUrl}
               sizes="(max-width: 56rem) 50vw, 28rem"
-              className="w-80 max-w-full cursor-pointer"
+              className="w-80 max-w-full cursor-pointer rounded-lg"
               onClick={() => {
                 setOpen(true)
                 setInitialSlideIndex(i)
