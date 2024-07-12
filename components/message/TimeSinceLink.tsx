@@ -11,7 +11,7 @@ export const TimeSinceLink = ({
 }: { time: number } & React.ComponentProps<typeof Link>) => {
   return (
     <Tooltip content={format(time, 'MMM d, yyyy h:mm a')}>
-      <Link {...props} className={cn('text-gray-10 hover:underline', className)}>
+      <Link {...props} className={cn('meticulous-ignore text-gray-10 hover:underline', className)}>
         {formatTimeToDisplayShort(time)}
       </Link>
     </Tooltip>
