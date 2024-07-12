@@ -6,6 +6,7 @@ import { Button, Card, IconButton } from '@radix-ui/themes'
 
 import { ImageModelCardH, ImageModelCardHSkeleton } from '@/components/cards/ImageModelCard'
 import { EImageLoader } from '@/components/images/EImageLoader'
+import { Image } from '@/components/images/Image'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useImageModel } from '@/lib/queries'
 import { cn } from '@/lib/utils'
@@ -53,9 +54,14 @@ export const GenerationPage = ({
 
               {/* image */}
               <div className="relative flex-grow">
-                <EImageLoader
+                <Image
                   key={image._id}
-                  image={image}
+                  alt=""
+                  src={image._id}
+                  width={image.width}
+                  height={image.height}
+                  placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
+                  blurDataURL={image?.blurDataUrl}
                   className="absolute inset-0 rounded-lg"
                   priority
                 />
@@ -154,6 +160,15 @@ export const GenerationPage = ({
                 {textToImageConfig.width}x{textToImageConfig.height} px
               </div>
             </div>
+
+            {/* # temp */}
+            <Image src="/pixart-cactus.png" width={1000} height={1000} alt="" />
+            <Image
+              src="https://storage.googleapis.com/falserverless/gallery/scribble.jpeg"
+              width={1000}
+              height={1000}
+              alt=""
+            />
           </Card>
         </div>
       </div>

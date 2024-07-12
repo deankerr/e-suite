@@ -35,7 +35,7 @@ export const EImageLite = ({
         </div>
 
         {/* lower overlay */}
-        <div className="absolute inset-x-0 bottom-0 z-10 flex h-full items-end gap-2 overflow-hidden">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex h-1/2 items-end gap-2 overflow-hidden">
           <div className="flex h-full w-full items-end justify-between overflow-hidden p-1">
             <div></div>
 

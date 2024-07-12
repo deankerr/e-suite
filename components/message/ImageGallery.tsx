@@ -30,10 +30,11 @@ export const ImageGallery = ({ message }: { message: EMessage }) => {
 
   const hasJobErrors = message.jobs.some((job) => job.status === 'failed')
 
+  // NOTE uses custom next/image
   const slides = useMemo(
     () =>
       images.map((image) => ({
-        src: `/i/${image._id}.webp`,
+        src: `/i/${image._id}`,
         width: image.width ?? 1024,
         height: image.height ?? 1024,
         blurDataURL: image.blurDataUrl ?? '',

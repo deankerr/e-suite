@@ -1,4 +1,5 @@
 import { v } from 'convex/values'
+import { getQuery, parseFilename } from 'ufo'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
@@ -27,6 +28,7 @@ export const createImage = async (
     captionModelId: modelId,
     userId: message.userId,
     threadId: message.threadId,
+    generationData: await getGenerationData(ctx, message),
   })
   console.log('[image]', args.sourceUrl)
 
@@ -82,29 +84,26 @@ export const getImage = internalQuery({
 
 // * http
 export const serve = httpAction(async (ctx, request) => {
-  const imageRequest = parseRequestUrl(request.url, '/i')
-  if (!imageRequest || !imageRequest.id) return new Response('invalid request', { status: 400 })
-  const image = await ctx.runQuery(internal.db.images.getImage, {
-    imageId: imageRequest.id,
-  })
-  if (!image) return new Response('invalid image id', { status: 400 })
+  const id = parseFilename(request.url, { strict: false })
+
+  const image = id
+    ? await ctx.runQuery(internal.db.images.getImage, {
+        imageId: id,
+      })
+    : null
+  if (!image) return new Response('Not Found', { status: 404 })
 
   const blob = await ctx.storage.get(image.fileId)
+  if (!blob) throw new Error()
+
+  const { download } = getQuery(request.url)
+  if (download !== undefined) {
+    return new Response(blob, {
+      headers: {
+        'Content-Disposition': `attachment; filename="${id}.${image.format}"`,
+      },
+    })
+  }
+
   return new Response(blob)
 })
-
-function parseRequestUrl(url: string, route: string) {
-  const { pathname, searchParams } = new URL(url)
-
-  // parse image id, extension from pathname
-  const match = pathname.match(new RegExp(`^${route}/([^/]+)\\.([^/]+)$`, 'i'))
-  if (!match) {
-    console.error('invalid pathname', pathname)
-    return null
-  }
-  const [, id, extension] = match
-
-  // parse width param to closest valid size
-  const width = srcSizes.findLast((size) => size <= Number(searchParams.get('w')))
-  return { id, extension, width }
-}
