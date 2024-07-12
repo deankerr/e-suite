@@ -92,6 +92,16 @@ export function getTextToAudioConfig(inference?: InferenceConfig): TextToAudioCo
   return inference?.type === 'sound-generation' ? inference : null
 }
 
+export function getInferenceConfig(inference?: InferenceConfig) {
+  const base = {
+    chatConfig: getChatConfig(inference),
+    textToImageConfig: getTextToImageConfig(inference),
+    textToAudioConfig: getTextToAudioConfig(inference),
+  }
+
+  return base
+}
+
 export function extractValidUrlsFromText(text: string): URL[] {
   const urlRegex = /(https?:\/\/[^\s]+)/g
   const matches = text.match(urlRegex) || []

@@ -21,8 +21,8 @@ export const ImageCard = ({
 
   return (
     <Card
-      style={{ aspectRatio: image.width / image.height }}
-      className={cn('group flex flex-col justify-between gap-2', className)}
+      style={{ aspectRatio: image.width / image.height, maxWidth: image.width }}
+      className={cn('group flex w-full flex-col justify-between gap-2', className)}
       {...props}
     >
       <Image

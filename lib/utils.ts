@@ -60,6 +60,21 @@ export function stringToHex(str: string) {
   return color
 }
 
+export function stringHashToListItem<T>(str: string, list: T[]): T {
+  if (list.length === 0) {
+    throw new Error('The provided list is empty')
+  }
+
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  hash = Math.abs(hash)
+
+  const index = hash % list.length
+  return list[index] as T
+}
+
 export function endpointCode(endpoint: string) {
   switch (endpoint) {
     case 'openai':
