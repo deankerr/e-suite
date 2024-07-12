@@ -3,7 +3,6 @@ import { format, formatDistanceToNowStrict, isThisYear } from 'date-fns'
 import { atom, WritableAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { twMerge } from 'tailwind-merge'
-import z from 'zod'
 
 import type { ClassValue } from 'clsx'
 
@@ -26,25 +25,6 @@ export function getConvexSiteUrl() {
   if (!convexUrl) throw new Error('NEXT_PUBLIC_CONVEX_URL is undefined')
   return convexUrl.replace('.cloud', '.site')
 }
-
-// see https://github.com/JacobWeisenburger/zod_utilz
-const jsonLiteralSchema = z.union([z.string(), z.number(), z.boolean(), z.null()])
-type JsonLiteral = z.infer<typeof jsonLiteralSchema>
-type Json = JsonLiteral | { [key: string]: Json } | Json[]
-const jsonParseSchema: z.ZodType<Json> = z.lazy(() =>
-  z.union([jsonLiteralSchema, z.array(jsonParseSchema), z.record(jsonParseSchema)]),
-)
-
-export const stringToJsonSchema = z
-  .string()
-  .transform((str, ctx): z.infer<typeof jsonParseSchema> => {
-    try {
-      return JSON.parse(str) as Json
-    } catch (e) {
-      ctx.addIssue({ code: 'custom', message: 'Invalid JSON' })
-      return z.NEVER
-    }
-  })
 
 export function atomWithToggleAndStorage(
   key: string,

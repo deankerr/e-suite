@@ -6,8 +6,6 @@ import { atomWithStorage } from 'jotai/utils'
 
 export const commandMenuOpenAtom = atom(false)
 
-export const chatDeckAtom = atomWithStorage<string[]>('chat-deck', [])
-
 export const voiceoverQueueAtom = atom<string[]>([])
 export const voiceoverAutoplayThreadIdAtom = atom('')
 
@@ -23,7 +21,7 @@ const defaultState: ChatState = {
   sidebarOpen: false,
 }
 
-export const chatStateAtom = atomWithStorage<Record<string, ChatState>>('chat-state', {})
+const chatStateAtom = atomWithStorage<Record<string, ChatState>>('chat-state', {})
 
 export const useChatState = (id: string) => {
   const [chatStateFocusAtom] = useState(() => {
