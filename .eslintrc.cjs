@@ -1,9 +1,4 @@
 /* eslint-env node */
-// @ts-check
-
-/**
- * @type {import('@typescript-eslint/utils').TSESLint.Linter.ConfigType}
- */
 
 module.exports = {
   root: true,
