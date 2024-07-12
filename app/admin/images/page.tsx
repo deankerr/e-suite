@@ -3,7 +3,7 @@
 import { usePaginatedQuery } from 'convex/react'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
-import { ImageBR } from '@/components/images/ImageBR'
+import { Image } from '@/components/images/Image'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { api } from '@/convex/_generated/api'
@@ -20,7 +20,14 @@ export default function Page() {
     <AdminPageWrapper className="">
       <div className="grid grid-cols-3 place-items-center gap-3">
         {imagesQuery.results.map((image) => (
-          <ImageBR key={image._id} image={image} sizes="33vw" />
+          <Image
+            key={image._id}
+            src={image._id}
+            width={image.width}
+            height={image.height}
+            alt={image._id}
+            sizes="33vw"
+          />
         ))}
       </div>
 

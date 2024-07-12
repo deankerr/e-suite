@@ -5,7 +5,6 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, Card, IconButton } from '@radix-ui/themes'
 
 import { ImageModelCardH, ImageModelCardHSkeleton } from '@/components/cards/ImageModelCard'
-import { EImageLoader } from '@/components/images/EImageLoader'
 import { Image } from '@/components/images/Image'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { useImageModel } from '@/lib/queries'
