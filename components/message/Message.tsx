@@ -10,7 +10,7 @@ import { ImageGallery } from '@/components/message/ImageGallery'
 import { Markdown } from '@/components/message/Markdown'
 import { TimeSinceLink } from '@/components/message/TimeSinceLink'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { VoiceoverPlayer } from '@/components/voiceovers/VoiceoverPlayer'
 import { hasActiveJob } from '@/convex/shared/utils'
@@ -75,12 +75,12 @@ export const Message = ({
             </span>
             <span className="text-gray-10">·</span>
             <TimeSinceLink time={message._creationTime} href={`/c/${slug}/${message.series}`} />
-            <NonSecureAdminRoleOnly>
+            <AdminOnlyUi>
               <span className="text-gray-10">·</span>
               <Link href={`/dev/image-page/${slug}/${message.series}`}>
                 <span className="font-mono text-xs text-gray-10">#{message.series}</span>
               </Link>
-            </NonSecureAdminRoleOnly>
+            </AdminOnlyUi>
           </div>
 
           <div>

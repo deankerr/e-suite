@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { CommandMenu } from '@/components/command-menu/CommandMenu'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { Logo } from '@/components/ui/Logo'
-import { NonSecureAdminRoleOnly } from '@/components/util/NonSecureAdminRoleOnly'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { cn } from '@/lib/utils'
 
 type NavRailProps = React.ComponentProps<'div'>
@@ -23,7 +23,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
 
       <div className="grow">{/* spacer */}</div>
 
-      <NonSecureAdminRoleOnly>
+      <AdminOnlyUi>
         <IconButton variant="ghost" className="shrink-0" asChild>
           <Link href={`/c/none`}>
             <NumberZero className="size-6" />
@@ -34,7 +34,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
             <Nut className="size-6" />
           </Link>
         </IconButton>
-      </NonSecureAdminRoleOnly>
+      </AdminOnlyUi>
       <UserButtons />
     </nav>
   )

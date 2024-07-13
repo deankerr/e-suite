@@ -44,3 +44,7 @@ output
 
 # Million Lint
 .million
+
+# cosmos next
+.cosmos/.next
+.cosmos/node_modules

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import Noun26 from '@/assets/svg/noun26.svg'
+import Noun26 from '@/assets/logo.svg'
 import { cn } from '@/lib/utils'
 
 type LogoProps = Partial<React.ComponentProps<typeof Image>>

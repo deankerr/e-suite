@@ -11,7 +11,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         {/* background layer */}
         <div className="pointer-events-none fixed inset-0 bg-orange-1">
           <div className="fixed inset-0 bg-gradient-to-br from-orange-3 via-orange-1 to-iris-1"></div>
-          <div className='fixed inset-0 bg-[url("/nn2.svg")]' />
+          <div className='fixed inset-0 bg-[url("/noise.svg")]' />
         </div>
 
         <NavRail />

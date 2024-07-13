@@ -8,9 +8,8 @@
     "dev": "pnpm run '/^dev:.*/'",
     "dev:next": "next dev --port 3333",
     "dev:convex": "convex dev",
-    "lint": "next lint && tsc",
-    "typecheck": "tsc --noEmit",
-    "generate-schemas": "pnpm orval --config scripts/openapi-to-zod/orval.config.ts"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.27",
