@@ -1,7 +1,7 @@
 import { Badge, Card, Inset } from '@radix-ui/themes'
-import Image from 'next/image'
 
 import { EndpointBadge } from '@/app/admin/Badges'
+import { Image } from '@/components/images/Image'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
@@ -54,30 +54,38 @@ export const ImageModelCardH = ({
   ...props
 }: { model: EImageModel } & React.ComponentProps<'div'>) => {
   return (
-    <Card {...props} className={cn('h-32 w-full shrink-0', className)}>
-      <div className="absolute inset-y-0 right-0 h-full w-32 border-l border-grayA-3">
-        {model.coverImageUrl && (
-          <Image
-            src={model.coverImageUrl}
-            alt={`${model.name} cover image`}
-            className="w-full object-cover object-top"
-            fill
-            sizes="13rem"
-            draggable={false}
-          />
-        )}
-      </div>
-
-      <div className="mr-32 flex h-full flex-col justify-between">
-        <div className="flex gap-2">
-          <EndpointBadge endpoint={model.endpoint} variant="surface" />
-          <Badge color="orange" variant="surface">
-            {model.architecture}
-          </Badge>
+    <Card
+      {...props}
+      className={cn('flex h-32 w-full shrink-0 flex-col justify-between @container', className)}
+    >
+      <Inset side="all" className="absolute inset-0">
+        <div className="ml-[50%] h-full w-[50%] @[16rem]:ml-[57%]">
+          {model.coverImageUrl && (
+            <Image
+              src={model.coverImageUrl}
+              alt={`${model.name} cover image`}
+              className="h-full w-full object-cover object-top @[16rem]:object-contain"
+              fill
+              sizes="13rem"
+              draggable={false}
+            />
+          )}
         </div>
+      </Inset>
 
-        <div className="text-base font-medium">{model.name}</div>
+      <div className="flex gap-2">
+        <EndpointBadge endpoint={model.endpoint} variant="surface" />
+        <Badge color="orange" variant="surface">
+          {model.architecture}
+        </Badge>
       </div>
+
+      <Inset
+        side="bottom"
+        className="bg-overlay px-3 py-2 text-sm font-medium @[16rem]:mr-[30%] @[16rem]:bg-transparent @[16rem]:text-base"
+      >
+        {model.name}
+      </Inset>
     </Card>
   )
 }

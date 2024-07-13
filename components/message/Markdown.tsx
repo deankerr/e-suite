@@ -1,4 +1,7 @@
+import './github-markdown-dark.css'
+
 import { memo } from 'react'
+import { Link } from '@radix-ui/themes'
 import ReactMarkdown from 'react-markdown'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import remarkBreaks from 'remark-breaks'
@@ -10,7 +13,9 @@ const Component = (props: { text?: string }) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
+      className="markdown-body"
       components={{
+        a: ({ color: _, ...props }) => <Link {...props} />,
         code(props) {
           const { children, className, node, ref, ...rest } = props
           const match = /language-(\w+)/.exec(className || '')
@@ -22,13 +27,13 @@ const Component = (props: { text?: string }) => {
               useInlineStyles
               customStyle={{
                 margin: 0,
-                padding: '1rem',
+                padding: 0,
                 fontFamily: 'unset',
                 fontSize: 'unset',
                 lineHeight: 'unset',
                 backgroundColor: '#1D1F21',
               }}
-              codeTagProps={{ style: {}, className: 'not-prose' }}
+              codeTagProps={{ style: {} }}
             >
               {String(children).replace(/\n$/, '')}
             </SyntaxHighlighter>

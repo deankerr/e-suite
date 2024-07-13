@@ -124,9 +124,7 @@ export const Message = ({
         {/* text */}
         {message.text && !editing && (
           <div className="max-w-full space-y-1 rounded-lg bg-grayA-2 p-2 sm:w-fit">
-            <div className="prose prose-sm prose-stone prose-invert max-w-none prose-pre:p-0">
-              <Markdown text={message.text} />
-            </div>
+            <Markdown text={message.text} />
 
             {showTokenInfo && (
               <div className="text-[0.66rem] leading-3 text-gray-10">
