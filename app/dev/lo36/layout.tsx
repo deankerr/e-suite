@@ -38,9 +38,9 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* * footer * */}
-        <div className="flex h-12 shrink-0 items-center justify-between border-t px-3">
-          <IconButton variant="outline">
-            <Icons.Plus className="size-7" />
+        <div className="flex h-12 shrink-0 items-center justify-center border-t px-3">
+          <IconButton variant="surface">
+            <Icons.User className="size-6" />
           </IconButton>
 
           {/* <UserButtons /> */}
