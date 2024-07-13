@@ -1,20 +1,15 @@
-import 'katex/dist/katex.min.css'
-
 import { memo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
-import rehypeKatex from 'rehype-katex'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
 
 const Component = (props: { text?: string }) => {
   if (!props.text) return null
 
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]}
-      rehypePlugins={[rehypeKatex]}
+      remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
         code(props) {
           const { children, className, node, ref, ...rest } = props
