@@ -37,6 +37,7 @@
     "@vercel/speed-insights": "^1.0.12",
     "ai": "^3.2.22",
     "audiomotion-analyzer": "^4.5.0",
+    "boring-avatars": "^1.10.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",

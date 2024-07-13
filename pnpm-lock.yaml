@@ -80,6 +80,9 @@ importers:
       audiomotion-analyzer:
         specifier: ^4.5.0
         version: 4.5.0
+      boring-avatars:
+        specifier: ^1.10.2
+        version: 1.10.2
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -2965,6 +2968,9 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
+  boring-avatars@1.10.2:
+    resolution: {integrity: sha512-uQyvmNeW6loz4Yytj7aDo0IhhuByW/YyOHtqwb3kQ/x48hum22hROA2Wn3qzrLR5JsoZ+FHjPO6z6LrXrWjegg==}
+
   bowser@2.11.0:
     resolution: {integrity: sha512-AlcaJBi/pqqJBIQ8U9Mcpc9i8Aqxn88Skv5d+xBX006BY5u8N3mGLHa5Lgppa7L/HfwgwLgZ6NYs+Ag6uUmJRA==}
 
@@ -4176,6 +4182,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsondiffpatch@0.6.0:
     resolution: {integrity: sha512-3QItJOXp2AP1uv7waBkao5nCvhEv+QmJAd38Ybq7wNI74Q+BBmnLn4EDKz6yI9xGAIQoUF87qHt+kc1IVxB4zQ==}
@@ -7197,8 +7204,8 @@ snapshots:
     dependencies:
       '@antfu/ni': 0.21.12
       '@axiomhq/js': 1.0.0-rc.3
-      '@babel/core': 7.24.6
-      '@babel/types': 7.24.6
+      '@babel/core': 7.24.8
+      '@babel/types': 7.24.8
       '@clack/prompts': 0.7.0
       cli-high: 0.4.2
       diff: 5.2.0
@@ -9132,6 +9139,8 @@ snapshots:
   base16@1.0.0: {}
 
   binary-extensions@2.3.0: {}
+
+  boring-avatars@1.10.2: {}
 
   bowser@2.11.0: {}
 
