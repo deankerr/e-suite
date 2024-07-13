@@ -18,9 +18,14 @@ const colors = [
   '#f76b15',
 ]
 
-export const Marble = ({ name, size = 15 }: { name: string; size?: number }) => {
+export const Marble = ({
+  name,
+  size = 15,
+  variant = 'marble',
+  square = false,
+}: Omit<React.ComponentProps<typeof Avatar>, 'colors'>) => {
   return useMemo(
-    () => <Avatar name={name} size={size} colors={colors} variant="marble" />,
-    [name, size],
+    () => <Avatar name={name} size={size} colors={colors} variant={variant} square={square} />,
+    [name, size, variant, square],
   )
 }

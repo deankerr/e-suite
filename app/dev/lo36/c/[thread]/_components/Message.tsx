@@ -1,5 +1,8 @@
+import { useState } from 'react'
+
 import { Marble } from '@/app/dev/lo36/c/[thread]/_components/Marble'
 import { ImageCard } from '@/components/images/ImageCard'
+import { Markdown } from '@/components/message/Markdown'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -13,19 +16,32 @@ export const Message = ({
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
+  const isShortMessage = text !== undefined && text.length < 500
+
+  const [messageTime] = useState(new Date(message._creationTime).toTimeString().slice(0, 5))
+
   return (
     <div
       {...props}
-      className={cn('w-full rounded border border-transparent p-2 hover:border-grayA-4', className)}
+      className={cn('w-full rounded border border-transparent p-2 hover:border-grayA-2', className)}
     >
-      <div className="flex gap-1.5 text-sm">
-        <div className="flex h-[1.25rem] shrink-0 items-center">
-          <Marble name={name} size={15} />
+      <div className={cn('flex gap-1.5 text-sm', !isShortMessage && 'flex-wrap')}>
+        <div className="shrink-0 text-gray-10">{messageTime ?? '00:00'}</div>
+
+        <div
+          className={cn(
+            'flex h-[1.25rem] shrink-0 items-center',
+            message.role === 'assistant' && 'rotate-45 -scale-75',
+          )}
+        >
+          <Marble name={name} size={15} square={message.role === 'assistant'} />
         </div>
 
-        <div className="shrink-0 font-medium">{name}</div>
+        <div className="shrink-0 font-semibold text-gray-11">{name}</div>
 
-        <div className="break-all text-sm text-gray-11">{text}</div>
+        <div className="break-all text-sm text-gray-12">
+          <Markdown text={text} />
+        </div>
       </div>
 
       {message.images.length > 0 && (
