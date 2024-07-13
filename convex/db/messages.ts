@@ -160,6 +160,7 @@ export const list = query({
             : ctx.table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
 
     const result = await baseQuery
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .order('desc')
       .paginate(paginationOpts)
       .map((message) => getMessageEdges(ctx, message))
