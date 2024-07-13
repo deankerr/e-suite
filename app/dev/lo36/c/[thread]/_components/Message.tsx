@@ -1,6 +1,5 @@
 import { ImageCard } from '@/components/images/ImageCard'
-import { getInferenceConfig } from '@/convex/shared/utils'
-import { cn, stringHashToListItem } from '@/lib/utils'
+import { cn, getInferenceConfig, stringHashToListItem } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
 

@@ -3,8 +3,7 @@ import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from '../functions'
 import { kvListV, messageFields } from '../schema'
-import { zStringToMessageRole } from '../shared/utils'
-import { emptyPage } from '../utils'
+import { emptyPage, zStringToMessageRole } from '../utils'
 import { getOrCreateThread, getThreadBySlugOrId } from './threads'
 
 import type { Doc, Id } from '../_generated/dataModel'

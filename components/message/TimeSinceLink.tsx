@@ -1,8 +1,8 @@
 import { Tooltip } from '@radix-ui/themes'
-import { format } from 'date-fns'
+import { format, formatDistanceToNowStrict, isThisYear } from 'date-fns'
 import Link from 'next/link'
 
-import { cn, formatTimeToDisplayShort } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 export const TimeSinceLink = ({
   time,
@@ -16,4 +16,20 @@ export const TimeSinceLink = ({
       </Link>
     </Tooltip>
   )
+}
+
+export function formatTimeToDisplayShort(time: number) {
+  const date = new Date(time)
+
+  if (isThisYear(date)) {
+    return formatDistanceToNowStrict(date, { addSuffix: false })
+      .replace(/ seconds?/, 's')
+      .replace(/ minutes?/, 'm')
+      .replace(/ hours?/, 'h')
+      .replace(/ days?/, 'd')
+      .replace(/ months?/, 'mo')
+      .replace(/ years?/, 'y')
+  }
+
+  return format(date, 'MMM d, yyyy')
 }

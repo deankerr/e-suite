@@ -1,5 +1,6 @@
 import { makeActionRetrier } from 'convex-helpers/server/retries'
 import { customAlphabet } from 'nanoid/non-secure'
+import { z } from 'zod'
 
 import type { MutationCtx } from './types'
 
@@ -41,3 +42,17 @@ export function emptyPage() {
     pageStatus: 'SplitRequired' as const,
   }
 }
+
+//* zod utils
+export const zTruncate = (max: number, min = 0) =>
+  z
+    .string()
+    .min(min)
+    .transform((value) => value.slice(0, max))
+
+export const zThreadTitle = zTruncate(256, 1)
+export const zMessageName = zTruncate(64)
+export const zMessageTextContent = zTruncate(32767)
+export const zStringToMessageRole = z
+  .string()
+  .transform((value) => z.enum(['user', 'assistant', 'system']).parse(value))

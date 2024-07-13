@@ -1,5 +1,4 @@
 import { ConvexError } from 'convex/values'
-import { z } from 'zod'
 
 import { Doc } from '../_generated/dataModel'
 
@@ -65,20 +64,6 @@ export function hasDelimiter(text: string) {
     text.length > 100
   )
 }
-
-//* zod utils
-export const zTruncate = (max: number, min = 0) =>
-  z
-    .string()
-    .min(min)
-    .transform((value) => value.slice(0, max))
-
-export const zThreadTitle = zTruncate(256, 1)
-export const zMessageName = zTruncate(64)
-export const zMessageTextContent = zTruncate(32767)
-export const zStringToMessageRole = z
-  .string()
-  .transform((value) => z.enum(['user', 'assistant', 'system']).parse(value))
 
 export function getChatConfig(inference?: InferenceConfig): ChatCompletionConfig | null {
   return inference?.type === 'chat-completion' ? inference : null

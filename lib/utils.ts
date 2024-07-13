@@ -1,9 +1,14 @@
 import { clsx } from 'clsx'
-import { format, formatDistanceToNowStrict, isThisYear } from 'date-fns'
 import { atom, WritableAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { twMerge } from 'tailwind-merge'
 
+import type {
+  ChatCompletionConfig,
+  InferenceConfig,
+  TextToAudioConfig,
+  TextToImageConfig,
+} from '@/convex/types'
 import type { ClassValue } from 'clsx'
 
 export type { ClassNameValue } from 'tailwind-merge'
@@ -88,22 +93,6 @@ export function endpointCode(endpoint: string) {
   }
 }
 
-export function formatTimeToDisplayShort(time: number) {
-  const date = new Date(time)
-
-  if (isThisYear(date)) {
-    return formatDistanceToNowStrict(date, { addSuffix: false })
-      .replace(/ seconds?/, 's')
-      .replace(/ minutes?/, 'm')
-      .replace(/ hours?/, 'h')
-      .replace(/ days?/, 'd')
-      .replace(/ months?/, 'mo')
-      .replace(/ years?/, 'y')
-  }
-
-  return format(date, 'MMM d, yyyy')
-}
-
 export function isValidUrl(url: string) {
   try {
     new URL(url)
@@ -111,4 +100,26 @@ export function isValidUrl(url: string) {
   } catch {
     return false
   }
+}
+
+export function getChatConfig(inference?: InferenceConfig): ChatCompletionConfig | null {
+  return inference?.type === 'chat-completion' ? inference : null
+}
+
+export function getTextToImageConfig(inference?: InferenceConfig): TextToImageConfig | null {
+  return inference?.type === 'text-to-image' ? inference : null
+}
+
+export function getTextToAudioConfig(inference?: InferenceConfig): TextToAudioConfig | null {
+  return inference?.type === 'sound-generation' ? inference : null
+}
+
+export function getInferenceConfig(inference?: InferenceConfig) {
+  const base = {
+    chatConfig: getChatConfig(inference),
+    textToImageConfig: getTextToImageConfig(inference),
+    textToAudioConfig: getTextToAudioConfig(inference),
+  }
+
+  return base
 }
