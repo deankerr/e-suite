@@ -1,6 +1,10 @@
 import { useMemo } from 'react'
 import Avatar from 'boring-avatars'
 
+import { cn, stringToHex } from '@/lib/utils'
+
+import type { ClassNameValue } from '@/lib/utils'
+
 const colors = [
   '#e54666',
   '#e93d82',
@@ -18,7 +22,7 @@ const colors = [
   '#f76b15',
 ]
 
-export const Marble = ({
+export const BoringAvatar = ({
   name,
   size = 15,
   variant = 'marble',
@@ -27,5 +31,27 @@ export const Marble = ({
   return useMemo(
     () => <Avatar name={name} size={size} colors={colors} variant={variant} square={square} />,
     [name, size, variant, square],
+  )
+}
+
+const mockImpl = true
+
+export const Marble = ({
+  className,
+  ...props
+}: { className?: ClassNameValue } & Omit<React.ComponentProps<typeof Avatar>, 'colors'>) => {
+  return (
+    <div
+      className={cn('h-fit w-fit flex-none', props.square && 'overflow-hidden rounded', className)}
+    >
+      {mockImpl ? (
+        <div
+          className="size-[15px] rounded-full bg-red-6"
+          style={{ backgroundColor: stringToHex(props.name ?? 'MIA') }}
+        />
+      ) : (
+        <BoringAvatar {...props} />
+      )}
+    </div>
   )
 }

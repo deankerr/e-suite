@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton, ScrollArea } from '@radix-ui/themes'
 
@@ -53,14 +54,17 @@ export const ChatPage = ({
   const thread = useThread({ slug })
   const messages = useMessagesList({ slugOrId: slug })
 
+  const [showSidebar, setShowSidebar] = useState(true)
+
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <ChatPageSkeleton />
 
+  // const msg0 = messages.results[0]
   return (
     <Shell {...props} className={className}>
-      <ScrollArea scrollbars="vertical" className="">
+      <ScrollArea scrollbars="vertical">
         {/* * loader button * */}
-        <div className="mt-3 flex justify-center">
+        <div className={cn('mt-3 flex justify-center', '')}>
           <IconButton
             variant="surface"
             onClick={() => {
@@ -69,27 +73,30 @@ export const ChatPage = ({
               }
             }}
             disabled={messages.status !== 'CanLoadMore'}
-            size="3"
+            size="2"
             className=""
           >
-            <Icons.DiamondsFour className={cn('size-6', messages.isLoading && 'animate-spin')} />
+            <Icons.DiamondsFour className={cn('size-5', messages.isLoading && 'animate-spin')} />
           </IconButton>
         </div>
 
         {/* * feed * */}
-        <div className="flex max-w-full flex-col-reverse items-center gap-0.5 overflow-hidden px-3 text-sm">
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-0.5 overflow-hidden px-1.5 text-sm">
           {messages.results.map((message) => (
-            <Message key={message._id} message={message} />
+            <Message key={message._id} message={message} className="" />
           ))}
-        </div>
 
-        <div className="my-3 flex shrink-0 justify-center">
-          <Icons.SunHorizon className="mx-auto my-2 size-6 text-grayA-8" />
+          <div className="my-3 flex h-8 w-full shrink-0 items-center justify-center overflow-hidden">
+            <div className="absolute right-[55%] top-1/2 h-px w-[40%] bg-grayA-5" />
+            <div className="absolute left-[55%] top-1/2 h-px w-[40%] bg-grayA-5" />
+
+            <Icons.SunHorizon className="size-6 rounded text-grayA-5" />
+          </div>
         </div>
       </ScrollArea>
 
       {/* * sidebar * */}
-      <Sidebar thread={thread} />
+      <Sidebar thread={thread} className={cn(!showSidebar && 'hidden')} />
     </Shell>
   )
 }

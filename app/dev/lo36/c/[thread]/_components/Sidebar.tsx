@@ -17,6 +17,7 @@ const Shell = ({
     <div
       className={cn(
         'flex h-full w-60 shrink-0 flex-col gap-2 overflow-hidden bg-gray-2 px-0.5',
+        'hidden, lg:flex',
         className,
       )}
     >
@@ -25,17 +26,8 @@ const Shell = ({
   )
 }
 
-export const SidebarSkeleton = () => {
-  return (
-    <Shell className="bg-gray-1">
-      <Skeleton className="absolute inset-0" />
-    </Shell>
-  )
-}
-
 export const Sidebar = ({
   thread,
-  className,
   ...props
 }: { thread: EThread } & React.ComponentProps<'div'>) => {
   return (
@@ -48,6 +40,14 @@ export const Sidebar = ({
         {thread.model?.type === 'chat' && <ChatModelCard model={thread.model} />}
         {thread.model?.type === 'image' && <ImageModelCardH model={thread.model} />}
       </div>
+    </Shell>
+  )
+}
+
+export const SidebarSkeleton = () => {
+  return (
+    <Shell className="bg-gray-1">
+      <Skeleton className="absolute inset-0" />
     </Shell>
   )
 }
