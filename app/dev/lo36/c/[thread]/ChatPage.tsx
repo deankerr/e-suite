@@ -58,16 +58,9 @@ export const ChatPage = ({
 
   return (
     <Shell {...props} className={className}>
-      {/* * feed * */}
-      <ScrollArea scrollbars="vertical" className="w-full">
-        <div className="mx-auto flex w-full max-w-3xl flex-col-reverse items-center px-2 py-3">
-          <div className="mx-auto my-3 shrink-0">
-            <Icons.SunHorizon className="size-6 text-grayA-8" />
-          </div>
-          {messages.results.map((message) => (
-            <Message key={message._id} message={message} />
-          ))}
-
+      <ScrollArea scrollbars="vertical" className="">
+        {/* * loader button * */}
+        <div className="mt-3 flex justify-center">
           <IconButton
             variant="surface"
             onClick={() => {
@@ -77,9 +70,21 @@ export const ChatPage = ({
             }}
             disabled={messages.status !== 'CanLoadMore'}
             size="3"
+            className=""
           >
             <Icons.DiamondsFour className={cn('size-6', messages.isLoading && 'animate-spin')} />
           </IconButton>
+        </div>
+
+        {/* * feed * */}
+        <div className="flex max-w-full flex-col-reverse items-center gap-0.5 overflow-hidden px-3 text-sm">
+          {messages.results.map((message) => (
+            <Message key={message._id} message={message} />
+          ))}
+        </div>
+
+        <div className="my-3 flex shrink-0 justify-center">
+          <Icons.SunHorizon className="mx-auto my-2 size-6 text-grayA-8" />
         </div>
       </ScrollArea>
 
