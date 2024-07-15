@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
 import Avatar from 'boring-avatars'
 
-import { cn, stringToHex } from '@/lib/utils'
+import { cn, environment, stringToHex } from '@/lib/utils'
 
 import type { ClassNameValue } from '@/lib/utils'
+
+const shouldUseSimpleAvatar = environment === 'dev'
 
 const colors = [
   '#e54666',
@@ -34,8 +36,6 @@ export const BoringAvatar = ({
   )
 }
 
-const mockImpl = true
-
 export const Marble = ({
   className,
   ...props
@@ -44,7 +44,7 @@ export const Marble = ({
     <div
       className={cn('h-fit w-fit flex-none', props.square && 'overflow-hidden rounded', className)}
     >
-      {mockImpl ? (
+      {shouldUseSimpleAvatar ? (
         <div
           className="size-[15px] rounded-full bg-red-6"
           style={{ backgroundColor: stringToHex(props.name ?? 'MIA') }}

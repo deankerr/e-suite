@@ -3,6 +3,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 
 import { Marble } from '@/app/dev/lo36/c/[thread]/_components/Marble'
+import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Markdown } from '@/components/message/Markdown'
 import { cn, getInferenceConfig } from '@/lib/utils'
@@ -22,40 +23,84 @@ export const Message = ({
 
   const [messageTime] = useState(new Date(message._creationTime).toTimeString().slice(0, 5))
 
+  const shouldAddSpacer = message.images.length > 0 || message.audio.length > 0
   return (
     <div
       {...props}
       className={cn(
         'grid shrink-0 grid-cols-[minmax(72px,_1fr)_minmax(0,_768px)_minmax(48px,_1fr)]',
         'rounded-md border border-transparent hover:border-gray-5',
-        'box-content min-h-7 gap-1 text-sm',
+        'box-content min-h-7 text-sm',
+        shouldAddSpacer && 'mb-2',
         className,
       )}
     >
       {/* # left gutter # */}
-      <div className="sXelf-start flex items-center gap-1.5 border-r border-grayA-2 pl-1">
-        {/* * time * */}
-        <div className="shrink-0 text-gray-10" style={{ fontVariantNumeric: 'tabular-nums' }}>
-          {messageTime ?? '00:00'}
-        </div>
+      <div className="pl-1">
+        <div className="flex min-h-7 items-center gap-1.5">
+          {/* * time * */}
+          <div className="shrink-0 text-gray-10" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            {messageTime ?? '00:00'}
+          </div>
 
-        {/* * marble * */}
-        <Marble name={name} size={15} className={cn('flex overflow-hidden')} />
+          {/* * marble * */}
+          <Marble name={name} size={15} className={cn('flex overflow-hidden')} />
+        </div>
       </div>
 
-      {/* # content # */}
-      <div className="border-x border-grayA-2 py-1">
+      {/* # name / text content # */}
+      <div className="py-1">
         {/* * name * */}
         <span className={cn('shrink-0 font-medium text-brown-11')}>{name}</span>{' '}
         {text && text.length > 300 ? <Markdown text={text} /> : text}
+        {/* * basic error display * */}
+        {message.jobs
+          .flatMap((job) => job.errors)
+          .map(
+            (error, i) =>
+              error && (
+                <div
+                  key={i}
+                  className="rounded-lg border border-red-10 px-2 py-1 text-xs text-red-11"
+                >
+                  {error.code} {error.message}
+                </div>
+              ),
+          )}
       </div>
 
       {/* # right gutter # */}
-      <div className="border-l border-grayA-2 text-right">
+      <div className="text-right">
         <IconButton variant="ghost" size="1" className="m-0 size-7 p-0">
           <Icons.DotsThree size={24} />
         </IconButton>
       </div>
+
+      {/* # images # */}
+      {message.images.length > 0 ? (
+        <>
+          <div></div>
+          <div className="flex flex-wrap justify-center gap-2 py-1">
+            {message.images.map((image) => (
+              <div className="w-full max-w-[45%]" key={image._id}>
+                <ImageCard image={image} />
+              </div>
+            ))}
+          </div>
+          <div></div>
+        </>
+      ) : null}
+
+      {/* # audio # */}
+      {message.audio.length > 0 ? (
+        <div className="col-start-2 space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
+          {message.audio.map((sfx) =>
+            sfx.fileUrl ? (
+              <AudioPlayer key={sfx._id} url={sfx.fileUrl} titleText={sfx.generationData.prompt} />
+            ) : null,
+          )}
+        </div>
+      ) : null}
     </div>
   )
 }

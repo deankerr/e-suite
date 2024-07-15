@@ -2,6 +2,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
 
 import { ChatNavList } from '@/app/dev/lo36/_components/ChatNavList'
+import { UserButtons } from '@/components/layout/UserButtons'
 import { Logo } from '@/components/ui/Logo'
 import { cn } from '@/lib/utils'
 
@@ -35,7 +36,7 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         <div className="flex grow flex-col gap-2 overflow-hidden">
           <div className="flex justify-center py-2">
             <Button variant="surface">
-              <Icons.AirplaneInFlight className="size-6" />
+              <Icons.Feather weight="light" className="size-6" />
               Compose
             </Button>
           </div>
@@ -44,12 +45,8 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* * footer * */}
-        <div className="flex h-12 shrink-0 items-center justify-center border-t px-3">
-          <IconButton variant="surface">
-            <Icons.User className="size-6" />
-          </IconButton>
-
-          {/* <UserButtons /> */}
+        <div className="flex h-10 shrink-0 items-center justify-center border-t px-3">
+          <UserButtons />
         </div>
       </div>
 

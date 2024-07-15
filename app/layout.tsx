@@ -5,7 +5,7 @@ import { dark } from '@clerk/themes'
 import { Theme } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { IBM_Plex_Mono, Inter } from 'next/font/google'
+import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ClientProviders } from '@/components/util/ClientProviders'
@@ -35,14 +35,21 @@ const inter = Inter({
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
-  weight: ['400', '500', '600'],
+  weight: ['400'],
   variable: '--font-mono',
+})
+
+const chakraPetch = Chakra_Petch({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400'],
+  variable: '--font-chakra-petch',
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(inter.variable, ibmPlexMono.variable)}>
-      <head>
+    <html lang="en" className={cn(inter.variable, ibmPlexMono.variable, chakraPetch.variable)}>
+      {/* <head>
         {process.env.VERCEL_ENV === 'preview' && (
           // eslint-disable-next-line @next/next/no-sync-scripts
           <script
@@ -51,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             src="https://snippet.meticulous.ai/v1/meticulous.js"
           />
         )}
-      </head>
+      </head> */}
 
       <body className="overscroll-y-none">
         <ClerkProvider appearance={{ baseTheme: dark }}>

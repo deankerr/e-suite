@@ -80,7 +80,7 @@
 }
 
 .colorize-orange {
-  filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(0deg) saturate(5);
+  filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(-6deg) saturate(5);
 }
 
 .noisey {
