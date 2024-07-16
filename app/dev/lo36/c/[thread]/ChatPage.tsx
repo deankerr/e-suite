@@ -1,9 +1,10 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
+import { Button, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
+import { Composer } from '@/app/dev/lo36/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/dev/lo36/c/[thread]/_components/Message'
 import { Sidebar, SidebarSkeleton } from '@/app/dev/lo36/c/[thread]/_components/Sidebar'
 import { ChatProvider, useChat } from '@/app/dev/lo36/c/[thread]/_provider/ChatProvider'
@@ -20,7 +21,7 @@ const Shell = ({
   className?: ClassNameValue
   children: React.ReactNode
 }) => {
-  return <div className={cn('flex h-full w-full', className)}>{children}</div>
+  return <div className={cn('flex h-full w-full bg-gray-1', className)}>{children}</div>
 }
 
 const Component = () => {
@@ -31,19 +32,22 @@ const Component = () => {
 
   return (
     <Shell>
-      <ScrollArea scrollbars="vertical">
-        {/* * feed * */}
-        <div className="mx-auto flex max-w-3xl flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
-          <EndOfFeedIndicator />
+      <div className="flex h-full w-full flex-col">
+        <ScrollArea scrollbars="vertical">
+          {/* * feed * */}
+          <div className="mx-auto flex max-w-3xl flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
+            <EndOfFeedIndicator />
 
-          {/* * messages * */}
-          {messages.map((message) => (
-            <Message key={message._id} message={message} className="" />
-          ))}
+            {/* * messages * */}
+            {messages.map((message) => (
+              <Message key={message._id} message={message} className="" />
+            ))}
 
-          <LoadMoreButton />
-        </div>
-      </ScrollArea>
+            <LoadMoreButton />
+          </div>
+        </ScrollArea>
+        <Composer className="border-t" />
+      </div>
 
       {/* * sidebar * */}
       <Sidebar thread={thread} />

@@ -1,6 +1,9 @@
-import { NumberZero, Nut } from '@phosphor-icons/react/dist/ssr'
+'use client'
+
+import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import { CommandMenu } from '@/components/command-menu/CommandMenu'
 import { UserButtons } from '@/components/layout/UserButtons'
@@ -10,6 +13,7 @@ import { cn } from '@/lib/utils'
 
 type NavRailProps = React.ComponentProps<'div'>
 export const NavRail = ({ className, ...props }: NavRailProps) => {
+  const path = usePathname()
   return (
     <nav
       {...props}
@@ -25,13 +29,18 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
 
       <AdminOnlyUi>
         <IconButton variant="ghost" className="shrink-0" asChild>
+          <Link href={`/dev/lo36/${path.slice(1)}`}>
+            <Icons.Planet className="size-6" />
+          </Link>
+        </IconButton>
+        <IconButton variant="ghost" className="shrink-0" asChild>
           <Link href={`/c/none`}>
-            <NumberZero className="size-6" />
+            <Icons.NumberZero className="size-6" />
           </Link>
         </IconButton>
         <IconButton variant="ghost" className="shrink-0" asChild>
           <Link href={`/admin`}>
-            <Nut className="size-6" />
+            <Icons.Nut className="size-6" />
           </Link>
         </IconButton>
       </AdminOnlyUi>
