@@ -20,10 +20,10 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
           'hidden sm:flex',
         )}
       >
-        {/* * logotype / menu button * */}
+        {/* * logo / menu button * */}
         <div className="flex h-11 shrink-0 items-center justify-between px-2.5 py-1">
-          <div className="flex items-center gap-0.5 text-lg font-semibold tracking-tight">
-            <Logo className="size-6 translate-y-[0.05rem]" />
+          <div className="flex items-center gap-1 text-lg font-semibold tracking-tight">
+            <Logo className="-mb-0 size-[1.375rem] translate-y-[0.05rem]" />
             e/suite
           </div>
 
@@ -45,7 +45,7 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* * footer * */}
-        <div className="flex h-10 shrink-0 items-center justify-center border-t px-3">
+        <div className="flex h-12 shrink-0 items-center justify-center border-t border-grayA-3 px-3">
           <UserButtons />
         </div>
       </div>

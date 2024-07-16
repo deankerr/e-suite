@@ -46,7 +46,7 @@ export const Marble = ({
     >
       {shouldUseSimpleAvatar ? (
         <div
-          className="size-[15px] rounded-full bg-red-6"
+          className="size-[15px] rounded-full bg-red-6 outline -outline-offset-2 outline-grayA-7"
           style={{ backgroundColor: stringToHex(props.name ?? 'MIA') }}
         />
       ) : (

@@ -1,15 +1,14 @@
 'use client'
 
-import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { IconButton, ScrollArea } from '@radix-ui/themes'
+import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { Message } from '@/app/dev/lo36/c/[thread]/_components/Message'
 import { Sidebar, SidebarSkeleton } from '@/app/dev/lo36/c/[thread]/_components/Sidebar'
+import { ChatProvider, useChat } from '@/app/dev/lo36/c/[thread]/_provider/ChatProvider'
 import { Link } from '@/components/ui/Link'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { useMessagesList, useThread } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
 import type { ClassNameValue } from '@/lib/utils'
@@ -24,63 +23,81 @@ const Shell = ({
   return <div className={cn('flex h-full w-full', className)}>{children}</div>
 }
 
-export const ChatPage = ({
-  slug,
-  className,
-  ...props
-}: { slug: string } & React.ComponentProps<'div'>) => {
-  const thread = useThread({ slug })
-  const messages = useMessagesList({ slugOrId: slug })
-
-  const [showSidebar, setShowSidebar] = useState(true)
+const Component = () => {
+  const { thread, messages } = useChat()
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <ChatPageSkeleton />
 
-  // const msg0 = messages.results[0]
   return (
-    <Shell {...props} className={className}>
+    <Shell>
       <ScrollArea scrollbars="vertical">
         {/* * feed * */}
         <div className="mx-auto flex max-w-3xl flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
           <EndOfFeedIndicator />
 
           {/* * messages * */}
-          {messages.results.map((message) => (
+          {messages.map((message) => (
             <Message key={message._id} message={message} className="" />
           ))}
 
-          {/* * loader button * */}
-          <div className={cn('mt-3 flex justify-center', '')}>
-            <IconButton
-              variant="surface"
-              onClick={() => {
-                if (messages.status === 'CanLoadMore') {
-                  messages.loadMore(100)
-                }
-              }}
-              disabled={messages.status !== 'CanLoadMore'}
-              size="2"
-              className=""
-            >
-              <Icons.DiamondsFour className={cn('size-5', messages.isLoading && 'animate-spin')} />
-            </IconButton>
-          </div>
+          <LoadMoreButton />
         </div>
       </ScrollArea>
 
       {/* * sidebar * */}
-      <Sidebar thread={thread} className={cn(!showSidebar && 'hidden')} />
+      <Sidebar thread={thread} />
     </Shell>
   )
 }
 
-const EndOfFeedIndicator = () => {
+export const ChatPage = ({ slug, onClose }: { slug: string; onClose?: (slug: string) => void }) => {
   return (
-    <div className="my-3 flex h-8 w-full shrink-0 items-center justify-center overflow-hidden">
+    <ChatProvider slug={slug} onClose={onClose}>
+      <Component />
+    </ChatProvider>
+  )
+}
+
+const LoadMoreButton = () => {
+  const { page, loadMoreMessages } = useChat()
+
+  if (page.status === 'Exhausted') return <EndOfFeedIndicator position="end" />
+
+  return (
+    <div className="flex h-12 w-full items-center justify-center">
+      <Button
+        variant="surface"
+        size="1"
+        className="w-48"
+        disabled={page.status !== 'CanLoadMore'}
+        onClick={() => loadMoreMessages()}
+      >
+        {page.isLoading ? (
+          <Icons.CircleNotch className="size-4 animate-spin" />
+        ) : (
+          'Load More Messages'
+        )}
+      </Button>
+    </div>
+  )
+}
+
+const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end' }) => {
+  return (
+    <div
+      className={cn(
+        'flex h-7 w-full shrink-0 items-center justify-center overflow-hidden',
+        position === 'start' ? 'mb-2' : 'mt-2',
+      )}
+    >
       <div className="absolute right-[57.5%] top-1/2 h-px w-[37.5%] bg-grayA-5" />
       <div className="absolute left-[57.5%] top-1/2 h-px w-[37.5%] bg-grayA-5" />
-      <Icons.SunHorizon className="size-6 rounded text-grayA-5" />
+      {position === 'start' ? (
+        <Icons.SunHorizon className="size-6 rounded text-grayA-5" />
+      ) : (
+        <Icons.Planet className="size-6 rounded text-grayA-5" />
+      )}
     </div>
   )
 }

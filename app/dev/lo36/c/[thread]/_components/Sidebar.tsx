@@ -17,7 +17,7 @@ const Shell = ({
     <div
       className={cn(
         'flex h-full w-60 shrink-0 flex-col gap-2 overflow-hidden bg-gray-2 px-0.5',
-        'hidden, lg:flex',
+        'hidden lg:flex',
         className,
       )}
     >

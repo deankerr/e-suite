@@ -13,10 +13,15 @@ import { cn, environment } from '@/lib/utils'
 
 import type { Metadata, Viewport } from 'next'
 
+const devIndicator = '🔅'
+const previewIndicator = '✴️'
+const indicator =
+  environment === 'dev' ? devIndicator : environment === 'prev' ? previewIndicator : ''
+
 export const metadata: Metadata = {
   title: {
-    template: 'e/suite / %s',
-    default: 'e/suite',
+    template: `${indicator}e/suite / %s`,
+    default: `${indicator}e/suite`,
   },
   description: "it's the e/suite",
 }
@@ -49,7 +54,7 @@ const chakraPetch = Chakra_Petch({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={cn(inter.variable, ibmPlexMono.variable, chakraPetch.variable)}>
-      {/* <head>
+      <head>
         {process.env.VERCEL_ENV === 'preview' && (
           // eslint-disable-next-line @next/next/no-sync-scripts
           <script
@@ -58,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             src="https://snippet.meticulous.ai/v1/meticulous.js"
           />
         )}
-      </head> */}
+      </head>
 
       <body className="overscroll-y-none">
         <ClerkProvider appearance={{ baseTheme: dark }}>

@@ -13,10 +13,10 @@ export const size = {
 export const contentType = 'image/png'
 
 const orange = '#FF801F'
-const bronze = '#AE8C7E'
-const gold = '#A39073'
+const amber = '#ffd60a'
+const gold = '#a39073'
 
-const color = environment === 'prod' ? orange : environment === 'prev' ? bronze : gold
+const color = environment === 'prod' ? orange : environment === 'prev' ? amber : gold
 
 const sun = svgToDataUri(`<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1200pt" height="1200pt" version="1.1" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
