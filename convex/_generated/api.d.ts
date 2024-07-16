@@ -23,6 +23,7 @@ import type * as db_messages from "../db/messages.js";
 import type * as db_speech from "../db/speech.js";
 import type * as db_threads from "../db/threads.js";
 import type * as db_voiceModels from "../db/voiceModels.js";
+import type * as deletion from "../deletion.js";
 import type * as endpoints_aws from "../endpoints/aws.js";
 import type * as endpoints_elevenlabs from "../endpoints/elevenlabs.js";
 import type * as endpoints_fal from "../endpoints/fal.js";
@@ -75,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "db/speech": typeof db_speech;
   "db/threads": typeof db_threads;
   "db/voiceModels": typeof db_voiceModels;
+  deletion: typeof deletion;
   "endpoints/aws": typeof endpoints_aws;
   "endpoints/elevenlabs": typeof endpoints_elevenlabs;
   "endpoints/fal": typeof endpoints_fal;

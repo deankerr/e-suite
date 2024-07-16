@@ -187,7 +187,7 @@ export const append = mutation({
   },
 })
 
-const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime'])))
+const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime', 'metadata'])))
 export const update = mutation({
   args: {
     threadId: v.string(),
@@ -206,9 +206,11 @@ export const remove = mutation({
     threadId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx
+    await ctx
       .table('threads')
       .getX(args.threadId as Id<'threads'>)
       .delete()
+
+    await ctx.scheduler.runAfter(0, internal.deletion.scheduleFileDeletion, {})
   },
 })

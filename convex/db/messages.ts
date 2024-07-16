@@ -1,6 +1,7 @@
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 
+import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { kvListV, messageFields } from '../schema'
 import { emptyPage, zStringToMessageRole } from '../utils'
@@ -213,7 +214,6 @@ export const update = mutation({
     role: messageFields.role,
     name: v.optional(v.string()),
     text: v.optional(v.string()),
-    metadata: v.optional(kvListV),
   },
   handler: async (ctx, { messageId, ...fields }) => {
     return await ctx.table('messages').getX(messageId).patch(fields)
@@ -225,10 +225,12 @@ export const remove = mutation({
     messageId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx
+    await ctx
       .table('messages')
       .getX(args.messageId as Id<'messages'>)
       .delete()
+
+    await ctx.scheduler.runAfter(0, internal.deletion.scheduleFileDeletion, {})
   },
 })
 
