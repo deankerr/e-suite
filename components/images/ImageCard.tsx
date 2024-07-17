@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, Card, IconButton } from '@radix-ui/themes'
+import Link from 'next/link'
 
 import { Image } from '@/components/images/Image'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { cn } from '@/lib/utils'
+import { cn, getConvexSiteUrl } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
 
@@ -43,15 +44,17 @@ export const ImageCard = ({
           {image.width}x{image.height}
         </div>
 
-        <IconButton
-          variant="ghost"
-          color="gray"
-          radius="full"
-          size="1"
-          className="group-hover:bg-[var(--card-1-light)] group-hover:backdrop-blur"
-        >
-          <Icons.DotsThreeVertical className="size-9 text-white" weight="bold" />
-        </IconButton>
+        <Link href={`${getConvexSiteUrl()}/i/${image._id}?download`}>
+          <IconButton
+            variant="ghost"
+            color="gray"
+            radius="full"
+            size="1"
+            className="group-hover:bg-[var(--card-1-light)] group-hover:backdrop-blur"
+          >
+            <Icons.DotsThreeVertical className="size-9 text-white" weight="bold" />
+          </IconButton>
+        </Link>
       </div>
 
       {/* * caption panel * */}
