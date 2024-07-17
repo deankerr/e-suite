@@ -5,6 +5,7 @@ import { focusAtom } from 'jotai-optics'
 import { atomWithStorage } from 'jotai/utils'
 
 export const commandMenuOpenAtom = atom(false)
+export const commandShellOpenAtom = atom(false)
 
 export const voiceoverQueueAtom = atom<string[]>([])
 export const voiceoverAutoplayThreadIdAtom = atom('')

@@ -2,8 +2,9 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
 
 import { ChatNavList } from '@/app/dev/lo36/_components/ChatNavList'
+import { CommandShell } from '@/components/command-shell/CommandShell'
 import { UserButtons } from '@/components/layout/UserButtons'
-import { Logo } from '@/components/ui/Logo'
+import { AppLogoName } from '@/components/ui/AppLogoName'
 import { cn } from '@/lib/utils'
 
 export const metadata = {
@@ -22,14 +23,15 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
       >
         {/* * logo / menu button * */}
         <div className="flex h-11 shrink-0 items-center justify-between px-2.5 py-1">
-          <div className="flex items-center gap-1 text-lg font-semibold tracking-tight">
-            <Logo className="-mb-0 size-[1.375rem] translate-y-[0.05rem]" />
-            e/suite
-          </div>
+          <AppLogoName />
 
-          <IconButton variant="ghost" size="1" className="shrink-0">
-            <Icons.List className="size-6" />
-          </IconButton>
+          <CommandShell
+            button={
+              <IconButton variant="ghost" size="1" className="shrink-0">
+                <Icons.List className="size-6" />
+              </IconButton>
+            }
+          />
         </div>
 
         {/* * main nav * */}
