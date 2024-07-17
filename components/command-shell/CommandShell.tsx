@@ -1,34 +1,22 @@
 'use client'
 
-import { List } from '@phosphor-icons/react/dist/ssr'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Dialog, IconButton, Inset } from '@radix-ui/themes'
+import { Dialog, Inset } from '@radix-ui/themes'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useAtom } from 'jotai'
 
-import { AppLogoName } from '@/components/ui/AppLogoName'
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from '@/components/ui/Command'
+  Cmdk,
+  CmdkEmpty,
+  CmdkGroup,
+  CmdkInput,
+  CmdkItem,
+  CmdkList,
+} from '@/components/command-shell/components/Cmdk'
+import { AppLogoName } from '@/components/ui/AppLogoName'
 import { commandShellOpenAtom } from '@/lib/atoms'
-import { cn } from '@/lib/utils'
 
-const groupStyle =
-  '[&_[cmdk-group-heading]]:px-1 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2'
-
-const inputStyle = '[&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12'
-
-const itemStyle =
-  '[&_[cmdk-item]]:px-4 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]]:opacity-90 aria-selected:[&_[cmdk-item]]:opacity-100 [&_[cmdk-item]_svg]:size-4 aria-selected:[&_[cmdk-item]]:bg-grayA-3 aria-selected:[&_[cmdk-item]]:text-white [&_[cmdk-item]]:gap-4 [&_[cmdk-item]]:rounded'
-
-export const CommandShell = (props: { button?: React.ReactNode }) => {
+export const CommandShell = ({ children }: { children?: React.ReactNode }) => {
   const [open, setOpen] = useAtom(commandShellOpenAtom)
 
   useKeyboardEvent('k', (e) => {
@@ -40,97 +28,91 @@ export const CommandShell = (props: { button?: React.ReactNode }) => {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger>
-        {props.button ?? (
-          <IconButton variant="ghost" className="shrink-0">
-            <List className="size-6" />
-          </IconButton>
-        )}
-      </Dialog.Trigger>
+      {children ? <Dialog.Trigger>{children}</Dialog.Trigger> : null}
       <Dialog.Content aria-describedby={undefined}>
         <Dialog.Title className="sr-only">Command Menu</Dialog.Title>
 
-        <Inset side="top" className="border-b border-grayA-3 px-2.5 py-2">
+        <Inset side="top" className="flex items-baseline gap-2 border-b border-grayA-3 px-3 py-2.5">
           <AppLogoName />
+          <div className="ml-auto font-mono text-sm text-gray-11">Command Shell</div>
         </Inset>
 
         <Inset side="bottom">
           {/* # Menu */}
-          <Command className={cn('border-none bg-gray-2', itemStyle, groupStyle, inputStyle)}>
-            <CommandInput
+          <Cmdk>
+            <CmdkInput
               placeholder="Type a command or search..."
               className="border-b border-grayA-3"
             />
-            <CommandList className="h-[400px] max-h-[80lvh]">
-              <CommandEmpty>No results found.</CommandEmpty>
+            <CmdkList>
+              <CmdkEmpty>No results found.</CmdkEmpty>
 
-              <CommandGroup heading="Threads">
-                <CommandItem>
+              <CmdkGroup heading="Threads">
+                <CmdkItem>
                   <Icons.Plus />
                   Create new thread
-                  <CommandShortcut>⌘N</CommandShortcut>
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.MagnifyingGlass />
                   Search threads...
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.Chat />
                   Conversations with e
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.Chat />
                   Who am I?
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.Chat />
                   How to change a tyre
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.Chat />
                   React useMemo
-                </CommandItem>
-              </CommandGroup>
+                </CmdkItem>
+              </CmdkGroup>
 
-              <CommandGroup heading="Generations">
-                <CommandItem>
+              <CmdkGroup heading="Generations">
+                <CmdkItem>
                   <Icons.Plus />
                   Create new generation
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.MagnifyingGlass />
                   Search generations...
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.ImageSquare />
                   SD3: Medium
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.ImageSquare />
                   Pixart Generations
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.ImageSquare />
                   Anime Babes
-                </CommandItem>
-              </CommandGroup>
+                </CmdkItem>
+              </CmdkGroup>
 
-              <CommandGroup heading="Settings">
-                <CommandItem>
+              <CmdkGroup heading="Settings">
+                <CmdkItem>
                   <Icons.User />
                   Profile
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.Gear />
                   Preferences
-                </CommandItem>
-                <CommandItem>
+                </CmdkItem>
+                <CmdkItem>
                   <Icons.SignOut />
                   Log out
-                </CommandItem>
-              </CommandGroup>
-            </CommandList>
-          </Command>
+                </CmdkItem>
+              </CmdkGroup>
+            </CmdkList>
+          </Cmdk>
         </Inset>
       </Dialog.Content>
     </Dialog.Root>

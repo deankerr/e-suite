@@ -25,13 +25,13 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         <div className="flex h-11 shrink-0 items-center justify-between px-2.5 py-1">
           <AppLogoName />
 
-          <CommandShell
+          {/* <CommandShell
             button={
               <IconButton variant="ghost" size="1" className="shrink-0">
                 <Icons.List className="size-6" />
               </IconButton>
             }
-          />
+          /> */}
         </div>
 
         {/* * main nav * */}

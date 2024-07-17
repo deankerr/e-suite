@@ -1,17 +1,15 @@
 import Image from 'next/image'
 
-import Noun26 from '@/assets/logo.svg'
+import LogoSvg from '@/assets/logo.svg'
 import { cn } from '@/lib/utils'
 
-type LogoProps = Partial<React.ComponentProps<typeof Image>>
-
-export const Logo = ({ className, ...props }: LogoProps) => {
+export const Logo = ({ className, ...props }: Partial<React.ComponentProps<typeof Image>>) => {
   return (
     <Image
       {...props}
-      src={Noun26}
+      src={LogoSvg}
       alt="logo"
-      className={cn('size-7 flex-none', className)}
+      className={cn('size-6', className)}
       priority
       unoptimized
     />

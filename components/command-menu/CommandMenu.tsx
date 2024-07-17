@@ -8,7 +8,7 @@ import { useAtom } from 'jotai'
 import { ImagePlusIcon, MessageSquarePlusIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-import { AppLogoTitle } from '@/components/ui/AppLogoTitle'
+import { AppLogoName } from '@/components/ui/AppLogoName'
 import {
   Command,
   CommandEmpty,
@@ -55,7 +55,7 @@ export const CommandMenu = (props: { button?: React.ReactNode }) => {
 
         <Inset side="top" className="p-3">
           <div className="pt-0.5 flex-between">
-            <AppLogoTitle />
+            <AppLogoName />
           </div>
         </Inset>
 

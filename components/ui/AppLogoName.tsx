@@ -3,15 +3,9 @@ import { cn } from '@/lib/utils'
 
 export const AppLogoName = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (
-    <div
-      {...props}
-      className={cn(
-        'flex flex-none items-center gap-1 text-lg font-semibold tracking-tight',
-        className,
-      )}
-    >
-      <Logo className="size-[1.375rem] translate-y-[0.05rem]" />
-      e/suite
+    <div {...props} className={cn('flex flex-none items-baseline gap-1', className)}>
+      <Logo className="self-center" />
+      <div className="text-lg font-semibold tracking-tight">e/suite</div>
     </div>
   )
 }
