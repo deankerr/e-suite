@@ -1,8 +1,8 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
+import Link from 'next/link'
 
 import { ChatNavList } from '@/app/dev/lo36/_components/ChatNavList'
-import { CommandShell } from '@/components/command-shell/CommandShell'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoName } from '@/components/ui/AppLogoName'
 import { cn } from '@/lib/utils'
@@ -13,13 +13,13 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
       <nav className="flex h-full flex-col overflow-hidden rounded-md border border-transparent">
         {/* * logo / menu button * */}
         <div className="flex h-12 shrink-0 items-center justify-between px-1.5">
-          <AppLogoName className="" />
+          <Link href="/c">
+            <AppLogoName />
+          </Link>
 
-          <CommandShell>
-            <IconButton variant="ghost" size="1" className="shrink-0">
-              <Icons.List className="size-6" />
-            </IconButton>
-          </CommandShell>
+          <IconButton variant="ghost" size="1" className="shrink-0">
+            <Icons.List className="size-6" />
+          </IconButton>
         </div>
 
         {/* * compose * */}

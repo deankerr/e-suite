@@ -12,7 +12,7 @@ const Cmdk = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive
     ref={ref}
-    className={cn('flex h-full w-full flex-col overflow-hidden bg-gray-2', className)}
+    className={cn('flex h-full w-full flex-col overflow-hidden bg-gray-2 outline-none', className)}
     {...props}
   />
 ))
@@ -47,7 +47,7 @@ const CmdkList = React.forwardRef<
       transition: 'height 100ms ease',
     }}
     className={cn(
-      'h-[var(--cmdk-list-height)] max-h-[24rem] overflow-y-auto overflow-x-hidden',
+      'h-[var(--cmdk-list-height)] max-h-[24rem] scroll-py-1 overflow-y-auto overflow-x-hidden',
       className,
     )}
     {...props}
@@ -100,7 +100,7 @@ const CmdkItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-pointer select-none items-center gap-4 rounded px-4 py-2.5 text-sm opacity-90 outline-none aria-selected:bg-grayA-4 aria-selected:text-white aria-selected:opacity-100 data-[disabled="false"]:pointer-events-auto data-[disabled="true"]:opacity-50 [&_svg]:size-[1.125rem] [&_svg]:shrink-0',
+      'relative flex cursor-pointer select-none items-center gap-4 rounded px-4 py-2.5 text-sm opacity-85 outline-none aria-selected:bg-grayA-4 aria-selected:text-white aria-selected:opacity-100 data-[disabled="false"]:pointer-events-auto data-[disabled="true"]:opacity-50 [&_svg]:size-[1.125rem] [&_svg]:shrink-0',
       className,
     )}
     {...props}
