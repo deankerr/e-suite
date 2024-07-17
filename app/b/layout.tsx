@@ -1,9 +1,14 @@
-import { Navigation } from '@/app/dev/lo36/Navigation'
+import { Navigation } from '@/app/b/Navigation'
 import { CommandShell } from '@/components/command-shell/CommandShell'
 import { cn } from '@/lib/utils'
 
-export const metadata = {
-  title: 'LO36',
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: {
+    template: `β / %s`,
+    default: `β`,
+  },
 }
 
 export default function Lo36Layout({ children }: { children: React.ReactNode }) {

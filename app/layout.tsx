@@ -14,7 +14,7 @@ import { cn, environment } from '@/lib/utils'
 import type { Metadata, Viewport } from 'next'
 
 const devIndicator = '🔅'
-const previewIndicator = '✴️'
+const previewIndicator = '👁️'
 const indicator =
   environment === 'dev' ? devIndicator : environment === 'prev' ? previewIndicator : ''
 
@@ -57,16 +57,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={cn('overscroll-none', inter.variable, ibmPlexMono.variable, chakraPetch.variable)}
     >
-      <head>
-        {process.env.VERCEL_ENV === 'preview' && (
-          // eslint-disable-next-line @next/next/no-sync-scripts
+      {process.env.METICULOUS === 'true' && (
+        <head>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
           <script
             data-project-id="nbXksKI7xQWFFu6T8ARpgvCnWU91V2zWxIWYOqaZ"
             data-is-production-environment="false"
             src="https://snippet.meticulous.ai/v1/meticulous.js"
           />
-        )}
-      </head>
+        </head>
+      )}
 
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>

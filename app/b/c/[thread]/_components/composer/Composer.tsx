@@ -3,7 +3,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
 
-import { useChat } from '@/app/dev/lo36/c/[thread]/_provider/ChatProvider'
+import { useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { commandShellOpenAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
