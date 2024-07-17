@@ -27,7 +27,7 @@ const CmdkInput = React.forwardRef<
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        'flex h-11 w-full border-none bg-transparent py-3 text-base outline-none placeholder:text-gray-10 disabled:cursor-not-allowed disabled:opacity-50',
+        'flex h-12 w-full border-none bg-transparent py-3 text-base outline-none placeholder:text-gray-10 disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}
@@ -100,7 +100,7 @@ const CmdkItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-pointer select-none items-center gap-4 rounded px-4 py-2.5 text-sm opacity-90 outline-none aria-selected:bg-grayA-3 aria-selected:text-white aria-selected:opacity-100 data-[disabled="false"]:pointer-events-auto data-[disabled="true"]:opacity-50 [&_svg]:size-4',
+      'relative flex cursor-pointer select-none items-center gap-4 rounded px-4 py-2.5 text-sm opacity-90 outline-none aria-selected:bg-grayA-4 aria-selected:text-white aria-selected:opacity-100 data-[disabled="false"]:pointer-events-auto data-[disabled="true"]:opacity-50 [&_svg]:size-[1.125rem] [&_svg]:shrink-0',
       className,
     )}
     {...props}

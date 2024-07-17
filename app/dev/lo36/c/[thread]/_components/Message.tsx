@@ -43,7 +43,11 @@ export const Message = ({
       <div className="pl-1">
         <div className="flex min-h-7 items-center gap-1.5">
           {/* * time * */}
-          <div className="shrink-0 text-gray-10" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <div
+            className="shrink-0 text-gray-10"
+            style={{ fontVariantNumeric: 'tabular-nums' }}
+            suppressHydrationWarning
+          >
             {messageTime ?? '00:00'}
           </div>
 
