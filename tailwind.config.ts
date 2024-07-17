@@ -2,13 +2,11 @@
 
 import svgToDataUri from 'mini-svg-data-uri'
 import { fontFamily } from 'tailwindcss/defaultTheme'
-// @ts-expect-error - flattenColorPalette file does not export a type declaration
-import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
 import plugin from 'tailwindcss/plugin'
 
-import type { Config } from 'tailwindcss'
+import radixColors from './lib/radix-colors'
 
-const radixColors = createRadixColors()
+import type { Config } from 'tailwindcss'
 
 const config: Config = {
   darkMode: 'class',
@@ -17,15 +15,15 @@ const config: Config = {
     require('@tailwindcss/container-queries'),
     require('tailwindcss-animated'),
     require('@tailwindcss/typography'),
-    // css reset
     plugin(({ addBase }) => {
+      // css reset
       addBase({
-        '*': { boxSizing: 'border-box', position: 'relative', minWidth: '0' },
-        p: { textWrap: 'pretty' },
+        '*': { position: 'relative', minWidth: '0' },
       })
     }),
-    plugin(({ addUtilities }) => {
-      addUtilities({
+    plugin(({ addComponents }) => {
+      // flex utilities
+      addComponents({
         '.flex-start': {
           display: 'flex',
           'flex-direction': 'row',
@@ -76,7 +74,8 @@ const config: Config = {
         },
       })
     }),
-    plugin(function ({ matchUtilities, theme }: any) {
+    plugin(function ({ matchUtilities }: any) {
+      // svg backgrounds
       matchUtilities(
         {
           'bg-grid': (value: any) => ({
@@ -112,24 +111,45 @@ const config: Config = {
             backgroundAttachment: 'fixed',
           }),
         },
-        { values: flattenColorPalette(theme('backgroundColor')), type: 'color' },
+        { values: radixColors.hex, type: 'color' },
       )
     }),
   ],
   theme: {
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      black: '#000000',
+      white: '#ffffff',
+      ...radixColors.css,
+      surface: 'var(--color-surface)',
+      overlay: 'var(--color-overlay)',
+      'panel-solid': 'var(--color-panel-solid)',
+      'panel-translucent': 'var(--color-panel-translucent)',
+      midnight: '#090908',
+    },
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
+    screens: {
+      // radix themes breakpoints
+      sm: '520px', // Phones (landscape)
+      md: '768px', // Tablets (portrait)
+      lg: '1024px', // Tablets (landscape)
+      xl: '1280px', // Laptops
+      '2xl': '1640px', // Desktops
+    },
+
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
       borderColor: {
         DEFAULT: 'var(--gray-6)',
-      },
-      colors: {
-        ...radixColors,
-        surface: 'var(--color-surface)',
-        overlay: 'var(--color-overlay)',
-        'panel-solid': 'var(--color-panel-solid)',
-        'panel-translucent': 'var(--color-panel-translucent)',
       },
       containers: {
         '2xs': '16rem',
@@ -156,85 +176,7 @@ const config: Config = {
         starfieldDown: 'starfieldDown 20s linear infinite',
       },
     },
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
-    },
-
-    // radix themes breakpoints
-    screens: {
-      sm: '520px', // Phones (landscape)
-      md: '768px', // Tablets (portrait)
-      lg: '1024px', // Tablets (landscape)
-      xl: '1280px', // Laptops
-      '2xl': '1640px', // Desktops
-    },
   },
 }
 
 export default config
-
-function createRadixColors() {
-  const scale = (key: string) =>
-    Object.fromEntries([...Array(12)].map((_, i) => [i + 1, `var(--${key}${i + 1})`]))
-
-  return {
-    accent: scale('orange-'),
-    accentA: scale('orange-a'),
-    gray: scale('sand-'),
-    grayA: scale('sand-a'),
-    gold: scale('gold-'),
-    goldA: scale('gold-a'),
-    bronze: scale('bronze-'),
-    bronzeA: scale('bronze-a'),
-    brown: scale('brown-'),
-    brownA: scale('brown-a'),
-    yellow: scale('yellow-'),
-    yellowA: scale('yellow-a'),
-    amber: scale('amber-'),
-    amberA: scale('amber-a'),
-    orange: scale('orange-'),
-    orangeA: scale('orange-a'),
-    tomato: scale('tomato-'),
-    tomatoA: scale('tomato-a'),
-    red: scale('red-'),
-    redA: scale('red-a'),
-    ruby: scale('ruby-'),
-    rubyA: scale('ruby-a'),
-    crimson: scale('crimson-'),
-    crimsonA: scale('crimson-a'),
-    pink: scale('pink-'),
-    pinkA: scale('pink-a'),
-    plum: scale('plum-'),
-    plumA: scale('plum-a'),
-    purple: scale('purple-'),
-    purpleA: scale('purple-a'),
-    violet: scale('violet-'),
-    violetA: scale('violet-a'),
-    iris: scale('iris-'),
-    irisA: scale('iris-a'),
-    indigo: scale('indigo-'),
-    indigoA: scale('indigo-a'),
-    blue: scale('blue-'),
-    blueA: scale('blue-a'),
-    cyan: scale('cyan-'),
-    cyanA: scale('cyan-a'),
-    teal: scale('teal-'),
-    tealA: scale('teal-a'),
-    jade: scale('jade-'),
-    jadeA: scale('jade-a'),
-    green: scale('green-'),
-    greenA: scale('green-a'),
-    grass: scale('grass-'),
-    grassA: scale('grass-a'),
-    lime: scale('lime-'),
-    limeA: scale('lime-a'),
-    mint: scale('mint-'),
-    mintA: scale('mint-a'),
-    sky: scale('sky-'),
-    skyA: scale('sky-a'),
-  }
-}
