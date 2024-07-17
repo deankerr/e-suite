@@ -1,14 +1,12 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
+import { Button, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { Composer } from '@/app/dev/lo36/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/dev/lo36/c/[thread]/_components/Message'
-import { Sidebar, SidebarSkeleton } from '@/app/dev/lo36/c/[thread]/_components/Sidebar'
 import { ChatProvider, useChat } from '@/app/dev/lo36/c/[thread]/_provider/ChatProvider'
-import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Link } from '@/components/ui/Link'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
@@ -22,7 +20,16 @@ const Shell = ({
   className?: ClassNameValue
   children: React.ReactNode
 }) => {
-  return <div className={cn('flex h-full w-full bg-gray-1', className)}>{children}</div>
+  return (
+    <div
+      className={cn(
+        'flex h-full w-full overflow-hidden rounded-md border border-grayA-3 bg-gray-1',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 const Component = () => {
@@ -34,16 +41,9 @@ const Component = () => {
   return (
     <Shell>
       <div className="flex h-full w-full flex-col">
-        <div className="shrink-0 p-1">
-          <CommandShell>
-            <IconButton variant="ghost" size="1" className="shrink-0">
-              <Icons.List className="size-6" />
-            </IconButton>
-          </CommandShell>
-        </div>
         <ScrollArea scrollbars="vertical">
           {/* * feed * */}
-          <div className="mx-auto flex max-w-3xl flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
+          <div className="mx-auto flex flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
             <EndOfFeedIndicator />
 
             {/* * messages * */}
@@ -54,11 +54,11 @@ const Component = () => {
             <LoadMoreButton />
           </div>
         </ScrollArea>
-        <Composer className="border-t" />
+        <Composer className="border-t border-grayA-3" />
       </div>
 
       {/* * sidebar * */}
-      <Sidebar thread={thread} />
+      {/* <Sidebar thread={thread} /> */}
     </Shell>
   )
 }
@@ -126,7 +126,7 @@ const ChatPageSkeleton = () => {
           </div>
         ))}
       </div>
-      <SidebarSkeleton />
+      {/* <SidebarSkeleton /> */}
     </Shell>
   )
 }

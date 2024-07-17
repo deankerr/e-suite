@@ -42,7 +42,7 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
   }
 
   return (
-    <div {...props} className={cn('min-h-8 shrink-0 bg-gray-1 px-1.5 py-1', className)}>
+    <div {...props} className={cn('min-h-10 shrink-0 px-1.5 py-1', className)}>
       <div className="flex flex-wrap items-center gap-1 overflow-hidden px-1 py-1 text-sm">
         <Button size="1" variant="outline" color="gold" className="max-w-[95%] justify-start">
           <Icons.Chat className="shrink-0" />

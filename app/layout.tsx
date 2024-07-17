@@ -71,7 +71,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
-            <Theme accentColor="orange" appearance="dark" panelBackground="solid">
+            <Theme
+              accentColor="orange"
+              appearance="dark"
+              panelBackground="solid"
+              className="bg-midnight"
+            >
               {children}
               <Toaster position="top-right" theme="light" closeButton richColors />
             </Theme>

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import Avatar from 'boring-avatars'
 
-import { cn, environment, stringToHex } from '@/lib/utils'
+import { cn, environment, stringHashToListItem } from '@/lib/utils'
 
 import type { ClassNameValue } from '@/lib/utils'
 
@@ -46,8 +46,8 @@ export const Marble = ({
     >
       {shouldUseSimpleAvatar ? (
         <div
-          className="size-[15px] rounded-full bg-red-6 outline -outline-offset-2 outline-grayA-7"
-          style={{ backgroundColor: stringToHex(props.name ?? 'MIA') }}
+          className="size-[15px] rounded-full"
+          style={{ backgroundColor: stringHashToListItem(props.name ?? 'MIA', colors) }}
         />
       ) : (
         <BoringAvatar {...props} />

@@ -15,11 +15,11 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
   const threads = useUserThreadsList()
 
   return (
-    <div {...props} className={cn('flex grow flex-col gap-1 overflow-hidden', className)}>
+    <div {...props} className={cn('flex h-full flex-col gap-1 overflow-hidden', className)}>
       <div className="shrink-0 px-3 text-sm font-semibold text-gray-10">Chats</div>
 
       <ScrollArea scrollbars="vertical">
-        <div className="flex h-full grow flex-col gap-1 px-3">
+        <div className="flex h-full flex-col gap-1 px-1">
           {threads?.map((thread) => <ChatNavLink key={thread._id} thread={thread} />)}
         </div>
       </ScrollArea>
