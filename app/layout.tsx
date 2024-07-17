@@ -53,7 +53,10 @@ const chakraPetch = Chakra_Petch({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(inter.variable, ibmPlexMono.variable, chakraPetch.variable)}>
+    <html
+      lang="en"
+      className={cn('overscroll-none', inter.variable, ibmPlexMono.variable, chakraPetch.variable)}
+    >
       <head>
         {process.env.VERCEL_ENV === 'preview' && (
           // eslint-disable-next-line @next/next/no-sync-scripts
@@ -65,7 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
 
-      <body className="overscroll-y-none">
+      <body>
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <Theme accentColor="orange" appearance="dark" panelBackground="solid">
