@@ -4,6 +4,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Dialog } from '@radix-ui/themes'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useAtom } from 'jotai'
+import Link from 'next/link'
 
 import {
   Cmdk,
@@ -12,15 +13,18 @@ import {
   CmdkInput,
   CmdkItem,
   CmdkList,
+  CmdkSeparator,
 } from '@/components/command-shell/components/Cmdk'
+import { useCommandShell } from '@/components/command-shell/useCommandShell'
 import { AppLogoName } from '@/components/ui/AppLogoName'
 import { commandShellOpenAtom } from '@/lib/atoms'
 
 const CommandShellMenu = () => {
+  const { threads, closeDialog } = useCommandShell()
   return (
     <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
       {/* * header * */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-grayA-3 px-3 py-2">
+      <div className="flex h-12 shrink-0 items-center gap-2 border-b border-grayA-3 px-3">
         <AppLogoName />
         <div className="ml-auto font-mono text-xs text-gray-11">Command Shell</div>
       </div>
@@ -31,54 +35,28 @@ const CommandShellMenu = () => {
         <CmdkList>
           <CmdkEmpty>No results found.</CmdkEmpty>
 
-          <CmdkGroup heading="Threads">
+          <CmdkGroup heading="Compose">
             <CmdkItem>
               <Icons.Plus />
               Create new thread
             </CmdkItem>
             <CmdkItem>
-              <Icons.MagnifyingGlass />
-              Search threads...
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.Chat />
-              Conversations with e
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.Chat />
-              Who am I?
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.Chat />
-              How to change a tyre
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.Chat />
-              React useMemo
-            </CmdkItem>
-          </CmdkGroup>
-
-          <CmdkGroup heading="Generations">
-            <CmdkItem>
               <Icons.Plus />
               Create new generation
             </CmdkItem>
-            <CmdkItem>
-              <Icons.MagnifyingGlass />
-              Search generations...
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.ImageSquare />
-              SD3: Medium
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.ImageSquare />
-              Pixart Generations
-            </CmdkItem>
-            <CmdkItem>
-              <Icons.ImageSquare />
-              Anime Babes
-            </CmdkItem>
+          </CmdkGroup>
+
+          <CmdkGroup heading="Recent">
+            {threads
+              ? threads.map((thread) => (
+                  <Link key={thread._id} href={`/dev/lo36/c/${thread.slug}`} onClick={closeDialog}>
+                    <CmdkItem value={thread.title ?? 'untitled ' + thread.slug}>
+                      {thread.model?.type === 'chat' ? <Icons.Chat /> : <Icons.ImageSquare />}
+                      <div className="truncate">{thread.title ?? 'Untitled'}</div>
+                    </CmdkItem>
+                  </Link>
+                ))
+              : null}
           </CmdkGroup>
 
           <CmdkGroup heading="Settings">
