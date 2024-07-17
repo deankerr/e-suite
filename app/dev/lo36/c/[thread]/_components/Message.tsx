@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { IconButton } from '@radix-ui/themes'
+import { DropdownMenu, IconButton } from '@radix-ui/themes'
 
 import { Marble } from '@/app/dev/lo36/c/[thread]/_components/Marble'
 import AudioPlayer from '@/components/audio/AudioPlayer'
@@ -12,9 +12,13 @@ import type { EMessage } from '@/convex/types'
 
 export const Message = ({
   message,
+  removeMessage,
   className,
   ...props
-}: { message: EMessage } & React.ComponentProps<'div'>) => {
+}: {
+  message: EMessage
+  removeMessage?: (args: { messageId: string }) => void
+} & React.ComponentProps<'div'>) => {
   const { textToImageConfig } = getInferenceConfig(message.inference)
 
   const name = getMessageName(message)
@@ -71,9 +75,31 @@ export const Message = ({
 
       {/* # right gutter # */}
       <div className="text-right">
-        <IconButton variant="ghost" size="1" className="m-0 size-7 p-0">
-          <Icons.DotsThree size={24} />
-        </IconButton>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">
+              <Icons.DotsThree size={24} />
+            </IconButton>
+          </DropdownMenu.Trigger>
+
+          <DropdownMenu.Content variant="soft" align="end">
+            {/* <DropdownMenu.Item onClick={() => setEditing(!editing)}>
+                    {editing ? 'Cancel Edit' : 'Edit'}
+                  </DropdownMenu.Item>
+
+                  <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
+                    Show JSON
+                  </DropdownMenu.Item> */}
+
+            <DropdownMenu.Item
+              color="red"
+              disabled={!removeMessage}
+              onClick={() => removeMessage?.({ messageId: message._id })}
+            >
+              Delete
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </div>
 
       {/* # images # */}

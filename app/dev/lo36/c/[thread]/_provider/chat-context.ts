@@ -87,7 +87,7 @@ export const useCreateChatContext = ({ slug }: { slug?: string }) => {
   )
 
   const removeMessage = useCallback(
-    async (args: Parameters<typeof sendRemoveMessage>[0]) => {
+    async (args: Omit<Parameters<typeof sendRemoveMessage>[0], 'apiKey'>) => {
       await sendRemoveMessage(args)
     },
     [sendRemoveMessage],

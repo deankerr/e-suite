@@ -7,18 +7,43 @@ import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { cn } from '@/lib/utils'
 
 export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) => {
-  const { thread } = useChat()
+  const { thread, appendMessage } = useChat()
 
   const [promptValue, setPromptValue] = useState('')
+
+  const addMessage = async () => {
+    if (!thread || !promptValue) return
+
+    await appendMessage({
+      message: {
+        text: promptValue,
+      },
+    })
+
+    setPromptValue('')
+  }
+
+  const run = async () => {
+    if (!thread) return
+
+    const args = promptValue
+      ? {
+          message: {
+            text: promptValue,
+          },
+          inference: thread.inference,
+        }
+      : {
+          inference: thread.inference,
+        }
+
+    await appendMessage(args)
+    setPromptValue('')
+  }
 
   return (
     <div {...props} className={cn('min-h-8 shrink-0 bg-gray-1 px-1.5 py-1', className)}>
       <div className="flex flex-wrap items-center gap-1 overflow-hidden px-1 py-1 text-sm">
-        {/* <div className="flex items-center gap-1 rounded border border-grayA-3 bg-grayA-2 px-1 py-0.5">
-          <Icons.Chat />
-          dev kamehub
-        </div> */}
-
         <Button size="1" variant="outline" color="gold" className="max-w-[95%] justify-start">
           <Icons.Chat className="shrink-0" />
           <div className="truncate">{thread?.title}</div>
@@ -35,6 +60,12 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
         className="border-none bg-transparent"
         value={promptValue}
         onValueChange={(value) => setPromptValue(value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+            e.preventDefault()
+            void run()
+          }
+        }}
       />
 
       <div className="flex gap-2 px-1 py-1">
@@ -44,27 +75,26 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
 
         <div className="grow"></div>
 
-        {/* <IconButton color="gray">
-          <Icons.Plus />
-        </IconButton>
-        <Button color="orange">
-          <Icons.PaperPlane className="size-4" />
-        </Button> */}
-
-        <Button color="gray">Add</Button>
-        <Button>
+        <Button color="gray" disabled={!promptValue} onClick={addMessage}>
+          Add
+        </Button>
+        <Button onClick={run}>
           Run
           <div className="hidden rounded bg-grayA-5 p-0.5 md:flex">
             <Icons.Command />
             <Icons.ArrowElbowDownLeft />
           </div>
-          {/* <Icons.PaperPlane className="size-4" /> */}
         </Button>
-      </div>
-
-      <div className="pointer-events-none absolute right-0 top-0 hidden translate-x-2 scale-75 px-1 font-mono text-xs text-gold-11">
-        composer
       </div>
     </div>
   )
 }
+
+/* 
+  <IconButton color="gray">
+    <Icons.Plus />
+  </IconButton>
+  <Button color="orange">
+    <Icons.PaperPlane className="size-4" />
+  </Button>
+*/
