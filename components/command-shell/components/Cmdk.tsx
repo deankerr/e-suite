@@ -27,7 +27,7 @@ const CmdkInput = React.forwardRef<
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        'flex h-11 w-full border-none bg-transparent py-3 text-sm outline-none placeholder:text-gray-10 disabled:cursor-not-allowed disabled:opacity-50',
+        'flex h-11 w-full border-none bg-transparent py-3 text-base outline-none placeholder:text-gray-10 disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}
@@ -43,7 +43,13 @@ const CmdkList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
+    style={{
+      transition: 'height 100ms ease',
+    }}
+    className={cn(
+      'h-[var(--cmdk-list-height)] max-h-[24rem] overflow-y-auto overflow-x-hidden',
+      className,
+    )}
     {...props}
   />
 ))
