@@ -1,13 +1,14 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, ScrollArea } from '@radix-ui/themes'
+import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { Composer } from '@/app/dev/lo36/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/dev/lo36/c/[thread]/_components/Message'
 import { Sidebar, SidebarSkeleton } from '@/app/dev/lo36/c/[thread]/_components/Sidebar'
 import { ChatProvider, useChat } from '@/app/dev/lo36/c/[thread]/_provider/ChatProvider'
+import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Link } from '@/components/ui/Link'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
@@ -33,6 +34,13 @@ const Component = () => {
   return (
     <Shell>
       <div className="flex h-full w-full flex-col">
+        <div className="shrink-0 p-1">
+          <CommandShell>
+            <IconButton variant="ghost" size="1" className="shrink-0">
+              <Icons.List className="size-6" />
+            </IconButton>
+          </CommandShell>
+        </div>
         <ScrollArea scrollbars="vertical">
           {/* * feed * */}
           <div className="mx-auto flex max-w-3xl flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
