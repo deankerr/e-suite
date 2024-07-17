@@ -5,7 +5,7 @@ import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 import { useSelectedLayoutSegments } from 'next/navigation'
 
-import { appConfig } from '@/app/dev/lo36/config'
+import { appConfig } from '@/app/b/config'
 import { useUserThreadsList } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 

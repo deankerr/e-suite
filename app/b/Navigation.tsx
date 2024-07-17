@@ -2,7 +2,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
 import Link from 'next/link'
 
-import { ChatNavList } from '@/app/dev/lo36/_components/ChatNavList'
+import { ChatNavList } from '@/app/b/_components/ChatNavList'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AppLogoName } from '@/components/ui/AppLogoName'
 import { cn } from '@/lib/utils'

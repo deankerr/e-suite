@@ -7,7 +7,7 @@ import { useKeyboardEvent } from '@react-hookz/web'
 import { useAtom } from 'jotai'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { appConfig } from '@/app/dev/lo36/config'
+import { appConfig } from '@/app/b/config'
 import {
   Cmdk,
   CmdkEmpty,
