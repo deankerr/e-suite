@@ -25,7 +25,7 @@ const Shell = ({
 }
 
 const Component = () => {
-  const { thread, messages } = useChat()
+  const { thread, messages, removeMessage } = useChat()
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <ChatPageSkeleton />
@@ -40,7 +40,7 @@ const Component = () => {
 
             {/* * messages * */}
             {messages.map((message) => (
-              <Message key={message._id} message={message} className="" />
+              <Message key={message._id} message={message} removeMessage={removeMessage} />
             ))}
 
             <LoadMoreButton />
