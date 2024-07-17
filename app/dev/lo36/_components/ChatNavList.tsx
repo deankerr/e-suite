@@ -5,7 +5,7 @@ import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 import { useSelectedLayoutSegments } from 'next/navigation'
 
-import { lo36Config } from '@/app/dev/lo36/config'
+import { appConfig } from '@/app/dev/lo36/config'
 import { useUserThreadsList } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -38,7 +38,7 @@ export const ChatNavLink = ({
   const Icon = thread.model?.type === 'chat' ? Icons.Chat : Icons.ImagesSquare
   return (
     <Link
-      href={`${lo36Config.chatUrl}/${thread.slug}`}
+      href={`${appConfig.chatUrl}/${thread.slug}`}
       className={cn('flex rounded p-2', isActive ? 'bg-grayA-3' : 'hover:bg-grayA-2', className)}
       {...props}
     >

@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
+import { useSetAtom } from 'jotai'
 
 import { useChat } from '@/app/dev/lo36/c/[thread]/_provider/ChatProvider'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
+import { commandShellOpenAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) => {
+  const setOpen = useSetAtom(commandShellOpenAtom)
   const { thread, appendMessage } = useChat()
 
   const [promptValue, setPromptValue] = useState('')
@@ -69,7 +72,11 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
       />
 
       <div className="flex gap-2 px-1 py-1">
-        <IconButton variant="outline" color="gray">
+        <IconButton variant="surface" onClick={() => setOpen(true)}>
+          <Icons.List className="size-5" />
+        </IconButton>
+
+        <IconButton variant="surface" color="gray">
           <Icons.Paperclip />
         </IconButton>
 
