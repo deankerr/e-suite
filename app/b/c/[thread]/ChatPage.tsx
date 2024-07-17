@@ -4,62 +4,40 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
+import { PageWrapper } from '@/app/b/_components/PageWrapper'
 import { Composer } from '@/app/b/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
+import { appConfig } from '@/app/b/config'
 import { Link } from '@/components/ui/Link'
-import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
-
-import type { ClassNameValue } from '@/lib/utils'
-
-const Shell = ({
-  className,
-  children,
-}: {
-  className?: ClassNameValue
-  children: React.ReactNode
-}) => {
-  return (
-    <div
-      className={cn(
-        'flex h-full w-full overflow-hidden rounded-md border border-grayA-3 bg-gray-1',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  )
-}
 
 const Component = () => {
   const { thread, messages, removeMessage } = useChat()
 
   if (thread === null) return <ChatPageError />
-  if (thread === undefined) return <ChatPageSkeleton />
+  if (thread === undefined) return <PageWrapper loading />
 
   return (
-    <Shell>
-      <div className="flex h-full w-full flex-col">
-        <ScrollArea scrollbars="vertical">
-          {/* * feed * */}
-          <div className="mx-auto flex flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
-            <EndOfFeedIndicator />
+    <PageWrapper className="flex flex-col">
+      <ScrollArea scrollbars="vertical">
+        {/* * feed * */}
+        <div className="mx-auto flex flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
+          <EndOfFeedIndicator />
 
-            {/* * messages * */}
-            {messages.map((message) => (
-              <Message key={message._id} message={message} removeMessage={removeMessage} />
-            ))}
+          {/* * messages * */}
+          {messages.map((message) => (
+            <Message key={message._id} message={message} removeMessage={removeMessage} />
+          ))}
 
-            <LoadMoreButton />
-          </div>
-        </ScrollArea>
-        <Composer className="border-t border-grayA-3" />
-      </div>
+          <LoadMoreButton />
+        </div>
+      </ScrollArea>
+      <Composer className="border-t border-grayA-3" />
 
       {/* * sidebar * */}
       {/* <Sidebar thread={thread} /> */}
-    </Shell>
+    </PageWrapper>
   )
 }
 
@@ -114,27 +92,10 @@ const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end'
   )
 }
 
-const ChatPageSkeleton = () => {
-  return (
-    <Shell>
-      <div className="mx-auto flex w-full max-w-3xl animate-pulse flex-col items-center gap-3 overflow-hidden px-1.5 py-5">
-        {[...Array(30)].map((_, i) => (
-          <div key={i} className="box-content flex max-h-7 w-full items-center gap-2">
-            <Skeleton className="h-7 w-10 animate-none" />
-            <Skeleton className="size-6 animate-none rounded-full" />
-            <Skeleton className="h-7 w-full animate-none" />
-          </div>
-        ))}
-      </div>
-      {/* <SidebarSkeleton /> */}
-    </Shell>
-  )
-}
-
 const ChatPageError = () => {
   const router = useRouter()
   return (
-    <Shell className="flex flex-col">
+    <PageWrapper className="flex flex-col">
       <div className="m-auto flex flex-col items-center px-5">
         <Icons.Cat weight="thin" className="size-60 shrink-0 text-accentA-11" />
 
@@ -142,7 +103,7 @@ const ChatPageError = () => {
           className="p-3 text-center text-2xl"
           style={{ fontFamily: 'var(--font-chakra-petch)' }}
         >
-          There doesn&apos;t appear to be anything here.
+          There doesn&apos;t appear to be anything at this address.
         </div>
 
         <div className="flex gap-4 p-2">
@@ -150,11 +111,11 @@ const ChatPageError = () => {
             Go Back
           </Link>
 
-          <Link underline="always" color="brown" href="/">
+          <Link underline="always" color="brown" href={appConfig.baseUrl}>
             Go Home
           </Link>
         </div>
       </div>
-    </Shell>
+    </PageWrapper>
   )
 }
