@@ -18,18 +18,26 @@ import {
 } from '@/components/command-shell/components/Cmdk'
 import { useCommandShell } from '@/components/command-shell/useCommandShell'
 import { AppLogoName } from '@/components/ui/AppLogoName'
+import { TextField } from '@/components/ui/TextField'
+import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { commandShellOpenAtom } from '@/lib/atoms'
+import { useChatModels, useImageModels } from '@/lib/queries'
 
 const CommandShellMenu = () => {
   const router = useRouter()
   const pathname = usePathname()
-  const { threads, closeDialog } = useCommandShell()
+  const { threads, closeDialog, updateThread, removeThread } = useCommandShell()
 
   const [searchValue, setSearchValue] = useState('')
 
   const [currentPage, setCurrentPage] = useState<keyof typeof page>('main')
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
   const selectedThread = threads?.find((thread) => thread._id === selectedThreadId)
+
+  const chatModels = useChatModels()
+  const imageModels = useImageModels()
+
+  const [newThreadTitle, setNewThreadTitle] = useState('')
 
   const page = {
     main: () => (
@@ -84,11 +92,17 @@ const CommandShellMenu = () => {
             </CmdkItem>
           )}
 
-          <CmdkItem>
+          <CmdkItem onSelect={() => setCurrentPage('editThreadTitle')}>
             <Icons.PencilLine weight="light" />
             Edit title...
           </CmdkItem>
-          <CmdkItem>
+          <CmdkItem
+            onSelect={() =>
+              setCurrentPage(
+                selectedThread?.model?.type === 'chat' ? 'selectChatModel' : 'selectImageModel',
+              )
+            }
+          >
             <Icons.CodesandboxLogo weight="light" />
             Model: {selectedThread?.model?.name ?? 'unknown model'}
           </CmdkItem>
@@ -96,7 +110,10 @@ const CommandShellMenu = () => {
             <Icons.UserSound weight="light" />
             Voiceover: {selectedThread?.voiceovers?.default ?? 'unknown model'}
           </CmdkItem>
-          <CmdkItem className="text-red-11 aria-selected:text-red-11">
+          <CmdkItem
+            onSelect={() => setCurrentPage('deleteThread')}
+            className="text-red-11 aria-selected:text-red-11"
+          >
             <Icons.Trash weight="light" />
             Delete
           </CmdkItem>
@@ -105,6 +122,152 @@ const CommandShellMenu = () => {
             onSelect={() => {
               setSelectedThreadId(null)
               setCurrentPage('main')
+            }}
+          >
+            <Icons.CaretLeft weight="light" />
+            Back
+          </CmdkItem>
+        </CmdkGroup>
+      </>
+    ),
+
+    selectChatModel: () => (
+      <>
+        <CmdkGroup heading="Chat Models">
+          {chatModels?.map((model) => (
+            <CmdkItem
+              key={model._id}
+              value={`${model.name} ${model.endpoint}`}
+              onSelect={() => {
+                if (!selectedThread) return
+                const current =
+                  selectedThread.inference.type === 'chat-completion'
+                    ? selectedThread.inference
+                    : defaultChatInferenceConfig
+                const updated = {
+                  ...current,
+                  resourceKey: model.resourceKey,
+                  endpoint: model.endpoint,
+                  endpointModelId: model.endpointModelId,
+                }
+                void updateThread({ threadId: selectedThread._id, fields: { inference: updated } })
+                setCurrentPage('threadConfig')
+              }}
+            >
+              {model.name}
+            </CmdkItem>
+          ))}
+          <CmdkItem
+            className="text-gray-11"
+            onSelect={() => {
+              setCurrentPage('threadConfig')
+            }}
+          >
+            <Icons.CaretLeft weight="light" />
+            Back
+          </CmdkItem>
+        </CmdkGroup>
+      </>
+    ),
+
+    selectImageModel: () => (
+      <>
+        <CmdkGroup heading="Image Models">
+          {imageModels?.map((model) => (
+            <CmdkItem
+              key={model._id}
+              value={`${model.name} ${model.endpoint}`}
+              onSelect={() => {
+                if (!selectedThread) return
+                const current =
+                  selectedThread.inference.type === 'text-to-image'
+                    ? selectedThread.inference
+                    : defaultImageInferenceConfig
+                const updated = {
+                  ...current,
+                  resourceKey: model.resourceKey,
+                  endpoint: model.endpoint,
+                  endpointModelId: model.endpointModelId,
+                }
+                void updateThread({ threadId: selectedThread._id, fields: { inference: updated } })
+                setCurrentPage('threadConfig')
+              }}
+            >
+              {model.name}
+            </CmdkItem>
+          ))}
+          <CmdkItem
+            className="text-gray-11"
+            onSelect={() => {
+              setCurrentPage('threadConfig')
+            }}
+          >
+            <Icons.CaretLeft weight="light" />
+            Back
+          </CmdkItem>
+        </CmdkGroup>
+      </>
+    ),
+
+    editThreadTitle: () => {
+      if (!selectedThread) return null
+      return (
+        <>
+          <CmdkGroup heading="Edit title">
+            <TextField
+              size="3"
+              className="m-1 mb-2"
+              placeholder="Enter new title..."
+              value={newThreadTitle}
+              onValueChange={setNewThreadTitle}
+            />
+            <CmdkItem
+              className="text-grass-11 aria-selected:text-grass-11"
+              onSelect={() => {
+                if (!selectedThread) return
+                void updateThread({
+                  threadId: selectedThread._id,
+                  fields: { title: newThreadTitle },
+                })
+                setCurrentPage('threadConfig')
+              }}
+            >
+              <Icons.Check weight="light" />
+              Save
+            </CmdkItem>
+            <CmdkItem
+              className="text-gray-11"
+              onSelect={() => {
+                setCurrentPage('threadConfig')
+              }}
+            >
+              <Icons.CaretLeft weight="light" />
+              Back
+            </CmdkItem>
+          </CmdkGroup>
+        </>
+      )
+    },
+
+    deleteThread: () => (
+      <>
+        <CmdkGroup heading="Delete thread">
+          <CmdkItem
+            className="text-red-11 aria-selected:text-red-11"
+            onSelect={() => {
+              if (!selectedThread) return
+              void removeThread({ threadId: selectedThread._id })
+              setSelectedThreadId(null)
+              setCurrentPage('main')
+            }}
+          >
+            <Icons.Trash weight="light" />
+            Confirm
+          </CmdkItem>
+          <CmdkItem
+            className="text-gray-11"
+            onSelect={() => {
+              setCurrentPage('threadConfig')
             }}
           >
             <Icons.CaretLeft weight="light" />
