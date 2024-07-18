@@ -5,6 +5,7 @@ import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
+import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
 import { Composer } from '@/app/b/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
@@ -14,6 +15,7 @@ import { cn } from '@/lib/utils'
 
 const Component = () => {
   const { thread, messages, removeMessage } = useChat()
+  const { chatModels, imageModels, voiceModels } = useModelsApi()
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <PageWrapper loading />
@@ -25,6 +27,18 @@ const Component = () => {
         <div className="flex items-center gap-1.5 px-2.5 text-sm font-medium">
           <Icons.Chat weight="regular" className="-mt-0.5 size-5 shrink-0 text-accentA-11" />
           {thread.title}
+        </div>
+
+        <div className="flex items-center gap-1.5 px-2.5 text-sm font-medium">
+          <span>
+            {chatModels?.length} - {Math.floor(JSON.stringify(chatModels)?.length / 1000)}kB
+          </span>
+          <span>
+            {imageModels?.length} - {Math.floor(JSON.stringify(imageModels)?.length / 1000)}kB
+          </span>
+          <span>
+            {voiceModels?.length} - {Math.floor(JSON.stringify(voiceModels)?.length / 1000)}kB
+          </span>
         </div>
 
         <div className="flex-end shrink-0 gap-1 px-1">
