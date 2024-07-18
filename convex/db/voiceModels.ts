@@ -15,7 +15,7 @@ export const getVoiceModels = () => {
       accent: data.LanguageName,
       gender: data.Gender,
     })),
-    ElevenLabs.getVoiceModelData(),
+    ElevenLabs.getNormalizedVoiceModelData(),
   ]
     .flat()
     .map((model) => ({ ...model, type: 'voice' as const }))

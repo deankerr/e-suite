@@ -42,7 +42,7 @@ export const textToSpeech = async (
   }
 }
 
-export const getVoiceModelData = () => {
+export const getNormalizedVoiceModelData = () => {
   return [
     ...ElevenLabsVoicesJson.voices.map((voice) => ({
       resourceKey: `elevenlabs::${voice.voice_id}`,
