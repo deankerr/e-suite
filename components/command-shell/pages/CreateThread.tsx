@@ -15,6 +15,7 @@ import {
   CmdkItem,
   CmdkList,
 } from '@/components/command-shell/components/Cmdk'
+import { ThreadComposer } from '@/components/command-shell/pages/ThreadComposer'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { createThreadShellOpenAtom } from '@/lib/atoms'
@@ -258,6 +259,24 @@ const CreateGeneration = () => {
   )
 }
 
+const ShellOuter = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
+      {/* * header * */}
+      <div className="flex h-12 shrink-0 items-center gap-1 truncate border-b border-grayA-3 px-2 font-medium">
+        {/* <AppLogoName /> */}
+        <Icons.CaretRight className="size-5 text-accentA-11" /> New Chat
+        <div className="grow"></div>
+        <IconButton variant="ghost" color="gray" className="m-0 shrink-0">
+          <Icons.X className="size-5" />
+        </IconButton>
+      </div>
+
+      {children}
+    </div>
+  )
+}
+
 const CreateThreadDialog = ({
   triggerKey,
   children,
@@ -292,8 +311,11 @@ const CreateThreadDialog = ({
 export const CreateThreadShell = () => {
   return (
     <CreateThreadDialog triggerKey="j">
-      <CreateChat />
+      {/* <CreateChat /> */}
       {/* <CreateGeneration /> */}
+      <ShellOuter>
+        <ThreadComposer inferenceType="textToImage" />
+      </ShellOuter>
     </CreateThreadDialog>
   )
 }

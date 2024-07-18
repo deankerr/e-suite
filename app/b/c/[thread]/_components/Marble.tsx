@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import Avatar from 'boring-avatars'
 
-import { RenderMate } from '@/components/ui/RenderMate'
 import { cn, environment, stringHashToListItem } from '@/lib/utils'
 
 import type { ClassNameValue } from '@/lib/utils'
@@ -35,7 +34,6 @@ export const BoringAvatar = ({
     () => (
       <div className="flex-none">
         <Avatar name={name} size={size} colors={colors} variant={variant} square={square} />
-        <RenderMate />
       </div>
     ),
     [name, size, variant, square],
@@ -58,7 +56,6 @@ export const Marble = ({
       ) : (
         <BoringAvatar {...props} />
       )}
-      <RenderMate />
     </div>
   )
 }
