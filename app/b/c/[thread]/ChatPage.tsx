@@ -1,7 +1,7 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, ScrollArea } from '@radix-ui/themes'
+import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
@@ -20,6 +20,25 @@ const Component = () => {
 
   return (
     <PageWrapper className="flex flex-col">
+      {/* * header * */}
+      <header className="flex-between h-12 border border-grayA-3">
+        <div className="flex items-center gap-1.5 px-2.5 text-sm font-medium">
+          <Icons.Chat weight="regular" className="-mt-0.5 size-5 shrink-0 text-accentA-11" />
+          {thread.title}
+        </div>
+
+        <div className="flex-end shrink-0 gap-1 px-1">
+          <Button variant="outline" size="2" color="gray">
+            <Icons.FunnelSimple className="size-5" />
+            Filter
+          </Button>
+
+          <IconButton variant="ghost" color="gray" className="m-0" disabled>
+            <Icons.Sidebar className="size-7" mirrored />
+          </IconButton>
+        </div>
+      </header>
+
       <ScrollArea scrollbars="vertical">
         {/* * feed * */}
         <div className="mx-auto flex flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
@@ -34,6 +53,8 @@ const Component = () => {
         </div>
       </ScrollArea>
       <Composer className="border-t border-grayA-3" />
+
+      <div className="absolute left-0.5 top-11 bg-grayA-3 font-mono text-xs">{messages.length}</div>
 
       {/* * sidebar * */}
       {/* <Sidebar thread={thread} /> */}
@@ -59,6 +80,7 @@ const LoadMoreButton = () => {
       <Button
         variant="surface"
         size="1"
+        color="gray"
         className="w-48"
         disabled={page.status !== 'CanLoadMore'}
         onClick={() => loadMoreMessages()}
