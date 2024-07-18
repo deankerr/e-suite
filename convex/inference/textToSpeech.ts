@@ -51,7 +51,7 @@ export const run = internalAction({
       console.log('[tts]', voice.resourceKey, text)
       const fileId =
         voice.endpoint === 'aws'
-          ? await ctx.runAction(internal.endpoints.aws.textToSpeech, {
+          ? await ctx.runAction(internal.endpoints.aws_node.textToSpeech, {
               text: text,
               endpointModelId: voice.endpointModelId,
             })
