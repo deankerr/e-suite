@@ -24,13 +24,16 @@ const nextConfig = {
     loader: 'custom',
     loaderFile: './lib/image-loader.ts',
   },
+
   rewrites: async () => [
     {
       source: '/convex/:slug',
       destination: `${backendUrl}/i/:slug`,
     },
   ],
+
   transpilePackages: ['jotai-devtools'],
+
   experimental: {
     swcPlugins: [
       [
@@ -47,9 +50,9 @@ const nextConfig = {
       ],
     ],
   },
-  webpack(config) {
-    config.plugins.push(UnpluginTurboConsole())
 
+  webpack: (config) => {
+    config.plugins.push(UnpluginTurboConsole())
     return config
   },
 }
