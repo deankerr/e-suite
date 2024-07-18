@@ -6,6 +6,7 @@ import { Button, Dialog, IconButton, Select } from '@radix-ui/themes'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useAtom } from 'jotai'
 
+import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
 import {
   Cmdk,
   CmdkEmpty,
@@ -17,10 +18,9 @@ import {
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { createThreadShellOpenAtom } from '@/lib/atoms'
-import { useChatModels, useImageModels } from '@/lib/queries'
 
 const CreateChat = () => {
-  const chatModels = useChatModels()
+  const { chatModels } = useModelsApi()
   const [promptValue, setPromptValue] = useState('')
 
   const [modelKey, setModelKey] = useState('openrouter::perplexity/llama-3-sonar-large-32k-online')
@@ -116,7 +116,7 @@ const CreateChat = () => {
 }
 
 const CreateGeneration = () => {
-  const imageModels = useImageModels()
+  const { imageModels } = useModelsApi()
   const [promptValue, setPromptValue] = useState('')
 
   const [modelKey, setModelKey] = useState('fal::fal-ai/pixart-sigma')
@@ -213,7 +213,7 @@ const CreateGeneration = () => {
 
           {/* * actions * */}
           <div className="flex-start gap-2 border-t border-grayA-3 px-3 py-3">
-            <Button variant="soft" color="gold">
+            <Button variant="surface" color="gold">
               <Icons.Image className="size-4" /> Generate
             </Button>
 
@@ -292,8 +292,8 @@ const CreateThreadDialog = ({
 export const CreateThreadShell = () => {
   return (
     <CreateThreadDialog triggerKey="j">
-      {/* <CreateChat /> */}
-      <CreateGeneration />
+      <CreateChat />
+      {/* <CreateGeneration /> */}
     </CreateThreadDialog>
   )
 }

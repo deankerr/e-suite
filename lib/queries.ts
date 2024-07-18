@@ -1,11 +1,9 @@
-import { useQuery as useCachedQuery } from 'convex-helpers/react/cache/hooks'
 import { useQuery as useConvexQuery, usePaginatedQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 import { EChatModel, EImageModel, EThread, EUser, EVoiceModel } from '@/convex/types'
 
-const shouldUseCachedQuery = false
-const useQuery = shouldUseCachedQuery ? useCachedQuery : useConvexQuery
+const useQuery = useConvexQuery
 
 export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | undefined => {
   const thread = useQuery(api.db.threads.get, {
