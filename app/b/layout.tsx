@@ -1,5 +1,6 @@
 import { Navigation } from '@/app/b/Navigation'
 import { CommandShell } from '@/components/command-shell/CommandShell'
+import { CreateThreadShell } from '@/components/command-shell/pages/CreateThread'
 
 import type { Metadata } from 'next'
 
@@ -18,6 +19,7 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         {children}
       </div>
       <CommandShell />
+      <CreateThreadShell />
     </>
   )
 }

@@ -6,6 +6,7 @@ import { atomWithStorage } from 'jotai/utils'
 
 export const commandMenuOpenAtom = atom(false)
 export const commandShellOpenAtom = atom(false)
+export const createThreadShellOpenAtom = atom(false)
 
 export const voiceoverQueueAtom = atom<string[]>([])
 export const voiceoverAutoplayThreadIdAtom = atom('')

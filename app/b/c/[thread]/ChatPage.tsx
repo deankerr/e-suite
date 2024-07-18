@@ -52,7 +52,7 @@ const Component = () => {
           <LoadMoreButton />
         </div>
       </ScrollArea>
-      <Composer className="border-t border-grayA-3" />
+      <Composer className="border-t border-grayA-3 bg-gray-2" />
 
       <div className="absolute left-0.5 top-11 bg-grayA-3 font-mono text-xs">{messages.length}</div>
 

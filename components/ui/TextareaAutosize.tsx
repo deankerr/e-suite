@@ -18,8 +18,8 @@ export const TextareaAutosize = ({
         onChange?.(e)
       }}
       className={cn(
-        'flex focus-visible:outline-1 focus-visible:outline-accent-8 disabled:cursor-not-allowed disabled:opacity-50',
-        'w-full resize-none rounded border border-grayA-7 bg-black/25 px-3 py-2 text-gray-12 placeholder:text-gray-9',
+        'flex outline-none focus-visible:outline-1 focus-visible:outline-accent-8 disabled:cursor-not-allowed disabled:opacity-50',
+        'w-full resize-none rounded border border-grayA-7 bg-black/25 px-2 py-2 text-gray-12 placeholder:text-gray-10',
         className,
       )}
     />
