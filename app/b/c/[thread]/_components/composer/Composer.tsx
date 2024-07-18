@@ -4,13 +4,17 @@ import { Button, IconButton } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
 
 import { useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
+import {
+  CreateChatThreadShell,
+  CreateImageThreadShell,
+} from '@/components/command-shell/pages/ThreadComposer'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { commandShellOpenAtom, createThreadShellOpenAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const setOpen = useSetAtom(commandShellOpenAtom)
-  const setCTOpen = useSetAtom(createThreadShellOpenAtom)
+
   const { thread, appendMessage } = useChat()
 
   const [promptValue, setPromptValue] = useState('')
@@ -77,9 +81,8 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
           <Icons.List className="size-5" />
         </IconButton>
 
-        <IconButton variant="surface" color="gray" onClick={() => setCTOpen(true)}>
-          <Icons.List className="size-5" />
-        </IconButton>
+        <CreateChatThreadShell />
+        <CreateImageThreadShell />
 
         <div className="grow"></div>
 
