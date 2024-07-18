@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
 
-import { Marble } from '@/app/b/c/[thread]/_components/Marble'
+import { BoringAvatar } from '@/app/b/c/[thread]/_components/Marble'
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Markdown } from '@/components/message/Markdown'
@@ -23,36 +22,23 @@ export const Message = ({
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
-  // const isShortMessage = text !== undefined && text.length < 500
-
-  const [messageTime] = useState(new Date(message._creationTime).toTimeString().slice(0, 5))
 
   const shouldAddSpacer = message.images.length > 0 || message.audio.length > 0
   return (
     <div
       {...props}
       className={cn(
-        'grid shrink-0 grid-cols-[minmax(72px,_1fr)_minmax(0,_768px)_minmax(48px,_1fr)]',
-        'rounded-md border border-transparent hover:border-gray-5',
-        'box-content min-h-7 text-sm',
+        'grid shrink-0 grid-cols-[3rem_1fr_3rem]',
+        'rounded-md border border-transparent hover:border-grayA-2',
+        'box-content min-h-7 w-full text-sm',
         shouldAddSpacer && 'mb-2',
         className,
       )}
     >
       {/* # left gutter # */}
-      <div className="pl-1">
-        <div className="flex min-h-7 items-center gap-1.5">
-          {/* * time * */}
-          <div
-            className="shrink-0 text-gray-10"
-            style={{ fontVariantNumeric: 'tabular-nums' }}
-            suppressHydrationWarning
-          >
-            {messageTime ?? '00:00'}
-          </div>
-
-          {/* * marble * */}
-          <Marble name={name} size={15} className={cn('flex overflow-hidden')} />
+      <div className="flex justify-end">
+        <div className="flex-center h-7 px-2.5">
+          <BoringAvatar name={name} size={15} />
         </div>
       </div>
 
@@ -78,7 +64,7 @@ export const Message = ({
       </div>
 
       {/* # right gutter # */}
-      <div className="text-right">
+      <div className="flex-center items-start">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">

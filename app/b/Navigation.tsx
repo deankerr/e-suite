@@ -18,8 +18,8 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
             <AppLogoName />
           </Link>
 
-          <IconButton variant="ghost" size="1" className="shrink-0">
-            <Icons.List className="size-6" />
+          <IconButton variant="ghost" size="1" color="gray" className="shrink-0">
+            <Icons.Cards className="size-5" />
           </IconButton>
         </div>
 
