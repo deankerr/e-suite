@@ -301,11 +301,12 @@ const CommandShellMenu = () => {
         onKeyDown={(e) => {
           // Escape goes to previous page (actually it closes dialog)
           // Backspace goes to previous page when search is empty
-          if (e.key === 'Escape' || (e.key === 'Backspace' && !searchValue)) {
-            e.preventDefault()
-            setSelectedThreadId(null)
-            setCurrentPage('main')
-          }
+          // TODO fix - stops backspacing in other inputs
+          // if (e.key === 'Escape' || (e.key === 'Backspace' && !searchValue)) {
+          //   e.preventDefault()
+          //   setSelectedThreadId(null)
+          //   setCurrentPage('main')
+          // }
         }}
       >
         <CmdkInput
