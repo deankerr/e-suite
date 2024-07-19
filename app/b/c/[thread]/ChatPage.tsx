@@ -5,18 +5,16 @@ import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
-import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
 import { Composer } from '@/app/b/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
-import { Shell } from '@/components/command-shell/Shell'
+import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Link } from '@/components/ui/Link'
 import { cn } from '@/lib/utils'
 
 const Component = () => {
   const { thread, messages, removeMessage } = useChat()
-  const { chatModels, imageModels, voiceModels } = useModelsApi()
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <PageWrapper loading />
@@ -24,25 +22,21 @@ const Component = () => {
   return (
     <PageWrapper className="flex flex-col">
       {/* * header * */}
-      <header className="flex-between h-12 border border-grayA-3">
-        <div className="flex items-center gap-1.5 px-2.5 text-sm font-medium">
-          <Icons.Chat weight="regular" className="-mt-0.5 size-5 shrink-0 text-accentA-11" />
-          {thread.title}
+      <header className="flex-between h-12 shrink-0 border border-grayA-3">
+        <div className="flex w-11 shrink-0 items-center px-1">
+          {/* * command menu button * */}
+          <CommandShell>
+            <IconButton variant="ghost" className="m-0 transition-none md:-translate-x-14">
+              <Icons.List className="size-8" />
+            </IconButton>
+          </CommandShell>
         </div>
 
-        <div className="flex items-center gap-1.5 px-2.5 text-sm font-medium">
-          <span>
-            {chatModels?.length} - {Math.floor(JSON.stringify(chatModels)?.length / 1000)}kB
-          </span>
-          <span>
-            {imageModels?.length} - {Math.floor(JSON.stringify(imageModels)?.length / 1000)}kB
-          </span>
-          <span>
-            {voiceModels?.length} - {Math.floor(JSON.stringify(voiceModels)?.length / 1000)}kB
-          </span>
+        <div className="flex-center px-1 text-sm font-medium">
+          {thread.title ?? 'untitled thread'}
         </div>
 
-        <div className="flex-end shrink-0 gap-1 px-1">
+        <div className="flex-end w-11 shrink-0 gap-1 px-1">
           <Button variant="outline" size="2" color="gray">
             <Icons.FunnelSimple className="size-5" />
             Filter
@@ -73,8 +67,6 @@ const Component = () => {
 
       {/* * sidebar * */}
       {/* <Sidebar thread={thread} /> */}
-
-      <Shell />
     </PageWrapper>
   )
 }

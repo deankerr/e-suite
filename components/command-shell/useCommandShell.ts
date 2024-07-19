@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
@@ -6,20 +6,15 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
-import { useCreateThread } from '@/app/b/api'
 import { appConfig } from '@/app/b/config'
 import { shellOpenAtom, shellStackAtom } from '@/components/command-shell/atoms'
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { commandShellOpenAtom } from '@/lib/atoms'
 import { useUserThreadsList, useViewerDetails } from '@/lib/queries'
 
 import type { ShellMenuPageName } from '@/components/command-shell/Shell'
 
 export const useCommandShell = () => {
-  const [open, setOpen] = useAtom(commandShellOpenAtom)
-  const closeDialog = () => setOpen(false)
-
   const { user, isAdmin } = useViewerDetails()
   const threads = useUserThreadsList()
 
@@ -33,7 +28,7 @@ export const useCommandShell = () => {
     await sendRemoveThread(args)
   }
 
-  return { user, isAdmin, threads, closeDialog, updateThread, removeThread }
+  return { user, isAdmin, threads, updateThread, removeThread }
 }
 
 const initialPage = 'ThreadComposer'

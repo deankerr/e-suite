@@ -8,7 +8,7 @@ export const PageWrapper = ({
   ...props
 }: { loading?: boolean } & React.ComponentProps<'div'>) => {
   return (
-    <div className="h-full w-full p-1.5 sm:ml-56">
+    <div className="h-full w-full p-1.5 md:ml-56">
       <div
         {...props}
         className={cn('h-full w-full rounded-md border border-grayA-3 bg-gray-1', className)}
