@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
 import { useCreateThread } from '@/app/b/api'
+import { appConfig } from '@/app/b/config'
 import { shellOpenAtom, shellStackAtom } from '@/components/command-shell/atoms'
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
@@ -37,6 +40,8 @@ const initialPage = 'ThreadComposer'
 
 export type ShellHelpers = ReturnType<typeof useShell>
 export const useShell = () => {
+  const router = useRouter()
+
   const [open, setOpen] = useAtom(shellOpenAtom)
   const close = () => setOpen(false)
 
@@ -83,7 +88,17 @@ export const useShell = () => {
       ? chatModels?.find((model) => model.resourceKey === chatModelKey)
       : imageModels?.find((model) => model.resourceKey === imageModelKey)
 
-  const createThread = useCreateThread()
+  const sendCreateThread = useMutation(api.db.threadsB.create)
+  const createThread = async (args: Parameters<typeof sendCreateThread>[0]) => {
+    try {
+      const result = await sendCreateThread(args)
+      router.push(`${appConfig.chatUrl}/${result.slug}`)
+      close()
+    } catch (err) {
+      console.error(err)
+      toast.error('An error occurred while trying to create a new thread.')
+    }
+  }
 
   // useEffect(() => {
   //   console.log(open, stack)
@@ -103,6 +118,5 @@ export const useShell = () => {
     setInferenceType,
     currentModel,
     setModelKey,
-    shellKey: '1234',
   }
 }

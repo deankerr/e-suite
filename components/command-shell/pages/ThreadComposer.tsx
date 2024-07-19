@@ -6,17 +6,19 @@ import { Button, Select } from '@radix-ui/themes'
 import { type ShellHelpers } from '@/components/command-shell/useCommandShell'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
-import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { cn } from '@/lib/utils'
 
 export const ThreadComposer = ({
   shell,
   className,
-  ...props
 }: {
   shell: ShellHelpers
 } & React.ComponentProps<'form'>) => {
   const [promptValue, setPromptValue] = useState('')
+  const [textToImageN, setTextToImageN] = useState<'1' | '4'>('4')
+  const [textToImageSize, setTextToImageSize] = useState<'square' | 'portrait' | 'landscape'>(
+    'square',
+  )
 
   const send = () => {
     if (!shell.currentModel) {
@@ -35,16 +37,22 @@ export const ThreadComposer = ({
               type: 'textToImage',
               prompt: promptValue,
               resourceKey: shell.currentModel?.resourceKey,
-              n: 4,
-              size: 'square',
+              n: textToImageN === '1' ? 1 : 4,
+              size: textToImageSize,
             },
+    })
+  }
+
+  const add = () => {
+    shell.createThread({
+      text: promptValue,
     })
   }
 
   return (
     <form className={cn('shrink-0', className)}>
       {/* * prompt * */}
-      <Label className="block px-2">
+      <Label className="block px-2 pt-0.5">
         <span className="sr-only">Prompt</span>
         <TextareaAutosize
           name="prompt"
@@ -63,8 +71,8 @@ export const ThreadComposer = ({
         />
       </Label>
 
-      {/* * config * */}
-      <div className="flex gap-1.5 px-3 py-1.5">
+      {/* * model / config * */}
+      <div className="flex gap-1.5 px-3 pb-2 pt-1.5">
         <Button
           type="button"
           variant="surface"
@@ -77,8 +85,16 @@ export const ThreadComposer = ({
 
         {shell.inferenceType === 'textToImage' && (
           <>
-            <QuantitySelect />
-            <DimensionsSelect />
+            <QuantitySelect
+              value={textToImageN}
+              onValueChange={(value) => setTextToImageN(value as '1' | '4')}
+            />
+            <DimensionsSelect
+              value={textToImageSize}
+              onValueChange={(value) =>
+                setTextToImageSize(value as 'portrait' | 'landscape' | 'square')
+              }
+            />
           </>
         )}
       </div>
@@ -88,7 +104,7 @@ export const ThreadComposer = ({
         {shell.inferenceType === 'chat' && (
           <Button
             type="button"
-            variant="surface"
+            variant="soft"
             color="gold"
             onClick={() => shell.setInferenceType('textToImage')}
           >
@@ -111,7 +127,7 @@ export const ThreadComposer = ({
 
         <div className="grow"></div>
 
-        <Button type="button" color="gray">
+        <Button type="button" color="gray" onClick={add}>
           Add
         </Button>
         <Button type="button" onClick={send}>
@@ -126,9 +142,9 @@ export const ThreadComposer = ({
   )
 }
 
-const QuantitySelect = () => {
+const QuantitySelect = (props: React.ComponentProps<typeof Select.Root>) => {
   return (
-    <Select.Root defaultValue="4">
+    <Select.Root {...props}>
       <Select.Trigger placeholder="Quantity" className="min-w-24" variant="soft" color="gray" />
       <Select.Content variant="soft">
         <Select.Group>
@@ -151,9 +167,9 @@ const QuantitySelect = () => {
   )
 }
 
-const DimensionsSelect = () => {
+const DimensionsSelect = (props: React.ComponentProps<typeof Select.Root>) => {
   return (
-    <Select.Root defaultValue="square">
+    <Select.Root {...props}>
       <Select.Trigger placeholder="Dimensions" className="min-w-24" variant="soft" color="gray" />
       <Select.Content variant="soft" highContrast>
         <Select.Group>

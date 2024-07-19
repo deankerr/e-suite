@@ -11,10 +11,28 @@ export const ModelSelect = ({
   shell: ShellHelpers
 } & React.ComponentProps<typeof CmdkGroup>) => {
   const models = shell.inferenceType === 'chat' ? shell?.chatModels : shell?.imageModels
-  const initialModel = models?.find((m) => m.resourceKey === shell.currentModel?.resourceKey)
 
   return (
-    <CmdkGroup heading={`${shell.inferenceType} Models`} {...props}>
+    <CmdkGroup
+      heading={`${shell.inferenceType} models`}
+      {...props}
+      onKeyDown={(e) => {
+        if (e.key === 'Backspace') {
+          e.preventDefault()
+          shell.pop()
+        }
+      }}
+    >
+      <CmdkItem
+        value={`${shell.currentModel?.name} ${shell.currentModel?.endpoint}`}
+        onSelect={() => {
+          shell.pop()
+        }}
+      >
+        <Icons.CaretLeft />
+        {shell.currentModel?.name} (current)
+      </CmdkItem>
+
       {models?.map((model) => (
         <CmdkItem
           key={model._id}

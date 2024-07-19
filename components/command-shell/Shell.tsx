@@ -21,8 +21,12 @@ export const pages = {
 export const Shell = () => {
   const shell = useShell()
 
-  const title = 'Shell Menu'
   const currentPage = shell.stack.at(-1)
+  const title = currentPage
+    ? currentPage === 'ThreadComposer'
+      ? `New ${shell.inferenceType}`
+      : 'Select model'
+    : ''
 
   return (
     <Dialog.Root open={shell.open} onOpenChange={shell.setOpen}>
