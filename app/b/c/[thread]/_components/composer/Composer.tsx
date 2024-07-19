@@ -4,12 +4,8 @@ import { Button, IconButton } from '@radix-ui/themes'
 import { useSetAtom } from 'jotai'
 
 import { useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
-import {
-  CreateChatThreadShell,
-  CreateImageThreadShell,
-} from '@/components/command-shell/pages/ThreadComposer'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
-import { commandShellOpenAtom, createThreadShellOpenAtom } from '@/lib/atoms'
+import { commandShellOpenAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) => {
@@ -56,11 +52,6 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
           <Icons.Chat className="shrink-0" />
           <div className="truncate">{thread?.title}</div>
         </Button>
-
-        <Button size="1" variant="outline" color="bronze" className="max-w-[95%] justify-start">
-          <Icons.CodesandboxLogo className="shrink-0" />
-          <div className="truncate">{thread?.model?.name}</div>
-        </Button>
       </div>
 
       <TextareaAutosize
@@ -80,9 +71,6 @@ export const Composer = ({ className, ...props }: React.ComponentProps<'div'>) =
         <IconButton variant="surface" onClick={() => setOpen(true)}>
           <Icons.List className="size-5" />
         </IconButton>
-
-        <CreateChatThreadShell />
-        <CreateImageThreadShell />
 
         <div className="grow"></div>
 

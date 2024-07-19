@@ -10,6 +10,7 @@ import { Composer } from '@/app/b/c/[thread]/_components/composer/Composer'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
+import { Shell } from '@/components/command-shell/Shell'
 import { Link } from '@/components/ui/Link'
 import { cn } from '@/lib/utils'
 
@@ -72,6 +73,8 @@ const Component = () => {
 
       {/* * sidebar * */}
       {/* <Sidebar thread={thread} /> */}
+
+      <Shell />
     </PageWrapper>
   )
 }
