@@ -1,26 +1,26 @@
+import { useState } from 'react'
 import { useMutation } from 'convex/react'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import { appConfig } from '@/app/b/config'
-import { useShell } from '@/components/command-shell/useCommandShell'
 import { api } from '@/convex/_generated/api'
 
-export const useCreateThread = () => {
-  const { close } = useShell()
-  const router = useRouter()
-  const sendCreateThread = useMutation(api.db.threadsB.create)
+export const useAppendMessage = (threadId = '') => {
+  const sendAppendMessage = useMutation(api.db.threadsB.append)
+  const [inputReadyState, setInputReadyState] = useState<'ready' | 'pending' | 'locked'>('ready')
 
-  const createThread = async (args: Parameters<typeof sendCreateThread>[0]) => {
+  const appendMessage = async (args: Omit<Parameters<typeof sendAppendMessage>[0], 'threadId'>) => {
     try {
-      const result = await sendCreateThread(args)
-      router.push(`${appConfig.chatUrl}/${result.slug}`)
-      close()
+      setInputReadyState('pending')
+      const result = await sendAppendMessage({ ...args, threadId })
+      setInputReadyState('ready')
+      return result
     } catch (err) {
       console.error(err)
-      toast.error('An error occurred while trying to create a new thread.')
+      toast.error('An error occurred while trying to append a message.')
+      setInputReadyState('ready')
+      return null
     }
   }
 
-  return createThread
+  return { appendMessage, inputReadyState }
 }

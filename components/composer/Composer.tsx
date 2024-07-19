@@ -2,98 +2,140 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
 import { Button, Select } from '@radix-ui/themes'
+import { toast } from 'sonner'
 
-import { type ShellHelpers } from '@/components/command-shell/useCommandShell'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
-import { cn } from '@/lib/utils'
+import { cn, getInferenceConfig } from '@/lib/utils'
 
-export const ThreadComposer = ({
-  shell,
+import type { useAppendMessage } from '@/app/b/api'
+import type { api } from '@/convex/_generated/api'
+import type { RunConfig } from '@/convex/db/threadsB'
+import type { EChatModel, EImageModel, InferenceConfig } from '@/convex/types'
+import type { FunctionReturnType } from 'convex/server'
+
+export const Composer = ({
+  runConfig,
+  model,
+  appendMessage,
+  inputReadyState,
+  onSuccess,
   className,
+  ...props
 }: {
-  shell: ShellHelpers
+  runConfig: InferenceConfig
+  model: EChatModel | EImageModel | null | undefined
+  appendMessage: ReturnType<typeof useAppendMessage>['appendMessage']
+  inputReadyState: ReturnType<typeof useAppendMessage>['inputReadyState']
+  onSuccess?: (result: FunctionReturnType<typeof api.db.threadsB.append>) => void
 } & React.ComponentProps<'form'>) => {
+  const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
+
   const [promptValue, setPromptValue] = useState('')
-  const [textToImageN, setTextToImageN] = useState<'1' | '4'>('4')
+  const [textToImageN, setTextToImageN] = useState<'1' | '4'>(
+    textToImageConfig?.n === 1 ? '1' : '4',
+  )
   const [textToImageSize, setTextToImageSize] = useState<'square' | 'portrait' | 'landscape'>(
-    'square',
+    textToImageConfig?.size ?? 'square',
   )
 
-  const send = () => {
-    if (!shell.currentModel) {
-      return
+  const send = async (run?: RunConfig) => {
+    if (inputReadyState !== 'ready') {
+      return toast.error('Please wait for the input to be ready.')
     }
 
-    shell.createThread({
+    const result = await appendMessage({
       text: promptValue,
-      run:
-        shell.inferenceType === 'chat'
-          ? {
-              type: 'chat',
-              resourceKey: shell.currentModel?.resourceKey,
-            }
-          : {
-              type: 'textToImage',
-              prompt: promptValue,
-              resourceKey: shell.currentModel?.resourceKey,
-              n: textToImageN === '1' ? 1 : 4,
-              size: textToImageSize,
-            },
+      run,
     })
+    if (result) {
+      setPromptValue('')
+      onSuccess?.(result)
+    }
   }
 
-  const add = () => {
-    shell.createThread({
-      text: promptValue,
-    })
+  const add = () => send()
+
+  const run = () => {
+    if (!model) {
+      return toast.error('Please select a model to run.')
+    }
+
+    if (chatConfig) {
+      send({
+        type: 'chat',
+        resourceKey: model.resourceKey,
+      })
+    }
+
+    if (textToImageConfig) {
+      send({
+        type: 'textToImage',
+        resourceKey: model.resourceKey,
+        prompt: promptValue,
+        n: textToImageN === '1' ? 1 : 4,
+        size: textToImageSize,
+      })
+    }
   }
 
   return (
-    <form className={cn('shrink-0', className)}>
+    <form
+      className={cn(
+        'shrink-0',
+        inputReadyState !== 'ready' && 'pointer-events-none opacity-50',
+        className,
+      )}
+      {...props}
+    >
       {/* * prompt * */}
-      <Label className="block px-2 pt-0.5">
+      <Label className="block px-2 pt-1.5">
         <span className="sr-only">Prompt</span>
         <TextareaAutosize
           name="prompt"
-          placeholder="Prompt..."
+          placeholder={`${chatConfig ? 'Enter your message...' : 'Enter your prompt...'}`}
           className="border-none bg-transparent focus-visible:outline-none focus-visible:outline-transparent"
-          rows={4}
-          minRows={4}
+          rows={2}
+          minRows={2}
           value={promptValue}
           onValueChange={(value) => setPromptValue(value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
               e.preventDefault()
-              send()
+              run()
             }
           }}
+          disabled={inputReadyState !== 'ready'}
         />
       </Label>
 
       {/* * model / config * */}
       <div className="flex gap-1.5 px-3 pb-2 pt-1.5">
+        {/* TODO model select */}
         <Button
           type="button"
           variant="surface"
-          color="bronze"
-          onClick={() => shell.push('ModelSelect')}
+          color="gray"
+          highContrast
+          disabled={inputReadyState === 'locked'}
         >
           <Icons.CodesandboxLogo className="size-4" />
-          {shell.currentModel?.name ?? shell.currentModel?.resourceKey ?? '???'}
+          {model?.name ?? 'Unknown Model'}
         </Button>
 
-        {shell.inferenceType === 'textToImage' && (
+        {textToImageConfig && (
           <>
             <QuantitySelect
               value={textToImageN}
               onValueChange={(value) => setTextToImageN(value as '1' | '4')}
+              disabled={inputReadyState === 'locked'}
             />
             <DimensionsSelect
               value={textToImageSize}
               onValueChange={(value) =>
                 setTextToImageSize(value as 'portrait' | 'landscape' | 'square')
               }
+              disabled={inputReadyState === 'locked'}
             />
           </>
         )}
@@ -101,36 +143,38 @@ export const ThreadComposer = ({
 
       {/* * actions * */}
       <div className="flex gap-2 border-t border-grayA-3 p-3">
-        {shell.inferenceType === 'chat' && (
-          <Button
-            type="button"
-            variant="soft"
-            color="gold"
-            onClick={() => shell.setInferenceType('textToImage')}
-          >
+        <Button
+          type="button"
+          variant="soft"
+          color="gold"
+          highContrast
+          disabled={inputReadyState === 'locked'}
+        >
+          {chatConfig ? (
             <Icons.Chat className="size-4" />
-            Chat
-          </Button>
-        )}
-
-        {shell.inferenceType === 'textToImage' && (
-          <Button
-            type="button"
-            variant="surface"
-            color="gold"
-            onClick={() => shell.setInferenceType('chat')}
-          >
+          ) : (
             <Icons.ImageSquare className="size-4" />
-            Text To Image
-          </Button>
-        )}
+          )}
+          {chatConfig ? 'Chat' : 'Text To Image'}
+        </Button>
 
         <div className="grow"></div>
 
-        <Button type="button" color="gray" onClick={add}>
+        <Button
+          type="button"
+          color="gray"
+          onClick={add}
+          loading={inputReadyState === 'pending'}
+          disabled={inputReadyState === 'locked'}
+        >
           Add
         </Button>
-        <Button type="button" onClick={send}>
+        <Button
+          type="button"
+          onClick={run}
+          loading={inputReadyState === 'pending'}
+          disabled={inputReadyState === 'locked'}
+        >
           Run
           <div className="hidden rounded bg-grayA-5 p-0.5 md:flex">
             <Icons.Command />
