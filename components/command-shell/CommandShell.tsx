@@ -26,7 +26,7 @@ import { useChatModels, useImageModels } from '@/lib/queries'
 const CommandShellMenu = () => {
   const router = useRouter()
   const pathname = usePathname()
-  const { threads, closeDialog, updateThread, removeThread } = useCommandShell()
+  const { threads, updateThread, removeThread } = useCommandShell()
 
   const [searchValue, setSearchValue] = useState('')
 
@@ -84,7 +84,7 @@ const CommandShellMenu = () => {
             <CmdkItem
               onSelect={() => {
                 router.push(`${appConfig.chatUrl}/${selectedThread?.slug}`)
-                closeDialog()
+                // closeDialog()
               }}
             >
               <Icons.CaretDoubleUp weight="light" />
@@ -325,7 +325,7 @@ const CommandShellMenu = () => {
   )
 }
 
-const CommandShellDialog = ({ children }: { children?: React.ReactNode }) => {
+export const CommandShell = ({ children }: { children?: React.ReactNode }) => {
   const [open, setOpen] = useAtom(commandShellOpenAtom)
 
   useKeyboardEvent('k', (e) => {
@@ -350,5 +350,3 @@ const CommandShellDialog = ({ children }: { children?: React.ReactNode }) => {
     </Dialog.Root>
   )
 }
-
-export const CommandShell = CommandShellDialog
