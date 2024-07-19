@@ -1,5 +1,5 @@
 import { omit } from 'convex-helpers'
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 
 import { mutation } from '../functions'
 import { createJob } from '../jobs'
@@ -7,9 +7,13 @@ import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shar
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
+import { getNextMessageSeries } from './messages'
+import { getThreadBySlugOrId } from './threads'
 
 import type { ChatCompletionConfig, MutationCtx, TextToImageConfig } from '../types'
 import type { Infer } from 'convex/values'
+
+export type RunConfig = Infer<typeof runConfigV>
 
 const runConfigChatV = v.object({
   type: v.literal('chat'),
@@ -36,10 +40,13 @@ const runConfigTextToImageV = v.object({
   ),
 })
 
-export const create = mutation({
+export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV)
+
+export const append = mutation({
   args: {
+    threadId: v.optional(v.string()),
     text: v.string(),
-    run: v.optional(v.union(runConfigChatV, runConfigTextToImageV)),
+    run: v.optional(runConfigV),
   },
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
@@ -50,16 +57,33 @@ export const create = mutation({
         : await getTransitionConfigTextToImage(ctx, args.run)
       : undefined
 
-    const thread = await ctx
-      .table('threads')
-      .insert({
-        userId: user._id,
-        slug: await generateSlug(ctx),
-        updatedAtTime: Date.now(),
-        slashCommands: [],
-        inference: inference ?? defaultChatInferenceConfig,
+    if (!args.threadId && !args.text && !args.run) {
+      throw new ConvexError('no arguments provided')
+    }
+
+    const thread = args.threadId
+      ? await getThreadBySlugOrId(ctx, args.threadId)
+      : await ctx
+          .table('threads')
+          .insert({
+            userId: user._id,
+            slug: await generateSlug(ctx),
+            updatedAtTime: Date.now(),
+            slashCommands: [],
+            inference: inference ?? defaultChatInferenceConfig,
+          })
+          .get()
+
+    if (!thread) throw new ConvexError('invalid thread')
+
+    // update inference config if was existing thread
+    if (args.threadId && inference) {
+      await ctx.table('threads').getX(thread._id).patch({
+        inference,
       })
-      .get()
+    }
+
+    let nextSeries = await getNextMessageSeries(thread)
 
     if (inference?.type === 'text-to-image') {
       const asstMessage = await ctx
@@ -68,7 +92,7 @@ export const create = mutation({
           userId: user._id,
           role: 'assistant',
           threadId: thread._id,
-          series: 1,
+          series: nextSeries++,
           inference,
           contentType: 'image',
           hasImageReference: false,
@@ -98,7 +122,7 @@ export const create = mutation({
         role: 'user',
         text: args.text,
         threadId: thread._id,
-        series: 1,
+        series: nextSeries++,
         contentType: 'text',
         hasImageReference: false,
       })
@@ -119,7 +143,7 @@ export const create = mutation({
         userId: user._id,
         role: 'assistant',
         threadId: thread._id,
-        series: 2,
+        series: nextSeries++,
         inference,
         contentType: 'text',
         hasImageReference: false,

@@ -5,16 +5,18 @@ import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
-import { Composer } from '@/app/b/c/[thread]/_components/composer/Composer'
+import { useAppendMessage } from '@/app/b/api'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
 import { CommandShell } from '@/components/command-shell/CommandShell'
+import { Composer } from '@/components/composer/Composer'
 import { Link } from '@/components/ui/Link'
 import { cn } from '@/lib/utils'
 
 const Component = () => {
   const { thread, messages, removeMessage } = useChat()
+  const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <PageWrapper loading />
@@ -61,9 +63,19 @@ const Component = () => {
           <LoadMoreButton />
         </div>
       </ScrollArea>
-      <Composer className="border-t border-grayA-3 bg-gray-2" />
 
-      <div className="absolute left-0.5 top-11 bg-grayA-3 font-mono text-xs">{messages.length}</div>
+      <Composer
+        runConfig={thread.inference}
+        model={thread.model}
+        appendMessage={appendMessage}
+        inputReadyState={inputReadyState}
+        // inputReadyState={'pending'}
+        className="border-t border-grayA-3 bg-grayA-2 pt-1"
+      />
+
+      <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
+        {messages.length}
+      </div>
 
       {/* * sidebar * */}
       {/* <Sidebar thread={thread} /> */}

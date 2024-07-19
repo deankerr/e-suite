@@ -2,17 +2,16 @@ import { useState } from 'react'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 
 import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
-import { appConfig } from '@/app/b/config'
+import { useAppendMessage } from '@/app/b/api'
 import { shellOpenAtom, shellStackAtom } from '@/components/command-shell/atoms'
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { useUserThreadsList, useViewerDetails } from '@/lib/queries'
 
 import type { ShellMenuPageName } from '@/components/command-shell/Shell'
+import type { InferenceConfig } from '@/convex/types'
 
 export const useCommandShell = () => {
   const { user, isAdmin } = useViewerDetails()
@@ -35,8 +34,6 @@ const initialPage = 'ThreadComposer'
 
 export type ShellHelpers = ReturnType<typeof useShell>
 export const useShell = () => {
-  const router = useRouter()
-
   const [open, setOpen] = useAtom(shellOpenAtom)
   const close = () => setOpen(false)
 
@@ -51,7 +48,6 @@ export const useShell = () => {
   useKeyboardEvent('j', (e) => {
     if (e.metaKey || e.ctrlKey) {
       e.preventDefault()
-      // setOpen(!open)
       if (open) {
         console.log('open -> close')
         setOpen(false)
@@ -83,17 +79,27 @@ export const useShell = () => {
       ? chatModels?.find((model) => model.resourceKey === chatModelKey)
       : imageModels?.find((model) => model.resourceKey === imageModelKey)
 
-  const sendCreateThread = useMutation(api.db.threadsB.create)
-  const createThread = async (args: Parameters<typeof sendCreateThread>[0]) => {
-    try {
-      const result = await sendCreateThread(args)
-      router.push(`${appConfig.chatUrl}/${result.slug}`)
-      close()
-    } catch (err) {
-      console.error(err)
-      toast.error('An error occurred while trying to create a new thread.')
-    }
-  }
+  const runConfig: InferenceConfig =
+    inferenceType === 'chat'
+      ? {
+          type: 'chat-completion',
+          resourceKey: chatModelKey,
+          endpointModelId: '',
+          endpoint: '',
+        }
+      : {
+          type: 'text-to-image',
+          resourceKey: imageModelKey,
+          endpointModelId: '',
+          endpoint: '',
+          prompt: '',
+          n: 4,
+          width: 0,
+          height: 0,
+          size: 'square',
+        }
+
+  const { appendMessage, inputReadyState } = useAppendMessage()
 
   // useEffect(() => {
   //   console.log(open, stack)
@@ -108,8 +114,10 @@ export const useShell = () => {
     pop,
     chatModels,
     imageModels,
-    createThread,
+    appendMessage,
+    inputReadyState,
     inferenceType,
+    runConfig,
     setInferenceType,
     currentModel,
     setModelKey,

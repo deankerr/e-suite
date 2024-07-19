@@ -2,11 +2,13 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Dialog, IconButton } from '@radix-ui/themes'
+import { useRouter } from 'next/navigation'
 
+import { appConfig } from '@/app/b/config'
 import { Cmdk, CmdkEmpty, CmdkInput, CmdkList } from '@/components/command-shell/components/Cmdk'
 import { ModelSelect } from '@/components/command-shell/pages/ModelSelect'
-import { ThreadComposer } from '@/components/command-shell/pages/ThreadComposer'
 import { useShell } from '@/components/command-shell/useCommandShell'
+import { Composer } from '@/components/composer/Composer'
 import { AppLogoName } from '@/components/ui/AppLogoName'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +21,7 @@ export const pages = {
 }
 
 export const Shell = () => {
+  const router = useRouter()
   const shell = useShell()
 
   const currentPage = shell.stack.at(-1)
@@ -58,8 +61,15 @@ export const Shell = () => {
           </Command>
 
           {shell.stack.includes('ThreadComposer') && (
-            <ThreadComposer
-              shell={shell}
+            <Composer
+              runConfig={shell.runConfig}
+              model={shell.currentModel}
+              appendMessage={shell.appendMessage}
+              inputReadyState={shell.inputReadyState}
+              onSuccess={({ slug }) => {
+                router.push(`${appConfig.chatUrl}/${slug}`)
+                shell.close()
+              }}
               className={cn(currentPage !== 'ThreadComposer' && 'hidden')}
             />
           )}
