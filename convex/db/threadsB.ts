@@ -1,27 +1,14 @@
 import { omit } from 'convex-helpers'
-import { literals, partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
-import { internal } from '../_generated/api'
-import { mutation, query } from '../functions'
+import { mutation } from '../functions'
 import { createJob } from '../jobs'
-import { inferenceConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
-import { createError, extractValidUrlsFromText, insist } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
-import { getMessageCommand, getNextMessageSeries } from './messages'
 
-import type { Id } from '../_generated/dataModel'
-import type {
-  ChatCompletionConfig,
-  Ent,
-  InferenceConfig,
-  MutationCtx,
-  QueryCtx,
-  TextToImageConfig,
-} from '../types'
+import type { ChatCompletionConfig, MutationCtx, TextToImageConfig } from '../types'
 import type { Infer } from 'convex/values'
 
 const runConfigChatV = v.object({
@@ -181,8 +168,8 @@ const getTransitionConfigTextToImage = async (
   const size =
     typeof args.size === 'string'
       ? {
-          width: imageModel.sizes[args.size][0],
-          height: imageModel.sizes[args.size][1],
+          width: imageModel.sizes[args.size][0] ?? 512,
+          height: imageModel.sizes[args.size][1] ?? 512,
           size: args.size,
         }
       : args.size
@@ -191,7 +178,7 @@ const getTransitionConfigTextToImage = async (
     type: 'text-to-image',
     endpoint: imageModel.endpoint,
     endpointModelId: imageModel.endpointModelId,
-    ...size,
     ...omit(args, ['type', 'size']),
+    ...size,
   }
 }
