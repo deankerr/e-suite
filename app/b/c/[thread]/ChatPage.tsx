@@ -24,34 +24,30 @@ const Component = () => {
   return (
     <PageWrapper className="flex flex-col">
       {/* * header * */}
-      <header className="flex-between h-12 shrink-0 border border-grayA-3">
-        <div className="flex w-11 shrink-0 items-center px-1">
+      <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 bg-grayA-2 px-2">
+        <div className="flex w-20 items-center">
           {/* * command menu button * */}
           <CommandShell>
-            <IconButton variant="ghost" className="m-0 transition-none md:-translate-x-14">
-              <Icons.List className="size-8" />
+            <IconButton variant="ghost" className="m-0 shrink-0 transition-none md:-translate-x-14">
+              <Icons.List className="size-7" />
             </IconButton>
           </CommandShell>
         </div>
 
-        <div className="flex-center px-1 text-sm font-medium">
+        <div className="px-1 text-sm font-medium md:absolute md:left-1/2 md:-translate-x-1/2 md:transform md:whitespace-nowrap">
           {thread.title ?? 'untitled thread'}
         </div>
 
-        <div className="flex-end w-11 shrink-0 gap-1 px-1">
+        <div className="flex shrink-0 items-center">
           <Button variant="outline" size="2" color="gray">
             <Icons.FunnelSimple className="size-5" />
             Filter
           </Button>
-
-          <IconButton variant="ghost" color="gray" className="m-0" disabled>
-            <Icons.Sidebar className="size-7" mirrored />
-          </IconButton>
         </div>
       </header>
 
+      {/* * feed * */}
       <ScrollArea scrollbars="vertical">
-        {/* * feed * */}
         <div className="mx-auto flex flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
           <EndOfFeedIndicator />
 
@@ -64,13 +60,14 @@ const Component = () => {
         </div>
       </ScrollArea>
 
+      {/* * composer * */}
       <Composer
         runConfig={thread.inference}
         model={thread.model}
         appendMessage={appendMessage}
         inputReadyState={inputReadyState}
         // inputReadyState={'pending'}
-        className="border-t border-grayA-3 bg-grayA-2 pt-1"
+        className="border-t border-grayA-3 bg-grayA-2"
       />
 
       <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">

@@ -20,7 +20,7 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
     <div {...props} className={cn('fixed inset-y-0 hidden w-56 p-1.5 md:block', className)}>
       <nav className="flex h-full flex-col rounded-md border border-transparent">
         {/* * logo / menu button * */}
-        <div className="flex h-12 shrink-0 items-center justify-between border-b border-grayA-3 px-1.5">
+        <div className="flex h-12 shrink-0 items-center justify-between px-1.5">
           <Link href={appConfig.baseUrl}>
             <AppLogoName />
           </Link>
@@ -50,7 +50,7 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
         <ChatNavList />
 
         {/* * footer * */}
-        <div className="flex h-12 shrink-0 items-center justify-center border-t border-grayA-3 px-3">
+        <div className="flex h-12 shrink-0 items-center justify-center px-3">
           <UserButtons />
         </div>
       </nav>

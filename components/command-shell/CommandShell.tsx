@@ -23,7 +23,17 @@ import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/conve
 import { commandShellOpenAtom } from '@/lib/atoms'
 import { useChatModels, useImageModels } from '@/lib/queries'
 
-const CommandShellMenu = () => {
+export const CommandShell = ({ children }: { children?: React.ReactNode }) => {
+  const [open, setOpen] = useAtom(commandShellOpenAtom)
+  const close = () => setOpen(false)
+
+  useKeyboardEvent('k', (e) => {
+    if (e.metaKey || e.ctrlKey) {
+      e.preventDefault()
+      setOpen(!open)
+    }
+  })
+
   const router = useRouter()
   const pathname = usePathname()
   const { threads, updateThread, removeThread } = useCommandShell()
@@ -58,7 +68,7 @@ const CommandShellMenu = () => {
             ? threads.map((thread) => (
                 <CmdkItem
                   key={thread._id}
-                  value={thread.title ?? 'untitled ' + thread.slug}
+                  value={`${thread.title ?? 'untitled'} ${thread.slug}`}
                   onSelect={() => {
                     setSelectedThreadId(thread._id)
                     setCurrentPage('threadConfig')
@@ -84,7 +94,7 @@ const CommandShellMenu = () => {
             <CmdkItem
               onSelect={() => {
                 router.push(`${appConfig.chatUrl}/${selectedThread?.slug}`)
-                // closeDialog()
+                close()
               }}
             >
               <Icons.CaretDoubleUp weight="light" />
@@ -278,64 +288,6 @@ const CommandShellMenu = () => {
     ),
   }
   return (
-    <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
-      {/* * header * */}
-      <div className="flex h-12 shrink-0 items-center gap-2 border-b border-grayA-3 px-3">
-        {selectedThread ? (
-          <div className="flex items-center gap-1.5 truncate text-sm font-medium [&_svg]:shrink-0">
-            <Icons.CaretRight className="size-5" />
-            {selectedThread.model?.type === 'chat' ? (
-              <Icons.Chat className="size-4" />
-            ) : (
-              <Icons.ImageSquare className="size-4" />
-            )}
-            {selectedThread.title ?? 'Untitled'}
-          </div>
-        ) : (
-          <AppLogoName />
-        )}
-      </div>
-
-      {/* * menu * */}
-      <Cmdk
-        onKeyDown={(e) => {
-          // Escape goes to previous page (actually it closes dialog)
-          // Backspace goes to previous page when search is empty
-          // TODO fix - stops backspacing in other inputs
-          // if (e.key === 'Escape' || (e.key === 'Backspace' && !searchValue)) {
-          //   e.preventDefault()
-          //   setSelectedThreadId(null)
-          //   setCurrentPage('main')
-          // }
-        }}
-      >
-        <CmdkInput
-          placeholder="Type a command or search..."
-          className="border-b border-grayA-3"
-          value={searchValue}
-          onValueChange={setSearchValue}
-        />
-        <CmdkList>
-          <CmdkEmpty>No results found.</CmdkEmpty>
-
-          {page[currentPage]()}
-        </CmdkList>
-      </Cmdk>
-    </div>
-  )
-}
-
-export const CommandShell = ({ children }: { children?: React.ReactNode }) => {
-  const [open, setOpen] = useAtom(commandShellOpenAtom)
-
-  useKeyboardEvent('k', (e) => {
-    if (e.metaKey || e.ctrlKey) {
-      e.preventDefault()
-      setOpen(!open)
-    }
-  })
-
-  return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {children ? <Dialog.Trigger>{children}</Dialog.Trigger> : null}
       <Dialog.Content
@@ -345,7 +297,51 @@ export const CommandShell = ({ children }: { children?: React.ReactNode }) => {
         aria-describedby={undefined}
       >
         <Dialog.Title className="sr-only">Command Menu</Dialog.Title>
-        <CommandShellMenu />
+
+        <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
+          {/* * header * */}
+          <div className="flex h-12 shrink-0 items-center gap-2 border-b border-grayA-3 px-3">
+            {selectedThread ? (
+              <div className="flex items-center gap-1.5 truncate text-sm font-medium [&_svg]:shrink-0">
+                <Icons.CaretRight className="size-5" />
+                {selectedThread.model?.type === 'chat' ? (
+                  <Icons.Chat className="size-4" />
+                ) : (
+                  <Icons.ImageSquare className="size-4" />
+                )}
+                {selectedThread.title ?? 'Untitled'}
+              </div>
+            ) : (
+              <AppLogoName />
+            )}
+          </div>
+
+          {/* * menu * */}
+          <Cmdk
+            onKeyDown={(e) => {
+              // Escape goes to previous page (actually it closes dialog)
+              // Backspace goes to previous page when search is empty
+              // TODO fix - stops backspacing in other inputs
+              // if (e.key === 'Escape' || (e.key === 'Backspace' && !searchValue)) {
+              //   e.preventDefault()
+              //   setSelectedThreadId(null)
+              //   setCurrentPage('main')
+              // }
+            }}
+          >
+            <CmdkInput
+              placeholder="Type a command or search..."
+              className="border-b border-grayA-3"
+              value={searchValue}
+              onValueChange={setSearchValue}
+            />
+            <CmdkList>
+              <CmdkEmpty>No results found.</CmdkEmpty>
+
+              {page[currentPage]()}
+            </CmdkList>
+          </Cmdk>
+        </div>
       </Dialog.Content>
     </Dialog.Root>
   )

@@ -89,14 +89,14 @@ export const Composer = ({
       {...props}
     >
       {/* * prompt * */}
-      <Label className="block px-2 pt-1.5">
+      <Label className="block px-2">
         <span className="sr-only">Prompt</span>
         <TextareaAutosize
           name="prompt"
           placeholder={`${chatConfig ? 'Enter your message...' : 'Enter your prompt...'}`}
           className="border-none bg-transparent focus-visible:outline-none focus-visible:outline-transparent"
           rows={2}
-          minRows={2}
+          minRows={1}
           value={promptValue}
           onValueChange={(value) => setPromptValue(value)}
           onKeyDown={(e) => {
@@ -110,7 +110,7 @@ export const Composer = ({
       </Label>
 
       {/* * model / config * */}
-      <div className="flex gap-1.5 px-3 pb-2 pt-1.5">
+      <div className="flex flex-wrap gap-2 px-2 pb-2 pt-1.5">
         {/* TODO model select */}
         <Button
           type="button"
@@ -142,7 +142,7 @@ export const Composer = ({
       </div>
 
       {/* * actions * */}
-      <div className="flex gap-2 border-t border-grayA-3 p-3">
+      <div className="flex gap-2 border-t border-grayA-3 px-2 py-3">
         <Button
           type="button"
           variant="soft"
@@ -176,6 +176,9 @@ export const Composer = ({
           disabled={inputReadyState === 'locked'}
         >
           Run
+          <div className="md:hidden">
+            <Icons.PaperPlane className="size-4" />
+          </div>
           <div className="hidden rounded bg-grayA-5 p-0.5 md:flex">
             <Icons.Command />
             <Icons.ArrowElbowDownLeft />
@@ -190,7 +193,7 @@ const QuantitySelect = (props: React.ComponentProps<typeof Select.Root>) => {
   return (
     <Select.Root {...props}>
       <Select.Trigger placeholder="Quantity" className="min-w-24" variant="soft" color="gray" />
-      <Select.Content variant="soft">
+      <Select.Content variant="soft" color="gray">
         <Select.Group>
           <Select.Label>Quantity</Select.Label>
           <Select.Item value="1">
@@ -215,7 +218,7 @@ const DimensionsSelect = (props: React.ComponentProps<typeof Select.Root>) => {
   return (
     <Select.Root {...props}>
       <Select.Trigger placeholder="Dimensions" className="min-w-24" variant="soft" color="gray" />
-      <Select.Content variant="soft" highContrast>
+      <Select.Content variant="soft" color="gray">
         <Select.Group>
           <Select.Label>Dimensions</Select.Label>
           <Select.Item value="portrait">
