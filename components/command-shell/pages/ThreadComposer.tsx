@@ -1,56 +1,40 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
-import { Button, Dialog, IconButton, Select } from '@radix-ui/themes'
-import { useKeyboardEvent } from '@react-hookz/web'
-import { useAtom } from 'jotai'
+import { Button, Select } from '@radix-ui/themes'
 
-import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
-import { useCreateThread } from '@/app/b/api'
-import {
-  Cmdk,
-  CmdkEmpty,
-  CmdkGroup,
-  CmdkInput,
-  CmdkItem,
-  CmdkList,
-} from '@/components/command-shell/components/Cmdk'
+import { type ShellHelpers } from '@/components/command-shell/useCommandShell'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { createThreadShellOpenAtom } from '@/lib/atoms'
 import { cn } from '@/lib/utils'
 
 export const ThreadComposer = ({
-  inferenceType = 'chat',
+  shell,
   className,
   ...props
-}: { inferenceType?: 'chat' | 'textToImage' } & React.ComponentProps<'form'>) => {
-  const createThread = useCreateThread()
-  const { chatModels, imageModels } = useModelsApi()
-  const models = inferenceType === 'chat' ? chatModels : imageModels
-
+}: {
+  shell: ShellHelpers
+} & React.ComponentProps<'form'>) => {
   const [promptValue, setPromptValue] = useState('')
-  const [modelKey, setModelKey] = useState(
-    inferenceType === 'chat'
-      ? defaultChatInferenceConfig.resourceKey.toLowerCase()
-      : defaultImageInferenceConfig.resourceKey,
-  )
-  const currentModel = models?.find((model) => model.resourceKey === modelKey)
 
   const send = () => {
-    createThread({
+    if (!shell.currentModel) {
+      return
+    }
+
+    shell.createThread({
       text: promptValue,
       run:
-        inferenceType === 'chat'
+        shell.inferenceType === 'chat'
           ? {
               type: 'chat',
-              resourceKey: modelKey,
+              resourceKey: shell.currentModel?.resourceKey,
             }
           : {
               type: 'textToImage',
               prompt: promptValue,
-              resourceKey: modelKey,
+              resourceKey: shell.currentModel?.resourceKey,
               n: 4,
               size: 'square',
             },
@@ -58,7 +42,7 @@ export const ThreadComposer = ({
   }
 
   return (
-    <form {...props} className={cn('shrink-0', className)}>
+    <form className={cn('shrink-0', className)}>
       {/* * prompt * */}
       <Label className="block px-2">
         <span className="sr-only">Prompt</span>
@@ -81,12 +65,17 @@ export const ThreadComposer = ({
 
       {/* * config * */}
       <div className="flex gap-1.5 px-3 py-1.5">
-        <Button type="button" variant="surface" color="bronze">
+        <Button
+          type="button"
+          variant="surface"
+          color="bronze"
+          onClick={() => shell.push('ModelSelect')}
+        >
           <Icons.CodesandboxLogo className="size-4" />
-          {currentModel?.name ?? currentModel?.resourceKey ?? '???'}
+          {shell.currentModel?.name ?? shell.currentModel?.resourceKey ?? '???'}
         </Button>
 
-        {inferenceType === 'textToImage' && (
+        {shell.inferenceType === 'textToImage' && (
           <>
             <QuantitySelect />
             <DimensionsSelect />
@@ -96,15 +85,25 @@ export const ThreadComposer = ({
 
       {/* * actions * */}
       <div className="flex gap-2 border-t border-grayA-3 p-3">
-        {inferenceType === 'chat' && (
-          <Button type="button" variant="surface" color="gold">
+        {shell.inferenceType === 'chat' && (
+          <Button
+            type="button"
+            variant="surface"
+            color="gold"
+            onClick={() => shell.setInferenceType('textToImage')}
+          >
             <Icons.Chat className="size-4" />
             Chat
           </Button>
         )}
 
-        {inferenceType === 'textToImage' && (
-          <Button type="button" variant="surface" color="gold">
+        {shell.inferenceType === 'textToImage' && (
+          <Button
+            type="button"
+            variant="surface"
+            color="gold"
+            onClick={() => shell.setInferenceType('chat')}
+          >
             <Icons.ImageSquare className="size-4" />
             Text To Image
           </Button>
@@ -180,71 +179,5 @@ const DimensionsSelect = () => {
         </Select.Group>
       </Select.Content>
     </Select.Root>
-  )
-}
-
-// * temp shell set up
-
-const ShellOuter = ({ title, children }: { title: string; children: React.ReactNode }) => {
-  return (
-    <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
-      {/* * header * */}
-      <div className="flex h-12 shrink-0 items-center gap-1 truncate border-b border-grayA-3 px-2 font-medium">
-        {/* <AppLogoName /> */}
-        <Icons.CaretRight className="size-5 text-accentA-11" /> {title}
-        <div className="grow"></div>
-        <IconButton variant="ghost" color="gray" className="m-0 shrink-0">
-          <Icons.X className="size-5" />
-        </IconButton>
-      </div>
-
-      {children}
-    </div>
-  )
-}
-
-export const CreateChatThreadShell = () => {
-  return (
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <IconButton variant="ghost" color="gray" className="m-0 shrink-0">
-          <Icons.Chat className="size-5" />
-        </IconButton>
-      </Dialog.Trigger>
-      <Dialog.Content
-        align="start"
-        maxWidth="42rem"
-        className="rounded-md p-0"
-        aria-describedby={undefined}
-      >
-        <Dialog.Title className="sr-only">Command Menu</Dialog.Title>
-        <ShellOuter title="New Chat">
-          <ThreadComposer inferenceType="chat" />
-        </ShellOuter>
-      </Dialog.Content>
-    </Dialog.Root>
-  )
-}
-
-export const CreateImageThreadShell = () => {
-  return (
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <IconButton variant="ghost" color="gray" className="m-0 shrink-0">
-          <Icons.ImageSquare className="size-5" />
-        </IconButton>
-      </Dialog.Trigger>
-      <Dialog.Content
-        align="start"
-        maxWidth="42rem"
-        className="rounded-md p-0"
-        aria-describedby={undefined}
-      >
-        <Dialog.Title className="sr-only">Command Menu</Dialog.Title>
-        <ShellOuter title="New Image">
-          <ThreadComposer inferenceType="textToImage" />
-        </ShellOuter>
-      </Dialog.Content>
-    </Dialog.Root>
   )
 }
