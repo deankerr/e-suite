@@ -22,7 +22,7 @@ export const NavRail = ({ className, ...props }: NavRailProps) => {
         className,
       )}
     >
-      <Logo />
+      <Logo className="size-6" />
       <CommandMenu />
 
       <div className="grow">{/* spacer */}</div>
