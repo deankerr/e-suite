@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "run dev:next",
+      "label": "run dev:convex",
       "type": "shell",
-      "command": "pnpm dev:next",
+      "command": "pnpm dev:convex",
       "presentation": {
         "reveal": "always",
         "panel": "dedicated"
@@ -15,9 +15,9 @@
       "problemMatcher": []
     },
     {
-      "label": "run dev:convex",
+      "label": "run dev:next",
       "type": "shell",
-      "command": "pnpm dev:convex",
+      "command": "pnpm dev:next",
       "presentation": {
         "reveal": "always",
         "panel": "dedicated"
