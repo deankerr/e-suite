@@ -19,7 +19,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
       <div className="shrink-0 px-3 text-sm font-semibold text-gray-10">Threads</div>
 
       <ScrollArea scrollbars="vertical">
-        <div className="flex flex-col gap-1 px-1">
+        <div className="space-y-2 px-2">
           {threads?.map((thread) => <ChatNavLink key={thread._id} thread={thread} />)}
         </div>
       </ScrollArea>
@@ -35,17 +35,18 @@ export const ChatNavLink = ({
   const segments = useSelectedLayoutSegments()
   const isActive = segments.includes(thread.slug)
 
-  const Icon = thread.model?.type === 'chat' ? Icons.Chat : Icons.ImagesSquare
+  const Icon = thread.model?.type === 'chat' ? Icons.Chat : Icons.Images
   return (
     <Link
       href={`${appConfig.chatUrl}/${thread.slug}`}
-      className={cn('flex rounded p-2', isActive ? 'bg-grayA-3' : 'hover:bg-grayA-2', className)}
+      className={cn(
+        'line-clamp-2 rounded border border-transparent px-2 py-1 text-sm',
+        isActive ? 'bg-accentA-6' : 'hover:border-accentA-3 hover:bg-accentA-3',
+      )}
       {...props}
     >
-      <div className="shrink-0 pr-1.5 pt-0.5">
-        <Icon className="size-4 text-gray-11" />
-      </div>
-      <div className="line-clamp-2 text-sm">{thread.title ?? 'untitled'}</div>
+      <Icon className="mr-1 inline-block text-accent-11" />
+      {thread.title ?? 'untitled'}
     </Link>
   )
 }

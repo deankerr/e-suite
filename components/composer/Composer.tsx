@@ -150,11 +150,7 @@ export const Composer = ({
           highContrast
           disabled={inputReadyState === 'locked'}
         >
-          {chatConfig ? (
-            <Icons.Chat className="size-4" />
-          ) : (
-            <Icons.ImageSquare className="size-4" />
-          )}
+          {chatConfig ? <Icons.Chat /> : <Icons.ImageSquare />}
           {chatConfig ? 'Chat' : 'Text To Image'}
         </Button>
 
