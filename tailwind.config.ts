@@ -126,7 +126,7 @@ const config: Config = {
       overlay: 'var(--color-overlay)',
       'panel-solid': 'var(--color-panel-solid)',
       'panel-translucent': 'var(--color-panel-translucent)',
-      midnight: '#090908',
+      midnight: '#090909',
     },
     container: {
       center: true,
