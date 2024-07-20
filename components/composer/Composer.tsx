@@ -20,6 +20,7 @@ export const Composer = ({
   appendMessage,
   inputReadyState,
   onSuccess,
+  textareaMinRows = 2,
   className,
   ...props
 }: {
@@ -28,6 +29,7 @@ export const Composer = ({
   appendMessage: ReturnType<typeof useAppendMessage>['appendMessage']
   inputReadyState: ReturnType<typeof useAppendMessage>['inputReadyState']
   onSuccess?: (result: FunctionReturnType<typeof api.db.threadsB.append>) => void
+  textareaMinRows?: number
 } & React.ComponentProps<'form'>) => {
   const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
 
@@ -95,8 +97,8 @@ export const Composer = ({
           name="prompt"
           placeholder={`${chatConfig ? 'Enter your message...' : 'Enter your prompt...'}`}
           className="border-none bg-transparent focus-visible:outline-none focus-visible:outline-transparent"
-          rows={2}
-          minRows={1}
+          rows={textareaMinRows}
+          minRows={textareaMinRows}
           value={promptValue}
           onValueChange={(value) => setPromptValue(value)}
           onKeyDown={(e) => {
@@ -106,6 +108,7 @@ export const Composer = ({
             }
           }}
           disabled={inputReadyState !== 'ready'}
+          autoFocus
         />
       </Label>
 
@@ -150,7 +153,11 @@ export const Composer = ({
           highContrast
           disabled={inputReadyState === 'locked'}
         >
-          {chatConfig ? <Icons.Chat /> : <Icons.ImageSquare />}
+          {chatConfig ? (
+            <Icons.Chat className="phosphor" />
+          ) : (
+            <Icons.ImageSquare className="phosphor" />
+          )}
           {chatConfig ? 'Chat' : 'Text To Image'}
         </Button>
 

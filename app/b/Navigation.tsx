@@ -17,10 +17,10 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
   const setShellStack = useSetAtom(shellStackAtom)
 
   return (
-    <div {...props} className={cn('fixed inset-y-0 hidden w-60 p-1.5 md:block', className)}>
-      <nav className="flex h-full flex-col rounded-md border border-grayA-5">
+    <div {...props} className={cn('fixed inset-y-0 hidden w-60 md:block md:p-1.5', className)}>
+      <nav className="flex h-full flex-col rounded-md border border-gray-5 bg-gray-1">
         {/* * logo / menu button * */}
-        <div className="flex h-12 shrink-0 items-center justify-between px-1.5 pl-2.5">
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-transparent px-1.5 pl-2.5">
           <Link href={appConfig.baseUrl}>
             <AppLogoName />
           </Link>
@@ -31,19 +31,15 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
           <Button
             variant="soft"
             color="gray"
-            size="3"
+            size="2"
             onClick={() => {
               setShellStack(['ThreadComposer'])
               setShellOpen(true)
             }}
           >
-            <Icons.Chats className="-ml-3 size-5" />
+            <Icons.Chats className="phosphor -ml-3" />
             New Chat
           </Button>
-          {/* <Button variant="soft" color="gray" size="3">
-            <Icons.ImagesSquare className="-ml-3 size-5" />
-            Generate
-          </Button> */}
         </div>
 
         {/* * chats * */}
