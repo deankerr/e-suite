@@ -75,8 +75,7 @@ export const run = internalAction({
       const { type, endpoint, endpointModelId, resourceKey, ...parameters } = chatConfig
       const api = createOpenAiClient(endpoint)
 
-      console.log(type, endpoint, parameters)
-      console.log(messages)
+      console.log(`[${type}]`, `[${endpoint}]`, parameters, messages)
 
       const nonStreaming = async () => {
         const chatCompletion = await api.chat.completions.create({
@@ -119,6 +118,7 @@ export const run = internalAction({
 
       const isStreamingRequest = chatConfig.stream ?? true
       const content = isStreamingRequest ? await streaming() : await nonStreaming()
+      console.log(content)
 
       await ctx.runMutation(internal.inference.chat.complete, {
         jobId: args.jobId,

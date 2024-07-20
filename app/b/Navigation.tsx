@@ -17,17 +17,17 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
   const setShellStack = useSetAtom(shellStackAtom)
 
   return (
-    <div {...props} className={cn('fixed inset-y-0 hidden w-56 p-1.5 md:block', className)}>
-      <nav className="flex h-full flex-col rounded-md border border-transparent">
+    <div {...props} className={cn('fixed inset-y-0 hidden w-60 p-1.5 md:block', className)}>
+      <nav className="flex h-full flex-col rounded-md border border-grayA-5">
         {/* * logo / menu button * */}
-        <div className="flex h-12 shrink-0 items-center justify-between px-1.5">
+        <div className="flex h-12 shrink-0 items-center justify-between px-1.5 pl-2.5">
           <Link href={appConfig.baseUrl}>
             <AppLogoName />
           </Link>
         </div>
 
         {/* * compose * */}
-        <div className="flex shrink-0 flex-col gap-2 py-3">
+        <div className="flex shrink-0 flex-col gap-2 px-2 py-3">
           <Button
             variant="soft"
             color="gray"
@@ -50,7 +50,7 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
         <ChatNavList />
 
         {/* * footer * */}
-        <div className="flex h-12 shrink-0 items-center justify-center px-3">
+        <div className="flex-center h-12 shrink-0 gap-2 px-3">
           <UserButtons />
         </div>
       </nav>

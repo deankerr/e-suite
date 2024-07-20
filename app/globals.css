@@ -58,3 +58,10 @@
 .colorize-orange {
   filter: invert(100%) brightness(0.5) sepia(1) hue-rotate(-6deg) saturate(5);
 }
+
+svg {
+  display: inline-block;
+  vertical-align: text-top;
+  width: 1.2em;
+  height: 1.2em;
+}

@@ -24,12 +24,12 @@ const Component = () => {
   return (
     <PageWrapper className="flex flex-col">
       {/* * header * */}
-      <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 bg-grayA-2 px-2">
+      <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
         <div className="flex w-20 items-center">
           {/* * command menu button * */}
           <CommandShell>
             <IconButton variant="ghost" className="m-0 shrink-0 transition-none md:-translate-x-14">
-              <Icons.List className="size-7" />
+              <Icons.List />
             </IconButton>
           </CommandShell>
         </div>
@@ -39,9 +39,9 @@ const Component = () => {
         </div>
 
         <div className="flex shrink-0 items-center">
-          <Button variant="outline" size="2" color="gray">
-            <Icons.FunnelSimple className="size-5" />
+          <Button variant="outline" color="gray">
             Filter
+            <Icons.FunnelSimple />
           </Button>
         </div>
       </header>
@@ -67,7 +67,7 @@ const Component = () => {
         appendMessage={appendMessage}
         inputReadyState={inputReadyState}
         // inputReadyState={'pending'}
-        className="border-t border-grayA-3 bg-grayA-2"
+        className="border-t border-grayA-3"
       />
 
       <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
