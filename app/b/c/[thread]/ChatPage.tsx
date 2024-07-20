@@ -29,19 +29,19 @@ const Component = () => {
           {/* * command menu button * */}
           <CommandShell>
             <IconButton variant="ghost" className="m-0 shrink-0 transition-none md:-translate-x-14">
-              <Icons.List />
+              <Icons.List className="phosphor" />
             </IconButton>
           </CommandShell>
         </div>
 
-        <div className="px-1 text-sm font-medium md:absolute md:left-1/2 md:-translate-x-1/2 md:transform md:whitespace-nowrap">
+        <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">
           {thread.title ?? 'untitled thread'}
         </div>
 
         <div className="flex shrink-0 items-center">
           <Button variant="outline" color="gray">
             Filter
-            <Icons.FunnelSimple />
+            <Icons.FunnelSimple className="phosphor" />
           </Button>
         </div>
       </header>
@@ -66,16 +66,13 @@ const Component = () => {
         model={thread.model}
         appendMessage={appendMessage}
         inputReadyState={inputReadyState}
-        // inputReadyState={'pending'}
-        className="border-t border-grayA-3"
+        textareaMinRows={1}
+        className="border-t border-grayA-3 pt-1"
       />
 
       <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
         {messages.length}
       </div>
-
-      {/* * sidebar * */}
-      {/* <Sidebar thread={thread} /> */}
     </PageWrapper>
   )
 }
