@@ -14,6 +14,8 @@ import { Composer } from '@/components/composer/Composer'
 import { Link } from '@/components/ui/Link'
 import { cn } from '@/lib/utils'
 
+import type { EMessage } from '@/convex/types'
+
 const Component = () => {
   const { thread, messages, removeMessage } = useChat()
   const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
@@ -48,12 +50,17 @@ const Component = () => {
 
       {/* * feed * */}
       <ScrollArea scrollbars="vertical">
-        <div className="mx-auto flex flex-col-reverse items-center gap-0.5 overflow-hidden px-1.5 text-sm">
-          <EndOfFeedIndicator />
+        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-1.5 text-sm">
+          {/* <EndOfFeedIndicator /> */}
 
           {/* * messages * */}
-          {messages.map((message) => (
-            <Message key={message._id} message={message} removeMessage={removeMessage} />
+          {messages.map((message, i) => (
+            <Message
+              key={message._id}
+              message={message}
+              removeMessage={removeMessage}
+              showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
+            />
           ))}
 
           <LoadMoreButton />
@@ -75,6 +82,11 @@ const Component = () => {
       </div>
     </PageWrapper>
   )
+}
+
+const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
+  if (previousMessage === undefined) return false
+  return message.name === previousMessage.name && message.role === previousMessage.role
 }
 
 export const ChatPage = ({ slug, onClose }: { slug: string; onClose?: (slug: string) => void }) => {

@@ -35,7 +35,7 @@ export const MarbleAvatar = (props: {
     <>
       {/* line */}
       <div
-        className="absolute bottom-2 right-0 top-4 w-1/2 border-l opacity-50"
+        className="absolute right-0 h-[calc(100%-12px)] w-1/2 border-l opacity-70"
         style={{ borderColor: primaryColor }}
       ></div>
 
