@@ -31,7 +31,7 @@ const Component = () => {
           {/* * command menu button * */}
           <CommandShell>
             <IconButton variant="ghost" className="m-0 shrink-0 transition-none md:-translate-x-14">
-              <Icons.List className="phosphor" />
+              <Icons.List className="size-6" />
             </IconButton>
           </CommandShell>
         </div>

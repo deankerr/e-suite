@@ -15,7 +15,7 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
   return (
     <ModelsApiProvider>
       <div className="flex h-svh md:p-1.5">
-        <Navigation className="pr-0" />
+        <Navigation />
         {children}
       </div>
 

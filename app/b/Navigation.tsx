@@ -17,7 +17,10 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
   const setShellStack = useSetAtom(shellStackAtom)
 
   return (
-    <div {...props} className={cn('fixed inset-y-0 hidden w-60 md:block md:p-1.5', className)}>
+    <div
+      {...props}
+      className={cn('fixed inset-y-0 hidden w-60 md:block md:py-1.5 md:pr-1.5', className)}
+    >
       <nav className="flex h-full flex-col rounded-md border border-gray-5 bg-gray-1">
         {/* * logo / menu button * */}
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-transparent px-1.5 pl-2.5">
