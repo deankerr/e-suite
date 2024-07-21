@@ -1,7 +1,7 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
 
-import { BoringAvatar } from '@/app/b/c/[thread]/_components/Marble'
+import { MarbleAvatar } from '@/app/b/c/[thread]/_components/MarbleAvatar'
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Markdown } from '@/components/message/Markdown'
@@ -28,7 +28,7 @@ export const Message = ({
     <div
       {...props}
       className={cn(
-        'grid shrink-0 grid-cols-[3rem_1fr_3rem]',
+        'grid shrink-0 grid-cols-[2rem_1fr_3rem]',
         'rounded-md border border-transparent hover:border-grayA-2',
         'box-content min-h-7 w-full text-sm',
         shouldAddSpacer && 'mb-2',
@@ -36,10 +36,8 @@ export const Message = ({
       )}
     >
       {/* # left gutter # */}
-      <div className="flex justify-end">
-        <div className="flex-center h-7 px-2.5">
-          <BoringAvatar name={name} size={15} />
-        </div>
+      <div className="row-span-2 flex justify-center pt-1.5">
+        <MarbleAvatar name={name} size={16} />
       </div>
 
       {/* # name / text content # */}
@@ -95,15 +93,13 @@ export const Message = ({
       {/* # images # */}
       {message.images.length > 0 ? (
         <>
-          <div></div>
-          <div className="flex flex-wrap justify-center gap-2 py-1">
+          <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
             {message.images.map((image) => (
               <div className="w-full max-w-[45%]" key={image._id}>
                 <ImageCard image={image} />
               </div>
             ))}
           </div>
-          <div></div>
         </>
       ) : null}
 
