@@ -50,7 +50,7 @@ const Component = () => {
 
       {/* * feed * */}
       <ScrollArea scrollbars="vertical">
-        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-1.5 text-sm">
+        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 pb-1.5 text-sm">
           {/* <EndOfFeedIndicator /> */}
 
           {/* * messages * */}

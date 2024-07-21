@@ -215,8 +215,15 @@ export const update = mutation({
     name: v.optional(v.string()),
     text: v.optional(v.string()),
   },
-  handler: async (ctx, { messageId, ...fields }) => {
-    return await ctx.table('messages').getX(messageId).patch(fields)
+  handler: async (ctx, { messageId, role, name, text }) => {
+    return await ctx
+      .table('messages')
+      .getX(messageId)
+      .patch({
+        role,
+        name: name || undefined,
+        text: text || undefined,
+      })
   },
 })
 
