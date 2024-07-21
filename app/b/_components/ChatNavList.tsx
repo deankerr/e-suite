@@ -19,7 +19,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
       <div className="shrink-0 px-3 text-sm font-semibold text-gray-10">Threads</div>
 
       <ScrollArea scrollbars="vertical" className="border-y border-grayA-3">
-        <div className="space-y-1 px-2 py-1">
+        <div className="space-y-1 px-2 py-2">
           {threads?.map((thread) => <ChatNavLink key={thread._id} thread={thread} />)}
         </div>
       </ScrollArea>
@@ -42,8 +42,8 @@ export const ChatNavLink = ({
       className={cn(
         'rt-Link line-clamp-2 rounded border border-transparent px-2 py-1 text-sm font-medium opacity-90',
         isActive
-          ? 'border-accentA-3 bg-accentA-3 text-white opacity-100'
-          : 'hover:bg-accentA-3 hover:opacity-100',
+          ? 'shadow-glow border-accentA-3 bg-accentA-3 opacity-100'
+          : 'hover:shadow-glow hover:border-accentA-3 hover:bg-accentA-3',
       )}
       {...props}
     >

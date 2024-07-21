@@ -175,6 +175,9 @@ const config: Config = {
         shimmerDown: 'shimmerDown 8s linear infinite',
         starfieldDown: 'starfieldDown 20s linear infinite',
       },
+      boxShadow: {
+        glow: '0 0 10px 0px #ff720021, 0 0 5px 0px #ff720021',
+      },
     },
   },
 }
