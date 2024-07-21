@@ -12,18 +12,21 @@ import type { EMessage } from '@/convex/types'
 export const Message = ({
   message,
   removeMessage,
+  showNameAvatar = true,
   className,
   ...props
 }: {
   message: EMessage
   removeMessage?: (args: { messageId: string }) => void
+  showNameAvatar?: boolean
 } & React.ComponentProps<'div'>) => {
   const { textToImageConfig } = getInferenceConfig(message.inference)
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
 
-  const shouldAddSpacer = message.images.length > 0 || message.audio.length > 0
+  // const shouldAddSpacer = message.images.length > 0 || message.audio.length > 0
+  const shouldAddSpacer = false
   return (
     <div
       {...props}
@@ -36,15 +39,23 @@ export const Message = ({
       )}
     >
       {/* # left gutter # */}
-      <div className="row-span-2 flex justify-center pt-1.5">
-        <MarbleAvatar name={name} size={16} />
+      <div
+        className={cn(
+          'row-span-2 flex justify-center pt-1.5',
+          showNameAvatar
+            ? ''
+            : 'pt-0 [&_div]:-top-1 [&_div]:bottom-0 [&_div]:h-auto [&_svg]:hidden',
+        )}
+      >
+        <MarbleAvatar name={name} size={17} />
       </div>
 
       {/* # name / text content # */}
       <div className="py-1">
         {/* * name * */}
-        <span className={cn('shrink-0 font-medium text-brown-11')}>{name}</span>{' '}
+        {showNameAvatar ? <span className={cn('text-accentA-11')}>{name} </span> : null}
         {text && text.length > 300 ? <Markdown text={text} /> : text}
+
         {/* * basic error display * */}
         {message.jobs
           .flatMap((job) => job.errors)
