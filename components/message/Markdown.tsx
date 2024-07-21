@@ -8,13 +8,15 @@ import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
-const Component = (props: { text?: string }) => {
+import { cn } from '@/lib/utils'
+
+const Component = (props: { text?: string; className?: string }) => {
   if (!props.text) return null
 
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
-      className="markdown-body"
+      className={cn('markdown-body', props.className)}
       components={{
         a: ({ color: _, ...props }) => <Link {...props} />,
         code(props) {

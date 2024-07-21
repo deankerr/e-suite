@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
 
 import { MarbleAvatar } from '@/app/b/c/[thread]/_components/MarbleAvatar'
+import { MessageEditor } from '@/app/b/c/[thread]/_components/MessageEditor'
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
 import { Markdown } from '@/components/message/Markdown'
+import { Pre } from '@/components/util/Pre'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -25,16 +28,17 @@ export const Message = ({
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
 
-  // const shouldAddSpacer = message.images.length > 0 || message.audio.length > 0
-  const shouldAddSpacer = false
+  const [showJson, setShowJson] = useState(false)
+  const [showEditor, setShowEditor] = useState(false)
+
   return (
     <div
       {...props}
       className={cn(
-        'grid shrink-0 grid-cols-[2rem_1fr_3rem]',
-        'rounded-md border border-transparent hover:border-grayA-2',
+        'grid shrink-0 grid-cols-[2rem_1fr_2rem]',
+        'rounded-md border border-transparent hover:border-grayA-4',
         'box-content min-h-7 w-full text-sm',
-        shouldAddSpacer && 'mb-2',
+        showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
         className,
       )}
     >
@@ -53,8 +57,8 @@ export const Message = ({
       {/* # name / text content # */}
       <div className="py-1">
         {/* * name * */}
-        {showNameAvatar ? <span className={cn('text-accentA-11')}>{name} </span> : null}
-        {text && text.length > 300 ? <Markdown text={text} /> : text}
+        {showNameAvatar ? <span className={cn('font-medium text-accentA-11')}>{name} </span> : null}
+        {!showEditor && text && text.length < 300 ? text : null}
 
         {/* * basic error display * */}
         {message.jobs
@@ -73,7 +77,7 @@ export const Message = ({
       </div>
 
       {/* # right gutter # */}
-      <div className="flex-center items-start">
+      <div className="flex-end items-start">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">
@@ -82,13 +86,11 @@ export const Message = ({
           </DropdownMenu.Trigger>
 
           <DropdownMenu.Content variant="soft" align="end">
-            {/* <DropdownMenu.Item onClick={() => setEditing(!editing)}>
-                    {editing ? 'Cancel Edit' : 'Edit'}
-                  </DropdownMenu.Item>
+            <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
+              {showEditor ? 'Cancel Edit' : 'Edit'}
+            </DropdownMenu.Item>
 
-                  <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
-                    Show JSON
-                  </DropdownMenu.Item> */}
+            <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
 
             <DropdownMenu.Item
               color="red"
@@ -101,17 +103,25 @@ export const Message = ({
         </DropdownMenu.Root>
       </div>
 
+      {/* * editor */}
+      {showEditor && (
+        <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
+      )}
+
+      {/* * markdown text */}
+      {!showEditor && text && text.length >= 300 ? (
+        <Markdown text={text} className="col-start-2" />
+      ) : null}
+
       {/* # images # */}
       {message.images.length > 0 ? (
-        <>
-          <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
-            {message.images.map((image) => (
-              <div className="w-full max-w-[45%]" key={image._id}>
-                <ImageCard image={image} />
-              </div>
-            ))}
-          </div>
-        </>
+        <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
+          {message.images.map((image) => (
+            <div className="w-full max-w-[45%]" key={image._id}>
+              <ImageCard image={image} />
+            </div>
+          ))}
+        </div>
       ) : null}
 
       {/* # audio # */}
@@ -124,6 +134,9 @@ export const Message = ({
           )}
         </div>
       ) : null}
+
+      {/* * json * */}
+      {showJson && <Pre className="col-start-2">{JSON.stringify(message, null, 2)}</Pre>}
     </div>
   )
 }
