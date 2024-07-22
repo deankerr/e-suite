@@ -7,7 +7,7 @@ import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shar
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
-import { getNextMessageSeries } from './messages'
+import { getMessageCommand, getNextMessageSeries } from './messages'
 import { getThreadBySlugOrId } from './threads'
 
 import type { ChatCompletionConfig, MutationCtx, TextToImageConfig } from '../types'
@@ -51,15 +51,11 @@ export const append = mutation({
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
 
-    const inference = args.run
+    const runConfig = args.run
       ? args.run.type === 'chat'
         ? await getTransitionConfigChat(ctx, args.run)
         : await getTransitionConfigTextToImage(ctx, args.run)
       : undefined
-
-    if (!args.threadId && !args.text && !args.run) {
-      throw new ConvexError('no arguments provided')
-    }
 
     const thread = args.threadId
       ? await getThreadBySlugOrId(ctx, args.threadId)
@@ -70,21 +66,25 @@ export const append = mutation({
             slug: await generateSlug(ctx),
             updatedAtTime: Date.now(),
             slashCommands: [],
-            inference: inference ?? defaultChatInferenceConfig,
+            inference: runConfig ?? defaultChatInferenceConfig,
           })
           .get()
 
     if (!thread) throw new ConvexError('invalid thread')
 
     // update inference config if was existing thread
-    if (args.threadId && inference) {
+    if (args.threadId && runConfig) {
       await ctx.table('threads').getX(thread._id).patch({
-        inference,
+        inference: runConfig,
       })
     }
 
+    const messageCommand = getMessageCommand(thread, args.text)
+    const inference = messageCommand?.inference ?? runConfig
+
     let nextSeries = await getNextMessageSeries(thread)
 
+    // * textToImage
     if (inference?.type === 'text-to-image') {
       const asstMessage = await ctx
         .table('messages')
@@ -115,6 +115,38 @@ export const append = mutation({
       }
     }
 
+    // * textToAudio
+    if (inference?.type === 'sound-generation') {
+      const asstMessage = await ctx
+        .table('messages')
+        .insert({
+          userId: user._id,
+          role: 'assistant',
+          threadId: thread._id,
+          series: nextSeries++,
+          inference,
+          contentType: 'audio',
+          hasImageReference: false,
+        })
+        .get()
+
+      const jobId = await createJob(ctx, {
+        name: 'inference/textToAudio',
+        fields: {
+          messageId: asstMessage._id,
+        },
+      })
+
+      return {
+        threadId: thread._id,
+        slug: thread.slug,
+        messageId: asstMessage._id,
+        series: asstMessage.series,
+        jobId,
+      }
+    }
+
+    // * add user message
     const userMessage = await ctx
       .table('messages')
       .insert({
@@ -137,6 +169,7 @@ export const append = mutation({
       }
     }
 
+    // * chat
     const asstMessage = await ctx
       .table('messages')
       .insert({
