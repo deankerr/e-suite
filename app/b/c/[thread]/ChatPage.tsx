@@ -12,6 +12,8 @@ import { appConfig } from '@/app/b/config'
 import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Composer } from '@/components/composer/Composer'
 import { Link } from '@/components/ui/Link'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
+import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -19,6 +21,7 @@ import type { EMessage } from '@/convex/types'
 const ChatPageImpl = () => {
   const { thread, messages, removeMessage } = useChat()
   const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
+  const { isOwner } = useViewerDetails(thread?.userId)
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <PageWrapper loading />
@@ -68,18 +71,22 @@ const ChatPageImpl = () => {
       </ScrollArea>
 
       {/* * composer * */}
-      <Composer
-        runConfig={thread.inference}
-        model={thread.model}
-        appendMessage={appendMessage}
-        inputReadyState={inputReadyState}
-        textareaMinRows={1}
-        className="border-t border-grayA-3 pt-1"
-      />
+      {isOwner ? (
+        <Composer
+          runConfig={thread.inference}
+          model={thread.model}
+          appendMessage={appendMessage}
+          inputReadyState={inputReadyState}
+          textareaMinRows={1}
+          className="border-t border-grayA-3 pt-1"
+        />
+      ) : null}
 
-      <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
-        {messages.length}
-      </div>
+      <AdminOnlyUi>
+        <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
+          {messages.length}
+        </div>
+      </AdminOnlyUi>
     </PageWrapper>
   )
 }

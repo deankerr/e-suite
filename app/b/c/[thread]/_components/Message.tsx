@@ -8,6 +8,7 @@ import { ImageCard } from '@/components/images/ImageCard'
 import { Marble, useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/message/Markdown'
 import { Pre } from '@/components/util/Pre'
+import { useViewerDetails } from '@/lib/queries'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -23,6 +24,7 @@ export const Message = ({
   removeMessage?: (args: { messageId: string }) => void
   showNameAvatar?: boolean
 } & React.ComponentProps<'div'>) => {
+  const { isOwner } = useViewerDetails(message.userId)
   const { textToImageConfig } = getInferenceConfig(message.inference)
 
   const name = getMessageName(message)
@@ -77,29 +79,33 @@ export const Message = ({
 
       {/* # right gutter # */}
       <div className="flex-end items-start">
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">
-              <Icons.DotsThree size={24} />
-            </IconButton>
-          </DropdownMenu.Trigger>
+        {isOwner ? (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">
+                <Icons.DotsThree size={24} />
+              </IconButton>
+            </DropdownMenu.Trigger>
 
-          <DropdownMenu.Content variant="soft" align="end">
-            <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
-              {showEditor ? 'Cancel Edit' : 'Edit'}
-            </DropdownMenu.Item>
+            <DropdownMenu.Content variant="soft" align="end">
+              <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
+                {showEditor ? 'Cancel Edit' : 'Edit'}
+              </DropdownMenu.Item>
 
-            <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
+              <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>
+                Show JSON
+              </DropdownMenu.Item>
 
-            <DropdownMenu.Item
-              color="red"
-              disabled={!removeMessage}
-              onClick={() => removeMessage?.({ messageId: message._id })}
-            >
-              Delete
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+              <DropdownMenu.Item
+                color="red"
+                disabled={!removeMessage}
+                onClick={() => removeMessage?.({ messageId: message._id })}
+              >
+                Delete
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        ) : null}
       </div>
 
       {/* * editor */}
