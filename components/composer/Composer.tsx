@@ -4,6 +4,7 @@ import { Label } from '@radix-ui/react-label'
 import { Button, Select } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
+import { Badge } from '@/components/ui/Badge'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { cn, getInferenceConfig } from '@/lib/utils'
@@ -115,16 +116,49 @@ export const Composer = ({
       {/* * model / config * */}
       <div className="flex flex-wrap gap-2 px-2 pb-2 pt-1.5">
         {/* TODO model select */}
-        <Button
-          type="button"
-          variant="surface"
-          color="gray"
-          highContrast
-          disabled={inputReadyState === 'locked'}
-        >
-          <Icons.CodesandboxLogo className="size-4" />
-          {model?.name ?? 'Unknown Model'}
-        </Button>
+
+        {model ? (
+          <>
+            <Button
+              type="button"
+              variant="surface"
+              color="gray"
+              highContrast
+              disabled={inputReadyState === 'locked'}
+            >
+              <Icons.CodesandboxLogo className="size-4" />
+              {model.name}
+              <Icons.CaretUpDown className="phosphor" />
+            </Button>
+            <div className="flex-start gap-1">
+              <Badge size="3" color="brown">
+                {model.endpoint}
+              </Badge>
+
+              {model.moderated && (
+                <Badge size="3" color="ruby">
+                  moderated
+                </Badge>
+              )}
+
+              {model.type === 'image' && (
+                <Badge size="3" color="brown">
+                  {model.architecture}
+                </Badge>
+              )}
+            </div>
+          </>
+        ) : (
+          <Button
+            type="button"
+            variant="surface"
+            color="gray"
+            disabled={inputReadyState === 'locked'}
+          >
+            <Icons.QuestionMark className="size-4" />
+            No Model Selected
+          </Button>
+        )}
 
         {textToImageConfig && (
           <>
