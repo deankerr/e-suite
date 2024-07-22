@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 import { useQueries } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
@@ -14,7 +14,11 @@ const queryKeys = {
 }
 
 const useCreateModelsApiContext = () => {
-  const queries = useQueries(queryKeys)
+  const { chatModels, imageModels, voiceModels } = useQueries(queryKeys)
+  const queries = useMemo(
+    () => ({ chatModels, imageModels, voiceModels }),
+    [chatModels, imageModels, voiceModels],
+  )
 
   return queries as {
     chatModels: FunctionReturnType<typeof api.db.models.listChatModels> | undefined

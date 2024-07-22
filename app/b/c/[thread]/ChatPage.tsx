@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
 
-const Component = () => {
+const ChatPageImpl = () => {
   const { thread, messages, removeMessage } = useChat()
   const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
 
@@ -92,7 +92,7 @@ const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
 export const ChatPage = ({ slug, onClose }: { slug: string; onClose?: (slug: string) => void }) => {
   return (
     <ChatProvider slug={slug} onClose={onClose}>
-      <Component />
+      <ChatPageImpl />
     </ChatProvider>
   )
 }
