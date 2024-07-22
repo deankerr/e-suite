@@ -40,10 +40,10 @@ export const useUserThreadsList = (): EThread[] | undefined => {
 }
 
 export const useViewerDetails = (
-  ownerId?: string,
+  checkOwnerId?: string,
 ): { user: EUser | null | undefined; isOwner: boolean; isAdmin: boolean } => {
   const user = useQuery(api.users.getViewer, {})
-  const isOwner = user?._id === ownerId
+  const isOwner = user?._id === checkOwnerId
   const isAdmin = user?.role === 'admin'
   return { user, isOwner, isAdmin }
 }
