@@ -2,10 +2,10 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
 
-import { MarbleAvatar } from '@/app/b/c/[thread]/_components/MarbleAvatar'
 import { MessageEditor } from '@/app/b/c/[thread]/_components/MessageEditor'
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
+import { Marble, useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/message/Markdown'
 import { Pre } from '@/components/util/Pre'
 import { cn, getInferenceConfig } from '@/lib/utils'
@@ -27,6 +27,7 @@ export const Message = ({
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
+  const marbleProps = useMarbleProperties(name)
 
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
@@ -43,24 +44,22 @@ export const Message = ({
       )}
     >
       {/* # left gutter # */}
-      <div
-        className={cn(
-          'row-span-2 flex justify-center pt-1.5',
-          showNameAvatar
-            ? ''
-            : 'pt-0 [&_div]:-top-1 [&_div]:bottom-0 [&_div]:h-auto [&_svg]:hidden',
-        )}
-      >
-        <MarbleAvatar name={name} size={17} />
+      <div className="row-span-2 flex justify-center gap-4 pt-1.5 opacity-90">
+        <div
+          className={cn('absolute -top-2 bottom-1 w-px', showNameAvatar && 'inset-y-1.5')}
+          style={{ backgroundColor: marbleProps[0].color }}
+        />
+        {showNameAvatar ? <Marble name={name} properties={marbleProps} size={16} /> : null}
       </div>
 
       {/* # name / text content # */}
       <div className="py-1">
         {/* * name * */}
         {showNameAvatar ? <span className={cn('font-medium text-accentA-11')}>{name} </span> : null}
+        {/* * short message text * */}
         {!showEditor && text && text.length < 300 ? text : null}
 
-        {/* * basic error display * */}
+        {/* * errors * */}
         {message.jobs
           .flatMap((job) => job.errors)
           .map(
@@ -68,7 +67,7 @@ export const Message = ({
               error && (
                 <div
                   key={i}
-                  className="rounded-lg border border-red-10 px-2 py-1 text-xs text-red-11"
+                  className="rounded-lg border border-red-10 px-2 py-1.5 text-xs text-red-11"
                 >
                   {error.code} {error.message}
                 </div>
