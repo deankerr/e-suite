@@ -150,23 +150,24 @@ export const Message = ({
       {message.images.length > 0 || nImagePlaceholders > 0 ? (
         <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
           {message.images.map((image) => (
-            <div
-              className="w-full max-w-[45%] cursor-pointer"
-              key={image._id}
-              onClick={() => {
-                openLightbox({
-                  slides: message.images.map((image) => ({
-                    type: 'image',
-                    src: image._id,
-                    width: image.width,
-                    height: image.height,
-                    blurDataURL: image.blurDataUrl,
-                  })),
-                  index: message.images.indexOf(image),
-                })
-              }}
-            >
-              <ImageCard image={image} />
+            <div className="w-full max-w-[45%] cursor-pointer" key={image._id}>
+              <ImageCard
+                image={image}
+                imageProps={{
+                  onClick: () => {
+                    openLightbox({
+                      slides: message.images.map((image) => ({
+                        type: 'image',
+                        src: image._id,
+                        width: image.width,
+                        height: image.height,
+                        blurDataURL: image.blurDataUrl,
+                      })),
+                      index: message.images.indexOf(image),
+                    })
+                  },
+                }}
+              />
             </div>
           ))}
 
