@@ -5,6 +5,7 @@ import { DropdownMenu, IconButton } from '@radix-ui/themes'
 import { MessageEditor } from '@/app/b/c/[thread]/_components/MessageEditor'
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
+import { useLightbox } from '@/components/lightbox/hooks'
 import { Marble, useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/message/Markdown'
 import { Pre } from '@/components/util/Pre'
@@ -34,6 +35,7 @@ export const Message = ({
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
+  const openLightbox = useLightbox()
   return (
     <div
       {...props}
@@ -122,7 +124,22 @@ export const Message = ({
       {message.images.length > 0 ? (
         <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
           {message.images.map((image) => (
-            <div className="w-full max-w-[45%]" key={image._id}>
+            <div
+              className="w-full max-w-[45%]"
+              key={image._id}
+              onClick={() => {
+                openLightbox({
+                  slides: message.images.map((image) => ({
+                    type: 'image',
+                    src: image._id,
+                    width: image.width,
+                    height: image.height,
+                    blurDataURL: image.blurDataUrl,
+                  })),
+                  index: message.images.indexOf(image),
+                })
+              }}
+            >
               <ImageCard image={image} />
             </div>
           ))}
