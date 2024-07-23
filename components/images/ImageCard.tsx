@@ -48,6 +48,7 @@ export const ImageCard = ({
 
         <Link href={`${getConvexSiteUrl()}/i/${image._id}?download`}>
           <IconButton
+            aria-label="Download image"
             variant="ghost"
             color="gray"
             size="1"

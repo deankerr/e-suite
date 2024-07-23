@@ -10,7 +10,7 @@ import { appConfig } from '@/config/config'
 import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
 import { useAppendMessage } from '@/lib/api'
 
-export const CreateThread = ({}: { props?: unknown }) => {
+export const CreateThread = () => {
   const router = useRouter()
   const stack = useShellStack()
 
