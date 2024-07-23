@@ -5,7 +5,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
 import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
-import { useMessagesList, useThread } from '@/lib/queries'
+import { useMessagesList, useSeriesMessage, useThread } from '@/lib/queries'
 
 import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
 
@@ -14,13 +14,16 @@ type ChatQueryFilters = {
   hasContent?: 'image' | 'audio'
 }
 
-export const useCreateChatContext = ({ slug }: { slug?: string }) => {
+export const useCreateChatContext = ({ slug, series }: { slug?: string; series?: string }) => {
   const thread = useThread({ slug })
+
+  const isMessageSeriesQuery = !!series
+  const seriesMessage = useSeriesMessage({ slug, series })
 
   const [queryFilters, setQueryFilters] = useState<ChatQueryFilters | undefined>(undefined)
 
   const page = useMessagesList({
-    slugOrId: thread?.slug,
+    slugOrId: !isMessageSeriesQuery ? thread?.slug : undefined,
     filters: queryFilters,
   })
 
@@ -37,6 +40,7 @@ export const useCreateChatContext = ({ slug }: { slug?: string }) => {
   const setVoiceoverQueue = useSetAtom(voiceoverQueueAtom)
 
   useEffect(() => {
+    if (!Array.isArray(messages)) return
     const newLatestMessage = messages?.at(0)
     if (!latestMessageId.current) {
       latestMessageId.current = newLatestMessage?._id ?? ''
@@ -130,6 +134,8 @@ export const useCreateChatContext = ({ slug }: { slug?: string }) => {
   return {
     thread,
     messages,
+    seriesMessage,
+    isMessageSeriesQuery,
     loadMoreMessages,
     page,
     appendMessage,

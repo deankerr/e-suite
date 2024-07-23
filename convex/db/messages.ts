@@ -101,7 +101,8 @@ export const getSeries = query({
   },
 })
 
-export const getSlugMessage = query({
+// * get single message by slug:series
+export const getSeriesMessage = query({
   args: {
     slug: v.string(),
     series: v.number(),
@@ -112,17 +113,11 @@ export const getSlugMessage = query({
 
     const messageEnt = await ctx.table('messages').get('threadId_series', thread._id, args.series)
     if (!messageEnt || messageEnt.deletionTime) {
-      return {
-        thread,
-        message: null,
-      }
+      return null
     }
 
     const message = await getMessageEdges(ctx, messageEnt)
-    return {
-      thread,
-      message,
-    }
+    return message
   },
 })
 

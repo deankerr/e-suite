@@ -9,9 +9,9 @@ import { useInView } from 'react-intersection-observer'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
 import { useAppendMessage } from '@/app/b/api'
-import { FilterControl } from '@/app/b/c/[thread]/_components/FilterControl'
-import { Message } from '@/app/b/c/[thread]/_components/Message'
-import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
+import { FilterControl } from '@/app/b/c/[...slug]/_components/FilterControl'
+import { Message } from '@/app/b/c/[...slug]/_components/Message'
+import { ChatProvider, useChat } from '@/app/b/c/[...slug]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
 import { Composer } from '@/components/composer/Composer'
 import { UserButtons } from '@/components/layout/UserButtons'
@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils'
 import type { EMessage } from '@/convex/types'
 
 const ChatPageImpl = () => {
-  const { thread, messages, removeMessage, page } = useChat()
+  const { thread, messages, removeMessage, page, isMessageSeriesQuery, seriesMessage } = useChat()
   const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
   const { isOwner } = useViewerDetails(thread?.userId)
   const shell = useShellActions()
@@ -62,8 +62,9 @@ const ChatPageImpl = () => {
     }
   }, [page.status])
 
-  if (thread === null) return <ChatPageError />
-  if (thread === undefined) return <PageWrapper loading />
+  if (thread === null || (isMessageSeriesQuery && seriesMessage === null)) return <ChatPageError />
+  if (thread === undefined || (isMessageSeriesQuery && seriesMessage === undefined))
+    return <PageWrapper loading />
 
   return (
     <PageWrapper className="flex flex-col">
@@ -122,12 +123,28 @@ const ChatPageImpl = () => {
             <Message
               key={message._id}
               message={message}
+              deeplink={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
               removeMessage={removeMessage}
               showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
             />
           ))}
 
-          <LoadMoreButton />
+          {/* * series message * */}
+          {isMessageSeriesQuery && seriesMessage && (
+            <Message
+              key={seriesMessage._id}
+              message={seriesMessage}
+              deeplink=""
+              removeMessage={removeMessage}
+              showTimeline={false}
+            />
+          )}
+
+          {isMessageSeriesQuery ? (
+            <div className="pointer-events-none h-4 w-full" />
+          ) : (
+            <LoadMoreButton />
+          )}
         </div>
       </ScrollArea>
 
@@ -166,7 +183,7 @@ const ChatPageImpl = () => {
 
       <AdminOnlyUi>
         <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
-          {messages.length}
+          {messages.length} | {page.status}
         </div>
       </AdminOnlyUi>
     </PageWrapper>
@@ -178,9 +195,9 @@ const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
   return message.name && message.name === previousMessage.name
 }
 
-export const ChatPage = ({ slug, onClose }: { slug: string; onClose?: (slug: string) => void }) => {
+export const ChatPage = ({ slug, series }: { slug: string; series?: string }) => {
   return (
-    <ChatProvider slug={slug} onClose={onClose}>
+    <ChatProvider slug={slug} series={series}>
       <ChatPageImpl />
     </ChatProvider>
   )
