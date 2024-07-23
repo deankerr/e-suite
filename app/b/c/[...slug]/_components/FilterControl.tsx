@@ -4,7 +4,11 @@ import { Button, Checkbox, Popover, Radio, Separator } from '@radix-ui/themes'
 
 import { useChat } from '@/app/b/c/[...slug]/_provider/ChatProvider'
 
-export const FilterControl = () => {
+export const FilterControl = ({
+  buttonProps,
+}: {
+  buttonProps?: React.ComponentProps<typeof Button>
+}) => {
   const { queryFilters, setQueryFilters } = useChat()
 
   const className =
@@ -13,7 +17,13 @@ export const FilterControl = () => {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Button variant="outline" size="2" color={queryFilters ? 'orange' : 'gray'}>
+        <Button
+          variant="outline"
+          size="2"
+          color={queryFilters ? 'orange' : 'gray'}
+          className="px-2 md:px-3"
+          {...buttonProps}
+        >
           <Icons.FunnelSimple className="size-5" />
           <span className="hidden md:inline">Filter</span>
         </Button>
