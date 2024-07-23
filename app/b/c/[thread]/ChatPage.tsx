@@ -40,7 +40,7 @@ const ChatPageImpl = () => {
   const getScrollToEndButtonPosition = () => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
-      return { top: rect.bottom - 64, left: rect.right - 64 }
+      return { top: rect.bottom - 64, left: rect.right - 80 }
     }
     return { top: 0, left: 0 }
   }
