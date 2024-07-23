@@ -1,6 +1,5 @@
 import { ModelsApiProvider } from '@/app/b/_providers/ModelsApiProvider'
 import { Navigation } from '@/app/b/Navigation'
-import { Shell } from '@/components/command-shell/Shell'
 
 import type { Metadata } from 'next'
 
@@ -18,8 +17,6 @@ export default function Lo36Layout({ children }: { children: React.ReactNode }) 
         <Navigation />
         {children}
       </div>
-
-      <Shell />
     </ModelsApiProvider>
   )
 }
