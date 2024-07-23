@@ -14,7 +14,6 @@ import { FilterControl } from '@/components/pages/FilterControl'
 import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ChatProvider, useChat } from '@/components/providers/ChatProvider'
 import { useShellActions } from '@/components/shell/hooks'
-import { ShellC } from '@/components/shell/Shell'
 import { Link } from '@/components/ui/Link'
 import { LinkButton2 } from '@/components/ui/LinkButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
@@ -72,8 +71,6 @@ const ChatPageImpl = () => {
       {/* * header * */}
       <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
         <div className="flex-start min-w-8 shrink-0 gap-1">
-          <ShellC />
-
           {isMessageSeriesQuery ? (
             <LinkButton2
               href={`${appConfig.chatUrl}/${thread.slug}`}
@@ -86,7 +83,7 @@ const ChatPageImpl = () => {
             <>
               <Authenticated>
                 <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
-                  <Icons.TerminalWindow className="size-5" />
+                  <Icons.Terminal className="size-5" />
                 </IconButton>
 
                 <IconButton

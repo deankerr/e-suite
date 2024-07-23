@@ -1,3 +1,5 @@
+'use client'
+
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Code, Dialog, IconButton } from '@radix-ui/themes'
 import { useKeyboardEvent } from '@react-hookz/web'
@@ -127,7 +129,7 @@ const ShellDialog = ({ children, ...props }: React.ComponentProps<typeof Dialog.
 export const ShellC = () => {
   const [open, setOpen] = useAtom(shellOpenAtom)
 
-  useKeyboardEvent('i', (e) => {
+  useKeyboardEvent('k', (e) => {
     if (e.metaKey || e.ctrlKey) {
       e.preventDefault()
       setOpen(!open)
