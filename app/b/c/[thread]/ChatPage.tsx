@@ -11,6 +11,7 @@ import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider
 import { appConfig } from '@/app/b/config'
 import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Composer } from '@/components/composer/Composer'
+import { ShellC } from '@/components/shell/Shell'
 import { Link } from '@/components/ui/Link'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { useViewerDetails } from '@/lib/queries'
@@ -37,6 +38,8 @@ const ChatPageImpl = () => {
               <Icons.List className="size-6" />
             </IconButton>
           </CommandShell>
+
+          <ShellC />
         </div>
 
         <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">

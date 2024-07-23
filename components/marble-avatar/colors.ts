@@ -13,7 +13,6 @@ export const colors = [
   '#0090ff', // blue-9
   '#75C7F0', // sky-11
   '#00a2c7', // cyan-9
-  '#58D5BA', // mint-11
   '#12a594', // teal-9
   '#29a383', // jade-9
   '#30a46c', // green-9
