@@ -179,6 +179,9 @@ importers:
       react-textarea-autosize:
         specifier: ^8.5.3
         version: 8.5.3(@types/react@18.3.3)(react@18.3.1)
+      react-twc:
+        specifier: ^1.4.1
+        version: 1.4.1(@types/react@18.3.3)(react@18.3.1)
       react-virtuoso:
         specifier: ^4.7.12
         version: 4.7.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4821,6 +4824,9 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  react-twc@1.4.1:
+    resolution: {integrity: sha512-G8Z4a20zM5bFMUPUrVlMiOIRiIbrNgj4CbvqNH6A1KcbEaEsXrKnDAtN6h7JptSaREbl/Mz66Rg+bEpiHnZDig==}
 
   react-virtuoso@4.7.12:
     resolution: {integrity: sha512-q8yaykkVJGJbPNQH2Hgm82ik0LsbNGJpHMEjAGz5ibEsTVHKObs5WtEELAd1A99OKFHs091W1M+HN+1sasL08Q==}
@@ -10875,6 +10881,14 @@ snapshots:
       use-latest: 1.2.1(@types/react@18.3.3)(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
+
+  react-twc@1.4.1(@types/react@18.3.3)(react@18.3.1):
+    dependencies:
+      '@radix-ui/react-slot': 1.1.0(@types/react@18.3.3)(react@18.3.1)
+      clsx: 2.1.1
+    transitivePeerDependencies:
+      - '@types/react'
+      - react
 
   react-virtuoso@4.7.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
