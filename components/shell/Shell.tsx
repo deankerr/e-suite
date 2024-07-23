@@ -1,12 +1,13 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Badge, Button, Dialog, IconButton } from '@radix-ui/themes'
+import { Code, Dialog, IconButton } from '@radix-ui/themes'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useAtom } from 'jotai'
 
 import { shellOpenAtom, shellSearchValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
-import { useShellStack } from '@/components/shell/hooks'
+import { useShellStack, useShellUserThreads } from '@/components/shell/hooks'
 import { AppLogoName } from '@/components/ui/AppLogoName'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import * as Page from './pages'
 
 export type ShellPage = keyof typeof Page
@@ -19,42 +20,73 @@ const Shell = () => {
   return (
     <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
       <div className="flex h-12 shrink-0 items-center justify-between gap-1 truncate border-b border-grayA-3 px-2 font-medium">
-        <AppLogoName />
-        <Badge>{stack.current}</Badge>
-        <Button onClick={stack.pop}>Back</Button>
-        <Button onClick={stack.clear}>Home</Button>
-        <Dialog.Close>
-          <IconButton variant="ghost" color="gray">
-            <Icons.X className="size-5" />
-          </IconButton>
-        </Dialog.Close>
+        <ShellTitle />
+
+        <div className="flex-end shrink-0 gap-1">
+          <Dialog.Close>
+            <IconButton variant="ghost" color="gray" className="m-0">
+              <Icons.X className="phosphor" />
+            </IconButton>
+          </Dialog.Close>
+        </div>
       </div>
-      <CmdK>
-        <CmdK.Input
-          placeholder="Enter a command"
-          value={searchValue}
-          onValueChange={setSearchValue}
-          autoFocus
-          autoComplete="off"
-        />
+
+      <CmdK tabIndex={0}>
+        {!stack.current || stack.current === 'ModelPicker' ? (
+          <CmdK.Input
+            placeholder="Enter a command"
+            value={searchValue}
+            onValueChange={setSearchValue}
+            autoFocus
+            autoComplete="off"
+          />
+        ) : null}
         <CmdK.List>
           <CmdK.Empty>No results found</CmdK.Empty>
-
-          <CmdK.Item>{stack.current ?? 'Main Menu'}</CmdK.Item>
-          {!stack.current && (
-            <>
-              <CmdK.Item onSelect={() => stack.push('UserThreads')}>Show Recent Threads</CmdK.Item>
-              <CmdK.Item onSelect={() => stack.push('ModelPicker')}>Pick a Model</CmdK.Item>
-            </>
-          )}
 
           <Page.UserThreads />
           <Page.ModelPicker />
           <Page.ThreadConfig />
           <Page.EditThreadTitle />
+          <Page.DeleteThread />
+
+          <AdminOnlyUi>
+            <Code size="1" color="gray" className="absolute -top-1 right-0 opacity-50">
+              {stack.current ?? 'none'}
+            </Code>
+          </AdminOnlyUi>
         </CmdK.List>
       </CmdK>
     </div>
+  )
+}
+
+const pageTitles: Record<string, string> = {
+  ThreadConfig: 'Thread: %t',
+  EditThreadTitle: 'Edit Title',
+  DeleteThread: 'Delete Thread',
+  ModelPicker: 'Select Model',
+  UserThreads: 'Threads',
+} satisfies Record<ShellPage, string>
+
+const ShellTitle = () => {
+  const stack = useShellStack()
+  const threads = useShellUserThreads()
+
+  let title = pageTitles[stack.current ?? ''] ?? stack.current ?? ''
+  title = title.replace('%t', threads.current?.title ?? 'untitled thread')
+
+  if (!title) {
+    return <AppLogoName className="ml-1" />
+  }
+
+  return (
+    <>
+      <IconButton variant="ghost" color="gray" className="m-0 shrink-0" onClick={stack.pop}>
+        <Icons.CaretLeft className="phosphor" />
+      </IconButton>
+      <div className="grow truncate">{title}</div>
+    </>
   )
 }
 

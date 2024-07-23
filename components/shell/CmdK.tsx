@@ -34,7 +34,7 @@ Input.displayName = CommandPrimitive.Input.displayName
 
 const List = twc(
   CommandPrimitive.List,
-)`h-[var(--cmdk-list-height)] max-h-[24rem] scroll-py-1 overflow-y-auto overflow-x-hidden`
+)`h-[var(--cmdk-list-height)] max-h-[24rem] scroll-py-1 overflow-y-auto overflow-x-hidden cmdk-animate-list`
 
 const Empty = twc(CommandPrimitive.Empty)`py-6 text-center text-sm`
 

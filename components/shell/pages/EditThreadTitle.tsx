@@ -4,40 +4,36 @@ import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
 import { toast } from 'sonner'
 
-import { useThread } from '@/app/b/api'
-import {
-  shellStackAtom,
-  shellThreadIdAtom,
-  shellThreadTitleValueAtom,
-} from '@/components/shell/atoms'
+import { shellStackAtom, shellThreadTitleValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
-import { useIsCurrentPage } from '@/components/shell/hooks'
+import { useIsCurrentPage, useShellUserThreads } from '@/components/shell/hooks'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { TextField } from '@/components/ui/TextField'
 import { api } from '@/convex/_generated/api'
 
 export const EditThreadTitle = () => {
-  const [threadId, setThreadId] = useAtom(shellThreadIdAtom)
-  const thread = useThread(threadId)
+  const threads = useShellUserThreads()
   const [threadTitleValue, setThreadTitleValue] = useAtom(shellThreadTitleValueAtom)
 
   const sendUpdateThread = useMutation(api.db.threads.update)
   const [isPending, setIsPending] = useState(false)
 
   const handleUpdateThread = async () => {
-    if (!threadId) return
+    if (!threads.current) return
     setIsPending(true)
 
     try {
       await sendUpdateThread({
-        threadId: threadId,
+        threadId: threads.current._id,
         fields: { title: threadTitleValue },
       })
+      setIsPending(false)
+      stack.pop()
     } catch (err) {
       console.error(err)
       toast.error('Failed to update thread title')
+      setIsPending(false)
     }
-    setIsPending(false)
   }
 
   const [stack, setStack] = useAtom(shellStackAtom)
