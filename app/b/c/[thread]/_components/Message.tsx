@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import dynamic from 'next/dynamic'
 
 import { MessageEditor } from '@/app/b/c/[thread]/_components/MessageEditor'
-import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
@@ -16,6 +16,8 @@ import { useViewerDetails } from '@/lib/queries'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
+
+const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'))
 
 export const Message = ({
   message,
