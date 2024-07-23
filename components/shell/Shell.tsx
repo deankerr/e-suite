@@ -5,7 +5,7 @@ import { useAtom } from 'jotai'
 
 import { shellOpenAtom, shellSearchValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
-import { useShellStack, useShellUserThreads } from '@/components/shell/hooks'
+import { useShellActions, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
 import { AppLogoName } from '@/components/ui/AppLogoName'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import * as Page from './pages'
@@ -13,10 +13,12 @@ import * as Page from './pages'
 export type ShellPage = keyof typeof Page
 
 const Shell = () => {
+  const { createChat, createImage } = useShellActions()
   const [searchValue, setSearchValue] = useAtom(shellSearchValueAtom)
 
   const stack = useShellStack()
-
+  const isHomePage = !stack.current
+  const shouldShowSearchUi = isHomePage || stack.current === 'ModelPicker'
   return (
     <div className="flex h-full max-h-[55vh] flex-col sm:max-h-none">
       <div className="flex h-12 shrink-0 items-center justify-between gap-1 truncate border-b border-grayA-3 px-2 font-medium">
@@ -32,7 +34,7 @@ const Shell = () => {
       </div>
 
       <CmdK tabIndex={0}>
-        {!stack.current || stack.current === 'ModelPicker' ? (
+        {shouldShowSearchUi && (
           <CmdK.Input
             placeholder="Enter a command"
             value={searchValue}
@@ -40,15 +42,24 @@ const Shell = () => {
             autoFocus
             autoComplete="off"
           />
-        ) : null}
+        )}
+
         <CmdK.List>
-          <CmdK.Empty>No results found</CmdK.Empty>
+          {shouldShowSearchUi && <CmdK.Empty>No results found</CmdK.Empty>}
+
+          {!stack.current && (
+            <>
+              <CmdK.Item onSelect={createChat}>Create Chat</CmdK.Item>
+              <CmdK.Item onSelect={createImage}>Create Image</CmdK.Item>
+            </>
+          )}
 
           <Page.UserThreads />
           <Page.ModelPicker />
           <Page.ThreadConfig />
           <Page.EditThreadTitle />
           <Page.DeleteThread />
+          <Page.CreateThread />
 
           <AdminOnlyUi>
             <Code size="1" color="gray" className="absolute -top-1 right-0 opacity-50">
@@ -67,6 +78,7 @@ const pageTitles: Record<string, string> = {
   DeleteThread: 'Delete Thread',
   ModelPicker: 'Select Model',
   UserThreads: 'Threads',
+  CreateThread: 'Create Thread',
 } satisfies Record<ShellPage, string>
 
 const ShellTitle = () => {
@@ -93,11 +105,6 @@ const ShellTitle = () => {
 const ShellDialog = ({ children, ...props }: React.ComponentProps<typeof Dialog.Root>) => {
   return (
     <Dialog.Root {...props}>
-      <Dialog.Trigger>
-        <IconButton variant="surface">
-          <Icons.TerminalWindow />
-        </IconButton>
-      </Dialog.Trigger>
       <Dialog.Content
         align="start"
         maxWidth="42rem"

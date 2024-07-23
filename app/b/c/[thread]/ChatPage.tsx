@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
@@ -11,9 +12,11 @@ import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider
 import { appConfig } from '@/app/b/config'
 import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Composer } from '@/components/composer/Composer'
+import { useShellActions } from '@/components/shell/hooks'
 import { ShellC } from '@/components/shell/Shell'
 import { Link } from '@/components/ui/Link'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
+import { Pre } from '@/components/util/Pre'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +26,9 @@ const ChatPageImpl = () => {
   const { thread, messages, removeMessage } = useChat()
   const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
   const { isOwner } = useViewerDetails(thread?.userId)
+  const shell = useShellActions()
+
+  const [showJson, setShowJson] = useState(false)
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <PageWrapper loading />
@@ -31,22 +37,43 @@ const ChatPageImpl = () => {
     <PageWrapper className="flex flex-col">
       {/* * header * */}
       <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
-        <div className="flex w-20 items-center">
+        <div className="flex-start shrink-0">
           {/* * command menu button * */}
           <CommandShell>
-            <IconButton variant="ghost" className="m-0 shrink-0 transition-none md:-translate-x-14">
+            <IconButton variant="ghost" className="absolute -left-14 m-0 shrink-0">
               <Icons.List className="size-6" />
             </IconButton>
           </CommandShell>
 
           <ShellC />
+
+          <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
+            <Icons.TerminalWindow className="phosphor" />
+          </IconButton>
+
+          <IconButton
+            variant="ghost"
+            className="m-0 shrink-0"
+            onClick={() => shell.open({ threadId: thread._id })}
+          >
+            <Icons.Sliders className="phosphor" />
+          </IconButton>
         </div>
 
         <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">
           {thread.title ?? 'untitled thread'}
         </div>
 
-        <div className="flex shrink-0 items-center">
+        <div className="flex shrink-0 items-center gap-1">
+          <AdminOnlyUi>
+            <IconButton
+              variant="ghost"
+              className="m-0 shrink-0"
+              onClick={() => setShowJson(!showJson)}
+            >
+              <Icons.Code className="phosphor" />
+            </IconButton>
+          </AdminOnlyUi>
           <Button variant="outline" color="gray">
             Filter
             <Icons.FunnelSimple className="phosphor" />
@@ -90,6 +117,13 @@ const ChatPageImpl = () => {
           {messages.length}
         </div>
       </AdminOnlyUi>
+
+      {/* * show json * */}
+      {showJson && (
+        <div className="absolute inset-14 overflow-hidden rounded border">
+          <Pre className="h-full overflow-auto">{JSON.stringify(thread, null, 2)}</Pre>
+        </div>
+      )}
     </PageWrapper>
   )
 }
