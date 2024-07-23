@@ -4,19 +4,24 @@ import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { useChatState, voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
+import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 import { useMessagesList, useThread } from '@/lib/queries'
 
 import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
 
+type ChatQueryFilters = {
+  role?: 'user' | 'assistant'
+  hasContent?: 'image' | 'audio'
+}
+
 export const useCreateChatContext = ({ slug }: { slug?: string }) => {
   const thread = useThread({ slug })
 
-  const [chatState] = useChatState(slug ?? '')
+  const [queryFilters, setQueryFilters] = useState<ChatQueryFilters | undefined>(undefined)
 
   const page = useMessagesList({
     slugOrId: thread?.slug,
-    filters: chatState.queryFilters,
+    filters: queryFilters,
   })
 
   const loadMoreMessages = useCallback(() => {
@@ -133,5 +138,7 @@ export const useCreateChatContext = ({ slug }: { slug?: string }) => {
     removeMessage,
     setChatInferenceConfig,
     setImageInferenceConfig,
+    queryFilters,
+    setQueryFilters,
   }
 }

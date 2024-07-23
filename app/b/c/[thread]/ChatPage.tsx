@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
 import { useAppendMessage } from '@/app/b/api'
+import { FilterControl } from '@/app/b/c/[thread]/_components/FilterControl'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
@@ -76,10 +77,8 @@ const ChatPageImpl = () => {
               <Icons.Code className="phosphor" />
             </IconButton>
           </AdminOnlyUi>
-          <Button variant="outline" color="gray">
-            Filter
-            <Icons.FunnelSimple className="phosphor" />
-          </Button>
+
+          <FilterControl />
         </div>
       </header>
 
