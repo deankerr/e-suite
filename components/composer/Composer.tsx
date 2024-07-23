@@ -21,6 +21,7 @@ export const Composer = ({
   appendMessage,
   inputReadyState,
   onSuccess,
+  onModelChange,
   textareaMinRows = 2,
   className,
   ...props
@@ -30,6 +31,7 @@ export const Composer = ({
   appendMessage: ReturnType<typeof useAppendMessage>['appendMessage']
   inputReadyState: ReturnType<typeof useAppendMessage>['inputReadyState']
   onSuccess?: (result: FunctionReturnType<typeof api.db.threadsB.append>) => void
+  onModelChange?: () => void
   textareaMinRows?: number
 } & React.ComponentProps<'form'>) => {
   const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
@@ -117,19 +119,21 @@ export const Composer = ({
       <div className="flex flex-wrap gap-2 px-2 pb-2 pt-1.5">
         {/* TODO model select */}
 
-        {model ? (
+        <Button
+          type="button"
+          variant="surface"
+          color="gray"
+          highContrast
+          disabled={inputReadyState === 'locked'}
+          onClick={() => onModelChange?.()}
+        >
+          <Icons.Cube className="size-4" />
+          {model?.name ?? 'No Model Selected'}
+          {onModelChange && <Icons.CaretUpDown className="phosphor" />}
+        </Button>
+
+        {model && (
           <>
-            <Button
-              type="button"
-              variant="surface"
-              color="gray"
-              highContrast
-              disabled={inputReadyState === 'locked'}
-            >
-              <Icons.CodesandboxLogo className="size-4" />
-              {model.name}
-              <Icons.CaretUpDown className="phosphor" />
-            </Button>
             <div className="flex-start gap-1">
               <Badge size="3" color="brown">
                 {model.endpoint}
@@ -148,16 +152,6 @@ export const Composer = ({
               )}
             </div>
           </>
-        ) : (
-          <Button
-            type="button"
-            variant="surface"
-            color="gray"
-            disabled={inputReadyState === 'locked'}
-          >
-            <Icons.QuestionMark className="size-4" />
-            No Model Selected
-          </Button>
         )}
 
         {textToImageConfig && (
