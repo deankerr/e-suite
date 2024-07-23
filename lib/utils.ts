@@ -80,19 +80,6 @@ export function stringHashToListItem<T>(str: string, list: T[]): T {
   return list[index] as T
 }
 
-export function endpointCode(endpoint: string) {
-  switch (endpoint) {
-    case 'openai':
-      return 'OA'
-    case 'openrouter':
-      return 'OR'
-    case 'together':
-      return 'TA'
-    default:
-      return endpoint.slice(0, 2).toUpperCase()
-  }
-}
-
 export function isValidUrl(url: string) {
   try {
     new URL(url)

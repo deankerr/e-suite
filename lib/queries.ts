@@ -66,11 +66,6 @@ export const useChatModels = (): EChatModel[] | undefined => {
   return result
 }
 
-export const useImageModel = ({ resourceKey }: { resourceKey: string }) => {
-  const result = useQuery(api.db.imageModels.get, { resourceKey })
-  return result
-}
-
 export const useImageModels = (): EImageModel[] | undefined => {
   const result = useQuery(api.db.imageModels.list, {})
   return result
