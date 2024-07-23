@@ -72,13 +72,13 @@ const ChatPageImpl = () => {
         <div className="flex-start shrink-0">
           <ShellC />
 
-          <div className="flex-start shrink-0 md:hidden">
+          <div className="flex-start mr-1 shrink-0 md:hidden">
             <UserButtons />
           </div>
 
           <Authenticated>
             <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
-              <Icons.TerminalWindow className="phosphor" />
+              <Icons.TerminalWindow className="size-5" />
             </IconButton>
           </Authenticated>
 
@@ -139,7 +139,7 @@ const ChatPageImpl = () => {
           !shouldShowScrollToBottom && 'hidden',
         )}
         style={getScrollToEndButtonPosition()}
-        onClick={scrollToEnd}
+        onClick={() => scrollToEnd('smooth')}
       >
         <Icons.ArrowDown className="phosphor" />
       </IconButton>
@@ -159,7 +159,7 @@ const ChatPageImpl = () => {
 
       {/* * show json * */}
       {showJson && (
-        <div className="absolute inset-14 overflow-hidden rounded border">
+        <div className="absolute inset-x-4 inset-y-16 overflow-hidden rounded border">
           <Pre className="h-full overflow-auto">{JSON.stringify(thread, null, 2)}</Pre>
         </div>
       )}
