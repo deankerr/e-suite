@@ -15,7 +15,7 @@ export const FilterControl = () => {
       <Popover.Trigger>
         <Button variant="outline" size="2" color={queryFilters ? 'orange' : 'gray'}>
           <Icons.FunnelSimple className="size-5" />
-          Filter
+          <span className="hidden md:inline">Filter</span>
         </Button>
       </Popover.Trigger>
 
