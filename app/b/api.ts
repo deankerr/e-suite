@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
@@ -23,9 +23,4 @@ export const useAppendMessage = (threadId = '') => {
   }
 
   return { appendMessage, inputReadyState }
-}
-
-export const useThread = (threadId?: string | null) => {
-  const thread = useQuery(api.db.threads.get, threadId ? { slugOrId: threadId } : 'skip')
-  return thread
 }

@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useMutation } from 'convex/react'
-import { useAtomValue, useSetAtom } from 'jotai'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { voiceoverAutoplayThreadIdAtom, voiceoverQueueAtom } from '@/lib/atoms'
 import { useMessagesList, useSeriesMessage, useThread } from '@/lib/queries'
 
 import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
@@ -35,40 +33,9 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
 
   const messages = page.results
 
-  const latestMessageId = useRef('')
-  const shouldAutoplayVoiceovers = useAtomValue(voiceoverAutoplayThreadIdAtom) === thread?._id
-  const setVoiceoverQueue = useSetAtom(voiceoverQueueAtom)
-
-  useEffect(() => {
-    if (!Array.isArray(messages)) return
-    const newLatestMessage = messages?.at(0)
-    if (!latestMessageId.current) {
-      latestMessageId.current = newLatestMessage?._id ?? ''
-    }
-    if (!messages || !newLatestMessage) return
-
-    const newMessages = messages
-      .slice(
-        0,
-        messages.findIndex((message) => message._id === latestMessageId.current),
-      )
-      .reverse()
-
-    if (shouldAutoplayVoiceovers) {
-      setVoiceoverQueue((prev) => [
-        ...prev,
-        ...newMessages.map(({ _id }) => _id).filter((id) => !prev.includes(id)),
-      ])
-    }
-
-    latestMessageId.current = newLatestMessage._id
-  }, [messages, setVoiceoverQueue, shouldAutoplayVoiceovers])
-
   // * mutations
   const sendAppendMessage = useMutation(api.db.threads.append)
   const sendUpdateThread = useMutation(api.db.threads.update)
-
-  // const sendCreateMessage = useMutation(api.db.messages.create)
   const sendUpdateMessage = useMutation(api.db.messages.update)
   const sendRemoveMessage = useMutation(api.db.messages.remove)
 
