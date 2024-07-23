@@ -120,7 +120,7 @@ export const Message = ({
 
       {/* * markdown text */}
       {!showEditor && text && text.length >= 300 ? (
-        <Markdown text={text} className="col-start-2" />
+        <Markdown text={text} className="col-start-2 pb-2" />
       ) : null}
 
       {/* # images # */}
@@ -173,7 +173,12 @@ export const Message = ({
         </div>
       ) : null}
 
-      {activeJobs.length > 0 && <LoadingSpinner variant="ping" />}
+      {/* * loading ping * */}
+      {activeJobs.length > 0 && (
+        <div className="col-start-2">
+          <LoadingSpinner variant="ping" />
+        </div>
+      )}
 
       {/* * json * */}
       {showJson && <Pre className="col-start-2">{JSON.stringify(message, null, 2)}</Pre>}
