@@ -4,11 +4,11 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@radix-ui/themes'
 import Link from 'next/link'
 
-import { ChatNavList } from '@/app/b/_components/ChatNavList'
-import { appConfig } from '@/app/b/config'
 import { UserButtons } from '@/components/layout/UserButtons'
+import { ChatNavList } from '@/components/navigation/ChatNavList'
 import { useShellActions } from '@/components/shell/hooks'
 import { AppLogoName } from '@/components/ui/AppLogoName'
+import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
 
 export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>) => {

@@ -2,13 +2,13 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/navigation'
 
-import { useAppendMessage } from '@/app/b/api'
-import { appConfig } from '@/app/b/config'
 import { Composer } from '@/components/composer/Composer'
 import { shellNewThreadInferenceConfig, shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useShellActions, useShellStack } from '@/components/shell/hooks'
+import { appConfig } from '@/config/config'
 import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
+import { useAppendMessage } from '@/lib/api'
 
 export const CreateThread = ({}: { props?: unknown }) => {
   const router = useRouter()
