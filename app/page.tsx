@@ -13,7 +13,7 @@ export default function Page() {
 
   return (
     <div className="flex-col-between h-full p-3">
-      <div className="h-6 w-full">
+      <div className="h-6 w-full md:*:hidden">
         <Authenticated>
           <IconButton variant="ghost" onClick={() => shell.open()}>
             <Icons.Terminal />
@@ -23,7 +23,7 @@ export default function Page() {
 
       <LogoSvg className="m-auto w-48 text-gray-2" />
 
-      <div className="h-6">
+      <div className="h-6 md:*:hidden">
         <UserButtons />
       </div>
     </div>
