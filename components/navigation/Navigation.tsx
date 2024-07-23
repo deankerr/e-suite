@@ -2,6 +2,7 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@radix-ui/themes'
+import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 
 import { UserButtons } from '@/components/layout/UserButtons'
@@ -27,40 +28,32 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
           </Link>
         </div>
 
-        {/* * create * */}
-        <div className="divide-y divide-grayA-3 py-2">
-          <div className="px-3 text-sm font-semibold text-gray-10">Create</div>
-          <div className="grid grid-cols-2 gap-2 px-2 py-1.5">
-            <Button
-              variant="soft"
-              size="2"
-              onClick={() => {
-                shell.createChat()
-              }}
-              className="grow"
-            >
-              <Icons.Chats className="phosphor" />
-              Chat
-            </Button>
-            <Button
-              variant="soft"
-              size="2"
-              onClick={() => {
-                shell.createImage()
-              }}
-              className="grow"
-            >
-              <Icons.ImagesSquare className="phosphor" />
-              Images
-            </Button>
+        <Authenticated>
+          {/* * create * */}
+          <div className="flex shrink-0 flex-col gap-1.5 py-3">
+            <div className="shrink-0 border-b border-grayA-3 px-3 py-0 text-sm font-semibold text-gray-10">
+              Create
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 px-2">
+              <Button variant="soft" onClick={() => shell.createChat()}>
+                <Icons.Chats className="phosphor" />
+                Chat
+              </Button>
+              <Button variant="soft" onClick={() => shell.createImage()}>
+                <Icons.ImagesSquare className="phosphor" />
+                Images
+              </Button>
+            </div>
           </div>
-        </div>
 
-        {/* * chats * */}
-        <ChatNavList />
+          {/* * chats * */}
+          <ChatNavList />
+        </Authenticated>
 
+        <div className="grow" />
         {/* * footer * */}
-        <div className="flex-center h-12 shrink-0 gap-2 px-3">
+        <div className="flex-center h-12 shrink-0 gap-2 border-t border-grayA-3 px-3">
           <UserButtons />
         </div>
       </nav>
