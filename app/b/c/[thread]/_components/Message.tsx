@@ -5,10 +5,13 @@ import { DropdownMenu, IconButton } from '@radix-ui/themes'
 import { MessageEditor } from '@/app/b/c/[thread]/_components/MessageEditor'
 import AudioPlayer from '@/components/audio/AudioPlayer'
 import { ImageCard } from '@/components/images/ImageCard'
+import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
 import { Marble, useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/message/Markdown'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Pre } from '@/components/util/Pre'
+import { getActiveJobs } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
@@ -26,7 +29,12 @@ export const Message = ({
   showNameAvatar?: boolean
 } & React.ComponentProps<'div'>) => {
   const { isOwner } = useViewerDetails(message.userId)
+  const activeJobs = getActiveJobs(message.jobs)
+  const jobErrors = message.jobs.flatMap((job) => job.errors).filter((error) => error !== undefined)
+
   const { textToImageConfig } = getInferenceConfig(message.inference)
+  const nImagePlaceholders =
+    textToImageConfig && jobErrors.length === 0 ? textToImageConfig.n - message.images.length : 0
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
@@ -60,23 +68,16 @@ export const Message = ({
       <div className="py-1">
         {/* * name * */}
         {showNameAvatar ? <span className={cn('font-medium text-accentA-11')}>{name} </span> : null}
+
         {/* * short message text * */}
         {!showEditor && text && text.length < 300 ? text : null}
 
         {/* * errors * */}
-        {message.jobs
-          .flatMap((job) => job.errors)
-          .map(
-            (error, i) =>
-              error && (
-                <div
-                  key={i}
-                  className="rounded-lg border border-red-10 px-2 py-1.5 text-xs text-red-11"
-                >
-                  {error.code} {error.message}
-                </div>
-              ),
-          )}
+        {jobErrors.map((error, i) => (
+          <div key={i} className="rounded-lg border border-red-10 px-2 py-1.5 text-xs text-red-11">
+            {error.code} {error.message}
+          </div>
+        ))}
       </div>
 
       {/* # right gutter # */}
@@ -121,11 +122,11 @@ export const Message = ({
       ) : null}
 
       {/* # images # */}
-      {message.images.length > 0 ? (
+      {message.images.length > 0 || nImagePlaceholders > 0 ? (
         <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
           {message.images.map((image) => (
             <div
-              className="w-full max-w-[45%]"
+              className="w-full max-w-[45%] cursor-pointer"
               key={image._id}
               onClick={() => {
                 openLightbox({
@@ -143,6 +144,19 @@ export const Message = ({
               <ImageCard image={image} />
             </div>
           ))}
+
+          {textToImageConfig &&
+            [...Array(nImagePlaceholders)].map((_, i) => (
+              <div key={i} className="w-full max-w-[45%]">
+                <ImageGeneratingEffect
+                  style={{
+                    aspectRatio: textToImageConfig.width / textToImageConfig.height,
+                    width: textToImageConfig.width,
+                    maxWidth: '100%',
+                  }}
+                />
+              </div>
+            ))}
         </div>
       ) : null}
 
@@ -156,6 +170,8 @@ export const Message = ({
           )}
         </div>
       ) : null}
+
+      {activeJobs.length > 0 && <LoadingSpinner variant="ping" />}
 
       {/* * json * */}
       {showJson && <Pre className="col-start-2">{JSON.stringify(message, null, 2)}</Pre>}

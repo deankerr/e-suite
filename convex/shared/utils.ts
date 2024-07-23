@@ -54,6 +54,10 @@ export function hasActiveJob(jobs: Doc<'jobs'>[], name?: string) {
     .some((j) => ['active', 'queued'].includes(j.status))
 }
 
+export function getActiveJobs(jobs: Doc<'jobs'>[]) {
+  return jobs.filter((j) => ['active', 'queued'].includes(j.status))
+}
+
 export function hasDelimiter(text: string) {
   return (
     text.includes('\n') ||

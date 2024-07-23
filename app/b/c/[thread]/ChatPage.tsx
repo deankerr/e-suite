@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
+import { Authenticated } from 'convex/react'
 import { useRouter } from 'next/navigation'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
@@ -11,6 +12,7 @@ import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
 import { Composer } from '@/components/composer/Composer'
+import { UserButtons } from '@/components/layout/UserButtons'
 import { useShellActions } from '@/components/shell/hooks'
 import { ShellC } from '@/components/shell/Shell'
 import { Link } from '@/components/ui/Link'
@@ -39,17 +41,25 @@ const ChatPageImpl = () => {
         <div className="flex-start shrink-0">
           <ShellC />
 
-          <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
-            <Icons.TerminalWindow className="phosphor" />
-          </IconButton>
+          <div className="flex-start shrink-0 md:hidden">
+            <UserButtons />
+          </div>
 
-          <IconButton
-            variant="ghost"
-            className="m-0 shrink-0"
-            onClick={() => shell.open({ threadId: thread._id })}
-          >
-            <Icons.Sliders className="phosphor" />
-          </IconButton>
+          <Authenticated>
+            <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
+              <Icons.TerminalWindow className="phosphor" />
+            </IconButton>
+          </Authenticated>
+
+          {isOwner && (
+            <IconButton
+              variant="ghost"
+              className="m-0 shrink-0"
+              onClick={() => shell.open({ threadId: thread._id })}
+            >
+              <Icons.Sliders className="phosphor" />
+            </IconButton>
+          )}
         </div>
 
         <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">
@@ -99,6 +109,7 @@ const ChatPageImpl = () => {
           model={thread.model}
           appendMessage={appendMessage}
           inputReadyState={inputReadyState}
+          onModelChange={() => shell.open({ threadId: thread._id })}
           textareaMinRows={1}
           className="border-t border-grayA-3 pt-1"
         />
@@ -122,7 +133,7 @@ const ChatPageImpl = () => {
 
 const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
   if (previousMessage === undefined) return false
-  return message.name === previousMessage.name && message.role === previousMessage.role
+  return message.name && message.name === previousMessage.name
 }
 
 export const ChatPage = ({ slug, onClose }: { slug: string; onClose?: (slug: string) => void }) => {
