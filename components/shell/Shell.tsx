@@ -48,10 +48,16 @@ const Shell = () => {
           {shouldShowSearchUi && <CmdK.Empty>No results found</CmdK.Empty>}
 
           {!stack.current && (
-            <>
-              <CmdK.Item onSelect={createChat}>Create Chat</CmdK.Item>
-              <CmdK.Item onSelect={createImage}>Create Image</CmdK.Item>
-            </>
+            <CmdK.Group>
+              <CmdK.Item onSelect={createChat}>
+                <Icons.Plus className="phosphor" />
+                Create Chat
+              </CmdK.Item>
+              <CmdK.Item onSelect={createImage}>
+                <Icons.Plus className="phosphor" />
+                Create Image
+              </CmdK.Item>
+            </CmdK.Group>
           )}
 
           <Page.UserThreads />
