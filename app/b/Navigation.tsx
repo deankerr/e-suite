@@ -2,19 +2,17 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@radix-ui/themes'
-import { useSetAtom } from 'jotai'
 import Link from 'next/link'
 
 import { ChatNavList } from '@/app/b/_components/ChatNavList'
 import { appConfig } from '@/app/b/config'
-import { shellOpenAtom, shellStackAtom } from '@/components/command-shell/atoms'
 import { UserButtons } from '@/components/layout/UserButtons'
+import { useShellActions } from '@/components/shell/hooks'
 import { AppLogoName } from '@/components/ui/AppLogoName'
 import { cn } from '@/lib/utils'
 
 export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>) => {
-  const setShellOpen = useSetAtom(shellOpenAtom)
-  const setShellStack = useSetAtom(shellStackAtom)
+  const shell = useShellActions()
 
   return (
     <div
@@ -29,20 +27,33 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
           </Link>
         </div>
 
-        {/* * compose * */}
-        <div className="flex shrink-0 flex-col gap-2 px-2 py-3">
-          <Button
-            variant="soft"
-            color="gray"
-            size="2"
-            onClick={() => {
-              setShellStack(['ThreadComposer'])
-              setShellOpen(true)
-            }}
-          >
-            <Icons.Chats className="phosphor -ml-3" />
-            New Chat
-          </Button>
+        {/* * create * */}
+        <div className="divide-y divide-grayA-3 py-3">
+          <div className="px-3 text-sm font-semibold text-gray-10">Create</div>
+          <div className="grid grid-cols-2 gap-2 px-2 py-1">
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => {
+                shell.createChat()
+              }}
+              className="grow"
+            >
+              <Icons.Chats className="phosphor" />
+              Chat
+            </Button>
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => {
+                shell.createImage()
+              }}
+              className="grow"
+            >
+              <Icons.ImagesSquare className="phosphor" />
+              Images
+            </Button>
+          </div>
         </div>
 
         {/* * chats * */}

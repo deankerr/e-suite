@@ -42,7 +42,7 @@ const Group = twc(
   CommandPrimitive.Group,
 )`select-none overflow-hidden p-1 [&_[cmdk-group-heading]]:px-1 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-gray-11 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2`
 
-const Separator = twc(CommandPrimitive.Separator)`-mx-1 h-px bg-gray-6`
+const Separator = twc(CommandPrimitive.Separator)`-mx-1 h-px bg-grayA-3`
 
 const Item = twc(
   CommandPrimitive.Item,
