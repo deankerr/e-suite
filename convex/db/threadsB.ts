@@ -200,6 +200,71 @@ export const append = mutation({
   },
 })
 
+export const updateRunConfig = mutation({
+  args: {
+    threadId: v.string(),
+    runConfig: runConfigV,
+  },
+  handler: async (ctx, args) => {
+    const threadId = ctx.table('threads').normalizeId(args.threadId)
+    if (!threadId) throw new ConvexError('invalid thread')
+
+    const inference =
+      args.runConfig.type === 'chat'
+        ? await getTransitionConfigChat(ctx, args.runConfig)
+        : await getTransitionConfigTextToImage(ctx, args.runConfig)
+
+    await ctx.table('threads').getX(threadId).patch({
+      inference,
+    })
+  },
+})
+
+export const updateRunConfigModel = mutation({
+  args: {
+    threadId: v.string(),
+    type: v.union(v.literal('chat'), v.literal('textToImage')),
+    resourceKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const threadId = ctx.table('threads').normalizeId(args.threadId)
+    if (!threadId) throw new ConvexError('invalid thread')
+    const thread = await ctx.table('threads').getX(threadId)
+
+    const model =
+      args.type === 'chat'
+        ? await getChatModelByResourceKey(ctx, args.resourceKey)
+        : await getImageModelByResourceKey(ctx, args.resourceKey)
+    if (!model) throw new ConvexError('invalid model')
+
+    if (model.type === 'chat') {
+      const currentConfig =
+        thread.inference.type === 'chat-completion' ? thread.inference : defaultChatInferenceConfig
+      await thread.patch({
+        inference: {
+          ...currentConfig,
+          endpoint: model.endpoint,
+          endpointModelId: model.endpointModelId,
+          resourceKey: model.resourceKey,
+        },
+      })
+    }
+
+    if (model.type === 'image') {
+      const currentConfig =
+        thread.inference.type === 'text-to-image' ? thread.inference : defaultImageInferenceConfig
+      await thread.patch({
+        inference: {
+          ...currentConfig,
+          endpoint: model.endpoint,
+          endpointModelId: model.endpointModelId,
+          resourceKey: model.resourceKey,
+        },
+      })
+    }
+  },
+})
+
 const getTransitionConfigChat = async (
   ctx: MutationCtx,
   args: Infer<typeof runConfigChatV>,

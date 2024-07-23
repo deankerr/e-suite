@@ -65,3 +65,7 @@
   width: 1.2em;
   height: 1.2em;
 }
+
+.cmdk-animate-list {
+  transition: height 100ms ease;
+}

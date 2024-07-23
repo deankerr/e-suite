@@ -1,51 +1,57 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { useAtom, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 
-import { useThread } from '@/app/b/api'
-import {
-  shellStackAtom,
-  shellThreadIdAtom,
-  shellThreadTitleValueAtom,
-} from '@/components/shell/atoms'
+import { shellSelectedModelAtom, shellThreadTitleValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
-import { useIsCurrentPage } from '@/components/shell/hooks'
+import { useIsCurrentPage, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
 
 export const ThreadConfig = () => {
-  const [threadId, setThreadId] = useAtom(shellThreadIdAtom)
-  const thread = useThread(threadId)
-  const setThreadTitleValue = useSetAtom(shellThreadTitleValueAtom)
+  const threads = useShellUserThreads()
 
-  const [stack, setStack] = useAtom(shellStackAtom)
+  const setThreadTitleValue = useSetAtom(shellThreadTitleValueAtom)
+  const setSelectedModel = useSetAtom(shellSelectedModelAtom)
+
+  const stack = useShellStack()
 
   const isCurrentPage = useIsCurrentPage('ThreadConfig')
   if (!isCurrentPage) return null
   return (
     <>
-      {thread ? (
-        <CmdK.Group heading={`Thread Config: ${thread.title}`}>
+      {threads.current ? (
+        <CmdK.Group heading={`Options`}>
           <CmdK.Item
             onSelect={() => {
-              setThreadTitleValue(thread.title ?? '')
-              setStack([...stack, 'EditThreadTitle'])
+              setThreadTitleValue(threads.current?.title ?? '')
+              stack.push('EditThreadTitle')
             }}
           >
             <Icons.PencilLine weight="light" />
-            Edit title...
+            Edit title
           </CmdK.Item>
-          <CmdK.Item>
-            <Icons.CodesandboxLogo weight="light" />
-            Model: {thread.model?.name ?? 'unknown model'}
+          <CmdK.Item
+            onSelect={() => {
+              setSelectedModel(threads.current?.model ?? null)
+              stack.push('ModelPicker')
+            }}
+          >
+            <Icons.Cube weight="light" />
+            Model: {threads.current.model?.name ?? 'unknown model'}
           </CmdK.Item>
           <CmdK.Item>
             <Icons.UserSound weight="light" />
-            Voiceover: {thread.voiceovers?.default ?? 'unknown model'}
+            Voiceover: {threads.current.voiceovers?.default ?? 'unknown model'}
           </CmdK.Item>
-          <CmdK.Item className="text-red-11 aria-selected:text-red-11">
+          <CmdK.Item onSelect={() => stack.push('DeleteThread')}>
             <Icons.Trash weight="light" />
             Delete
           </CmdK.Item>
+
+          <CmdK.Item onSelect={() => stack.pop()}>
+            <Icons.ArrowLeft weight="light" />
+            Back
+          </CmdK.Item>
         </CmdK.Group>
-      ) : thread === null ? (
+      ) : threads.current === null ? (
         <CmdK.Item>Thread not found.</CmdK.Item>
       ) : (
         <CmdK.Loading />

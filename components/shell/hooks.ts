@@ -1,8 +1,14 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 
-import { shellSearchValueAtom, shellStackAtom } from '@/components/shell/atoms'
+import {
+  shellSearchValueAtom,
+  shellSelectedThreadIdAtom,
+  shellStackAtom,
+} from '@/components/shell/atoms'
+import { useUserThreadsList } from '@/lib/queries'
 
 import type { ShellPage } from '@/components/shell/Shell'
+import type { EThread } from '@/convex/types'
 
 export const useIsCurrentPage = (page: ShellPage) => {
   const stack = useAtomValue(shellStackAtom)
@@ -35,4 +41,17 @@ export const useShellStack = () => {
   }
 
   return { stack, push, pop, set, clear, current }
+}
+
+export const useShellUserThreads = () => {
+  const list = useUserThreadsList()
+  const [selectedThreadId, setSelectedThreadId] = useAtom(shellSelectedThreadIdAtom)
+
+  const current = list ? (list.find((t) => t._id === selectedThreadId) ?? null) : undefined
+
+  const select = (thread: EThread) => {
+    setSelectedThreadId(thread._id)
+  }
+
+  return { list, select, current }
 }
