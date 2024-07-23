@@ -4,6 +4,7 @@ import { Card, IconButton } from '@radix-ui/themes'
 import Link from 'next/link'
 
 import { Image } from '@/components/images/Image'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { cn, getConvexSiteUrl } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
@@ -21,7 +22,7 @@ export const ImageCard = ({
 
   return (
     <Card
-      style={{ aspectRatio: image.width / image.height, maxWidth: image.width }}
+      style={{ aspectRatio: image.width / image.height, width: image.width }}
       className={cn('group flex w-full flex-col justify-between gap-2 p-1', className)}
       {...props}
     >
@@ -40,7 +41,9 @@ export const ImageCard = ({
       {/* * top panel * */}
       <div className="flex shrink-0 justify-between">
         <div className="font-mono text-xs text-gray-11">
-          {image.width}x{image.height}
+          <AdminOnlyUi>
+            {image.width}x{image.height}
+          </AdminOnlyUi>
         </div>
 
         <Link href={`${getConvexSiteUrl()}/i/${image._id}?download`}>
