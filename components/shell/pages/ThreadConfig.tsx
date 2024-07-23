@@ -2,7 +2,6 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useSetAtom } from 'jotai'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { appConfig } from '@/app/b/config'
 import { shellSelectedModelAtom, shellThreadTitleValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import {
@@ -11,6 +10,7 @@ import {
   useShellStack,
   useShellUserThreads,
 } from '@/components/shell/hooks'
+import { appConfig } from '@/config/config'
 
 export const ThreadConfig = () => {
   const pathname = usePathname()

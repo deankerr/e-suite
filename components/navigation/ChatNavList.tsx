@@ -5,8 +5,8 @@ import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 import { useSelectedLayoutSegments } from 'next/navigation'
 
-import { appConfig } from '@/app/b/config'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { appConfig } from '@/config/config'
 import { useUserThreadsList } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -28,8 +28,8 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
                 className={cn(
                   'rt-Link line-clamp-2 rounded border border-transparent px-2 py-1 text-sm font-medium opacity-90',
                   segments.includes(thread.slug)
-                    ? 'shadow-glow border-accentA-3 bg-accentA-3 opacity-100'
-                    : 'hover:shadow-glow hover:border-accentA-3 hover:bg-accentA-3',
+                    ? 'border-accentA-3 bg-accentA-3 opacity-100 shadow-glow'
+                    : 'hover:border-accentA-3 hover:bg-accentA-3 hover:shadow-glow',
                 )}
               >
                 {thread.model?.type === 'chat' ? (

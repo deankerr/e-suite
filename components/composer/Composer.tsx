@@ -9,10 +9,10 @@ import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
-import type { useAppendMessage } from '@/app/b/api'
 import type { api } from '@/convex/_generated/api'
 import type { RunConfig } from '@/convex/db/threadsB'
 import type { EChatModel, EImageModel, InferenceConfig } from '@/convex/types'
+import type { useAppendMessage } from '@/lib/api'
 import type { FunctionReturnType } from 'convex/server'
 
 export const Composer = ({

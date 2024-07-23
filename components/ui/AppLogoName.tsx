@@ -1,4 +1,4 @@
-import { LogoSvg } from '@/app/b/LogoSvg'
+import { LogoSvg } from '@/components/ui/LogoSvg'
 import { cn } from '@/lib/utils'
 
 export const AppLogoName = ({ className, ...props }: React.ComponentProps<'div'>) => {

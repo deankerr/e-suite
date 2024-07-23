@@ -1,4 +1,4 @@
-import { ChatPage } from '@/app/b/c/[...slug]/ChatPage'
+import { ChatPage } from '@/components/pages/ChatPage'
 
 export default function ThreadPage({ params }: { params: { slug: string[] } }) {
   const slug = params.slug[0] ?? ''

@@ -1,4 +1,4 @@
 export const appConfig = {
-  baseUrl: '/b',
-  chatUrl: '/b/c',
+  baseUrl: '/',
+  chatUrl: '/c',
 } as const

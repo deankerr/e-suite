@@ -3,7 +3,7 @@ import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
 import { toast } from 'sonner'
 
-import { useModelsApi } from '@/app/b/_providers/ModelsApiProvider'
+import { useModelsApi } from '@/components/providers/ModelsApiProvider'
 import { shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useIsCurrentPage, useShellStack, useShellUserThreads } from '@/components/shell/hooks'

@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-import { useCreateChatContext } from '@/app/b/c/[...slug]/_provider/chat-context'
+import { useCreateChatContext } from '@/components/providers/chat-context'
 
 export type ChatContext = ReturnType<typeof useCreateChatContext>
 const ChatContext = createContext<ChatContext | undefined>(undefined)
