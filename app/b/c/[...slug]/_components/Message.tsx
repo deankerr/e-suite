@@ -2,8 +2,10 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, IconButton } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 
-import { MessageEditor } from '@/app/b/c/[thread]/_components/MessageEditor'
+import { MessageEditor } from '@/app/b/c/[...slug]/_components/MessageEditor'
+import { appConfig } from '@/app/b/config'
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
@@ -21,15 +23,20 @@ const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'))
 
 export const Message = ({
   message,
+  deeplink,
   removeMessage,
   showNameAvatar = true,
+  showTimeline = true,
   className,
   ...props
 }: {
   message: EMessage
+  deeplink: string
   removeMessage?: (args: { messageId: string }) => void
   showNameAvatar?: boolean
+  showTimeline?: boolean
 } & React.ComponentProps<'div'>) => {
+  const router = useRouter()
   const { isOwner } = useViewerDetails(message.userId)
   const activeJobs = getActiveJobs(message.jobs)
   const jobErrors = message.jobs.flatMap((job) => job.errors).filter((error) => error !== undefined)
@@ -52,17 +59,19 @@ export const Message = ({
       className={cn(
         'grid shrink-0 grid-cols-[2rem_1fr_2rem]',
         'rounded-md border border-transparent hover:border-grayA-4',
-        'box-content min-h-7 w-full text-sm',
+        'box-content min-h-7 w-full max-w-3xl text-sm',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
         className,
       )}
     >
       {/* # left gutter # */}
       <div className="row-span-2 flex justify-center gap-4 pt-1.5 opacity-90">
-        <div
-          className={cn('absolute -top-2 bottom-1 w-px', showNameAvatar && 'inset-y-1.5')}
-          style={{ backgroundColor: marbleProps[0].color }}
-        />
+        {showTimeline && (
+          <div
+            className={cn('absolute -top-2 bottom-1 w-px', showNameAvatar && 'inset-y-1.5')}
+            style={{ backgroundColor: marbleProps[0].color }}
+          />
+        )}
         {showNameAvatar ? <Marble name={name} properties={marbleProps} size={16} /> : null}
       </div>
 
@@ -93,6 +102,8 @@ export const Message = ({
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Content variant="soft" align="end">
+              <DropdownMenu.Item onClick={() => router.push(deeplink)}>Link</DropdownMenu.Item>
+
               <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
                 {showEditor ? 'Cancel Edit' : 'Edit'}
               </DropdownMenu.Item>
@@ -108,6 +119,18 @@ export const Message = ({
               >
                 Delete
               </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        ) : deeplink ? (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">
+                <Icons.DotsThree size={24} />
+              </IconButton>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Content variant="soft" align="end">
+              <DropdownMenu.Item onClick={() => router.push(deeplink)}>Link</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         ) : null}

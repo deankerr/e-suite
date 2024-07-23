@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-import { useCreateChatContext } from '@/app/b/c/[thread]/_provider/chat-context'
+import { useCreateChatContext } from '@/app/b/c/[...slug]/_provider/chat-context'
 
 export type ChatContext = ReturnType<typeof useCreateChatContext>
 const ChatContext = createContext<ChatContext | undefined>(undefined)
@@ -10,10 +10,11 @@ export const ChatProvider = ({
   ...props
 }: {
   slug: string
-  onClose?: (slug: string) => void
+  series?: string
+
   children: React.ReactNode
 }) => {
-  const api = useCreateChatContext({ slug: props.slug })
+  const api = useCreateChatContext({ slug: props.slug, series: props.series })
 
   return <ChatContext.Provider value={api}>{children}</ChatContext.Provider>
 }

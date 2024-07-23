@@ -33,6 +33,19 @@ export const useMessagesList = ({
   return result
 }
 
+export const useSeriesMessage = ({ slug, series }: { slug?: string; series?: string }) => {
+  const result = useQuery(
+    api.db.messages.getSeriesMessage,
+    slug && series
+      ? {
+          slug,
+          series: Number(series),
+        }
+      : 'skip',
+  )
+  return result
+}
+
 export const useUserThreadsList = (): EThread[] | undefined => {
   const result = useQuery(api.db.threads.list, {})
   result?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
