@@ -1,6 +1,5 @@
 import { Button, ButtonProps, IconButton } from '@radix-ui/themes'
 import { accentColors } from '@radix-ui/themes/props'
-import { ExternalLinkIcon, SquareArrowUpRightIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
@@ -18,8 +17,22 @@ export const LinkButton = ({
   return (
     <Link {...props} className={cn('shrink-0', className)}>
       <Button variant={variant ?? 'soft'} color={color} size="1">
-        {children} <SquareArrowUpRightIcon className="size-4" />
+        {children}
       </Button>
+    </Link>
+  )
+}
+
+export const LinkButton2 = ({
+  children,
+  buttonProps,
+  ...props
+}: {
+  buttonProps: ButtonProps
+} & React.ComponentProps<typeof Link>) => {
+  return (
+    <Link {...props}>
+      <Button {...buttonProps}>{children}</Button>
     </Link>
   )
 }
@@ -33,7 +46,7 @@ export const LinkIconButton = ({
   return (
     <Link {...props} className={cn('flex shrink-0', className)}>
       <IconButton variant="soft" color={color} size="1">
-        {children} <ExternalLinkIcon className="size-4" />
+        {children}
       </IconButton>
     </Link>
   )

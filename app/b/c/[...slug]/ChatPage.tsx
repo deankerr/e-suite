@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
-import { Authenticated } from 'convex/react'
+import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { useInView } from 'react-intersection-observer'
 
@@ -18,6 +18,7 @@ import { UserButtons } from '@/components/layout/UserButtons'
 import { useShellActions } from '@/components/shell/hooks'
 import { ShellC } from '@/components/shell/Shell'
 import { Link } from '@/components/ui/Link'
+import { LinkButton, LinkButton2 } from '@/components/ui/LinkButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { useViewerDetails } from '@/lib/queries'
@@ -70,27 +71,46 @@ const ChatPageImpl = () => {
     <PageWrapper className="flex flex-col">
       {/* * header * */}
       <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
-        <div className="flex-start shrink-0">
+        <div className="flex-start min-w-8 shrink-0 gap-1">
           <ShellC />
 
-          <div className="flex-start mr-1 shrink-0 md:hidden">
-            <UserButtons />
-          </div>
-
-          <Authenticated>
-            <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
-              <Icons.TerminalWindow className="size-5" />
-            </IconButton>
-          </Authenticated>
-
-          {isOwner && (
-            <IconButton
-              variant="ghost"
-              className="m-0 shrink-0"
-              onClick={() => shell.open({ threadId: thread._id })}
+          {isMessageSeriesQuery ? (
+            <LinkButton2
+              href={`${appConfig.chatUrl}/${thread.slug}`}
+              buttonProps={{ variant: 'soft', size: { initial: '1', md: '2' } }}
             >
-              <Icons.Sliders className="phosphor" />
-            </IconButton>
+              <Icons.ArrowSquareLeft className="size-5" />
+              Back<span className="hidden md:inline"> to Thread</span>
+            </LinkButton2>
+          ) : (
+            <>
+              <Authenticated>
+                <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
+                  <Icons.TerminalWindow className="size-5" />
+                </IconButton>
+
+                <IconButton
+                  variant="ghost"
+                  className="m-0 shrink-0"
+                  onClick={() => shell.open({ threadId: thread._id })}
+                  disabled={!isOwner}
+                >
+                  <Icons.Sliders className="phosphor" />
+                </IconButton>
+              </Authenticated>
+
+              <AuthLoading>
+                <IconButton variant="ghost" className="m-0 shrink-0" disabled>
+                  <Icons.TerminalWindow className="size-5" />
+                </IconButton>
+              </AuthLoading>
+
+              <Unauthenticated>
+                <div className="flex-start mr-1 shrink-0 md:hidden">
+                  <UserButtons />
+                </div>
+              </Unauthenticated>
+            </>
           )}
         </div>
 
@@ -99,17 +119,7 @@ const ChatPageImpl = () => {
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
-          <AdminOnlyUi>
-            <IconButton
-              variant="ghost"
-              className="m-0 shrink-0"
-              onClick={() => setShowJson(!showJson)}
-            >
-              <Icons.Code className="phosphor" />
-            </IconButton>
-          </AdminOnlyUi>
-
-          <FilterControl />
+          <FilterControl buttonProps={{ disabled: isMessageSeriesQuery }} />
         </div>
       </header>
 
@@ -185,7 +195,19 @@ const ChatPageImpl = () => {
         <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
           {messages.length} | {page.status}
         </div>
+        <IconButton
+          variant="ghost"
+          className="absolute right-0 top-12"
+          color="gray"
+          onClick={() => setShowJson(!showJson)}
+        >
+          <Icons.Code className="phosphor" />
+        </IconButton>
       </AdminOnlyUi>
+
+      {/* <AdminOnlyUi>
+            
+          </AdminOnlyUi> */}
     </PageWrapper>
   )
 }
