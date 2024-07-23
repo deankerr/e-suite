@@ -28,9 +28,9 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
         </div>
 
         {/* * create * */}
-        <div className="divide-y divide-grayA-3 py-3">
+        <div className="divide-y divide-grayA-3 py-2">
           <div className="px-3 text-sm font-semibold text-gray-10">Create</div>
-          <div className="grid grid-cols-2 gap-2 px-2 py-1">
+          <div className="grid grid-cols-2 gap-2 px-2 py-1.5">
             <Button
               variant="soft"
               size="2"

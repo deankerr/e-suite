@@ -64,7 +64,7 @@ export const Message = ({
       )}
     >
       {/* # left gutter # */}
-      <div className="row-span-2 flex justify-center gap-4 pt-1.5 opacity-90">
+      <div className="row-span-2 flex justify-center gap-4 pt-1.5 opacity-80">
         {showTimeline && (
           <div
             className={cn('absolute -top-2 bottom-1 w-px', showNameAvatar && 'inset-y-1.5')}
@@ -173,7 +173,7 @@ export const Message = ({
 
           {textToImageConfig &&
             [...Array(nImagePlaceholders)].map((_, i) => (
-              <div key={i} className="w-full max-w-[45%]">
+              <div key={i} className="w-full max-w-xs">
                 <ImageGeneratingEffect
                   style={{
                     aspectRatio: textToImageConfig.width / textToImageConfig.height,
