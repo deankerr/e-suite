@@ -16,10 +16,12 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
 
   return (
     <div {...props} className={cn('flex grow flex-col gap-0.5 overflow-hidden', className)}>
-      <div className="shrink-0 px-3 text-sm font-semibold text-gray-10">Threads</div>
+      <div className="shrink-0 border-b border-grayA-3 px-3 text-sm font-semibold text-gray-10">
+        Threads
+      </div>
 
-      <ScrollArea scrollbars="vertical" className="border-y border-grayA-3">
-        <div className="h-full space-y-1 px-2 py-2">
+      <ScrollArea scrollbars="vertical">
+        <div className="h-full space-y-1 px-2 py-1">
           {threads ? (
             threads.map((thread) => (
               <Link
