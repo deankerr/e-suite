@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { Authenticated } from 'convex/react'
 import { useRouter } from 'next/navigation'
+import { useInView } from 'react-intersection-observer'
 
 import { PageWrapper } from '@/app/b/_components/PageWrapper'
 import { useAppendMessage } from '@/app/b/api'
@@ -25,12 +26,41 @@ import { cn } from '@/lib/utils'
 import type { EMessage } from '@/convex/types'
 
 const ChatPageImpl = () => {
-  const { thread, messages, removeMessage } = useChat()
+  const { thread, messages, removeMessage, page } = useChat()
   const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
   const { isOwner } = useViewerDetails(thread?.userId)
   const shell = useShellActions()
 
   const [showJson, setShowJson] = useState(false)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [endOfFeedRef, endOfFeedInView] = useInView()
+  const shouldShowScrollToBottom = messages.length > 0 && !endOfFeedInView
+
+  const getScrollToEndButtonPosition = () => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect()
+      return { top: rect.bottom - 64, left: rect.right - 64 }
+    }
+    return { top: 0, left: 0 }
+  }
+
+  const scrollToEnd = (behavior: 'smooth' | 'instant' = 'smooth') => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior,
+      })
+    }
+  }
+
+  const initialScrollToEnd = useRef(false)
+  useEffect(() => {
+    if (!initialScrollToEnd.current && page.status !== 'LoadingFirstPage') {
+      scrollToEnd('instant')
+      initialScrollToEnd.current = true
+    }
+  }, [page.status])
 
   if (thread === null) return <ChatPageError />
   if (thread === undefined) return <PageWrapper loading />
@@ -83,9 +113,9 @@ const ChatPageImpl = () => {
       </header>
 
       {/* * feed * */}
-      <ScrollArea scrollbars="vertical">
-        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 pb-3 text-sm">
-          {/* <EndOfFeedIndicator /> */}
+      <ScrollArea ref={containerRef} scrollbars="vertical">
+        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
+          <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
 
           {/* * messages * */}
           {messages.map((message, i) => (
@@ -101,6 +131,19 @@ const ChatPageImpl = () => {
         </div>
       </ScrollArea>
 
+      {/* * scroll to bottom * */}
+      <IconButton
+        variant="soft"
+        className={cn(
+          'fixed animate-fade animate-delay-100 animate-duration-100',
+          !shouldShowScrollToBottom && 'hidden',
+        )}
+        style={getScrollToEndButtonPosition()}
+        onClick={scrollToEnd}
+      >
+        <Icons.ArrowDown className="phosphor" />
+      </IconButton>
+
       {/* * composer * */}
       {isOwner ? (
         <Composer
@@ -114,18 +157,18 @@ const ChatPageImpl = () => {
         />
       ) : null}
 
-      <AdminOnlyUi>
-        <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
-          {messages.length}
-        </div>
-      </AdminOnlyUi>
-
       {/* * show json * */}
       {showJson && (
         <div className="absolute inset-14 overflow-hidden rounded border">
           <Pre className="h-full overflow-auto">{JSON.stringify(thread, null, 2)}</Pre>
         </div>
       )}
+
+      <AdminOnlyUi>
+        <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
+          {messages.length}
+        </div>
+      </AdminOnlyUi>
     </PageWrapper>
   )
 }
