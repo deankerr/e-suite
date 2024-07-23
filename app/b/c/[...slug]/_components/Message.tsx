@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 
 import { MessageEditor } from '@/app/b/c/[...slug]/_components/MessageEditor'
-import { appConfig } from '@/app/b/config'
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
@@ -150,25 +149,26 @@ export const Message = ({
       {message.images.length > 0 || nImagePlaceholders > 0 ? (
         <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
           {message.images.map((image) => (
-            <div className="w-full max-w-[45%] cursor-pointer" key={image._id}>
-              <ImageCard
-                image={image}
-                imageProps={{
-                  onClick: () => {
-                    openLightbox({
-                      slides: message.images.map((image) => ({
-                        type: 'image',
-                        src: image._id,
-                        width: image.width,
-                        height: image.height,
-                        blurDataURL: image.blurDataUrl,
-                      })),
-                      index: message.images.indexOf(image),
-                    })
-                  },
-                }}
-              />
-            </div>
+            <ImageCard
+              key={image._id}
+              className="max-w-xs cursor-pointer"
+              image={image}
+              imageProps={{
+                sizes: '(max-width: 410px) 90vw, 20rem',
+                onClick: () => {
+                  openLightbox({
+                    slides: message.images.map((image) => ({
+                      type: 'image',
+                      src: image._id,
+                      width: image.width,
+                      height: image.height,
+                      blurDataURL: image.blurDataUrl,
+                    })),
+                    index: message.images.indexOf(image),
+                  })
+                },
+              }}
+            />
           ))}
 
           {textToImageConfig &&
