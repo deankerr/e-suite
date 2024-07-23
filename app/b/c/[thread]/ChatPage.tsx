@@ -10,7 +10,6 @@ import { useAppendMessage } from '@/app/b/api'
 import { Message } from '@/app/b/c/[thread]/_components/Message'
 import { ChatProvider, useChat } from '@/app/b/c/[thread]/_provider/ChatProvider'
 import { appConfig } from '@/app/b/config'
-import { CommandShell } from '@/components/command-shell/CommandShell'
 import { Composer } from '@/components/composer/Composer'
 import { useShellActions } from '@/components/shell/hooks'
 import { ShellC } from '@/components/shell/Shell'
@@ -38,13 +37,6 @@ const ChatPageImpl = () => {
       {/* * header * */}
       <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
         <div className="flex-start shrink-0">
-          {/* * command menu button * */}
-          <CommandShell>
-            <IconButton variant="ghost" className="absolute -left-14 m-0 shrink-0">
-              <Icons.List className="size-6" />
-            </IconButton>
-          </CommandShell>
-
           <ShellC />
 
           <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
