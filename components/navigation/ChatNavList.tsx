@@ -16,7 +16,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
 
   return (
     <div {...props} className={cn('flex grow flex-col gap-0.5 overflow-hidden', className)}>
-      <div className="shrink-0 border-b border-grayA-3 px-3 text-sm font-semibold text-gray-10">
+      <div className="shrink-0 border-b border-grayA-5 px-3 text-sm font-semibold text-gray-11">
         Threads
       </div>
 
@@ -28,18 +28,19 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
                 key={thread._id}
                 href={`${appConfig.chatUrl}/${thread.slug}`}
                 className={cn(
-                  'rt-Link line-clamp-2 rounded border border-transparent px-2 py-1 text-sm font-medium opacity-90',
+                  'rounded border border-transparent py-2 pl-2 pr-0 text-sm opacity-90',
+                  'flex gap-2',
                   segments.includes(thread.slug)
-                    ? 'border-accentA-3 bg-accentA-3 opacity-100 shadow-glow'
+                    ? 'border-accentA-8 bg-accentA-3 text-accent-12 opacity-100 shadow-glow'
                     : 'hover:border-accentA-3 hover:bg-accentA-3 hover:shadow-glow',
                 )}
               >
                 {thread.model?.type === 'chat' ? (
-                  <Icons.Chat className="phosphor mr-2 text-accent-11" />
+                  <Icons.Chat className="size-5 shrink-0 text-accent-11" />
                 ) : (
-                  <Icons.Images className="phosphor mr-2 text-accent-11" />
+                  <Icons.Images className="size-5 shrink-0 text-accent-11" />
                 )}
-                {thread.title ?? 'untitled'}
+                <div className="line-clamp-2">{thread.title ?? 'untitled'}</div>
               </Link>
             ))
           ) : (
