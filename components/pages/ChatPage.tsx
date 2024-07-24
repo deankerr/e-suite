@@ -201,10 +201,6 @@ const ChatPageImpl = () => {
           <Icons.Code className="phosphor" />
         </IconButton>
       </AdminOnlyUi>
-
-      {/* <AdminOnlyUi>
-            
-          </AdminOnlyUi> */}
     </PageWrapper>
   )
 }
