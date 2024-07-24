@@ -8,17 +8,13 @@ import { CmdK } from '@/components/shell/CmdK'
 import { useShellActions, useShellStack } from '@/components/shell/hooks'
 import { appConfig } from '@/config/config'
 import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
-import { useAppendMessage } from '@/lib/api'
 
 export const CreateThread = () => {
   const router = useRouter()
   const stack = useShellStack()
-
   const shell = useShellActions()
 
-  const { appendMessage, inputReadyState } = useAppendMessage()
   const selectedModel = useAtomValue(shellSelectedModelAtom)
-
   const newThreadInferenceConfig = useAtomValue(shellNewThreadInferenceConfig)
 
   if (stack.current !== 'CreateThread') return null
@@ -39,8 +35,6 @@ export const CreateThread = () => {
       <Composer
         model={selectedModel}
         runConfig={newThreadInferenceConfig ?? defaultChatInferenceConfig}
-        appendMessage={appendMessage}
-        inputReadyState={inputReadyState}
         onSuccess={(thread) => {
           router.push(`${appConfig.chatUrl}/${thread.slug}`)
           shell.close()
