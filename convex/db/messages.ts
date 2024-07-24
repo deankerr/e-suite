@@ -3,9 +3,9 @@ import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
-import { kvListV, messageFields } from '../schema'
-import { emptyPage, zStringToMessageRole } from '../utils'
-import { getOrCreateThread, getThreadBySlugOrId } from './threads'
+import { messageFields } from '../schema'
+import { emptyPage } from '../utils'
+import { getThreadBySlugOrId } from './threads'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
@@ -162,43 +162,6 @@ export const list = query({
       .map((message) => getMessageEdges(ctx, message))
 
     return result
-  },
-})
-
-export const create = mutation({
-  args: {
-    threadId: v.optional(v.string()),
-    role: v.string(),
-    name: v.optional(v.string()),
-    text: v.string(),
-    metadata: v.optional(kvListV),
-  },
-  handler: async (ctx, args) => {
-    const user = await ctx.viewerX()
-    const thread = await getOrCreateThread(ctx, {
-      threadId: args.threadId ?? '',
-      userId: user._id,
-    })
-
-    const series = await getNextMessageSeries(thread)
-    const messageId = await ctx.table('messages').insert({
-      contentType: 'text',
-      role: zStringToMessageRole.parse(args.role),
-      name: args.name,
-      text: args.text,
-      metadata: args.metadata,
-      threadId: thread._id,
-      series,
-      userId: user._id,
-      hasImageReference: false,
-    })
-
-    return {
-      threadId: thread._id,
-      slug: thread.slug,
-      messageId: messageId,
-      series,
-    }
   },
 })
 

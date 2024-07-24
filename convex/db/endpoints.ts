@@ -1,6 +1,5 @@
 import { Infer, v } from 'convex/values'
 
-import * as Fal from '../endpoints/fal'
 import * as OpenAi from '../endpoints/openai'
 import * as OpenRouter from '../endpoints/openrouter'
 import * as Sinkin from '../endpoints/sinkin'

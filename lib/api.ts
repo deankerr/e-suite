@@ -68,3 +68,11 @@ export const useThreadActions = (threadId?: string) => {
 
   return { run, append, state: actionState }
 }
+
+export const useUpdateThread = () => {
+  return useMutation(api.db.threads.update)
+}
+
+export const useUpdateCurrentThreadModel = () => {
+  return useMutation(api.db.threads.updateCurrentModel)
+}

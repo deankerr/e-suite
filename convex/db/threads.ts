@@ -1,20 +1,31 @@
 import { omit } from 'convex-helpers'
-import { partial } from 'convex-helpers/validators'
-import { v } from 'convex/values'
+import { literals, partial } from 'convex-helpers/validators'
+import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
-import { createJob } from '../jobs'
-import { inferenceConfigV, threadFields } from '../schema'
-import { defaultChatInferenceConfig } from '../shared/defaults'
-import { createError, extractValidUrlsFromText, insist } from '../shared/utils'
+import { threadFields } from '../schema'
+import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
+import { getInferenceConfig } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey } from './chatModels'
 import { getImageModelByResourceKey } from './imageModels'
-import { getMessageCommand, getNextMessageSeries } from './messages'
 
 import type { Id } from '../_generated/dataModel'
 import type { Ent, InferenceConfig, MutationCtx, QueryCtx } from '../types'
+
+// * new
+
+const getUserThread = async (ctx: MutationCtx, threadId: string) => {
+  const user = await ctx.viewerX()
+  const id = ctx.table('threads').normalizeId(threadId)
+  const thread = id ? await ctx.table('threads').getX(id) : null
+
+  if (thread?.userId !== user._id || thread.deletionTime) return null
+  return thread
+}
+
+// * --
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   const id = ctx.unsafeDb.normalizeId('threads', slugOrId)
@@ -82,111 +93,6 @@ export const list = query({
   },
 })
 
-export const append = mutation({
-  args: {
-    threadId: v.optional(v.string()),
-    message: v.optional(
-      v.object({
-        name: v.optional(v.string()),
-        text: v.optional(v.string()),
-      }),
-    ),
-    inference: v.optional(inferenceConfigV),
-  },
-  handler: async (ctx, args) => {
-    const user = await ctx.viewerX()
-    const thread = await getOrCreateThread(ctx, {
-      threadId: args.threadId ?? '',
-      userId: user._id,
-      uiConfig: args.inference,
-    })
-
-    const messageCommand = getMessageCommand(thread, args.message?.text)
-    const inference = messageCommand?.inference ?? args.inference
-
-    let series = await getNextMessageSeries(thread)
-
-    if (args.message) {
-      const userMessage = await ctx
-        .table('messages')
-        .insert({
-          ...args.message,
-          role: 'user',
-          threadId: thread._id,
-          series: series++,
-          userId: user._id,
-          contentType: 'text',
-          hasImageReference: false,
-        })
-        .get()
-
-      if (userMessage.text) {
-        const urls = extractValidUrlsFromText(userMessage.text)
-        if (urls.length > 0) {
-          await ctx.scheduler.runAfter(0, internal.files.processUrlContent.run, {
-            urls: urls.map((url) => url.toString()),
-            messageId: userMessage._id,
-          })
-        }
-      }
-
-      if (!inference)
-        return {
-          threadId: thread._id,
-          slug: thread.slug,
-          messageId: userMessage._id,
-          series: userMessage.series,
-        }
-    }
-
-    if (!inference) {
-      throw createError('No message or inference provided', { fatal: true, code: 'bad_request' })
-    }
-
-    const jobNameMap: Record<string, string> = {
-      'chat-completion': 'inference/chat',
-      'text-to-image': 'inference/textToImage',
-      'sound-generation': 'inference/textToAudio',
-    }
-    const jobName = jobNameMap[inference.type]
-    insist(jobName, 'invalid inference type')
-
-    const contentTypeMap: Record<string, 'text' | 'image' | 'audio'> = {
-      'chat-completion': 'text',
-      'text-to-image': 'image',
-      'sound-generation': 'audio',
-    }
-
-    const asstMessage = await ctx
-      .table('messages')
-      .insert({
-        role: 'assistant',
-        threadId: thread._id,
-        series,
-        userId: user._id,
-        inference,
-        contentType: contentTypeMap[inference.type] ?? 'text',
-        hasImageReference: false,
-      })
-      .get()
-
-    const jobId = await createJob(ctx, {
-      name: jobName,
-      fields: {
-        messageId: asstMessage._id,
-      },
-    })
-
-    return {
-      threadId: thread._id,
-      slug: thread.slug,
-      messageId: asstMessage._id,
-      series: asstMessage.series,
-      jobId,
-    }
-  },
-})
-
 const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime', 'metadata'])))
 export const update = mutation({
   args: {
@@ -198,6 +104,47 @@ export const update = mutation({
       .table('threads')
       .getX(args.threadId as Id<'threads'>)
       .patch({ ...args.fields, updatedAtTime: Date.now() })
+  },
+})
+
+export const updateCurrentModel = mutation({
+  args: {
+    threadId: v.string(),
+    type: literals('chat', 'image'),
+    resourceKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getUserThread(ctx, args.threadId)
+    if (!thread) throw new ConvexError('invalid thread')
+
+    const model =
+      args.type === 'chat'
+        ? await getChatModelByResourceKey(ctx, args.resourceKey)
+        : await getImageModelByResourceKey(ctx, args.resourceKey)
+    if (!model) throw new ConvexError('invalid model')
+
+    const { chatConfig, textToImageConfig } = getInferenceConfig(thread.inference)
+    if (model.type === 'chat') {
+      const prev = chatConfig ?? defaultChatInferenceConfig
+      await thread.patch({
+        inference: {
+          ...prev,
+          endpoint: model.endpoint,
+          endpointModelId: model.endpointModelId,
+          resourceKey: model.resourceKey,
+        },
+      })
+    } else {
+      const prev = textToImageConfig ?? defaultImageInferenceConfig
+      await thread.patch({
+        inference: {
+          ...prev,
+          endpoint: model.endpoint,
+          endpointModelId: model.endpointModelId,
+          resourceKey: model.resourceKey,
+        },
+      })
+    }
   },
 })
 

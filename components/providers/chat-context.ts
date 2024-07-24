@@ -34,18 +34,9 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
   const messages = page.results
 
   // * mutations
-  const sendAppendMessage = useMutation(api.db.threads.append)
   const sendUpdateThread = useMutation(api.db.threads.update)
   const sendUpdateMessage = useMutation(api.db.messages.update)
   const sendRemoveMessage = useMutation(api.db.messages.remove)
-
-  const appendMessage = useCallback(
-    async (args: Omit<Parameters<typeof sendAppendMessage>[0], 'threadId'>) => {
-      if (!thread) return
-      await sendAppendMessage({ ...args, threadId: thread._id })
-    },
-    [sendAppendMessage, thread],
-  )
 
   const updateThread = useCallback(
     async (args: Omit<Parameters<typeof sendUpdateThread>[0], 'threadId'>['fields']) => {
@@ -105,7 +96,6 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
     isMessageSeriesQuery,
     loadMoreMessages,
     page,
-    appendMessage,
     updateThread,
     updateMessage,
     removeMessage,

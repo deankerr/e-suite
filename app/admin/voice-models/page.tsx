@@ -3,14 +3,10 @@
 import { useState } from 'react'
 import { Play as PlayIcon } from '@phosphor-icons/react/dist/ssr'
 import { IconButton, Table, Tabs } from '@radix-ui/themes'
-import { useMutation, useQuery } from 'convex/react'
 import fuzzysort from 'fuzzysort'
-import { Play, useHowl } from 'rehowl'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { SearchField } from '@/components/form/SearchField'
-import { api } from '@/convex/_generated/api'
-import { Id } from '@/convex/_generated/dataModel'
 import { useVoiceModels } from '@/lib/queries'
 
 export default function Page() {
