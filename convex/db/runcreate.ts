@@ -5,16 +5,18 @@ import { errorMap } from 'zod-validation-error'
 import { mutation } from '../functions'
 import { createJob } from '../jobs'
 import { inferenceConfigV } from '../schema'
-import { getImageModelByResourceKey } from './models'
+import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
 import type { Doc, Id } from '../_generated/dataModel'
-import type { MutationCtx } from '../types'
+import type { Ent, MutationCtx } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
 import type { Infer } from 'convex/values'
 
 // * VALIDATORS
 export type RunConfig = Infer<typeof runConfigV>
 export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>
+export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
+export type RunConfigChat = Infer<typeof runConfigChatV>
 
 export const runConfigChatV = v.object({
   type: v.literal('chat'),
@@ -39,6 +41,7 @@ export const runConfigTextToAudioV = v.object({
   type: v.literal('textToAudio'),
   resourceKey: v.string(),
   prompt: v.string(),
+  duration: v.optional(v.number()),
 })
 
 export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
@@ -75,29 +78,36 @@ export const run = mutation({
     threadId: v.string(),
     runConfig: runConfigV,
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, { threadId, runConfig }) => {
     const user = await ctx.viewerX()
-    const thread = await getThread(ctx, args.threadId)
+    const thread = await getThread(ctx, threadId)
     if (!thread) throw new ConvexError('invalid thread')
 
-    if (args.runConfig.type === 'textToImage') {
+    if (runConfig.type === 'textToImage') {
       return createTextToImageRun(ctx, {
-        threadId: thread._id,
+        thread,
         userId: user._id,
-        runConfig: args.runConfig,
+        runConfig,
       })
     }
 
-    throw new Error('unimplemented')
-    // create message
-    // const message = await createMessage(ctx, {
-    //   threadId: thread._id,
-    //   userId: user._id,
-    //   contentType: 'text', // TODO
-    //   role: 'assistant',
-    //   hasImageReference: false,
-    //   inference: args.runConfig
-    // })
+    if (runConfig.type === 'textToAudio') {
+      return createTextToAudioRun(ctx, {
+        thread,
+        userId: user._id,
+        runConfig,
+      })
+    }
+
+    if (runConfig.type === 'chat') {
+      return createChatRun(ctx, {
+        thread,
+        userId: user._id,
+        runConfig,
+      })
+    }
+
+    throw new ConvexError('not implemented')
   },
 })
 
@@ -106,11 +116,11 @@ export const run = mutation({
 const createTextToImageRun = async (
   ctx: MutationCtx,
   {
-    threadId,
+    thread,
     userId,
     runConfig,
   }: {
-    threadId: Id<'threads'>
+    thread: Ent<'threads'>
     userId: Id<'users'>
     runConfig: RunConfigTextToImage
   },
@@ -139,7 +149,7 @@ const createTextToImageRun = async (
     .parse(runConfig)
 
   const message = await createMessage(ctx, {
-    threadId,
+    threadId: thread._id,
     userId,
     contentType: 'image',
     role: 'assistant',
@@ -152,7 +162,6 @@ const createTextToImageRun = async (
       ...input,
     },
     name: imageModel.name,
-    text: runConfig.prompt,
   })
 
   const jobId = await createJob(ctx, {
@@ -163,7 +172,113 @@ const createTextToImageRun = async (
   })
 
   return {
-    threadId,
+    threadId: thread._id,
+    slug: thread.slug,
+    messageId: message._id,
+    series: message.series,
+    jobId,
+  }
+}
+
+// * TEXT TO AUDIO
+const createTextToAudioRun = async (
+  ctx: MutationCtx,
+  {
+    thread,
+    userId,
+    runConfig,
+  }: {
+    thread: Ent<'threads'>
+    userId: Id<'users'>
+    runConfig: RunConfigTextToAudio
+  },
+) => {
+  const input = z
+    .object({
+      prompt: z.string().max(2048),
+      duration: z.number().max(30).optional(),
+    })
+    .parse(runConfig)
+
+  const message = await createMessage(ctx, {
+    threadId: thread._id,
+    userId,
+    contentType: 'audio',
+    role: 'assistant',
+    hasImageReference: false,
+    inference: {
+      type: 'sound-generation',
+      // current only this source
+      resourceKey: 'elevenlabs::sound-generation',
+      endpoint: 'elevenlabs',
+      endpointModelId: 'sound-generation',
+      ...input,
+    },
+    name: 'ElevenLabs Sound Generation',
+  })
+
+  const jobId = await createJob(ctx, {
+    name: 'inference/textToAudio',
+    fields: {
+      messageId: message._id,
+    },
+  })
+
+  return {
+    threadId: thread._id,
+    slug: thread.slug,
+    messageId: message._id,
+    series: message.series,
+    jobId,
+  }
+}
+
+// * CHAT
+const createChatRun = async (
+  ctx: MutationCtx,
+  {
+    thread,
+    userId,
+    runConfig,
+  }: { thread: Ent<'threads'>; userId: Id<'users'>; runConfig: RunConfigChat },
+) => {
+  const chatModel = await getChatModelByResourceKey(ctx, runConfig.resourceKey)
+  if (!chatModel) throw new ConvexError('invalid resourceKey')
+
+  const input = z
+    .object({
+      excludeHistoryMessagesByName: z.array(z.string().max(64)).max(64).optional(),
+      maxHistoryMessages: z.number().max(64).default(64),
+      stream: z.boolean().default(true),
+    })
+    .parse(runConfig)
+
+  const message = await createMessage(ctx, {
+    threadId: thread._id,
+    userId,
+    contentType: 'text',
+    role: 'assistant',
+    hasImageReference: false,
+    inference: {
+      type: 'chat-completion',
+      resourceKey: chatModel.resourceKey,
+      endpoint: chatModel.endpoint,
+      endpointModelId: chatModel.endpointModelId,
+      ...input,
+    },
+    name: chatModel.name,
+  })
+
+  const jobId = await createJob(ctx, {
+    name: 'inference/chat',
+    fields: {
+      messageId: message._id,
+    },
+  })
+
+  return {
+    threadId: thread._id,
+    slug: thread.slug,
     messageId: message._id,
     series: message.series,
     jobId,

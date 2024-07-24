@@ -73,6 +73,9 @@ export const run = internalAction({
       )
 
       const { type, endpoint, endpointModelId, resourceKey, ...parameters } = chatConfig
+      parameters.excludeHistoryMessagesByName = undefined
+      parameters.maxHistoryMessages = undefined
+
       const api = createOpenAiClient(endpoint)
 
       console.log(`[${type}]`, `[${endpoint}]`, parameters, messages)
