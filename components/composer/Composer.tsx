@@ -34,23 +34,46 @@ export const Composer = ({
   textareaMinRows?: number
   threadId?: string
 } & React.ComponentProps<'form'>) => {
-  // TODO refactor duplicate configs/responsibilities
   const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
   const threadActions = useThreadActions(threadId)
   const shell = useShellActions()
   const router = useRouter()
 
   const [promptValue, setPromptValue] = useState('')
-  const [textToImageN, setTextToImageN] = useState<'1' | '4'>(
-    textToImageConfig?.n === 1 ? '1' : '4',
-  )
+
+  const getValidQuantity = (n: string | number) => {
+    const num = Number(n) || 1
+    const max = model?.resourceKey === 'fal::fal-ai/aura-flow' ? 2 : 4
+
+    return Math.min(num, max)
+  }
+  const [textToImageN, setTextToImageN] = useState(() => getValidQuantity(4))
+
   const [textToImageSize, setTextToImageSize] = useState<'square' | 'portrait' | 'landscape'>(
     textToImageConfig?.size ?? 'square',
   )
 
+  const currentRunConfig = model
+    ? chatConfig
+      ? {
+          type: 'chat' as const,
+          resourceKey: model.resourceKey,
+        }
+      : textToImageConfig
+        ? {
+            type: 'textToImage' as const,
+            resourceKey: model.resourceKey,
+            prompt: promptValue,
+            n: textToImageN,
+            size: textToImageSize,
+          }
+        : null
+    : null
+
   const handleActionResult = (
     result: FunctionReturnType<typeof api.db.runcreate.append> | null,
   ) => {
+    if (result) setPromptValue('')
     if (result && result.threadId !== threadId) {
       shell.close()
       router.push(`${appConfig.chatUrl}/${result.slug}`)
@@ -58,62 +81,39 @@ export const Composer = ({
   }
 
   const send = () => {
-    if (chatConfig) {
-      async function sendChat() {
-        if (!model) {
-          toast.error('No model selected')
-          return
-        }
+    if (!currentRunConfig) {
+      toast.error('Invalid configuration')
+      return
+    }
 
-        const result = await threadActions.append({
+    if (currentRunConfig.type === 'chat' && promptValue) {
+      threadActions
+        .append({
           message: {
             role: 'user',
             text: promptValue,
           },
-          runConfig: {
-            type: 'chat',
-            resourceKey: model.resourceKey,
-          },
+          runConfig: currentRunConfig,
         })
-        handleActionResult(result)
-      }
-
-      void sendChat()
-    }
-
-    if (textToImageConfig) {
-      async function sendTextToImage() {
-        if (!model) {
-          toast.error('No model selected')
-          return
-        }
-
-        const result = await threadActions.run({
-          runConfig: {
-            type: 'textToImage',
-            resourceKey: model.resourceKey,
-            prompt: promptValue,
-            n: textToImageN === '1' ? 1 : 4,
-            size: textToImageSize,
-          },
+        .then(handleActionResult)
+    } else {
+      threadActions
+        .run({
+          runConfig: currentRunConfig,
         })
-        handleActionResult(result)
-      }
-      void sendTextToImage()
+        .then(handleActionResult)
     }
   }
 
   const add = () => {
-    async function sendAddMessage() {
-      const result = await threadActions.append({
+    threadActions
+      .append({
         message: {
           role: 'user',
           text: promptValue,
         },
       })
-      handleActionResult(result)
-    }
-    void sendAddMessage()
+      .then(handleActionResult)
   }
 
   return (
@@ -187,8 +187,9 @@ export const Composer = ({
         {textToImageConfig && (
           <>
             <QuantitySelect
-              value={textToImageN}
-              onValueChange={(value) => setTextToImageN(value as '1' | '4')}
+              value={textToImageN.toString()}
+              onValueChange={(value) => setTextToImageN(getValidQuantity(value))}
+              max={model?.resourceKey === 'fal::fal-ai/aura-flow' ? 2 : 4}
               disabled={threadActions.state === 'rateLimited'}
             />
             <DimensionsSelect
@@ -250,7 +251,10 @@ export const Composer = ({
   )
 }
 
-const QuantitySelect = (props: React.ComponentProps<typeof Select.Root>) => {
+const QuantitySelect = ({
+  max,
+  ...props
+}: { max: number } & React.ComponentProps<typeof Select.Root>) => {
   return (
     <Select.Root {...props}>
       <Select.Trigger placeholder="Quantity" className="min-w-24" variant="soft" color="gray" />
@@ -263,7 +267,14 @@ const QuantitySelect = (props: React.ComponentProps<typeof Select.Root>) => {
               Single
             </div>
           </Select.Item>
-          <Select.Item value="4" className="items-center">
+          <Select.Item value="2" disabled={max < 2}>
+            <div className="flex items-center gap-1">
+              <Icons.Copy className="size-5 shrink-0 -scale-75" />
+              Double
+            </div>
+          </Select.Item>
+
+          <Select.Item value="4" className="items-center" disabled={max < 4}>
             <div className="flex items-center gap-1">
               <Icons.GridFour className="size-5 shrink-0" />
               Grid
