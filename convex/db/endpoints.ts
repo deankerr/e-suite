@@ -121,24 +121,10 @@ const defaultChatModelTags = [
 const imageModelSchema = v.object(imageModelFields)
 export type ImageModelDataRecord = Infer<typeof imageModelSchema> & { resourceKey: string }
 export const importEndpointImageModelData = internalMutation({
-  args: {
-    purgeExisting: v.boolean(),
-  },
+  args: {},
   handler: async (ctx, args) => {
-    if (args.purgeExisting) {
-      await ctx.table('image_models').map(async (model) => await model.delete())
-      console.log('purged existing image models')
-    }
-
     const existingModels = await ctx.table('image_models')
     console.log('image models existing:', existingModels.length)
-
-    const fal = Fal.getNormalizedModelData()
-    const falNew = fal.filter(
-      (model) => !existingModels.some((m) => m.resourceKey === model.resourceKey),
-    )
-    const falIds = await ctx.table('image_models').insertMany(falNew)
-    console.log('fal: imported', falIds.length, 'models')
 
     const sinkin = await Sinkin.getNormalizedModelData(ctx)
     const sinkinNew = sinkin.filter(
