@@ -1,21 +1,33 @@
 import { useCallback, useState } from 'react'
+import { useTimeoutEffect } from '@react-hookz/web'
 import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 
+const RUN_THROTTLE = 5000
+
 export const useThreadActions = (threadId?: string) => {
   const [actionState, setActionState] = useState<'ready' | 'pending' | 'rateLimited'>('ready')
+
+  const [_, reset] = useTimeoutEffect(() => {
+    setActionState('ready')
+  }, RUN_THROTTLE)
 
   const sendRun = useMutation(api.db.runcreate.run)
   const run = useCallback(
     async (args: Omit<Parameters<typeof sendRun>[0], 'threadId'>) => {
+      if (actionState !== 'ready') {
+        toast.error('Please wait before running the action again.')
+        return
+      }
       setActionState('pending')
       try {
         console.log('run', args)
         const result = await sendRun({ ...args, threadId })
 
-        setActionState('ready')
+        setActionState('rateLimited')
+        reset()
         return result
       } catch (err) {
         console.error(err)
@@ -25,18 +37,23 @@ export const useThreadActions = (threadId?: string) => {
         return null
       }
     },
-    [sendRun, threadId],
+    [actionState, sendRun, threadId, reset],
   )
 
   const sendAppend = useMutation(api.db.runcreate.append)
   const append = useCallback(
     async (args: Omit<Parameters<typeof sendAppend>[0], 'threadId'>) => {
+      if (actionState !== 'ready') {
+        toast.error('Please wait before running the action again.')
+        return
+      }
       setActionState('pending')
       try {
         console.log('append', args)
         const result = await sendAppend({ ...args, threadId })
 
-        setActionState('ready')
+        setActionState('rateLimited')
+        reset()
         return result
       } catch (err) {
         console.error(err)
@@ -46,7 +63,7 @@ export const useThreadActions = (threadId?: string) => {
         return null
       }
     },
-    [sendAppend, threadId],
+    [actionState, sendAppend, threadId, reset],
   )
 
   return { run, append, state: actionState }
