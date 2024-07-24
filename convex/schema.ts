@@ -5,7 +5,36 @@ import { ms } from 'itty-time'
 
 const timeToDelete = ms('1 day')
 
-// * shared schemas
+// * run config schemas
+export const runConfigChatV = v.object({
+  type: v.literal('chat'),
+  resourceKey: v.string(),
+  excludeHistoryMessagesByName: v.optional(v.array(v.string())),
+  maxHistoryMessages: v.optional(v.number()),
+  stream: v.optional(v.boolean()),
+})
+
+export const runConfigTextToImageV = v.object({
+  type: v.literal('textToImage'),
+  resourceKey: v.string(),
+
+  prompt: v.string(),
+  n: v.optional(v.number()),
+  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
+})
+
+export const runConfigTextToAudioV = v.object({
+  type: v.literal('textToAudio'),
+  resourceKey: v.string(),
+  prompt: v.string(),
+  duration: v.optional(v.number()),
+})
+
+export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
+
+// * inference schemas
 export const chatCompletionConfigV = v.object({
   type: v.literal('chat-completion'),
   resourceKey: v.string(),
@@ -284,13 +313,15 @@ export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
   inference: inferenceConfigV,
-  slashCommands: v.array(
-    v.object({
-      id: v.string(),
-      command: v.string(),
-      commandType: literals('startsWith', 'includesWord'),
-      inference: inferenceConfigV,
-    }),
+  slashCommands: v.optional(
+    v.array(
+      v.object({
+        id: v.string(),
+        command: v.string(),
+        commandType: literals('startsWith', 'includesWord'),
+        inference: inferenceConfigV,
+      }),
+    ),
   ),
 
   voiceovers: v.optional(
@@ -323,6 +354,15 @@ export const userFields = {
   name: v.string(),
   imageUrl: v.string(),
   role: literals('user', 'admin'),
+  runConfigs: v.optional(
+    v.array(
+      v.object({
+        name: v.string(),
+        runConfig: runConfigV,
+        keyword: v.optional(v.string()),
+      }),
+    ),
+  ),
 }
 const users = defineEnt(userFields)
   .deletion('scheduled', { delayMs: timeToDelete })

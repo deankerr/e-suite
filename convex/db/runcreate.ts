@@ -4,51 +4,56 @@ import { z } from 'zod'
 
 import { mutation } from '../functions'
 import { createJob } from '../jobs'
-import { kvListV } from '../schema'
+import { kvListV, runConfigV } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
 import type { Doc, Id } from '../_generated/dataModel'
-import type { Ent, EntWriter, MutationCtx } from '../types'
+import type {
+  Ent,
+  EntWriter,
+  MutationCtx,
+  RunConfig,
+  RunConfigChat,
+  RunConfigTextToAudio,
+  RunConfigTextToImage,
+} from '../types'
 import type { WithoutSystemFields } from 'convex/server'
-import type { Infer } from 'convex/values'
-
-// * VALIDATORS
-export type RunConfig = Infer<typeof runConfigV>
-export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>
-export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
-export type RunConfigChat = Infer<typeof runConfigChatV>
-
-export const runConfigChatV = v.object({
-  type: v.literal('chat'),
-  resourceKey: v.string(),
-  excludeHistoryMessagesByName: v.optional(v.array(v.string())),
-  maxHistoryMessages: v.optional(v.number()),
-  stream: v.optional(v.boolean()),
-})
-
-export const runConfigTextToImageV = v.object({
-  type: v.literal('textToImage'),
-  resourceKey: v.string(),
-
-  prompt: v.string(),
-  n: v.optional(v.number()),
-  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
-  width: v.optional(v.number()),
-  height: v.optional(v.number()),
-})
-
-export const runConfigTextToAudioV = v.object({
-  type: v.literal('textToAudio'),
-  resourceKey: v.string(),
-  prompt: v.string(),
-  duration: v.optional(v.number()),
-})
-
-export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
 
 // * HELPERS
+const defaultConfigs = [
+  {
+    name: 'sound generation',
+    runConfig: {
+      type: 'textToAudio',
+      resourceKey: 'elevenlabs::sound-generation',
+      prompt: '',
+    },
+    keyword: '^@sfx (.+)',
+  },
+] as const
+
+export const matchUserRunConfigKeyword = async (ctx: MutationCtx, text?: string) => {
+  if (!text) return null
+  const user = await ctx.viewerX()
+  const configs = (user.runConfigs ?? []).concat(defaultConfigs)
+  // keyword is regex string
+  const config = configs.find((c) => (c.keyword ? new RegExp(c.keyword).test(text) : false))
+  if (!config) return null
+
+  if ('prompt' in config.runConfig) {
+    const keyword = config.keyword as string
+    if (keyword.startsWith('^@')) {
+      config.runConfig.prompt = text.slice(text.indexOf(' ')).trim()
+    } else {
+      config.runConfig.prompt = text
+    }
+  }
+
+  return config
+}
+
 const getThread = async (ctx: MutationCtx, threadId: string) => {
   const id = ctx.table('threads').normalizeId(threadId)
   return id ? await ctx.table('threads').get(id) : null
@@ -123,6 +128,15 @@ export const append = mutation({
       hasImageReference: false,
       contentType: 'text',
     })
+
+    const userRunConfig = await matchUserRunConfigKeyword(ctx, args.message.text)
+    if (userRunConfig) {
+      return await createRun(ctx, {
+        thread,
+        userId: thread.userId,
+        runConfig: userRunConfig.runConfig,
+      })
+    }
 
     if (args.runConfig) {
       return await createRun(ctx, { thread, userId: thread.userId, runConfig: args.runConfig })

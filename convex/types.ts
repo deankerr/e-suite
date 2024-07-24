@@ -10,6 +10,10 @@ import type {
   entDefinitions,
   inferenceConfigV,
   jobErrorV,
+  runConfigChatV,
+  runConfigTextToAudioV,
+  runConfigTextToImageV,
+  runConfigV,
   soundGenerationConfigV,
   textToImageConfigV,
 } from './schema'
@@ -43,6 +47,11 @@ export type ChatCompletionConfig = Infer<typeof chatCompletionConfigV>
 export type TextToImageConfig = Infer<typeof textToImageConfigV>
 export type TextToAudioConfig = Infer<typeof soundGenerationConfigV>
 export type InferenceConfig = Infer<typeof inferenceConfigV>
+
+export type RunConfig = Infer<typeof runConfigV>
+export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>
+export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
+export type RunConfigChat = Infer<typeof runConfigChatV>
 
 export type JobError = Infer<typeof jobErrorV>
 export type TextToImageHandlerResult =
