@@ -1,11 +1,76 @@
 [
   {
+    "cover_image": "https://v2.fal.media/files/ca17a9704d9f4d6eb1ff0c1c9526e897_b1abc7da53e949698e9c8186963f80c4.png",
+    "description": "Fully open flow-based text to image model",
+    "link": "https://fal.ai/models/fal-ai/aura-flow",
+    "model_id": "fal-ai/aura-flow",
+    "name": "AuraFlow",
+    "tags": "text-to-image inference optimized",
+    "creatorName": "fal.ai",
+    "pricing": {
+      "type": "perSecond",
+      "value": "0.00111"
+    }
+  },
+  {
     "cover_image": "https://storage.googleapis.com/falserverless/landing/sd13-sample-03.webp",
     "description": "Run SD3 at the speed of light",
     "link": "https://fal.ai/models/fal-ai/stable-diffusion-v3-medium/api",
     "model_id": "fal-ai/stable-diffusion-v3-medium",
     "name": "Stable Diffusion V3 Medium",
-    "tags": "text-to-image inference optimized"
+    "tags": "text-to-image inference optimized",
+    "creatorName": "Stability AI",
+    "pricing": {
+      "type": "perRequest",
+      "value": "0.035"
+    }
+  },
+  {
+    "cover_image": "https://storage.googleapis.com/falserverless/gallery/stable-diffusion-xl-lightning.webp",
+    "cover_image_animated": "https://storage.googleapis.com/falserverless/gallery/stable-diffusion-xl-lightning-animated.webp",
+    "description": "Run SDXL at the speed of light",
+    "link": "https://fal.ai/models/stable-diffusion-xl-lightning",
+    "model_id": "fal-ai/fast-lightning-sdxl",
+    "name": "Stable Diffusion XL Lightning",
+    "tags": "text-to-image real-time",
+    "creatorName": "Stability AI",
+    "pricing": {
+      "type": "perSecond",
+      "value": "0.00111"
+    }
+  },
+  {
+    "cover_image": "https://fal.media/files/kangaroo/LM0fy_9qT_8FlKrWhR7Zt.jpeg",
+    "description": "Hyper-charge SDXL's performance and creativity.",
+    "link": "https://fal.ai/models/hyper-sdxl",
+    "model_id": "fal-ai/hyper-sdxl",
+    "name": "Hyper SDXL",
+    "tags": "text-to-image real-time",
+    "creatorName": "Stability AI + Bytedance",
+    "pricing": {
+      "type": "perSecond",
+      "value": "0.00111"
+    }
+  },
+  {
+    "cover_image": "https://storage.googleapis.com/falserverless/gallery/pixart-sigma.jpeg",
+    "description": "Weak-to-Strong Training of Diffusion Transformer for 4K Text-to-Image Generation",
+    "link": "https://fal.ai/models/pixart-sigma",
+    "model_id": "fal-ai/pixart-sigma",
+    "name": "PixArt-Σ",
+    "tags": "text-to-image inference realistic",
+    "pricing": {
+      "type": "perSecond",
+      "value": "0.000575"
+    }
+  },
+  {
+    "cover_image": "https://storage.googleapis.com/falserverless/gallery/illusion-diffusion.jpeg",
+    "description": "Create illusions conditioned on image.",
+    "link": "https://fal.ai/models/illusion-diffusion",
+    "model_id": "fal-ai/illusion-diffusion",
+    "name": "Illusion Diffusion",
+    "tags": "text-to-image inference stylized"
   },
   {
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/fast-sdxl.jpeg",
@@ -13,7 +78,8 @@
     "link": "https://fal.ai/models/stable-diffusion-xl",
     "model_id": "fal-ai/fast-sdxl",
     "name": "Stable Diffusion XL",
-    "tags": "text-to-image inference loras"
+    "tags": "text-to-image inference loras",
+    "creatorName": "Stability AI"
   },
   {
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/fast-sdxl.jpeg",
@@ -123,23 +189,6 @@
     "model_id": "fal-ai/wizper",
     "name": "Wizper (Whisper v3 -- fal.ai edition)",
     "tags": "speech-to-text inference speech"
-  },
-  {
-    "cover_image": "https://storage.googleapis.com/falserverless/gallery/stable-diffusion-xl-lightning.webp",
-    "cover_image_animated": "https://storage.googleapis.com/falserverless/gallery/stable-diffusion-xl-lightning-animated.webp",
-    "description": "Run SDXL at the speed of light",
-    "link": "https://fal.ai/models/stable-diffusion-xl-lightning",
-    "model_id": "fal-ai/fast-lightning-sdxl",
-    "name": "Stable Diffusion XL Lightning",
-    "tags": "text-to-image real-time"
-  },
-  {
-    "cover_image": "https://fal.media/files/kangaroo/LM0fy_9qT_8FlKrWhR7Zt.jpeg",
-    "description": "Hyper-charge SDXL's performance and creativity.",
-    "link": "https://fal.ai/models/hyper-sdxl",
-    "model_id": "fal-ai/hyper-sdxl",
-    "name": "Hyper SDXL",
-    "tags": "text-to-image real-time"
   },
   {
     "cover_image": "https://fal-cdn.batuhan-941.workers.dev/files/monkey/8WXjrk5HEam79CPlQlo5T.jpeg",
@@ -256,14 +305,6 @@
     "model_id": "fal-ai/metavoice",
     "name": "MetaVoice",
     "tags": "text-to-speech inference speech"
-  },
-  {
-    "cover_image": "https://storage.googleapis.com/falserverless/gallery/illusion-diffusion.jpeg",
-    "description": "Create illusions conditioned on image.",
-    "link": "https://fal.ai/models/illusion-diffusion",
-    "model_id": "fal-ai/illusion-diffusion",
-    "name": "Illusion Diffusion",
-    "tags": "text-to-image inference stylized"
   },
   {
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/sam.jpeg",
@@ -508,14 +549,6 @@
     "model_id": "fal-ai/stable-diffusion-xl-image-to-image",
     "name": "Stable Diffusion XL",
     "tags": "image-to-image inference loras"
-  },
-  {
-    "cover_image": "https://storage.googleapis.com/falserverless/gallery/pixart-sigma.jpeg",
-    "description": "Weak-to-Strong Training of Diffusion Transformer for 4K Text-to-Image Generation",
-    "link": "https://fal.ai/models/pixart-sigma",
-    "model_id": "fal-ai/pixart-sigma",
-    "name": "PixArt-Σ",
-    "tags": "text-to-image inference realistic"
   },
   {
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/dreamshaper.jpeg",

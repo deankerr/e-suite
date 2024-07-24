@@ -1,6 +1,9 @@
 import * as client from '@fal-ai/serverless-client'
 import { z } from 'zod'
 
+import { internalMutation } from '../functions'
+import FalModelsJson from './fal.models.json'
+
 import type { ImageModelDataRecord } from '../db/endpoints'
 import type { TextToImageConfig, TextToImageHandlerResult } from '../types'
 
@@ -102,101 +105,6 @@ const sdxlSizes = {
   square: [1024, 1024],
 } satisfies ImageModelDataRecord['sizes']
 
-export const falImageModelData = [
-  {
-    resourceKey: 'fal::fal-ai/stable-diffusion-v3-medium',
-    name: 'Stable Diffusion V3 Medium',
-    description: '',
-
-    creatorName: '',
-    link: '',
-    license: '',
-    tags: [],
-    coverImageUrl: 'https://storage.googleapis.com/falserverless/landing/sd3-sample-03.webp',
-
-    architecture: 'SD3' as const,
-    sizes: sdxlSizes,
-
-    endpoint: 'fal',
-    endpointModelId: 'fal-ai/stable-diffusion-v3-medium',
-    pricing: {},
-    moderated: false,
-    available: true,
-    hidden: false,
-  },
-  {
-    resourceKey: 'fal::fal-ai/hyper-sdxl',
-    name: 'Hyper SDXL',
-    description: '',
-
-    creatorName: '',
-    link: '',
-    license: '',
-    tags: [],
-    coverImageUrl: 'https://fal.media/files/kangaroo/LM0fy_9qT_8FlKrWhR7Zt.jpeg',
-
-    architecture: 'SDXL' as const,
-    sizes: sdxlSizes,
-
-    endpoint: 'fal',
-    endpointModelId: 'fal-ai/hyper-sdxl',
-    pricing: {},
-    moderated: false,
-    available: true,
-    hidden: false,
-  },
-  {
-    resourceKey: 'fal::fal-ai/fast-lightning-sdxl',
-    name: 'Fast Lightning SDXL',
-    description: '',
-
-    creatorName: '',
-    link: '',
-    license: '',
-    tags: [],
-    coverImageUrl:
-      'https://storage.googleapis.com/falserverless/gallery/dreamshaper-sdxl-lightning.jpeg',
-
-    architecture: 'SDXL' as const,
-    sizes: sdxlSizes,
-
-    endpoint: 'fal',
-    endpointModelId: 'fal-ai/fast-lightning-sdxl',
-    pricing: {},
-    moderated: false,
-    available: true,
-    hidden: false,
-  },
-  {
-    resourceKey: 'fal::fal-ai/pixart-sigma',
-    name: 'PixArt-Σ',
-    description: '',
-
-    creatorName: '',
-    link: '',
-    license: '',
-    tags: [],
-    coverImageUrl: 'https://storage.googleapis.com/falserverless/gallery/pixart-sigma.jpeg',
-
-    architecture: 'SDXL' as const,
-    sizes: sdxlSizes,
-
-    endpoint: 'fal',
-    endpointModelId: 'fal-ai/pixart-sigma',
-    pricing: {},
-    moderated: false,
-    available: true,
-    hidden: false,
-  },
-]
-
-export const getNormalizedModelData = (): ImageModelDataRecord[] => {
-  return falImageModelData.map((data) => ({
-    ...data,
-    internalScore: 1,
-  }))
-}
-
 export const visionModels = [
   'fal-ai/llavav15-13b',
   'fal-ai/llava-next',
@@ -208,3 +116,71 @@ export const visionModels = [
   'fal-ai/qwen-vl-chat-7b-int4',
   'fal-ai/llava-llama3-8b-v11',
 ]
+
+const importModelIds = [
+  'fal-ai/aura-flow',
+  'fal-ai/stable-diffusion-v3-medium',
+  'fal-ai/pixart-sigma',
+  'fal-ai/hyper-sdxl',
+  'fal-ai/fast-lightning-sdxl',
+]
+
+function buildModelData(): ImageModelDataRecord[] {
+  const models = FalModelsJson.filter((model) => importModelIds.includes(model.model_id)).map(
+    (data, i) => {
+      const record: ImageModelDataRecord = {
+        resourceKey: `fal::${data.model_id}`,
+        endpoint: 'fal',
+        endpointModelId: data.model_id,
+        name: data.name,
+        description: data.description,
+        creatorName: data.creatorName ?? '',
+        link: data.link,
+        license: '',
+        tags: [],
+        coverImageUrl: data.cover_image,
+        architecture: data.model_id.includes('sdxl')
+          ? 'SDXL'
+          : data.model_id.includes('v3-medium')
+            ? 'SD3'
+            : '',
+        sizes: sdxlSizes,
+        pricing: data.pricing
+          ? {
+              type: data.pricing.type,
+              value: Number(data.pricing.value),
+            }
+          : { type: 'unknown' },
+        moderated: false,
+        available: true,
+        hidden: false,
+        internalScore: 10 - i,
+      }
+
+      return record
+    },
+  )
+
+  return models
+}
+
+export const importFalModelRecords = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const models = buildModelData()
+
+    for (const model of models) {
+      const existing = await ctx
+        .table('image_models')
+        .filter((q) => q.eq(q.field('endpointModelId'), model.endpointModelId))
+        .unique()
+      if (existing) {
+        await existing.replace(model)
+        console.log('updated:', model.name)
+      } else {
+        await ctx.table('image_models').insert(model)
+        console.log('new:', model.name)
+      }
+    }
+  },
+})

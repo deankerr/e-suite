@@ -145,7 +145,7 @@ export const Composer = ({
                 </Badge>
               )}
 
-              {model.type === 'image' && (
+              {model.type === 'image' && model.architecture && (
                 <Badge size="3" color="brown">
                   {model.architecture}
                 </Badge>

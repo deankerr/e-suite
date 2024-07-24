@@ -95,7 +95,20 @@ const sharedModelFields = {
 
   endpoint: v.string(),
   endpointModelId: v.string(),
-  pricing: v.object({}),
+  pricing: v.union(
+    v.object({
+      type: v.literal('perRequest'),
+      value: v.number(),
+    }),
+    v.object({
+      type: v.literal('perSecond'),
+      value: v.number(),
+    }),
+    v.object({
+      type: v.literal('unknown'),
+    }),
+    v.object({}), // NOTE - deprecated (no data)
+  ),
 
   moderated: v.boolean(),
   available: v.boolean(),
@@ -117,7 +130,7 @@ const chat_models = defineEnt(chatModelFields).field('resourceKey', v.string(), 
 
 export const imageModelFields = {
   ...sharedModelFields,
-  architecture: literals('SD', 'SDXL', 'SD3'),
+  architecture: v.string(),
   sizes: v.object({
     portrait: v.array(v.number()),
     landscape: v.array(v.number()),
