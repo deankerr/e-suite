@@ -7,10 +7,10 @@ import { toast } from 'sonner'
 import { Badge } from '@/components/ui/Badge'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
+import { useThreadActions } from '@/lib/api'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
-import type { RunConfig } from '@/convex/db/threadsB'
 import type { EChatModel, EImageModel, InferenceConfig } from '@/convex/types'
 import type { useAppendMessage } from '@/lib/api'
 import type { FunctionReturnType } from 'convex/server'
@@ -23,6 +23,7 @@ export const Composer = ({
   onSuccess,
   onModelChange,
   textareaMinRows = 2,
+  threadId,
   className,
   ...props
 }: {
@@ -33,8 +34,11 @@ export const Composer = ({
   onSuccess?: (result: FunctionReturnType<typeof api.db.threadsB.append>) => void
   onModelChange?: () => void
   textareaMinRows?: number
+  threadId?: string
 } & React.ComponentProps<'form'>) => {
+  // TODO refactor duplicate configs/responsibilities
   const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
+  const threadActions = useThreadActions(threadId)
 
   const [promptValue, setPromptValue] = useState('')
   const [textToImageN, setTextToImageN] = useState<'1' | '4'>(
@@ -44,44 +48,60 @@ export const Composer = ({
     textToImageConfig?.size ?? 'square',
   )
 
-  const send = async (run?: RunConfig) => {
-    if (inputReadyState !== 'ready') {
-      return toast.error('Please wait for the input to be ready.')
-    }
-
-    const result = await appendMessage({
-      text: promptValue,
-      run,
-    })
-    if (result) {
-      setPromptValue('')
-      onSuccess?.(result)
-    }
-  }
-
-  const add = () => send()
-
-  const run = () => {
-    if (!model) {
-      return toast.error('Please select a model to run.')
-    }
-
+  const send = () => {
     if (chatConfig) {
-      send({
-        type: 'chat',
-        resourceKey: model.resourceKey,
-      })
+      async function sendChat() {
+        if (!model) {
+          toast.error('No model selected')
+          return
+        }
+
+        const result = await threadActions.append({
+          message: {
+            role: 'user',
+            text: promptValue,
+          },
+          runConfig: {
+            type: 'chat',
+            resourceKey: model.resourceKey,
+          },
+        })
+      }
+
+      void sendChat()
     }
 
     if (textToImageConfig) {
-      send({
-        type: 'textToImage',
-        resourceKey: model.resourceKey,
-        prompt: promptValue,
-        n: textToImageN === '1' ? 1 : 4,
-        size: textToImageSize,
+      async function sendTextToImage() {
+        if (!model) {
+          toast.error('No model selected')
+          return
+        }
+
+        const result = await threadActions.run({
+          runConfig: {
+            type: 'textToImage',
+            resourceKey: model.resourceKey,
+            prompt: promptValue,
+            n: textToImageN === '1' ? 1 : 4,
+            size: textToImageSize,
+          },
+        })
+      }
+      void sendTextToImage()
+    }
+  }
+
+  const add = () => {
+    async function sendAddMessage() {
+      const result = await threadActions.append({
+        message: {
+          role: 'user',
+          text: promptValue,
+        },
       })
     }
+    void sendAddMessage()
   }
 
   return (
@@ -107,7 +127,7 @@ export const Composer = ({
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
               e.preventDefault()
-              run()
+              send()
             }
           }}
           disabled={inputReadyState !== 'ready'}
@@ -117,8 +137,6 @@ export const Composer = ({
 
       {/* * model / config * */}
       <div className="flex flex-wrap gap-2 px-2 pb-2 pt-1.5">
-        {/* TODO model select */}
-
         <Button
           type="button"
           variant="surface"
@@ -202,7 +220,7 @@ export const Composer = ({
         </Button>
         <Button
           type="button"
-          onClick={run}
+          onClick={send}
           loading={inputReadyState === 'pending'}
           disabled={inputReadyState === 'locked'}
         >
