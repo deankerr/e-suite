@@ -13,14 +13,12 @@ import { appConfig } from '@/config/config'
 import { useThreadActions } from '@/lib/api'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
-import type { api } from '@/convex/_generated/api'
-import type { EChatModel, EImageModel, InferenceConfig } from '@/convex/types'
-import type { FunctionReturnType } from 'convex/server'
+import type { EChatModel, EImageModel, InferenceConfig, ThreadActionResult } from '@/convex/types'
 
 export const Composer = ({
   runConfig,
   model,
-  onSuccess,
+
   onModelChange,
   textareaMinRows = 2,
   threadId,
@@ -29,7 +27,6 @@ export const Composer = ({
 }: {
   runConfig: InferenceConfig
   model: EChatModel | EImageModel | null | undefined
-  onSuccess?: (result: FunctionReturnType<typeof api.db.threadsB.append>) => void
   onModelChange?: () => void
   textareaMinRows?: number
   threadId?: string
@@ -70,9 +67,7 @@ export const Composer = ({
         : null
     : null
 
-  const handleActionResult = (
-    result: FunctionReturnType<typeof api.db.runcreate.append> | null,
-  ) => {
+  const handleActionResult = (result?: ThreadActionResult | null) => {
     if (result) setPromptValue('')
     if (result && result.threadId !== threadId) {
       shell.close()

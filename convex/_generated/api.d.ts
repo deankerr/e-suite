@@ -24,7 +24,6 @@ import type * as db_models from "../db/models.js";
 import type * as db_runcreate from "../db/runcreate.js";
 import type * as db_speech from "../db/speech.js";
 import type * as db_threads from "../db/threads.js";
-import type * as db_threadsB from "../db/threadsB.js";
 import type * as db_voiceModels from "../db/voiceModels.js";
 import type * as deletion from "../deletion.js";
 import type * as endpoints_aws from "../endpoints/aws.js";
@@ -81,7 +80,6 @@ declare const fullApi: ApiFromModules<{
   "db/runcreate": typeof db_runcreate;
   "db/speech": typeof db_speech;
   "db/threads": typeof db_threads;
-  "db/threadsB": typeof db_threadsB;
   "db/voiceModels": typeof db_voiceModels;
   deletion: typeof deletion;
   "endpoints/aws": typeof endpoints_aws;

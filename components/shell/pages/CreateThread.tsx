@@ -35,10 +35,6 @@ export const CreateThread = () => {
       <Composer
         model={selectedModel}
         runConfig={newThreadInferenceConfig ?? defaultChatInferenceConfig}
-        onSuccess={(thread) => {
-          router.push(`${appConfig.chatUrl}/${thread.slug}`)
-          shell.close()
-        }}
         className="pt-1"
       />
     </>

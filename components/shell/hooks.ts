@@ -33,6 +33,7 @@ export const useShellStack = () => {
 
   const pop = () => {
     setStack(stack.slice(0, -1))
+    setSearchValue('')
   }
 
   const set = (page: ShellPage) => {

@@ -54,11 +54,6 @@ export const matchUserRunConfigKeyword = async (ctx: MutationCtx, text?: string)
   return config
 }
 
-const getThread = async (ctx: MutationCtx, threadId: string) => {
-  const id = ctx.table('threads').normalizeId(threadId)
-  return id ? await ctx.table('threads').get(id) : null
-}
-
 const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
   const user = await ctx.viewerX()
 
@@ -81,7 +76,7 @@ const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
   const id = ctx.table('threads').normalizeId(threadId)
   const thread = id ? await ctx.table('threads').getX(id) : null
 
-  if (thread?.userId !== user._id) return null
+  if (thread?.userId !== user._id || thread.deletionTime) return null
   return thread
 }
 
@@ -210,15 +205,20 @@ const createTextToImageRun = async (
       height: z.number().max(2048).default(1024),
       size: z.enum(['portrait', 'square', 'landscape']).optional(),
     })
-    .transform((vals) =>
-      vals.size
-        ? {
-            ...vals,
-            width: imageModel.sizes[vals.size][0],
-            height: imageModel.sizes[vals.size][1],
-          }
-        : vals,
-    )
+    .transform((vals) => {
+      if (vals.size) {
+        const [width, height] = imageModel.sizes[vals.size]
+        return width && height
+          ? {
+              ...vals,
+              width,
+              height,
+            }
+          : vals
+      }
+      return vals
+    })
+
     .parse(runConfig)
 
   const inference = {

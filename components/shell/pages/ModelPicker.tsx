@@ -1,5 +1,4 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { useMutation } from 'convex/react'
 import { useAtom } from 'jotai'
 import { toast } from 'sonner'
 
@@ -7,7 +6,7 @@ import { useModelsApi } from '@/components/providers/ModelsApiProvider'
 import { shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useIsCurrentPage, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
-import { api } from '@/convex/_generated/api'
+import { useUpdateCurrentThreadModel } from '@/lib/api'
 
 import type { EChatModel, EImageModel } from '@/convex/types'
 
@@ -17,18 +16,16 @@ export const ModelPicker = () => {
   const threads = useShellUserThreads()
   const stack = useShellStack()
 
-  const sendUpdateRunConfigModel = useMutation(api.db.threadsB.updateRunConfigModel)
+  const sendUpdateCurrentThreadModel = useUpdateCurrentThreadModel()
 
   const handleModelSelect = async (model: EChatModel | EImageModel) => {
     if (threads.current) {
       try {
-        await sendUpdateRunConfigModel({
+        await sendUpdateCurrentThreadModel({
           threadId: threads.current._id,
-          type: model.type === 'image' ? 'textToImage' : 'chat',
+          type: model.type,
           resourceKey: model.resourceKey,
         })
-
-        setSelectedModel(null)
       } catch (err) {
         console.error(err)
         toast.error('Failed to update model')

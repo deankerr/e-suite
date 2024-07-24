@@ -1,4 +1,4 @@
-import type { Doc, TableNames } from './_generated/dataModel'
+import type { Doc, Id, TableNames } from './_generated/dataModel'
 import type { getChatModelByResourceKey } from './db/chatModels'
 import type { getImageModelByResourceKey } from './db/imageModels'
 import type { getMessageEdges } from './db/messages'
@@ -52,6 +52,13 @@ export type RunConfig = Infer<typeof runConfigV>
 export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>
 export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
 export type RunConfigChat = Infer<typeof runConfigChatV>
+
+export type ThreadActionResult = {
+  threadId: Id<'threads'>
+  slug: string
+  messageId: string
+  jobId?: Id<'jobs'>
+}
 
 export type JobError = Infer<typeof jobErrorV>
 export type TextToImageHandlerResult =
