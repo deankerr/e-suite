@@ -1,17 +1,16 @@
 import { literals } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
-import { errorMap } from 'zod-validation-error'
 
 import { mutation } from '../functions'
 import { createJob } from '../jobs'
-import { inferenceConfigV, kvListV } from '../schema'
+import { kvListV } from '../schema'
 import { defaultChatInferenceConfig } from '../shared/defaults'
 import { generateSlug } from '../utils'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
 import type { Doc, Id } from '../_generated/dataModel'
-import type { Ent, MutationCtx } from '../types'
+import type { Ent, EntWriter, MutationCtx } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
 import type { Infer } from 'convex/values'
 
@@ -75,9 +74,9 @@ const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
   }
 
   const id = ctx.table('threads').normalizeId(threadId)
-  const thread = id
-    ? await ctx.table('threads', 'userId', (q) => q.eq('userId', user._id)).getX(id)
-    : null
+  const thread = id ? await ctx.table('threads').getX(id) : null
+
+  if (thread?.userId !== user._id) return null
   return thread
 }
 
@@ -104,7 +103,7 @@ const createMessage = async (
 // * add any message to thread, optionally run with config
 export const append = mutation({
   args: {
-    threadId: v.string(),
+    threadId: v.optional(v.string()),
     message: v.object({
       role: literals('assistant', 'user'),
       name: v.optional(v.string()),
@@ -142,7 +141,7 @@ export const append = mutation({
 // * no user message. will create asst/result message
 export const run = mutation({
   args: {
-    threadId: v.string(),
+    threadId: v.optional(v.string()),
     runConfig: runConfigV,
   },
   handler: async (ctx, { threadId, runConfig }) => {
@@ -159,7 +158,7 @@ const createRun = async (
     thread,
     userId,
     runConfig,
-  }: { thread: Ent<'threads'>; userId: Id<'users'>; runConfig: RunConfig },
+  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfig: RunConfig },
 ) => {
   switch (runConfig.type) {
     case 'textToImage':
@@ -180,7 +179,7 @@ const createTextToImageRun = async (
     userId,
     runConfig,
   }: {
-    thread: Ent<'threads'>
+    thread: EntWriter<'threads'>
     userId: Id<'users'>
     runConfig: RunConfigTextToImage
   },
@@ -208,19 +207,21 @@ const createTextToImageRun = async (
     )
     .parse(runConfig)
 
+  const inference = {
+    type: 'text-to-image' as const,
+    resourceKey: imageModel.resourceKey,
+    endpoint: imageModel.endpoint,
+    endpointModelId: imageModel.endpointModelId,
+    ...input,
+  }
+
   const message = await createMessage(ctx, {
     threadId: thread._id,
     userId,
     contentType: 'image',
     role: 'assistant',
     hasImageReference: false,
-    inference: {
-      type: 'text-to-image',
-      resourceKey: imageModel.resourceKey,
-      endpoint: imageModel.endpoint,
-      endpointModelId: imageModel.endpointModelId,
-      ...input,
-    },
+    inference,
     name: imageModel.name,
   })
 
@@ -229,6 +230,11 @@ const createTextToImageRun = async (
     fields: {
       messageId: message._id,
     },
+  })
+
+  await thread.patch({
+    inference,
+    updatedAtTime: Date.now(),
   })
 
   return {
@@ -299,7 +305,7 @@ const createChatRun = async (
     thread,
     userId,
     runConfig,
-  }: { thread: Ent<'threads'>; userId: Id<'users'>; runConfig: RunConfigChat },
+  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfig: RunConfigChat },
 ) => {
   const chatModel = await getChatModelByResourceKey(ctx, runConfig.resourceKey)
   if (!chatModel) throw new ConvexError('invalid resourceKey')
@@ -312,19 +318,21 @@ const createChatRun = async (
     })
     .parse(runConfig)
 
+  const inference = {
+    type: 'chat-completion' as const,
+    resourceKey: chatModel.resourceKey,
+    endpoint: chatModel.endpoint,
+    endpointModelId: chatModel.endpointModelId,
+    ...input,
+  }
+
   const message = await createMessage(ctx, {
     threadId: thread._id,
     userId,
     contentType: 'text',
     role: 'assistant',
     hasImageReference: false,
-    inference: {
-      type: 'chat-completion',
-      resourceKey: chatModel.resourceKey,
-      endpoint: chatModel.endpoint,
-      endpointModelId: chatModel.endpointModelId,
-      ...input,
-    },
+    inference,
     name: chatModel.name,
   })
 
@@ -333,6 +341,11 @@ const createChatRun = async (
     fields: {
       messageId: message._id,
     },
+  })
+
+  await thread.patch({
+    inference,
+    updatedAtTime: Date.now(),
   })
 
   return {

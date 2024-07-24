@@ -177,6 +177,7 @@ const ChatPageImpl = () => {
           inputReadyState={inputReadyState}
           onModelChange={() => shell.open({ threadId: thread._id })}
           textareaMinRows={1}
+          threadId={thread._id}
           className="border-t border-grayA-3 pt-1"
         />
       ) : null}

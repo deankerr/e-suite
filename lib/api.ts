@@ -70,5 +70,5 @@ export const useThreadActions = (threadId?: string) => {
     [sendAppend, threadId],
   )
 
-  return { run, append, actionState }
+  return { run, append, state: actionState }
 }
