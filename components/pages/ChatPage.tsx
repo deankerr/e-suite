@@ -19,7 +19,6 @@ import { LinkButton2 } from '@/components/ui/LinkButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { appConfig } from '@/config/config'
-import { useAppendMessage } from '@/lib/api'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
@@ -27,7 +26,7 @@ import type { EMessage } from '@/convex/types'
 
 const ChatPageImpl = () => {
   const { thread, messages, removeMessage, page, isMessageSeriesQuery, seriesMessage } = useChat()
-  const { appendMessage, inputReadyState } = useAppendMessage(thread?._id)
+
   const { isOwner } = useViewerDetails(thread?.userId)
   const shell = useShellActions()
 
@@ -173,8 +172,6 @@ const ChatPageImpl = () => {
         <Composer
           runConfig={thread.inference}
           model={thread.model}
-          appendMessage={appendMessage}
-          inputReadyState={inputReadyState}
           onModelChange={() => shell.open({ threadId: thread._id })}
           textareaMinRows={1}
           threadId={thread._id}

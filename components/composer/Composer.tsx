@@ -2,24 +2,24 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
 import { Button, Select } from '@radix-ui/themes'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
+import { useShellActions } from '@/components/shell/hooks'
 import { Badge } from '@/components/ui/Badge'
 import { RectangleHorizontal, RectangleVertical } from '@/components/ui/Icons'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
+import { appConfig } from '@/config/config'
 import { useThreadActions } from '@/lib/api'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
 import type { EChatModel, EImageModel, InferenceConfig } from '@/convex/types'
-import type { useAppendMessage } from '@/lib/api'
 import type { FunctionReturnType } from 'convex/server'
 
 export const Composer = ({
   runConfig,
   model,
-  appendMessage,
-  inputReadyState,
   onSuccess,
   onModelChange,
   textareaMinRows = 2,
@@ -29,8 +29,6 @@ export const Composer = ({
 }: {
   runConfig: InferenceConfig
   model: EChatModel | EImageModel | null | undefined
-  appendMessage: ReturnType<typeof useAppendMessage>['appendMessage']
-  inputReadyState: ReturnType<typeof useAppendMessage>['inputReadyState']
   onSuccess?: (result: FunctionReturnType<typeof api.db.threadsB.append>) => void
   onModelChange?: () => void
   textareaMinRows?: number
@@ -39,6 +37,8 @@ export const Composer = ({
   // TODO refactor duplicate configs/responsibilities
   const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
   const threadActions = useThreadActions(threadId)
+  const shell = useShellActions()
+  const router = useRouter()
 
   const [promptValue, setPromptValue] = useState('')
   const [textToImageN, setTextToImageN] = useState<'1' | '4'>(
@@ -47,6 +47,15 @@ export const Composer = ({
   const [textToImageSize, setTextToImageSize] = useState<'square' | 'portrait' | 'landscape'>(
     textToImageConfig?.size ?? 'square',
   )
+
+  const handleActionResult = (
+    result: FunctionReturnType<typeof api.db.runcreate.append> | null,
+  ) => {
+    if (result && result.threadId !== threadId) {
+      shell.close()
+      router.push(`${appConfig.chatUrl}/${result.slug}`)
+    }
+  }
 
   const send = () => {
     if (chatConfig) {
@@ -66,6 +75,7 @@ export const Composer = ({
             resourceKey: model.resourceKey,
           },
         })
+        handleActionResult(result)
       }
 
       void sendChat()
@@ -87,6 +97,7 @@ export const Composer = ({
             size: textToImageSize,
           },
         })
+        handleActionResult(result)
       }
       void sendTextToImage()
     }
@@ -100,6 +111,7 @@ export const Composer = ({
           text: promptValue,
         },
       })
+      handleActionResult(result)
     }
     void sendAddMessage()
   }
@@ -108,7 +120,7 @@ export const Composer = ({
     <form
       className={cn(
         'shrink-0',
-        inputReadyState !== 'ready' && 'pointer-events-none opacity-50',
+        threadActions.state !== 'ready' && 'pointer-events-none opacity-50',
         className,
       )}
       {...props}
@@ -130,7 +142,7 @@ export const Composer = ({
               send()
             }
           }}
-          disabled={inputReadyState !== 'ready'}
+          disabled={threadActions.state !== 'ready'}
           autoFocus
         />
       </Label>
@@ -142,7 +154,7 @@ export const Composer = ({
           variant="surface"
           color="gray"
           highContrast
-          disabled={inputReadyState === 'locked'}
+          disabled={threadActions.state === 'rateLimited'}
           onClick={() => onModelChange?.()}
         >
           <Icons.Cube className="size-4" />
@@ -177,14 +189,14 @@ export const Composer = ({
             <QuantitySelect
               value={textToImageN}
               onValueChange={(value) => setTextToImageN(value as '1' | '4')}
-              disabled={inputReadyState === 'locked'}
+              disabled={threadActions.state === 'rateLimited'}
             />
             <DimensionsSelect
               value={textToImageSize}
               onValueChange={(value) =>
                 setTextToImageSize(value as 'portrait' | 'landscape' | 'square')
               }
-              disabled={inputReadyState === 'locked'}
+              disabled={threadActions.state === 'rateLimited'}
             />
           </>
         )}
@@ -197,7 +209,7 @@ export const Composer = ({
           variant="soft"
           color="gold"
           highContrast
-          disabled={inputReadyState === 'locked'}
+          disabled={threadActions.state === 'rateLimited'}
         >
           {chatConfig ? (
             <Icons.Chat className="phosphor" />
@@ -213,16 +225,16 @@ export const Composer = ({
           type="button"
           color="gray"
           onClick={add}
-          loading={inputReadyState === 'pending'}
-          disabled={inputReadyState === 'locked'}
+          loading={threadActions.state === 'pending'}
+          disabled={threadActions.state === 'rateLimited'}
         >
           Add
         </Button>
         <Button
           type="button"
           onClick={send}
-          loading={inputReadyState === 'pending'}
-          disabled={inputReadyState === 'locked'}
+          loading={threadActions.state === 'pending'}
+          disabled={threadActions.state === 'rateLimited'}
         >
           Run
           <div className="md:hidden">
