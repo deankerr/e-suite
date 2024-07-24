@@ -40,7 +40,7 @@ const runConfigTextToImageV = v.object({
   ),
 })
 
-export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV)
+const runConfigV = v.union(runConfigChatV, runConfigTextToImageV)
 
 export const append = mutation({
   args: {
