@@ -14,7 +14,7 @@ export const useThreadActions = (threadId?: string) => {
     setActionState('ready')
   }, RUN_THROTTLE)
 
-  const sendRun = useMutation(api.db.runcreate.run)
+  const sendRun = useMutation(api.db.threads.run)
   const run = useCallback(
     async (args: Omit<Parameters<typeof sendRun>[0], 'threadId'>) => {
       if (actionState !== 'ready') {
@@ -40,7 +40,7 @@ export const useThreadActions = (threadId?: string) => {
     [actionState, sendRun, threadId, reset],
   )
 
-  const sendAppend = useMutation(api.db.runcreate.append)
+  const sendAppend = useMutation(api.db.threads.append)
   const append = useCallback(
     async (args: Omit<Parameters<typeof sendAppend>[0], 'threadId'>) => {
       if (actionState !== 'ready') {
