@@ -2,7 +2,7 @@ import './globals.css'
 
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
-import { Theme } from '@radix-ui/themes'
+import { Theme, ThemePanel } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
@@ -75,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Theme accentColor="orange" grayColor="slate" appearance="dark" panelBackground="solid">
               <AppLayout>{children}</AppLayout>
               <Toaster position="top-right" theme="light" closeButton richColors />
+              {environment === 'dev' && <ThemePanel defaultOpen={false} />}
             </Theme>
           </ClientProviders>
         </ClerkProvider>
