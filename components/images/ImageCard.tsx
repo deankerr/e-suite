@@ -22,7 +22,7 @@ export const ImageCard = ({
 
   return (
     <Card
-      style={{ aspectRatio: image.width / image.height, width: image.width }}
+      style={{ aspectRatio: image.width / image.height }}
       className={cn('group flex w-full flex-col justify-between gap-2 p-1', className)}
       {...props}
     >
