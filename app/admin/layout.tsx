@@ -14,15 +14,15 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Theme className="flex h-screen flex-col gap-2 p-3">
-      <div className="fixed inset-0 bg-gradient-to-br from-orange-3 via-orange-1 to-violet-2"></div>
-      <div className="h-12 shrink-0 gap-3 rounded-lg border border-grayA-3 bg-grayA-2 px-2 flex-start">
+      <div className="fixed inset-0"></div>
+      <div className="flex-start h-12 shrink-0 gap-3 rounded-lg border border-grayA-3 bg-grayA-2 px-2">
         <AppLogoName />
         <div className="font-semibold text-grayA-11">admin</div>
         <nav className="min-w-36">
           <AdminNav />
         </nav>
 
-        <div className="shrink-0 grow flex-end">
+        <div className="flex-end shrink-0 grow">
           <UserButtons />
         </div>
       </div>

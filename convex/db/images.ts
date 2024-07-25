@@ -3,7 +3,7 @@ import { getQuery, parseFilename } from 'ufo'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
-import { getImageModelByResourceKey } from '../db/imageModels'
+import { getImageModelByResourceKey } from '../db/models'
 import { internalQuery } from '../functions'
 import { createJob } from '../jobs'
 import { getTextToImageConfig } from '../shared/utils'
