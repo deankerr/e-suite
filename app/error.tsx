@@ -28,7 +28,7 @@ export default function Error({
         )}
 
         <Button color="red" onClick={() => reset()}>
-          Reset Component
+          Retry
         </Button>
       </div>
     </div>

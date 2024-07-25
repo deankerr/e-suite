@@ -27,7 +27,7 @@ export const useMessagesList = ({
     api.db.messages.list,
     slugOrId ? { slugOrId, filters } : 'skip',
     {
-      initialNumItems: 25,
+      initialNumItems: 64,
     },
   )
   return result
@@ -62,16 +62,16 @@ export const useViewerDetails = (
 }
 
 export const useChatModels = (): EChatModel[] | undefined => {
-  const result = useQuery(api.db.chatModels.list, {})
+  const result = useQuery(api.db.models.listChatModels, {})
   return result
 }
 
 export const useImageModels = (): EImageModel[] | undefined => {
-  const result = useQuery(api.db.imageModels.list, {})
+  const result = useQuery(api.db.models.listImageModels, {})
   return result
 }
 
 export const useVoiceModels = (): EVoiceModel[] | undefined => {
-  const result = useQuery(api.db.voiceModels.list, {})
+  const result = useQuery(api.db.models.listVoiceModels, {})
   return result
 }
