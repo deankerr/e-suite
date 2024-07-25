@@ -81,28 +81,42 @@ const defaultConfigs = [
       resourceKey: 'elevenlabs::sound-generation',
       prompt: '',
     },
-    keyword: '^@sfx (.+)',
+    keyword: '@sfx',
   },
 ] as const
 
-export const matchUserRunConfigKeyword = async (ctx: MutationCtx, text?: string) => {
+export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) => {
   if (!text) return null
   const user = await ctx.viewerX()
   const configs = (user.runConfigs ?? []).concat(defaultConfigs)
-  // keyword is regex string
-  const config = configs.find((c) => (c.keyword ? new RegExp(c.keyword).test(text) : false))
-  if (!config) return null
 
-  if ('prompt' in config.runConfig) {
-    const keyword = config.keyword as string
-    if (keyword.startsWith('^@')) {
-      config.runConfig.prompt = text.slice(text.indexOf(' ')).trim()
-    } else {
-      config.runConfig.prompt = text
+  const getMatch = (keyword: string) => {
+    // * match + strip command keywords
+    if (['/', '@'].includes(keyword[0]) && text.startsWith(`${keyword} `)) {
+      return { text: text.replace(`${keyword} `, ''), keyword }
     }
+
+    // * keyword anywhere
+    if (text.includes(keyword)) {
+      return { text, keyword }
+    }
+
+    return null
   }
 
-  return config
+  const matches = configs
+    .map((conf) => {
+      const match = conf.keyword ? getMatch(conf.keyword) : null
+      if (match) {
+        console.log('matched config keyword', match.keyword, conf.name)
+        if ('prompt' in conf.runConfig) conf.runConfig.prompt = match.text
+        return conf.runConfig
+      }
+    })
+    .filter((m) => m !== undefined)
+
+  if (matches.length > 1) console.warn('matched multiple configs:', matches)
+  return matches[0]
 }
 
 const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
@@ -114,7 +128,6 @@ const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
       .table('threads')
       .insert({
         userId: user._id,
-        slashCommands: [],
         slug: await generateSlug(ctx),
         updatedAtTime: Date.now(),
         inference: defaultChatInferenceConfig, // NOTE have to set this here, should be updated during run
@@ -276,12 +289,12 @@ export const append = mutation({
       contentType: 'text',
     })
 
-    const userRunConfig = await matchUserRunConfigKeyword(ctx, args.message.text)
-    if (userRunConfig) {
+    const userConfig = await matchUserCommandKeywords(ctx, args.message.text)
+    if (userConfig) {
       return await createRun(ctx, {
         thread,
         userId: thread.userId,
-        runConfig: userRunConfig.runConfig,
+        runConfig: userConfig,
       })
     }
 
