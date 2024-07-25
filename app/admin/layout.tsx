@@ -14,7 +14,6 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Theme className="flex h-screen flex-col gap-2 p-3">
-      <div className="fixed inset-0"></div>
       <div className="flex-start h-12 shrink-0 gap-3 rounded-lg border border-grayA-3 bg-grayA-2 px-2">
         <AppLogoName />
         <div className="font-semibold text-grayA-11">admin</div>
