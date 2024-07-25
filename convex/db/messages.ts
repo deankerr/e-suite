@@ -8,12 +8,7 @@ import { emptyPage } from '../utils'
 import { getThreadBySlugOrId } from './threads'
 
 import type { Doc, Id } from '../_generated/dataModel'
-import type { Ent, QueryCtx } from '../types'
-
-export const getNextMessageSeries = async (thread: Ent<'threads'>) => {
-  const prev = await thread.edge('messages').order('desc').first()
-  return (prev?.series ?? 0) + 1
-}
+import type { QueryCtx } from '../types'
 
 export const getMessage = async (ctx: QueryCtx, messageId: string) => {
   const id = ctx.unsafeDb.normalizeId('messages', messageId)
@@ -51,55 +46,6 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) =
     audio: await getMessageAudio(ctx, message._id),
   }
 }
-
-export const getShapedMessage = async (ctx: QueryCtx, messageId: string) => {
-  const message = await getMessage(ctx, messageId)
-  return message ? await getMessageEdges(ctx, message) : null
-}
-
-export const getMessageCommand = (thread: Ent<'threads'>, text?: string) => {
-  if (!text) return null
-
-  const config = thread.slashCommands?.find((c) =>
-    c.commandType === 'startsWith'
-      ? text.startsWith(c.command)
-      : text.match(new RegExp(`\\s${c.command}\\s`)),
-  )
-  if (!config) return null
-
-  const command = config.command ?? ''
-  const textWithoutCommand = text.slice(command.length).trim()
-
-  if ('prompt' in config.inference) {
-    config.inference.prompt = textWithoutCommand
-  }
-
-  return { ...config, content: textWithoutCommand }
-}
-
-// * get single message by slug:series
-export const getSeries = query({
-  args: {
-    slug: v.string(),
-    series: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slug)
-    if (!thread) return null
-
-    const messages = await ctx
-      .table('messages', 'threadId_series', (q) =>
-        q.eq('threadId', thread._id).eq('series', args.series),
-      )
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (message) => await getMessageEdges(ctx, message))
-
-    return {
-      thread,
-      messages: messages.reverse(),
-    }
-  },
-})
 
 // * get single message by slug:series
 export const getSeriesMessage = query({

@@ -15,15 +15,12 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as db_admin_see from "../db/admin/see.js";
-import type * as db_chatModels from "../db/chatModels.js";
 import type * as db_endpoints from "../db/endpoints.js";
-import type * as db_imageModels from "../db/imageModels.js";
 import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_models from "../db/models.js";
 import type * as db_speech from "../db/speech.js";
 import type * as db_threads from "../db/threads.js";
-import type * as db_voiceModels from "../db/voiceModels.js";
 import type * as deletion from "../deletion.js";
 import type * as endpoints_aws from "../endpoints/aws.js";
 import type * as endpoints_aws_node from "../endpoints/aws_node.js";
@@ -54,7 +51,6 @@ import type * as lib_sharp from "../lib/sharp.js";
 import type * as migrations from "../migrations.js";
 import type * as rules from "../rules.js";
 import type * as shared_defaults from "../shared/defaults.js";
-import type * as shared_structures from "../shared/structures.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
@@ -70,15 +66,12 @@ import type * as utils from "../utils.js";
  */
 declare const fullApi: ApiFromModules<{
   "db/admin/see": typeof db_admin_see;
-  "db/chatModels": typeof db_chatModels;
   "db/endpoints": typeof db_endpoints;
-  "db/imageModels": typeof db_imageModels;
   "db/images": typeof db_images;
   "db/messages": typeof db_messages;
   "db/models": typeof db_models;
   "db/speech": typeof db_speech;
   "db/threads": typeof db_threads;
-  "db/voiceModels": typeof db_voiceModels;
   deletion: typeof deletion;
   "endpoints/aws": typeof endpoints_aws;
   "endpoints/aws_node": typeof endpoints_aws_node;
@@ -109,7 +102,6 @@ declare const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   rules: typeof rules;
   "shared/defaults": typeof shared_defaults;
-  "shared/structures": typeof shared_structures;
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;

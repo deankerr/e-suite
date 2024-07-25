@@ -1,9 +1,11 @@
 import type { Doc, Id, TableNames } from './_generated/dataModel'
-import type { getChatModelByResourceKey } from './db/chatModels'
-import type { getImageModelByResourceKey } from './db/imageModels'
 import type { getMessageEdges } from './db/messages'
+import type {
+  getChatModelByResourceKey,
+  getImageModelByResourceKey,
+  getVoiceModels,
+} from './db/models'
 import type { getThreadExtras } from './db/threads'
-import type { getVoiceModels } from './db/voiceModels'
 import type { mutation, query } from './functions'
 import type {
   chatCompletionConfigV,

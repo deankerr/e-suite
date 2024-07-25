@@ -2,7 +2,7 @@ import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { ActionCtx } from '../_generated/server'
-import { getVoiceModels } from '../db/voiceModels'
+import { getVoiceModels } from '../db/models'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import { internalAction, internalMutation } from '../functions'
 import { claimJob, completeJob, handleJobError } from '../jobs'

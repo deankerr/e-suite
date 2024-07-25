@@ -10,8 +10,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { getInferenceConfig } from '../shared/utils'
 import { generateSlug } from '../utils'
-import { getChatModelByResourceKey } from './chatModels'
-import { getImageModelByResourceKey } from './imageModels'
+import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type {

@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { getImageModelByResourceKey } from '../db/imageModels'
+import { getImageModelByResourceKey } from '../db/models'
 import * as fal from '../endpoints/fal'
 import * as sinkin from '../endpoints/sinkin'
 import { internalAction, internalMutation } from '../functions'
