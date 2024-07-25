@@ -2,7 +2,6 @@
 
 import MillionLint from '@million/lint'
 import bundleAnalyzer from '@next/bundle-analyzer'
-import UnpluginTurboConsole from 'unplugin-turbo-console/webpack'
 
 function getBackendUrl() {
   const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
@@ -49,11 +48,6 @@ const nextConfig = {
         },
       ],
     ],
-  },
-
-  webpack: (config) => {
-    config.plugins.push(UnpluginTurboConsole())
-    return config
   },
 }
 
