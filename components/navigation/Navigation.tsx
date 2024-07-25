@@ -24,8 +24,8 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
         {/* * logo / menu button * */}
         <div className="flex h-14 shrink-0 px-3">
           <Link href={appConfig.baseUrl} className="my-auto flex items-center gap-1.5">
-            <LogoSvg className="-mb-0.5 w-[1.75rem] text-accent-11" />
-            <Heading size="6">e/suite</Heading>
+            <LogoSvg className="-mb-0.5 w-[1.7rem] text-accent-11" />
+            <Heading size="5">e/suite</Heading>
           </Link>
         </div>
 

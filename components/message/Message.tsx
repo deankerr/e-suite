@@ -1,16 +1,17 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import { Card, DropdownMenu, IconButton } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
-import { Marble, useMarbleProperties } from '@/components/marble-avatar/Marble'
+import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/message/Markdown'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
 import { getActiveJobs } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
@@ -18,7 +19,13 @@ import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
 
-const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'))
+const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'), {
+  loading: () => (
+    <Card className="mx-auto aspect-[8/5] w-80">
+      <Skeleton className="absolute inset-0" />
+    </Card>
+  ),
+})
 
 export const Message = ({
   message,
@@ -56,7 +63,7 @@ export const Message = ({
     <div
       {...props}
       className={cn(
-        'grid shrink-0 grid-cols-[2rem_1fr_2rem]',
+        'grid shrink-0 grid-cols-[0.75rem_1fr_2rem]',
         'rounded-md border border-transparent hover:border-grayA-4',
         'box-content min-h-7 w-full max-w-3xl text-sm',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
@@ -64,14 +71,14 @@ export const Message = ({
       )}
     >
       {/* # left gutter # */}
-      <div className="row-span-2 flex justify-center gap-4 pt-1.5 opacity-80">
+      <div className="row-span-2 flex gap-4 pt-1.5 opacity-80">
         {showTimeline && (
           <div
             className={cn('absolute -top-2 bottom-1 w-px', showNameAvatar && 'inset-y-1.5')}
             style={{ backgroundColor: marbleProps[0].color }}
           />
         )}
-        {showNameAvatar ? <Marble name={name} properties={marbleProps} size={16} /> : null}
+        {/* {showNameAvatar ? <Marble name={name} properties={marbleProps} size={16} /> : null} */}
       </div>
 
       {/* # name / text content # */}
