@@ -15,7 +15,7 @@ import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ChatProvider, useChat } from '@/components/providers/ChatProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { Link } from '@/components/ui/Link'
-import { LinkButton2, LinkIconButton } from '@/components/ui/LinkButton'
+import { LinkIconButton } from '@/components/ui/LinkButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { appConfig } from '@/config/config'
@@ -153,7 +153,7 @@ const ChatPageImpl = () => {
       </IconButton>
 
       {/* * composer * */}
-      {isOwner ? (
+      {isOwner && !isMessageSeriesQuery ? (
         <Composer
           runConfig={thread.inference}
           model={thread.model}
