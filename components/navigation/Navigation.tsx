@@ -1,7 +1,6 @@
 'use client'
 
-import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, Heading } from '@radix-ui/themes'
+import { Heading } from '@radix-ui/themes'
 import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 
@@ -22,18 +21,17 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
     >
       <nav className="flex h-full flex-col rounded-md border border-gray-5 bg-gray-1">
         {/* * logo / menu button * */}
-        <div className="flex h-14 shrink-0 px-3">
-          <Link href={appConfig.baseUrl} className="my-auto flex items-center gap-1.5">
-            <LogoSvg className="-mb-0.5 w-[1.7rem] text-accent-11" />
+        <div className="flex h-14 w-full shrink-0 items-center justify-center px-3">
+          <Link href={appConfig.baseUrl} className="-ml-4 flex items-center gap-2">
+            <LogoSvg className="-mb-0.5 w-6 text-accent-11" />
             <Heading size="5">e/suite</Heading>
           </Link>
         </div>
 
         <Authenticated>
-          {/* * create * */}
-          <div className="flex shrink-0 flex-col items-center gap-1.5 px-2 py-2">
+          <div className="flex shrink-0 flex-col items-center gap-1.5 px-2 pb-3 pt-1">
             <button
-              className="w-full rounded-lg border border-grayA-3 bg-grayA-3 px-4 py-2 text-base font-semibold text-gray-12 hover:bg-grayA-4"
+              className="w-full max-w-44 rounded-md border border-grayA-3 bg-grayA-3 py-1.5 text-base font-medium text-gray-12 hover:bg-grayA-4"
               onClick={() => shell.open()}
             >
               Command
