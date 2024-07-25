@@ -41,13 +41,12 @@ export const LinkIconButton = ({
   color,
   className,
   children,
+  buttonProps,
   ...props
-}: { color?: (typeof accentColors)[number] } & React.ComponentProps<typeof Link>) => {
+}: { buttonProps: ButtonProps } & React.ComponentProps<typeof Link>) => {
   return (
     <Link {...props} className={cn('flex shrink-0', className)}>
-      <IconButton variant="soft" color={color} size="1">
-        {children}
-      </IconButton>
+      <IconButton {...buttonProps}>{children}</IconButton>
     </Link>
   )
 }

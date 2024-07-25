@@ -15,7 +15,7 @@ import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ChatProvider, useChat } from '@/components/providers/ChatProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { Link } from '@/components/ui/Link'
-import { LinkButton2 } from '@/components/ui/LinkButton'
+import { LinkButton2, LinkIconButton } from '@/components/ui/LinkButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { appConfig } from '@/config/config'
@@ -63,27 +63,21 @@ const ChatPageImpl = () => {
       <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
         <div className="flex-start min-w-8 shrink-0 gap-1">
           {isMessageSeriesQuery ? (
-            <LinkButton2
+            <LinkIconButton
               href={`${appConfig.chatUrl}/${thread.slug}`}
-              buttonProps={{ variant: 'soft', size: { initial: '1', md: '2' } }}
+              buttonProps={{ variant: 'soft' }}
             >
               <Icons.ArrowSquareLeft className="size-5" />
-              Back<span className="hidden md:inline"> to Thread</span>
-            </LinkButton2>
+            </LinkIconButton>
           ) : (
             <>
               <Authenticated>
-                <IconButton variant="ghost" className="m-0 shrink-0" onClick={() => shell.open()}>
-                  <Icons.Terminal className="size-5" />
-                </IconButton>
-
                 <IconButton
                   variant="ghost"
                   className="m-0 shrink-0"
                   onClick={() => shell.open({ threadId: thread._id })}
-                  disabled={!isOwner}
                 >
-                  <Icons.Sliders className="phosphor" />
+                  <Icons.Terminal className="size-5" />
                 </IconButton>
               </Authenticated>
 
