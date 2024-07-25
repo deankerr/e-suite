@@ -8,7 +8,7 @@ import { mutation, query } from '../functions'
 import { createJob } from '../jobs'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
-import { getInferenceConfig } from '../shared/utils'
+import { extractValidUrlsFromText, getInferenceConfig } from '../shared/utils'
 import { generateSlug } from '../utils'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
@@ -288,6 +288,16 @@ export const append = mutation({
       hasImageReference: false,
       contentType: 'text',
     })
+
+    if (message.text) {
+      const urls = extractValidUrlsFromText(message.text)
+      if (urls.length > 0) {
+        await ctx.scheduler.runAfter(0, internal.files.processUrlContent.run, {
+          urls: urls.map((url) => url.toString()),
+          messageId: message._id,
+        })
+      }
+    }
 
     const userConfig = await matchUserCommandKeywords(ctx, args.message.text)
     if (userConfig) {
