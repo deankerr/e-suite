@@ -195,7 +195,7 @@ export const Message = ({
 
       {/* # audio # */}
       {message.audio.length > 0 ? (
-        <div className="col-start-2 space-y-1 rounded-lg bg-grayA-2 p-3 sm:w-fit">
+        <div className="col-start-2 flex flex-wrap justify-center gap-2 py-1">
           {message.audio.map((sfx) =>
             sfx.fileUrl ? (
               <AudioPlayer key={sfx._id} url={sfx.fileUrl} titleText={sfx.generationData.prompt} />

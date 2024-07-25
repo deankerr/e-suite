@@ -13,26 +13,6 @@ export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | un
   return thread
 }
 
-export const useMessagesList = ({
-  slugOrId,
-  filters,
-}: {
-  slugOrId?: string
-  filters?: {
-    role?: 'user' | 'assistant'
-    hasContent?: 'image' | 'audio'
-  }
-}) => {
-  const result = usePaginatedQuery(
-    api.db.messages.list,
-    slugOrId ? { slugOrId, filters } : 'skip',
-    {
-      initialNumItems: 64,
-    },
-  )
-  return result
-}
-
 export const useSeriesMessage = ({ slug, series }: { slug?: string; series?: string }) => {
   const result = useQuery(
     api.db.messages.getSeriesMessage,

@@ -8,10 +8,9 @@ export const RectangleHorizontal = (props: SVGProps<SVGSVGElement>) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth={2}
+    strokeWidth={1.5}
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="lucide lucide-rectangle-horizontal"
     {...props}
   >
     <rect width={20} height={12} x={2} y={6} rx={2} />
@@ -26,10 +25,9 @@ export const RectangleVertical = (props: SVGProps<SVGSVGElement>) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth={2}
+    strokeWidth={1.5}
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="lucide lucide-rectangle-vertical"
     {...props}
   >
     <rect width={12} height={20} x={6} y={2} rx={2} />
