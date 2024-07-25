@@ -22,42 +22,22 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
     >
       <nav className="flex h-full flex-col rounded-md border border-gray-5 bg-gray-1">
         {/* * logo / menu button * */}
-        <div className="flex shrink-0 items-center justify-center border-b border-transparent px-1.5 pb-1 pt-5">
-          <Link href={appConfig.baseUrl} className="-ml-1.5 flex items-center gap-2">
-            <LogoSvg className="w-6 text-accent-11" />
-            <Heading size="5">e/suite</Heading>
+        <div className="flex h-14 shrink-0 px-3">
+          <Link href={appConfig.baseUrl} className="my-auto flex items-center gap-1.5">
+            <LogoSvg className="-mb-0.5 w-[1.75rem] text-accent-11" />
+            <Heading size="6">e/suite</Heading>
           </Link>
         </div>
 
         <Authenticated>
           {/* * create * */}
-          <div className="flex shrink-0 flex-col gap-1.5 py-4">
-            <div className="shrink-0 border-b border-grayA-5 px-3 text-sm font-semibold text-gray-11">
-              Create
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 px-2">
-              <Button
-                color="orange"
-                variant="ghost"
-                size="3"
-                className="m-0 py-2"
-                onClick={() => shell.createChat()}
-              >
-                <Icons.Chats className="phosphor -ml-1 shrink-0" />
-                Chat
-              </Button>
-              <Button
-                color="orange"
-                variant="ghost"
-                size="3"
-                className="m-0 py-2"
-                onClick={() => shell.createImage()}
-              >
-                <Icons.ImagesSquare className="phosphor -ml-1 shrink-0" />
-                Images
-              </Button>
-            </div>
+          <div className="flex shrink-0 flex-col items-center gap-1.5 px-2 py-2">
+            <button
+              className="w-full rounded-lg border border-grayA-3 bg-grayA-3 px-4 py-2 text-base font-semibold text-gray-12 hover:bg-grayA-4"
+              onClick={() => shell.open()}
+            >
+              Command
+            </button>
           </div>
 
           {/* * chats * */}

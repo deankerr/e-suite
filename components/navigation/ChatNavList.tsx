@@ -31,8 +31,8 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
                   'rounded border border-transparent py-2 pl-2 pr-0 text-sm opacity-90',
                   'flex gap-2',
                   segments.includes(thread.slug)
-                    ? 'border-accentA-8 bg-accentA-3 text-accent-12 opacity-100 shadow-glow'
-                    : 'hover:border-accentA-3 hover:bg-accentA-3 hover:shadow-glow',
+                    ? 'border-accentA-7 bg-accentA-4 text-white opacity-100 shadow-glow'
+                    : 'hover:border-accentA-6 hover:bg-accentA-3 hover:shadow-glow',
                 )}
               >
                 {thread.model?.type === 'chat' ? (
