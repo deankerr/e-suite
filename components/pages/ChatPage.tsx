@@ -47,11 +47,11 @@ const ChatPageImpl = () => {
 
   const initialScrollToEnd = useRef(false)
   useEffect(() => {
-    if (!initialScrollToEnd.current && page.status !== 'LoadingFirstPage') {
+    if (!initialScrollToEnd.current && messages.length > 0) {
       scrollToEnd('instant')
       initialScrollToEnd.current = true
     }
-  }, [page.status])
+  }, [messages])
 
   if (thread === null || (isMessageSeriesQuery && seriesMessage === null)) return <ChatPageError />
   if (thread === undefined || (isMessageSeriesQuery && seriesMessage === undefined))

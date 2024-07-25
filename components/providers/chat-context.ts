@@ -3,11 +3,12 @@ import { useMutation } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { useMessagesList, useSeriesMessage, useThread } from '@/lib/queries'
+import { useLatestMessages, useMessagesList } from '@/lib/api'
+import { useSeriesMessage, useThread } from '@/lib/queries'
 
 import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
 
-type ChatQueryFilters = {
+export type ChatQueryFilters = {
   role?: 'user' | 'assistant'
   hasContent?: 'image' | 'audio'
 }
@@ -27,7 +28,7 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
 
   const loadMoreMessages = useCallback(() => {
     if (page.status === 'CanLoadMore') {
-      page.loadMore(50)
+      page.loadMore(64)
     }
   }, [page])
 

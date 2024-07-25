@@ -10,6 +10,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { getInferenceConfig } from '../shared/utils'
 import { generateSlug } from '../utils'
+import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
 import type { Doc, Id } from '../_generated/dataModel'
@@ -155,6 +156,26 @@ export const list = query({
       .map(async (thread) => await getThreadExtras(ctx, thread))
 
     return threads
+  },
+})
+
+// * get messages feed of latest n messages
+export const latest = query({
+  args: {
+    slugOrId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return null
+
+    const messages = await thread
+      .edge('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(32)
+      .map(async (message) => await getMessageEdges(ctx, message))
+
+    return messages
   },
 })
 
