@@ -1,5 +1,6 @@
 'use client'
 
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
@@ -28,6 +29,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
   const activeClassNames =
     'border-accentA-7 bg-accentA-3 text-accent-12 opacity-100 shadow-glow [&>svg]:text-accentA-11'
 
+  const [containerRef] = useAutoAnimate()
   return (
     <div {...props} className={cn('flex grow flex-col gap-0.5 overflow-hidden', className)}>
       <div className="shrink-0 border-b border-grayA-5 px-3 text-sm font-semibold text-gray-11">
@@ -35,7 +37,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
       </div>
 
       <ScrollArea scrollbars="vertical">
-        <div className="h-full space-y-1 px-2.5 py-1">
+        <div ref={containerRef} className="h-full space-y-1 px-2.5 py-1">
           {threads ? (
             threads.map((thread) => {
               const IconComponent = modelTypeIcons[thread.model?.type ?? 'chat']
