@@ -3,7 +3,7 @@
 module.exports = {
   root: true,
   extends: ['next/core-web-vitals'],
-  ignorePatterns: ['.cosmos', 'convex/_generated', 'scripts'],
+  ignorePatterns: ['convex/_generated'],
   reportUnusedDisableDirectives: true,
   rules: {
     // // downgrade unused/let vars to warning
