@@ -73,8 +73,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <Theme accentColor="orange" grayColor="slate" appearance="dark" panelBackground="solid">
-              <AppLayout>{children}</AppLayout>
-              <Toaster position="top-right" theme="light" closeButton richColors />
+              {children}
+              <Toaster position="top-right" theme="light" richColors />
               {environment === 'dev' && <ThemePanel defaultOpen={false} />}
             </Theme>
           </ClientProviders>
