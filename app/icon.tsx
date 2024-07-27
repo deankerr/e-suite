@@ -12,7 +12,7 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-const orange = '#FF801F'
+const orange = '#FF9F6A'
 const amber = '#ffd60a'
 const gold = '#a39073'
 
