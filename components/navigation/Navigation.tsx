@@ -4,7 +4,7 @@ import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 
 import { UserButtons } from '@/components/layout/UserButtons'
-import { ChatNavList } from '@/components/navigation/ChatNavList'
+import { ThreadsList } from '@/components/navigation/ThreadsList'
 import { useShellActions } from '@/components/shell/hooks'
 import { LogoSvg } from '@/components/ui/LogoSvg'
 import { appConfig } from '@/config/config'
@@ -20,8 +20,8 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
       <nav className="flex h-full flex-col rounded-md border border-gray-5 bg-gray-1">
         {/* * logo / menu button * */}
         <div className="flex h-12 w-full shrink-0 items-center justify-center px-3">
-          <Link href={appConfig.baseUrl} className="flex items-center gap-1.5">
-            <LogoSvg className="-mb-0.5 -ml-5 w-5 text-accent-11" />
+          <Link href={appConfig.baseUrl} className="flex items-center gap-1">
+            <LogoSvg className="-mb-0.5 -ml-2 w-5 text-accent-11" />
             <span className="text-xl font-semibold tracking-tight">e/suite</span>
           </Link>
         </div>
@@ -37,7 +37,7 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
           </div>
 
           {/* * chats * */}
-          <ChatNavList />
+          <ThreadsList />
         </Authenticated>
 
         <div className="grow" />
