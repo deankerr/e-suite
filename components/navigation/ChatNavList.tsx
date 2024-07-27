@@ -27,7 +27,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
   )
 
   const activeClassNames =
-    'border-accentA-7 bg-accentA-3 text-accent-12 opacity-100 shadow-glow [&>svg]:text-accentA-11'
+    'border-accentA-7 hover:border-accentA-7 bg-accentA-3 text-accent-12 opacity-100 shadow-glow [&>svg]:text-accentA-11'
 
   const [containerRef] = useAutoAnimate()
   return (
@@ -49,7 +49,7 @@ export const ChatNavList = ({ className, ...props }: React.ComponentProps<'div'>
                   href={`${appConfig.chatUrl}/${thread.slug}`}
                   className={cn(linkClassNames, isActive && activeClassNames)}
                 >
-                  <IconComponent className="size-5 shrink-0 text-accentA-9" />
+                  <IconComponent className="size-5 shrink-0 text-accentA-11" />
                   <div className="line-clamp-2 select-none">{thread.title ?? 'untitled'}</div>
                 </Link>
               )
