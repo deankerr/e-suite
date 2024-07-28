@@ -59,7 +59,7 @@ export type ThreadActionResult = {
   threadId: Id<'threads'>
   slug: string
   messageId: string
-  jobId?: Id<'jobs'>
+  jobId?: Id<'jobs'> | Id<'jobs3'>
 }
 
 export type JobError = Infer<typeof jobErrorV>

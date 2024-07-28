@@ -438,8 +438,14 @@ export const job3Fields = {
     }),
   ),
   updatedAt: v.number(),
+
+  messageId: v.optional(v.id('messages')),
+  threadId: v.optional(v.id('threads')),
 }
-const jobs3 = defineEnt(job3Fields).index('status', ['status'])
+const jobs3 = defineEnt(job3Fields)
+  .index('status', ['status'])
+  .index('threadId', ['threadId'])
+  .index('messageId', ['messageId'])
 
 const queueFields = {
   jobId: v.id('job2'),

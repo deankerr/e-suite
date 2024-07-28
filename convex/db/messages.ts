@@ -44,6 +44,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) =
     jobs: await getMessageJobs(ctx, message._id),
     images: await getMessageImages(ctx, message._id),
     audio: await getMessageAudio(ctx, message._id),
+    workflow: await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', message._id)),
   }
 }
 

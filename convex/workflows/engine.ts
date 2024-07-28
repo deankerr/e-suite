@@ -5,34 +5,51 @@ import { internalAction, internalMutation } from '../functions'
 import { getErrorMessage } from '../shared/utils'
 import { textToImagePipeline } from './pipelines/textToImage'
 
+import type { Id } from '../_generated/dataModel'
+import type { MutationCtx } from '../types'
+
 const pipelines = {
   textToImage: textToImagePipeline,
+}
+
+export const createWorkflowJob = async (
+  ctx: MutationCtx,
+  args: {
+    pipeline: keyof typeof pipelines
+    input: Record<string, unknown>
+    messageId?: Id<'messages'>
+    threadId?: Id<'threads'>
+  },
+) => {
+  const pipeline = pipelines[args.pipeline as keyof typeof pipelines]
+  if (!pipeline) {
+    throw new ConvexError(`Unknown pipeline: ${args.pipeline}`)
+  }
+
+  const jobId = await ctx.table('jobs3').insert({
+    pipeline: pipeline.name,
+    status: 'pending',
+    currentStep: 0,
+    input: args.input,
+    stepResults: [],
+    updatedAt: Date.now(),
+    messageId: args.messageId,
+    threadId: args.threadId,
+  })
+
+  await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
+  console.log('job created', args.pipeline, jobId)
+  return jobId
 }
 
 export const startJob = internalMutation({
   args: {
     pipeline: v.string(),
     input: v.any(),
+    messageId: v.optional(v.id('messages')),
+    threadId: v.optional(v.id('threads')),
   },
-  handler: async (ctx, args) => {
-    const pipeline = pipelines[args.pipeline as keyof typeof pipelines]
-    if (!pipeline) {
-      throw new Error(`Unknown pipeline: ${args.pipeline}`)
-    }
-
-    const jobId = await ctx.table('jobs3').insert({
-      pipeline: args.pipeline,
-      status: 'pending',
-      currentStep: 0,
-      input: args.input,
-      stepResults: [],
-      updatedAt: Date.now(),
-    })
-
-    await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
-    console.log('job created', args.pipeline, jobId)
-    return jobId
-  },
+  handler: createWorkflowJob,
 })
 
 export const executeStep = internalAction({

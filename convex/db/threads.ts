@@ -10,6 +10,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { extractValidUrlsFromText, getInferenceConfig } from '../shared/utils'
 import { generateSlug } from '../utils'
+import { createWorkflowJob } from '../workflows/engine'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
@@ -25,6 +26,12 @@ import type {
   RunConfigTextToImage,
 } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
+
+const appConfig = {
+  workflows: {
+    textToImage: true,
+  },
+}
 
 // * Helpers
 const createMessage = async (
@@ -415,15 +422,22 @@ const createTextToImageRun = async (
     name: imageModel.name,
   })
 
-  const jobId = await createJob(ctx, {
-    name: 'inference/textToImage',
-    fields: {
-      messageId: message._id,
-    },
-  })
+  // NOTE workflow switch
+  const jobId = appConfig.workflows.textToImage
+    ? await createWorkflowJob(ctx, {
+        pipeline: 'textToImage',
+        input: { ...inference, messageId: message._id },
+        messageId: message._id,
+      })
+    : await createJob(ctx, {
+        name: 'inference/textToImage',
+        fields: {
+          messageId: message._id,
+        },
+      })
 
   await thread.patch({
-    inference,
+    inference: { ...inference, prompt: '' },
     updatedAtTime: Date.now(),
   })
 
