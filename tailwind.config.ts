@@ -152,10 +152,15 @@ const config: Config = {
           from: { transform: 'translateY(0)' },
           to: { transform: 'translateY(100%)' },
         },
+        scanlinesDown: {
+          from: { transform: 'translateY(0)' },
+          to: { transform: 'translateY(10%)' },
+        },
       },
       animation: {
         shimmerDown: 'shimmerDown 8s linear infinite',
         starfieldDown: 'starfieldDown 20s linear infinite',
+        scanlinesDown: 'scanlinesDown 20s linear infinite',
       },
       boxShadow: {
         glow: '0 0 10px 0px #ff720021, 0 0 5px 0px #ff720021',
