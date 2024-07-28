@@ -1,4 +1,4 @@
-import * as Fal from '../endpoints/fal'
+import { fal_textToImage } from './actions/endpoints'
 import * as Ingest from './actions/ingest'
 
 import type { TextToImageWorkflow } from './types'
@@ -11,7 +11,7 @@ export const textToImageWorkflow: TextToImageWorkflow = {
       retryLimit: 3,
       action: async (ctx, input, previousResults) => {
         console.log('wf 1 input', input)
-        const images = await Fal.textToImageWf(input)
+        const images = await fal_textToImage(input)
         console.log('wf 1 output', images)
         return images
       },
