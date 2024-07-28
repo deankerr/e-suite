@@ -1,4 +1,4 @@
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
@@ -42,70 +42,57 @@ export const executeStep = internalAction({
   handler: async (ctx, { jobId }) => {
     const job = await ctx.runQuery(internal.workflows.jobs.get, { jobId })
     if (!job) {
-      throw new Error('job not found')
+      throw new ConvexError({ message: 'invalid job id', code: 'invalid_job', jobId })
     }
 
     const pipeline = pipelines[job.pipeline as keyof typeof pipelines]
     const step = pipeline.steps[job.currentStep]
     // * no step - assume job finished
     if (!step) {
-      await ctx.runMutation(internal.workflows.jobs.updateStatus, {
+      await ctx.runMutation(internal.workflows.jobs.complete, {
         jobId,
-        status: 'completed',
       })
       return
     }
+    const startTime = Date.now()
 
-    const stepStartTime = Date.now()
     try {
-      // * run step
       const previousResults = job.stepResults.map((r) => r.result)
+      // * run step
       const result = await step.action(ctx, job.input, previousResults)
 
       // * add successful result
-      await ctx.runMutation(internal.workflows.jobs.addStepResult, {
+      await ctx.runMutation(internal.workflows.jobs.stepCompleted, {
         jobId,
-        stepResult: {
-          stepName: step.name,
-          status: 'completed',
-          result,
-          startTime: stepStartTime,
-          endTime: Date.now(),
-          retryCount: 0,
-        },
+        stepName: step.name,
+        result,
+        startTime,
       })
 
-      // * schedule next step, return
+      // * schedule next step
       await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
     } catch (err) {
       const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
 
       if (retryCount > step.retryLimit) {
         // * max retries reached, fail
-        await ctx.runMutation(internal.workflows.jobs.updateStatus, {
+        await ctx.runMutation(internal.workflows.jobs.fail, {
           jobId,
-          status: 'failed',
         })
       } else {
         // * add failed step error, retry
-        await ctx.runMutation(internal.workflows.jobs.addStepResult, {
+        await ctx.runMutation(internal.workflows.jobs.stepFailed, {
           jobId,
-          stepResult: {
-            stepName: step.name,
-            status: 'failed',
-            error: {
-              code: 'job_error',
-              message: getErrorMessage(err),
-              fatal: false,
-            },
-            result: null,
-            startTime: stepStartTime,
-            endTime: Date.now(),
-            retryCount,
+          stepName: step.name,
+          error: {
+            code: 'job_error',
+            message: getErrorMessage(err),
+            fatal: false,
           },
+          startTime,
         })
 
-        // * Retry after a delay
+        // * schedule retry after delay
         await ctx.scheduler.runAfter(
           2000 * (retryCount + 1),
           internal.workflows.engine.executeStep,

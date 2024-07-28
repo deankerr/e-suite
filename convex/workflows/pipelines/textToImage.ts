@@ -1,7 +1,7 @@
 import * as vb from 'valibot'
 
-import { fal_textToImage } from '../actions/endpoints'
 import * as Ingest from '../actions/ingest'
+import * as Fal from '../actions/textToImage/fal'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -26,16 +26,17 @@ export const textToImagePipeline: Pipeline = {
     {
       name: 'inference',
       retryLimit: 3,
-      action: async (ctx, input, previousResults) => {
+      action: async (_, input) => {
         try {
           const parsedInput = vb.parse(InferenceSchema, input)
-          const result = await fal_textToImage(parsedInput)
+          const result = await Fal.textToImage(parsedInput)
           return result
         } catch (err) {
           throw err
         }
       },
     },
+
     {
       name: 'ingestImages',
       retryLimit: 3,
