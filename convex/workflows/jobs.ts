@@ -79,6 +79,7 @@ export const stepFailed = internalMutation({
     const job = await ctx.table('jobs3').getX(jobId)
     const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
 
+    console.error('job step failed', job.pipeline, stepName, error, jobId)
     return await job.patch({
       status: 'active',
       stepResults: [
