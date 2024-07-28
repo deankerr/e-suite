@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils'
 import type { EMessage } from '@/convex/types'
 
 const ChatPageImpl = () => {
-  const { thread, messages, removeMessage, page, isMessageSeriesQuery, seriesMessage } = useChat()
+  const { thread, messages, removeMessage, isMessageSeriesQuery, seriesMessage } = useChat()
 
   const { isOwner } = useViewerDetails(thread?.userId)
   const shell = useShellActions()
@@ -133,16 +133,18 @@ const ChatPageImpl = () => {
         </ScrollArea>
 
         {/* * scroll to bottom * */}
-        <IconButton
-          variant="soft"
-          className={cn(
-            'fixed bottom-56 right-10 animate-fade animate-delay-100 animate-duration-100',
-            !shouldShowScrollToBottom && 'hidden',
-          )}
-          onClick={() => scrollToEnd('smooth')}
-        >
-          <Icons.ArrowDown className="phosphor" />
-        </IconButton>
+        <div className="bg-blue-4">
+          <IconButton
+            variant="soft"
+            className={cn(
+              'absolute -top-12 right-12 animate-fade animate-delay-100 animate-duration-100',
+              !shouldShowScrollToBottom && 'hidden',
+            )}
+            onClick={() => scrollToEnd('smooth')}
+          >
+            <Icons.ArrowDown className="phosphor" />
+          </IconButton>
+        </div>
 
         {/* * composer * */}
         {isOwner && !isMessageSeriesQuery ? (
@@ -164,17 +166,16 @@ const ChatPageImpl = () => {
         )}
 
         <AdminOnlyUi>
-          <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
-            {messages.length} | {page.status}
+          <div className="absolute left-2 top-14 font-mono text-xs text-gray-9">
+            <IconButton
+              variant="ghost"
+              color="gray"
+              size="1"
+              onClick={() => setShowJson(!showJson)}
+            >
+              {messages?.length ?? '?'}
+            </IconButton>
           </div>
-          <IconButton
-            variant="ghost"
-            className="absolute right-0 top-12"
-            color="gray"
-            onClick={() => setShowJson(!showJson)}
-          >
-            <Icons.Code className="phosphor" />
-          </IconButton>
         </AdminOnlyUi>
       </div>
     </PageWrapper>
@@ -182,7 +183,7 @@ const ChatPageImpl = () => {
 }
 
 const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
-  if (previousMessage === undefined) return false
+  if (previousMessage === undefined || message.role !== 'user') return false
   return message.name && message.name === previousMessage.name
 }
 
