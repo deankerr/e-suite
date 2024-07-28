@@ -66,75 +66,10 @@ type TextToImageJob = JobBase & {
   output?: TextToImageOutput
 }
 
-// * TextToAudio workflow
-type TextToAudioInput = {
-  endpoint: string
-  modelId: string
-  prompt: string
-  duration: number
-  quantity: number
-}
-
-type TextToAudioOutput = {
-  imageUrls: string[]
-  captions: string[]
-  nsfwRatings: number[]
-}
-
-type TextToAudioStep = WorkflowStepBase & {
-  action: (ctx: ActionCtx, input: any, previousResults: any[]) => Promise<any>
-}
-
-type TextToAudioWorkflow = {
-  type: 'textToAudio'
-  steps: TextToAudioStep[]
-}
-
-type TextToAudioJob = JobBase & {
-  workflowType: 'textToImage'
-  input: TextToAudioInput
-  output?: TextToAudioOutput
-}
-
-// * Chat Workflow (provisional)
-type ChatInput = {
-  messages: { role: 'user' | 'assistant'; content: string }[]
-  model: string
-  temperature: number
-}
-
-type ChatOutput = {
-  response: string
-  tokens: number
-}
-
-type ChatStep = WorkflowStepBase & {
-  action: (ctx: ActionCtx, input: any, previousResults: any[]) => Promise<any>
-}
-
-type ChatWorkflow = {
-  type: 'chat'
-  steps: ChatStep[]
-}
-
-type ChatJob = JobBase & {
-  workflowType: 'chat'
-  input: ChatInput
-  output?: ChatOutput
-}
-
 // Union types for all workflows
-type WorkflowType = TextToImageWorkflow | TextToAudioWorkflow | ChatWorkflow
-type Job = TextToImageJob | TextToAudioJob | ChatJob
-type WorkflowInput = TextToImageInput | TextToAudioInput | ChatInput
-type WorkflowOutput = TextToImageOutput | TextToAudioOutput | ChatOutput
+type WorkflowType = TextToImageWorkflow
+type Job = TextToImageJob
+type WorkflowInput = TextToImageInput
+type WorkflowOutput = TextToImageOutput
 
-export type {
-  WorkflowType,
-  Job,
-  WorkflowInput,
-  WorkflowOutput,
-  TextToImageWorkflow,
-  TextToAudioWorkflow,
-  ChatWorkflow,
-}
+export type { WorkflowType, Job, WorkflowInput, WorkflowOutput, TextToImageWorkflow }
