@@ -8,7 +8,7 @@ import { useAtom } from 'jotai'
 import { shellOpenAtom, shellSearchValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useShellActions, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
-import { AppLogoName } from '@/components/ui/AppLogoName'
+import { AppTitle } from '@/components/ui/AppTitle'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import * as Page from './pages'
 
@@ -97,7 +97,7 @@ const ShellTitle = () => {
   title = title.replace('%t', threads.current?.title ?? 'untitled thread')
 
   if (!title) {
-    return <AppLogoName className="ml-1" />
+    return <AppTitle className="ml-1" />
   }
 
   return (

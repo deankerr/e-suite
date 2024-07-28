@@ -1,4 +1,4 @@
-import { Logo } from '@/components/ui/Logo'
+import LoadingPage from '@/app/loading'
 import { cn } from '@/lib/utils'
 
 export const PageWrapper = ({
@@ -15,13 +15,7 @@ export const PageWrapper = ({
         className,
       )}
     >
-      {loading ? (
-        <div className="flex h-full w-full">
-          <Logo className="m-auto size-48 animate-pulse brightness-[.25] saturate-0" />
-        </div>
-      ) : (
-        children
-      )}
+      {loading ? <LoadingPage /> : children}
     </div>
   )
 }

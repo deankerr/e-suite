@@ -4,20 +4,18 @@
 import { RendererConfig, UserModuleWrappers } from 'react-cosmos-core';
 
 import * as fixture0 from './components/ui/TextareaAutosize.fixture';
-import * as fixture1 from './components/ui/LogoSvg.fixture';
-import * as fixture2 from './components/navigation/Navigation.fixture';
+import * as fixture1 from './components/navigation/Navigation.fixture';
 
 import * as decorator0 from './components/cosmos.decorator';
 
 export const rendererConfig: RendererConfig = {
-  "playgroundUrl": "http://localhost:3343",
+  "playgroundUrl": "http://localhost:3344",
   "rendererUrl": "http://localhost:3333/cosmos/<fixture>"
 };
 
 const fixtures = {
   'components/ui/TextareaAutosize.fixture.tsx': { module: fixture0 },
-  'components/ui/LogoSvg.fixture.tsx': { module: fixture1 },
-  'components/navigation/Navigation.fixture.tsx': { module: fixture2 }
+  'components/navigation/Navigation.fixture.tsx': { module: fixture1 }
 };
 
 const decorators = {

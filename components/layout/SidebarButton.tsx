@@ -1,3 +1,5 @@
+'use client'
+
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { IconButton } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
