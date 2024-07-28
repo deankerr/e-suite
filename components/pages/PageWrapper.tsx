@@ -10,7 +10,10 @@ export const PageWrapper = ({
   return (
     <div
       {...props}
-      className={cn('h-full w-full border-grayA-5 bg-gray-2 md:rounded-md md:border', className)}
+      className={cn(
+        'h-full w-full overflow-x-hidden border-grayA-5 bg-gray-2 md:rounded-md md:border',
+        className,
+      )}
     >
       {loading ? (
         <div className="flex h-full w-full">
