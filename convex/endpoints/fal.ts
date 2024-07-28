@@ -5,7 +5,7 @@ import { internalMutation } from '../functions'
 import FalModelsJson from './fal.models.json'
 
 import type { ImageModelDataRecord } from '../db/endpoints'
-import type { TextToImageConfig, TextToImageHandlerResult } from '../types'
+import type { RunConfigTextToImage, TextToImageConfig, TextToImageHandlerResult } from '../types'
 
 client.config({
   credentials: process.env.FAL_API_KEY!,
@@ -86,6 +86,84 @@ export const textToImage = async ({
         images: undefined,
       }
     }
+
+    throw err
+  }
+}
+
+export const textToImageWf = async (args: RunConfigTextToImage) => {
+  try {
+    const { resourceKey, width, height, size, prompt, n } = args
+    const modelId = z
+      .string()
+      .startsWith('fal::')
+      .transform((s) => s.split('::')[1])
+      .parse(resourceKey)
+
+    const input = {
+      prompt,
+      image_size: width && height ? { width, height } : size,
+      num_images: n,
+
+      prompt_expansion: false,
+      expand_prompt: false,
+      enable_safety_checker: false,
+    }
+    console.log('[textToImage] [fal] [input]', modelId, input)
+
+    const response = await client.subscribe(modelId, {
+      input,
+    })
+    console.log('[textToImage] [fal] [output]', response)
+
+    const { images } = z
+      .object({
+        images: z
+          .object({
+            url: z.string(),
+          })
+          .array(),
+      })
+      .parse(response)
+
+    return { imageUrls: images.map((i) => i.url) }
+  } catch (err) {
+    console.error(err)
+
+    // if (err instanceof client.ValidationError) {
+    //   return {
+    //     error: {
+    //       code: 'endpoint_error',
+    //       message: `${err.name}: ${JSON.stringify(err.body.detail)}`,
+    //       status: err.status,
+    //       fatal: true,
+    //     },
+    //     images: undefined,
+    //   }
+    // }
+
+    // if (err instanceof client.ApiError) {
+    //   return {
+    //     error: {
+    //       code: 'endpoint_error',
+    //       message: `${err.name}: ${err.body?.detail}`,
+    //       status: err.status,
+    //       fatal: true,
+    //     },
+    //     images: undefined,
+    //   }
+    // }
+
+    // if (err instanceof Error) {
+    //   return {
+    //     error: {
+    //       code: 'unhandled',
+    //       message: err.message,
+    //       fatal: true,
+    //     },
+    //     images: undefined,
+    //   }
+    // }
 
     throw err
   }

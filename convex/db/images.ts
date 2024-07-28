@@ -4,8 +4,9 @@ import { getQuery, parseFilename } from 'ufo'
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
-import { internalQuery } from '../functions'
+import { internalMutation, internalQuery } from '../functions'
 import { createJob } from '../jobs'
+import { imageFields } from '../schema'
 import { getTextToImageConfig } from '../shared/utils'
 
 import type { Doc } from '../_generated/dataModel'
@@ -54,6 +55,26 @@ export const createImage = async (
 
   return imageId
 }
+
+export const createImageWf = internalMutation({
+  args: {
+    ...imageFields,
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, args) => {
+    const message = await ctx.skipRules.table('messages').getX(args.messageId)
+
+    const imageId = await ctx.table('images').insert({
+      ...args,
+      userId: message.userId,
+      threadId: message.threadId,
+      generationData: await getGenerationData(ctx, message),
+    })
+    console.log('[image]', args.sourceUrl)
+
+    return imageId
+  },
+})
 
 const getGenerationData = async (ctx: MutationCtx, message: Doc<'messages'>) => {
   const textToImageConfig = getTextToImageConfig(message.inference)
