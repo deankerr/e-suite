@@ -412,6 +412,35 @@ export const job2Fields = {
 }
 const jobs2 = defineEnt(job2Fields).index('status', ['status'])
 
+export const job3Fields = {
+  pipeline: v.string(), // # textToImage
+  status: literals('pending', 'active', 'completed', 'failed'),
+  currentStep: v.number(),
+
+  input: v.any(), // NOTE runtime check
+  output: v.optional(v.any()),
+
+  stepResults: v.array(
+    v.object({
+      stepName: v.string(),
+      status: literals('completed', 'failed'),
+      result: v.any(),
+      error: v.optional(
+        v.object({
+          code: v.string(),
+          message: v.string(),
+          fatal: v.boolean(),
+        }),
+      ),
+      startTime: v.number(),
+      endTime: v.number(),
+      retryCount: v.number(),
+    }),
+  ),
+  updatedAt: v.number(),
+}
+const jobs3 = defineEnt(job3Fields).index('status', ['status'])
+
 const queueFields = {
   jobId: v.id('job2'),
   status: v.string(),
@@ -445,6 +474,7 @@ const schema = defineEntSchema(
     jobs2,
     queue,
     rate_limits,
+    jobs3,
   },
   {
     schemaValidation: true,
