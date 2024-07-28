@@ -3,13 +3,11 @@
 import { useEffect, useRef, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
-import { Authenticated, AuthLoading, Unauthenticated } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { useInView } from 'react-intersection-observer'
 
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
-import { UserButtons } from '@/components/layout/UserButtons'
 import { Message } from '@/components/message/Message'
 import { FilterControl } from '@/components/pages/FilterControl'
 import { PageWrapper } from '@/components/pages/PageWrapper'
@@ -58,13 +56,16 @@ const ChatPageImpl = () => {
   if (thread === undefined || (isMessageSeriesQuery && seriesMessage === undefined))
     return <PageWrapper loading />
 
+  const threadTitle = thread.title ?? 'untitled thread'
+
   return (
     <PageWrapper>
       <div className="flex h-full flex-col">
         {/* * header * */}
-        <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
-          <div className="flex-start min-w-8 shrink-0 gap-1">
-            <SidebarButton />
+        <header className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-grayA-3 px-2.5">
+          {/* * header left * */}
+          <div className="flex-start min-w-10 gap-1">
+            <SidebarButton className="m-0 md:hidden" />
             {isMessageSeriesQuery ? (
               <LinkIconButton
                 href={`${appConfig.chatUrl}/${thread.slug}`}
@@ -72,38 +73,26 @@ const ChatPageImpl = () => {
               >
                 <Icons.ArrowSquareLeft className="size-5" />
               </LinkIconButton>
-            ) : (
-              <>
-                <Authenticated>
-                  <IconButton
-                    variant="ghost"
-                    className="m-0 shrink-0"
-                    onClick={() => shell.open({ threadId: thread._id })}
-                  >
-                    <Icons.Terminal className="size-5" />
-                  </IconButton>
-                </Authenticated>
-
-                <AuthLoading>
-                  <IconButton variant="ghost" className="m-0 shrink-0" disabled>
-                    <Icons.TerminalWindow className="size-5" />
-                  </IconButton>
-                </AuthLoading>
-
-                <Unauthenticated>
-                  <div className="flex-start mr-1 shrink-0 md:hidden">
-                    <UserButtons />
-                  </div>
-                </Unauthenticated>
-              </>
-            )}
+            ) : null}
           </div>
 
-          <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">
-            {thread.title ?? 'untitled thread'}
+          {/* * header center * */}
+          <div className="overflow-hidden">
+            <Button
+              variant="soft"
+              size={{ initial: '1', sm: '2' }}
+              color="gray"
+              highContrast
+              className={cn('max-w-full', !isOwner && 'pointer-events-none [&>svg]:hidden')}
+              onClick={() => isOwner && shell.open({ threadId: thread._id })}
+            >
+              <div className="truncate">{threadTitle}</div>
+              <Icons.CaretUpDown className="shrink-0" />
+            </Button>
           </div>
 
-          <div className="flex shrink-0 items-center gap-1">
+          {/* * header right * */}
+          <div className="flex-end min-w-10 gap-1 md:min-w-24">
             <FilterControl buttonProps={{ disabled: isMessageSeriesQuery }} />
           </div>
         </header>
