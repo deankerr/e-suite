@@ -36,16 +36,18 @@ export function insist<T>(
     throw new ConvexError({ ...data, message: `assertion failed: ${message}`, fatal: true })
 }
 
-export function getErrorMessage(err: unknown) {
-  if (err instanceof ConvexError) {
-    return err.message
+export function getErrorMessage(error: unknown) {
+  if (typeof error === 'string') return error
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message
   }
-
-  if (err instanceof Error) {
-    return err.message
-  }
-
-  return `Unknown error: ${String(err).slice(0, 100)}`
+  console.error('Unable to get error message for error', error)
+  return 'Unknown Error'
 }
 
 export function hasActiveJob(jobs: Doc<'jobs'>[], name?: string) {

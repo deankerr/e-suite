@@ -389,6 +389,43 @@ export const endpointDataCacheFields = {
 }
 const endpoint_data_cache = defineEnt(endpointDataCacheFields)
 
+export const job2Fields = {
+  workflowType: v.string(), // # textToImage
+  status: v.string(),
+  currentStep: v.number(),
+
+  input: v.any(), // NOTE runtime check
+  output: v.optional(v.any()), // NOTE runtime check
+
+  stepResults: v.array(
+    v.object({
+      stepName: v.string(),
+      status: v.string(),
+      result: v.any(),
+      error: v.optional(v.string()),
+      startTime: v.number(),
+      endTime: v.number(),
+      retryCount: v.number(),
+    }),
+  ),
+  updatedAt: v.number(),
+}
+const jobs2 = defineEnt(job2Fields).index('status', ['status'])
+
+const queueFields = {
+  jobId: v.id('job2'),
+  status: v.string(),
+  priority: v.number(),
+}
+export const queue = defineEnt(queueFields)
+
+const rateLimitFields = {
+  endpoint: v.string(),
+  requestCount: v.number(),
+  lastResetTime: v.number(),
+}
+const rate_limits = defineEnt(rateLimitFields)
+
 // * Schema
 const schema = defineEntSchema(
   {
@@ -404,6 +441,10 @@ const schema = defineEntSchema(
     threads,
     users,
     users_api_keys,
+
+    jobs2,
+    queue,
+    rate_limits,
   },
   {
     schemaValidation: true,
