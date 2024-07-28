@@ -1,7 +1,6 @@
 import { v } from 'convex/values'
 
 import { internalMutation, internalQuery } from '../functions'
-import { job3Fields } from '../schema'
 
 export const get = internalQuery({
   args: {
@@ -12,38 +11,89 @@ export const get = internalQuery({
   },
 })
 
-export const updateStatus = internalMutation({
+export const complete = internalMutation({
   args: {
     jobId: v.id('jobs3'),
-    status: job3Fields.status,
   },
-  handler: async (ctx, { jobId, status }) => {
+  handler: async (ctx, { jobId }) => {
     const job = await ctx.table('jobs3').getX(jobId)
     return await job.patch({
-      status,
+      status: 'completed',
     })
   },
 })
 
-export const addStepResult = internalMutation({
+export const fail = internalMutation({
   args: {
     jobId: v.id('jobs3'),
-    stepResult: job3Fields.stepResults.element,
   },
-
-  handler: async (ctx, { jobId, stepResult }) => {
+  handler: async (ctx, { jobId }) => {
     const job = await ctx.table('jobs3').getX(jobId)
-    console.log('add step result', stepResult)
-    try {
-      return await job.patch({
-        status: 'active',
-        stepResults: [...job.stepResults, stepResult],
-        currentStep: stepResult.status === 'completed' ? job.currentStep + 1 : job.currentStep,
-        updatedAt: Date.now(),
-      })
-    } catch (err) {
-      console.log(stepResult)
-      throw err
-    }
+    return await job.patch({
+      status: 'failed',
+    })
+  },
+})
+
+export const stepCompleted = internalMutation({
+  args: {
+    jobId: v.id('jobs3'),
+    stepName: v.string(),
+    result: v.any(),
+    startTime: v.number(),
+  },
+  handler: async (ctx, { jobId, stepName, result, startTime }) => {
+    const job = await ctx.table('jobs3').getX(jobId)
+
+    return await job.patch({
+      status: 'active',
+      stepResults: [
+        ...job.stepResults,
+        {
+          stepName,
+          status: 'completed',
+          result,
+          startTime,
+          endTime: Date.now(),
+          retryCount: 0,
+        },
+      ],
+      currentStep: job.currentStep + 1,
+      updatedAt: Date.now(),
+    })
+  },
+})
+
+export const stepFailed = internalMutation({
+  args: {
+    jobId: v.id('jobs3'),
+    stepName: v.string(),
+    error: v.object({
+      code: v.string(),
+      message: v.string(),
+      fatal: v.boolean(),
+    }),
+    startTime: v.number(),
+  },
+  handler: async (ctx, { jobId, stepName, error, startTime }) => {
+    const job = await ctx.table('jobs3').getX(jobId)
+    const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
+
+    return await job.patch({
+      status: 'active',
+      stepResults: [
+        ...job.stepResults,
+        {
+          stepName,
+          status: 'failed',
+          error,
+          result: null,
+          startTime,
+          endTime: Date.now(),
+          retryCount,
+        },
+      ],
+      updatedAt: Date.now(),
+    })
   },
 })

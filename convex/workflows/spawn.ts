@@ -16,7 +16,7 @@ export const spawnTextToImageJob = internalAction({
     const jobId = await ctx.runMutation(internal.workflows.engine.startJob, {
       pipeline: 'textToImage',
       input: {
-        messageId: 'jh78wrc3ebj62mrj54waegp42h6xsewt',
+        messageId: 'jh75ara6d492xdtq2z8644by496xse52',
         resourceKey: 'fal::fal-ai/pixart-sigma',
         prompt: 'A beautiful landscape',
         n: 2,
