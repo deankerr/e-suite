@@ -3,15 +3,11 @@ import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { getErrorMessage } from '../shared/utils'
-import { chatWorkflow } from './chat'
-import { textToAudioWorkflow } from './textToAudio'
 import { textToImageWorkflow } from './textToImage'
 import { WorkflowType } from './types'
 
 const workflows: { [K in WorkflowType['type']]: WorkflowType } = {
   textToImage: textToImageWorkflow,
-  textToAudio: textToAudioWorkflow,
-  chat: chatWorkflow,
 }
 
 export const startWorkflow = internalMutation({

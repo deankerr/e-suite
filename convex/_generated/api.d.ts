@@ -56,11 +56,9 @@ import type * as types from "../types.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 import type * as workflows_actions_ingest from "../workflows/actions/ingest.js";
-import type * as workflows_chat from "../workflows/chat.js";
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_spawn from "../workflows/spawn.js";
-import type * as workflows_textToAudio from "../workflows/textToAudio.js";
 import type * as workflows_textToImage from "../workflows/textToImage.js";
 import type * as workflows_types from "../workflows/types.js";
 
@@ -115,11 +113,9 @@ declare const fullApi: ApiFromModules<{
   users: typeof users;
   utils: typeof utils;
   "workflows/actions/ingest": typeof workflows_actions_ingest;
-  "workflows/chat": typeof workflows_chat;
   "workflows/engine": typeof workflows_engine;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/spawn": typeof workflows_spawn;
-  "workflows/textToAudio": typeof workflows_textToAudio;
   "workflows/textToImage": typeof workflows_textToImage;
   "workflows/types": typeof workflows_types;
 }>;
