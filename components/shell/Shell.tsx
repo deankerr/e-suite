@@ -97,7 +97,7 @@ const ShellTitle = () => {
   title = title.replace('%t', threads.current?.title ?? 'untitled thread')
 
   if (!title) {
-    return <AppTitle className="ml-1" />
+    return <AppTitle />
   }
 
   return (
