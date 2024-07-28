@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useInView } from 'react-intersection-observer'
 
 import { Composer } from '@/components/composer/Composer'
+import { SidebarButton } from '@/components/layout/SidebarButton'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { Message } from '@/components/message/Message'
 import { FilterControl } from '@/components/pages/FilterControl'
@@ -58,132 +59,135 @@ const ChatPageImpl = () => {
     return <PageWrapper loading />
 
   return (
-    <PageWrapper className="flex flex-col">
-      {/* * header * */}
-      <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
-        <div className="flex-start min-w-8 shrink-0 gap-1">
-          {isMessageSeriesQuery ? (
-            <LinkIconButton
-              href={`${appConfig.chatUrl}/${thread.slug}`}
-              buttonProps={{ variant: 'soft' }}
-            >
-              <Icons.ArrowSquareLeft className="size-5" />
-            </LinkIconButton>
-          ) : (
-            <>
-              <Authenticated>
-                <IconButton
-                  variant="ghost"
-                  className="m-0 shrink-0"
-                  onClick={() => shell.open({ threadId: thread._id })}
-                >
-                  <Icons.Terminal className="size-5" />
-                </IconButton>
-              </Authenticated>
+    <PageWrapper>
+      <div className="flex h-full flex-col">
+        {/* * header * */}
+        <header className="flex-between h-12 shrink-0 gap-1 border-b border-grayA-3 px-2">
+          <div className="flex-start min-w-8 shrink-0 gap-1">
+            <SidebarButton />
+            {isMessageSeriesQuery ? (
+              <LinkIconButton
+                href={`${appConfig.chatUrl}/${thread.slug}`}
+                buttonProps={{ variant: 'soft' }}
+              >
+                <Icons.ArrowSquareLeft className="size-5" />
+              </LinkIconButton>
+            ) : (
+              <>
+                <Authenticated>
+                  <IconButton
+                    variant="ghost"
+                    className="m-0 shrink-0"
+                    onClick={() => shell.open({ threadId: thread._id })}
+                  >
+                    <Icons.Terminal className="size-5" />
+                  </IconButton>
+                </Authenticated>
 
-              <AuthLoading>
-                <IconButton variant="ghost" className="m-0 shrink-0" disabled>
-                  <Icons.TerminalWindow className="size-5" />
-                </IconButton>
-              </AuthLoading>
+                <AuthLoading>
+                  <IconButton variant="ghost" className="m-0 shrink-0" disabled>
+                    <Icons.TerminalWindow className="size-5" />
+                  </IconButton>
+                </AuthLoading>
 
-              <Unauthenticated>
-                <div className="flex-start mr-1 shrink-0 md:hidden">
-                  <UserButtons />
-                </div>
-              </Unauthenticated>
-            </>
-          )}
-        </div>
+                <Unauthenticated>
+                  <div className="flex-start mr-1 shrink-0 md:hidden">
+                    <UserButtons />
+                  </div>
+                </Unauthenticated>
+              </>
+            )}
+          </div>
 
-        <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">
-          {thread.title ?? 'untitled thread'}
-        </div>
+          <div className="truncate px-1 text-sm font-medium md:absolute md:left-1/2 md:max-w-[70%] md:-translate-x-1/2 md:transform md:whitespace-nowrap">
+            {thread.title ?? 'untitled thread'}
+          </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <FilterControl buttonProps={{ disabled: isMessageSeriesQuery }} />
-        </div>
-      </header>
+          <div className="flex shrink-0 items-center gap-1">
+            <FilterControl buttonProps={{ disabled: isMessageSeriesQuery }} />
+          </div>
+        </header>
 
-      {/* * feed * */}
-      <ScrollArea ref={containerRef} scrollbars="vertical">
-        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
-          <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
+        {/* * feed * */}
+        <ScrollArea ref={containerRef} scrollbars="vertical">
+          <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
+            <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
 
-          {/* * messages * */}
-          {messages.map((message, i) => (
-            <Message
-              key={message._id}
-              message={message}
-              deeplink={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
-              removeMessage={removeMessage}
-              showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
-            />
-          ))}
+            {/* * messages * */}
+            {messages.map((message, i) => (
+              <Message
+                key={message._id}
+                message={message}
+                deeplink={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
+                removeMessage={removeMessage}
+                showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
+              />
+            ))}
 
-          {/* * series message * */}
-          {isMessageSeriesQuery && seriesMessage && (
-            <Message
-              key={seriesMessage._id}
-              message={seriesMessage}
-              deeplink=""
-              removeMessage={removeMessage}
-              showTimeline={false}
-            />
-          )}
+            {/* * series message * */}
+            {isMessageSeriesQuery && seriesMessage && (
+              <Message
+                key={seriesMessage._id}
+                message={seriesMessage}
+                deeplink=""
+                removeMessage={removeMessage}
+                showTimeline={false}
+              />
+            )}
 
-          {isMessageSeriesQuery ? (
-            <div className="pointer-events-none h-4 w-full" />
-          ) : (
-            <LoadMoreButton />
-          )}
-        </div>
-      </ScrollArea>
+            {isMessageSeriesQuery ? (
+              <div className="pointer-events-none h-4 w-full" />
+            ) : (
+              <LoadMoreButton />
+            )}
+          </div>
+        </ScrollArea>
 
-      {/* * scroll to bottom * */}
-      <IconButton
-        variant="soft"
-        className={cn(
-          'fixed bottom-56 right-10 animate-fade animate-delay-100 animate-duration-100',
-          !shouldShowScrollToBottom && 'hidden',
-        )}
-        onClick={() => scrollToEnd('smooth')}
-      >
-        <Icons.ArrowDown className="phosphor" />
-      </IconButton>
-
-      {/* * composer * */}
-      {isOwner && !isMessageSeriesQuery ? (
-        <Composer
-          runConfig={thread.inference}
-          model={thread.model}
-          onModelChange={() => shell.open({ threadId: thread._id })}
-          textareaMinRows={1}
-          threadId={thread._id}
-          className="border-t border-grayA-3 pt-1"
-        />
-      ) : null}
-
-      {/* * show json * */}
-      {showJson && (
-        <div className="absolute inset-x-4 inset-y-16 overflow-hidden rounded border">
-          <Pre className="h-full overflow-auto">{JSON.stringify(thread, null, 2)}</Pre>
-        </div>
-      )}
-
-      <AdminOnlyUi>
-        <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
-          {messages.length} | {page.status}
-        </div>
+        {/* * scroll to bottom * */}
         <IconButton
-          variant="ghost"
-          className="absolute right-0 top-12"
-          color="gray"
-          onClick={() => setShowJson(!showJson)}
+          variant="soft"
+          className={cn(
+            'fixed bottom-56 right-10 animate-fade animate-delay-100 animate-duration-100',
+            !shouldShowScrollToBottom && 'hidden',
+          )}
+          onClick={() => scrollToEnd('smooth')}
         >
-          <Icons.Code className="phosphor" />
+          <Icons.ArrowDown className="phosphor" />
         </IconButton>
-      </AdminOnlyUi>
+
+        {/* * composer * */}
+        {isOwner && !isMessageSeriesQuery ? (
+          <Composer
+            runConfig={thread.inference}
+            model={thread.model}
+            onModelChange={() => shell.open({ threadId: thread._id })}
+            textareaMinRows={1}
+            threadId={thread._id}
+            className="border-t border-grayA-3 pt-1"
+          />
+        ) : null}
+
+        {/* * show json * */}
+        {showJson && (
+          <div className="absolute inset-x-4 inset-y-16 overflow-hidden rounded border">
+            <Pre className="h-full overflow-auto">{JSON.stringify(thread, null, 2)}</Pre>
+          </div>
+        )}
+
+        <AdminOnlyUi>
+          <div className="pointer-events-none absolute left-1 top-12 scale-90 font-mono text-xs text-gray-9">
+            {messages.length} | {page.status}
+          </div>
+          <IconButton
+            variant="ghost"
+            className="absolute right-0 top-12"
+            color="gray"
+            onClick={() => setShowJson(!showJson)}
+          >
+            <Icons.Code className="phosphor" />
+          </IconButton>
+        </AdminOnlyUi>
+      </div>
     </PageWrapper>
   )
 }
