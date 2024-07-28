@@ -58,11 +58,9 @@ import type * as utils from "../utils.js";
 import type * as workflows_actions_endpoints from "../workflows/actions/endpoints.js";
 import type * as workflows_actions_ingest from "../workflows/actions/ingest.js";
 import type * as workflows_engine from "../workflows/engine.js";
-import type * as workflows_engine2 from "../workflows/engine2.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_textToImage from "../workflows/pipelines/textToImage.js";
 import type * as workflows_spawn from "../workflows/spawn.js";
-import type * as workflows_textToImage from "../workflows/textToImage.js";
 import type * as workflows_types from "../workflows/types.js";
 
 /**
@@ -118,11 +116,9 @@ declare const fullApi: ApiFromModules<{
   "workflows/actions/endpoints": typeof workflows_actions_endpoints;
   "workflows/actions/ingest": typeof workflows_actions_ingest;
   "workflows/engine": typeof workflows_engine;
-  "workflows/engine2": typeof workflows_engine2;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/textToImage": typeof workflows_pipelines_textToImage;
   "workflows/spawn": typeof workflows_spawn;
-  "workflows/textToImage": typeof workflows_textToImage;
   "workflows/types": typeof workflows_types;
 }>;
 export declare const api: FilterApi<
