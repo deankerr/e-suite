@@ -8,7 +8,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
-import { AppLayout } from '@/components/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { cn, environment } from '@/lib/utils'
 

@@ -1,29 +1,48 @@
 'use client'
 
 import { Authenticated } from 'convex/react'
+import { useAtom } from 'jotai'
 import Link from 'next/link'
 
+import { sidebarOpenAtom } from '@/components/layout/atoms'
+import { SidebarButton } from '@/components/layout/SidebarButton'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { ThreadsList } from '@/components/navigation/ThreadsList'
 import { useShellActions } from '@/components/shell/hooks'
-import { LogoSvg } from '@/components/ui/LogoSvg'
+import { AppTitle } from '@/components/ui/AppTitle'
 import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
 
-export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>) => {
+export const Navigation = () => {
   const shell = useShellActions()
+  const [isSidebarOpen, toggleSidebar] = useAtom(sidebarOpenAtom)
+
   return (
-    <div
-      {...props}
-      className={cn('fixed inset-y-0 hidden w-60 md:block md:py-1.5 md:pr-1.5', className)}
-    >
-      <nav className="flex h-full flex-col rounded-md border border-gray-5 bg-gray-1">
+    <>
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-10 bg-overlay md:hidden"
+          onClick={() => toggleSidebar(false)}
+        />
+      )}
+
+      <nav
+        className={cn(
+          'flex w-60 shrink-0 flex-col rounded-md border border-gray-5 bg-gray-1',
+          'fixed left-1.5 top-1.5 z-10 h-[calc(100dvh-0.75rem)] transition-transform',
+          isSidebarOpen
+            ? '-translate-x-0'
+            : 'pointer-events-none -translate-x-[calc(100%+1.5rem)] md:pointer-events-auto md:-translate-x-0',
+          'md:static md:z-auto',
+        )}
+      >
         {/* * logo / menu button * */}
-        <div className="flex h-12 w-full shrink-0 items-center justify-center px-3">
-          <Link href={appConfig.baseUrl} className="flex items-center gap-1">
-            <LogoSvg className="-mb-0.5 -ml-2 w-5 text-accent-11" />
-            <span className="text-xl font-semibold tracking-tight">e/suite</span>
+        <div className="flex-between h-12 w-full shrink-0 px-3">
+          <Link href={appConfig.baseUrl}>
+            <AppTitle />
           </Link>
+
+          <SidebarButton />
         </div>
 
         <Authenticated>
@@ -46,6 +65,6 @@ export const Navigation = ({ className, ...props }: React.ComponentProps<'div'>)
           <UserButtons />
         </div>
       </nav>
-    </div>
+    </>
   )
 }
