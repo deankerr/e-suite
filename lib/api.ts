@@ -7,7 +7,7 @@ import { api } from '@/convex/_generated/api'
 
 import type { ChatQueryFilters } from '@/components/providers/chat-context'
 
-const RUN_THROTTLE = 5000
+const RUN_THROTTLE = 2500
 const MAX_LATEST_MESSAGES = 32
 
 export const useThreadActions = (threadId?: string) => {
@@ -99,19 +99,24 @@ export const useMessagesList = ({
     },
   )
 
-  const latestMessagesLength = latestResult?.length ?? 0
   useEffect(() => {
     if (startPaginatedQuery) return
-    if (filters || latestMessagesLength >= MAX_LATEST_MESSAGES) setStartPaginatedQuery(true)
-  }, [filters, latestMessagesLength, startPaginatedQuery])
+    if (filters) setStartPaginatedQuery(true)
+  }, [filters, startPaginatedQuery])
 
   if (startPaginatedQuery && pagedResult.status !== 'LoadingFirstPage') {
     return pagedResult
   }
 
+  const latestMessagesLength = latestResult?.length ?? 0
   return {
     results: latestResult ?? [],
-    status: latestResult === undefined ? 'LoadingFirstPage' : 'Exhausted',
+    status:
+      latestResult === undefined
+        ? 'LoadingFirstPage'
+        : latestMessagesLength >= MAX_LATEST_MESSAGES
+          ? 'CanLoadMore'
+          : 'Exhausted',
     isLoading: false,
     loadMore: () => setStartPaginatedQuery(true),
   }

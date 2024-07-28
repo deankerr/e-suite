@@ -3,7 +3,7 @@ import { useMutation } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { useLatestMessages, useMessagesList } from '@/lib/api'
+import { useMessagesList } from '@/lib/api'
 import { useSeriesMessage, useThread } from '@/lib/queries'
 
 import type { ChatCompletionConfig, TextToImageConfig } from '@/convex/types'
