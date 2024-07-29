@@ -4,6 +4,7 @@ import { api, internal } from '../../_generated/api'
 import { ResourceKey } from '../../lib/valibot'
 import * as Fal from '../actions/textToImage/fal'
 import * as Sinkin from '../actions/textToImage/sinkin'
+import { jobErrorHandling } from '../engine'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -31,7 +32,7 @@ export const textToImagePipeline: Pipeline = {
       name: 'inference',
       retryLimit: 3,
       action: async (ctx, input) => {
-        try {
+        return jobErrorHandling(async () => {
           const { initial } = vb.parse(vb.object({ initial: InitialInput }), input)
 
           const model = await ctx.runQuery(api.db.models.getImageModel, {
@@ -53,9 +54,7 @@ export const textToImagePipeline: Pipeline = {
           }
 
           return result
-        } catch (err) {
-          throw err
-        }
+        }, 'textToImage.inference')
       },
     },
   ],

@@ -163,7 +163,7 @@ export const stepFailed = internalMutation({
   handler: async (ctx, { jobId, stepName, error, startTime }) => {
     const job = await ctx.table('jobs3').getX(jobId)
     const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
-    console.warn(`${job.pipeline}.${stepName}`, error.message)
+    console.warn(`${job.pipeline}.${stepName} ${error.fatal ? 'fatal' : retryCount}`, error.message)
 
     return await job.patch({
       status: 'active',
