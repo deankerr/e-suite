@@ -487,11 +487,17 @@ const createTextToAudioRun = async (
     name: 'ElevenLabs Sound Generation',
   })
 
-  const jobId = await createJob(ctx, {
-    name: 'inference/textToAudio',
-    fields: {
-      messageId: message._id,
-    },
+  // const jobId = await createJob(ctx, {
+  //   name: 'inference/textToAudio',
+  //   fields: {
+  //     messageId: message._id,
+  //   },
+  // })
+
+  const jobId = await createWorkflowJob(ctx, {
+    pipeline: 'textToAudio',
+    input: { ...input, messageId: message._id },
+    messageId: message._id,
   })
 
   return {
