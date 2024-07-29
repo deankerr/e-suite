@@ -6,6 +6,7 @@ import * as vb from 'valibot'
 import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
 import { env, hasDelimiter } from '../../shared/utils'
+import { createJob } from '../jobs'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -210,6 +211,15 @@ export const result = internalMutation({
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
     await message.patch({ text: args.text })
+
+    // * thread title
+    // TODO centralised check
+    const thread = await message.edgeX('thread')
+    if (!thread.title) {
+      await createJob.generateThreadTitle(ctx, {
+        threadId: thread._id,
+      })
+    }
 
     return message._id
   },

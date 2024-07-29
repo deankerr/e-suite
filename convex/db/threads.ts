@@ -5,7 +5,6 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
-import { createJob } from '../jobs'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { extractValidUrlsFromText, getInferenceConfig } from '../shared/utils'
@@ -26,13 +25,6 @@ import type {
   RunConfigTextToImage,
 } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
-
-const appConfig = {
-  workflows: {
-    textToImage: true,
-    chat: true,
-  },
-}
 
 // * Helpers
 const createMessage = async (
@@ -423,22 +415,15 @@ const createTextToImageRun = async (
     name: imageModel.name,
   })
 
-  // NOTE workflow switch
-  const jobId = appConfig.workflows.textToImage
-    ? await createJobNext.textToImage(ctx, {
-        ...inference,
-        messageId: message._id,
-      })
-    : await createJob(ctx, {
-        name: 'inference/textToImage',
-        fields: {
-          messageId: message._id,
-        },
-      })
+  const jobId = await createJobNext.textToImage(ctx, {
+    ...inference,
+    messageId: message._id,
+  })
 
   await thread.patch({
     inference: { ...inference, prompt: '' },
     updatedAtTime: Date.now(),
+    title: thread.title ? thread.title : imageModel.name, // TODO better title creation
   })
 
   return {
@@ -545,17 +530,10 @@ const createChatRun = async (
     name: chatModel.name,
   })
 
-  const jobId = appConfig.workflows.chat
-    ? await createJobNext.chat(ctx, {
-        ...inference,
-        messageId: message._id,
-      })
-    : await createJob(ctx, {
-        name: 'inference/chat',
-        fields: {
-          messageId: message._id,
-        },
-      })
+  const jobId = await createJobNext.chat(ctx, {
+    ...inference,
+    messageId: message._id,
+  })
 
   await thread.patch({
     inference,
