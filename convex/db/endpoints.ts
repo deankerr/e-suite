@@ -1,6 +1,5 @@
 import { Infer, v } from 'convex/values'
 
-import * as OpenAi from '../endpoints/openai'
 import * as OpenRouter from '../endpoints/openrouter'
 import * as Sinkin from '../endpoints/sinkin'
 import * as Together from '../endpoints/together'
@@ -26,7 +25,6 @@ export const importEndpointChatModelData = internalMutation({
     console.log('chat models existing:', existingModels.length)
 
     const parsedModels = [
-      OpenAi.getNormalizedModelData(),
       await OpenRouter.getNormalizedModelData(ctx),
       await Together.getNormalizedModelData(ctx),
     ]
@@ -90,7 +88,11 @@ const defaultChatModelTags = [
     ],
     score: 10,
   },
-  { tag: 'multimodal', includes: ['gpt-4o', 'vision', 'llava', 'gemini', 'claude-3'], score: 5 },
+  {
+    tag: 'multimodal',
+    includes: ['gpt-4o', 'gpt-4-turbo', 'vision', 'llava', 'gemini', 'claude-3'],
+    score: 5,
+  },
 
   { tag: 'online', includes: ['online'], score: 1 },
   { tag: 'free', includes: ['free'], score: -1 },
@@ -113,7 +115,6 @@ const defaultChatModelTags = [
   },
   { tag: 'legacy', includes: ['gpt-3.5', 'palm-2', 'claude-2', 'claude-instant'], score: -10 },
   { tag: 'vintage', includes: ['alpaca'], score: -10 },
-  { tag: 'expensive', includes: ['gpt-4-32k'], score: -30 },
 ]
 
 //* image models

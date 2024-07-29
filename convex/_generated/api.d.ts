@@ -33,6 +33,7 @@ import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as lib_clerk from "../lib/clerk.js";
 import type * as lib_fetch from "../lib/fetch.js";
+import type * as lib_modelTags from "../lib/modelTags.js";
 import type * as lib_sharp from "../lib/sharp.js";
 import type * as lib_valibot from "../lib/valibot.js";
 import type * as migrations from "../migrations.js";
@@ -84,6 +85,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "lib/clerk": typeof lib_clerk;
   "lib/fetch": typeof lib_fetch;
+  "lib/modelTags": typeof lib_modelTags;
   "lib/sharp": typeof lib_sharp;
   "lib/valibot": typeof lib_valibot;
   migrations: typeof migrations;
