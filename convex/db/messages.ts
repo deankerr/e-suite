@@ -16,7 +16,7 @@ export const getMessage = async (ctx: QueryCtx, messageId: string) => {
 }
 
 export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
-  const jobs = await ctx.table('jobs', 'messageId', (q) => q.eq('messageId', messageId))
+  const jobs = await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', messageId))
   return jobs
 }
 
@@ -44,7 +44,6 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Doc<'messages'>) =
     jobs: await getMessageJobs(ctx, message._id),
     images: await getMessageImages(ctx, message._id),
     audio: await getMessageAudio(ctx, message._id),
-    workflow: await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', message._id)),
   }
 }
 

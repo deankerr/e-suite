@@ -11,7 +11,6 @@ import type {
   chatCompletionConfigV,
   entDefinitions,
   inferenceConfigV,
-  jobErrorV,
   runConfigChatV,
   runConfigTextToAudioV,
   runConfigTextToImageV,
@@ -59,18 +58,5 @@ export type ThreadActionResult = {
   threadId: Id<'threads'>
   slug: string
   messageId: string
-  jobId?: Id<'jobs'> | Id<'jobs3'>
+  jobId?: Id<'jobs3'>
 }
-
-export type JobError = Infer<typeof jobErrorV>
-export type TextToImageHandlerResult =
-  | {
-      images: {
-        url: string
-      }[]
-      error: undefined
-    }
-  | {
-      images: undefined
-      error: JobError
-    }

@@ -1,7 +1,5 @@
 import { ConvexError } from 'convex/values'
 
-import { Doc } from '../_generated/dataModel'
-
 import type {
   ChatCompletionConfig,
   InferenceConfig,
@@ -48,16 +46,6 @@ export function getErrorMessage(error: unknown) {
   }
   console.error('Unable to get error message for error', error)
   return 'Unknown Error'
-}
-
-export function hasActiveJob(jobs: Doc<'jobs'>[], name?: string) {
-  return jobs
-    .filter((j) => (name ? j.name === name : true))
-    .some((j) => ['active', 'queued'].includes(j.status))
-}
-
-export function getActiveJobs(jobs: Doc<'jobs'>[]) {
-  return jobs.filter((j) => ['active', 'queued'].includes(j.status))
 }
 
 export function hasDelimiter(text: string) {
