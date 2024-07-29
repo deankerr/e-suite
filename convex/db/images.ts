@@ -62,15 +62,39 @@ export const getImage = internalQuery({
   },
 })
 
+export const getImageByTimecode = internalQuery({
+  args: {
+    timecode: v.number(),
+  },
+  handler: async (ctx, { timecode }) => {
+    return await ctx
+      .table('images', 'by_creation_time', (q) => q.eq('_creationTime', timecode))
+      .first()
+  },
+})
+
+const parseTimecode = (id: string) => {
+  const match = id.match(/es(\d{13})([a-zA-Z])(\d{0,4})/)
+  if (!match) return null
+  const num = id.slice(2, 15)
+  const dec = id.slice(16)
+  const timecode = parseFloat(`${num}.${dec}`)
+  return timecode
+}
+
 // * http
 export const serve = httpAction(async (ctx, request) => {
-  const id = parseFilename(request.url, { strict: false })
+  const id = parseFilename(request.url, { strict: false }) ?? ''
+  const timecode = parseTimecode(id)
 
-  const image = id
-    ? await ctx.runQuery(internal.db.images.getImage, {
+  const image = timecode
+    ? await ctx.runQuery(internal.db.images.getImageByTimecode, {
+        timecode,
+      })
+    : await ctx.runQuery(internal.db.images.getImage, {
         imageId: id,
       })
-    : null
+
   if (!image) return new Response('Not Found', { status: 404 })
 
   const blob = await ctx.storage.get(image.fileId)

@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { Image } from '@/components/images/Image'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
-import { cn, getConvexSiteUrl } from '@/lib/utils'
+import { cn, environment, getConvexSiteUrl } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
 
@@ -46,7 +46,7 @@ export const ImageCard = ({
           </AdminOnlyUi>
         </div>
 
-        <Link href={`${getConvexSiteUrl()}/i/${image._id}?download`}>
+        <Link href={`${getConvexSiteUrl()}/i/${getTimecode(image)}?download`}>
           <IconButton
             aria-label="Download image"
             variant="ghost"
@@ -71,4 +71,9 @@ export const ImageCard = ({
       </div>
     </Card>
   )
+}
+
+const getTimecode = (image: { _creationTime: number }) => {
+  const char = environment.charAt(0)
+  return `es${String(image._creationTime).replace('.', char)}`
 }
