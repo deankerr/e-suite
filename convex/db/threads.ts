@@ -30,6 +30,7 @@ import type { WithoutSystemFields } from 'convex/server'
 const appConfig = {
   workflows: {
     textToImage: true,
+    chat: true,
   },
 }
 
@@ -540,12 +541,18 @@ const createChatRun = async (
     name: chatModel.name,
   })
 
-  const jobId = await createJob(ctx, {
-    name: 'inference/chat',
-    fields: {
-      messageId: message._id,
-    },
-  })
+  const jobId = appConfig.workflows.chat
+    ? await createWorkflowJob(ctx, {
+        pipeline: 'chat',
+        input: { ...inference, messageId: message._id },
+        messageId: message._id,
+      })
+    : await createJob(ctx, {
+        name: 'inference/chat',
+        fields: {
+          messageId: message._id,
+        },
+      })
 
   await thread.patch({
     inference,

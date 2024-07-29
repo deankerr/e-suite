@@ -3,6 +3,7 @@ import { ConvexError, v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { getErrorMessage } from '../shared/utils'
+import { chatPipeline } from './pipelines/chat'
 import { textToImagePipeline } from './pipelines/textToImage'
 
 import type { Id } from '../_generated/dataModel'
@@ -10,6 +11,7 @@ import type { MutationCtx } from '../types'
 
 const pipelines = {
   textToImage: textToImagePipeline,
+  chat: chatPipeline,
 }
 
 export const createWorkflowJob = async (
