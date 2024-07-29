@@ -1,60 +1,19 @@
 import { ConvexError, v } from 'convex/values'
+import * as vb from 'valibot'
+import { ValiError } from 'valibot'
 
 import { internal } from '../_generated/api'
-import { internalAction, internalMutation } from '../functions'
+import { internalAction } from '../functions'
 import { getErrorMessage } from '../shared/utils'
 import { chatPipeline } from './pipelines/chat'
 import { textToAudioPipeline } from './pipelines/textToAudio'
 import { textToImagePipeline } from './pipelines/textToImage'
-
-import type { Id } from '../_generated/dataModel'
-import type { MutationCtx } from '../types'
 
 const pipelines = {
   chat: chatPipeline,
   textToAudio: textToAudioPipeline,
   textToImage: textToImagePipeline,
 }
-
-export const createWorkflowJob = async (
-  ctx: MutationCtx,
-  args: {
-    pipeline: keyof typeof pipelines
-    input: Record<string, unknown>
-    messageId?: Id<'messages'>
-    threadId?: Id<'threads'>
-  },
-) => {
-  const pipeline = pipelines[args.pipeline as keyof typeof pipelines]
-  if (!pipeline) {
-    throw new ConvexError(`Unknown pipeline: ${args.pipeline}`)
-  }
-
-  const jobId = await ctx.table('jobs3').insert({
-    pipeline: pipeline.name,
-    status: 'pending',
-    currentStep: 0,
-    input: args.input,
-    stepResults: [],
-    updatedAt: Date.now(),
-    messageId: args.messageId,
-    threadId: args.threadId,
-  })
-
-  await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
-  console.log('job created', args.pipeline, jobId)
-  return jobId
-}
-
-export const startJob = internalMutation({
-  args: {
-    pipeline: v.string(),
-    input: v.any(),
-    messageId: v.optional(v.id('messages')),
-    threadId: v.optional(v.id('threads')),
-  },
-  handler: createWorkflowJob,
-})
 
 export const executeStep = internalAction({
   args: {
@@ -98,6 +57,8 @@ export const executeStep = internalAction({
       // * schedule next step
       await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
     } catch (err) {
+      console.error(err)
+      // * handle error
       const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
 
       if (retryCount > step.retryLimit) {
@@ -110,11 +71,7 @@ export const executeStep = internalAction({
         await ctx.runMutation(internal.workflows.jobs.stepFailed, {
           jobId,
           stepName: step.name,
-          error: {
-            code: 'job_error',
-            message: getErrorMessage(err),
-            fatal: false,
-          },
+          error: getErrorDetails(err),
           startTime,
         })
 
@@ -128,3 +85,20 @@ export const executeStep = internalAction({
     }
   },
 })
+
+const getErrorDetails = (err: unknown) => {
+  if (err instanceof ValiError) {
+    return {
+      code: 'vali_error',
+      message: err.message,
+      details: vb.flatten(err.issues),
+      fatal: true,
+    }
+  }
+
+  return {
+    code: 'unhandled',
+    message: getErrorMessage(err),
+    fatal: false,
+  }
+}

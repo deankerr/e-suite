@@ -1,6 +1,62 @@
 import { v } from 'convex/values'
 
+import { internal } from '../_generated/api'
 import { internalMutation, internalQuery } from '../functions'
+
+import type { Id } from '../_generated/dataModel'
+import type { MutationCtx } from '../types'
+import type { ChatPipelineInput } from './pipelines/chat'
+import type { TextToAudioPipelineInput } from './pipelines/textToAudio'
+import type { TextToImagePipelineInput } from './pipelines/textToImage'
+
+const register = async (
+  ctx: MutationCtx,
+  {
+    pipeline,
+    input,
+  }: {
+    pipeline: string
+    input: Record<string, unknown> & { messageId?: Id<'messages'>; threadId?: Id<'threads'> }
+  },
+) => {
+  const jobId = await ctx.table('jobs3').insert({
+    status: 'pending',
+    currentStep: 0,
+    stepResults: [],
+    updatedAt: Date.now(),
+    pipeline,
+    input,
+    messageId: input.messageId,
+    threadId: input.threadId,
+  })
+
+  await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
+  console.log('job created', pipeline, jobId)
+  return jobId
+}
+
+export const createJob = {
+  chat: async (ctx: MutationCtx, input: ChatPipelineInput) => {
+    return await register(ctx, {
+      pipeline: 'chat',
+      input,
+    })
+  },
+
+  textToAudio: async (ctx: MutationCtx, input: TextToAudioPipelineInput) => {
+    return await register(ctx, {
+      pipeline: 'textToAudio',
+      input,
+    })
+  },
+
+  textToImage: async (ctx: MutationCtx, input: TextToImagePipelineInput) => {
+    return await register(ctx, {
+      pipeline: 'textToImage',
+      input,
+    })
+  },
+}
 
 export const get = internalQuery({
   args: {
@@ -44,6 +100,7 @@ export const stepCompleted = internalMutation({
   },
   handler: async (ctx, { jobId, stepName, result, startTime }) => {
     const job = await ctx.table('jobs3').getX(jobId)
+    console.log(`${job.pipeline}.${stepName}`)
 
     return await job.patch({
       status: 'active',
@@ -72,14 +129,15 @@ export const stepFailed = internalMutation({
       code: v.string(),
       message: v.string(),
       fatal: v.boolean(),
+      details: v.optional(v.any()),
     }),
     startTime: v.number(),
   },
   handler: async (ctx, { jobId, stepName, error, startTime }) => {
     const job = await ctx.table('jobs3').getX(jobId)
     const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
+    console.error(`${job.pipeline}.${stepName}`, error.message)
 
-    console.error('job step failed', job.pipeline, stepName, error, jobId)
     return await job.patch({
       status: 'active',
       stepResults: [

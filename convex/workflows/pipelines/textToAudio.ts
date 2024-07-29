@@ -8,19 +8,20 @@ import { internalMutation } from '../../functions'
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
 
+export type TextToAudioPipelineInput = vb.InferOutput<typeof InitialInput>
+
 const InitialInput = vb.object({
-  initial: vb.object({
-    messageId: vb.pipe(
-      vb.string(),
-      vb.transform((input) => input as Id<'messages'>),
-    ),
-    prompt: vb.string(),
-    duration: vb.optional(vb.number()),
-  }),
+  messageId: vb.pipe(
+    vb.string(),
+    vb.transform((input) => input as Id<'messages'>),
+  ),
+  prompt: vb.string(),
+  duration: vb.optional(vb.number()),
 })
 
 export const textToAudioPipeline: Pipeline = {
   name: 'textToAudio',
+  schema: InitialInput,
   steps: [
     {
       name: 'inference',
@@ -28,7 +29,7 @@ export const textToAudioPipeline: Pipeline = {
       action: async (ctx, input) => {
         const {
           initial: { messageId, prompt, duration },
-        } = vb.parse(InitialInput, input)
+        } = vb.parse(vb.object({ initial: InitialInput }), input)
 
         console.log('[textToAudio] [input] [elevenlabs]', prompt)
         const fileId = await ElevenLabs.soundGeneration(ctx, {

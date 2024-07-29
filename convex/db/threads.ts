@@ -10,7 +10,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { extractValidUrlsFromText, getInferenceConfig } from '../shared/utils'
 import { generateSlug } from '../utils'
-import { createWorkflowJob } from '../workflows/engine'
+import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 
@@ -425,9 +425,8 @@ const createTextToImageRun = async (
 
   // NOTE workflow switch
   const jobId = appConfig.workflows.textToImage
-    ? await createWorkflowJob(ctx, {
-        pipeline: 'textToImage',
-        input: { ...inference, messageId: message._id },
+    ? await createJobNext.textToImage(ctx, {
+        ...inference,
         messageId: message._id,
       })
     : await createJob(ctx, {
@@ -494,9 +493,8 @@ const createTextToAudioRun = async (
   //   },
   // })
 
-  const jobId = await createWorkflowJob(ctx, {
-    pipeline: 'textToAudio',
-    input: { ...input, messageId: message._id },
+  const jobId = await createJobNext.textToAudio(ctx, {
+    ...input,
     messageId: message._id,
   })
 
@@ -548,9 +546,8 @@ const createChatRun = async (
   })
 
   const jobId = appConfig.workflows.chat
-    ? await createWorkflowJob(ctx, {
-        pipeline: 'chat',
-        input: { ...inference, messageId: message._id },
+    ? await createJobNext.chat(ctx, {
+        ...inference,
         messageId: message._id,
       })
     : await createJob(ctx, {

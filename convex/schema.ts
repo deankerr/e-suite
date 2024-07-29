@@ -408,6 +408,7 @@ export const job3Fields = {
           code: v.string(),
           message: v.string(),
           fatal: v.boolean(),
+          details: v.optional(v.any()),
         }),
       ),
       startTime: v.number(),
