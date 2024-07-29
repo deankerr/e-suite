@@ -5,7 +5,7 @@ import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
-import { jobErrorHandling, WorkflowError } from '../engine'
+import { jobErrorHandling, WorkflowError } from '../helpers'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'

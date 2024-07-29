@@ -4,7 +4,7 @@ import { api, internal } from '../../_generated/api'
 import { ResourceKey } from '../../lib/valibot'
 import * as Fal from '../actions/textToImage/fal'
 import * as Sinkin from '../actions/textToImage/sinkin'
-import { jobErrorHandling } from '../engine'
+import { jobErrorHandling } from '../helpers'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'

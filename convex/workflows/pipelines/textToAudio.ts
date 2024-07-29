@@ -4,7 +4,7 @@ import * as vb from 'valibot'
 import { internal } from '../../_generated/api'
 import * as ElevenLabs from '../../endpoints/elevenlabs'
 import { internalMutation } from '../../functions'
-import { jobErrorHandling } from '../engine'
+import { jobErrorHandling } from '../helpers'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
