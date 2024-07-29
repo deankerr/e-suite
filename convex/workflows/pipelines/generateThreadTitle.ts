@@ -1,10 +1,11 @@
 import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
-import { ConvexError, v } from 'convex/values'
+import { v } from 'convex/values'
 import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
+import { jobErrorHandling, WorkflowError } from '../engine'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -25,44 +26,46 @@ export const generateThreadTitlePipeline: Pipeline = {
       name: 'inference',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const {
-          initial: { threadId },
-        } = vb.parse(vb.object({ initial: InitialInput }), input)
+        return jobErrorHandling(async () => {
+          const {
+            initial: { threadId },
+          } = vb.parse(vb.object({ initial: InitialInput }), input)
 
-        const messages = await ctx.runQuery(
-          internal.workflows.pipelines.generateThreadTitle.getMessages,
-          {
+          const messages = await ctx.runQuery(
+            internal.workflows.pipelines.generateThreadTitle.getMessages,
+            {
+              threadId,
+            },
+          )
+
+          const message = prompt.replace(
+            '%%%',
+            messages
+              .map((message) => `${message.role}: ${message.text}`)
+              .join('\n')
+              .slice(0, 800),
+          )
+
+          console.log('generateThreadTitle/openai/input', message)
+          const { text } = await generateText({
+            model: openai('gpt-4o-mini'),
+            prompt: message,
+            maxTokens: 1024,
+          })
+          console.log('generateThreadTitle/openai/output', text)
+
+          const title = text.split('\n').at(-1)
+          if (!title) {
+            throw new WorkflowError('title is missing', 'title_missing', true)
+          }
+
+          await ctx.runMutation(internal.workflows.pipelines.generateThreadTitle.result, {
             threadId,
-          },
-        )
+            title,
+          })
 
-        const message = prompt.replace(
-          '%%%',
-          messages
-            .map((message) => `${message.role}: ${message.text}`)
-            .join('\n')
-            .slice(0, 800),
-        )
-
-        console.log('generateThreadTitle/openai/input', message)
-        const { text } = await generateText({
-          model: openai('gpt-4o-mini'),
-          prompt: message,
-          maxTokens: 1024,
-        })
-        console.log('generateThreadTitle/openai/output', text)
-
-        const title = text.split('\n').at(-1)
-        if (!title) {
-          throw new ConvexError('title is missing')
-        }
-
-        await ctx.runMutation(internal.workflows.pipelines.generateThreadTitle.result, {
-          threadId,
-          title,
-        })
-
-        return { title }
+          return { title }
+        }, 'generateThreadTitle.inference')
       },
     },
   ],
