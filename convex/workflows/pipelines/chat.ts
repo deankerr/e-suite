@@ -7,7 +7,7 @@ import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
 import { ResourceKey } from '../../lib/valibot'
 import { env, hasDelimiter } from '../../shared/utils'
-import { jobErrorHandling, WorkflowError } from '../engine'
+import { jobErrorHandling, WorkflowError } from '../helpers'
 import { createJob } from '../jobs'
 
 import type { Id } from '../../_generated/dataModel'

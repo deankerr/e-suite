@@ -1,15 +1,16 @@
 import { ConvexError, v } from 'convex/values'
-import * as vb from 'valibot'
-import { ValiError } from 'valibot'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
+import { WorkflowError } from './helpers'
 import { chatPipeline } from './pipelines/chat'
 import { evaluateMessageUrlsPipeline } from './pipelines/evaluateMessageUrls'
 import { generateThreadTitlePipeline } from './pipelines/generateThreadTitle'
 import { ingestImageUrlPipeline } from './pipelines/ingestImageUrl'
 import { textToAudioPipeline } from './pipelines/textToAudio'
 import { textToImagePipeline } from './pipelines/textToImage'
+
+import type { Doc } from '../_generated/dataModel'
 
 const pipelines = {
   chat: chatPipeline,
@@ -31,6 +32,14 @@ export const executeStep = internalAction({
     }
 
     const pipeline = pipelines[job.pipeline as keyof typeof pipelines]
+    if (!pipeline)
+      throw new ConvexError({
+        message: 'invalid pipeline',
+        code: 'invalid_job',
+        pipeline,
+        job: job as Doc<'jobs3'>,
+      })
+
     const step = pipeline.steps[job.currentStep]
     // * no step - assume job finished
     // ? could add a 'final result' to output field here
@@ -112,36 +121,3 @@ export const executeStep = internalAction({
     }
   },
 })
-
-export class WorkflowError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly fatal: boolean = false,
-    public readonly details?: unknown,
-  ) {
-    super(message)
-    this.name = 'WorkflowError'
-  }
-}
-
-export async function jobErrorHandling<T>(fn: () => Promise<T>, stepName: string): Promise<T> {
-  try {
-    return await fn()
-  } catch (error) {
-    if (error instanceof WorkflowError) {
-      throw error
-    } else if (error instanceof ConvexError) {
-      // TODO remove ConvexErrors from jobs
-      const { code, details } = error.data as { code: string; details?: any }
-      throw new WorkflowError(error.message, code, true, details)
-    } else if (error instanceof ValiError) {
-      throw new WorkflowError(error.message, 'validation_error', true, vb.flatten(error.issues))
-    } else {
-      console.error(`Error in step ${stepName}:`, error)
-      throw new WorkflowError(`Unexpected error in step ${stepName}`, 'unexpected_error', false, {
-        originalError: error,
-      })
-    }
-  }
-}

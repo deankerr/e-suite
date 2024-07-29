@@ -2,7 +2,7 @@ import ky from 'ky'
 import * as vb from 'valibot'
 
 import { env } from '../../../shared/utils'
-import { WorkflowError } from '../../engine'
+import { WorkflowError } from '../../helpers'
 
 import type { EImageModel } from '../../../types'
 import type { TextToImagePipelineInput } from '../../pipelines/textToImage'

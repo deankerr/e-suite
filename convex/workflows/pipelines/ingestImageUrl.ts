@@ -5,7 +5,7 @@ import { internal } from '../../_generated/api'
 import { internalMutation } from '../../functions'
 import { evaluateNsfwProbability } from '../actions/evaluateNsfwProbability'
 import { generateImageCaption } from '../actions/generateImageCaption'
-import { jobErrorHandling } from '../engine'
+import { jobErrorHandling } from '../helpers'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'

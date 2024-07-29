@@ -48,6 +48,7 @@ import type * as workflows_actions_generateImageCaption from "../workflows/actio
 import type * as workflows_actions_textToImage_fal from "../workflows/actions/textToImage/fal.js";
 import type * as workflows_actions_textToImage_sinkin from "../workflows/actions/textToImage/sinkin.js";
 import type * as workflows_engine from "../workflows/engine.js";
+import type * as workflows_helpers from "../workflows/helpers.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
 import type * as workflows_pipelines_evaluateMessageUrls from "../workflows/pipelines/evaluateMessageUrls.js";
@@ -100,6 +101,7 @@ declare const fullApi: ApiFromModules<{
   "workflows/actions/textToImage/fal": typeof workflows_actions_textToImage_fal;
   "workflows/actions/textToImage/sinkin": typeof workflows_actions_textToImage_sinkin;
   "workflows/engine": typeof workflows_engine;
+  "workflows/helpers": typeof workflows_helpers;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/chat": typeof workflows_pipelines_chat;
   "workflows/pipelines/evaluateMessageUrls": typeof workflows_pipelines_evaluateMessageUrls;

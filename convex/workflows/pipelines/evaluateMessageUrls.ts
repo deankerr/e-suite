@@ -3,7 +3,7 @@ import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { fetch } from '../../lib/fetch'
-import { jobErrorHandling } from '../engine'
+import { jobErrorHandling } from '../helpers'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'

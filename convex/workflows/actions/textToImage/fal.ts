@@ -2,7 +2,7 @@ import * as client from '@fal-ai/serverless-client'
 import * as vb from 'valibot'
 
 import { ResourceKey } from '../../../lib/valibot'
-import { WorkflowError } from '../../engine'
+import { WorkflowError } from '../../helpers'
 
 import type { RunConfigTextToImage } from '../../../types'
 
