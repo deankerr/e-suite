@@ -59,6 +59,7 @@ import type * as workflows_actions_evaluateNsfwProbability from "../workflows/ac
 import type * as workflows_actions_generateImageCaption from "../workflows/actions/generateImageCaption.js";
 import type * as workflows_actions_ingest from "../workflows/actions/ingest.js";
 import type * as workflows_actions_textToImage_fal from "../workflows/actions/textToImage/fal.js";
+import type * as workflows_actions_textToImage_sinkin from "../workflows/actions/textToImage/sinkin.js";
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
@@ -122,6 +123,7 @@ declare const fullApi: ApiFromModules<{
   "workflows/actions/generateImageCaption": typeof workflows_actions_generateImageCaption;
   "workflows/actions/ingest": typeof workflows_actions_ingest;
   "workflows/actions/textToImage/fal": typeof workflows_actions_textToImage_fal;
+  "workflows/actions/textToImage/sinkin": typeof workflows_actions_textToImage_sinkin;
   "workflows/engine": typeof workflows_engine;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/chat": typeof workflows_pipelines_chat;

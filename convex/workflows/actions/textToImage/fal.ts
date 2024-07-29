@@ -4,20 +4,7 @@ import * as vb from 'valibot'
 
 import type { RunConfigTextToImage } from '../../../types'
 
-client.config({
-  credentials: process.env.FAL_API_KEY!,
-})
-
-const FalResourceKey = vb.pipe(
-  vb.string(),
-  vb.startsWith('fal::'),
-  vb.transform((input) => {
-    const [endpoint, modelId] = input.split('::')
-    return { endpoint, modelId }
-  }),
-)
-
-const Output = vb.object({
+const Response = vb.object({
   images: vb.array(
     vb.object({
       url: vb.pipe(vb.string(), vb.url()),
@@ -36,6 +23,19 @@ const Output = vb.object({
   prompt: vb.optional(vb.string()),
 })
 
+client.config({
+  credentials: process.env.FAL_API_KEY!,
+})
+
+const FalResourceKey = vb.pipe(
+  vb.string(),
+  vb.startsWith('fal::'),
+  vb.transform((input) => {
+    const [endpoint, modelId] = input.split('::')
+    return { endpoint, modelId }
+  }),
+)
+
 export const textToImage = async (
   args: Omit<RunConfigTextToImage, 'type' | 'size'> & { size?: string },
 ) => {
@@ -53,13 +53,13 @@ export const textToImage = async (
       enable_safety_checker: false,
     }
 
-    console.log('[textToImage] [fal] [input]', modelId, input)
+    console.log('textToImage.fal.input', modelId, input)
     const response = await client.subscribe(modelId, {
       input,
     })
-    console.log('[textToImage] [fal] [output]', response)
+    console.log('textToImage.fal.output', response)
 
-    const output = vb.parse(Output, response)
+    const output = vb.parse(Response, response)
     return { imageUrls: output.images.map((i) => i.url), output }
   } catch (err) {
     console.error(err)

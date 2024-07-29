@@ -1,3 +1,5 @@
+import { v } from 'convex/values'
+
 import * as Aws from '../endpoints/aws'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import * as OpenAi from '../endpoints/openai'
@@ -32,6 +34,13 @@ export const getImageModelByResourceKey = async (ctx: QueryCtx, resourceKey: str
 
   return { ...model, type: 'image' as const }
 }
+
+export const getImageModel = query({
+  args: { resourceKey: v.string() },
+  handler: async (ctx, args) => {
+    return await getImageModelByResourceKey(ctx, args.resourceKey)
+  },
+})
 
 export const listImageModels = query({
   args: {},
