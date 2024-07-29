@@ -1,4 +1,5 @@
 import type { ActionCtx } from '../_generated/server'
+import type { BaseSchema } from 'valibot'
 
 export type PipelineStep = {
   name: string
@@ -8,5 +9,6 @@ export type PipelineStep = {
 
 export type Pipeline = {
   name: string
+  schema: BaseSchema<any, any, any>
   steps: PipelineStep[]
 }

@@ -23,17 +23,16 @@ const ResourceKey = vb.pipe(
   }),
 )
 
+export type ChatPipelineInput = vb.InferOutput<typeof InitialInput>
 const InitialInput = vb.object({
-  initial: vb.object({
-    messageId: vb.pipe(
-      vb.string(),
-      vb.transform((input) => input as Id<'messages'>),
-    ),
-    resourceKey: vb.string(),
-    excludeHistoryMessagesByName: vb.optional(vb.array(vb.string())),
-    maxHistoryMessages: vb.optional(vb.number()),
-    stream: vb.optional(vb.boolean()),
-  }),
+  messageId: vb.pipe(
+    vb.string(),
+    vb.transform((input) => input as Id<'messages'>),
+  ),
+  resourceKey: vb.string(),
+  excludeHistoryMessagesByName: vb.optional(vb.array(vb.string())),
+  maxHistoryMessages: vb.optional(vb.number()),
+  stream: vb.optional(vb.boolean()),
 })
 
 const createProvider = (endpoint: string) => {
@@ -59,6 +58,7 @@ const createProvider = (endpoint: string) => {
 
 export const chatPipeline: Pipeline = {
   name: 'chat',
+  schema: InitialInput,
   steps: [
     {
       name: 'inference',
@@ -73,7 +73,7 @@ export const chatPipeline: Pipeline = {
               maxHistoryMessages,
               stream,
             },
-          } = vb.parse(InitialInput, input)
+          } = vb.parse(vb.object({ initial: InitialInput }), input)
 
           const { endpoint, modelId } = vb.parse(ResourceKey, resourceKey)
 
