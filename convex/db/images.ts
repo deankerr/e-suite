@@ -72,6 +72,10 @@ export const createImageWf = internalMutation({
     })
     console.log('[image]', args.sourceUrl)
 
+    if (!message.hasImageContent) {
+      await message.patch({ hasImageContent: true })
+    }
+
     return imageId
   },
 })
