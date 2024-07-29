@@ -8,13 +8,15 @@ import { internalMutation } from '../../functions'
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
 
-const JobInput = vb.object({
-  messageId: vb.pipe(
-    vb.string(),
-    vb.transform((input) => input as Id<'messages'>),
-  ),
-  prompt: vb.string(),
-  duration: vb.optional(vb.number()),
+const InitialInput = vb.object({
+  initial: vb.object({
+    messageId: vb.pipe(
+      vb.string(),
+      vb.transform((input) => input as Id<'messages'>),
+    ),
+    prompt: vb.string(),
+    duration: vb.optional(vb.number()),
+  }),
 })
 
 export const textToAudioPipeline: Pipeline = {
@@ -24,7 +26,9 @@ export const textToAudioPipeline: Pipeline = {
       name: 'inference',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const { messageId, prompt, duration } = vb.parse(JobInput, input)
+        const {
+          initial: { messageId, prompt, duration },
+        } = vb.parse(InitialInput, input)
 
         console.log('[textToAudio] [input] [elevenlabs]', prompt)
         const fileId = await ElevenLabs.soundGeneration(ctx, {
@@ -62,6 +66,7 @@ export const complete = internalMutation({
         modelId: 'sound-generation',
         modelName: 'ElevenLabs Sound Generation',
         endpointId: 'elevenlabs',
+        duration,
       },
       messageId,
       threadId: message.threadId,
