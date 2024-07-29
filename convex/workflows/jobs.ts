@@ -6,6 +6,7 @@ import { internalMutation, internalQuery } from '../functions'
 import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 import type { ChatPipelineInput } from './pipelines/chat'
+import type { GenerateThreadTitlePipelineInput } from './pipelines/generateThreadTitle'
 import type { TextToAudioPipelineInput } from './pipelines/textToAudio'
 import type { TextToImagePipelineInput } from './pipelines/textToImage'
 
@@ -39,6 +40,13 @@ export const createJob = {
   chat: async (ctx: MutationCtx, input: ChatPipelineInput) => {
     return await register(ctx, {
       pipeline: 'chat',
+      input,
+    })
+  },
+
+  generateThreadTitle: async (ctx: MutationCtx, input: GenerateThreadTitlePipelineInput) => {
+    return await register(ctx, {
+      pipeline: 'generateThreadTitle',
       input,
     })
   },
