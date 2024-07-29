@@ -23,15 +23,17 @@ const ResourceKey = vb.pipe(
   }),
 )
 
-const ChatInput = vb.object({
-  messageId: vb.pipe(
-    vb.string(),
-    vb.transform((input) => input as Id<'messages'>),
-  ),
-  resourceKey: vb.string(),
-  excludeHistoryMessagesByName: vb.optional(vb.array(vb.string())),
-  maxHistoryMessages: vb.optional(vb.number()),
-  stream: vb.optional(vb.boolean()),
+const InitialInput = vb.object({
+  initial: vb.object({
+    messageId: vb.pipe(
+      vb.string(),
+      vb.transform((input) => input as Id<'messages'>),
+    ),
+    resourceKey: vb.string(),
+    excludeHistoryMessagesByName: vb.optional(vb.array(vb.string())),
+    maxHistoryMessages: vb.optional(vb.number()),
+    stream: vb.optional(vb.boolean()),
+  }),
 })
 
 const createProvider = (endpoint: string) => {
@@ -64,12 +66,14 @@ export const chatPipeline: Pipeline = {
       action: async (ctx, input) => {
         try {
           const {
-            messageId,
-            resourceKey,
-            excludeHistoryMessagesByName,
-            maxHistoryMessages,
-            stream,
-          } = vb.parse(ChatInput, input)
+            initial: {
+              messageId,
+              resourceKey,
+              excludeHistoryMessagesByName,
+              maxHistoryMessages,
+              stream,
+            },
+          } = vb.parse(InitialInput, input)
 
           const { endpoint, modelId } = vb.parse(ResourceKey, resourceKey)
 

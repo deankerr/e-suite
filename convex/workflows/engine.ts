@@ -69,6 +69,7 @@ export const executeStep = internalAction({
     const pipeline = pipelines[job.pipeline as keyof typeof pipelines]
     const step = pipeline.steps[job.currentStep]
     // * no step - assume job finished
+    // ? could add a 'final result' to output field here
     if (!step) {
       await ctx.runMutation(internal.workflows.jobs.complete, {
         jobId,
@@ -78,9 +79,13 @@ export const executeStep = internalAction({
     const startTime = Date.now()
 
     try {
-      const previousResults = job.stepResults.map((r) => r.result)
+      // * step input/results record
+      const stepInput = Object.fromEntries([
+        ['initial', job.input],
+        ...job.stepResults.map((sr) => [sr.stepName, sr.result]),
+      ])
       // * run step
-      const result = await step.action(ctx, job.input, previousResults)
+      const result = await step.action(ctx, stepInput)
 
       // * add successful result
       await ctx.runMutation(internal.workflows.jobs.stepCompleted, {
