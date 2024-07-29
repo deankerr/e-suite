@@ -13,7 +13,6 @@ import { MessageEditor } from '@/components/message/MessageEditor'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
-import { getActiveJobs } from '@/convex/shared/utils'
 import { useViewerDetails } from '@/lib/queries'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
@@ -44,12 +43,19 @@ export const Message = ({
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const { isOwner } = useViewerDetails(message.userId)
-  const activeJobs = getActiveJobs(message.jobs)
-  const jobErrors = message.jobs.flatMap((job) => job.errors).filter((error) => error !== undefined)
+  const activeJobs = message.jobs.filter(
+    (job) => job.status === 'active' || job.status === 'pending',
+  )
+  const failedJobMessages = message.jobs
+    .filter((job) => job.status === 'failed')
+    .map((job) => job.stepResults.at(-1)?.error?.message)
+    .filter((error): error is string => error !== undefined)
 
   const { textToImageConfig } = getInferenceConfig(message.inference)
   const nImagePlaceholders =
-    textToImageConfig && jobErrors.length === 0 ? textToImageConfig.n - message.images.length : 0
+    textToImageConfig && failedJobMessages.length === 0
+      ? textToImageConfig.n - message.images.length
+      : 0
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
@@ -90,9 +96,9 @@ export const Message = ({
         {!showEditor && text && text.length < 300 ? text : null}
 
         {/* * errors * */}
-        {jobErrors.map((error, i) => (
+        {failedJobMessages.map((error, i) => (
           <div key={i} className="rounded-lg border border-red-10 px-2 py-1.5 text-xs text-red-11">
-            {error.code} {error.message}
+            {error}
           </div>
         ))}
       </div>

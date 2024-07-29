@@ -104,13 +104,6 @@ export const fileAttachmentRecordSchemaV = v.array(
 
 export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
 
-export const jobErrorV = v.object({
-  code: v.string(),
-  message: v.string(),
-  fatal: v.boolean(),
-  status: v.optional(v.number()),
-})
-
 // * Models
 const sharedModelFields = {
   name: v.string(),
@@ -170,33 +163,6 @@ export const imageModelFields = {
 const image_models = defineEnt(imageModelFields).field('resourceKey', v.string(), {
   unique: true,
 })
-
-// * Jobs
-export const jobAttributeFields = {
-  threadId: v.optional(v.id('threads')),
-  messageId: v.optional(v.id('messages')),
-  imageId: v.optional(v.id('images')),
-  speechId: v.optional(v.id('speech')),
-
-  url: v.optional(v.string()),
-  text: v.optional(v.string()),
-  resourceKey: v.optional(v.string()),
-}
-export const jobFields = {
-  name: v.string(),
-  status: literals('queued', 'active', 'complete', 'failed'),
-  errors: v.optional(v.array(jobErrorV)),
-  queuedTime: v.number(),
-  startedTime: v.optional(v.number()),
-  endedTime: v.optional(v.number()),
-
-  ...jobAttributeFields,
-}
-const jobs = defineEnt(jobFields)
-  .index('status', ['status'])
-  .index('threadId', ['threadId'])
-  .index('messageId', ['messageId'])
-  .index('imageId', ['imageId'])
 
 // * images
 export const imageFields = {
@@ -446,7 +412,6 @@ const schema = defineEntSchema(
     audio,
     chat_models,
     endpoint_data_cache,
-    jobs,
     images,
     image_models,
 
