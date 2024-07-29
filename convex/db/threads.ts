@@ -292,7 +292,7 @@ export const append = mutation({
     if (message.text) {
       const urls = extractValidUrlsFromText(message.text)
       if (urls.length > 0) {
-        await ctx.scheduler.runAfter(0, internal.files.processUrlContent.run, {
+        await createJobNext.evaluateMessageUrls(ctx, {
           urls: urls.map((url) => url.toString()),
           messageId: message._id,
         })

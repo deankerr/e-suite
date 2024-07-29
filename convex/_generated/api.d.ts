@@ -63,6 +63,7 @@ import type * as workflows_actions_textToImage_sinkin from "../workflows/actions
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
+import type * as workflows_pipelines_evaluateMessageUrls from "../workflows/pipelines/evaluateMessageUrls.js";
 import type * as workflows_pipelines_generateThreadTitle from "../workflows/pipelines/generateThreadTitle.js";
 import type * as workflows_pipelines_ingestImageUrl from "../workflows/pipelines/ingestImageUrl.js";
 import type * as workflows_pipelines_textToAudio from "../workflows/pipelines/textToAudio.js";
@@ -127,6 +128,7 @@ declare const fullApi: ApiFromModules<{
   "workflows/engine": typeof workflows_engine;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/chat": typeof workflows_pipelines_chat;
+  "workflows/pipelines/evaluateMessageUrls": typeof workflows_pipelines_evaluateMessageUrls;
   "workflows/pipelines/generateThreadTitle": typeof workflows_pipelines_generateThreadTitle;
   "workflows/pipelines/ingestImageUrl": typeof workflows_pipelines_ingestImageUrl;
   "workflows/pipelines/textToAudio": typeof workflows_pipelines_textToAudio;

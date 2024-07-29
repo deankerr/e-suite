@@ -6,6 +6,7 @@ import { internalMutation, internalQuery } from '../functions'
 import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 import type { ChatPipelineInput } from './pipelines/chat'
+import type { EvaluateMessageUrlsPipelineInput } from './pipelines/evaluateMessageUrls'
 import type { GenerateThreadTitlePipelineInput } from './pipelines/generateThreadTitle'
 import type { IngestImageUrlPipelineInput } from './pipelines/ingestImageUrl'
 import type { TextToAudioPipelineInput } from './pipelines/textToAudio'
@@ -33,7 +34,6 @@ const register = async (
   })
 
   await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
-  console.log('job created', pipeline, jobId)
   return jobId
 }
 
@@ -41,6 +41,13 @@ export const createJob = {
   chat: async (ctx: MutationCtx, input: ChatPipelineInput) => {
     return await register(ctx, {
       pipeline: 'chat',
+      input,
+    })
+  },
+
+  evaluateMessageUrls: async (ctx: MutationCtx, input: EvaluateMessageUrlsPipelineInput) => {
+    return await register(ctx, {
+      pipeline: 'evaluateMessageUrls',
       input,
     })
   },
