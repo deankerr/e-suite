@@ -1,8 +1,8 @@
 import * as client from '@fal-ai/serverless-client'
-import { ConvexError } from 'convex/values'
 import * as vb from 'valibot'
 
 import { ResourceKey } from '../../../lib/valibot'
+import { WorkflowError } from '../../engine'
 
 import type { RunConfigTextToImage } from '../../../types'
 
@@ -55,13 +55,15 @@ export const textToImage = async (
     const output = vb.parse(Response, response)
     return { imageUrls: output.images.map((i) => i.url), output }
   } catch (err) {
+    // * error handling
     console.error(err)
     if (err instanceof client.ValidationError || err instanceof client.ApiError) {
-      throw new ConvexError({
-        message: `${err.name}: ${JSON.stringify(err.body.detail)}`,
-        code: 'endpoint_error',
-        fatal: true,
-      })
+      throw new WorkflowError(
+        `${err.name}: ${JSON.stringify(err.body.detail)}`,
+        'endpoint_error',
+        true,
+        err.body.detail,
+      )
     }
 
     throw err
