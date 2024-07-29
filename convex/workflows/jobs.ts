@@ -7,6 +7,7 @@ import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 import type { ChatPipelineInput } from './pipelines/chat'
 import type { GenerateThreadTitlePipelineInput } from './pipelines/generateThreadTitle'
+import type { IngestImageUrlPipelineInput } from './pipelines/ingestImageUrl'
 import type { TextToAudioPipelineInput } from './pipelines/textToAudio'
 import type { TextToImagePipelineInput } from './pipelines/textToImage'
 
@@ -51,6 +52,13 @@ export const createJob = {
     })
   },
 
+  ingestImageUrl: async (ctx: MutationCtx, input: IngestImageUrlPipelineInput) => {
+    return await register(ctx, {
+      pipeline: 'ingestImageUrl',
+      input,
+    })
+  },
+
   textToAudio: async (ctx: MutationCtx, input: TextToAudioPipelineInput) => {
     return await register(ctx, {
       pipeline: 'textToAudio',
@@ -65,6 +73,8 @@ export const createJob = {
     })
   },
 }
+
+export const createIngestImageUrlJob = internalMutation(createJob.ingestImageUrl)
 
 export const get = internalQuery({
   args: {
@@ -93,6 +103,8 @@ export const fail = internalMutation({
   },
   handler: async (ctx, { jobId }) => {
     const job = await ctx.table('jobs3').getX(jobId)
+    console.error(job.pipeline, job._id)
+
     return await job.patch({
       status: 'failed',
     })
@@ -144,7 +156,7 @@ export const stepFailed = internalMutation({
   handler: async (ctx, { jobId, stepName, error, startTime }) => {
     const job = await ctx.table('jobs3').getX(jobId)
     const retryCount = (job.stepResults.at(-1)?.retryCount ?? 0) + 1
-    console.error(`${job.pipeline}.${stepName}`, error.message)
+    console.warn(`${job.pipeline}.${stepName}`, error.message)
 
     return await job.patch({
       status: 'active',

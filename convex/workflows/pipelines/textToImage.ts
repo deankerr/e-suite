@@ -1,6 +1,6 @@
 import * as vb from 'valibot'
 
-import * as Ingest from '../actions/ingest'
+import { internal } from '../../_generated/api'
 import * as Fal from '../actions/textToImage/fal'
 
 import type { Id } from '../../_generated/dataModel'
@@ -21,11 +21,6 @@ const InitialInput = vb.object({
   height: vb.optional(vb.number()),
 })
 
-const InferenceResult = vb.object({
-  initial: InitialInput,
-  inference: vb.object({ imageUrls: vb.array(vb.string()) }),
-})
-
 export const textToImagePipeline: Pipeline = {
   name: 'textToImage',
   schema: InitialInput,
@@ -33,28 +28,18 @@ export const textToImagePipeline: Pipeline = {
     {
       name: 'inference',
       retryLimit: 3,
-      action: async (_, input) => {
-        try {
-          const { initial } = vb.parse(vb.object({ initial: InitialInput }), input)
-          const { imageUrls } = await Fal.textToImage(initial)
-          return { imageUrls }
-        } catch (err) {
-          throw err
-        }
-      },
-    },
-
-    {
-      name: 'ingestImages',
-      retryLimit: 3,
       action: async (ctx, input) => {
         try {
-          const { initial, inference } = vb.parse(InferenceResult, input)
+          const { initial } = vb.parse(vb.object({ initial: InitialInput }), input)
+          const result = await Fal.textToImage(initial)
 
-          const result = await Ingest.images(ctx, {
-            imageUrls: inference.imageUrls,
-            messageId: initial.messageId as Id<'messages'>,
-          })
+          for (const url of result.imageUrls) {
+            await ctx.runMutation(internal.workflows.jobs.createIngestImageUrlJob, {
+              url,
+              messageId: initial.messageId,
+            })
+          }
+
           return result
         } catch (err) {
           throw err

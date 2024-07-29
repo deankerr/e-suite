@@ -7,12 +7,14 @@ import { internalAction } from '../functions'
 import { getErrorMessage } from '../shared/utils'
 import { chatPipeline } from './pipelines/chat'
 import { generateThreadTitlePipeline } from './pipelines/generateThreadTitle'
+import { ingestImageUrlPipeline } from './pipelines/ingestImageUrl'
 import { textToAudioPipeline } from './pipelines/textToAudio'
 import { textToImagePipeline } from './pipelines/textToImage'
 
 const pipelines = {
   chat: chatPipeline,
   generateThreadTitle: generateThreadTitlePipeline,
+  ingestImageUrl: ingestImageUrlPipeline,
   textToAudio: textToAudioPipeline,
   textToImage: textToImagePipeline,
 }
