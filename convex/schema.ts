@@ -85,23 +85,6 @@ export const inferenceConfigV = v.union(
   soundGenerationConfigV,
 )
 
-export const fileAttachmentRecordSchemaV = v.array(
-  v.union(
-    v.object({
-      id: v.id('images'),
-      type: v.literal('image'),
-    }),
-    v.object({
-      type: v.literal('image_url'),
-      url: v.string(),
-    }),
-    v.object({
-      id: v.id('sound_effect_files'),
-      type: v.literal('sound_effect'),
-    }),
-  ),
-)
-
 export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
 
 // * Models
@@ -116,8 +99,18 @@ const sharedModelFields = {
   coverImageUrl: v.optional(v.string()),
 
   endpoint: v.string(),
+  modelId: v.optional(v.string()),
   endpointModelId: v.string(),
+
   pricing: v.union(
+    v.object({
+      type: v.literal('perMillionTokens'),
+      inputValue: v.number(),
+      outputValue: v.number(),
+    }),
+    v.object({
+      type: v.literal('free'),
+    }),
     v.object({
       type: v.literal('perRequest'),
       value: v.number(),
