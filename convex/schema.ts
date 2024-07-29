@@ -252,6 +252,7 @@ export const audioFields = {
     modelId: v.string(),
     modelName: v.string(),
     endpointId: v.string(),
+    duration: v.optional(v.number()),
   }),
 }
 const audio = defineEnt(audioFields)

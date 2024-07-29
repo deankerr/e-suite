@@ -60,6 +60,7 @@ import type * as workflows_actions_textToImage_fal from "../workflows/actions/te
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
+import type * as workflows_pipelines_textToAudio from "../workflows/pipelines/textToAudio.js";
 import type * as workflows_pipelines_textToImage from "../workflows/pipelines/textToImage.js";
 import type * as workflows_spawn from "../workflows/spawn.js";
 import type * as workflows_types from "../workflows/types.js";
@@ -119,6 +120,7 @@ declare const fullApi: ApiFromModules<{
   "workflows/engine": typeof workflows_engine;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/chat": typeof workflows_pipelines_chat;
+  "workflows/pipelines/textToAudio": typeof workflows_pipelines_textToAudio;
   "workflows/pipelines/textToImage": typeof workflows_pipelines_textToImage;
   "workflows/spawn": typeof workflows_spawn;
   "workflows/types": typeof workflows_types;

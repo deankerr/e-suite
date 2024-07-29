@@ -4,14 +4,16 @@ import { internal } from '../_generated/api'
 import { internalAction, internalMutation } from '../functions'
 import { getErrorMessage } from '../shared/utils'
 import { chatPipeline } from './pipelines/chat'
+import { textToAudioPipeline } from './pipelines/textToAudio'
 import { textToImagePipeline } from './pipelines/textToImage'
 
 import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 
 const pipelines = {
-  textToImage: textToImagePipeline,
   chat: chatPipeline,
+  textToAudio: textToAudioPipeline,
+  textToImage: textToImagePipeline,
 }
 
 export const createWorkflowJob = async (
