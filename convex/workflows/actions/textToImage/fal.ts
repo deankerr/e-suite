@@ -2,6 +2,8 @@ import * as client from '@fal-ai/serverless-client'
 import { ConvexError } from 'convex/values'
 import * as vb from 'valibot'
 
+import { ResourceKey } from '../../../lib/valibot'
+
 import type { RunConfigTextToImage } from '../../../types'
 
 const Response = vb.object({
@@ -27,21 +29,12 @@ client.config({
   credentials: process.env.FAL_API_KEY!,
 })
 
-const FalResourceKey = vb.pipe(
-  vb.string(),
-  vb.startsWith('fal::'),
-  vb.transform((input) => {
-    const [endpoint, modelId] = input.split('::')
-    return { endpoint, modelId }
-  }),
-)
-
 export const textToImage = async (
   args: Omit<RunConfigTextToImage, 'type' | 'size'> & { size?: string },
 ) => {
   try {
     const { resourceKey, width, height, size, prompt, n } = args
-    const { modelId } = vb.parse(FalResourceKey, resourceKey)
+    const { modelId } = vb.parse(ResourceKey, resourceKey)
 
     const input = {
       prompt,

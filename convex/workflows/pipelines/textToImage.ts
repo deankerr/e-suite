@@ -1,6 +1,7 @@
 import * as vb from 'valibot'
 
 import { api, internal } from '../../_generated/api'
+import { ResourceKey } from '../../lib/valibot'
 import * as Fal from '../actions/textToImage/fal'
 import * as Sinkin from '../actions/textToImage/sinkin'
 
@@ -37,7 +38,7 @@ export const textToImagePipeline: Pipeline = {
             resourceKey: initial.resourceKey,
           })
 
-          const [endpoint] = initial.resourceKey.split('::')
+          const { endpoint } = vb.parse(ResourceKey, initial.resourceKey)
           const handler = getEndpointHandler(endpoint)
           const result = await handler({
             ...initial,
