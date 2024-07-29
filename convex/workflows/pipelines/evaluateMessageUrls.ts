@@ -3,6 +3,7 @@ import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { fetch } from '../../lib/fetch'
+import { jobErrorHandling } from '../engine'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -25,23 +26,25 @@ export const evaluateMessageUrlsPipeline: Pipeline = {
       name: 'run',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const {
-          initial: { urls, messageId },
-        } = vb.parse(vb.object({ initial: InitialInput }), input)
+        return jobErrorHandling(async () => {
+          const {
+            initial: { urls, messageId },
+          } = vb.parse(vb.object({ initial: InitialInput }), input)
 
-        const urlData = await Promise.all(urls.map(fetchContentTypeData))
+          const urlData = await Promise.all(urls.map(fetchContentTypeData))
 
-        const imageUrls = urlData
-          .filter((data) => data.type.startsWith('image'))
-          .map((data) => data.url)
-        for (const url of imageUrls) {
-          await ctx.runMutation(internal.workflows.jobs.createIngestImageUrlJob, {
-            url,
-            messageId,
-          })
-        }
+          const imageUrls = urlData
+            .filter((data) => data.type.startsWith('image'))
+            .map((data) => data.url)
+          for (const url of imageUrls) {
+            await ctx.runMutation(internal.workflows.jobs.createIngestImageUrlJob, {
+              url,
+              messageId,
+            })
+          }
 
-        return { imageUrls }
+          return { imageUrls }
+        }, 'evaluateMessageUrls.run')
       },
     },
   ],

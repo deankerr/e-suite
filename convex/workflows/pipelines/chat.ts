@@ -1,12 +1,13 @@
 import { createOpenAI, openai } from '@ai-sdk/openai'
 import { generateText, streamText } from 'ai'
-import { ConvexError, v } from 'convex/values'
+import { v } from 'convex/values'
 import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
 import { ResourceKey } from '../../lib/valibot'
 import { env, hasDelimiter } from '../../shared/utils'
+import { jobErrorHandling, WorkflowError } from '../engine'
 import { createJob } from '../jobs'
 
 import type { Id } from '../../_generated/dataModel'
@@ -44,7 +45,7 @@ const createProvider = (endpoint: string) => {
       })
   }
 
-  throw new ConvexError(`invalid endpoint: ${endpoint}`)
+  throw new WorkflowError(`invalid endpoint: ${endpoint}`, 'invalid_endpoint', true)
 }
 
 export const chatPipeline: Pipeline = {
@@ -55,7 +56,7 @@ export const chatPipeline: Pipeline = {
       name: 'inference',
       retryLimit: 0,
       action: async (ctx, input) => {
-        try {
+        return jobErrorHandling(async () => {
           const {
             initial: {
               messageId,
@@ -131,10 +132,7 @@ export const chatPipeline: Pipeline = {
 
             return { text, finishReason, usage, output }
           }
-        } catch (err) {
-          console.error(err)
-          throw err
-        }
+        }, 'chat.inference')
       },
     },
   ],

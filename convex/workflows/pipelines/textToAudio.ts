@@ -4,6 +4,7 @@ import * as vb from 'valibot'
 import { internal } from '../../_generated/api'
 import * as ElevenLabs from '../../endpoints/elevenlabs'
 import { internalMutation } from '../../functions'
+import { jobErrorHandling } from '../engine'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -27,24 +28,26 @@ export const textToAudioPipeline: Pipeline = {
       name: 'inference',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const {
-          initial: { messageId, prompt, duration },
-        } = vb.parse(vb.object({ initial: InitialInput }), input)
+        return jobErrorHandling(async () => {
+          const {
+            initial: { messageId, prompt, duration },
+          } = vb.parse(vb.object({ initial: InitialInput }), input)
 
-        console.log('[textToAudio] [input] [elevenlabs]', prompt)
-        const fileId = await ElevenLabs.soundGeneration(ctx, {
-          text: prompt,
-          duration_seconds: duration,
-        })
+          console.log('[textToAudio] [input] [elevenlabs]', prompt)
+          const fileId = await ElevenLabs.soundGeneration(ctx, {
+            text: prompt,
+            duration_seconds: duration,
+          })
 
-        const audioId = await ctx.runMutation(internal.workflows.pipelines.textToAudio.complete, {
-          messageId,
-          fileId,
-          prompt,
-          duration,
-        })
+          const audioId = await ctx.runMutation(internal.workflows.pipelines.textToAudio.complete, {
+            messageId,
+            fileId,
+            prompt,
+            duration,
+          })
 
-        return { audioId }
+          return { audioId }
+        }, 'textToAudio.inference')
       },
     },
   ],

@@ -1,10 +1,11 @@
-import { ConvexError, v } from 'convex/values'
+import { v } from 'convex/values'
 import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation } from '../../functions'
 import { evaluateNsfwProbability } from '../actions/evaluateNsfwProbability'
 import { generateImageCaption } from '../actions/generateImageCaption'
+import { jobErrorHandling } from '../engine'
 
 import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
@@ -40,61 +41,63 @@ export const ingestImageUrlPipeline: Pipeline = {
       name: 'createImage',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const {
-          initial: { url, messageId },
-        } = vb.parse(vb.object({ initial: InitialInput }), input)
+        return jobErrorHandling(async () => {
+          const {
+            initial: { url, messageId },
+          } = vb.parse(vb.object({ initial: InitialInput }), input)
 
-        const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.storeImageFromUrl, {
-          url,
-        })
+          const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.storeImageFromUrl, {
+            url,
+          })
 
-        const imageId = await ctx.runMutation(internal.db.images.createImageWf, {
-          fileId,
-          ...metadata,
-          sourceUrl: url,
-          messageId,
-        })
+          const imageId = await ctx.runMutation(internal.db.images.createImageWf, {
+            fileId,
+            ...metadata,
+            sourceUrl: url,
+            messageId,
+          })
 
-        return { imageId, fileId }
+          return { imageId, fileId }
+        }, 'ingestImageUrl.createImage')
       },
     },
     {
       name: 'nsfwProbability',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const { createImage } = vb.parse(CreateImageResult, input)
+        return jobErrorHandling(async () => {
+          const { createImage } = vb.parse(CreateImageResult, input)
 
-        const url = await ctx.storage.getUrl(createImage.fileId)
-        if (!url) throw new ConvexError('unable to get file url')
+          const url = (await ctx.storage.getUrl(createImage.fileId)) as string
+          const { nsfwProbability } = await evaluateNsfwProbability(ctx, { url })
 
-        const { nsfwProbability } = await evaluateNsfwProbability(ctx, { url })
+          await ctx.runMutation(internal.workflows.pipelines.ingestImageUrl.addImageDetails, {
+            imageId: createImage.imageId,
+            nsfwProbability,
+          })
 
-        await ctx.runMutation(internal.workflows.pipelines.ingestImageUrl.addImageDetails, {
-          imageId: createImage.imageId,
-          nsfwProbability,
-        })
-
-        return { nsfwProbability }
+          return { nsfwProbability }
+        }, 'ingestImageUrl.nsfwProbability')
       },
     },
     {
       name: 'caption',
       retryLimit: 3,
       action: async (ctx, input) => {
-        const { createImage } = vb.parse(CreateImageResult, input)
+        return jobErrorHandling(async () => {
+          const { createImage } = vb.parse(CreateImageResult, input)
 
-        const url = await ctx.storage.getUrl(createImage.fileId)
-        if (!url) throw new ConvexError('unable to get file url')
+          const url = (await ctx.storage.getUrl(createImage.fileId)) as string
+          const { caption, modelId } = await generateImageCaption(ctx, { url })
 
-        const { caption, modelId } = await generateImageCaption(ctx, { url })
+          await ctx.runMutation(internal.workflows.pipelines.ingestImageUrl.addImageDetails, {
+            imageId: createImage.imageId,
+            captionText: caption,
+            captionModelId: modelId,
+          })
 
-        await ctx.runMutation(internal.workflows.pipelines.ingestImageUrl.addImageDetails, {
-          imageId: createImage.imageId,
-          captionText: caption,
-          captionModelId: modelId,
-        })
-
-        return { caption, modelId }
+          return { caption, modelId }
+        }, 'ingestImageUrl.caption')
       },
     },
   ],
