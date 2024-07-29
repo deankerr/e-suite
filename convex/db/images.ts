@@ -5,56 +5,11 @@ import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery } from '../functions'
-import { createJob } from '../jobs'
 import { imageFields } from '../schema'
 import { getTextToImageConfig } from '../shared/utils'
 
 import type { Doc } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
-import type { WithoutSystemFields } from 'convex/server'
-
-const srcSizes = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]
-
-export const createImage = async (
-  ctx: MutationCtx,
-  args: Omit<WithoutSystemFields<Doc<'images'>>, 'threadId' | 'userId'>,
-) => {
-  const message = await ctx.skipRules.table('messages').getX(args.messageId)
-
-  // const modelId = visionModels[Math.floor(Math.random() * visionModels.length)] as string
-  const modelId = 'fal-ai/idefics-2-8b'
-
-  const imageId = await ctx.table('images').insert({
-    ...args,
-    captionModelId: modelId,
-    userId: message.userId,
-    threadId: message.threadId,
-    generationData: await getGenerationData(ctx, message),
-  })
-  console.log('[image]', args.sourceUrl)
-
-  // # captioning
-  await createJob(ctx, {
-    name: 'inference/captionImage',
-    fields: {
-      imageId,
-    },
-  })
-
-  // # nsfw ranking
-  await createJob(ctx, {
-    name: 'inference/assessNsfw',
-    fields: {
-      imageId,
-    },
-  })
-
-  if (!message.hasImageContent) {
-    await message.patch({ hasImageContent: true })
-  }
-
-  return imageId
-}
 
 export const createImageWf = internalMutation({
   args: {

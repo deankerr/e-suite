@@ -5,6 +5,7 @@ import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
+import { ResourceKey } from '../../lib/valibot'
 import { env, hasDelimiter } from '../../shared/utils'
 import { createJob } from '../jobs'
 
@@ -12,17 +13,6 @@ import type { Id } from '../../_generated/dataModel'
 import type { Pipeline } from '../types'
 
 const defaultMaxHistoryMessages = 64
-
-const ResourceKey = vb.pipe(
-  vb.string(),
-  vb.transform((input) => {
-    const [endpoint, modelId] = input.split('::')
-    if (endpoint === 'openai' && modelId.startsWith('openai/')) {
-      return { endpoint, modelId: modelId.slice(7) }
-    }
-    return { endpoint, modelId }
-  }),
-)
 
 export type ChatPipelineInput = vb.InferOutput<typeof InitialInput>
 const InitialInput = vb.object({
@@ -79,7 +69,7 @@ export const chatPipeline: Pipeline = {
           const { endpoint, modelId } = vb.parse(ResourceKey, resourceKey)
 
           const api = createProvider(endpoint)
-          const model = api(modelId)
+          const model = endpoint === 'openai' ? api(modelId.slice(7)) : api(modelId)
 
           const { messages } = await ctx.runQuery(
             internal.workflows.pipelines.chat.getConversationMessages,
@@ -89,7 +79,7 @@ export const chatPipeline: Pipeline = {
               maxHistoryMessages,
             },
           )
-          console.log(`[chat] [${endpoint}] [input]`, model, messages, input)
+          console.log(`chat.${endpoint}.input`, model, messages, input)
 
           // * streaming generation
           if (stream) {
@@ -103,7 +93,7 @@ export const chatPipeline: Pipeline = {
                   text,
                 })
 
-                console.log(`[chat] [${endpoint}] [output]`, text, finishReason, usage)
+                console.log(`chat.${endpoint}.output`, text, finishReason, usage)
               },
             })
 
