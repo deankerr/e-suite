@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 import type { EMessage } from '@/convex/types'
 
 export const MessageFeed = () => {
-  const { thread, messages, removeMessage } = useChat()
+  const { thread, messages } = useChat()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [endOfFeedRef, endOfFeedInView] = useInView()
@@ -48,7 +48,6 @@ export const MessageFeed = () => {
               key={message._id}
               message={message}
               deeplink={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
-              removeMessage={removeMessage}
               showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
             />
           ))}

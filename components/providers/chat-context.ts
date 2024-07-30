@@ -37,7 +37,6 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
   // * mutations
   const sendUpdateThread = useMutation(api.db.threads.update)
   const sendUpdateMessage = useMutation(api.db.messages.update)
-  const sendRemoveMessage = useMutation(api.db.messages.remove)
 
   const updateThread = useCallback(
     async (args: Omit<Parameters<typeof sendUpdateThread>[0], 'threadId'>['fields']) => {
@@ -52,13 +51,6 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
       await sendUpdateMessage(args)
     },
     [sendUpdateMessage],
-  )
-
-  const removeMessage = useCallback(
-    async (args: Omit<Parameters<typeof sendRemoveMessage>[0], 'apiKey'>) => {
-      await sendRemoveMessage(args)
-    },
-    [sendRemoveMessage],
   )
 
   // * mutation helpers
@@ -99,7 +91,6 @@ export const useCreateChatContext = ({ slug, series }: { slug?: string; series?:
     page,
     updateThread,
     updateMessage,
-    removeMessage,
     setChatInferenceConfig,
     setImageInferenceConfig,
     queryFilters,
