@@ -124,7 +124,7 @@ const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end'
 
 const MessagesLoading = () => {
   return (
-    <div className="grid grow grid-rows-12 gap-4 overflow-hidden px-4 py-4">
+    <div className="mx-auto grid w-full max-w-3xl grow grid-rows-12 gap-4 overflow-hidden px-4 py-4">
       <Skeleton />
       <Skeleton />
       <Skeleton />
