@@ -10,9 +10,12 @@ import { useLightbox } from '@/components/lightbox/hooks'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/message/Markdown'
 import { MessageEditor } from '@/components/message/MessageEditor'
+import { ErrorCallout } from '@/components/ui/Callouts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
+import { getMessageJobsDetails } from '@/convex/shared/utils'
+import { useMessageMutations } from '@/lib/api'
 import { useViewerDetails } from '@/lib/queries'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
@@ -29,7 +32,6 @@ const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'), {
 export const Message = ({
   message,
   deeplink,
-  removeMessage,
   showNameAvatar = true,
   showTimeline = true,
   className,
@@ -37,25 +39,16 @@ export const Message = ({
 }: {
   message: EMessage
   deeplink: string
-  removeMessage?: (args: { messageId: string }) => void
   showNameAvatar?: boolean
   showTimeline?: boolean
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const { isOwner } = useViewerDetails(message.userId)
-  const activeJobs = message.jobs.filter(
-    (job) => job.status === 'active' || job.status === 'pending',
-  )
-  const failedJobMessages = message.jobs
-    .filter((job) => job.status === 'failed')
-    .map((job) => job.stepResults.at(-1)?.error?.message)
-    .filter((error): error is string => error !== undefined)
+  const jobs = getMessageJobsDetails(message.jobs)
 
   const { textToImageConfig } = getInferenceConfig(message.inference)
   const nImagePlaceholders =
-    textToImageConfig && failedJobMessages.length === 0
-      ? textToImageConfig.n - message.images.length
-      : 0
+    textToImageConfig && jobs.failed.length === 0 ? textToImageConfig.n - message.images.length : 0
 
   const name = getMessageName(message)
   const text = textToImageConfig ? textToImageConfig.prompt : message.text
@@ -65,6 +58,8 @@ export const Message = ({
   const [showEditor, setShowEditor] = useState(false)
 
   const openLightbox = useLightbox()
+
+  const { removeMessage } = useMessageMutations()
   return (
     <div
       {...props}
@@ -84,7 +79,6 @@ export const Message = ({
             style={{ backgroundColor: marbleProps[0].color }}
           />
         )}
-        {/* {showNameAvatar ? <Marble name={name} properties={marbleProps} size={16} /> : null} */}
       </div>
 
       {/* # name / text content # */}
@@ -96,10 +90,14 @@ export const Message = ({
         {!showEditor && text && text.length < 300 ? text : null}
 
         {/* * errors * */}
-        {failedJobMessages.map((error, i) => (
-          <div key={i} className="rounded-lg border border-red-10 px-2 py-1.5 text-xs text-red-11">
-            {error}
-          </div>
+        {jobs.failedJobErrors.map(({ code, message }, i) => (
+          <ErrorCallout
+            key={i}
+            title={code}
+            message={message}
+            size="1"
+            className="mx-auto max-w-xl"
+          />
         ))}
       </div>
 
@@ -211,7 +209,7 @@ export const Message = ({
       ) : null}
 
       {/* * loading ping * */}
-      {activeJobs.length > 0 && (
+      {jobs.active.length > 0 && (
         <div className="col-start-2">
           <LoadingSpinner variant="ping" />
         </div>

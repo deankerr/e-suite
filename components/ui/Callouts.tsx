@@ -6,19 +6,19 @@ import { cn } from '@/lib/utils'
 export const ErrorCallout = ({
   title,
   message,
-  className,
+  ...props
 }: {
   title: string
   message: string
-  className?: string
-}) => {
+} & React.ComponentProps<typeof Callout.Root>) => {
   return (
-    <Callout.Root color="red" role="alert" className={cn('mx-auto max-w-2xl', className)}>
+    <Callout.Root color="red" role="alert" {...props}>
       <Callout.Icon>
-        <Icons.WarningOctagon className="animate-pulse" />
+        <Icons.WarningOctagon className="size-5 animate-pulse" />
       </Callout.Icon>
-      <Callout.Text className="border-b border-red-6 pb-1">{title}</Callout.Text>
-      <Callout.Text className="">{message}</Callout.Text>
+      <Callout.Text className="">
+        {title}: {message}
+      </Callout.Text>
     </Callout.Root>
   )
 }

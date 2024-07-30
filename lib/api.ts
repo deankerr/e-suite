@@ -10,6 +10,7 @@ import type { ChatQueryFilters } from '@/components/providers/chat-context'
 const RUN_THROTTLE = 2500
 const MAX_LATEST_MESSAGES = 32
 
+// * mutations
 export const useThreadActions = (threadId?: string) => {
   const [actionState, setActionState] = useState<'ready' | 'pending' | 'rateLimited'>('ready')
 
@@ -76,6 +77,20 @@ export const useUpdateCurrentThreadModel = () => {
   return useMutation(api.db.threads.updateCurrentModel)
 }
 
+export const useMessageMutations = () => {
+  const sendRemoveMessage = useMutation(api.db.messages.remove)
+
+  const removeMessage = useCallback(
+    async (args: Omit<Parameters<typeof sendRemoveMessage>[0], 'apiKey'>) => {
+      await sendRemoveMessage(args)
+    },
+    [sendRemoveMessage],
+  )
+
+  return { removeMessage }
+}
+
+// * queries
 export const useLatestMessages = (slugOrId?: string) => {
   return useQuery(api.db.threads.latest, slugOrId ? { slugOrId } : 'skip')
 }

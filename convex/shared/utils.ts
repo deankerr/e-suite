@@ -1,5 +1,6 @@
 import { ConvexError } from 'convex/values'
 
+import type { Doc } from '../_generated/dataModel'
 import type {
   ChatCompletionConfig,
   InferenceConfig,
@@ -54,11 +55,8 @@ export function stringifyValueForError(value: any) {
 
   return JSON.stringify(value, (_key, value) => {
     if (value === undefined) {
-      // By default `JSON.stringify` converts undefined, functions, symbols,
-      // Infinity, and NaN to null which produces a confusing error message.
+      // By default `JSON.stringify` converts undefined, functions, symbols, Infinity, and NaN to null which produces a confusing error message.
       // We deal with `undefined` specifically because it's the most common.
-      // Ideally we'd use a pretty-printing library that prints `undefined`
-      // (no quotes), but it might not be worth the bundle size cost.
       return 'undefined'
     }
     if (typeof value === 'bigint') {
@@ -67,6 +65,16 @@ export function stringifyValueForError(value: any) {
     }
     return value
   })
+}
+
+export function getMessageJobsDetails(jobs: Doc<'jobs3'>[]) {
+  const active = jobs.filter((job) => job.status === 'active' || job.status === 'pending')
+  const failed = jobs.filter((job) => job.status === 'failed')
+  const failedJobErrors = failed
+    .map((job) => job.stepResults.at(-1)?.error)
+    .filter((err) => err !== undefined)
+
+  return { active, failed, failedJobErrors }
 }
 
 export function hasDelimiter(text: string) {
