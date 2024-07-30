@@ -38,7 +38,7 @@ export const Message = ({
   ...props
 }: {
   message: EMessage
-  deeplink: string
+  deeplink?: string
   showNameAvatar?: boolean
   showTimeline?: boolean
 } & React.ComponentProps<'div'>) => {
@@ -112,7 +112,9 @@ export const Message = ({
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Content variant="soft" align="end">
-              <DropdownMenu.Item onClick={() => router.push(deeplink)}>Link</DropdownMenu.Item>
+              {deeplink ? (
+                <DropdownMenu.Item onClick={() => router.push(deeplink)}>Link</DropdownMenu.Item>
+              ) : null}
 
               <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
                 {showEditor ? 'Cancel Edit' : 'Edit'}

@@ -2,18 +2,20 @@
 
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { IconButton } from '@radix-ui/themes'
+import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { MessageFeed } from '@/components/message-feed/MessageFeed'
+import { Message } from '@/components/message/Message'
 import { LoadingPage } from '@/components/pages/LoadingPage'
-import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ThreadProvider, useThreadContext } from '@/components/providers/ThreadProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { EmptyPage } from '@/components/shell/pages/EmptyPage'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
+import { cn } from '@/lib/utils'
 
 export const ThreadPage = ({
   threadSlug,
@@ -24,29 +26,46 @@ export const ThreadPage = ({
 }) => {
   return (
     <ThreadProvider threadSlug={threadSlug} messageSeriesNum={messageSeriesNum}>
-      <PageWrapper>
+      <ThreadPageWrapper>
         <div className="flex h-full flex-col">
           <ThreadPageHeader />
           <ThreadPageBody />
           <ThreadComposer />
           <ThreadPageDebug />
         </div>
-      </PageWrapper>
+      </ThreadPageWrapper>
     </ThreadProvider>
   )
 }
 
 const ThreadPageHeader = () => {
-  const { threadTitle } = useThreadContext()
+  const { thread, threadTitle } = useThreadContext()
+  const shell = useShellActions()
+  if (!thread) return null
 
   return (
-    <header className="flex-between h-12 shrink-0 border-b border-grayA-3">
-      <div className="flex-start min-w-10 gap-1">
-        <SidebarButton className="m-0" />
+    <header className="flex-between h-12 shrink-0 gap-2 overflow-hidden border-b border-grayA-3 px-2.5">
+      <div className="flex-start min-w-10 shrink-0 gap-1">
+        <SidebarButton className="m-0 md:hidden" />
       </div>
-      {threadTitle}
 
-      <div className="flex-start min-w-10 gap-1">
+      <div className="flex overflow-hidden">
+        <Button
+          variant="soft"
+          color="gray"
+          highContrast
+          className={cn(
+            'max-w-full',
+            !thread?.user.isViewer && 'pointer-events-none [&>svg]:hidden',
+          )}
+          onClick={() => shell.open({ threadId: thread._id })}
+        >
+          <div className="truncate">{threadTitle}</div>
+          <Icons.CaretUpDown className="shrink-0" />
+        </Button>
+      </div>
+
+      <div className="flex-start min-w-10 shrink-0 gap-1">
         <IconButton variant="ghost">
           <Icons.X className="size-5" />
         </IconButton>
@@ -56,14 +75,31 @@ const ThreadPageHeader = () => {
 }
 
 const ThreadPageBody = () => {
-  return <MessageFeed />
+  const { isSeriesMessage } = useThreadContext()
+  return isSeriesMessage ? <SingleMessagePage /> : <MessageFeed />
+}
+
+const SingleMessagePage = () => {
+  const { seriesMessage } = useThreadContext()
+
+  if (!seriesMessage) return <LoadingSpinner />
+
+  return (
+    <div className="overflow-hidden">
+      <ScrollArea scrollbars="vertical">
+        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
+          <Message message={seriesMessage} showTimeline={false} />
+        </div>
+      </ScrollArea>
+    </div>
+  )
 }
 
 const ThreadComposer = () => {
-  const { thread } = useThreadContext()
+  const { thread, isSeriesMessage } = useThreadContext()
   const shell = useShellActions()
 
-  if (!thread) return null
+  if (!thread || isSeriesMessage) return null
 
   return (
     <Composer
@@ -90,5 +126,15 @@ const ThreadPageDebug = () => {
         <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button>
       </div>
     </AdminOnlyUi>
+  )
+}
+
+const ThreadPageWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { thread } = useThreadContext()
+  const isLoading = !thread
+  return (
+    <div className="h-full w-full overflow-x-hidden border-grayA-5 bg-gray-2 md:rounded-md md:border">
+      {isLoading ? <LoadingPage /> : children}
+    </div>
   )
 }

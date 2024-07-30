@@ -1,6 +1,11 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useState } from 'react'
 
-import { useLatestMessages, useThreads } from '@/lib/api'
+import { useLatestMessages, useSeriesMessage, useThreads } from '@/lib/api'
+
+export type ChatQueryFilters = {
+  role?: 'user' | 'assistant'
+  hasContent?: 'image' | 'audio'
+}
 
 const useCreateThreadContext = ({
   threadSlug,
@@ -9,12 +14,15 @@ const useCreateThreadContext = ({
   threadSlug?: string
   messageSeriesNum?: string
 }) => {
+  const [queryFilters, setQueryFilters] = useState<ChatQueryFilters | undefined>(undefined)
+
   const { thread } = useThreads(threadSlug)
-  const messages = useLatestMessages(threadSlug)
+  const messages = useLatestMessages(messageSeriesNum ? undefined : threadSlug)
+  const seriesMessage = useSeriesMessage({ slug: threadSlug, series: messageSeriesNum })
 
   const threadTitle = thread ? (thread.title ?? 'untitled thread') : ''
 
-  return { thread, messages, threadTitle }
+  return { thread, messages, threadTitle, seriesMessage, isSeriesMessage: !!messageSeriesNum }
 }
 
 type ThreadContext = ReturnType<typeof useCreateThreadContext>

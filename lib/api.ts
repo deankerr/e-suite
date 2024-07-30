@@ -147,3 +147,10 @@ export const useThreads = (threadSlug?: string) => {
     thread: currentUserThread ?? threadFromSlug,
   }
 }
+
+export const useSeriesMessage = ({ slug, series }: { slug?: string; series?: string }) => {
+  return useQuery(
+    api.db.messages.getSeriesMessage,
+    slug && series ? { slug, series: Number(series) } : 'skip',
+  )
+}
