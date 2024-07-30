@@ -2,7 +2,9 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
 import { Button, Checkbox, Popover, Radio, Separator } from '@radix-ui/themes'
 
-import { useChat } from '@/components/providers/ChatProvider'
+const useChat = () => {
+  return 1 as any
+}
 
 export const FilterControl = ({
   buttonProps,

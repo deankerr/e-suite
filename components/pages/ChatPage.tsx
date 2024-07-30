@@ -10,7 +10,6 @@ import { SidebarButton } from '@/components/layout/SidebarButton'
 import { MessageFeed } from '@/components/message-feed/MessageFeed'
 import { FilterControl } from '@/components/pages/FilterControl'
 import { PageWrapper } from '@/components/pages/PageWrapper'
-import { ChatProvider, useChat } from '@/components/providers/ChatProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { Link } from '@/components/ui/Link'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
@@ -19,8 +18,14 @@ import { appConfig } from '@/config/config'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
+import type { EMessage, EThread } from '@/convex/types'
+
 const ChatPageImpl = () => {
-  const { thread, isMessageSeriesQuery, seriesMessage } = useChat()
+  const { thread, isMessageSeriesQuery, seriesMessage } = {} as unknown as {
+    thread: EThread
+    isMessageSeriesQuery: boolean
+    seriesMessage: EMessage
+  }
   const { isOwner } = useViewerDetails(thread?.userId)
 
   const shell = useShellActions()
@@ -77,17 +82,9 @@ const ChatPageImpl = () => {
           />
         )}
 
-        <ChatPageDebug />
+        {/* <ChatPageDebug /> */}
       </div>
     </PageWrapper>
-  )
-}
-
-export const ChatPage = ({ slug, series }: { slug: string; series?: string }) => {
-  return (
-    <ChatProvider slug={slug} series={series}>
-      <ChatPageImpl />
-    </ChatProvider>
   )
 }
 
@@ -119,18 +116,18 @@ const ChatPageError = () => {
   )
 }
 
-const ChatPageDebug = () => {
-  const [showJson, setShowJson] = useState(false)
-  const { thread, messages } = useChat()
+// const ChatPageDebug = () => {
+//   const [showJson, setShowJson] = useState(false)
+//   const { thread, messages } = useChat()
 
-  return (
-    <AdminOnlyUi>
-      {showJson && (
-        <Pre stringify={thread} className="absolute inset-x-4 inset-y-16 overflow-auto" />
-      )}
-      <div className="absolute left-1 top-12 font-mono text-xs text-gray-9">
-        <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button>
-      </div>
-    </AdminOnlyUi>
-  )
-}
+//   return (
+//     <AdminOnlyUi>
+//       {showJson && (
+//         <Pre stringify={thread} className="absolute inset-x-4 inset-y-16 overflow-auto" />
+//       )}
+//       <div className="absolute left-1 top-12 font-mono text-xs text-gray-9">
+//         <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button>
+//       </div>
+//     </AdminOnlyUi>
+//   )
+// }

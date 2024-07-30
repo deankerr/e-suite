@@ -1,30 +1,9 @@
-import { useQuery as useConvexQuery, usePaginatedQuery } from 'convex/react'
+import { useQuery as useConvexQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
 import { EChatModel, EImageModel, EThread, EUser, EVoiceModel } from '@/convex/types'
 
 const useQuery = useConvexQuery
-
-export const useThread = ({ slug = '' }: { slug?: string }): EThread | null | undefined => {
-  const thread = useQuery(api.db.threads.get, {
-    slugOrId: slug,
-  })
-
-  return thread
-}
-
-export const useSeriesMessage = ({ slug, series }: { slug?: string; series?: string }) => {
-  const result = useQuery(
-    api.db.messages.getSeriesMessage,
-    slug && series
-      ? {
-          slug,
-          series: Number(series),
-        }
-      : 'skip',
-  )
-  return result
-}
 
 export const useUserThreadsList = (): EThread[] | undefined => {
   const result = useQuery(api.db.threads.list, {})

@@ -1,7 +1,7 @@
-import { ChatPage } from '@/components/pages/ChatPage'
+import { ThreadPage } from '@/components/pages/ThreadPage'
 
-export default function ThreadPage({ params }: { params: { slug: string[] } }) {
-  const slug = params.slug[0] ?? ''
-  const series = params.slug[1] ?? ''
-  return <ChatPage slug={slug} series={series} />
+export default function Page({ params }: { params: { slug: string[] } }) {
+  const threadSlug = params.slug[0] ?? ''
+  const messageSeriesNum = params.slug[1] ?? ''
+  return <ThreadPage threadSlug={threadSlug} messageSeriesNum={messageSeriesNum} />
 }

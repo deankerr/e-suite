@@ -63,60 +63,24 @@ export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   return thread && !thread.deletionTime ? thread : null
 }
 
-export const getThreadExtras = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
+const getCurrentModel = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   const model =
     thread.inference.type === 'chat-completion'
       ? await getChatModelByResourceKey(ctx, thread.inference.resourceKey)
       : thread.inference.type === 'text-to-image'
         ? await getImageModelByResourceKey(ctx, thread.inference.resourceKey)
         : null
-  return { ...thread, model }
+  return model
 }
 
-const defaultConfigs = [
-  {
-    name: 'sound generation',
-    runConfig: {
-      type: 'textToAudio',
-      resourceKey: 'elevenlabs::sound-generation',
-      prompt: '',
-    },
-    keyword: '@sfx',
-  },
-] as const
+export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
+  const user = await thread.edgeX('user')
 
-export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) => {
-  if (!text) return null
-  const user = await ctx.viewerX()
-  const configs = (user.runConfigs ?? []).concat(defaultConfigs)
-
-  const getMatch = (keyword: string) => {
-    // * match + strip command keywords
-    if (['/', '@'].includes(keyword.charAt(0)) && text.startsWith(`${keyword} `)) {
-      return { text: text.replace(`${keyword} `, ''), keyword }
-    }
-
-    // * keyword anywhere
-    if (text.includes(keyword)) {
-      return { text, keyword }
-    }
-
-    return null
+  return {
+    ...thread,
+    user: { ...user, isViewer: user._id === ctx.viewerId },
+    model: await getCurrentModel(ctx, thread),
   }
-
-  const matches = configs
-    .map((conf) => {
-      const match = conf.keyword ? getMatch(conf.keyword) : null
-      if (match) {
-        console.log('matched config keyword', match.keyword, conf.name)
-        if ('prompt' in conf.runConfig) conf.runConfig.prompt = match.text
-        return conf.runConfig
-      }
-    })
-    .filter((m) => m !== undefined)
-
-  if (matches.length > 1) console.warn('matched multiple configs:', matches)
-  return matches[0]
 }
 
 const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
@@ -153,7 +117,7 @@ export const get = query({
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return null
 
-    return await getThreadExtras(ctx, thread)
+    return await getThreadEdges(ctx, thread)
   },
 })
 
@@ -166,7 +130,7 @@ export const list = query({
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (thread) => await getThreadExtras(ctx, thread))
+      .map(async (thread) => await getThreadEdges(ctx, thread))
 
     return threads
   },
@@ -189,6 +153,24 @@ export const latest = query({
       .map(async (message) => await getMessageEdges(ctx, message))
 
     return messages
+  },
+})
+
+export const listThreadImages = query({
+  args: {
+    slugOrId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return []
+
+    const images = await thread
+      .edge('images')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(50)
+
+    return images
   },
 })
 
@@ -261,6 +243,53 @@ export const remove = mutation({
     await ctx.scheduler.runAfter(0, internal.deletion.scheduleFileDeletion, {})
   },
 })
+
+// * keyword commands
+const defaultConfigs = [
+  {
+    name: 'sound generation',
+    runConfig: {
+      type: 'textToAudio',
+      resourceKey: 'elevenlabs::sound-generation',
+      prompt: '',
+    },
+    keyword: '@sfx',
+  },
+] as const
+
+export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) => {
+  if (!text) return null
+  const user = await ctx.viewerX()
+  const configs = (user.runConfigs ?? []).concat(defaultConfigs)
+
+  const getMatch = (keyword: string) => {
+    // * match + strip command keywords
+    if (['/', '@'].includes(keyword.charAt(0)) && text.startsWith(`${keyword} `)) {
+      return { text: text.replace(`${keyword} `, ''), keyword }
+    }
+
+    // * keyword anywhere
+    if (text.includes(keyword)) {
+      return { text, keyword }
+    }
+
+    return null
+  }
+
+  const matches = configs
+    .map((conf) => {
+      const match = conf.keyword ? getMatch(conf.keyword) : null
+      if (match) {
+        console.log('matched config keyword', match.keyword, conf.name)
+        if ('prompt' in conf.runConfig) conf.runConfig.prompt = match.text
+        return conf.runConfig
+      }
+    })
+    .filter((m) => m !== undefined)
+
+  if (matches.length > 1) console.warn('matched multiple configs:', matches)
+  return matches[0]
+}
 
 // * Thread Actions (mutations)
 
