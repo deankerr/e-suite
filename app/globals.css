@@ -1,5 +1,6 @@
 @import 'tailwindcss/base';
 @import '@radix-ui/themes/styles.css';
+@import './github-markdown-dark.css';
 
 @tailwind components;
 

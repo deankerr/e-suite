@@ -1,4 +1,3 @@
-import './github-markdown-dark.css'
 import './syntax.css'
 
 import { memo } from 'react'

@@ -3,10 +3,12 @@
 
 import { RendererConfig, UserModuleWrappers } from 'react-cosmos-core';
 
-import * as fixture0 from './components/ui/TextareaAutosize.fixture';
-import * as fixture1 from './components/navigation/Navigation.fixture';
+import * as fixture0 from './components/text-document-editor/__fixtures__/TextDocumentEditor';
+import * as fixture1 from './components/ui/TextareaAutosize.fixture';
+import * as fixture2 from './components/navigation/Navigation.fixture';
 
 import * as decorator0 from './components/cosmos.decorator';
+import * as decorator1 from './components/text-document-editor/__fixtures__/cosmos.decorator';
 
 export const rendererConfig: RendererConfig = {
   "playgroundUrl": "http://localhost:3344",
@@ -14,12 +16,14 @@ export const rendererConfig: RendererConfig = {
 };
 
 const fixtures = {
-  'components/ui/TextareaAutosize.fixture.tsx': { module: fixture0 },
-  'components/navigation/Navigation.fixture.tsx': { module: fixture1 }
+  'components/text-document-editor/__fixtures__/TextDocumentEditor.tsx': { module: fixture0 },
+  'components/ui/TextareaAutosize.fixture.tsx': { module: fixture1 },
+  'components/navigation/Navigation.fixture.tsx': { module: fixture2 }
 };
 
 const decorators = {
-  'components/cosmos.decorator.tsx': { module: decorator0 }
+  'components/cosmos.decorator.tsx': { module: decorator0 },
+  'components/text-document-editor/__fixtures__/cosmos.decorator.tsx': { module: decorator1 }
 };
 
 export const moduleWrappers: UserModuleWrappers = {
