@@ -5,8 +5,6 @@ import { toast } from 'sonner'
 
 import { api } from '@/convex/_generated/api'
 
-import type { ChatQueryFilters } from '@/components/providers/chat-context'
-
 const RUN_THROTTLE = 2500
 const MAX_LATEST_MESSAGES = 32
 
@@ -95,13 +93,7 @@ export const useLatestMessages = (slugOrId?: string) => {
   return useQuery(api.db.threads.latest, slugOrId ? { slugOrId } : 'skip')
 }
 
-export const useMessagesList = ({
-  slugOrId,
-  filters,
-}: {
-  slugOrId?: string
-  filters?: ChatQueryFilters
-}) => {
+export const useMessagesList = ({ slugOrId, filters }: { slugOrId?: string; filters?: any }) => {
   const [startPaginatedQuery, setStartPaginatedQuery] = useState(false)
 
   const latestResult = useLatestMessages(slugOrId)
@@ -134,5 +126,24 @@ export const useMessagesList = ({
           : 'Exhausted',
     isLoading: false,
     loadMore: () => setStartPaginatedQuery(true),
+  }
+}
+
+export const useViewer = () => {
+  return useQuery(api.users.getViewer, {})
+}
+
+export const useThreads = (threadSlug?: string) => {
+  const userThreads = useQuery(api.db.threads.list, {})
+  const currentUserThread = userThreads?.find((thread) => thread.slug === threadSlug)
+
+  const threadFromSlug = useQuery(
+    api.db.threads.get,
+    threadSlug && !currentUserThread ? { slugOrId: threadSlug } : 'skip',
+  )
+
+  return {
+    userThreads,
+    thread: currentUserThread ?? threadFromSlug,
   }
 }

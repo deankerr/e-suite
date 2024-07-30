@@ -1,21 +1,22 @@
 import { useEffect, useRef } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
+import { IconButton, ScrollArea } from '@radix-ui/themes'
 import { useInView } from 'react-intersection-observer'
 
 import { Message } from '@/components/message/Message'
-import { useChat } from '@/components/providers/ChatProvider'
+import { useThreadContext } from '@/components/providers/ThreadProvider'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
 
 export const MessageFeed = () => {
-  const { thread, messages } = useChat()
+  const { thread, messages } = useThreadContext()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [endOfFeedRef, endOfFeedInView] = useInView()
-  const shouldShowScrollToBottom = messages.length > 0 && !endOfFeedInView
+  const shouldShowScrollToBottom = messages && messages.length > 0 && !endOfFeedInView
 
   const scrollToEnd = (behavior: 'smooth' | 'instant' = 'smooth') => {
     if (containerRef.current) {
@@ -28,13 +29,14 @@ export const MessageFeed = () => {
 
   const initialScrollToEnd = useRef(false)
   useEffect(() => {
-    if (!initialScrollToEnd.current && messages.length > 0) {
+    if (!initialScrollToEnd.current && messages && messages.length > 0) {
       scrollToEnd('instant')
       initialScrollToEnd.current = true
     }
   }, [messages])
 
   if (!thread) return null
+  if (!messages) return <MessagesLoading />
 
   return (
     <div className="overflow-hidden">
@@ -52,7 +54,7 @@ export const MessageFeed = () => {
             />
           ))}
 
-          <LoadMoreButton />
+          {/* <LoadMoreButton /> */}
         </div>
       </ScrollArea>
 
@@ -76,30 +78,30 @@ const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
   return message.name && message.name === previousMessage.name
 }
 
-const LoadMoreButton = () => {
-  const { page, loadMoreMessages } = useChat()
+// const LoadMoreButton = () => {
+//   const { page, loadMoreMessages } = useChat()
 
-  if (page.status === 'Exhausted') return <EndOfFeedIndicator position="end" />
+//   if (page.status === 'Exhausted') return <EndOfFeedIndicator position="end" />
 
-  return (
-    <div className="flex h-12 w-full items-center justify-center">
-      <Button
-        variant="surface"
-        size="1"
-        color="gray"
-        className="w-48"
-        disabled={page.status !== 'CanLoadMore'}
-        onClick={() => loadMoreMessages()}
-      >
-        {page.isLoading ? (
-          <Icons.CircleNotch className="size-4 animate-spin" />
-        ) : (
-          'Load More Messages'
-        )}
-      </Button>
-    </div>
-  )
-}
+//   return (
+//     <div className="flex h-12 w-full items-center justify-center">
+//       <Button
+//         variant="surface"
+//         size="1"
+//         color="gray"
+//         className="w-48"
+//         disabled={page.status !== 'CanLoadMore'}
+//         onClick={() => loadMoreMessages()}
+//       >
+//         {page.isLoading ? (
+//           <Icons.CircleNotch className="size-4 animate-spin" />
+//         ) : (
+//           'Load More Messages'
+//         )}
+//       </Button>
+//     </div>
+//   )
+// }
 
 const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end' }) => {
   return (
@@ -116,6 +118,25 @@ const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end'
       ) : (
         <Icons.Planet className="size-6 rounded text-grayA-5" />
       )}
+    </div>
+  )
+}
+
+const MessagesLoading = () => {
+  return (
+    <div className="grid grow grid-rows-12 gap-4 overflow-hidden px-4 py-4">
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
     </div>
   )
 }

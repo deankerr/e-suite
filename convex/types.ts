@@ -5,7 +5,7 @@ import type {
   getImageModelByResourceKey,
   getVoiceModels,
 } from './db/models'
-import type { getThreadExtras } from './db/threads'
+import type { getThreadEdges } from './db/threads'
 import type { mutation, query } from './functions'
 import type {
   chatCompletionConfigV,
@@ -31,7 +31,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
   TableName
 >
 
-export type EThread = Omit<Awaited<ReturnType<typeof getThreadExtras>>, '_id' | 'userId'> & {
+export type EThread = Omit<Awaited<ReturnType<typeof getThreadEdges>>, '_id' | 'userId'> & {
   _id: string
   userId: string
 }
