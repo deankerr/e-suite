@@ -48,6 +48,27 @@ export function getErrorMessage(error: unknown) {
   return 'Unknown Error'
 }
 
+// from convex/values
+export function stringifyValueForError(value: any) {
+  if (typeof value === 'string') return value
+
+  return JSON.stringify(value, (_key, value) => {
+    if (value === undefined) {
+      // By default `JSON.stringify` converts undefined, functions, symbols,
+      // Infinity, and NaN to null which produces a confusing error message.
+      // We deal with `undefined` specifically because it's the most common.
+      // Ideally we'd use a pretty-printing library that prints `undefined`
+      // (no quotes), but it might not be worth the bundle size cost.
+      return 'undefined'
+    }
+    if (typeof value === 'bigint') {
+      // `JSON.stringify` throws on bigints by default.
+      return `${value.toString()}n`
+    }
+    return value
+  })
+}
+
 export function hasDelimiter(text: string) {
   return (
     text.includes('\n') ||

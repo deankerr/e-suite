@@ -2,6 +2,7 @@ import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
+import { stringifyValueForError } from '../shared/utils'
 import { WorkflowError } from './helpers'
 import { chatPipeline } from './pipelines/chat'
 import { evaluateMessageUrlsPipeline } from './pipelines/evaluateMessageUrls'
@@ -81,7 +82,7 @@ export const executeStep = internalAction({
             code: err.code,
             message: err.message,
             fatal: err.fatal,
-            details: err.details,
+            details: stringifyValueForError(err.details),
           },
           startTime,
         })
