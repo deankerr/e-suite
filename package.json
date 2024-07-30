@@ -22,6 +22,7 @@
     "@clerk/themes": "^2.1.14",
     "@fal-ai/serverless-client": "^0.13.0",
     "@formkit/auto-animate": "^0.8.2",
+    "@mdxeditor/editor": "^3.10.1",
     "@million/lint": "1.0.0-rc.84",
     "@phosphor-icons/react": "^2.1.7",
     "@radix-ui/react-dialog": "^1.1.1",
