@@ -1,56 +1,29 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
+import { Button } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'
-import { useInView } from 'react-intersection-observer'
 
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
-import { Message } from '@/components/message/Message'
+import { MessageFeed } from '@/components/message-feed/MessageFeed'
 import { FilterControl } from '@/components/pages/FilterControl'
 import { PageWrapper } from '@/components/pages/PageWrapper'
 import { ChatProvider, useChat } from '@/components/providers/ChatProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { Link } from '@/components/ui/Link'
-import { LinkIconButton } from '@/components/ui/LinkButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { appConfig } from '@/config/config'
 import { useViewerDetails } from '@/lib/queries'
 import { cn } from '@/lib/utils'
 
-import type { EMessage } from '@/convex/types'
-
 const ChatPageImpl = () => {
-  const { thread, messages, removeMessage, isMessageSeriesQuery, seriesMessage } = useChat()
-
+  const { thread, isMessageSeriesQuery, seriesMessage } = useChat()
   const { isOwner } = useViewerDetails(thread?.userId)
+
   const shell = useShellActions()
-
-  const [showJson, setShowJson] = useState(false)
-
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [endOfFeedRef, endOfFeedInView] = useInView()
-  const shouldShowScrollToBottom = messages.length > 0 && !endOfFeedInView
-
-  const scrollToEnd = (behavior: 'smooth' | 'instant' = 'smooth') => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior,
-      })
-    }
-  }
-
-  const initialScrollToEnd = useRef(false)
-  useEffect(() => {
-    if (!initialScrollToEnd.current && messages.length > 0) {
-      scrollToEnd('instant')
-      initialScrollToEnd.current = true
-    }
-  }, [messages])
 
   if (thread === null || (isMessageSeriesQuery && seriesMessage === null)) return <ChatPageError />
   if (thread === undefined || (isMessageSeriesQuery && seriesMessage === undefined))
@@ -66,14 +39,6 @@ const ChatPageImpl = () => {
           {/* * header left * */}
           <div className="flex-start min-w-10 gap-1">
             <SidebarButton className="m-0 md:hidden" />
-            {isMessageSeriesQuery ? (
-              <LinkIconButton
-                href={`${appConfig.chatUrl}/${thread.slug}`}
-                buttonProps={{ variant: 'soft' }}
-              >
-                <Icons.ArrowSquareLeft className="size-5" />
-              </LinkIconButton>
-            ) : null}
           </div>
 
           {/* * header center * */}
@@ -98,56 +63,10 @@ const ChatPageImpl = () => {
         </header>
 
         {/* * feed * */}
-        <ScrollArea ref={containerRef} scrollbars="vertical">
-          <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
-            <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
-
-            {/* * messages * */}
-            {messages.map((message, i) => (
-              <Message
-                key={message._id}
-                message={message}
-                deeplink={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
-                removeMessage={removeMessage}
-                showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
-              />
-            ))}
-
-            {/* * series message * */}
-            {isMessageSeriesQuery && seriesMessage && (
-              <Message
-                key={seriesMessage._id}
-                message={seriesMessage}
-                deeplink=""
-                removeMessage={removeMessage}
-                showTimeline={false}
-              />
-            )}
-
-            {isMessageSeriesQuery ? (
-              <div className="pointer-events-none h-4 w-full" />
-            ) : (
-              <LoadMoreButton />
-            )}
-          </div>
-        </ScrollArea>
-
-        {/* * scroll to bottom * */}
-        <div className="bg-blue-4">
-          <IconButton
-            variant="soft"
-            className={cn(
-              'absolute -top-12 right-12 animate-fade animate-delay-100 animate-duration-100',
-              !shouldShowScrollToBottom && 'hidden',
-            )}
-            onClick={() => scrollToEnd('smooth')}
-          >
-            <Icons.ArrowDown className="phosphor" />
-          </IconButton>
-        </div>
+        <MessageFeed />
 
         {/* * composer * */}
-        {isOwner && !isMessageSeriesQuery ? (
+        {isOwner && (
           <Composer
             runConfig={thread.inference}
             model={thread.model}
@@ -156,35 +75,12 @@ const ChatPageImpl = () => {
             threadId={thread._id}
             className="border-t border-grayA-3 pt-1"
           />
-        ) : null}
-
-        {/* * show json * */}
-        {showJson && (
-          <div className="absolute inset-x-4 inset-y-16 overflow-hidden rounded border">
-            <Pre className="h-full overflow-auto">{JSON.stringify(thread, null, 2)}</Pre>
-          </div>
         )}
 
-        <AdminOnlyUi>
-          <div className="absolute left-2 top-14 font-mono text-xs text-gray-9">
-            <IconButton
-              variant="ghost"
-              color="gray"
-              size="1"
-              onClick={() => setShowJson(!showJson)}
-            >
-              {messages?.length ?? '?'}
-            </IconButton>
-          </div>
-        </AdminOnlyUi>
+        <ChatPageDebug />
       </div>
     </PageWrapper>
   )
-}
-
-const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
-  if (previousMessage === undefined || message.role !== 'user') return false
-  return message.name && message.name === previousMessage.name
 }
 
 export const ChatPage = ({ slug, series }: { slug: string; series?: string }) => {
@@ -192,50 +88,6 @@ export const ChatPage = ({ slug, series }: { slug: string; series?: string }) =>
     <ChatProvider slug={slug} series={series}>
       <ChatPageImpl />
     </ChatProvider>
-  )
-}
-
-const LoadMoreButton = () => {
-  const { page, loadMoreMessages } = useChat()
-
-  if (page.status === 'Exhausted') return <EndOfFeedIndicator position="end" />
-
-  return (
-    <div className="flex h-12 w-full items-center justify-center">
-      <Button
-        variant="surface"
-        size="1"
-        color="gray"
-        className="w-48"
-        disabled={page.status !== 'CanLoadMore'}
-        onClick={() => loadMoreMessages()}
-      >
-        {page.isLoading ? (
-          <Icons.CircleNotch className="size-4 animate-spin" />
-        ) : (
-          'Load More Messages'
-        )}
-      </Button>
-    </div>
-  )
-}
-
-const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end' }) => {
-  return (
-    <div
-      className={cn(
-        'flex h-7 w-full shrink-0 items-center justify-center overflow-hidden',
-        position === 'start' ? 'mb-2' : 'mt-2',
-      )}
-    >
-      <div className="absolute right-[57.5%] top-1/2 h-px w-[37.5%] bg-grayA-5" />
-      <div className="absolute left-[57.5%] top-1/2 h-px w-[37.5%] bg-grayA-5" />
-      {position === 'start' ? (
-        <Icons.SunHorizon className="size-6 rounded text-grayA-5" />
-      ) : (
-        <Icons.Planet className="size-6 rounded text-grayA-5" />
-      )}
-    </div>
   )
 }
 
@@ -264,5 +116,21 @@ const ChatPageError = () => {
         </div>
       </div>
     </PageWrapper>
+  )
+}
+
+const ChatPageDebug = () => {
+  const [showJson, setShowJson] = useState(false)
+  const { thread, messages } = useChat()
+
+  return (
+    <AdminOnlyUi>
+      {showJson && (
+        <Pre stringify={thread} className="absolute inset-x-4 inset-y-16 overflow-auto" />
+      )}
+      <div className="absolute left-1 top-12 font-mono text-xs text-gray-9">
+        <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button>
+      </div>
+    </AdminOnlyUi>
   )
 }
