@@ -110,8 +110,6 @@ export const fail = internalMutation({
   },
   handler: async (ctx, { jobId }) => {
     const job = await ctx.table('jobs3').getX(jobId)
-    console.error(job.pipeline, job._id)
-
     return await job.patch({
       status: 'failed',
     })
