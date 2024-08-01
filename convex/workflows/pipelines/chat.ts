@@ -70,7 +70,7 @@ export const chatPipeline: Pipeline = {
           const { endpoint, modelId } = vb.parse(ResourceKey, resourceKey)
 
           const api = createProvider(endpoint)
-          const model = endpoint === 'openai' ? api(modelId.slice(7)) : api(modelId)
+          const model = api(modelId)
 
           const { messages } = await ctx.runQuery(
             internal.workflows.pipelines.chat.getConversationMessages,
