@@ -13,6 +13,7 @@ import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
+import { getUser } from './users'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type {
@@ -75,11 +76,9 @@ const getCurrentModel = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
 }
 
 export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
-  const user = await thread.edgeX('user')
-
   return {
     ...thread,
-    user: { ...user, isViewer: user._id === ctx.viewerId },
+    user: await getUser(ctx, thread.userId),
     model: await getCurrentModel(ctx, thread),
   }
 }
