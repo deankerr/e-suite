@@ -14,15 +14,28 @@ const useCreateThreadContext = ({
   threadSlug?: string
   messageSeriesNum?: string
 }) => {
-  const [queryFilters, setQueryFilters] = useState<ChatQueryFilters | undefined>(undefined)
-
   const { thread } = useThreads(threadSlug)
-  const messages = useLatestMessages(messageSeriesNum ? undefined : threadSlug)
+  const [queryByMediaType, setQueryByMediaType] = useState<'images' | 'audio' | undefined>(
+    undefined,
+  )
+  const isSeriesMessage = !!messageSeriesNum
+
+  const latestMessages = useLatestMessages({ slugOrId: threadSlug, byMediaType: queryByMediaType })
+  const messages = latestMessages
+
   const seriesMessage = useSeriesMessage({ slug: threadSlug, series: messageSeriesNum })
 
   const threadTitle = thread ? (thread.title ?? 'untitled thread') : ''
 
-  return { thread, messages, threadTitle, seriesMessage, isSeriesMessage: !!messageSeriesNum }
+  return {
+    thread,
+    messages,
+    threadTitle,
+    seriesMessage,
+    isSeriesMessage,
+    queryByMediaType,
+    setQueryByMediaType,
+  }
 }
 
 type ThreadContext = ReturnType<typeof useCreateThreadContext>
