@@ -35,6 +35,7 @@ export const Message = ({
   showTimeline = true,
   hideName = false,
   isSequential = false,
+  priority = false,
   className,
   ...props
 }: {
@@ -43,6 +44,7 @@ export const Message = ({
   showTimeline?: boolean
   hideName?: boolean
   isSequential?: boolean
+  priority?: boolean
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const { isOwner } = useViewerDetails(message.userId)
@@ -170,6 +172,7 @@ export const Message = ({
               image={image}
               imageProps={{
                 sizes: '(max-width: 410px) 90vw, 20rem',
+                priority,
                 onClick: () => {
                   openLightbox({
                     slides: message.images.map((image) => ({
