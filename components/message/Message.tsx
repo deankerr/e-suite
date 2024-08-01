@@ -16,7 +16,6 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
 import { getMessageJobsDetails } from '@/convex/shared/utils'
 import { useMessageMutations } from '@/lib/api'
-import { useViewerDetails } from '@/lib/queries'
 import { cn, getInferenceConfig } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -47,7 +46,7 @@ export const Message = ({
   priority?: boolean
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
-  const { isOwner } = useViewerDetails(message.userId)
+  const isOwner = message.user?.isViewer ?? false
   const jobs = getMessageJobsDetails(message.jobs)
 
   const { textToImageConfig } = getInferenceConfig(message.inference)

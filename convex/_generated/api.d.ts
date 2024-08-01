@@ -20,6 +20,7 @@ import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_models from "../db/models.js";
 import type * as db_threads from "../db/threads.js";
+import type * as db_users from "../db/users.js";
 import type * as deletion from "../deletion.js";
 import type * as endpoints_aws from "../endpoints/aws.js";
 import type * as endpoints_aws_node from "../endpoints/aws_node.js";
@@ -73,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   "db/messages": typeof db_messages;
   "db/models": typeof db_models;
   "db/threads": typeof db_threads;
+  "db/users": typeof db_users;
   deletion: typeof deletion;
   "endpoints/aws": typeof endpoints_aws;
   "endpoints/aws_node": typeof endpoints_aws_node;

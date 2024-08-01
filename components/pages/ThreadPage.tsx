@@ -59,7 +59,7 @@ const ThreadPageHeader = () => {
           highContrast
           className={cn(
             'max-w-full',
-            !thread?.user.isViewer && 'pointer-events-none [&>svg]:hidden',
+            !thread.user?.isViewer && 'pointer-events-none [&>svg]:hidden',
           )}
           onClick={() => shell.open({ threadId: thread._id })}
         >
@@ -109,7 +109,7 @@ const ThreadComposer = () => {
   const { thread, isSeriesMessage } = useThreadContext()
   const shell = useShellActions()
 
-  if (!thread || !thread.user.isViewer || isSeriesMessage) return null
+  if (!thread || !thread.user?.isViewer || isSeriesMessage) return null
 
   return (
     <Composer
