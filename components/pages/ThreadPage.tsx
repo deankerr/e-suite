@@ -98,7 +98,7 @@ const SingleMessagePage = () => {
     <div className="overflow-hidden">
       <ScrollArea scrollbars="vertical">
         <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
-          <Message message={seriesMessage} showTimeline={false} />
+          <Message message={seriesMessage} showTimeline={false} priority={true} />
         </div>
       </ScrollArea>
     </div>
@@ -109,7 +109,7 @@ const ThreadComposer = () => {
   const { thread, isSeriesMessage } = useThreadContext()
   const shell = useShellActions()
 
-  if (!thread || isSeriesMessage) return null
+  if (!thread || !thread.user.isViewer || isSeriesMessage) return null
 
   return (
     <Composer

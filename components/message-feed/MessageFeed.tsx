@@ -53,6 +53,7 @@ export const MessageFeed = () => {
             <Message
               key={message._id}
               message={message}
+              priority={i < 4}
               deepLinkUrl={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
               hideName={
                 isShortMessage(message) &&
