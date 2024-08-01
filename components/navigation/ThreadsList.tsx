@@ -8,12 +8,13 @@ import { useSelectedLayoutSegments } from 'next/navigation'
 
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { appConfig } from '@/config/config'
-import { useUserThreadsList } from '@/lib/queries'
+import { useThreadsList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const segments = useSelectedLayoutSegments()
-  const threads = useUserThreadsList()
+  const threads = useThreadsList()
+  const [containerRef] = useAutoAnimate()
 
   const modelTypeIcons = {
     chat: Icons.Chat,
@@ -28,7 +29,8 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
 
   const activeClassNames = 'bg-gray-2 border-grayA-5 opacity-100'
 
-  const [containerRef] = useAutoAnimate()
+  if (threads.length === 0) return null
+
   return (
     <div {...props} className={cn('flex grow flex-col gap-0.5 overflow-hidden', className)}>
       <div className="shrink-0 border-b border-gray-5 px-3 text-sm font-semibold text-gray-11">

@@ -9,7 +9,7 @@ import {
   shellStackAtom,
 } from '@/components/shell/atoms'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '@/convex/shared/defaults'
-import { useUserThreadsList } from '@/lib/queries'
+import { useThreadsList } from '@/lib/api'
 
 import type { ShellPage } from '@/components/shell/Shell'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -50,7 +50,7 @@ export const useShellStack = () => {
 }
 
 export const useShellUserThreads = () => {
-  const list = useUserThreadsList()
+  const list = useThreadsList()
   const [selectedThreadId, setSelectedThreadId] = useAtom(shellSelectedThreadIdAtom)
 
   const current = list ? (list.find((t) => t._id === selectedThreadId) ?? null) : undefined

@@ -45,19 +45,19 @@ export const Navigation = () => {
           <SidebarButton />
         </div>
 
-        <Authenticated>
-          <div className="flex shrink-0 flex-col items-center gap-1.5 px-2 pb-3 pt-1">
+        <div className="flex shrink-0 flex-col items-center gap-1.5 px-2 pb-3 pt-1">
+          <Authenticated>
             <button
               className="w-full max-w-40 rounded-md border border-grayA-3 bg-grayA-3 py-1 text-base font-medium text-gray-12 hover:bg-grayA-4"
               onClick={() => shell.open()}
             >
               Command
             </button>
-          </div>
+          </Authenticated>
+        </div>
 
-          {/* * chats * */}
-          <ThreadsList />
-        </Authenticated>
+        {/* * threads * */}
+        <ThreadsList />
 
         <div className="grow" />
         {/* * footer * */}
