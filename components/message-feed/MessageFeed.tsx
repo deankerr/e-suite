@@ -39,7 +39,7 @@ export const MessageFeed = () => {
   if (!messages) return <MessagesLoading />
 
   return (
-    <div className="overflow-hidden">
+    <div className="grow overflow-hidden">
       <ScrollArea ref={containerRef} scrollbars="vertical">
         <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
           <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
@@ -124,19 +124,10 @@ const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end'
 
 const MessagesLoading = () => {
   return (
-    <div className="mx-auto grid w-full max-w-3xl grow grid-rows-12 gap-4 overflow-hidden px-4 py-4">
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
-      <Skeleton />
+    <div className="mx-auto grid w-full max-w-3xl grow auto-rows-fr gap-4 overflow-hidden px-3 py-4">
+      {Array.from({ length: 16 }).map((_, i) => (
+        <Skeleton key={i} style={{ animationDelay: `-${i * 100}ms` }} />
+      ))}
     </div>
   )
 }

@@ -136,14 +136,30 @@ export const list = query({
   },
 })
 
-// * get messages feed of latest n messages
-export const latest = query({
+export const latestMessages = query({
   args: {
     slugOrId: v.string(),
+    byMediaType: v.optional(literals('images', 'audio')),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return null
+    if (!thread) return []
+
+    if (args.byMediaType) {
+      const messages = await thread
+        .edge(args.byMediaType)
+        .order('desc')
+        .filter((q) => q.eq(q.field('deletionTime'), undefined))
+        .take(32)
+        .map(
+          async (media) =>
+            await media
+              .edgeX('message')
+              .then(async (message) => await getMessageEdges(ctx, message)),
+        )
+
+      return messages
+    }
 
     const messages = await thread
       .edge('messages')
@@ -153,24 +169,6 @@ export const latest = query({
       .map(async (message) => await getMessageEdges(ctx, message))
 
     return messages
-  },
-})
-
-export const listThreadImages = query({
-  args: {
-    slugOrId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return []
-
-    const images = await thread
-      .edge('images')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(50)
-
-    return images
   },
 })
 

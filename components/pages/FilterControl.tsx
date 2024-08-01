@@ -2,16 +2,14 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
 import { Button, Checkbox, Popover, Radio, Separator } from '@radix-ui/themes'
 
-const useChat = () => {
-  return 1 as any
-}
+import { useThreadContext } from '@/components/providers/ThreadProvider'
 
 export const FilterControl = ({
   buttonProps,
 }: {
   buttonProps?: React.ComponentProps<typeof Button>
 }) => {
-  const { queryFilters, setQueryFilters } = useChat()
+  const { queryByMediaType, setQueryByMediaType } = useThreadContext()
 
   const className =
     'flex items-center py-1 rounded-md pl-1.5 pr-4 cursor-pointer hover:bg-grayA-2 shrink-0'
@@ -22,7 +20,7 @@ export const FilterControl = ({
         <Button
           variant="outline"
           size="2"
-          color={queryFilters ? 'orange' : 'gray'}
+          color={queryByMediaType ? 'orange' : 'gray'}
           className="px-2 md:px-3"
           {...buttonProps}
         >
@@ -37,9 +35,9 @@ export const FilterControl = ({
             <Radio
               value="all"
               className="mr-2"
-              checked={!queryFilters}
+              checked={!queryByMediaType}
               onClick={() => {
-                setQueryFilters(undefined)
+                setQueryByMediaType(undefined)
               }}
             />
             <span className="font-medium">All</span>
@@ -49,11 +47,9 @@ export const FilterControl = ({
             <Radio
               value="images"
               className="mr-2"
-              checked={queryFilters?.hasContent === 'image'}
+              checked={queryByMediaType === 'images'}
               onClick={() => {
-                setQueryFilters({
-                  hasContent: 'image',
-                })
+                setQueryByMediaType('images')
               }}
             />
             <Icons.Images className="mr-1 size-4" />
@@ -64,30 +60,28 @@ export const FilterControl = ({
             <Radio
               value="audio"
               className="mr-2"
-              checked={queryFilters?.hasContent === 'audio'}
+              checked={queryByMediaType === 'audio'}
               onClick={() => {
-                setQueryFilters({
-                  hasContent: 'audio',
-                })
+                setQueryByMediaType('audio')
               }}
             />
             <Icons.CassetteTape className="mr-1 size-4" />
             <span className="font-medium">Audio</span>
           </Label>
 
-          <Separator size="4" my="1" />
+          {/* <Separator size="4" my="1" />
 
           <div className="grid grid-cols-2">
             <Label className={className}>
               <Checkbox
                 className="mr-2"
-                checked={queryFilters?.role === 'assistant'}
-                onCheckedChange={(checked) => {
-                  setQueryFilters({
-                    ...queryFilters,
-                    role: checked ? 'assistant' : undefined,
-                  })
-                }}
+                // checked={queryFilters?.role === 'assistant'}
+                // onCheckedChange={(checked) => {
+                //   setQueryFilters({
+                //     ...queryFilters,
+                //     role: checked ? 'assistant' : undefined,
+                //   })
+                // }}
               />
               <Icons.Robot className="mr-1 size-4" />
               AI
@@ -96,18 +90,18 @@ export const FilterControl = ({
             <Label className={className}>
               <Checkbox
                 className="mr-2"
-                checked={queryFilters?.role === 'user'}
-                onCheckedChange={(checked) => {
-                  setQueryFilters({
-                    ...queryFilters,
-                    role: checked ? 'user' : undefined,
-                  })
-                }}
+                // checked={queryFilters?.role === 'user'}
+                // onCheckedChange={(checked) => {
+                //   setQueryFilters({
+                //     ...queryFilters,
+                //     role: checked ? 'user' : undefined,
+                //   })
+                // }}
               />
               <Icons.User className="mr-1 size-4" />
               User
             </Label>
-          </div>
+          </div> */}
         </div>
       </Popover.Content>
     </Popover.Root>

@@ -96,7 +96,7 @@ export const Message = ({
             title={code}
             message={message}
             size="1"
-            className="mx-auto max-w-xl"
+            className="mx-auto mb-1 max-w-xl"
           />
         ))}
       </div>

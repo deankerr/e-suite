@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
+import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { toast } from 'sonner'
 
@@ -88,46 +89,46 @@ export const useMessageMutations = () => {
   return { removeMessage }
 }
 
-// * queries
-export const useLatestMessages = (slugOrId?: string) => {
-  return useQuery(api.db.threads.latest, slugOrId ? { slugOrId } : 'skip')
-}
+// // * queries
+// export const useLatestMessages = (slugOrId?: string) => {
+//   return useQuery(api.db.threads.latestMessages, slugOrId ? { slugOrId } : 'skip')
+// }
 
-export const useMessagesList = ({ slugOrId, filters }: { slugOrId?: string; filters?: any }) => {
-  const [startPaginatedQuery, setStartPaginatedQuery] = useState(false)
+// export const useMessagesList = ({ slugOrId, filters }: { slugOrId?: string; filters?: any }) => {
+//   const [startPaginatedQuery, setStartPaginatedQuery] = useState(false)
 
-  const latestResult = useLatestMessages(slugOrId)
+//   const latestResult = useLatestMessages(slugOrId)
 
-  const pagedResult = usePaginatedQuery(
-    api.db.messages.list,
-    startPaginatedQuery && slugOrId ? { slugOrId, filters } : 'skip',
-    {
-      initialNumItems: 64,
-    },
-  )
+//   const pagedResult = usePaginatedQuery(
+//     api.db.messages.list,
+//     startPaginatedQuery && slugOrId ? { slugOrId, filters } : 'skip',
+//     {
+//       initialNumItems: 64,
+//     },
+//   )
 
-  useEffect(() => {
-    if (startPaginatedQuery) return
-    if (filters) setStartPaginatedQuery(true)
-  }, [filters, startPaginatedQuery])
+//   useEffect(() => {
+//     if (startPaginatedQuery) return
+//     if (filters) setStartPaginatedQuery(true)
+//   }, [filters, startPaginatedQuery])
 
-  if (startPaginatedQuery && pagedResult.status !== 'LoadingFirstPage') {
-    return pagedResult
-  }
+//   if (startPaginatedQuery && pagedResult.status !== 'LoadingFirstPage') {
+//     return pagedResult
+//   }
 
-  const latestMessagesLength = latestResult?.length ?? 0
-  return {
-    results: latestResult ?? [],
-    status:
-      latestResult === undefined
-        ? 'LoadingFirstPage'
-        : latestMessagesLength >= MAX_LATEST_MESSAGES
-          ? 'CanLoadMore'
-          : 'Exhausted',
-    isLoading: false,
-    loadMore: () => setStartPaginatedQuery(true),
-  }
-}
+//   const latestMessagesLength = latestResult?.length ?? 0
+//   return {
+//     results: latestResult ?? [],
+//     status:
+//       latestResult === undefined
+//         ? 'LoadingFirstPage'
+//         : latestMessagesLength >= MAX_LATEST_MESSAGES
+//           ? 'CanLoadMore'
+//           : 'Exhausted',
+//     isLoading: false,
+//     loadMore: () => setStartPaginatedQuery(true),
+//   }
+// }
 
 export const useViewer = () => {
   return useQuery(api.users.getViewer, {})
@@ -153,4 +154,14 @@ export const useSeriesMessage = ({ slug, series }: { slug?: string; series?: str
     api.db.messages.getSeriesMessage,
     slug && series ? { slug, series: Number(series) } : 'skip',
   )
+}
+
+export const useLatestMessages = ({
+  slugOrId,
+  byMediaType,
+}: {
+  slugOrId?: string
+  byMediaType?: 'images' | 'audio'
+}) => {
+  return useCacheQuery(api.db.threads.latestMessages, slugOrId ? { slugOrId, byMediaType } : 'skip')
 }
