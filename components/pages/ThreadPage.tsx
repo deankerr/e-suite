@@ -68,7 +68,7 @@ const ThreadPageHeader = () => {
         </Button>
       </div>
 
-      <div className="flex-start min-w-10 shrink-0 gap-1">
+      <div className="flex-end min-w-10 shrink-0 gap-1">
         {isSeriesMessage ? (
           <Link href={`${appConfig.chatUrl}/${thread.slug}`}>
             <IconButton variant="ghost" className="m-0">

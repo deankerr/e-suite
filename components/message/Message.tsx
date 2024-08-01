@@ -31,16 +31,18 @@ const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'), {
 
 export const Message = ({
   message,
-  deeplink,
-  showNameAvatar = true,
+  deepLinkUrl,
   showTimeline = true,
+  hideName = false,
+  isSequential = false,
   className,
   ...props
 }: {
   message: EMessage
-  deeplink?: string
-  showNameAvatar?: boolean
+  deepLinkUrl?: string
   showTimeline?: boolean
+  hideName?: boolean
+  isSequential?: boolean
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const { isOwner } = useViewerDetails(message.userId)
@@ -75,7 +77,7 @@ export const Message = ({
       <div className="row-span-2 flex gap-4 pt-1.5 opacity-80">
         {showTimeline && (
           <div
-            className={cn('absolute -top-2 bottom-1 w-px', showNameAvatar && 'inset-y-1.5')}
+            className={cn('absolute w-px', isSequential ? '-top-2 bottom-1' : 'inset-y-1.5')}
             style={{ backgroundColor: marbleProps[0].color }}
           />
         )}
@@ -84,7 +86,7 @@ export const Message = ({
       {/* # name / text content # */}
       <div className="py-1">
         {/* * name * */}
-        {showNameAvatar ? <span className={cn('font-medium text-accentA-11')}>{name} </span> : null}
+        {!hideName ? <span className={cn('font-medium text-accentA-11')}>{name} </span> : null}
 
         {/* * short message text * */}
         {!showEditor && text && text.length < 300 ? text : null}
@@ -112,8 +114,8 @@ export const Message = ({
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Content variant="soft" align="end">
-              {deeplink ? (
-                <DropdownMenu.Item onClick={() => router.push(deeplink)}>Link</DropdownMenu.Item>
+              {deepLinkUrl ? (
+                <DropdownMenu.Item onClick={() => router.push(deepLinkUrl)}>Link</DropdownMenu.Item>
               ) : null}
 
               <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
@@ -133,7 +135,7 @@ export const Message = ({
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-        ) : deeplink ? (
+        ) : deepLinkUrl ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <IconButton variant="ghost" size="1" color="gray" className="m-0 size-7 p-0">
@@ -142,7 +144,7 @@ export const Message = ({
             </DropdownMenu.Trigger>
 
             <DropdownMenu.Content variant="soft" align="end">
-              <DropdownMenu.Item onClick={() => router.push(deeplink)}>Link</DropdownMenu.Item>
+              <DropdownMenu.Item onClick={() => router.push(deepLinkUrl)}>Link</DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         ) : null}

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { IconButton, ScrollArea } from '@radix-ui/themes'
+import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useInView } from 'react-intersection-observer'
 
 import { Message } from '@/components/message/Message'
@@ -41,20 +41,28 @@ export const MessageFeed = () => {
   return (
     <div className="grow overflow-hidden">
       <ScrollArea ref={containerRef} scrollbars="vertical">
-        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
+        <div className="flex-center min-h-4 py-2">
+          <Button variant="surface" size="1" color="gray" className="w-48">
+            Load More Messages
+          </Button>
+        </div>
+
+        <div className="flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
           <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
 
-          {/* * messages * */}
           {messages.map((message, i) => (
             <Message
               key={message._id}
               message={message}
-              deeplink={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
-              showNameAvatar={!isSameAuthor(message, messages.at(i + 1))}
+              deepLinkUrl={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
+              hideName={
+                isShortMessage(message) &&
+                isUserRoleMessage(message) &&
+                isSameAuthor(message, messages.at(i + 1))
+              }
+              isSequential={isSameAuthor(message, messages.at(i + 1))}
             />
           ))}
-
-          {/* <LoadMoreButton /> */}
         </div>
       </ScrollArea>
 
@@ -73,9 +81,24 @@ export const MessageFeed = () => {
   )
 }
 
-const isSameAuthor = (message: EMessage, previousMessage?: EMessage) => {
-  if (previousMessage === undefined || message.role !== 'user') return false
-  return message.name && message.name === previousMessage.name
+const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
+  const firstMessage = messages.at(0)
+  if (!firstMessage) return false
+  return messages.every(
+    (message) => message?.name === firstMessage.name && message?.role === firstMessage.role,
+  )
+}
+
+const isShortMessage = (message: EMessage | undefined) => {
+  if (!message) return false
+  const hasShortText = !!message.text && message.text.length < 300
+  const hasMedia = message.images.length > 0 || message.audio.length > 0
+  return hasShortText && !hasMedia
+}
+
+const isUserRoleMessage = (message: EMessage | undefined) => {
+  if (!message) return false
+  return message.role === 'user'
 }
 
 // const LoadMoreButton = () => {
