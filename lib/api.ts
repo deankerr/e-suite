@@ -2,8 +2,10 @@ import { useCallback, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 
+import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
 const RUN_THROTTLE = 2500
@@ -87,6 +89,27 @@ export const useMessageMutations = () => {
   )
 
   return { removeMessage }
+}
+
+// * queries
+export const useThreadsList = () => {
+  const pathname = usePathname()
+  const slug = pathname.startsWith(appConfig.chatUrl) ? pathname.split('/')[2] : undefined
+
+  const userThreads = useQuery(api.db.threads.list, {}) ?? []
+  const currentUserThread = userThreads?.find((thread) => thread.slug === slug)
+
+  const currentThreadFromSlug = useQuery(
+    api.db.threads.get,
+    slug && !currentUserThread ? { slugOrId: slug } : 'skip',
+  )
+
+  const threads = [...userThreads]
+  if (currentThreadFromSlug) {
+    threads.push(currentThreadFromSlug)
+  }
+
+  return threads.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
 }
 
 export const useViewer = () => {

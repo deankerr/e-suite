@@ -143,10 +143,10 @@ const ThreadPageDebug = () => {
 
 const ThreadPageWrapper = ({ children }: { children: React.ReactNode }) => {
   const { thread } = useThreadContext()
-  const isLoading = !thread
+
   return (
     <div className="h-full w-full overflow-x-hidden border-grayA-5 bg-gray-2 md:rounded-md md:border">
-      {isLoading ? <LoadingPage /> : children}
+      {thread === null ? <EmptyPage /> : thread === undefined ? <LoadingPage /> : children}
     </div>
   )
 }

@@ -1,15 +1,9 @@
 import { useQuery as useConvexQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
-import { EChatModel, EImageModel, EThread, EUser, EVoiceModel } from '@/convex/types'
+import { EChatModel, EImageModel, EUser, EVoiceModel } from '@/convex/types'
 
 const useQuery = useConvexQuery
-
-export const useUserThreadsList = (): EThread[] | undefined => {
-  const result = useQuery(api.db.threads.list, {})
-  result?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
-  return result
-}
 
 export const useViewerDetails = (
   checkOwnerId?: string,
