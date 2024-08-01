@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer'
 
 import { Message } from '@/components/message/Message'
 import { useThreadContext } from '@/components/providers/ThreadProvider'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
@@ -12,7 +13,7 @@ import { cn } from '@/lib/utils'
 import type { EMessage } from '@/convex/types'
 
 export const MessageFeed = () => {
-  const { thread, messages } = useThreadContext()
+  const { thread, messages, isLoading } = useThreadContext()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [endOfFeedRef, endOfFeedInView] = useInView()
@@ -36,15 +37,13 @@ export const MessageFeed = () => {
   }, [messages])
 
   if (!thread) return null
-  if (!messages) return <MessagesLoading />
+  if (isLoading && (messages === undefined || messages?.length === 0)) return <MessagesLoading />
 
   return (
     <div className="grow overflow-hidden">
       <ScrollArea ref={containerRef} scrollbars="vertical">
         <div className="flex-center min-h-4 py-2">
-          <Button variant="surface" size="1" color="gray" className="w-48">
-            Load More Messages
-          </Button>
+          <LoadMoreButton />
         </div>
 
         <div className="flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
@@ -101,47 +100,21 @@ const isUserRoleMessage = (message: EMessage | undefined) => {
   return message.role === 'user'
 }
 
-// const LoadMoreButton = () => {
-//   const { page, loadMoreMessages } = useChat()
+const LoadMoreButton = () => {
+  const { status, isLoading, loadMore } = useThreadContext()
 
-//   if (page.status === 'Exhausted') return <EndOfFeedIndicator position="end" />
-
-//   return (
-//     <div className="flex h-12 w-full items-center justify-center">
-//       <Button
-//         variant="surface"
-//         size="1"
-//         color="gray"
-//         className="w-48"
-//         disabled={page.status !== 'CanLoadMore'}
-//         onClick={() => loadMoreMessages()}
-//       >
-//         {page.isLoading ? (
-//           <Icons.CircleNotch className="size-4 animate-spin" />
-//         ) : (
-//           'Load More Messages'
-//         )}
-//       </Button>
-//     </div>
-//   )
-// }
-
-const EndOfFeedIndicator = ({ position = 'start' }: { position?: 'start' | 'end' }) => {
+  if (status === 'Exhausted') return null
   return (
-    <div
-      className={cn(
-        'flex h-7 w-full shrink-0 items-center justify-center overflow-hidden',
-        position === 'start' ? 'mb-2' : 'mt-2',
-      )}
+    <Button
+      variant="surface"
+      size="1"
+      color="gray"
+      className="w-48"
+      disabled={status !== 'CanLoadMore'}
+      onClick={loadMore}
     >
-      <div className="absolute right-[57.5%] top-1/2 h-px w-[37.5%] bg-grayA-5" />
-      <div className="absolute left-[57.5%] top-1/2 h-px w-[37.5%] bg-grayA-5" />
-      {position === 'start' ? (
-        <Icons.SunHorizon className="size-6 rounded text-grayA-5" />
-      ) : (
-        <Icons.Planet className="size-6 rounded text-grayA-5" />
-      )}
-    </div>
+      {isLoading ? <LoadingSpinner className="w-4" /> : 'Load More Messages'}
+    </Button>
   )
 }
 

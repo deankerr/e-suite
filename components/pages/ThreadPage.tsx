@@ -91,6 +91,7 @@ const ThreadPageBody = () => {
 const SingleMessagePage = () => {
   const { seriesMessage } = useThreadContext()
 
+  if (seriesMessage === null) return <EmptyPage />
   if (!seriesMessage) return <LoadingSpinner />
 
   return (
@@ -124,7 +125,7 @@ const ThreadComposer = () => {
 
 const ThreadPageDebug = () => {
   const [showJson, setShowJson] = useState(false)
-  const { thread, messages } = useThreadContext()
+  const { thread, messages, messagesQuery, status } = useThreadContext()
 
   return (
     <AdminOnlyUi>
@@ -133,6 +134,8 @@ const ThreadPageDebug = () => {
       )}
       <div className="absolute left-1 top-12 font-mono text-xs text-gray-9">
         <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button>
+        <span>{messagesQuery.byMediaType ?? 'all'}</span>
+        <span className="">{status}</span>
       </div>
     </AdminOnlyUi>
   )

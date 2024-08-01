@@ -1,10 +1,9 @@
 import { createContext, useContext, useState } from 'react'
 
-import { useLatestMessages, useSeriesMessage, useThreads } from '@/lib/api'
+import { useMessageBySeries, useThreadMessages, useThreads } from '@/lib/api'
 
-export type ChatQueryFilters = {
-  role?: 'user' | 'assistant'
-  hasContent?: 'image' | 'audio'
+type MessagesQuery = {
+  byMediaType?: 'images' | 'audio'
 }
 
 const useCreateThreadContext = ({
@@ -15,26 +14,30 @@ const useCreateThreadContext = ({
   messageSeriesNum?: string
 }) => {
   const { thread } = useThreads(threadSlug)
-  const [queryByMediaType, setQueryByMediaType] = useState<'images' | 'audio' | undefined>(
-    undefined,
-  )
+  const [messagesQuery, setMessagesQuery] = useState<MessagesQuery>({})
+
   const isSeriesMessage = !!messageSeriesNum
 
-  const latestMessages = useLatestMessages({ slugOrId: threadSlug, byMediaType: queryByMediaType })
-  const messages = latestMessages
+  const { messages, status, isLoading, loadMore } = useThreadMessages({
+    slug: !isSeriesMessage ? threadSlug : undefined,
+    byMediaType: messagesQuery.byMediaType,
+  })
 
-  const seriesMessage = useSeriesMessage({ slug: threadSlug, series: messageSeriesNum })
+  const seriesMessage = useMessageBySeries({ slug: threadSlug, series: messageSeriesNum })
 
   const threadTitle = thread ? (thread.title ?? 'untitled thread') : ''
 
   return {
     thread,
     messages,
+    status,
+    isLoading,
+    loadMore,
+    messagesQuery,
+    setMessagesQuery,
     threadTitle,
     seriesMessage,
     isSeriesMessage,
-    queryByMediaType,
-    setQueryByMediaType,
   }
 }
 

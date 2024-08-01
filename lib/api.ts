@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { api } from '@/convex/_generated/api'
 
 const RUN_THROTTLE = 2500
-const MAX_LATEST_MESSAGES = 32
+const INITIAL_MESSAGE_LIMIT = 32
 
 // * mutations
 export const useThreadActions = (threadId?: string) => {
@@ -89,47 +89,6 @@ export const useMessageMutations = () => {
   return { removeMessage }
 }
 
-// // * queries
-// export const useLatestMessages = (slugOrId?: string) => {
-//   return useQuery(api.db.threads.latestMessages, slugOrId ? { slugOrId } : 'skip')
-// }
-
-// export const useMessagesList = ({ slugOrId, filters }: { slugOrId?: string; filters?: any }) => {
-//   const [startPaginatedQuery, setStartPaginatedQuery] = useState(false)
-
-//   const latestResult = useLatestMessages(slugOrId)
-
-//   const pagedResult = usePaginatedQuery(
-//     api.db.messages.list,
-//     startPaginatedQuery && slugOrId ? { slugOrId, filters } : 'skip',
-//     {
-//       initialNumItems: 64,
-//     },
-//   )
-
-//   useEffect(() => {
-//     if (startPaginatedQuery) return
-//     if (filters) setStartPaginatedQuery(true)
-//   }, [filters, startPaginatedQuery])
-
-//   if (startPaginatedQuery && pagedResult.status !== 'LoadingFirstPage') {
-//     return pagedResult
-//   }
-
-//   const latestMessagesLength = latestResult?.length ?? 0
-//   return {
-//     results: latestResult ?? [],
-//     status:
-//       latestResult === undefined
-//         ? 'LoadingFirstPage'
-//         : latestMessagesLength >= MAX_LATEST_MESSAGES
-//           ? 'CanLoadMore'
-//           : 'Exhausted',
-//     isLoading: false,
-//     loadMore: () => setStartPaginatedQuery(true),
-//   }
-// }
-
 export const useViewer = () => {
   return useQuery(api.users.getViewer, {})
 }
@@ -149,19 +108,87 @@ export const useThreads = (threadSlug?: string) => {
   }
 }
 
-export const useSeriesMessage = ({ slug, series }: { slug?: string; series?: string }) => {
-  return useQuery(
-    api.db.messages.getSeriesMessage,
-    slug && series ? { slug, series: Number(series) } : 'skip',
-  )
+export const useLatestMessages = ({
+  slugOrId,
+  limit = INITIAL_MESSAGE_LIMIT,
+  byMediaType,
+}: {
+  slugOrId?: string
+  limit?: number
+  byMediaType?: 'images' | 'audio'
+}) => {
+  const queryKey = slugOrId ? { slugOrId, limit, byMediaType } : 'skip'
+  return useCacheQuery(api.db.threads.latestMessages, queryKey)
 }
 
-export const useLatestMessages = ({
+export const useMessagePages = ({
   slugOrId,
   byMediaType,
 }: {
   slugOrId?: string
   byMediaType?: 'images' | 'audio'
 }) => {
-  return useCacheQuery(api.db.threads.latestMessages, slugOrId ? { slugOrId, byMediaType } : 'skip')
+  const queryKey = slugOrId ? { slugOrId, byMediaType } : 'skip'
+  return usePaginatedQuery(api.db.threads.listMessages, queryKey, {
+    initialNumItems: INITIAL_MESSAGE_LIMIT * 2,
+  })
+}
+
+export const useMessageBySeries = ({ slug, series }: { slug?: string; series?: string }) => {
+  return useCacheQuery(
+    api.db.threads.getMessage,
+    slug ? { slugOrId: slug, series: Number(series) } : 'skip',
+  )
+}
+
+export const useThreadMessages = (args: { slug?: string; byMediaType?: 'images' | 'audio' }) => {
+  const [queryType, setQueryType] = useState<'latest' | 'pages'>('latest')
+  const shouldUsePageQuery = queryType === 'pages' || args.byMediaType
+
+  const pagesQueryKey =
+    shouldUsePageQuery && args.slug
+      ? {
+          slugOrId: args.slug,
+          byMediaType: args.byMediaType,
+        }
+      : 'skip'
+
+  const { results: pagedMessages, ...pager } = usePaginatedQuery(
+    api.db.threads.listMessages,
+    pagesQueryKey,
+    { initialNumItems: INITIAL_MESSAGE_LIMIT * 2 },
+  )
+
+  const latestQueryKey =
+    !shouldUsePageQuery && args.slug
+      ? {
+          slugOrId: args.slug,
+          limit: INITIAL_MESSAGE_LIMIT,
+        }
+      : 'skip'
+  const latestMessages = useCacheQuery(api.db.threads.latestMessages, latestQueryKey) ?? []
+
+  const messages = shouldUsePageQuery ? pagedMessages : latestMessages
+
+  const loadMore = () => {
+    if (queryType === 'latest') {
+      setQueryType('pages')
+    } else {
+      pager.loadMore(INITIAL_MESSAGE_LIMIT)
+    }
+  }
+
+  const status = shouldUsePageQuery
+    ? pager.status
+    : latestMessages.length >= INITIAL_MESSAGE_LIMIT
+      ? 'CanLoadMore'
+      : 'Exhausted'
+  const isLoading = shouldUsePageQuery ? pager.isLoading : latestMessages === undefined
+
+  return {
+    messages,
+    loadMore,
+    status,
+    isLoading,
+  }
 }

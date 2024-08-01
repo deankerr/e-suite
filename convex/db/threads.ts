@@ -1,5 +1,6 @@
 import { omit } from 'convex-helpers'
 import { literals, partial } from 'convex-helpers/validators'
+import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
 
@@ -8,7 +9,7 @@ import { mutation, query } from '../functions'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import { extractValidUrlsFromText, getInferenceConfig } from '../shared/utils'
-import { generateSlug } from '../utils'
+import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
@@ -139,18 +140,39 @@ export const list = query({
 export const latestMessages = query({
   args: {
     slugOrId: v.string(),
-    byMediaType: v.optional(literals('images', 'audio')),
+    limit: v.number(),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return []
+
+    const messages = await thread
+      .edge('messages')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .take(args.limit)
+      .map(async (message) => await getMessageEdges(ctx, message))
+
+    return messages
+  },
+})
+
+export const listMessages = query({
+  args: {
+    slugOrId: v.string(),
+    paginationOpts: paginationOptsValidator,
+    byMediaType: v.optional(literals('images', 'audio')),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return emptyPage()
 
     if (args.byMediaType) {
       const messages = await thread
         .edge(args.byMediaType)
         .order('desc')
         .filter((q) => q.eq(q.field('deletionTime'), undefined))
-        .take(32)
+        .paginate(args.paginationOpts)
         .map(
           async (media) =>
             await media
@@ -158,17 +180,41 @@ export const latestMessages = query({
               .then(async (message) => await getMessageEdges(ctx, message)),
         )
 
-      return messages
+      const uniqueIds = new Set(messages.page.map((m) => m._id))
+      const page = [...uniqueIds].map((id) =>
+        messages.page.find((m) => m._id === id),
+      ) as (typeof messages)['page']
+
+      return { ...messages, page }
     }
 
     const messages = await thread
       .edge('messages')
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(32)
+      .paginate(args.paginationOpts)
       .map(async (message) => await getMessageEdges(ctx, message))
 
     return messages
+  },
+})
+
+export const getMessage = query({
+  args: {
+    slugOrId: v.string(),
+    series: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return null
+
+    const messageEnt = await ctx.table('messages').get('threadId_series', thread._id, args.series)
+    if (!messageEnt || messageEnt.deletionTime) {
+      return null
+    }
+
+    const message = await getMessageEdges(ctx, messageEnt)
+    return message
   },
 })
 

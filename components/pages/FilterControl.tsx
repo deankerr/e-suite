@@ -9,7 +9,7 @@ export const FilterControl = ({
 }: {
   buttonProps?: React.ComponentProps<typeof Button>
 }) => {
-  const { queryByMediaType, setQueryByMediaType } = useThreadContext()
+  const { messagesQuery, setMessagesQuery } = useThreadContext()
 
   const className =
     'flex items-center py-1 rounded-md pl-1.5 pr-4 cursor-pointer hover:bg-grayA-2 shrink-0'
@@ -20,7 +20,7 @@ export const FilterControl = ({
         <Button
           variant="outline"
           size="2"
-          color={queryByMediaType ? 'orange' : 'gray'}
+          color={messagesQuery.byMediaType ? 'orange' : 'gray'}
           className="px-2 md:px-3"
           {...buttonProps}
         >
@@ -35,9 +35,9 @@ export const FilterControl = ({
             <Radio
               value="all"
               className="mr-2"
-              checked={!queryByMediaType}
+              checked={!messagesQuery.byMediaType}
               onClick={() => {
-                setQueryByMediaType(undefined)
+                setMessagesQuery({ byMediaType: undefined })
               }}
             />
             <span className="font-medium">All</span>
@@ -47,9 +47,9 @@ export const FilterControl = ({
             <Radio
               value="images"
               className="mr-2"
-              checked={queryByMediaType === 'images'}
+              checked={messagesQuery.byMediaType === 'images'}
               onClick={() => {
-                setQueryByMediaType('images')
+                setMessagesQuery({ byMediaType: 'images' })
               }}
             />
             <Icons.Images className="mr-1 size-4" />
@@ -60,9 +60,9 @@ export const FilterControl = ({
             <Radio
               value="audio"
               className="mr-2"
-              checked={queryByMediaType === 'audio'}
+              checked={messagesQuery.byMediaType === 'audio'}
               onClick={() => {
-                setQueryByMediaType('audio')
+                setMessagesQuery({ byMediaType: 'audio' })
               }}
             />
             <Icons.CassetteTape className="mr-1 size-4" />
