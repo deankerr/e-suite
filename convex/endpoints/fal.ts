@@ -1,9 +1,14 @@
 import * as client from '@fal-ai/serverless-client'
+import { v } from 'convex/values'
 
 import { internalMutation } from '../functions'
+import { imageModelFields } from '../schema'
 import FalModelsJson from './fal.models.json'
 
-import type { ImageModelDataRecord } from '../db/endpoints'
+import type { Infer } from 'convex/values'
+
+const imageModelSchema = v.object(imageModelFields)
+export type ImageModelDataRecord = Infer<typeof imageModelSchema> & { resourceKey: string }
 
 export const createFalClient = () => {
   client.config({
