@@ -2,7 +2,7 @@
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ImageModelCard } from '@/components/cards/ImageModelCard'
-import { useImageModels } from '@/lib/queries'
+import { useImageModels } from '@/lib/api'
 
 export default function Page() {
   const imageModels = useImageModels()

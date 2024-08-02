@@ -8,6 +8,8 @@ import { toast } from 'sonner'
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
+import type { EChatModel, EImageModel, EVoiceModel } from '@/convex/types'
+
 const RUN_THROTTLE = 2500
 const INITIAL_MESSAGE_LIMIT = 32
 
@@ -214,4 +216,19 @@ export const useThreadMessages = (args: { slug?: string; byMediaType?: 'images' 
     status,
     isLoading,
   }
+}
+
+export const useChatModels = (): EChatModel[] | undefined => {
+  const result = useCacheQuery(api.db.models.listChatModels, {})
+  return result
+}
+
+export const useImageModels = (): EImageModel[] | undefined => {
+  const result = useCacheQuery(api.db.models.listImageModels, {})
+  return result
+}
+
+export const useVoiceModels = (): EVoiceModel[] | undefined => {
+  const result = useCacheQuery(api.db.models.listVoiceModels, {})
+  return result
 }
