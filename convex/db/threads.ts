@@ -347,12 +347,12 @@ export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) 
 
   const getMatch = (keyword: string) => {
     // * match + strip command keywords
-    if (['/', '@'].includes(keyword.charAt(0)) && text.startsWith(`${keyword} `)) {
-      return { text: text.replace(`${keyword} `, ''), keyword }
-    }
-
-    // * keyword anywhere
-    if (text.includes(keyword)) {
+    if (['/', '@'].includes(keyword.charAt(0))) {
+      if (text.startsWith(`${keyword} `)) {
+        return { text: text.replace(`${keyword} `, ''), keyword }
+      }
+    } else if (text.includes(keyword)) {
+      // * keyword anywhere
       return { text, keyword }
     }
 
