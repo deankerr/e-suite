@@ -124,7 +124,7 @@ const defaultChatModel = {
   name: 'GPT-4o',
   numParameters: 0,
   pricing: {},
-  resourceKey: 'openai::openai/gpt-4o',
+  resourceKey: 'openai::gpt-4o',
   stop: [],
   tags: ['flagship', 'multimodal'],
   tokenizer: 'GPT',
