@@ -6,6 +6,17 @@ import type { MutationCtx } from './types'
 
 export const { runWithRetries, retry } = makeActionRetrier('utils:retry')
 
+// see https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
+// permanent loading state for a paginated query until a different result is returned
+export function emptyPage() {
+  return {
+    page: [],
+    isDone: false,
+    continueCursor: '',
+    pageStatus: 'SplitRequired' as const,
+  }
+}
+
 export const generateSlug = async (ctx: MutationCtx) => {
   const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
@@ -32,15 +43,29 @@ export const generateSha256Hash = async (input: string) => {
   return hashHex
 }
 
-// see https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
-// permanent loading state for a paginated query until a different result is returned
-export function emptyPage() {
-  return {
-    page: [],
-    isDone: false,
-    continueCursor: '',
-    pageStatus: 'SplitRequired' as const,
+const uidMagic = 1627826378900 // turn back time to reduce the size of the uid
+export const generateUid = (number: number): string => {
+  return base36Encode(Math.trunc(number) - uidMagic)
+}
+
+function base36Encode(number: number): string {
+  if (!Number.isInteger(number)) {
+    throw new TypeError(`number must be an integer: ${number}`)
   }
+  if (number < 0) {
+    throw new RangeError(`number must be positive: ${number}`)
+  }
+
+  const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz'
+  let base36 = ''
+
+  while (number > 0) {
+    const remainder = number % 36
+    base36 = alphabet[remainder] + base36
+    number = Math.floor(number / 36)
+  }
+
+  return base36 || '0'
 }
 
 //* zod utils

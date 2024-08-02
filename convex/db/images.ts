@@ -7,6 +7,7 @@ import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery } from '../functions'
 import { imageFields } from '../schema'
 import { extractInferenceConfig } from '../shared/helpers'
+import { generateUid } from '../utils'
 
 import type { Doc } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
@@ -24,8 +25,8 @@ export const createImageWf = internalMutation({
       userId: message.userId,
       threadId: message.threadId,
       generationData: await getGenerationData(ctx, message),
+      uid: generateUid(Date.now()),
     })
-    console.log('[image]', args.sourceUrl)
 
     if (!message.hasImageContent) {
       await message.patch({ hasImageContent: true })
@@ -117,3 +118,33 @@ export const serve = httpAction(async (ctx, request) => {
 
   return new Response(blob)
 })
+
+export const testid = internalMutation(async (ctx) => {
+  const images = await ctx.table('images').order('asc').take(2000)
+  return images.map(({ _creationTime }) => base36Encode(_creationTime * 1000))
+})
+
+function base36Encode(number: number): string {
+  try {
+    if (!Number.isInteger(number)) {
+      throw new TypeError(`number must be an integer: ${number}`)
+    }
+    if (number < 0) {
+      throw new RangeError(`number must be positive: ${number}`)
+    }
+
+    const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz'
+    let base36 = ''
+
+    while (number > 0) {
+      const remainder = number % 36
+      base36 = alphabet[remainder] + base36
+      number = Math.floor(number / 36)
+    }
+
+    return base36 || '0'
+  } catch (err) {
+    console.error(err)
+    return `${number}`
+  }
+}
