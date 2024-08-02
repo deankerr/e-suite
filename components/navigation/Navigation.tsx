@@ -38,7 +38,7 @@ export const Navigation = () => {
       >
         {/* * logo / menu button * */}
         <div className="flex-between h-12 w-full shrink-0 px-3">
-          <Link href={appConfig.baseUrl}>
+          <Link href={appConfig.baseUrl} aria-label="Go to home page">
             <AppTitle />
           </Link>
 
