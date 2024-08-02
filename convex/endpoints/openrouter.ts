@@ -142,7 +142,7 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
   }
 }
 
-export const importModels = internalAction(async (ctx: ActionCtx) => {
+export const importChatModels = internalAction(async (ctx: ActionCtx) => {
   console.info(endpoint, 'importing models')
   console.log('https://openrouter.ai/api/v1/models')
   const response = await ky.get('https://openrouter.ai/api/v1/models').json()

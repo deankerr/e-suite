@@ -1,9 +1,10 @@
 import { v } from 'convex/values'
 
+import { internal } from '../_generated/api'
 import * as Aws from '../endpoints/aws'
 import * as ElevenLabs from '../endpoints/elevenlabs'
 import * as OpenAi from '../endpoints/openai'
-import { internalMutation, query } from '../functions'
+import { internalAction, internalMutation, query } from '../functions'
 import { chatModelFields, imageModelFields } from '../schema'
 import { QueryCtx } from '../types'
 
@@ -155,4 +156,14 @@ export const listVoiceModels = query({
   handler: async () => {
     return getVoiceModels()
   },
+})
+
+// * admin
+export const importEndpointModels = internalAction(async (ctx) => {
+  await ctx.runMutation(internal.endpoints.openai.importChatModels, {})
+  await ctx.runMutation(internal.endpoints.fal.importImageModels, {})
+
+  await ctx.runAction(internal.endpoints.openrouter.importChatModels, {})
+  await ctx.runAction(internal.endpoints.sinkin.importImageModels, {})
+  await ctx.runAction(internal.endpoints.together.importChatModels, {})
 })

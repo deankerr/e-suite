@@ -4,36 +4,38 @@ import { getModelTags } from '../lib/modelTags'
 import type { Doc } from '../_generated/dataModel'
 import type { WithoutSystemFields } from 'convex/server'
 
+const endpoint = 'openai'
+
 const definitions = [
   {
     modelId: 'gpt-4o',
     name: 'GPT-4o',
     contextLength: 128000,
-    pricing: { type: 'perMillionTokens', inputValue: 5, outputValue: 15 },
+    pricing: { type: 'llm', tokenInput: 5, tokenOutput: 15 },
   },
   {
     modelId: 'gpt-4o-mini',
     name: 'GPT-4o Mini',
     contextLength: 128000,
-    pricing: { type: 'perMillionTokens', inputValue: 0.15, outputValue: 0.6 },
+    pricing: { type: 'llm', tokenInput: 0.15, tokenOutput: 0.6 },
   },
   {
     modelId: 'gpt-4-turbo',
     name: 'GPT-4 Turbo',
     contextLength: 128000,
-    pricing: { type: 'perMillionTokens', inputValue: 10, outputValue: 30 },
+    pricing: { type: 'llm', tokenInput: 10, tokenOutput: 30 },
   },
   {
     modelId: 'gpt-4',
     name: 'GPT-4',
     contextLength: 8192,
-    pricing: { type: 'perMillionTokens', inputValue: 30, outputValue: 60 },
+    pricing: { type: 'llm', tokenInput: 30, tokenOutput: 60 },
   },
   {
     modelId: 'gpt-3.5-turbo',
     name: 'GPT-3.5 Turbo',
     contextLength: 16385,
-    pricing: { type: 'perMillionTokens', inputValue: 0.5, outputValue: 1.5 },
+    pricing: { type: 'llm', tokenInput: 0.5, tokenOutput: 1.5 },
   },
 ]
 
@@ -50,19 +52,21 @@ export const chatModelData: WithoutSystemFields<Doc<'chat_models'>>[] = definiti
   license: '',
   tags: [],
 
-  numParameters: 0,
   tokenizer: 'GPT',
-  stop: [],
 
   moderated: false,
   available: true,
   hidden: false,
   internalScore: 2,
+
+  type: 'chat',
 }))
 
 export const importChatModels = internalMutation({
   args: {},
   handler: async (ctx) => {
+    console.info(endpoint, 'importing models')
+
     for (const model of chatModelData) {
       const { tags, score } = getModelTags(model.endpointModelId)
       model.tags.push(...tags)
@@ -76,8 +80,8 @@ export const importChatModels = internalMutation({
         await existing.replace(model)
       } else {
         await ctx.table('chat_models').insert(model)
+        console.info(endpoint, 'created new model', model.name, model.resourceKey)
       }
-      console.log(model.name, model.internalScore, model.tags)
     }
   },
 })
