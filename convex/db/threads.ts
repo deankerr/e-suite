@@ -8,7 +8,12 @@ import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
-import { extractInferenceConfig, extractValidUrlsFromText } from '../shared/helpers'
+import {
+  extractInferenceConfig,
+  extractValidUrlsFromText,
+  getMessageName,
+  getMessageText,
+} from '../shared/helpers'
 import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
@@ -46,6 +51,16 @@ const createMessage = async (
     .insert({ ...fields, series })
     .get()
   return message
+}
+
+const getMessageBySeries = async (
+  ctx: QueryCtx,
+  { threadId, series }: { threadId: Id<'threads'>; series: number },
+) => {
+  const messageEnt = await ctx.table('messages').get('threadId_series', threadId, series)
+  if (!messageEnt || messageEnt?.deletionTime) return null
+
+  return await getMessageEdges(ctx, messageEnt)
 }
 
 const getUserThread = async (ctx: MutationCtx, threadId: string) => {
@@ -207,13 +222,38 @@ export const getMessage = query({
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return null
 
-    const messageEnt = await ctx.table('messages').get('threadId_series', thread._id, args.series)
-    if (!messageEnt || messageEnt.deletionTime) {
-      return null
-    }
+    return await getMessageBySeries(ctx, { threadId: thread._id, series: args.series })
+  },
+})
 
-    const message = await getMessageEdges(ctx, messageEnt)
-    return message
+export const getPageMetadata = query({
+  args: {
+    slugOrId: v.string(),
+    series: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (thread) {
+      const threadTitle = thread.title ?? 'Untitled Thread'
+
+      const message = args.series
+        ? await getMessageBySeries(ctx, { threadId: thread._id, series: args.series })
+        : null
+      if (message) {
+        const name = getMessageName(message)
+        const text = getMessageText(message)
+        if (name && text) {
+          return {
+            title: `${threadTitle} · ${name}: ${text}`,
+            description: `${threadTitle} · ${name}: ${text}`,
+          }
+        }
+      }
+
+      return {
+        title: threadTitle,
+      }
+    }
   },
 })
 
