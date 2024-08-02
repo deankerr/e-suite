@@ -17,16 +17,15 @@ export async function generateMetadata({
   })
   if (!threadData) return {}
 
-  if (threadData.description) {
-    return {
-      title: threadData.title,
-      description: `${appConfig.siteDescription} · ${threadData.description}`,
-    }
-  }
-
-  return {
+  const metadata: Metadata = {
     title: threadData.title,
   }
+
+  if (threadData.description) {
+    metadata.description = `${appConfig.siteDescription} · ${threadData.description}`
+  }
+
+  return metadata
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
