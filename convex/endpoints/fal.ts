@@ -1,5 +1,6 @@
 import * as client from '@fal-ai/serverless-client'
 import { v } from 'convex/values'
+import * as vb from 'valibot'
 
 import { internalMutation } from '../functions'
 import { imageModelFields } from '../schema'
@@ -51,6 +52,7 @@ function buildModelData(): ImageModelDataRecord[] {
         resourceKey: `fal::${data.model_id}`,
         endpoint: 'fal',
         endpointModelId: data.model_id,
+        modelId: data.model_id,
         name: data.name,
         description: data.description,
         creatorName: data.creatorName ?? '',
@@ -64,12 +66,11 @@ function buildModelData(): ImageModelDataRecord[] {
             ? 'SD3'
             : '',
         sizes: sdxlSizes,
-        pricing: data.pricing
-          ? {
-              type: data.pricing.type,
-              value: Number(data.pricing.value),
-            }
-          : { type: 'unknown' },
+        pricing: {
+          type: vb.parse(vb.picklist(['perRequest', 'perSecond']), data.pricing?.type),
+          value: vb.parse(vb.number(), Number(data.pricing?.value)),
+        },
+
         moderated: false,
         available: true,
         hidden: false,

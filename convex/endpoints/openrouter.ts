@@ -70,9 +70,9 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
       // * build model shape
       const pricing =
         parsed.id.endsWith(':free') || Object.values(parsed.pricing).every((value) => value === '0')
-          ? { type: 'free' }
+          ? { type: 'free' as const }
           : {
-              type: 'llm',
+              type: 'llm' as const,
               tokenInput: toPerMillionTokens(parsed.pricing.prompt),
               tokenOutput: toPerMillionTokens(parsed.pricing.completion),
               imageInput:

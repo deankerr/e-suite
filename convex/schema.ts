@@ -111,11 +111,6 @@ const sharedModelFields = {
       imageOutput: v.optional(v.number()),
     }),
     v.object({
-      type: v.literal('perMillionTokens'),
-      inputValue: v.number(),
-      outputValue: v.number(),
-    }),
-    v.object({
       type: v.literal('free'),
     }),
     v.object({
@@ -126,10 +121,6 @@ const sharedModelFields = {
       type: v.literal('perSecond'),
       value: v.number(),
     }),
-    v.object({
-      type: v.literal('unknown'),
-    }),
-    v.object({}), // NOTE - deprecated (no data)
   ),
 
   moderated: v.boolean(),
@@ -394,20 +385,6 @@ const jobs3 = defineEnt(job3Fields)
   .index('threadId', ['threadId'])
   .index('messageId', ['messageId'])
 
-const queueFields = {
-  jobId: v.id('jobs3'),
-  status: v.string(),
-  priority: v.number(),
-}
-export const queue = defineEnt(queueFields)
-
-const rateLimitFields = {
-  endpoint: v.string(),
-  requestCount: v.number(),
-  lastResetTime: v.number(),
-}
-const rate_limits = defineEnt(rateLimitFields)
-
 // * Schema
 const schema = defineEntSchema(
   {
@@ -423,8 +400,6 @@ const schema = defineEntSchema(
     users,
     users_api_keys,
 
-    queue,
-    rate_limits,
     jobs3,
   },
   {
