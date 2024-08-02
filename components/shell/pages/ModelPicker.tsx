@@ -2,16 +2,16 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtom } from 'jotai'
 import { toast } from 'sonner'
 
-import { useModelsApi } from '@/components/providers/ModelsApiProvider'
 import { shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useIsCurrentPage, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
-import { useUpdateCurrentThreadModel } from '@/lib/api'
+import { useChatModels, useImageModels, useUpdateCurrentThreadModel } from '@/lib/api'
 
 import type { EChatModel, EImageModel } from '@/convex/types'
 
 export const ModelPicker = () => {
-  const { chatModels, imageModels } = useModelsApi()
+  const chatModels = useChatModels()
+  const imageModels = useImageModels()
   const [selectedModel, setSelectedModel] = useAtom(shellSelectedModelAtom)
   const threads = useShellUserThreads()
   const stack = useShellStack()

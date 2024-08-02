@@ -7,7 +7,7 @@ import fuzzysort from 'fuzzysort'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { SearchField } from '@/components/form/SearchField'
-import { useVoiceModels } from '@/lib/queries'
+import { useVoiceModels } from '@/lib/api'
 
 export default function Page() {
   // const textVoiceover = useMutation(api.db.voiceover.text)
