@@ -1,99 +1,14 @@
+import { omit } from 'convex-helpers'
 import ky from 'ky'
-import { z } from 'zod'
+import * as vb from 'valibot'
 
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
+import { shapeChatModel } from '../db/models'
+import { internalAction } from '../functions'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ParsedChatModelData } from '../db/endpoints'
-import type { MutationCtx } from '../types'
 
-export const fetchModelData = async (ctx: ActionCtx) => {
-  console.log('https://openrouter.ai/api/v1/models')
-  const response = await ky.get('https://openrouter.ai/api/v1/models').json()
-  await ctx.runMutation(internal.db.endpoints.cacheEndpointModelData, {
-    endpoint: 'openrouter',
-    name: 'chat-models',
-    data: JSON.stringify(response, null, 2),
-  })
-}
-
-export const getNormalizedModelData = async (ctx: MutationCtx) => {
-  const cached = await ctx
-    .table('endpoint_data_cache')
-    .order('desc')
-    .filter((q) =>
-      q.and(q.eq(q.field('endpoint'), 'openrouter'), q.eq(q.field('name'), 'chat-models')),
-    )
-    .firstX()
-  const list = modelDataListSchema.parse(JSON.parse(cached.data))
-
-  const models = list.data
-    .map((raw): ParsedChatModelData | null => {
-      const parsed = modelDataRecordSchema.strict().safeParse(raw)
-      if (!parsed.success) {
-        console.error(parsed.error.issues)
-        return null
-      }
-      if (excludedModelIds.includes(parsed.data.id)) return null
-
-      const d = parsed.data
-      return {
-        resourceKey: `openrouter::${d.id}`,
-        name: d.name,
-        description: d.description,
-
-        creatorName: d.id.split('/')[0] ?? '',
-        link: '',
-        license: '',
-        tags: [],
-
-        numParameters: 0,
-        contextLength: d.context_length,
-        tokenizer: d.architecture.tokenizer,
-        stop: [],
-        maxOutputTokens: d.top_provider.max_completion_tokens ?? undefined,
-
-        endpoint: 'openrouter',
-        endpointModelId: d.id,
-        pricing: {},
-        moderated: d.top_provider.is_moderated,
-        available: true,
-        hidden: false,
-        internalScore: 0,
-      }
-    })
-    .filter(Boolean) as ParsedChatModelData[]
-
-  console.log('openrouter: processed', models.length, 'models')
-  return models
-}
-
-const modelDataListSchema = z.object({
-  data: z.unknown().array(),
-})
-
-const modelDataRecordSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  pricing: z.object({
-    prompt: z.coerce.number(),
-    completion: z.coerce.number(),
-    image: z.coerce.number(),
-    request: z.coerce.number(),
-  }),
-  context_length: z.number(),
-  architecture: z.object({
-    modality: z.string(),
-    tokenizer: z.string(),
-    instruct_type: z.string().nullable(),
-  }),
-  top_provider: z.object({
-    max_completion_tokens: z.number().nullable(),
-    is_moderated: z.boolean(),
-  }),
-  per_request_limits: z.null(),
-})
+const endpoint = 'openrouter'
 
 const excludedModelIds = [
   'meta-llama/llama-guard-2-8b',
@@ -113,3 +28,118 @@ const excludedModelIds = [
   'anthropic/claude-instant-1.0',
   'anthropic/claude-instant-1.1',
 ]
+
+const ApiModelRecord = vb.object({
+  id: vb.string(),
+  name: vb.string(),
+  description: vb.string(),
+  pricing: vb.object({
+    prompt: vb.string(),
+    completion: vb.string(),
+    image: vb.string(),
+    request: vb.string(),
+  }),
+  context_length: vb.number(),
+  architecture: vb.object({
+    modality: vb.string(),
+    tokenizer: vb.string(),
+    instruct_type: vb.nullable(vb.string()),
+  }),
+  top_provider: vb.object({
+    max_completion_tokens: vb.number(),
+    is_moderated: vb.boolean(),
+  }),
+  per_request_limits: vb.null(),
+})
+
+const ApiModelsResponse = vb.object({
+  data: vb.array(vb.unknown()),
+})
+
+const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
+  const existingModels = await ctx.runQuery(api.db.models.listChatModels, { endpoint })
+  const availabilityCheck = new Set(existingModels.map((m) => m.resourceKey))
+  console.info(endpoint, 'existing models', existingModels.length)
+
+  for (const record of records) {
+    try {
+      const parsed = vb.parse(ApiModelRecord, record)
+      // * excluded model skip
+      if (excludedModelIds.includes(parsed.id)) continue
+
+      // * build model shape
+      const pricing = parsed.id.endsWith(':free')
+        ? { type: 'free' }
+        : {
+            type: 'llm',
+            tokenInput: parseFloat(parsed.pricing.prompt) * 1000000,
+            tokenOutput: parseFloat(parsed.pricing.completion) * 1000000,
+            imageInput: parsed.pricing.image ? parseFloat(parsed.pricing.image) : undefined,
+            imageOutput: parsed.pricing.image ? parseFloat(parsed.pricing.image) : undefined,
+          }
+
+      const shape = shapeChatModel({
+        endpoint,
+        name: parsed.name,
+        description: parsed.description,
+        creatorName: parsed.id.split('/')[0] ?? '',
+        link: '',
+        license: '',
+        tags: [],
+        modelId: parsed.id,
+        endpointModelId: parsed.id,
+        pricing,
+        moderated: parsed.top_provider.is_moderated,
+        available: true,
+        hidden: false,
+        internalScore: 0,
+        contextLength: parsed.context_length,
+        tokenizer: parsed.architecture.tokenizer,
+      })
+
+      // * compare with any existing
+      const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
+      if (existing) {
+        await ctx.runMutation(internal.db.models.updateChatModel, {
+          id: existing._id,
+          ...shape,
+        })
+        if (!existing.available) {
+          console.warn(endpoint, 'model now available', shape.name, shape.resourceKey)
+        }
+      } else {
+        await ctx.runMutation(internal.db.models.createChatModel, shape)
+        console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
+      }
+
+      availabilityCheck.delete(shape.resourceKey)
+    } catch (err) {
+      if (vb.isValiError(err)) {
+        console.error(endpoint, vb.flatten(err.issues))
+      } else {
+        console.error(endpoint, err)
+      }
+    }
+  }
+
+  // * mark unavailable models
+  const unavailable = existingModels.filter((m) => availabilityCheck.has(m.resourceKey))
+  for (const model of unavailable) {
+    const args = omit(model, ['_id', '_creationTime'])
+    await ctx.runMutation(internal.db.models.updateChatModel, {
+      id: model._id,
+      ...args,
+      available: false,
+    })
+    console.warn(endpoint, 'model now unavailable', model.name, model.resourceKey)
+  }
+}
+
+export const importModels = internalAction(async (ctx: ActionCtx) => {
+  console.info(endpoint, 'importing models')
+  console.log('https://openrouter.ai/api/v1/models')
+  const response = await ky.get('https://openrouter.ai/api/v1/models').json()
+  const records = vb.parse(ApiModelsResponse, response)
+
+  await processModelRecords(ctx, records.data)
+})
