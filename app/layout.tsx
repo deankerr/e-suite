@@ -9,21 +9,17 @@ import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ClientProviders } from '@/components/util/ClientProviders'
+import { appConfig } from '@/config/config'
 import { cn, environment } from '@/lib/utils'
 
 import type { Metadata, Viewport } from 'next'
 
-const devIndicator = '🔅'
-const previewIndicator = '👁️'
-const indicator =
-  environment === 'dev' ? devIndicator : environment === 'prev' ? previewIndicator : ''
-
 export const metadata: Metadata = {
   title: {
-    template: `${indicator}e/suite / %s`,
-    default: `${indicator}e/suite`,
+    template: `${appConfig.siteTitle} · %s`,
+    default: `${appConfig.siteTitle}`,
   },
-  description: "it's the e/suite",
+  description: appConfig.siteDescription,
 }
 
 export const viewport: Viewport = {
