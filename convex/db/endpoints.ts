@@ -1,6 +1,5 @@
 import { Infer, v } from 'convex/values'
 
-import * as OpenRouter from '../endpoints/openrouter'
 import * as Sinkin from '../endpoints/sinkin'
 import * as Together from '../endpoints/together'
 import { internalAction, internalMutation } from '../functions'
@@ -24,10 +23,7 @@ export const importEndpointChatModelData = internalMutation({
     const existingModels = await ctx.table('chat_models')
     console.log('chat models existing:', existingModels.length)
 
-    const parsedModels = [
-      await OpenRouter.getNormalizedModelData(ctx),
-      await Together.getNormalizedModelData(ctx),
-    ]
+    const parsedModels = [await Together.getNormalizedModelData(ctx)]
       .flat()
       .map((data): ParsedChatModelData => {
         const { tags, score } = getDefaultChatModelTags(data)
@@ -136,7 +132,6 @@ export const importEndpointImageModelData = internalMutation({
 })
 
 export const fetchEndpointModelData = internalAction(async (ctx) => {
-  await OpenRouter.fetchModelData(ctx)
   await Sinkin.fetchModelData(ctx)
   await Together.fetchModelData(ctx)
 })
