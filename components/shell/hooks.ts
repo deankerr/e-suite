@@ -123,7 +123,11 @@ const defaultChatModel = {
   moderated: false,
   name: 'GPT-4o',
   numParameters: 0,
-  pricing: {},
+  pricing: {
+    tokenInput: 5,
+    tokenOutput: 15,
+    type: "llm" as const,
+  },
   resourceKey: 'openai::gpt-4o',
   stop: [],
   tags: ['flagship', 'multimodal'],
@@ -131,28 +135,31 @@ const defaultChatModel = {
   type: 'chat' as const,
 }
 
-const defaultImageModel = {
-  _creationTime: 1720631474117.6956,
+const defaultImageModel ={
+  _creationTime: 1720631474117.6963,
   _id: '__default_image_model__' as Id<'image_models'>,
-  architecture: 'SD3' as const,
+  architecture: "",
   available: true,
-  creatorName: '',
-  description: '',
-  endpoint: 'fal',
-  endpointModelId: 'fal-ai/stable-diffusion-v3-medium',
+  coverImageUrl:
+    "https://storage.googleapis.com/falserverless/gallery/pixart-sigma.jpeg",
+  creatorName: "",
+  description:
+    "Weak-to-Strong Training of Diffusion Transformer for 4K Text-to-Image Generation",
+  endpoint: "fal",
+  endpointModelId: "fal-ai/pixart-sigma",
   hidden: false,
-  internalScore: 1,
-  license: '',
-  link: '',
+  internalScore: 6,
+  license: "",
+  link: "https://fal.ai/models/pixart-sigma",
   moderated: false,
-  name: 'Stable Diffusion V3 Medium',
-  pricing: {},
-  resourceKey: 'fal::fal-ai/stable-diffusion-v3-medium',
+  name: "PixArt-Σ",
+  pricing: { type: "perSecond" as const, value: 0.000575 },
+  resourceKey: "fal::fal-ai/pixart-sigma",
   sizes: {
     landscape: [1216, 832],
     portrait: [832, 1216],
     square: [1024, 1024],
   },
   tags: [],
-  type: 'image' as const,
+  type: "image" as const,
 }
