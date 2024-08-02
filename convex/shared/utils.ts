@@ -1,12 +1,6 @@
 import { ConvexError } from 'convex/values'
 
 import type { Doc } from '../_generated/dataModel'
-import type {
-  ChatCompletionConfig,
-  InferenceConfig,
-  TextToAudioConfig,
-  TextToImageConfig,
-} from '../types'
 import type { Value } from 'convex/values'
 
 export function env(name: string) {
@@ -86,28 +80,6 @@ export function hasDelimiter(text: string) {
     text.includes(',') ||
     text.length > 100
   )
-}
-
-export function getChatConfig(inference?: InferenceConfig): ChatCompletionConfig | null {
-  return inference?.type === 'chat-completion' ? inference : null
-}
-
-export function getTextToImageConfig(inference?: InferenceConfig): TextToImageConfig | null {
-  return inference?.type === 'text-to-image' ? inference : null
-}
-
-export function getTextToAudioConfig(inference?: InferenceConfig): TextToAudioConfig | null {
-  return inference?.type === 'sound-generation' ? inference : null
-}
-
-export function getInferenceConfig(inference?: InferenceConfig) {
-  const base = {
-    chatConfig: getChatConfig(inference),
-    textToImageConfig: getTextToImageConfig(inference),
-    textToAudioConfig: getTextToAudioConfig(inference),
-  }
-
-  return base
 }
 
 export function extractValidUrlsFromText(text: string): URL[] {

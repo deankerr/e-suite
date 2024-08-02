@@ -11,8 +11,9 @@ import { useShellActions } from '@/components/shell/hooks'
 import { Badge } from '@/components/ui/Badge'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { appConfig } from '@/config/config'
+import { extractInferenceConfig } from '@/convex/shared/helpers'
 import { useThreadActions } from '@/lib/api'
-import { cn, getInferenceConfig } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 import type { EChatModel, EImageModel, InferenceConfig, ThreadActionResult } from '@/convex/types'
 
@@ -32,7 +33,7 @@ export const Composer = ({
   textareaMinRows?: number
   threadId?: string
 } & React.ComponentProps<'form'>) => {
-  const { chatConfig, textToImageConfig } = getInferenceConfig(runConfig)
+  const { chatConfig, textToImageConfig } = extractInferenceConfig(runConfig)
   const threadActions = useThreadActions(threadId)
   const shell = useShellActions()
   const router = useRouter()

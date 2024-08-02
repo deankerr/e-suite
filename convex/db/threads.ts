@@ -8,7 +8,8 @@ import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
-import { extractValidUrlsFromText, getInferenceConfig } from '../shared/utils'
+import { extractInferenceConfig } from '../shared/helpers'
+import { extractValidUrlsFromText } from '../shared/utils'
 import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
@@ -248,7 +249,7 @@ export const updateCurrentModel = mutation({
         : await getImageModelByResourceKey(ctx, args.resourceKey)
     if (!model) throw new ConvexError('invalid model')
 
-    const { chatConfig, textToImageConfig } = getInferenceConfig(thread.inference)
+    const { chatConfig, textToImageConfig } = extractInferenceConfig(thread.inference)
     if (model.type === 'chat') {
       const prev = chatConfig ?? defaultChatInferenceConfig
       await thread.patch({
@@ -542,13 +543,6 @@ const createTextToAudioRun = async (
     },
     name: 'ElevenLabs Sound Generation',
   })
-
-  // const jobId = await createJob(ctx, {
-  //   name: 'inference/textToAudio',
-  //   fields: {
-  //     messageId: message._id,
-  //   },
-  // })
 
   const jobId = await createJobNext.textToAudio(ctx, {
     ...input,
