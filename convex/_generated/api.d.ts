@@ -15,7 +15,6 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as db_admin_see from "../db/admin/see.js";
-import type * as db_endpoints from "../db/endpoints.js";
 import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_models from "../db/models.js";
@@ -69,7 +68,6 @@ import type * as workflows_types from "../workflows/types.js";
  */
 declare const fullApi: ApiFromModules<{
   "db/admin/see": typeof db_admin_see;
-  "db/endpoints": typeof db_endpoints;
   "db/images": typeof db_images;
   "db/messages": typeof db_messages;
   "db/models": typeof db_models;

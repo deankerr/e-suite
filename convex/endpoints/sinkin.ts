@@ -1,48 +1,54 @@
 import ky from 'ky'
 import { z } from 'zod'
 
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
+import { shapeImageModel } from '../db/models'
+import { internalAction } from '../functions'
 import { env } from '../shared/utils'
 
-import type { ActionCtx } from '../_generated/server'
-import type { ImageModelDataRecord } from '../db/endpoints'
-import type { MutationCtx } from '../types'
+const endpoint = 'sinkin'
 
-export const fetchModelData = async (ctx: ActionCtx) => {
+export const fetchModelData = async () => {
   console.log('https://sinkin.ai/api/models')
   const body = new FormData()
   body.append('access_token', env('SINKIN_API_KEY'))
   const response = await ky.post('https://sinkin.ai/api/models', { body }).json()
-  await ctx.runMutation(internal.db.endpoints.cacheEndpointModelData, {
-    endpoint: 'sinkin',
-    name: 'image-models',
-    data: JSON.stringify(response, null, 2),
-  })
+  return response
 }
 
-export const getNormalizedModelData = async (ctx: MutationCtx) => {
-  const cached = await ctx
-    .table('endpoint_data_cache')
-    .order('desc')
-    .filter((q) =>
-      q.and(q.eq(q.field('endpoint'), 'sinkin'), q.eq(q.field('name'), 'image-models')),
-    )
-    .firstX()
+const modelDataSchema = z.object({
+  loras: z.any(),
+  models: z
+    .object({
+      civitai_model_id: z.coerce.string(),
+      cover_img: z.string(),
+      id: z.string(),
+      link: z.string(),
+      name: z.string(),
+      tags: z.string().array().optional(),
+    })
+    .array(),
+})
 
-  const modelList = modelDataSchema.parse(JSON.parse(cached.data))
-  return modelList.models.map((d): ImageModelDataRecord => {
-    const architecture = d.name.includes('XL') ? 'SDXL' : 'SD'
+export const importModels = internalAction(async (ctx) => {
+  console.info(endpoint, 'importing models')
 
-    return {
-      resourceKey: `sinkin::${encodeURIComponent(d.name)}`,
-      name: d.name,
+  const records = await fetchModelData()
+  const parsedRecords = modelDataSchema.parse(records)
+
+  const existingModels = await ctx.runQuery(api.db.models.listImageModels, { endpoint })
+
+  for (const record of parsedRecords.models) {
+    const architecture = record.name.includes('XL') ? 'SDXL' : 'SD'
+    const shape = shapeImageModel({
+      name: record.name,
       description: '',
 
       creatorName: '',
-      link: d.link,
+      link: record.link,
       license: '',
       tags: [],
-      coverImageUrl: d.cover_img,
+      coverImageUrl: record.cover_img,
 
       architecture,
       sizes:
@@ -59,26 +65,28 @@ export const getNormalizedModelData = async (ctx: MutationCtx) => {
             },
 
       endpoint: 'sinkin',
-      endpointModelId: d.id,
-      pricing: {},
+      modelId: record.id,
+      endpointModelId: record.id,
+      pricing: {
+        type: 'perRequest',
+        // * lazy estimate based of a 512px or 1024px square image at default settings
+        value: architecture === 'SD' ? 0.00225 : 0.009,
+      },
       moderated: false,
       available: true,
       hidden: false,
       internalScore: 0,
-    }
-  })
-}
-
-const modelDataSchema = z.object({
-  loras: z.any(),
-  models: z
-    .object({
-      civitai_model_id: z.coerce.string(),
-      cover_img: z.string(),
-      id: z.string(),
-      link: z.string(),
-      name: z.string(),
-      tags: z.string().array().optional(),
     })
-    .array(),
+
+    const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
+    if (existing) {
+      await ctx.runMutation(internal.db.models.updateImageModel, {
+        id: existing._id,
+        ...shape,
+      })
+    } else {
+      await ctx.runMutation(internal.db.models.createImageModel, shape)
+      console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
+    }
+  }
 })
