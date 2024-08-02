@@ -11,31 +11,31 @@ const definitions = [
     modelId: 'gpt-4o',
     name: 'GPT-4o',
     contextLength: 128000,
-    pricing: { type: 'llm', tokenInput: 5, tokenOutput: 15 },
+    pricing: { type: 'llm' as const, tokenInput: 5, tokenOutput: 15 },
   },
   {
     modelId: 'gpt-4o-mini',
     name: 'GPT-4o Mini',
     contextLength: 128000,
-    pricing: { type: 'llm', tokenInput: 0.15, tokenOutput: 0.6 },
+    pricing: { type: 'llm' as const, tokenInput: 0.15, tokenOutput: 0.6 },
   },
   {
     modelId: 'gpt-4-turbo',
     name: 'GPT-4 Turbo',
     contextLength: 128000,
-    pricing: { type: 'llm', tokenInput: 10, tokenOutput: 30 },
+    pricing: { type: 'llm' as const, tokenInput: 10, tokenOutput: 30 },
   },
   {
     modelId: 'gpt-4',
     name: 'GPT-4',
     contextLength: 8192,
-    pricing: { type: 'llm', tokenInput: 30, tokenOutput: 60 },
+    pricing: { type: 'llm' as const, tokenInput: 30, tokenOutput: 60 },
   },
   {
     modelId: 'gpt-3.5-turbo',
     name: 'GPT-3.5 Turbo',
     contextLength: 16385,
-    pricing: { type: 'llm', tokenInput: 0.5, tokenOutput: 1.5 },
+    pricing: { type: 'llm' as const, tokenInput: 0.5, tokenOutput: 1.5 },
   },
 ]
 
