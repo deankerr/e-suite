@@ -1,18 +1,14 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtomValue } from 'jotai'
-import { useRouter } from 'next/navigation'
 
 import { Composer } from '@/components/composer/Composer'
 import { shellNewThreadInferenceConfig, shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
-import { useShellActions, useShellStack } from '@/components/shell/hooks'
-import { appConfig } from '@/config/config'
+import { useShellStack } from '@/components/shell/hooks'
 import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
 
 export const CreateThread = () => {
-  const router = useRouter()
   const stack = useShellStack()
-  const shell = useShellActions()
 
   const selectedModel = useAtomValue(shellSelectedModelAtom)
   const newThreadInferenceConfig = useAtomValue(shellNewThreadInferenceConfig)
@@ -28,6 +24,7 @@ export const CreateThread = () => {
         >
           <Icons.Cube weight="light" />
           {selectedModel?.name ?? 'Select model...'}
+          <div className="grow text-right text-xs text-gray-10">{selectedModel?.endpoint}</div>
         </CmdK.Item>
       </CmdK.Group>
       <CmdK.Separator />

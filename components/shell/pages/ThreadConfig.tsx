@@ -59,6 +59,9 @@ export const ThreadConfig = () => {
           >
             <Icons.Cube weight="light" />
             Model: {threads.current.model?.name ?? 'unknown model'}
+            <div className="grow text-right text-xs text-gray-10">
+              {threads.current.model?.endpoint}
+            </div>
           </CmdK.Item>
 
           <CmdK.Item>
