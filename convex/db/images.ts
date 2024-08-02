@@ -6,7 +6,7 @@ import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery } from '../functions'
 import { imageFields } from '../schema'
-import { getTextToImageConfig } from '../shared/utils'
+import { extractInferenceConfig } from '../shared/helpers'
 
 import type { Doc } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
@@ -36,12 +36,12 @@ export const createImageWf = internalMutation({
 })
 
 const getGenerationData = async (ctx: MutationCtx, message: Doc<'messages'>) => {
-  const textToImageConfig = getTextToImageConfig(message.inference)
+  const { textToImageConfig } = extractInferenceConfig(message.inference)
   if (!textToImageConfig) {
     return undefined
   }
 
-  const model = await getImageModelByResourceKey(ctx, textToImageConfig.endpointModelId)
+  const model = await getImageModelByResourceKey(ctx, textToImageConfig.resourceKey)
 
   return {
     prompt: textToImageConfig.prompt,
@@ -95,10 +95,16 @@ export const serve = httpAction(async (ctx, request) => {
         imageId: id,
       })
 
-  if (!image) return new Response('Not Found', { status: 404 })
+  if (!image) {
+    console.error('not found', id)
+    return new Response('Not Found', { status: 404 })
+  }
 
   const blob = await ctx.storage.get(image.fileId)
-  if (!blob) throw new Error()
+  if (!blob) {
+    console.error('unable to get blob for fileId:', image.fileId, id)
+    throw new Error()
+  }
 
   const { download } = getQuery(request.url)
   if (download !== undefined) {

@@ -14,9 +14,10 @@ import { ErrorCallout } from '@/components/ui/Callouts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
+import { extractInferenceConfig, getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { getMessageJobsDetails } from '@/convex/shared/utils'
 import { useMessageMutations } from '@/lib/api'
-import { cn, getInferenceConfig } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
 
@@ -49,12 +50,12 @@ export const Message = ({
   const isOwner = message.user?.isViewer ?? false
   const jobs = getMessageJobsDetails(message.jobs)
 
-  const { textToImageConfig } = getInferenceConfig(message.inference)
+  const { textToImageConfig } = extractInferenceConfig(message.inference)
   const nImagePlaceholders =
     textToImageConfig && jobs.failed.length === 0 ? textToImageConfig.n - message.images.length : 0
 
   const name = getMessageName(message)
-  const text = textToImageConfig ? textToImageConfig.prompt : message.text
+  const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
 
   const [showJson, setShowJson] = useState(false)
@@ -225,13 +226,4 @@ export const Message = ({
       {showJson && <Pre className="col-start-2">{JSON.stringify(message, null, 2)}</Pre>}
     </div>
   )
-}
-
-function getMessageName(message: EMessage) {
-  const { textToImageConfig, textToAudioConfig } = getInferenceConfig(message.inference)
-  if (textToAudioConfig) return 'elevenlabs sound generation'
-  if (textToImageConfig) return textToImageConfig.endpointModelId
-  if (message.name) return message.name
-  if (message.role === 'user') return 'You'
-  return 'Assistant'
 }

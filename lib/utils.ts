@@ -1,12 +1,6 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-import type {
-  ChatCompletionConfig,
-  InferenceConfig,
-  TextToAudioConfig,
-  TextToImageConfig,
-} from '@/convex/types'
 import type { ClassValue } from 'clsx'
 
 export type { ClassNameValue } from 'tailwind-merge'
@@ -68,26 +62,4 @@ export function isValidUrl(url: string) {
   } catch {
     return false
   }
-}
-
-export function getChatConfig(inference?: InferenceConfig): ChatCompletionConfig | null {
-  return inference?.type === 'chat-completion' ? inference : null
-}
-
-export function getTextToImageConfig(inference?: InferenceConfig): TextToImageConfig | null {
-  return inference?.type === 'text-to-image' ? inference : null
-}
-
-export function getTextToAudioConfig(inference?: InferenceConfig): TextToAudioConfig | null {
-  return inference?.type === 'sound-generation' ? inference : null
-}
-
-export function getInferenceConfig(inference?: InferenceConfig) {
-  const base = {
-    chatConfig: getChatConfig(inference),
-    textToImageConfig: getTextToImageConfig(inference),
-    textToAudioConfig: getTextToAudioConfig(inference),
-  }
-
-  return base
 }
