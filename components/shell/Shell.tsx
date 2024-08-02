@@ -97,7 +97,11 @@ const ShellTitle = () => {
   title = title.replace('%t', threads.current?.title ?? 'untitled thread')
 
   if (!title) {
-    return <AppTitle />
+    return (
+      <div className="shrink-0 px-2">
+        <AppTitle />
+      </div>
+    )
   }
 
   return (
