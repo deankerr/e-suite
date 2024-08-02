@@ -75,7 +75,7 @@ const processModelRecords = async (ctx: ActionCtx, records: z.infer<typeof ApiMo
   }
 }
 
-export const importModels = internalAction(async (ctx: ActionCtx) => {
+export const importChatModels = internalAction(async (ctx: ActionCtx) => {
   console.info(endpoint, 'importing models')
   console.log('https://api.together.xyz/models/info')
   const response = await ky

@@ -83,7 +83,7 @@ function buildModelData(): ImageModelDataRecord[] {
   return models
 }
 
-export const importFalModelRecords = internalMutation({
+export const importImageModels = internalMutation({
   args: {},
   handler: async (ctx) => {
     const models = buildModelData()

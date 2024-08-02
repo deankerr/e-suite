@@ -30,7 +30,7 @@ const modelDataSchema = z.object({
     .array(),
 })
 
-export const importModels = internalAction(async (ctx) => {
+export const importImageModels = internalAction(async (ctx) => {
   console.info(endpoint, 'importing models')
 
   const records = await fetchModelData()
