@@ -48,6 +48,7 @@ export const ModelPicker = () => {
           <Icons.Cube className="phosphor" />
           <Icons.Chat className="phosphor -ml-3 -mt-0.5" />
           {model.name}
+          <div className="grow text-right text-xs text-gray-10">{model.endpoint}</div>
         </CmdK.Item>
       ))}
     </CmdK.Group>
@@ -64,6 +65,7 @@ export const ModelPicker = () => {
           <Icons.Cube className="phosphor" />
           <Icons.ImageSquare className="phosphor -ml-3" />
           {model.name}
+          <div className="grow text-right text-xs text-gray-10">{model.endpoint}</div>
         </CmdK.Item>
       ))}
     </CmdK.Group>
@@ -82,6 +84,7 @@ export const ModelPicker = () => {
           >
             <Icons.ArrowLeft className="phosphor" />
             {selectedModel?.name}
+            <div className="grow text-right text-xs text-gray-10">{selectedModel?.endpoint}</div>
           </CmdK.Item>
         ) : (
           <CmdK.Item

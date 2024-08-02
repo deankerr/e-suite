@@ -10,6 +10,7 @@ import { UserButtons } from '@/components/layout/UserButtons'
 import { ThreadsList } from '@/components/navigation/ThreadsList'
 import { useShellActions } from '@/components/shell/hooks'
 import { AppTitle } from '@/components/ui/AppTitle'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
 
@@ -63,6 +64,11 @@ export const Navigation = () => {
         {/* * footer * */}
         <div className="flex-center h-12 shrink-0 gap-2 border-t border-grayA-3 px-3">
           <UserButtons />
+          <AdminOnlyUi>
+            <Link href="/admin" className="text-xs text-gray-11 hover:text-gray-12">
+              Admin
+            </Link>
+          </AdminOnlyUi>
         </div>
       </nav>
     </>
