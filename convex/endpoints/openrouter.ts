@@ -68,15 +68,22 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
       if (excludedModelIds.includes(parsed.id)) continue
 
       // * build model shape
-      const pricing = parsed.id.endsWith(':free')
-        ? { type: 'free' }
-        : {
-            type: 'llm',
-            tokenInput: parseFloat(parsed.pricing.prompt) * 1000000,
-            tokenOutput: parseFloat(parsed.pricing.completion) * 1000000,
-            imageInput: parsed.pricing.image ? parseFloat(parsed.pricing.image) : undefined,
-            imageOutput: parsed.pricing.image ? parseFloat(parsed.pricing.image) : undefined,
-          }
+      const pricing =
+        parsed.id.endsWith(':free') || Object.values(parsed.pricing).every((value) => value === '0')
+          ? { type: 'free' }
+          : {
+              type: 'llm',
+              tokenInput: toPerMillionTokens(parsed.pricing.prompt),
+              tokenOutput: toPerMillionTokens(parsed.pricing.completion),
+              imageInput:
+                parsed.pricing.image && parsed.pricing.image !== '0'
+                  ? parseFloat(parsed.pricing.image)
+                  : undefined,
+              imageOutput:
+                parsed.pricing.request && parsed.pricing.request !== '0'
+                  ? parseFloat(parsed.pricing.request)
+                  : undefined,
+            }
 
       const shape = shapeChatModel({
         endpoint,
@@ -143,3 +150,9 @@ export const importModels = internalAction(async (ctx: ActionCtx) => {
 
   await processModelRecords(ctx, records.data)
 })
+
+function toPerMillionTokens(value: string): number {
+  const perToken = parseFloat(value)
+  const perMillionTokens = perToken * 1000000
+  return Math.round(perMillionTokens * 10000) / 10000 // Round to 4 decimal places
+}

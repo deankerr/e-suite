@@ -20,6 +20,7 @@ export const ModelsTable = ({
             <Table.ColumnHeaderCell>internalScore</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>tags</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>creatorName</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>pricing</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -35,6 +36,7 @@ export const ModelsTable = ({
                 {model.tags.join(', ') || <span className="italic text-gray-10">none</span>}
               </Table.Cell>
               <Table.Cell>{model.creatorName}</Table.Cell>
+              <Table.Cell className="font-mono text-xs">{JSON.stringify(model.pricing)}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
