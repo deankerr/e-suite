@@ -1,4 +1,5 @@
-import { environment, isValidUrl } from '@/lib/utils'
+import { isValidUrl } from '@/convex/shared/helpers'
+import { environment } from '@/lib/utils'
 
 const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL!
 export default function imageLoader({

@@ -14,8 +14,12 @@ import { ErrorCallout } from '@/components/ui/Callouts'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
-import { extractInferenceConfig, getMessageName, getMessageText } from '@/convex/shared/helpers'
-import { getMessageJobsDetails } from '@/convex/shared/utils'
+import {
+  extractInferenceConfig,
+  extractJobsDetails,
+  getMessageName,
+  getMessageText,
+} from '@/convex/shared/helpers'
 import { useMessageMutations } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -48,7 +52,7 @@ export const Message = ({
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const isOwner = message.user?.isViewer ?? false
-  const jobs = getMessageJobsDetails(message.jobs)
+  const jobs = extractJobsDetails(message.jobs)
 
   const { textToImageConfig } = extractInferenceConfig(message.inference)
   const nImagePlaceholders =

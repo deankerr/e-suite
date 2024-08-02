@@ -54,12 +54,3 @@ export function stringHashToListItem<T>(str: string, list: T[]): T {
   const index = hash % list.length
   return list[index] as T
 }
-
-export function isValidUrl(url: string) {
-  try {
-    new URL(url)
-    return true
-  } catch {
-    return false
-  }
-}
