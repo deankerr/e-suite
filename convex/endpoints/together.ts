@@ -1,13 +1,82 @@
 import ky from 'ky'
+import * as vb from 'valibot'
 import { z } from 'zod'
 
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
+import { shapeChatModel } from '../db/models'
+import { internalAction } from '../functions'
 
 import type { ActionCtx } from '../_generated/server'
-import type { ParsedChatModelData } from '../db/endpoints'
-import type { MutationCtx } from '../types'
 
-export const fetchModelData = async (ctx: ActionCtx) => {
+const endpoint = 'together'
+
+const processModelRecords = async (ctx: ActionCtx, records: z.infer<typeof ApiModelsResponse>) => {
+  const existingModels = await ctx.runQuery(api.db.models.listChatModels, { endpoint })
+  const availabilityCheck = new Set(existingModels.map((m) => m.resourceKey))
+  console.info(endpoint, 'existing models', existingModels.length)
+
+  for (const record of records) {
+    try {
+      const parsed = ApiModelRecord.parse(record)
+      // * only featured models are available
+      if (!parsed.isFeaturedModel) continue
+
+      // * build model shape
+      const shape = shapeChatModel({
+        endpoint,
+        name: parsed.display_name,
+        description: parsed.description,
+        creatorName: parsed.creator_organization,
+        link: parsed.link ?? '',
+        license: parsed.license,
+        tags: [],
+        modelId: parsed.name,
+        endpointModelId: parsed.name,
+        pricing: {
+          type: 'llm',
+          tokenInput: parsed.pricing.input / 250,
+          tokenOutput: parsed.pricing.output / 250,
+        },
+        moderated: false,
+        available: true,
+        hidden: false,
+        internalScore: 0,
+        contextLength: parsed.context_length ?? 0,
+        tokenizer: '',
+        numParameters:
+          parsed.num_parameters && Number(parsed.num_parameters)
+            ? Number(parsed.num_parameters)
+            : undefined,
+      })
+
+      // * compare with any existing
+      const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
+      if (existing) {
+        await ctx.runMutation(internal.db.models.updateChatModel, {
+          id: existing._id,
+          ...shape,
+        })
+        if (!existing.available) {
+          console.warn(endpoint, 'model now available', shape.name, shape.resourceKey)
+        }
+      } else {
+        await ctx.runMutation(internal.db.models.createChatModel, shape)
+        console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
+      }
+
+      availabilityCheck.delete(shape.resourceKey)
+    } catch (err) {
+      if (vb.isValiError(err)) {
+        console.error(endpoint, vb.flatten(err.issues))
+      } else {
+        console.error(endpoint, err)
+      }
+    }
+  }
+}
+
+export const importModels = internalAction(async (ctx: ActionCtx) => {
+  console.info(endpoint, 'importing models')
   console.log('https://api.together.xyz/models/info')
   const response = await ky
     .get('https://api.together.xyz/models/info', {
@@ -16,65 +85,11 @@ export const fetchModelData = async (ctx: ActionCtx) => {
       },
     })
     .json()
-  await ctx.runMutation(internal.db.endpoints.cacheEndpointModelData, {
-    endpoint: 'together',
-    name: 'chat-models',
-    data: JSON.stringify(response, null, 2),
-  })
-}
-
-export const getNormalizedModelData = async (ctx: MutationCtx) => {
-  const cached = await ctx
-    .table('endpoint_data_cache')
-    .order('desc')
-    .filter((q) =>
-      q.and(q.eq(q.field('endpoint'), 'together'), q.eq(q.field('name'), 'chat-models')),
-    )
-    .firstX()
-
-  const modelList = modelDataListSchema.parse(JSON.parse(cached.data))
-  const chatModelList = modelList.filter(
-    (m) => m.display_type === DisplayType.Chat && m.isFeaturedModel,
+  const records = ApiModelsResponse.parse(response).filter(
+    (m) => m.display_type === DisplayType.Chat,
   )
-
-  const models = chatModelList
-    .map((raw): ParsedChatModelData | null => {
-      const parsed = modelDataRecordSchema.safeParse(raw)
-      if (!parsed.success) {
-        console.error([raw.name, ...parsed.error.issues])
-        return null
-      }
-
-      const d = parsed.data
-      return {
-        resourceKey: `together::${d.name}`,
-        name: d.display_name,
-        description: d.description,
-
-        creatorName: d.creator_organization,
-        link: d.link ?? '',
-        license: d.license,
-        tags: [],
-
-        numParameters: d.num_parameters ? Number(d.num_parameters) : 0,
-        contextLength: d.context_length ?? 0,
-        tokenizer: '',
-        stop: d.config?.stop ?? [],
-
-        endpoint: 'together',
-        endpointModelId: d.name,
-        pricing: {},
-        moderated: false,
-        available: true,
-        hidden: false,
-        internalScore: 0,
-      }
-    })
-    .filter(Boolean) as ParsedChatModelData[]
-
-  console.log('together: processed', models.length, 'models')
-  return models
-}
+  await processModelRecords(ctx, records)
+})
 
 enum DisplayType {
   Chat = 'chat',
@@ -85,33 +100,7 @@ enum DisplayType {
   Moderation = 'moderation',
 }
 
-enum PricingTier {
-  Empty = '',
-  Featured = 'Featured',
-  PricingTierFeatured = 'featured',
-  PricingTierSupported = 'Supported',
-  Supported = 'supported',
-}
-
-enum ChatTemplateName {
-  Default = 'default',
-  GPT = 'gpt',
-  Llama = 'llama',
-}
-
-enum EOSToken {
-  EndOfText = '<|end_of_text|>',
-  Endoftext = '<|endoftext|>',
-  S = '</s>',
-}
-
-enum Access {
-  Empty = '',
-  Limited = 'limited',
-  Open = 'open',
-}
-
-const modelDataListSchema = z
+const ApiModelsResponse = z
   .object({
     name: z.string(),
     display_type: z.nativeEnum(DisplayType),
@@ -136,7 +125,7 @@ const configSchema = z.object({
     })
     .optional(),
   safety_categories: z.unknown().optional(),
-  chat_template_name: z.nativeEnum(ChatTemplateName).optional().nullable(),
+  chat_template_name: z.string().optional().nullable(),
   height: z.number().optional(),
   width: z.number().optional(),
   number_of_images: z.number().optional(),
@@ -144,14 +133,14 @@ const configSchema = z.object({
   seed: z.number().optional(),
   max_tokens: z.number().optional(),
   pre_prompt: z.string().optional(),
-  eos_token: z.nativeEnum(EOSToken).optional(),
+  eos_token: z.string().optional(),
   tools_template: z.string().optional(),
   bos_token: z.string().optional(),
   step_id: z.string().optional(),
   track_qps: z.boolean().optional(),
 })
 
-const modelDataRecordSchema = z.object({
+const ApiModelRecord = z.object({
   _id: z.string(),
   name: z.string(),
   display_name: z.string(),
@@ -173,10 +162,10 @@ const modelDataRecordSchema = z.object({
   }),
   created_at: z.string().optional(),
   update_at: z.string().optional(),
-  access: z.nativeEnum(Access).optional(),
+  access: z.string().optional(),
   link: z.string().optional(),
   descriptionLink: z.string().optional(),
-  pricing_tier: z.nativeEnum(PricingTier).optional().nullable(),
+  pricing_tier: z.string().optional().nullable(),
   release_date: z.string().optional(),
   isPrivate: z.boolean().optional(),
   access_control: z.array(z.any()).optional(),
