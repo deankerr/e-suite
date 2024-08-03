@@ -17,7 +17,7 @@ const Response = vb.object({
   ),
   timings: vb.optional(
     vb.object({
-      inference: vb.number(),
+      inference: vb.optional(vb.number()),
     }),
   ),
   seed: vb.optional(vb.number()),

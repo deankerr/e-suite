@@ -121,6 +121,10 @@ const sharedModelFields = {
       type: v.literal('perSecond'),
       value: v.number(),
     }),
+    v.object({
+      type: v.literal('perMegapixel'),
+      value: v.number(),
+    }),
   ),
 
   moderated: v.boolean(),
