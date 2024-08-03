@@ -12,7 +12,7 @@ import { generateUid } from '../utils'
 import type { Doc } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 
-export const createImageWf = internalMutation({
+export const createImage = internalMutation({
   args: {
     ...imageFields,
     messageId: v.id('messages'),
@@ -63,88 +63,42 @@ export const getImage = internalQuery({
   },
 })
 
-export const getImageByTimecode = internalQuery({
+export const getImageByUid = internalQuery({
   args: {
-    timecode: v.number(),
+    uid: v.string(),
   },
-  handler: async (ctx, { timecode }) => {
-    return await ctx
-      .table('images', 'by_creation_time', (q) => q.eq('_creationTime', timecode))
-      .first()
+  handler: async (ctx, args) => {
+    const image = await ctx.table('images').get('uid', args.uid)
+    return image
   },
 })
 
-const parseTimecode = (id: string) => {
-  const match = id.match(/es(\d{13})([a-zA-Z])(\d{0,4})/)
-  if (!match) return null
-  const num = id.slice(2, 15)
-  const dec = id.slice(16)
-  const timecode = parseFloat(`${num}.${dec}`)
-  return timecode
-}
-
 // * http
 export const serve = httpAction(async (ctx, request) => {
-  const id = parseFilename(request.url, { strict: false }) ?? ''
-  const timecode = parseTimecode(id)
-
-  const image = timecode
-    ? await ctx.runQuery(internal.db.images.getImageByTimecode, {
-        timecode,
-      })
-    : await ctx.runQuery(internal.db.images.getImage, {
-        imageId: id,
-      })
+  const uid = parseFilename(request.url, { strict: false }) ?? ''
+  const image = await ctx.runQuery(internal.db.images.getImageByUid, {
+    uid,
+  })
 
   if (!image) {
-    console.error('not found', id)
+    console.error('not found', uid)
     return new Response('Not Found', { status: 404 })
   }
 
   const blob = await ctx.storage.get(image.fileId)
   if (!blob) {
-    console.error('unable to get blob for fileId:', image.fileId, id)
-    throw new Error()
+    console.error('unable to get blob for fileId:', image.fileId, uid)
+    return new Response('Internal Server Error', { status: 500 })
   }
 
   const { download } = getQuery(request.url)
   if (download !== undefined) {
     return new Response(blob, {
       headers: {
-        'Content-Disposition': `attachment; filename="${id}.${image.format}"`,
+        'Content-Disposition': `attachment; filename="${uid}.${image.format}"`,
       },
     })
   }
 
   return new Response(blob)
 })
-
-export const testid = internalMutation(async (ctx) => {
-  const images = await ctx.table('images').order('asc').take(2000)
-  return images.map(({ _creationTime }) => base36Encode(_creationTime * 1000))
-})
-
-function base36Encode(number: number): string {
-  try {
-    if (!Number.isInteger(number)) {
-      throw new TypeError(`number must be an integer: ${number}`)
-    }
-    if (number < 0) {
-      throw new RangeError(`number must be positive: ${number}`)
-    }
-
-    const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz'
-    let base36 = ''
-
-    while (number > 0) {
-      const remainder = number % 36
-      base36 = alphabet[remainder] + base36
-      number = Math.floor(number / 36)
-    }
-
-    return base36 || '0'
-  } catch (err) {
-    console.error(err)
-    return `${number}`
-  }
-}
