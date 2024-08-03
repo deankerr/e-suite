@@ -1,14 +1,15 @@
-import { Link as RxLink } from '@radix-ui/themes'
+import { Link as RadixLink } from '@radix-ui/themes'
 import NextLink, { LinkProps } from 'next/link'
 
 export const Link = ({
   href,
-  children,
   ...props
-}: { href: LinkProps['href'] } & Omit<React.ComponentProps<typeof RxLink>, 'href'>) => {
+}: Omit<React.ComponentProps<typeof NextLink>, 'href'> & { href: LinkProps['href'] | null }) => {
+  if (href === null) return props.children
+
   return (
-    <RxLink {...props} asChild>
-      <NextLink href={href}>{children}</NextLink>
-    </RxLink>
+    <RadixLink asChild>
+      <NextLink {...props} href={href} />
+    </RadixLink>
   )
 }

@@ -105,7 +105,7 @@ const SingleMessagePage = () => {
     <div className="overflow-hidden">
       <ScrollArea scrollbars="vertical">
         <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
-          <Message message={seriesMessage} showTimeline={false} priority={true} />
+          <Message message={seriesMessage} hideTimeline priority={true} />
         </div>
       </ScrollArea>
     </div>

@@ -46,7 +46,7 @@ export const MessageFeed = () => {
           <LoadMoreButton />
         </div>
 
-        <div className="flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
+        <div className="mx-auto flex max-w-3xl flex-col-reverse items-center overflow-hidden px-3 text-sm">
           <div ref={endOfFeedRef} className="pointer-events-none h-4 w-full" />
 
           {messages.map((message, i) => (
@@ -55,11 +55,6 @@ export const MessageFeed = () => {
               message={message}
               priority={i === 0}
               deepLinkUrl={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
-              hideName={
-                isShortMessage(message) &&
-                isUserRoleMessage(message) &&
-                isSameAuthor(message, messages.at(i + 1))
-              }
               isSequential={isSameAuthor(message, messages.at(i + 1))}
             />
           ))}
