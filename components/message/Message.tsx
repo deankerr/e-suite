@@ -181,7 +181,7 @@ export const Message = ({
                   openLightbox({
                     slides: message.images.map((image) => ({
                       type: 'image',
-                      src: image._id,
+                      src: `/i/${image.uid}`,
                       width: image.width,
                       height: image.height,
                       blurDataURL: image.blurDataUrl,
