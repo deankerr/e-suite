@@ -196,7 +196,7 @@ const images = defineEnt(imageFields)
   .deletion('scheduled', {
     delayMs: timeToDelete,
   })
-  .field('uid', v.optional(v.string()))
+  .field('uid', v.string(), { unique: true })
   .edge('message')
   .edge('thread')
   .edge('user')
