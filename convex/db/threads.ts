@@ -388,6 +388,7 @@ export const append = mutation({
       metadata: v.optional(kvListV),
     }),
     runConfig: v.optional(runConfigV),
+    ignoreKeywordCommands: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const thread = await getOrCreateUserThread(ctx, args.threadId)
@@ -411,13 +412,15 @@ export const append = mutation({
       }
     }
 
-    const userConfig = await matchUserCommandKeywords(ctx, args.message.text)
-    if (userConfig) {
-      return await createRun(ctx, {
-        thread,
-        userId: thread.userId,
-        runConfig: userConfig,
-      })
+    if (args.ignoreKeywordCommands !== true) {
+      const userConfig = await matchUserCommandKeywords(ctx, args.message.text)
+      if (userConfig) {
+        return await createRun(ctx, {
+          thread,
+          userId: thread.userId,
+          runConfig: userConfig,
+        })
+      }
     }
 
     if (args.runConfig) {
