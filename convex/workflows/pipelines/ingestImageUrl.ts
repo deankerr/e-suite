@@ -50,7 +50,7 @@ export const ingestImageUrlPipeline: Pipeline = {
             url,
           })
 
-          const imageId = await ctx.runMutation(internal.db.images.createImageWf, {
+          const imageId = await ctx.runMutation(internal.db.images.createImage, {
             fileId,
             ...metadata,
             sourceUrl: url,
