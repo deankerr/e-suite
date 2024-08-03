@@ -14,6 +14,7 @@ import { LoadingPage } from '@/components/pages/LoadingPage'
 import { ThreadProvider, useThreadContext } from '@/components/providers/ThreadProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { EmptyPage } from '@/components/shell/pages/EmptyPage'
+import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
@@ -34,6 +35,7 @@ export const ThreadPage = ({
           <ThreadPageHeader />
           <ThreadPageBody />
           <ThreadComposer />
+
           <ThreadPageDebug />
         </div>
       </ThreadPageWrapper>
@@ -50,6 +52,11 @@ const ThreadPageHeader = () => {
     <header className="flex-between h-12 shrink-0 gap-2 overflow-hidden border-b border-grayA-3 px-2.5">
       <div className="flex-start min-w-10 shrink-0 gap-1">
         <SidebarButton className="m-0 md:hidden" />
+        <TextEditorDialog>
+          <IconButton variant="soft" color="gray">
+            <Icons.Code className="size-4" />
+          </IconButton>
+        </TextEditorDialog>
       </div>
 
       <div className="flex overflow-hidden">

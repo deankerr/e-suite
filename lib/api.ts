@@ -80,6 +80,10 @@ export const useUpdateCurrentThreadModel = () => {
   return useMutation(api.db.threads.updateCurrentModel)
 }
 
+export const useUpdateThread = () => {
+  return useMutation(api.db.threads.update)
+}
+
 export const useMessageMutations = () => {
   const sendRemoveMessage = useMutation(api.db.messages.remove)
 
