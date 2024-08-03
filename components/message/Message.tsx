@@ -56,7 +56,9 @@ export const Message = ({
 
   const { textToImageConfig } = extractInferenceConfig(message.inference)
   const nImagePlaceholders =
-    textToImageConfig && jobs.failed.length === 0 ? textToImageConfig.n - message.images.length : 0
+    textToImageConfig && jobs.failed.length === 0
+      ? Math.max(0, textToImageConfig.n - message.images.length)
+      : 0
 
   const name = getMessageName(message)
   const text = getMessageText(message)

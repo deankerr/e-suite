@@ -1,4 +1,4 @@
-import { omit } from 'convex-helpers'
+import { asyncMap, omit } from 'convex-helpers'
 import { literals, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
@@ -484,6 +484,10 @@ const createTextToImageRun = async (
     runConfig: RunConfigTextToImage
   },
 ) => {
+  if (runConfig.resourceKey.includes('%%')) {
+    return createDuoRun(ctx, { thread, userId, runConfig })
+  }
+
   const imageModel = await getImageModelByResourceKey(ctx, runConfig.resourceKey)
   if (!imageModel) throw new ConvexError('invalid resourceKey')
 
@@ -526,7 +530,7 @@ const createTextToImageRun = async (
     contentType: 'image',
     role: 'assistant',
     hasImageReference: false,
-    inference,
+    inference: { ...inference, n: 2 },
     name: imageModel.name,
   })
 
@@ -539,6 +543,84 @@ const createTextToImageRun = async (
     inference: { ...inference, prompt: '' },
     updatedAtTime: Date.now(),
     title: thread.title ? thread.title : imageModel.name, // TODO better title creation
+  })
+
+  return {
+    threadId: thread._id,
+    slug: thread.slug,
+    messageId: message._id,
+    series: message.series,
+    jobId,
+  }
+}
+
+const createDuoRun = async (
+  ctx: MutationCtx,
+  {
+    thread,
+    userId,
+    runConfig,
+  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfig: RunConfigTextToImage },
+) => {
+  const [resourceKey1, resourceKey2] = runConfig.resourceKey.split('%%')
+  if (!resourceKey1 || !resourceKey2) throw new ConvexError('invalid resourceKey')
+
+  const imageModel1 = await getImageModelByResourceKey(ctx, resourceKey1)
+  const imageModel2 = await getImageModelByResourceKey(ctx, resourceKey2)
+  if (!imageModel1 || !imageModel2) throw new ConvexError('invalid resourceKey')
+
+  const input = z
+    .object({
+      prompt: z.string().max(4096),
+    })
+    .parse(runConfig)
+
+  const inference = {
+    type: 'text-to-image' as const,
+    resourceKey: imageModel1.resourceKey,
+    endpoint: imageModel1.endpoint,
+    endpointModelId: imageModel1.endpointModelId,
+    width: 1024,
+    height: 1024,
+    n: 1,
+    ...input,
+  }
+
+  const message = await createMessage(ctx, {
+    threadId: thread._id,
+    userId,
+    contentType: 'image',
+    role: 'assistant',
+    hasImageReference: false,
+    inference,
+    name: imageModel1.name,
+  })
+
+  const jobId = await createJobNext.textToImage(ctx, {
+    ...inference,
+    messageId: message._id,
+  })
+
+  await thread.patch({
+    inference: { ...inference, prompt: '' },
+    updatedAtTime: Date.now(),
+    title: thread.title ? thread.title : imageModel1.name,
+  })
+
+  const inference2 = {
+    type: 'text-to-image' as const,
+    resourceKey: imageModel2.resourceKey,
+    endpoint: imageModel2.endpoint,
+    endpointModelId: imageModel2.endpointModelId,
+    width: 1024,
+    height: 1024,
+    n: 1,
+    ...input,
+  }
+
+  const jobId2 = await createJobNext.textToImage(ctx, {
+    ...inference2,
+    messageId: message._id,
   })
 
   return {
