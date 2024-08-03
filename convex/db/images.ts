@@ -75,10 +75,12 @@ export const getImageByUid = internalQuery({
 
 // * http
 export const serve = httpAction(async (ctx, request) => {
-  const uid = parseFilename(request.url, { strict: false }) ?? ''
-  const image = await ctx.runQuery(internal.db.images.getImageByUid, {
-    uid,
-  })
+  const [uid] = parseUrlToUid(request.url)
+  const image = uid
+    ? await ctx.runQuery(internal.db.images.getImageByUid, {
+        uid,
+      })
+    : null
 
   if (!image) {
     console.error('not found', uid)
@@ -100,5 +102,13 @@ export const serve = httpAction(async (ctx, request) => {
     })
   }
 
+  console.log('serve', uid, image.fileId, image.format)
+
   return new Response(blob)
 })
+
+function parseUrlToUid(url: string) {
+  const filename = parseFilename(url, { strict: false })
+  const [uid, ext] = filename?.split('.') ?? []
+  return [uid, ext] as const
+}
