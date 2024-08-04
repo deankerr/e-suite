@@ -15,6 +15,9 @@ export const MessageDetailPage = ({ slug, mNum }: { slug: string; mNum: number }
   const pathname = usePathname()
   const { thread, message } = useMessageInt(slug, mNum)
 
+  const [__, suite, threads, threadSlug, msg] = pathname.split('/')
+  if (!msg) return null
+
   if (thread === null) return null
   if (message === null) return <PageWrapper empty />
   if (!thread || !message) return <PageWrapper loading />

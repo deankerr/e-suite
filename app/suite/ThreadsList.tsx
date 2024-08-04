@@ -12,7 +12,7 @@ import { useThreadsList } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>) => {
-  const segments = useSelectedLayoutSegments()
+  const segments = useSelectedLayoutSegments('threads')
   const threads = useThreadsList()
   const [containerRef] = useAutoAnimate()
 
