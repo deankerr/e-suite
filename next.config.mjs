@@ -31,24 +31,24 @@ const nextConfig = {
     },
   ],
 
-  transpilePackages: ['jotai-devtools'],
+  // transpilePackages: ['jotai-devtools'],
 
-  experimental: {
-    swcPlugins: [
-      [
-        '@swc-jotai/debug-label',
-        {
-          atomNames: ['customAtom'],
-        },
-      ],
-      [
-        '@swc-jotai/react-refresh',
-        {
-          atomNames: ['customAtom'],
-        },
-      ],
-    ],
-  },
+  // experimental: {
+  //   swcPlugins: [
+  //     [
+  //       '@swc-jotai/debug-label',
+  //       {
+  //         atomNames: ['customAtom'],
+  //       },
+  //     ],
+  //     [
+  //       '@swc-jotai/react-refresh',
+  //       {
+  //         atomNames: ['customAtom'],
+  //       },
+  //     ],
+  //   ],
+  // },
 }
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -59,7 +59,7 @@ const config =
   process.env.MILLION === 'true'
     ? MillionLint.next({
         rsc: true,
-      })(withBundleAnalyzer(nextConfig))
+      })(nextConfig)
     : withBundleAnalyzer(nextConfig)
 
 export default config

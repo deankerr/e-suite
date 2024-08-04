@@ -1,3 +1,5 @@
+'use client'
+
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Link } from '@radix-ui/themes'
 import { useRouter } from 'next/navigation'

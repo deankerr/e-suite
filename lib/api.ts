@@ -171,6 +171,19 @@ export const useMessageBySeries = ({ slug, series }: { slug?: string; series?: s
   )
 }
 
+export const useMessageInt = (slug?: string, mNum?: number) => {
+  const thread = useCacheQuery(api.db.threads.get, slug ? { slugOrId: slug } : 'skip')
+  const message = useCacheQuery(
+    api.db.threads.getMessage,
+    slug && mNum ? { slugOrId: slug, series: mNum } : 'skip',
+  )
+
+  return {
+    thread: thread as typeof thread | undefined,
+    message: message as typeof message | undefined,
+  }
+}
+
 export const useChatModels = (): EChatModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listChatModels, {})
   return result

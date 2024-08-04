@@ -3,6 +3,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Card, DropdownMenu, IconButton } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
 
+import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Gallery } from '@/components/message/Gallery'
 import { Markdown } from '@/components/message/Markdown'
@@ -60,7 +61,7 @@ export const Message = ({
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
-              <Icons.DotsThree className="size-5" />
+              <DotsThreeX />
             </IconButton>
           </DropdownMenu.Trigger>
 
@@ -119,12 +120,15 @@ export const Message = ({
             {shortMessageText}
           </div>
 
+          {/* * buttons * */}
           <div className="flex shrink-0">
-            <Link href={deepLinkUrl ?? null} prefetch={false}>
-              <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
-                <Icons.Link className="size-5" />
-              </IconButton>
-            </Link>
+            {deepLinkUrl ? (
+              <Link href={deepLinkUrl} prefetch={false}>
+                <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
+                  <Icons.Share size={20} />
+                </IconButton>
+              </Link>
+            ) : null}
 
             {dropdownMenu}
           </div>

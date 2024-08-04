@@ -21,15 +21,9 @@ import { Pre } from '@/components/util/Pre'
 import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
 
-export const ThreadPage = ({
-  threadSlug,
-  messageSeriesNum,
-}: {
-  threadSlug?: string
-  messageSeriesNum?: string
-}) => {
+export const ThreadPage = ({ slug, mNum }: { slug?: string; mNum?: number }) => {
   return (
-    <ThreadProvider threadSlug={threadSlug} messageSeriesNum={messageSeriesNum}>
+    <ThreadProvider slug={slug} mNum={mNum}>
       <ThreadPageWrapper>
         <div className="flex h-full flex-col">
           <ThreadPageHeader />
@@ -44,7 +38,7 @@ export const ThreadPage = ({
 }
 
 const ThreadPageHeader = () => {
-  const { thread, threadTitle, isSeriesMessage } = useThreadContext()
+  const { thread, threadTitle } = useThreadContext()
   const shell = useShellActions()
   if (!thread) return null
 
@@ -76,47 +70,21 @@ const ThreadPageHeader = () => {
       </div>
 
       <div className="flex-end min-w-10 shrink-0 gap-1">
-        {isSeriesMessage ? (
-          <Link href={`${appConfig.chatUrl}/${thread.slug}`}>
-            <IconButton variant="ghost" className="m-0">
-              <Icons.X className="size-5" />
-            </IconButton>
-          </Link>
-        ) : (
-          <FilterControl />
-        )}
+        <FilterControl />
       </div>
     </header>
   )
 }
 
 const ThreadPageBody = () => {
-  const { isSeriesMessage } = useThreadContext()
-  return isSeriesMessage ? <SingleMessagePage /> : <MessageFeed />
-}
-
-const SingleMessagePage = () => {
-  const { seriesMessage } = useThreadContext()
-
-  if (seriesMessage === null) return <EmptyPage />
-  if (!seriesMessage) return <LoadingSpinner />
-
-  return (
-    <div className="overflow-hidden">
-      <ScrollArea scrollbars="vertical">
-        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
-          <Message message={seriesMessage} hideTimeline priority={true} />
-        </div>
-      </ScrollArea>
-    </div>
-  )
+  return <MessageFeed />
 }
 
 const ThreadComposer = () => {
-  const { thread, isSeriesMessage } = useThreadContext()
+  const { thread } = useThreadContext()
   const shell = useShellActions()
 
-  if (!thread || !thread.user?.isViewer || isSeriesMessage) return null
+  if (!thread || !thread.user?.isViewer) return null
 
   return (
     <Composer
@@ -132,7 +100,7 @@ const ThreadComposer = () => {
 
 const ThreadPageDebug = () => {
   const [showJson, setShowJson] = useState(false)
-  const { thread, messagesQuery } = useThreadContext()
+  const { thread } = useThreadContext()
 
   return (
     <AdminOnlyUi>
@@ -140,9 +108,7 @@ const ThreadPageDebug = () => {
         <Pre stringify={thread} className="absolute inset-x-4 inset-y-16 overflow-auto" />
       )}
       <div className="absolute left-1 top-12 font-mono text-xs text-gray-9">
-        {/* <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button> */}
-        <span>{messagesQuery.byMediaType ?? 'all'}</span>
-        {/* <span className="">{status}</span> */}
+        <button onClick={() => setShowJson(!showJson)}>T</button>
       </div>
     </AdminOnlyUi>
   )

@@ -5,6 +5,8 @@ import { Code, Dialog, IconButton } from '@radix-ui/themes'
 import { useKeyboardEvent } from '@react-hookz/web'
 import { useAtom } from 'jotai'
 
+import { ChatAdd } from '@/components/icons/ChatAdd'
+import { ImageAdd } from '@/components/icons/ImageAdd'
 import { shellOpenAtom, shellSearchValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useShellActions, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
@@ -52,11 +54,11 @@ const Shell = () => {
           {!stack.current && (
             <CmdK.Group>
               <CmdK.Item onSelect={createChat}>
-                <Icons.Plus className="phosphor" />
+                <ChatAdd width={24} height={24} />
                 Create Chat
               </CmdK.Item>
               <CmdK.Item onSelect={createImage}>
-                <Icons.Plus className="phosphor" />
+                <ImageAdd width={24} height={24} />
                 Create Image
               </CmdK.Item>
             </CmdK.Group>

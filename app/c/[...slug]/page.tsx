@@ -1,7 +1,13 @@
+import { MessagePage } from '@/components/pages/MessagePage'
 import { ThreadPage } from '@/components/pages/ThreadPage'
 
 export default function Page({ params }: { params: { slug: string[] } }) {
-  const threadSlug = params.slug[0] ?? ''
-  const messageSeriesNum = params.slug[1] ?? ''
-  return <ThreadPage threadSlug={threadSlug} messageSeriesNum={messageSeriesNum} />
+  const slug = params.slug[0] ?? ''
+  const mNum = parseInt(params.slug[1] ?? '') || undefined
+  return (
+    <>
+      <ThreadPage slug={slug} mNum={mNum} />
+      {mNum && <MessagePage slug={slug} mNum={mNum} />}
+    </>
+  )
 }
