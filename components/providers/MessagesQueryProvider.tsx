@@ -29,9 +29,24 @@ const MessagesQueryContext = createContext<MessagesQueryContextType | undefined>
 function getPathnameParams(pathname: string) {
   const [_, route, threadSlug, messageSeriesNum] = pathname.split('/')
   const isThreadRoute = `/${route}` === appConfig.threadsUrl
+  if (isThreadRoute) {
+    return {
+      threadSlug: isThreadRoute && threadSlug ? threadSlug : undefined,
+      messageSeriesNum: isThreadRoute && messageSeriesNum ? parseInt(messageSeriesNum) : undefined,
+    }
+  }
+
+  const [__, suite, threads, slug, msg] = pathname.split('/')
+  if (suite === 'suite' && threads === 'threads') {
+    return {
+      threadSlug: slug,
+      messageSeriesNum: msg ? parseInt(msg) : undefined,
+    }
+  }
+
   return {
-    threadSlug: isThreadRoute && threadSlug ? threadSlug : undefined,
-    messageSeriesNum: isThreadRoute && messageSeriesNum ? parseInt(messageSeriesNum) : undefined,
+    threadSlug: undefined,
+    messageSeriesNum: undefined,
   }
 }
 

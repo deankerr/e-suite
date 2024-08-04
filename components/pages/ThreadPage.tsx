@@ -2,23 +2,19 @@
 
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
-import Link from 'next/link'
+import { Button, IconButton } from '@radix-ui/themes'
 
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { MessageFeed } from '@/components/message-feed/MessageFeed'
-import { Message } from '@/components/message/Message'
 import { FilterControl } from '@/components/pages/FilterControl'
 import { LoadingPage } from '@/components/pages/LoadingPage'
 import { ThreadProvider, useThreadContext } from '@/components/providers/ThreadProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { EmptyPage } from '@/components/shell/pages/EmptyPage'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
-import { appConfig } from '@/config/config'
 import { cn } from '@/lib/utils'
 
 export const ThreadPage = ({ slug, mNum }: { slug?: string; mNum?: number }) => {
@@ -44,7 +40,7 @@ const ThreadPageHeader = () => {
 
   return (
     <header className="flex-between h-12 shrink-0 gap-2 overflow-hidden border-b border-grayA-3 px-2.5">
-      <div className="flex-start min-w-10 shrink-0 gap-1">
+      <div className="flex-start min-w-24 shrink-0 gap-1">
         <SidebarButton className="m-0 md:hidden" />
         <TextEditorDialog>
           <IconButton variant="soft" color="gray">
@@ -69,7 +65,7 @@ const ThreadPageHeader = () => {
         </Button>
       </div>
 
-      <div className="flex-end min-w-10 shrink-0 gap-1">
+      <div className="flex-end min-w-24 shrink-0 gap-1">
         <FilterControl />
       </div>
     </header>

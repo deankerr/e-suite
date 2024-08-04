@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Card, DropdownMenu, IconButton } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 
 import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
@@ -42,6 +43,7 @@ export const Message = ({
   isSequential?: boolean
   priority?: boolean
 } & React.ComponentProps<'div'>) => {
+  const pathname = usePathname()
   const isOwner = message.user?.isViewer ?? false
   const jobs = extractJobsDetails(message.jobs)
 
@@ -123,7 +125,7 @@ export const Message = ({
           {/* * buttons * */}
           <div className="flex shrink-0">
             {deepLinkUrl ? (
-              <Link href={deepLinkUrl} prefetch={false}>
+              <Link href={`${pathname}/${message.series}`} prefetch={false}>
                 <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
                   <Icons.Share size={20} />
                 </IconButton>
