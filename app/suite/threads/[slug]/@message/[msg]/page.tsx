@@ -1,8 +1,7 @@
-import { MessagePage } from '@/components/pages/MessagePage'
+import { MessageDetailPage } from '@/app/suite/threads/[slug]/@message/[msg]/MessageDetailPage'
 
-export default function Page({ params }: { params: { slug: string; msg: string } }) {
-  const slug = params.slug ?? ''
-  const msg = parseInt(params.msg ?? '0')
-
-  return <MessagePage slug={slug} mNum={msg} />
+export default function Page({ params: { slug, msg } }: { params: { slug: string; msg: string } }) {
+  if (!(slug && msg)) return null
+  const mNum = parseInt(msg)
+  return <MessageDetailPage slug={slug} mNum={mNum} />
 }

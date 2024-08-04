@@ -38,7 +38,12 @@ export const TextEditorDialog = ({ children }: { children: React.ReactNode }) =>
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
-      <Dialog.Content align="start" maxWidth="42rem" className="rounded-md p-0">
+      <Dialog.Content
+        aria-describedby={undefined}
+        align="start"
+        maxWidth="42rem"
+        className="rounded-md p-0"
+      >
         <div className="grid h-full max-h-[80vh] w-full grid-rows-[auto_1fr_auto] overflow-hidden rounded-md border border-grayA-3 bg-gray-3">
           {/* header */}
           <div className="flex-between h-10 border-b border-grayA-3 px-2 font-medium">
@@ -49,7 +54,7 @@ export const TextEditorDialog = ({ children }: { children: React.ReactNode }) =>
             </div>
 
             <Dialog.Title trim="normal" className="m-0">
-              <Heading size="3">Instructions</Heading>
+              <div className="text-base font-semibold">Instructions</div>
             </Dialog.Title>
 
             <div className="flex-end shrink-0">
