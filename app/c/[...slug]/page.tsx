@@ -1,4 +1,3 @@
-import { MessagePage } from '@/components/pages/MessagePage'
 import { ThreadPage } from '@/components/pages/ThreadPage'
 
 export default function Page({ params }: { params: { slug: string[] } }) {
@@ -7,7 +6,6 @@ export default function Page({ params }: { params: { slug: string[] } }) {
   return (
     <>
       <ThreadPage slug={slug} mNum={mNum} />
-      {mNum && <MessagePage slug={slug} mNum={mNum} />}
     </>
   )
 }
