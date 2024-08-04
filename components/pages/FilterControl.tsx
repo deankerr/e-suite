@@ -1,15 +1,16 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
-import { Button, Checkbox, Popover, Radio, Separator } from '@radix-ui/themes'
+import { Button, Popover, Radio } from '@radix-ui/themes'
+import { useAtom } from 'jotai'
 
-import { useThreadContext } from '@/components/providers/ThreadProvider'
+import { messageQueryAtom } from '@/components/providers/atoms'
 
 export const FilterControl = ({
   buttonProps,
 }: {
   buttonProps?: React.ComponentProps<typeof Button>
 }) => {
-  const { messagesQuery, setMessagesQuery } = useThreadContext()
+  const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
 
   const className =
     'flex items-center py-1 rounded-md pl-1.5 pr-4 cursor-pointer hover:bg-grayA-2 shrink-0'
@@ -20,7 +21,7 @@ export const FilterControl = ({
         <Button
           variant="outline"
           size="2"
-          color={messagesQuery.byMediaType ? 'orange' : 'gray'}
+          color={queryFilters.byMediaType ? 'orange' : 'gray'}
           className="px-2 md:px-3"
           {...buttonProps}
         >
@@ -35,9 +36,9 @@ export const FilterControl = ({
             <Radio
               value="all"
               className="mr-2"
-              checked={!messagesQuery.byMediaType}
+              checked={!queryFilters.byMediaType}
               onClick={() => {
-                setMessagesQuery({ byMediaType: undefined })
+                setQueryFilters({ byMediaType: undefined })
               }}
             />
             <span className="font-medium">All</span>
@@ -47,9 +48,9 @@ export const FilterControl = ({
             <Radio
               value="images"
               className="mr-2"
-              checked={messagesQuery.byMediaType === 'images'}
+              checked={queryFilters.byMediaType === 'images'}
               onClick={() => {
-                setMessagesQuery({ byMediaType: 'images' })
+                setQueryFilters({ byMediaType: 'images' })
               }}
             />
             <Icons.Images className="mr-1 size-4" />
@@ -60,9 +61,9 @@ export const FilterControl = ({
             <Radio
               value="audio"
               className="mr-2"
-              checked={messagesQuery.byMediaType === 'audio'}
+              checked={queryFilters.byMediaType === 'audio'}
               onClick={() => {
-                setMessagesQuery({ byMediaType: 'audio' })
+                setQueryFilters({ byMediaType: 'audio' })
               }}
             />
             <Icons.CassetteTape className="mr-1 size-4" />

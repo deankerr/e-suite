@@ -132,7 +132,7 @@ const ThreadComposer = () => {
 
 const ThreadPageDebug = () => {
   const [showJson, setShowJson] = useState(false)
-  const { thread, messages, messagesQuery, status } = useThreadContext()
+  const { thread, messagesQuery } = useThreadContext()
 
   return (
     <AdminOnlyUi>
@@ -140,9 +140,9 @@ const ThreadPageDebug = () => {
         <Pre stringify={thread} className="absolute inset-x-4 inset-y-16 overflow-auto" />
       )}
       <div className="absolute left-1 top-12 font-mono text-xs text-gray-9">
-        <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button>
+        {/* <button onClick={() => setShowJson(!showJson)}>{messages?.length ?? '?'}</button> */}
         <span>{messagesQuery.byMediaType ?? 'all'}</span>
-        <span className="">{status}</span>
+        {/* <span className="">{status}</span> */}
       </div>
     </AdminOnlyUi>
   )

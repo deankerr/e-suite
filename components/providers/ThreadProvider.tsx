@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 
-import { useMessageBySeries, useThreadMessages, useThreads } from '@/lib/api'
+import { useMessageBySeries, useThreads } from '@/lib/api'
 
 type MessagesQuery = {
   byMediaType?: 'images' | 'audio'
@@ -18,21 +18,12 @@ const useCreateThreadContext = ({
 
   const isSeriesMessage = !!messageSeriesNum
 
-  const { messages, status, isLoading, loadMore } = useThreadMessages({
-    slug: !isSeriesMessage ? threadSlug : undefined,
-    byMediaType: messagesQuery.byMediaType,
-  })
-
   const seriesMessage = useMessageBySeries({ slug: threadSlug, series: messageSeriesNum })
 
   const threadTitle = thread ? (thread.title ?? 'untitled thread') : ''
 
   return {
     thread,
-    messages,
-    status,
-    isLoading,
-    loadMore,
     messagesQuery,
     setMessagesQuery,
     threadTitle,

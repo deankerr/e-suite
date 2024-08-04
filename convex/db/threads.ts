@@ -155,10 +155,29 @@ export const latestMessages = query({
   args: {
     slugOrId: v.string(),
     limit: v.number(),
+    byMediaType: v.optional(literals('images', 'audio')),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return []
+
+    if (args.byMediaType) {
+      const messageIdsAll = await thread
+        .edge(args.byMediaType)
+        .order('desc')
+        .filter((q) => q.eq(q.field('deletionTime'), undefined))
+        .take(args.limit)
+        .map(async (media) => media.messageId)
+
+      const messageIds = [...new Set(messageIdsAll)]
+
+      const messages = await ctx.table('messages').getMany(messageIds)
+
+      return await asyncMap(
+        messages.filter((message) => message !== null).filter((message) => !message.deletionTime),
+        async (message) => await getMessageEdges(ctx, message),
+      )
+    }
 
     const messages = await thread
       .edge('messages')

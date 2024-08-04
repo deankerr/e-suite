@@ -4,6 +4,7 @@ import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 import { useInView } from 'react-intersection-observer'
 
 import { Message } from '@/components/message/Message'
+import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
 import { useThreadContext } from '@/components/providers/ThreadProvider'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -13,7 +14,9 @@ import { cn } from '@/lib/utils'
 import type { EMessage } from '@/convex/types'
 
 export const MessageFeed = () => {
-  const { thread, messages, isLoading } = useThreadContext()
+  const { thread } = useThreadContext()
+
+  const { messages, isLoading, isActive } = useMessagesQuery()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [endOfFeedRef, endOfFeedInView] = useInView()
@@ -97,7 +100,7 @@ const isUserRoleMessage = (message: EMessage | undefined) => {
 }
 
 const LoadMoreButton = () => {
-  const { status, isLoading, loadMore } = useThreadContext()
+  const { status, isLoading, loadMore } = useMessagesQuery()
 
   if (status === 'Exhausted') return null
   return (
@@ -107,7 +110,7 @@ const LoadMoreButton = () => {
       color="gray"
       className="w-48"
       disabled={status !== 'CanLoadMore'}
-      onClick={loadMore}
+      onClick={() => loadMore(32)}
     >
       {isLoading ? <LoadingSpinner className="w-4" /> : 'Load More Messages'}
     </Button>
