@@ -164,10 +164,10 @@ export const useMessagePages = ({
   })
 }
 
-export const useMessageBySeries = ({ slug, series }: { slug?: string; series?: string }) => {
+export const useMessageBySeries = ({ slug, series }: { slug?: string; series?: number }) => {
   return useCacheQuery(
     api.db.threads.getMessage,
-    slug ? { slugOrId: slug, series: Number(series) } : 'skip',
+    slug && series ? { slugOrId: slug, series } : 'skip',
   )
 }
 

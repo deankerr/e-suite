@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton } from '@radix-ui/themes'
+import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { MessageFeed } from '@/components/message-feed/MessageFeed'
+import { Message } from '@/components/message/Message'
 import { FilterControl } from '@/components/pages/FilterControl'
 import { LoadingPage } from '@/components/pages/LoadingPage'
 import { ThreadProvider, useThreadContext } from '@/components/providers/ThreadProvider'
@@ -73,14 +74,25 @@ const ThreadPageHeader = () => {
 }
 
 const ThreadPageBody = () => {
-  return <MessageFeed />
+  const { seriesMessage } = useThreadContext()
+  if (!seriesMessage) return <MessageFeed />
+
+  return (
+    <div className="overflow-hidden">
+      <ScrollArea scrollbars="vertical">
+        <div className="mx-auto flex flex-col-reverse items-center overflow-hidden px-3 text-sm">
+          <Message message={seriesMessage} hideTimeline priority />
+        </div>
+      </ScrollArea>
+    </div>
+  )
 }
 
 const ThreadComposer = () => {
-  const { thread } = useThreadContext()
+  const { thread, seriesMessage } = useThreadContext()
   const shell = useShellActions()
 
-  if (!thread || !thread.user?.isViewer) return null
+  if (!thread || !thread.user?.isViewer || seriesMessage) return null
 
   return (
     <Composer

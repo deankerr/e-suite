@@ -5,10 +5,11 @@ import { useMessageBySeries, useThreads } from '@/lib/api'
 const useCreateThreadContext = ({ slug, mNum }: { slug?: string; mNum?: number }) => {
   const { thread } = useThreads(slug)
   const threadTitle = thread ? (thread.title ?? 'untitled thread') : ''
-
+  const seriesMessage = useMessageBySeries({ slug, series: mNum })
   return {
     thread,
     threadTitle,
+    seriesMessage,
   }
 }
 
