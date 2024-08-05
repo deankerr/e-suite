@@ -4,6 +4,7 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton, ScrollArea } from '@radix-ui/themes'
 
+import { ThreadImagesView } from '@/app/c/[...slug]/ImagesView'
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { MessageFeed } from '@/components/message-feed/MessageFeed'
@@ -18,13 +19,21 @@ import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { cn } from '@/lib/utils'
 
-export const ThreadPage = ({ slug, mNum }: { slug?: string; mNum?: number }) => {
+export const ThreadPage = ({
+  slug,
+  mNum,
+  imageView = false,
+}: {
+  slug?: string
+  mNum?: number
+  imageView?: boolean
+}) => {
   return (
     <ThreadProvider slug={slug} mNum={mNum}>
       <ThreadPageWrapper>
         <div className="flex h-full flex-col">
           <ThreadPageHeader />
-          <ThreadPageBody />
+          {imageView ? <ThreadImagesView slug={slug ?? ''} /> : <ThreadPageBody />}
           <ThreadComposer />
 
           <ThreadPageDebug />
