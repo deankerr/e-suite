@@ -47,7 +47,7 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
                 return (
                   <Link
                     key={thread._id}
-                    href={`${appConfig.chatUrl}/${thread.slug}`}
+                    href={`${appConfig.threadUrl}/${thread.slug}`}
                     className={cn(linkClassNames, isActive && activeClassNames)}
                   >
                     <IconComponent className="size-5 shrink-0 text-accentA-11" />

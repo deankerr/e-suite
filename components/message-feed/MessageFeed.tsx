@@ -57,7 +57,7 @@ export const MessageFeed = () => {
               key={message._id}
               message={message}
               priority={i === 0}
-              deepLinkUrl={`${appConfig.chatUrl}/${thread.slug}/${message.series}`}
+              deepLinkUrl={`${appConfig.threadUrl}/${thread.slug}/${message.series}`}
               isSequential={isSameAuthor(message, messages.at(i + 1))}
             />
           ))}

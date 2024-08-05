@@ -3,11 +3,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { usePaginatedQuery } from 'convex/react'
 import { useAtomValue } from 'jotai'
-import { usePathname } from 'next/navigation'
 
 import { messageQueryAtom } from '@/components/providers/atoms'
-import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
+import { useSuitePath } from '@/lib/helpers'
 
 import type { EMessage } from '@/convex/types'
 import type { UsePaginatedQueryReturnType } from 'convex/react'
@@ -26,33 +25,8 @@ type MessagesQueryContextType = Omit<
 
 const MessagesQueryContext = createContext<MessagesQueryContextType | undefined>(undefined)
 
-function getPathnameParams(pathname: string) {
-  const [_, route, threadSlug, messageSeriesNum] = pathname.split('/')
-  const isThreadRoute = `/${route}` === appConfig.threadsUrl
-  if (isThreadRoute) {
-    return {
-      threadSlug: isThreadRoute && threadSlug ? threadSlug : undefined,
-      messageSeriesNum: isThreadRoute && messageSeriesNum ? parseInt(messageSeriesNum) : undefined,
-    }
-  }
-
-  const [__, suite, threads, slug, msg] = pathname.split('/')
-  if (suite === 'suite' && threads === 'threads') {
-    return {
-      threadSlug: slug,
-      messageSeriesNum: msg ? parseInt(msg) : undefined,
-    }
-  }
-
-  return {
-    threadSlug: undefined,
-    messageSeriesNum: undefined,
-  }
-}
-
 export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const pathname = usePathname()
-  const { threadSlug } = getPathnameParams(pathname)
+  const { slug: threadSlug } = useSuitePath()
   const [currentThread, setCurrentThread] = useState(threadSlug)
   const isActive = threadSlug === currentThread
 
@@ -68,7 +42,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
     api.db.threads.listMessages,
     queryKey,
     {
-      initialNumItems: 16,
+      initialNumItems: 20,
     },
   )
 
