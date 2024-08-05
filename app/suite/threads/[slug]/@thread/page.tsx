@@ -1,3 +1,4 @@
+import { ThreadImagesView } from '@/components/pages/ThreadImagesView'
 import { ThreadPage } from '@/components/pages/ThreadPage'
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -5,7 +6,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
   return (
     <>
-      <ThreadPage slug={slug} />
+      <ThreadImagesView slug={slug} />
     </>
   )
 }

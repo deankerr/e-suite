@@ -196,6 +196,12 @@ export const useImageModels = (): EImageModel[] | undefined => {
   return result
 }
 
+export const useImageModel = (resourceKey: string) => {
+  const list = useImageModels()
+  const model = list ? (list.find((model) => model.resourceKey === resourceKey) ?? null) : undefined
+  return { model, list }
+}
+
 export const useVoiceModels = (): EVoiceModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listVoiceModels, {})
   return result
