@@ -5,17 +5,16 @@ import { useInView } from 'react-intersection-observer'
 
 import { Message } from '@/components/message/Message'
 import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
-import { useThreadContext } from '@/components/providers/ThreadProvider'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { appConfig } from '@/config/config'
+import { useThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
 
-export const MessageFeed = () => {
-  const { thread } = useThreadContext()
-
+export const MessageFeed = ({ slug }: { slug: string }) => {
+  const { thread } = useThreads(slug)
   const { messages, isLoading, isActive } = useMessagesQuery()
 
   const containerRef = useRef<HTMLDivElement>(null)

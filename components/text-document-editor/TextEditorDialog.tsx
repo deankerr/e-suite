@@ -2,19 +2,25 @@
 
 import { useRef, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, Dialog, Heading, IconButton } from '@radix-ui/themes'
+import { Button, Dialog, IconButton } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
-import { useThreadContext } from '@/components/providers/ThreadProvider'
-import { useUpdateThread } from '@/lib/api'
+import { useThreads, useUpdateThread } from '@/lib/api'
 import { MDXEditor } from '../mdx-editor/MDXEditor'
 
 import type { MDXEditorMethods } from '@mdxeditor/editor'
 
-export const TextEditorDialog = ({ children }: { children: React.ReactNode }) => {
+export const TextEditorDialog = ({
+  slug,
+  children,
+}: {
+  slug: string
+  children: React.ReactNode
+}) => {
+  const { thread } = useThreads(slug)
   const [open, setOpen] = useState(false)
   const ref = useRef<MDXEditorMethods>(null)
-  const { thread } = useThreadContext()
+
   const updateThread = useUpdateThread()
 
   const handleSave = () => {

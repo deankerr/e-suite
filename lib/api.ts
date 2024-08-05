@@ -120,10 +120,6 @@ export const useThreadsList = () => {
   return threads.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
 }
 
-export const useViewer = () => {
-  return useQuery(api.users.getViewer, {})
-}
-
 export const useThreads = (threadSlug?: string) => {
   const userThreads = useQuery(api.db.threads.list, {})
   const currentUserThread = userThreads?.find((thread) => thread.slug === threadSlug)
@@ -162,13 +158,6 @@ export const useMessagePages = ({
   return usePaginatedQuery(api.db.threads.listMessages, queryKey, {
     initialNumItems: INITIAL_MESSAGE_LIMIT * 2,
   })
-}
-
-export const useMessageBySeries = ({ slug, series }: { slug?: string; series?: number }) => {
-  return useCacheQuery(
-    api.db.threads.getMessage,
-    slug && series ? { slugOrId: slug, series } : 'skip',
-  )
 }
 
 export const useMessageInt = (slug?: string, mNum?: number) => {
