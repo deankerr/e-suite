@@ -39,7 +39,7 @@ const ThreadPageHeader = ({ slug }: { slug: string }) => {
   return (
     <header className="flex-between h-12 shrink-0 gap-2 overflow-hidden border-b border-grayA-3 px-2.5">
       <div className="flex-start min-w-24 shrink-0 gap-1">
-        <SidebarButton className="m-0 md:hidden" />
+        <SidebarButton />
         <TextEditorDialog slug={slug}>
           <IconButton variant="soft" color="gray">
             <Icons.Code className="size-4" />

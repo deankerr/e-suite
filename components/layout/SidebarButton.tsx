@@ -1,19 +1,20 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { IconButton } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
 
 import { sidebarOpenAtom } from '@/components/layout/atoms'
+import { IconButton } from '@/components/ui/Button'
 
-export const SidebarButton = ({ ...props }: React.ComponentProps<typeof IconButton>) => {
+export const SidebarButton = ({ ...props }: Partial<React.ComponentProps<typeof IconButton>>) => {
   const [isOpen, toggle] = useAtom(sidebarOpenAtom)
   return (
     <IconButton
       variant="ghost"
       color="gray"
-      className="md:hidden"
+      // className="md:hidden"
       onClick={() => toggle()}
+      aria-label={`Toggle sidebar ${isOpen ? 'open' : 'closed'}`}
       {...props}
     >
       <Icons.Sidebar className="size-6" />
