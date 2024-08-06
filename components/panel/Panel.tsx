@@ -6,7 +6,7 @@ import { IconButton } from '@/components/ui/Button'
 
 const Shell = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border-grayA-5 bg-gray-2 md:rounded-md md:border">
+    <div className="hidden h-full w-full flex-col overflow-hidden border-grayA-5 bg-gray-2 last:flex md:flex md:rounded-md md:border">
       {children}
     </div>
   )
