@@ -42,7 +42,13 @@ const Footer = ({ children }: { children?: React.ReactNode }) => {
 
 const CloseButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <IconButton variant="ghost" aria-label="Close" className="ml-auto shrink-0" onClick={onClick}>
+    <IconButton
+      variant="ghost"
+      color="gray"
+      aria-label="Close"
+      className="ml-auto"
+      onClick={onClick}
+    >
       <Icons.X size={20} />
     </IconButton>
   )
