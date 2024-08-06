@@ -346,21 +346,13 @@ const users_api_keys = defineEnt(usersApiKeysFields)
   .field('secret', v.string(), { unique: true })
   .edge('user')
 
-// * Endpoint Data
-export const endpointDataCacheFields = {
-  endpoint: v.string(),
-  name: v.string(),
-  data: v.string(),
-}
-const endpoint_data_cache = defineEnt(endpointDataCacheFields)
-
 export const job3Fields = {
-  pipeline: v.string(), // # textToImage
+  pipeline: v.string(),
   status: literals('pending', 'active', 'completed', 'failed'),
   currentStep: v.number(),
 
   input: v.any(), // NOTE runtime check
-  output: v.optional(v.any()),
+  output: v.optional(v.any()), // NOTE currently unused
 
   stepResults: v.array(
     v.object({
@@ -395,7 +387,6 @@ const schema = defineEntSchema(
   {
     audio,
     chat_models,
-    endpoint_data_cache,
     images,
     image_models,
 
