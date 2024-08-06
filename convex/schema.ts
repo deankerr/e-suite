@@ -265,16 +265,6 @@ export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
   inference: inferenceConfigV,
-  slashCommands: v.optional(
-    v.array(
-      v.object({
-        id: v.string(),
-        command: v.string(),
-        commandType: literals('startsWith', 'includesWord'),
-        inference: inferenceConfigV,
-      }),
-    ),
-  ),
 
   voiceovers: v.optional(
     v.object({
