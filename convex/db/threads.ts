@@ -195,6 +195,7 @@ export const listMessages = query({
     slugOrId: v.string(),
     paginationOpts: paginationOptsValidator,
     byMediaType: v.optional(literals('images', 'audio')),
+    role: v.optional(literals('assistant', 'user')),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
@@ -218,13 +219,18 @@ export const listMessages = query({
         messages.page.find((m) => m._id === id),
       ) as (typeof messages)['page']
 
-      return { ...messages, page }
+      return { ...messages, page: args.role ? page.filter((m) => m.role === args.role) : page }
     }
 
     const messages = await thread
       .edge('messages')
       .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('deletionTime'), undefined),
+          args.role ? q.eq(q.field('role'), args.role) : true,
+        ),
+      )
       .paginate(args.paginationOpts)
       .map(async (message) => await getMessageEdges(ctx, message))
 
@@ -510,11 +516,19 @@ const createTextToImageRun = async (
   const imageModel = await getImageModelByResourceKey(ctx, runConfig.resourceKey)
   if (!imageModel) throw new ConvexError('invalid resourceKey')
 
-  const nMax = imageModel.endpointModelId === 'fal-ai/aura-flow' ? 2 : 4
+  const maxQuantities: Record<string, number> = {
+    'fal-ai/aura-flow': 2,
+    'fal-ai/flux-pro': 1,
+  }
+
+  const nMax = maxQuantities[imageModel.endpointModelId] ?? 4
   const input = z
     .object({
       prompt: z.string().max(4096),
-      n: z.number().max(nMax).default(1),
+      n: z
+        .number()
+        .default(1)
+        .transform((n) => Math.max(Math.min(n, nMax), 1)),
       width: z.number().max(2048).default(1024),
       height: z.number().max(2048).default(1024),
       size: z.enum(['portrait', 'square', 'landscape']).optional(),
@@ -549,7 +563,7 @@ const createTextToImageRun = async (
     contentType: 'image',
     role: 'assistant',
     hasImageReference: false,
-    inference: { ...inference, n: 2 },
+    inference,
     name: imageModel.name,
   })
 

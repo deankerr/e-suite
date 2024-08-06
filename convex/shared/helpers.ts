@@ -26,6 +26,14 @@ export function getMessageText(message: EMessage) {
   return textToImageConfig?.prompt ?? textToAudioConfig?.prompt
 }
 
+export const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
+  const firstMessage = messages.at(0)
+  if (!firstMessage) return false
+  return messages.every(
+    (message) => message?.name === firstMessage.name && message?.role === firstMessage.role,
+  )
+}
+
 export function extractInferenceConfig(inference: InferenceConfig | undefined): {
   chatConfig: ChatCompletionConfig | null
   textToImageConfig: TextToImageConfig | null

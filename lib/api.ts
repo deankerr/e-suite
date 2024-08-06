@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { messageQueryAtom } from '@/components/providers/atoms'
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
+import { useSuitePath } from '@/lib/helpers'
 
 import type { EChatModel, EImageModel, EVoiceModel } from '@/convex/types'
 
@@ -101,8 +102,7 @@ export const useMessageMutations = () => {
 
 // * queries
 export const useThreadsList = () => {
-  const pathname = usePathname()
-  const slug = pathname.startsWith(appConfig.chatUrl) ? pathname.split('/')[2] : undefined
+  const { slug } = useSuitePath()
 
   const userThreads = useQuery(api.db.threads.list, {}) ?? []
   const currentUserThread = userThreads?.find((thread) => thread.slug === slug)
@@ -118,10 +118,6 @@ export const useThreadsList = () => {
   }
 
   return threads.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
-}
-
-export const useViewer = () => {
-  return useQuery(api.users.getViewer, {})
 }
 
 export const useThreads = (threadSlug?: string) => {
@@ -164,13 +160,6 @@ export const useMessagePages = ({
   })
 }
 
-export const useMessageBySeries = ({ slug, series }: { slug?: string; series?: number }) => {
-  return useCacheQuery(
-    api.db.threads.getMessage,
-    slug && series ? { slugOrId: slug, series } : 'skip',
-  )
-}
-
 export const useMessageInt = (slug?: string, mNum?: number) => {
   const thread = useCacheQuery(api.db.threads.get, slug ? { slugOrId: slug } : 'skip')
   const message = useCacheQuery(
@@ -184,6 +173,19 @@ export const useMessageInt = (slug?: string, mNum?: number) => {
   }
 }
 
+export const useMessage = (slug?: string, msg?: string) => {
+  const { thread } = useThreads(slug)
+  const message = useCacheQuery(
+    api.db.threads.getMessage,
+    slug && msg ? { slugOrId: slug, series: parseInt(msg) } : 'skip',
+  )
+
+  return {
+    thread,
+    message,
+  }
+}
+
 export const useChatModels = (): EChatModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listChatModels, {})
   return result
@@ -192,6 +194,12 @@ export const useChatModels = (): EChatModel[] | undefined => {
 export const useImageModels = (): EImageModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listImageModels, {})
   return result
+}
+
+export const useImageModel = (resourceKey: string) => {
+  const list = useImageModels()
+  const model = list ? (list.find((model) => model.resourceKey === resourceKey) ?? null) : undefined
+  return { model, list }
 }
 
 export const useVoiceModels = (): EVoiceModel[] | undefined => {

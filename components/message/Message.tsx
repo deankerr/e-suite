@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Card, DropdownMenu, IconButton } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
 
 import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
@@ -43,7 +42,6 @@ export const Message = ({
   isSequential?: boolean
   priority?: boolean
 } & React.ComponentProps<'div'>) => {
-  const pathname = usePathname()
   const isOwner = message.user?.isViewer ?? false
   const jobs = extractJobsDetails(message.jobs)
 
@@ -90,15 +88,14 @@ export const Message = ({
       {...props}
       className={cn(
         'flex min-h-7 w-full shrink-0 @container/message',
-        'rounded-md border border-transparent hover:border-grayA-4',
-        '',
+        'rounded border border-transparent hover:border-grayA-4',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
         className,
       )}
     >
       {/* * timeline * */}
       {!hideTimeline && (
-        <div className="ml-px flex w-6 shrink-0 justify-center">
+        <div className="flex w-4 shrink-0 justify-center">
           <div
             className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
             style={{ backgroundColor: marbleProps[0].color }}
@@ -109,23 +106,23 @@ export const Message = ({
       {/* * content * */}
       <div className="grow">
         {/* * header * */}
-        <div className="flex justify-between">
-          <div className="pt-1">
+        <div className="flex-between">
+          <p>
             <span
               className={cn(
-                'mr-1 font-medium text-accentA-11',
+                'brightness-125 saturate-[.75]',
                 isSequential && message.role === 'user' && shortMessageText && 'hidden',
               )}
+              style={{ color: marbleProps[0].color }}
             >
-              {name}{' '}
-            </span>
+              {name}
+            </span>{' '}
             {shortMessageText}
-          </div>
-
+          </p>
           {/* * buttons * */}
           <div className="flex shrink-0">
             {deepLinkUrl ? (
-              <Link href={`${pathname}/${message.series}`} prefetch={false}>
+              <Link href={deepLinkUrl} prefetch={false}>
                 <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
                   <Icons.Share size={20} />
                 </IconButton>
@@ -135,7 +132,6 @@ export const Message = ({
             {dropdownMenu}
           </div>
         </div>
-
         {/* * errors * */}
         {jobs.failedJobErrors.map(({ code, message }, i) => (
           <ErrorCallout
@@ -146,20 +142,16 @@ export const Message = ({
             className="mx-auto mb-1 max-w-xl"
           />
         ))}
-
         {/* * editor */}
         {showEditor && (
           <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
         )}
-
         {/* * markdown text */}
         {!showEditor && text && text.length >= 300 ? (
           <Markdown text={text} className="pb-2" />
         ) : null}
-
         {/* # images # */}
         <Gallery message={message} priority={priority} />
-
         {/* # audio # */}
         {message.audio.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-2 py-1">
@@ -174,14 +166,12 @@ export const Message = ({
             )}
           </div>
         ) : null}
-
         {/* * loading ping * */}
         {jobs.active.length > 0 && (
           <div className="col-start-2">
             <LoadingSpinner variant="ping" />
           </div>
         )}
-
         {/* * json * */}
         {showJson && <Pre className="max-w-screen-md">{JSON.stringify(message, null, 2)}</Pre>}
       </div>

@@ -24,6 +24,16 @@ const nextConfig = {
     loaderFile: './lib/image-loader.ts',
   },
 
+  redirects: async () => {
+    return [
+      {
+        source: '/',
+        destination: '/suite',
+        permanent: false,
+      },
+    ]
+  },
+
   rewrites: async () => [
     {
       source: '/convex/:slug',

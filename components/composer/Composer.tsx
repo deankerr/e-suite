@@ -73,7 +73,7 @@ export const Composer = ({
     if (result) setPromptValue('')
     if (result && result.threadId !== threadId) {
       shell.close()
-      router.push(`${appConfig.chatUrl}/${result.slug}`)
+      router.push(`${appConfig.threadUrl}/${result.slug}`)
     }
   }
 

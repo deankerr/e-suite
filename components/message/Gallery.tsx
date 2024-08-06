@@ -33,7 +33,7 @@ export const Gallery = ({
       {message.images.map((image, index) => (
         <ImageCard
           key={image._id}
-          className="max-w-xs cursor-pointer @4xl:max-w-md"
+          className="max-w-xs cursor-pointer"
           image={image}
           imageProps={{
             sizes: '(max-width: 410px) 90vw, 20rem',

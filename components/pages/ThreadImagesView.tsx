@@ -1,16 +1,22 @@
 'use client'
 
-import { ScrollArea } from '@radix-ui/themes'
 import { usePaginatedQuery } from 'convex/react'
+import { useRouter } from 'next/navigation'
 
 import { ImageCard } from '@/components/images/ImageCard'
-import { useLightbox } from '@/components/lightbox/hooks'
+import { SectionPanel } from '@/components/pages/SectionPanel'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { api } from '@/convex/_generated/api'
+import { useThreads } from '@/lib/api'
+import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 
 export const ThreadImagesView = ({ slug }: { slug: string }) => {
+  const router = useRouter()
+  const { pathname } = useSuitePath()
+  const { thread } = useThreads(slug)
+
   const messages = usePaginatedQuery(
     api.db.threads.listMessages,
     { slugOrId: slug, byMediaType: 'images' },
@@ -18,32 +24,16 @@ export const ThreadImagesView = ({ slug }: { slug: string }) => {
       initialNumItems: 16,
     },
   )
-  const openLightbox = useLightbox()
   return (
-    <ScrollArea scrollbars="vertical">
+    <SectionPanel title={`${thread?.title} Images`} onClosePanel={() => router.push(pathname)}>
       <div className="grid grid-cols-3 gap-2 p-2">
         {messages.results.map((message) =>
           message.images.map((image) => (
             <ImageCard
               key={image._id}
               image={image}
-              imageProps={{
-                sizes: '25vw',
-                onClick: () =>
-                  openLightbox({
-                    slides: [
-                      {
-                        type: 'image' as const,
-                        src: `/i/${image.uid}`,
-                        width: image.width,
-                        height: image.height,
-                        blurDataURL: image.blurDataUrl,
-                      },
-                    ],
-                    index: 0,
-                  }),
-              }}
-              className="max-h-[400px] cursor-pointer"
+              imageProps={{ sizes: '25vw' }}
+              className="max-h-[400px]"
             />
           )),
         )}
@@ -57,6 +47,6 @@ export const ThreadImagesView = ({ slug }: { slug: string }) => {
           </div>
         </InfiniteScroll>
       </div>
-    </ScrollArea>
+    </SectionPanel>
   )
 }

@@ -32,7 +32,7 @@ export const ThreadConfig = () => {
           {!pathname.endsWith(threads.current.slug) && (
             <CmdK.Item
               onSelect={() => {
-                router.push(`${appConfig.chatUrl}/${threads.current?.slug}`)
+                router.push(`${appConfig.threadUrl}/${threads.current?.slug}`)
                 shell.close()
               }}
             >

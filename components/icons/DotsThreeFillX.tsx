@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-export const MoreDotsFill = (props: SVGProps<SVGSVGElement>) => (
+export const DotsThreeFillX = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={20}
