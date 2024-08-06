@@ -53,15 +53,13 @@ export const ThreadConfig = () => {
 
           <CmdK.Item
             onSelect={() => {
-              setSelectedModel(threads.current?.model ?? null)
+              setSelectedModel(null)
               stack.push('ModelPicker')
             }}
           >
             <Icons.Cube weight="light" />
-            Model: {threads.current.model?.name ?? 'unknown model'}
-            <div className="grow text-right text-xs text-gray-10">
-              {threads.current.model?.endpoint}
-            </div>
+            Model: unknown model
+            <div className="grow text-right text-xs text-gray-10">unknown endpoint</div>
           </CmdK.Item>
 
           <CmdK.Item>

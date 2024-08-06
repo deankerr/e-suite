@@ -1,3 +1,5 @@
+import { RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
+
 import type { Doc } from '../_generated/dataModel'
 import type {
   ChatCompletionConfig,
@@ -8,11 +10,11 @@ import type {
 } from '../types'
 
 export function getMessageName(message: EMessage) {
-  const { textToImageConfig, textToAudioConfig } = extractInferenceConfig(message.inference)
+  const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
   if (textToAudioConfig) return 'elevenlabs sound generation'
   if (textToImageConfig) {
     const modelName = message.images[0]?.generationData?.modelName
-    return modelName ?? textToImageConfig.endpointModelId
+    return modelName ?? textToImageConfig.resourceKey
   }
   if (message.name) return message.name
   if (message.role === 'user') return 'You'
@@ -22,7 +24,7 @@ export function getMessageName(message: EMessage) {
 export function getMessageText(message: EMessage) {
   if (message.text) return message.text
 
-  const { textToImageConfig, textToAudioConfig } = extractInferenceConfig(message.inference)
+  const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
   return textToImageConfig?.prompt ?? textToAudioConfig?.prompt
 }
 
@@ -43,6 +45,53 @@ export function extractInferenceConfig(inference: InferenceConfig | undefined): 
     chatConfig: inference?.type === 'chat-completion' ? inference : null,
     textToImageConfig: inference?.type === 'text-to-image' ? inference : null,
     textToAudioConfig: inference?.type === 'sound-generation' ? inference : null,
+  }
+}
+
+const runConfigNames = ['chat', 'textToImage', 'textToAudio'] as const
+
+export function extractRunConfig(jobs: Doc<'jobs3'>[]): {
+  chatConfig: RunConfigChat | null
+  textToImageConfig: RunConfigTextToImage | null
+  textToAudioConfig: RunConfigTextToAudio | null
+} {
+  const relevantJob = jobs.find((job) =>
+    runConfigNames.includes(job.pipeline as (typeof runConfigNames)[number]),
+  )
+
+  if (!relevantJob || typeof relevantJob.input !== 'object') {
+    return {
+      chatConfig: null,
+      textToImageConfig: null,
+      textToAudioConfig: null,
+    }
+  }
+
+  switch (relevantJob.pipeline) {
+    case 'chat':
+      return {
+        chatConfig: relevantJob.input as RunConfigChat,
+        textToImageConfig: null,
+        textToAudioConfig: null,
+      }
+    case 'textToImage':
+      return {
+        chatConfig: null,
+        textToImageConfig: relevantJob.input as RunConfigTextToImage,
+        textToAudioConfig: null,
+      }
+    case 'textToAudio':
+      return {
+        chatConfig: null,
+        textToImageConfig: null,
+        textToAudioConfig: relevantJob.input as RunConfigTextToAudio,
+      }
+    default:
+      return {
+        chatConfig: null,
+        textToImageConfig: null,
+        textToAudioConfig: null,
+      }
   }
 }
 

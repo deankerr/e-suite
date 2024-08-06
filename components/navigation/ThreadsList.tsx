@@ -41,7 +41,7 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
         <div ref={containerRef} className="h-full space-y-1 px-2.5 py-1">
           {threads
             ? threads.map((thread) => {
-                const IconComponent = modelTypeIcons[thread.model?.type ?? 'chat']
+                const IconComponent = modelTypeIcons.chat
                 const isActive = segments.includes(thread.slug)
 
                 return (

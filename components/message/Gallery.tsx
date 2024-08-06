@@ -1,7 +1,7 @@
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
-import { extractInferenceConfig, extractJobsDetails } from '@/convex/shared/helpers'
+import { extractJobsDetails, extractRunConfig } from '@/convex/shared/helpers'
 
 import type { EMessage } from '@/convex/types'
 
@@ -23,7 +23,7 @@ export const Gallery = ({
   const jobs = extractJobsDetails(message.jobs)
   const hasFailedJobs = jobs.failed.length > 0
 
-  const { textToImageConfig } = extractInferenceConfig(message.inference)
+  const { textToImageConfig } = extractRunConfig(message.jobs)
   const numExpectedImages = hasFailedJobs ? 0 : (textToImageConfig?.n ?? 0)
   const numImagePlaceholders = Math.max(0, numExpectedImages - message.images.length)
 
@@ -53,8 +53,8 @@ export const Gallery = ({
           <div key={i} className="w-full max-w-xs">
             <ImageGeneratingEffect
               style={{
-                aspectRatio: textToImageConfig.width / textToImageConfig.height,
-                width: textToImageConfig.width,
+                aspectRatio: (textToImageConfig.width ?? 512) / (textToImageConfig.height ?? 512),
+                width: textToImageConfig.width ?? 512,
                 maxWidth: '100%',
               }}
             />

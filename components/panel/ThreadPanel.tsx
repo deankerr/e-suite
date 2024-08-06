@@ -139,8 +139,7 @@ export const ThreadPanel = () => {
         {thread && (
           <ThreadOwner>
             <Composer
-              runConfig={thread.inference}
-              model={thread.model}
+              model={null}
               onModelChange={() => shell.open({ threadId: thread._id })}
               textareaMinRows={1}
               threadId={thread._id}

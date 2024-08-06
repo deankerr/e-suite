@@ -5,7 +5,6 @@ import { Composer } from '@/components/composer/Composer'
 import { shellNewThreadInferenceConfig, shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useShellStack } from '@/components/shell/hooks'
-import { defaultChatInferenceConfig } from '@/convex/shared/defaults'
 
 export const CreateThread = () => {
   const stack = useShellStack()
@@ -29,11 +28,7 @@ export const CreateThread = () => {
       </CmdK.Group>
       <CmdK.Separator />
 
-      <Composer
-        model={selectedModel}
-        runConfig={newThreadInferenceConfig ?? defaultChatInferenceConfig}
-        className="pt-1"
-      />
+      <Composer model={selectedModel} className="pt-1" />
     </>
   )
 }

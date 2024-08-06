@@ -21,11 +21,7 @@ export const UserThreads = () => {
                 stack.push('ThreadConfig')
               }}
             >
-              {thread.model?.type === 'chat' ? (
-                <Icons.Chat className="-mt-0.5" />
-              ) : (
-                <Icons.ImageSquare />
-              )}
+              <Icons.Chat className="-mt-0.5" />
               <div className="truncate">{thread.title ?? 'Untitled'}</div>
             </CmdK.Item>
           ))}

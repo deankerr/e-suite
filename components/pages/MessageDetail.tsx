@@ -6,10 +6,10 @@ import { Gallery } from '@/components/message/Gallery'
 import { Message } from '@/components/message/Message'
 import { SectionPanel } from '@/components/pages/SectionPanel'
 import { appConfig } from '@/config/config'
-import { extractInferenceConfig, getMessageName } from '@/convex/shared/helpers'
+import { extractRunConfig, getMessageName } from '@/convex/shared/helpers'
 import { useImageModel, useMessage } from '@/lib/api'
 
-import type { EMessage, EThread, TextToImageConfig } from '@/convex/types'
+import type { EMessage, EThread, RunConfigTextToImage } from '@/convex/types'
 
 export const MessageDetail = ({ slug, msg }: { slug: string; msg: string }) => {
   const router = useRouter()
@@ -29,7 +29,7 @@ export const MessageDetail = ({ slug, msg }: { slug: string; msg: string }) => {
 const Body = ({ message }: { thread: EThread; message: EMessage }) => {
   const name = getMessageName(message)
 
-  const { textToImageConfig } = extractInferenceConfig(message.inference)
+  const { textToImageConfig } = extractRunConfig(message.jobs)
 
   if (textToImageConfig) {
     return <GenerationView config={textToImageConfig} message={message} />
@@ -46,7 +46,13 @@ const Body = ({ message }: { thread: EThread; message: EMessage }) => {
   )
 }
 
-const GenerationView = ({ config, message }: { config: TextToImageConfig; message: EMessage }) => {
+const GenerationView = ({
+  config,
+  message,
+}: {
+  config: RunConfigTextToImage
+  message: EMessage
+}) => {
   const { model } = useImageModel(config.resourceKey)
   const job = message.jobs.find((job) => job.pipeline === 'textToImage')?.stepResults[0]
 

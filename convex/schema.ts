@@ -18,7 +18,7 @@ export const runConfigTextToImageV = v.object({
   type: v.literal('textToImage'),
   resourceKey: v.string(),
 
-  prompt: v.string(),
+  prompt: v.optional(v.string()),
   n: v.optional(v.number()),
   size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
   width: v.optional(v.number()),
@@ -28,7 +28,7 @@ export const runConfigTextToImageV = v.object({
 export const runConfigTextToAudioV = v.object({
   type: v.literal('textToAudio'),
   resourceKey: v.string(),
-  prompt: v.string(),
+  prompt: v.optional(v.string()),
   duration: v.optional(v.number()),
 })
 
@@ -264,7 +264,8 @@ const messages = defineEnt(messageFields)
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  inference: inferenceConfigV,
+  latestRunConfig: v.optional(runConfigV),
+  inference: v.optional(inferenceConfigV),
 
   voiceovers: v.optional(
     v.object({
