@@ -256,7 +256,7 @@ export const messageFields = {
 
   inference: v.optional(inferenceConfigV),
 
-  hasImageReference: v.boolean(),
+  hasImageReference: v.optional(v.boolean()),
   hasImageContent: v.optional(v.boolean()),
   metadata: v.optional(kvListV),
 }

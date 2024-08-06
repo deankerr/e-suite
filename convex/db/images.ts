@@ -28,10 +28,6 @@ export const createImage = internalMutation({
       uid: generateUid(Date.now()),
     })
 
-    if (!message.hasImageContent) {
-      await message.patch({ hasImageContent: true })
-    }
-
     return imageId
   },
 })

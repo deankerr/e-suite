@@ -423,7 +423,6 @@ export const append = mutation({
       threadId: thread._id,
       userId: thread.userId,
       ...args.message,
-      hasImageReference: false,
       contentType: 'text',
     })
 
@@ -562,7 +561,6 @@ const createTextToImageRun = async (
     userId,
     contentType: 'image',
     role: 'assistant',
-    hasImageReference: false,
     inference,
     name: imageModel.name,
   })
@@ -624,7 +622,6 @@ const createDuoRun = async (
     userId,
     contentType: 'image',
     role: 'assistant',
-    hasImageReference: false,
     inference,
     name: imageModel1.name,
   })
@@ -690,7 +687,6 @@ const createTextToAudioRun = async (
     userId,
     contentType: 'audio',
     role: 'assistant',
-    hasImageReference: false,
     inference: {
       type: 'sound-generation',
       resourceKey: 'elevenlabs::sound-generation', // NOTE current only this source
@@ -748,7 +744,6 @@ const createChatRun = async (
     userId,
     contentType: 'text',
     role: 'assistant',
-    hasImageReference: false,
     inference,
     name: chatModel.name,
   })
