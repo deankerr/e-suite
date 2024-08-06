@@ -14,6 +14,7 @@ export const SidebarButton = ({ ...props }: Partial<React.ComponentProps<typeof 
       color="gray"
       onClick={() => toggle()}
       aria-label={`Toggle sidebar ${isOpen ? 'open' : 'closed'}`}
+      className="md:hidden"
       {...props}
     >
       <Icons.Sidebar size={20} />

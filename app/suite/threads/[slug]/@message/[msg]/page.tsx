@@ -1,11 +1,5 @@
-'use client'
-
-import { MessageDetail } from '@/components/pages/MessageDetail'
-import { useSuitePath } from '@/lib/helpers'
+import { MessageDetailPanel } from '@/components/panel/MessageDetailPanel'
 
 export default function Page() {
-  const { slug, msg } = useSuitePath()
-  if (!(slug && msg)) return null
-
-  return <MessageDetail slug={slug} msg={msg} />
+  return <MessageDetailPanel />
 }

@@ -4,7 +4,7 @@ import { ScrollArea } from '@radix-ui/themes'
 
 import { IconButton } from '@/components/ui/Button'
 
-const Shell = ({ children }: { children: React.ReactNode }) => {
+const Shell = ({ children }: { children?: React.ReactNode }) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden border-grayA-5 bg-gray-2 md:rounded-md md:border">
       {children}
@@ -12,7 +12,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const Header = ({ children }: { children: React.ReactNode }) => {
+const Header = ({ children }: { children?: React.ReactNode }) => {
   return (
     <header className="flex-start h-10 shrink-0 overflow-hidden border-b border-grayA-3 px-1 font-medium">
       {children}
@@ -20,7 +20,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const Toolbar = ({ children }: { children: React.ReactNode }) => {
+const Toolbar = ({ children }: { children?: React.ReactNode }) => {
   return (
     <ToolbarPrimitive.Root className="flex-start h-10 shrink-0 border-b border-grayA-3 px-1">
       {children}
@@ -28,7 +28,7 @@ const Toolbar = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const Content = ({ children }: { children: React.ReactNode }) => {
+const Content = ({ children }: { children?: React.ReactNode }) => {
   return (
     <ScrollArea scrollbars="vertical" className="grow">
       {children}
@@ -36,7 +36,7 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const Footer = ({ children }: { children: React.ReactNode }) => {
+const Footer = ({ children }: { children?: React.ReactNode }) => {
   return <div className="flex-start shrink-0 border-t border-grayA-3 px-1">{children}</div>
 }
 
@@ -48,7 +48,7 @@ const CloseButton = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-const Title = ({ children }: { children: React.ReactNode }) => {
+const Title = ({ children }: { children?: React.ReactNode }) => {
   return <div className="flex-start truncate px-1 text-sm font-medium">{children}</div>
 }
 

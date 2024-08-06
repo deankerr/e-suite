@@ -88,8 +88,7 @@ export const Message = ({
       {...props}
       className={cn(
         'flex min-h-7 w-full shrink-0 @container/message',
-        'rounded-md border border-transparent hover:border-grayA-4',
-        '',
+        'rounded border border-transparent hover:border-grayA-4',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
         className,
       )}
@@ -111,7 +110,7 @@ export const Message = ({
           <p>
             <span
               className={cn(
-                'brightness-110 saturate-[.75]',
+                'brightness-125 saturate-[.75]',
                 isSequential && message.role === 'user' && shortMessageText && 'hidden',
               )}
               style={{ color: marbleProps[0].color }}
