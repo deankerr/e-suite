@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, IconButton } from '@radix-ui/themes'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { Composer } from '@/components/composer/Composer'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { MessageFeed } from '@/components/message-feed/MessageFeed'
 import { FilterControl } from '@/components/pages/FilterControl'
+import { SectionPanel } from '@/components/pages/SectionPanel'
 import { ThreadPanel } from '@/components/pages/ThreadPanel'
 import { useShellActions } from '@/components/shell/hooks'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
@@ -17,16 +19,15 @@ import { useThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ThreadPage = ({ slug }: { slug: string; mNum?: number }) => {
+  const { thread } = useThreads(slug)
+  const threadTitle = thread?.title ?? 'Untitled'
   return (
-    <ThreadPanel>
-      <div className="flex h-full flex-col">
-        <ThreadPageHeader slug={slug} />
-        <MessageFeed slug={slug} />
-        <ThreadComposer slug={slug} />
+    <SectionPanel title={threadTitle} toolbar={<ThreadPageHeader slug={slug} />}>
+      <MessageFeed slug={slug} />
+      {/* <ThreadComposer slug={slug} /> */}
 
-        <ThreadPageDebug slug={slug} />
-      </div>
-    </ThreadPanel>
+      <ThreadPageDebug slug={slug} />
+    </SectionPanel>
   )
 }
 
@@ -34,6 +35,10 @@ const ThreadPageHeader = ({ slug }: { slug: string }) => {
   const { thread } = useThreads(slug)
   const threadTitle = thread?.title ?? 'Untitled'
   const shell = useShellActions()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const showImages = searchParams.get('images') === 'true'
   if (!thread) return null
 
   return (
@@ -45,6 +50,16 @@ const ThreadPageHeader = ({ slug }: { slug: string }) => {
             <Icons.Code className="size-4" />
           </IconButton>
         </TextEditorDialog>
+        <IconButton
+          variant="soft"
+          color={showImages ? 'orange' : 'gray'}
+          onClick={() => {
+            if (showImages) router.push(pathname)
+            else router.push(`${pathname}?images=true`)
+          }}
+        >
+          <Icons.Image className="size-4" />
+        </IconButton>
       </div>
 
       <div className="flex overflow-hidden">

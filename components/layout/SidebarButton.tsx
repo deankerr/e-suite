@@ -12,12 +12,11 @@ export const SidebarButton = ({ ...props }: Partial<React.ComponentProps<typeof 
     <IconButton
       variant="ghost"
       color="gray"
-      // className="md:hidden"
       onClick={() => toggle()}
       aria-label={`Toggle sidebar ${isOpen ? 'open' : 'closed'}`}
       {...props}
     >
-      <Icons.Sidebar className="size-6" />
+      <Icons.Sidebar size={20} />
     </IconButton>
   )
 }

@@ -11,7 +11,10 @@ export const IconButton = ({
   ...props
 }: SetRequired<React.ComponentProps<typeof RadixIconButton>, 'aria-label'>) => {
   return (
-    <RadixIconButton {...props} className={cn(props.variant === 'ghost' && 'm-0', className)}>
+    <RadixIconButton
+      {...props}
+      className={cn('shrink-0', props.variant === 'ghost' && 'm-0', className)}
+    >
       {children}
     </RadixIconButton>
   )

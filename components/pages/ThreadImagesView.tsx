@@ -1,6 +1,7 @@
 'use client'
 
 import { usePaginatedQuery } from 'convex/react'
+import { useRouter } from 'next/navigation'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { SectionPanel } from '@/components/pages/SectionPanel'
@@ -8,9 +9,12 @@ import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { api } from '@/convex/_generated/api'
 import { useThreads } from '@/lib/api'
+import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 
 export const ThreadImagesView = ({ slug }: { slug: string }) => {
+  const router = useRouter()
+  const { pathname } = useSuitePath()
   const { thread } = useThreads(slug)
 
   const messages = usePaginatedQuery(
@@ -21,7 +25,7 @@ export const ThreadImagesView = ({ slug }: { slug: string }) => {
     },
   )
   return (
-    <SectionPanel title={`${thread?.title} Images`}>
+    <SectionPanel title={`${thread?.title} Images`} onClosePanel={() => router.push(pathname)}>
       <div className="grid grid-cols-3 gap-2 p-2">
         {messages.results.map((message) =>
           message.images.map((image) => (
