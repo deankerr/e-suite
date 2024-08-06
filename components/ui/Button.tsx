@@ -1,5 +1,5 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton as RadixIconButton } from '@radix-ui/themes'
+import { Button as RadixButton, IconButton as RadixIconButton } from '@radix-ui/themes'
 
 import { cn } from '@/lib/utils'
 
@@ -17,5 +17,20 @@ export const IconButton = ({
     >
       {children}
     </RadixIconButton>
+  )
+}
+
+export const Button = ({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<typeof RadixButton>) => {
+  return (
+    <RadixButton
+      {...props}
+      className={cn('shrink-0', props.variant === 'ghost' && 'm-0', className)}
+    >
+      {children}
+    </RadixButton>
   )
 }

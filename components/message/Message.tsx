@@ -96,7 +96,7 @@ export const Message = ({
     >
       {/* * timeline * */}
       {!hideTimeline && (
-        <div className="ml-px flex w-6 shrink-0 justify-center">
+        <div className="flex w-4 shrink-0 justify-center">
           <div
             className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
             style={{ backgroundColor: marbleProps[0].color }}
@@ -107,19 +107,19 @@ export const Message = ({
       {/* * content * */}
       <div className="grow">
         {/* * header * */}
-        <div className="flex justify-between">
-          <div className="pt-1">
+        <div className="flex-between">
+          <p>
             <span
               className={cn(
-                'mr-1 font-medium text-accentA-11',
+                'brightness-110 saturate-[.75]',
                 isSequential && message.role === 'user' && shortMessageText && 'hidden',
               )}
+              style={{ color: marbleProps[0].color }}
             >
-              {name}{' '}
-            </span>
+              {name}
+            </span>{' '}
             {shortMessageText}
-          </div>
-
+          </p>
           {/* * buttons * */}
           <div className="flex shrink-0">
             {deepLinkUrl ? (
@@ -133,7 +133,6 @@ export const Message = ({
             {dropdownMenu}
           </div>
         </div>
-
         {/* * errors * */}
         {jobs.failedJobErrors.map(({ code, message }, i) => (
           <ErrorCallout
@@ -144,20 +143,16 @@ export const Message = ({
             className="mx-auto mb-1 max-w-xl"
           />
         ))}
-
         {/* * editor */}
         {showEditor && (
           <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
         )}
-
         {/* * markdown text */}
         {!showEditor && text && text.length >= 300 ? (
           <Markdown text={text} className="pb-2" />
         ) : null}
-
         {/* # images # */}
         <Gallery message={message} priority={priority} />
-
         {/* # audio # */}
         {message.audio.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-2 py-1">
@@ -172,14 +167,12 @@ export const Message = ({
             )}
           </div>
         ) : null}
-
         {/* * loading ping * */}
         {jobs.active.length > 0 && (
           <div className="col-start-2">
             <LoadingSpinner variant="ping" />
           </div>
         )}
-
         {/* * json * */}
         {showJson && <Pre className="max-w-screen-md">{JSON.stringify(message, null, 2)}</Pre>}
       </div>
