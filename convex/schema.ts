@@ -244,20 +244,9 @@ export const messageFields = {
   name: v.optional(v.string()),
 
   text: v.optional(v.string()),
-  references: v.optional(
-    v.array(
-      v.object({
-        url: v.string(),
-        contentType: literals('image', 'unknown'),
-        imageId: v.optional(v.id('images')),
-      }),
-    ),
-  ),
 
   inference: v.optional(inferenceConfigV),
 
-  hasImageReference: v.optional(v.boolean()),
-  hasImageContent: v.optional(v.boolean()),
   metadata: v.optional(kvListV),
 }
 const messages = defineEnt(messageFields)
@@ -269,8 +258,6 @@ const messages = defineEnt(messageFields)
   .edges('images', { ref: true, deletion: 'soft' })
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
-  .index('threadId_role_hasImageContent', ['threadId', 'role', 'hasImageContent'])
-  .index('threadId_hasImageContent', ['threadId', 'hasImageContent'])
   .index('threadId_contentType', ['threadId', 'contentType'])
 
 // * Threads
