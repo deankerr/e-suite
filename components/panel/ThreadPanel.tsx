@@ -2,6 +2,7 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
+import { useAtom } from 'jotai'
 
 import { Composer } from '@/components/composer/Composer'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
@@ -9,6 +10,7 @@ import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
 import { Panel } from '@/components/panel/Panel'
 import { ThreadOwner } from '@/components/panel/ThreadOwner'
+import { messageQueryAtom } from '@/components/providers/atoms'
 import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
@@ -28,6 +30,8 @@ export const ThreadPanel = () => {
   const { thread } = useThreads(path.slug)
   const threadTitle = thread?.title ?? 'Thread'
   const { messages, loadMore, status, isLoading } = useMessagesQuery()
+
+  const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
 
   return (
     <Panel>
@@ -50,7 +54,17 @@ export const ThreadPanel = () => {
       </Panel.Header>
 
       <Panel.Toolbar>
-        <Toolbar.ToggleGroup type="single" aria-label="View">
+        <Toolbar.ToggleGroup
+          type="single"
+          aria-label="View"
+          value={queryFilters.byMediaType === 'images' ? 'images' : ''}
+          onValueChange={(value) => {
+            setQueryFilters({
+              ...queryFilters,
+              byMediaType: value === 'images' ? 'images' : undefined,
+            })
+          }}
+        >
           <Toolbar.ToggleItem
             value="images"
             className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
@@ -61,7 +75,19 @@ export const ThreadPanel = () => {
 
         <Toolbar.Separator className="mx-[10px] h-3/4 w-[1px] bg-grayA-3" />
 
-        <Toolbar.ToggleGroup type="single" aria-label="Role">
+        <Toolbar.ToggleGroup
+          type="single"
+          aria-label="Role"
+          value={queryFilters.role ?? ''}
+          onValueChange={(value) => {
+            setQueryFilters({
+              ...queryFilters,
+              role: ['assistant', 'user'].includes(value)
+                ? (value as 'assistant' | 'user')
+                : undefined,
+            })
+          }}
+        >
           <Toolbar.ToggleItem
             value="user"
             className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"

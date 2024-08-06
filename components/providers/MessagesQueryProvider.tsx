@@ -13,6 +13,7 @@ import type { UsePaginatedQueryReturnType } from 'convex/react'
 
 export type MessageQueryFilters = {
   byMediaType?: 'images' | 'audio'
+  role?: 'assistant' | 'user'
 }
 
 type MessagesQueryContextType = Omit<
