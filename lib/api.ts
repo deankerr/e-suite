@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { messageQueryAtom } from '@/components/providers/atoms'
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
+import { useSuitePath } from '@/lib/helpers'
 
 import type { EChatModel, EImageModel, EVoiceModel } from '@/convex/types'
 
@@ -101,8 +102,7 @@ export const useMessageMutations = () => {
 
 // * queries
 export const useThreadsList = () => {
-  const pathname = usePathname()
-  const slug = pathname.startsWith(appConfig.chatUrl) ? pathname.split('/')[2] : undefined
+  const { slug } = useSuitePath()
 
   const userThreads = useQuery(api.db.threads.list, {}) ?? []
   const currentUserThread = userThreads?.find((thread) => thread.slug === slug)

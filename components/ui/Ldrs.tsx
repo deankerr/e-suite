@@ -39,7 +39,7 @@ export function LineZoom({ color = 'var(--accent-11)', size, speed }: LoaderProp
   return <l-zoomies color={color} size={size} speed={speed}></l-zoomies>
 }
 
-export function LineZoom2({ color = 'var(--accent-11)', size, speed }: LoaderProps) {
+export function LineOscillate({ color = 'var(--accent-11)', size, speed }: LoaderProps) {
   useEffect(() => {
     async function getLoader() {
       const { lineWobble } = await import('ldrs')
@@ -59,4 +59,15 @@ export function Mirage({ color = 'var(--accent-11)', size, speed }: LoaderProps)
     getLoader()
   }, [])
   return <l-mirage color={color} size={size} speed={speed}></l-mirage>
+}
+
+export function Orbit({ color = 'var(--accent-11)', size, speed }: LoaderProps) {
+  useEffect(() => {
+    async function getLoader() {
+      const { orbit } = await import('ldrs')
+      orbit.register()
+    }
+    getLoader()
+  }, [])
+  return <l-orbit color={color} size={size} speed={speed}></l-orbit>
 }

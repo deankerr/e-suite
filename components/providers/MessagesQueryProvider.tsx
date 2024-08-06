@@ -46,7 +46,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   )
 
-  const checkLoadMore = () => {
+  const checkLoadMore = (_: number) => {
     if (!isActive) {
       setCurrentThread(threadSlug)
     } else {

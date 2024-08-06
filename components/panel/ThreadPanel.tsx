@@ -8,14 +8,18 @@ import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
 import { Panel } from '@/components/panel/Panel'
+import { ThreadOwner } from '@/components/panel/ThreadOwner'
 import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
 import { useShellActions } from '@/components/shell/hooks'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { Button, IconButton } from '@/components/ui/Button'
+import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
 import { appConfig } from '@/config/config'
 import { isSameAuthor } from '@/convex/shared/helpers'
 import { useThreads } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
+
+import type { UsePaginatedQueryResult } from 'convex/react'
 
 export const ThreadPanel = () => {
   const shell = useShellActions()
@@ -23,24 +27,26 @@ export const ThreadPanel = () => {
 
   const { thread } = useThreads(path.slug)
   const threadTitle = thread?.title ?? 'Thread'
-  const { messages } = useMessagesQuery()
+  const { messages, loadMore, status, isLoading } = useMessagesQuery()
 
   return (
     <Panel>
       <Panel.Header>
         <SidebarButton />
         <Panel.Title>{threadTitle}</Panel.Title>
-        <IconButton
-          variant="ghost"
-          color="gray"
-          aria-label="More options"
-          onClick={() => shell.open({ threadId: thread?._id })}
-        >
-          <DotsThreeFillX width={20} height={20} />
-        </IconButton>
-        <IconButton variant="ghost" color="gray" aria-label="Favorite">
-          <Icons.Star size={20} />
-        </IconButton>
+        <ThreadOwner>
+          <IconButton
+            variant="ghost"
+            color="gray"
+            aria-label="More options"
+            onClick={() => shell.open({ threadId: thread?._id })}
+          >
+            <DotsThreeFillX width={20} height={20} />
+          </IconButton>
+          <IconButton variant="ghost" color="gray" aria-label="Favorite">
+            <Icons.Star size={20} />
+          </IconButton>
+        </ThreadOwner>
       </Panel.Header>
 
       <Panel.Toolbar>
@@ -72,22 +78,30 @@ export const ThreadPanel = () => {
 
         <Toolbar.Separator className="mx-[10px] h-3/4 w-[1px] bg-grayA-3" />
 
-        <Toolbar.Button asChild>
-          <TextEditorDialog slug={thread?.slug ?? ''}>
-            <Button variant="soft" color="gray" size="1">
-              Instructions
-            </Button>
-          </TextEditorDialog>
-        </Toolbar.Button>
+        <ThreadOwner>
+          <Toolbar.Button asChild>
+            <TextEditorDialog slug={thread?.slug ?? ''}>
+              <Button variant="soft" color="gray" size="1">
+                Instructions
+              </Button>
+            </TextEditorDialog>
+          </Toolbar.Button>
+        </ThreadOwner>
       </Panel.Toolbar>
 
       <Panel.Content>
-        <div className="flex h-full flex-col-reverse p-1 text-sm">
+        <div className="flex-center p-1">
+          <LoadMoreButton
+            color="gray"
+            variant="surface"
+            query={{ loadMore, status, isLoading, results: [] } as UsePaginatedQueryResult<any>}
+          />
+        </div>
+        <div className="flex flex-col-reverse px-1 text-sm">
           {messages.map((message, i) => (
             <Message
               key={message._id}
               message={message}
-              priority={i === 0}
               deepLinkUrl={`${appConfig.threadUrl}/${thread?.slug}/${message.series}`}
               isSequential={isSameAuthor(message, messages.at(i + 1))}
             />
@@ -97,14 +111,16 @@ export const ThreadPanel = () => {
 
       <Panel.Footer>
         {thread && (
-          <Composer
-            runConfig={thread.inference}
-            model={thread.model}
-            onModelChange={() => shell.open({ threadId: thread._id })}
-            textareaMinRows={1}
-            threadId={thread._id}
-            className="w-full"
-          />
+          <ThreadOwner>
+            <Composer
+              runConfig={thread.inference}
+              model={thread.model}
+              onModelChange={() => shell.open({ threadId: thread._id })}
+              textareaMinRows={1}
+              threadId={thread._id}
+              className="w-full"
+            />
+          </ThreadOwner>
         )}
       </Panel.Footer>
     </Panel>

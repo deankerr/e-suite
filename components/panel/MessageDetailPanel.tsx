@@ -42,7 +42,7 @@ const Body = ({ thread, message }: { thread: EThread; message: EMessage }) => {
       </Panel.Header>
       <Panel.Content>
         <div className="p-2">
-          <Message message={message} hideTimeline />
+          <Message message={message} hideTimeline priority />
         </div>
       </Panel.Content>
     </>
