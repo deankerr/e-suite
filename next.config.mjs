@@ -31,6 +31,11 @@ const nextConfig = {
         destination: '/suite',
         permanent: false,
       },
+      {
+        source: '/c/:slug*',
+        destination: '/suite/threads/:slug*',
+        permanent: true,
+      },
     ]
   },
 
