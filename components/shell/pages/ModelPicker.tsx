@@ -1,39 +1,32 @@
+import { useMemo } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtom } from 'jotai'
-import { toast } from 'sonner'
 
-import { shellSelectedModelAtom } from '@/components/shell/atoms'
+import { shellSelectedResourceKeyAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
-import { useIsCurrentPage, useShellStack, useShellUserThreads } from '@/components/shell/hooks'
-import { useChatModels, useImageModels, useUpdateCurrentThreadModel } from '@/lib/api'
+import { useIsCurrentPage, useShellStack } from '@/components/shell/hooks'
+import { useChatModels, useImageModels } from '@/lib/api'
 
 import type { EChatModel, EImageModel } from '@/convex/types'
 
 export const ModelPicker = () => {
-  const chatModels = useChatModels()
-  const imageModels = useImageModels()
-  const [selectedModel, setSelectedModel] = useAtom(shellSelectedModelAtom)
-  const threads = useShellUserThreads()
   const stack = useShellStack()
 
-  const sendUpdateCurrentThreadModel = useUpdateCurrentThreadModel()
+  const chatModels = useChatModels()
+  const imageModels = useImageModels()
+  const [selectedResourceKey, setSelectedResourceKey] = useAtom(shellSelectedResourceKeyAtom)
+  const currentModel = useMemo(() => {
+    if (selectedResourceKey) {
+      return (
+        chatModels?.find((model) => model.resourceKey === selectedResourceKey) ??
+        imageModels?.find((model) => model.resourceKey === selectedResourceKey)
+      )
+    }
+    return null
+  }, [selectedResourceKey, chatModels, imageModels])
 
   const handleModelSelect = async (model: EChatModel | EImageModel) => {
-    if (threads.current) {
-      try {
-        await sendUpdateCurrentThreadModel({
-          threadId: threads.current._id,
-          type: model.type,
-          resourceKey: model.resourceKey,
-        })
-      } catch (err) {
-        console.error(err)
-        toast.error('Failed to update model')
-      }
-    } else {
-      setSelectedModel(model)
-    }
-
+    setSelectedResourceKey(model.resourceKey)
     stack.pop()
   }
 
@@ -76,15 +69,15 @@ export const ModelPicker = () => {
   return (
     <>
       <CmdK.Group heading="Current">
-        {selectedModel ? (
+        {currentModel ? (
           <CmdK.Item
             onSelect={() => {
               stack.pop()
             }}
           >
             <Icons.ArrowLeft className="phosphor" />
-            {selectedModel?.name}
-            <div className="grow text-right text-xs text-gray-10">{selectedModel?.endpoint}</div>
+            {currentModel?.name}
+            <div className="grow text-right text-xs text-gray-10">{currentModel?.endpoint}</div>
           </CmdK.Item>
         ) : (
           <CmdK.Item
@@ -97,7 +90,7 @@ export const ModelPicker = () => {
         )}
       </CmdK.Group>
 
-      {selectedModel?.type === 'image' ? (
+      {currentModel?.type === 'image' ? (
         <>
           {imageModelList}
           {chatModelList}

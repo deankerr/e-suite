@@ -1,8 +1,9 @@
+import { useMemo } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { shellSelectedModelAtom, shellThreadTitleValueAtom } from '@/components/shell/atoms'
+import { shellSelectedResourceKeyAtom, shellThreadTitleValueAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import {
   useIsCurrentPage,
@@ -11,6 +12,7 @@ import {
   useShellUserThreads,
 } from '@/components/shell/hooks'
 import { appConfig } from '@/config/config'
+import { useChatModels, useImageModels } from '@/lib/api'
 
 export const ThreadConfig = () => {
   const pathname = usePathname()
@@ -18,7 +20,19 @@ export const ThreadConfig = () => {
   const threads = useShellUserThreads()
 
   const setThreadTitleValue = useSetAtom(shellThreadTitleValueAtom)
-  const setSelectedModel = useSetAtom(shellSelectedModelAtom)
+
+  const chatModels = useChatModels()
+  const imageModels = useImageModels()
+  const [selectedResourceKey] = useAtom(shellSelectedResourceKeyAtom)
+  const currentModel = useMemo(() => {
+    if (selectedResourceKey) {
+      return (
+        chatModels?.find((model) => model.resourceKey === selectedResourceKey) ??
+        imageModels?.find((model) => model.resourceKey === selectedResourceKey)
+      )
+    }
+    return null
+  }, [selectedResourceKey, chatModels, imageModels])
 
   const stack = useShellStack()
   const shell = useShellActions()
@@ -53,13 +67,14 @@ export const ThreadConfig = () => {
 
           <CmdK.Item
             onSelect={() => {
-              setSelectedModel(null)
               stack.push('ModelPicker')
             }}
           >
             <Icons.Cube weight="light" />
-            Model: unknown model
-            <div className="grow text-right text-xs text-gray-10">unknown endpoint</div>
+            {currentModel?.name ?? 'unknown model'}
+            <div className="grow text-right text-xs text-gray-10">
+              {currentModel?.endpoint ?? 'unknown endpoint'}
+            </div>
           </CmdK.Item>
 
           <CmdK.Item>

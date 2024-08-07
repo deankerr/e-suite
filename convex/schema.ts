@@ -222,7 +222,7 @@ const messages = defineEnt(messageFields)
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  latestRunConfig: v.optional(runConfigV),
+  latestRunConfig: v.optional(v.union(runConfigChatV, runConfigTextToImageV)),
   inference: deprecated,
 
   voiceovers: v.optional(

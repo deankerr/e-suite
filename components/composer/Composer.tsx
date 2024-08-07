@@ -1,73 +1,73 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label } from '@radix-ui/react-label'
 import { Button, Select } from '@radix-ui/themes'
+import { useAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
 import { RectangleVertical } from '@/components/icons/RectangleVertical'
+import { shellSelectedResourceKeyAtom } from '@/components/shell/atoms'
 import { useShellActions } from '@/components/shell/hooks'
 import { Badge } from '@/components/ui/Badge'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { appConfig } from '@/config/config'
-import { useThreadActions } from '@/lib/api'
+import { defaultRunConfigChat } from '@/convex/shared/defaults'
+import { getMaxQuantityForModel } from '@/convex/shared/helpers'
+import { useChatModels, useImageModels, useThreadActions } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EChatModel, EImageModel, ThreadActionResult } from '@/convex/types'
+import type {
+  EChatModel,
+  EImageModel,
+  RunConfigChat,
+  RunConfigTextToImage,
+  ThreadActionResult,
+} from '@/convex/types'
 
 export const Composer = ({
-  model,
-
+  initialRunConfig,
   onModelChange,
   textareaMinRows = 2,
   threadId,
   className,
   ...props
 }: {
-  model: EChatModel | EImageModel | null | undefined
+  initialRunConfig?: RunConfigChat | RunConfigTextToImage
   onModelChange?: () => void
   textareaMinRows?: number
   threadId?: string
 } & React.ComponentProps<'form'>) => {
-  // TODO replace config methods
-  const chatConfig = null
-  const textToImageConfig = { size: 'square' as const, n: 4 }
-
+  const chatModels = useChatModels()
+  const imageModels = useImageModels()
   const threadActions = useThreadActions(threadId)
   const shell = useShellActions()
   const router = useRouter()
 
+  const chatConfig = initialRunConfig?.type === 'chat' ? initialRunConfig : null
+  const textToImageConfig = initialRunConfig?.type === 'textToImage' ? initialRunConfig : null
+  const currentConfig = chatConfig ?? textToImageConfig ?? defaultRunConfigChat
+  const currentResourceKey = currentConfig.resourceKey
+
+  const currentModel = useMemo(() => {
+    if (currentResourceKey) {
+      return (
+        chatModels?.find((model) => model.resourceKey === currentResourceKey) ??
+        imageModels?.find((model) => model.resourceKey === currentResourceKey)
+      )
+    }
+    return null
+  }, [currentResourceKey, chatModels, imageModels])
+
   const [promptValue, setPromptValue] = useState('')
 
-  const getValidQuantity = (n: string | number) => {
-    const num = Number(n) || 1
-    const max = model?.resourceKey === 'fal::fal-ai/aura-flow' ? 2 : 4
-
-    return Math.min(num, max)
-  }
-  const [textToImageN, setTextToImageN] = useState(() => getValidQuantity(4))
+  const maxQuantity = getMaxQuantityForModel(textToImageConfig?.resourceKey ?? '')
+  const [textToImageN, setTextToImageN] = useState(maxQuantity)
 
   const [textToImageSize, setTextToImageSize] = useState<'square' | 'portrait' | 'landscape'>(
     textToImageConfig?.size ?? 'square',
   )
-
-  const currentRunConfig = model
-    ? chatConfig
-      ? {
-          type: 'chat' as const,
-          resourceKey: model.resourceKey,
-        }
-      : textToImageConfig
-        ? {
-            type: 'textToImage' as const,
-            resourceKey: model.resourceKey,
-            prompt: promptValue,
-            n: textToImageN,
-            size: textToImageSize,
-          }
-        : null
-    : null
 
   const handleActionResult = (result?: ThreadActionResult | null) => {
     if (result) setPromptValue('')
@@ -78,25 +78,25 @@ export const Composer = ({
   }
 
   const send = () => {
-    if (!currentRunConfig) {
+    if (!chatConfig && !textToImageConfig) {
       toast.error('Invalid configuration')
       return
     }
 
-    if (currentRunConfig.type === 'chat' && promptValue) {
+    if (chatConfig && promptValue) {
       threadActions
         .append({
           message: {
             role: 'user',
             text: promptValue,
           },
-          runConfig: currentRunConfig,
+          runConfig: chatConfig,
         })
         .then(handleActionResult)
-    } else {
+    } else if (textToImageConfig) {
       threadActions
         .run({
-          runConfig: currentRunConfig,
+          runConfig: textToImageConfig,
         })
         .then(handleActionResult)
     }
@@ -155,26 +155,26 @@ export const Composer = ({
           onClick={() => onModelChange?.()}
         >
           <Icons.Cube className="size-4" />
-          {model?.name ?? 'No Model Selected'}
+          {currentModel?.name ?? 'No Model Selected'}
           {onModelChange && <Icons.CaretUpDown className="phosphor" />}
         </Button>
 
-        {model && (
+        {currentModel && (
           <>
             <div className="flex-start gap-1">
               <Badge size="3" color="brown">
-                {model.endpoint}
+                {currentModel.endpoint}
               </Badge>
 
-              {model.moderated && (
+              {currentModel.moderated && (
                 <Badge size="3" color="ruby">
                   moderated
                 </Badge>
               )}
 
-              {model.type === 'image' && model.architecture && (
+              {currentModel.type === 'image' && currentModel.architecture && (
                 <Badge size="3" color="brown">
-                  {model.architecture}
+                  {currentModel.architecture}
                 </Badge>
               )}
             </div>
@@ -185,8 +185,8 @@ export const Composer = ({
           <>
             <QuantitySelect
               value={textToImageN.toString()}
-              onValueChange={(value) => setTextToImageN(getValidQuantity(value))}
-              max={model?.resourceKey === 'fal::fal-ai/aura-flow' ? 2 : 4}
+              onValueChange={(value) => setTextToImageN(Number(value))}
+              max={maxQuantity}
               disabled={threadActions.state === 'rateLimited'}
             />
             <DimensionsSelect

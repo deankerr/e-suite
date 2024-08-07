@@ -7,7 +7,12 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
 import { kvListV, runConfigV, threadFields } from '../schema'
-import { extractValidUrlsFromText, getMessageName, getMessageText } from '../shared/helpers'
+import {
+  extractValidUrlsFromText,
+  getMaxQuantityForModel,
+  getMessageName,
+  getMessageText,
+} from '../shared/helpers'
 import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
@@ -495,12 +500,7 @@ const createTextToImageRun = async (
   const imageModel = await getImageModelByResourceKey(ctx, runConfig.resourceKey)
   if (!imageModel) throw new ConvexError('invalid resourceKey')
 
-  const maxQuantities: Record<string, number> = {
-    'fal-ai/aura-flow': 2,
-    'fal-ai/flux-pro': 1,
-  }
-
-  const nMax = maxQuantities[imageModel.endpointModelId] ?? 4
+  const nMax = getMaxQuantityForModel(imageModel.resourceKey)
   const input = z
     .object({
       prompt: z.string().max(4096),

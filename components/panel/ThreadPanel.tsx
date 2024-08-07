@@ -17,6 +17,7 @@ import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDi
 import { Button, IconButton } from '@/components/ui/Button'
 import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
 import { appConfig } from '@/config/config'
+import { defaultRunConfigChat } from '@/convex/shared/defaults'
 import { isSameAuthor } from '@/convex/shared/helpers'
 import { useThreads } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
@@ -29,9 +30,10 @@ export const ThreadPanel = () => {
 
   const { thread } = useThreads(path.slug)
   const threadTitle = thread?.title ?? 'Thread'
-  const { messages, loadMore, status, isLoading } = useMessagesQuery()
+  const latestRunConfig = thread?.latestRunConfig ?? defaultRunConfigChat
 
   const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
+  const { messages, loadMore, status, isLoading } = useMessagesQuery()
 
   return (
     <Panel>
@@ -139,7 +141,7 @@ export const ThreadPanel = () => {
         {thread && (
           <ThreadOwner>
             <Composer
-              model={null}
+              initialRunConfig={latestRunConfig}
               onModelChange={() => shell.open({ threadId: thread._id })}
               textareaMinRows={1}
               threadId={thread._id}

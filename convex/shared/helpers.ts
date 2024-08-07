@@ -30,6 +30,15 @@ export const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
   )
 }
 
+export const getMaxQuantityForModel = (resourceKey: string) => {
+  const maxQuantities: Record<string, number> = {
+    'fal::fal-ai/aura-flow': 2,
+    'fal::fal-ai/flux-pro': 1,
+  }
+
+  return maxQuantities[resourceKey] ?? 4
+}
+
 const runConfigNames = ['chat', 'textToImage', 'textToAudio'] as const
 export function extractRunConfig(jobs: Doc<'jobs3'>[]): {
   chatConfig: RunConfigChat | null
