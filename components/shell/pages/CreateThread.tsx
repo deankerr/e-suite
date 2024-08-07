@@ -1,7 +1,7 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtomValue } from 'jotai'
 
-import { Composer } from '@/components/composer/Composer'
+import { ComposerPrev } from '@/components/composer/ComposerPrev'
 import { shellSelectedModelAtom } from '@/components/shell/atoms'
 import { CmdK } from '@/components/shell/CmdK'
 import { useShellStack } from '@/components/shell/hooks'
@@ -28,7 +28,7 @@ export const CreateThread = () => {
       </CmdK.Group>
       <CmdK.Separator />
 
-      <Composer initialRunConfig={defaultRunConfigChat} className="pt-1" />
+      <ComposerPrev initialRunConfig={defaultRunConfigChat} className="pt-1" />
     </>
   )
 }

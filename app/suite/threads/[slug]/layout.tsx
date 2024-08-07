@@ -7,8 +7,6 @@ import type { Metadata } from 'next'
 
 export async function generateMetadata({
   params,
-  thread,
-  message,
 }: {
   params: { slug: string }
   thread: React.ReactNode // NOTE next types require these for some reason
@@ -19,7 +17,6 @@ export async function generateMetadata({
     slugOrId: slug,
   })
   if (!threadData) return {}
-  console.log('?', thread, message)
 
   const metadata: Metadata = {
     title: threadData.title,

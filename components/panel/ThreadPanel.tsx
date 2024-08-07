@@ -4,7 +4,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import { useAtom } from 'jotai'
 
-import { Composer } from '@/components/composer/Composer'
+import { ComposerPrev } from '@/components/composer/ComposerPrev'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
@@ -140,7 +140,7 @@ export const ThreadPanel = () => {
       <Panel.Footer>
         {thread && (
           <ThreadOwner>
-            <Composer
+            <ComposerPrev
               initialRunConfig={latestRunConfig}
               onModelChange={() => shell.open({ threadId: thread._id })}
               textareaMinRows={1}

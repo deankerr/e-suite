@@ -1,13 +1,11 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useAtomValue } from 'jotai'
-import { usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { messageQueryAtom } from '@/components/providers/atoms'
-import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 import { useSuitePath } from '@/lib/helpers'
 
@@ -205,4 +203,24 @@ export const useImageModel = (resourceKey: string) => {
 export const useVoiceModels = (): EVoiceModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listVoiceModels, {})
   return result
+}
+
+export const useModels = (resourceKey?: string) => {
+  const chatModels = useCacheQuery(api.db.models.listChatModels, {})
+  const imageModels = useCacheQuery(api.db.models.listImageModels, {})
+
+  const model = useMemo(() => {
+    if (!resourceKey) return undefined
+    return (
+      chatModels?.find((model) => model.resourceKey === resourceKey) ??
+      imageModels?.find((model) => model.resourceKey === resourceKey) ??
+      null
+    )
+  }, [resourceKey, chatModels, imageModels])
+
+  const result = useMemo(() => {
+    return { chatModels, imageModels, model }
+  }, [chatModels, imageModels, model])
+
+  return result as Partial<typeof result>
 }
