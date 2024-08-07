@@ -38,7 +38,6 @@ import type * as lib_sharp from "../lib/sharp.js";
 import type * as lib_valibot from "../lib/valibot.js";
 import type * as migrations from "../migrations.js";
 import type * as rules from "../rules.js";
-import type * as shared_defaults from "../shared/defaults.js";
 import type * as shared_helpers from "../shared/helpers.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
@@ -92,7 +91,6 @@ declare const fullApi: ApiFromModules<{
   "lib/valibot": typeof lib_valibot;
   migrations: typeof migrations;
   rules: typeof rules;
-  "shared/defaults": typeof shared_defaults;
   "shared/helpers": typeof shared_helpers;
   "shared/utils": typeof shared_utils;
   types: typeof types;

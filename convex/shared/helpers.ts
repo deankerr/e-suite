@@ -1,13 +1,7 @@
 import { RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
 
 import type { Doc } from '../_generated/dataModel'
-import type {
-  ChatCompletionConfig,
-  EMessage,
-  InferenceConfig,
-  TextToAudioConfig,
-  TextToImageConfig,
-} from '../types'
+import type { EMessage } from '../types'
 
 export function getMessageName(message: EMessage) {
   const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
@@ -36,20 +30,7 @@ export const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
   )
 }
 
-export function extractInferenceConfig(inference: InferenceConfig | undefined): {
-  chatConfig: ChatCompletionConfig | null
-  textToImageConfig: TextToImageConfig | null
-  textToAudioConfig: TextToAudioConfig | null
-} {
-  return {
-    chatConfig: inference?.type === 'chat-completion' ? inference : null,
-    textToImageConfig: inference?.type === 'text-to-image' ? inference : null,
-    textToAudioConfig: inference?.type === 'sound-generation' ? inference : null,
-  }
-}
-
 const runConfigNames = ['chat', 'textToImage', 'textToAudio'] as const
-
 export function extractRunConfig(jobs: Doc<'jobs3'>[]): {
   chatConfig: RunConfigChat | null
   textToImageConfig: RunConfigTextToImage | null
