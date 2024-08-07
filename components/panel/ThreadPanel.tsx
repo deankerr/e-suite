@@ -3,8 +3,9 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import { useAtom } from 'jotai'
+import { useRouter } from 'next/navigation'
 
-import { ComposerPrev } from '@/components/composer/ComposerPrev'
+import { Composer } from '@/components/composer/Composer'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
@@ -19,9 +20,10 @@ import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
 import { appConfig } from '@/config/config'
 import { defaultRunConfigChat } from '@/convex/shared/defaults'
 import { isSameAuthor } from '@/convex/shared/helpers'
-import { useThreads } from '@/lib/api'
+import { useThreadActions, useThreads } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
 
+import type { RunConfig } from '@/convex/types'
 import type { UsePaginatedQueryResult } from 'convex/react'
 
 export const ThreadPanel = () => {
@@ -34,6 +36,41 @@ export const ThreadPanel = () => {
 
   const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
   const { messages, loadMore, status, isLoading } = useMessagesQuery()
+  const router = useRouter()
+
+  const actions = useThreadActions(thread?._id)
+
+  const handleSend = async (
+    method: 'run' | 'add',
+    { text, ...runConfig }: RunConfig & { text: string },
+  ) => {
+    if (!thread) return false
+
+    // * add / run chat
+    if (method === 'add' || (runConfig.type === 'chat' && text)) {
+      const result = await actions.append({
+        message: {
+          role: 'user',
+          text,
+        },
+        runConfig: method !== 'add' ? runConfig : undefined,
+      })
+
+      if (result && result.threadId !== thread._id) {
+        router.push(`${appConfig.threadUrl}/${result.slug}`)
+      }
+      return !!result
+    }
+
+    // * run image
+    const result = await actions.run({
+      runConfig,
+    })
+    if (result && result.threadId !== thread._id) {
+      router.push(`${appConfig.threadUrl}/${result.slug}`)
+    }
+    return !!result
+  }
 
   return (
     <Panel>
@@ -140,12 +177,10 @@ export const ThreadPanel = () => {
       <Panel.Footer>
         {thread && (
           <ThreadOwner>
-            <ComposerPrev
-              initialRunConfig={latestRunConfig}
-              onModelChange={() => shell.open({ threadId: thread._id })}
-              textareaMinRows={1}
-              threadId={thread._id}
-              className="w-full"
+            <Composer
+              initialResourceKey={latestRunConfig.resourceKey}
+              loading={actions.state !== 'ready'}
+              onSend={handleSend}
             />
           </ThreadOwner>
         )}

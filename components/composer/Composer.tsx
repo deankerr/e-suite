@@ -22,7 +22,7 @@ export const Composer = ({
   initialResourceKey?: string
   defaultTextValue?: string
   loading?: boolean
-  onSend?: (method: 'run' | 'add', config: RunConfig) => unknown
+  onSend?: (method: 'run' | 'add', config: RunConfig & { text: string }) => Promise<boolean>
 }) => {
   const [resourceKey, setResourceKey] = useState(initialResourceKey)
   const { model } = useModels(resourceKey)
@@ -35,22 +35,27 @@ export const Composer = ({
 
   const handleSend = (method: 'run' | 'add') => {
     const configType = type === 'image' ? 'textToImage' : 'chat'
-    const config: RunConfig =
+    const config =
       configType === 'textToImage'
         ? {
-            type: configType,
+            text: textValue,
             prompt: textValue,
+            type: 'textToImage' as const,
             resourceKey,
             n: Number(quantity),
             size: dimensions as 'portrait' | 'square' | 'landscape',
           }
         : {
-            type: configType,
-
+            text: textValue,
+            type: 'chat' as const,
             resourceKey,
           }
 
-    onSend?.(method, config)
+    onSend?.(method, config).then((success) => {
+      if (success) {
+        setTextValue('')
+      }
+    })
   }
 
   return (
