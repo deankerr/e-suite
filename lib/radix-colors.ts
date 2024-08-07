@@ -93,6 +93,8 @@ function createRadixColors() {
     accentA: createFullScale('accent-a'),
     gray: createFullScale('gray-'),
     grayA: createFullScale('gray-a'),
+    mauve: createFullScale('mauve-'),
+    mauveA: createFullScale('mauve-a'),
     gold: createFullScale('gold-'),
     goldA: createFullScale('gold-a'),
     bronze: createFullScale('bronze-'),

@@ -144,6 +144,11 @@ const config: Config = {
         '8xl': '96rem',
       },
       keyframes: {
+        shimmerRight: {
+          '100%': {
+            transform: 'translateX(100%)',
+          },
+        },
         shimmerDown: {
           from: { transform: 'translateY(0)' },
           to: { transform: 'translateY(150%)' },

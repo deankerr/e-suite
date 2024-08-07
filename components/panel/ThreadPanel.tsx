@@ -11,6 +11,7 @@ import { Composer } from '@/components/composer/Composer'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
+import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Panel } from '@/components/panel/Panel'
 import { ThreadOwner } from '@/components/panel/ThreadOwner'
 import { messageQueryAtom } from '@/components/providers/atoms'
@@ -33,7 +34,7 @@ export const ThreadPanel = () => {
   const path = useSuitePath()
 
   const { thread } = useThreads(path.slug)
-  const threadTitle = thread?.title ?? 'Thread'
+  const threadTitle = thread ? (thread?.title ?? 'Untitled Thread') : ''
   const latestRunConfig = thread?.latestRunConfig ?? defaultRunConfigChat
 
   const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
@@ -76,11 +77,21 @@ export const ThreadPanel = () => {
 
   const [showJson, setShowJson] = useState(false)
 
+  if (thread === null) {
+    return (
+      <Panel>
+        <EmptyPage />
+      </Panel>
+    )
+  }
+
   return (
-    <Panel>
-      <Panel.Header>
+    <Panel loading={!thread || status === 'LoadingFirstPage'}>
+      <Panel.Header loading={!thread}>
         <SidebarButton />
+        <div className="size-4" />
         <Panel.Title>{threadTitle}</Panel.Title>
+        <div className="size-4" />
         <ThreadOwner>
           <IconButton variant="ghost" color="gray" aria-label="More options" disabled>
             <DotsThreeFillX width={20} height={20} />
@@ -104,7 +115,7 @@ export const ThreadPanel = () => {
         </ThreadOwner>
       </Panel.Header>
 
-      <Panel.Toolbar>
+      <Panel.Toolbar loading={!thread}>
         <Toolbar.ToggleGroup
           type="single"
           aria-label="View"
