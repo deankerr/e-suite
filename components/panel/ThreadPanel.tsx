@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
+import { AlertDialog, Dialog, TextField } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
 
@@ -17,10 +19,12 @@ import { useShellActions } from '@/components/shell/hooks'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { Button, IconButton } from '@/components/ui/Button'
 import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
+import { Pre } from '@/components/util/Pre'
 import { appConfig } from '@/config/config'
 import { defaultRunConfigChat } from '@/convex/shared/defaults'
 import { isSameAuthor } from '@/convex/shared/helpers'
-import { useThreadActions, useThreads } from '@/lib/api'
+import { useDeleteThread, useThreadActions, useThreads, useUpdateThread } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
 
 import type { RunConfig } from '@/convex/types'
@@ -72,6 +76,8 @@ export const ThreadPanel = () => {
     return !!result
   }
 
+  const [showJson, setShowJson] = useState(false)
+
   return (
     <Panel>
       <Panel.Header>
@@ -86,9 +92,22 @@ export const ThreadPanel = () => {
           >
             <DotsThreeFillX width={20} height={20} />
           </IconButton>
+
           <IconButton variant="ghost" color="gray" aria-label="Favorite">
             <Icons.Star size={20} />
           </IconButton>
+
+          <EditThreadTitleDialog threadId={thread?._id ?? ''} currentTitle={threadTitle}>
+            <IconButton variant="ghost" color="gray" aria-label="Edit">
+              <Icons.Pencil size={20} />
+            </IconButton>
+          </EditThreadTitleDialog>
+
+          <DeleteThreadDialog threadId={thread?._id ?? ''}>
+            <IconButton variant="ghost" color="gray" aria-label="Delete">
+              <Icons.Trash size={20} />
+            </IconButton>
+          </DeleteThreadDialog>
         </ThreadOwner>
       </Panel.Header>
 
@@ -143,15 +162,30 @@ export const ThreadPanel = () => {
 
         <Toolbar.Separator className="mx-[10px] h-3/4 w-[1px] bg-grayA-3" />
 
-        <ThreadOwner>
-          <Toolbar.Button asChild>
-            <TextEditorDialog slug={thread?.slug ?? ''}>
-              <Button variant="soft" color="gray" size="1">
-                Instructions
-              </Button>
-            </TextEditorDialog>
-          </Toolbar.Button>
-        </ThreadOwner>
+        <div className="flex-start gap-2">
+          <ThreadOwner>
+            <Toolbar.Button asChild>
+              <TextEditorDialog slug={thread?.slug ?? ''}>
+                <Button variant="soft" color="gray" size="1">
+                  Instructions
+                </Button>
+              </TextEditorDialog>
+            </Toolbar.Button>
+          </ThreadOwner>
+
+          <AdminOnlyUi>
+            <Toolbar.Button asChild>
+              <IconButton
+                aria-label="Show JSON"
+                variant="ghost"
+                color={showJson ? undefined : 'gray'}
+                onClick={() => setShowJson(!showJson)}
+              >
+                <Icons.FileJs size={20} />
+              </IconButton>
+            </Toolbar.Button>
+          </AdminOnlyUi>
+        </div>
       </Panel.Toolbar>
 
       <Panel.Content>
@@ -174,6 +208,12 @@ export const ThreadPanel = () => {
         </div>
       </Panel.Content>
 
+      {showJson && (
+        <Pre className="absolute inset-x-0 inset-y-20 z-20 max-w-[60vw] text-wrap">
+          {JSON.stringify(thread, null, 2)}
+        </Pre>
+      )}
+
       <Panel.Footer>
         {thread && (
           <ThreadOwner>
@@ -186,5 +226,88 @@ export const ThreadPanel = () => {
         )}
       </Panel.Footer>
     </Panel>
+  )
+}
+
+const EditThreadTitleDialog = ({
+  threadId,
+  currentTitle,
+  children,
+}: {
+  threadId: string
+  currentTitle: string
+  children: React.ReactNode
+}) => {
+  const sendUpdateThread = useUpdateThread()
+  const [title, setTitle] = useState(currentTitle)
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>{children}</Dialog.Trigger>
+
+      <Dialog.Content maxWidth="450px">
+        <Dialog.Title>Edit title</Dialog.Title>
+        <Dialog.Description size="2" mb="4">
+          Make changes to your thread.
+        </Dialog.Description>
+
+        <div className="flex flex-col gap-3">
+          <label>
+            Title
+            <TextField.Root
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter your new title"
+            />
+          </label>
+        </div>
+
+        <div className="flex-end mt-4 gap-2">
+          <Dialog.Close>
+            <Button variant="soft" color="gray">
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Dialog.Close>
+            <Button onClick={() => sendUpdateThread({ threadId, fields: { title } })}>Save</Button>
+          </Dialog.Close>
+        </div>
+      </Dialog.Content>
+    </Dialog.Root>
+  )
+}
+
+const DeleteThreadDialog = ({
+  threadId,
+  children,
+}: {
+  threadId: string
+  children: React.ReactNode
+}) => {
+  const sendDeleteThread = useDeleteThread()
+
+  return (
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>{children}</AlertDialog.Trigger>
+
+      <AlertDialog.Content maxWidth="450px">
+        <AlertDialog.Title>Delete Thread</AlertDialog.Title>
+        <AlertDialog.Description size="2">
+          Are you sure? This thread will be gone forever.
+        </AlertDialog.Description>
+
+        <div className="flex-end mt-4 gap-2">
+          <AlertDialog.Cancel>
+            <Button variant="soft" color="gray">
+              Cancel
+            </Button>
+          </AlertDialog.Cancel>
+          <AlertDialog.Action>
+            <Button variant="solid" color="red" onClick={() => sendDeleteThread({ threadId })}>
+              Delete
+            </Button>
+          </AlertDialog.Action>
+        </div>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
   )
 }
