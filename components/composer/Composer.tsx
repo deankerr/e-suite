@@ -11,7 +11,7 @@ import { Button, IconButton } from '@/components/ui/Button'
 import { getMaxQuantityForModel } from '@/convex/shared/helpers'
 import { useModels } from '@/lib/api'
 
-import type { RunConfig } from '@/convex/types'
+import type { ThreadActions } from '@/lib/api'
 
 export const Composer = ({
   initialResourceKey = '',
@@ -22,7 +22,7 @@ export const Composer = ({
   initialResourceKey?: string
   defaultTextValue?: string
   loading?: boolean
-  onSend?: (method: 'run' | 'add', config: RunConfig & { text: string }) => Promise<boolean>
+  onSend?: ThreadActions['send']
 }) => {
   const [resourceKey, setResourceKey] = useState(initialResourceKey)
   const { model } = useModels(resourceKey)
@@ -38,6 +38,7 @@ export const Composer = ({
     const config =
       configType === 'textToImage'
         ? {
+            method,
             text: textValue,
             prompt: textValue,
             type: 'textToImage' as const,
@@ -46,12 +47,13 @@ export const Composer = ({
             size: dimensions as 'portrait' | 'square' | 'landscape',
           }
         : {
+            method,
             text: textValue,
             type: 'chat' as const,
             resourceKey,
           }
 
-    onSend?.(method, config).then((success) => {
+    onSend?.(config).then((success) => {
       if (success) {
         setTextValue('')
       }

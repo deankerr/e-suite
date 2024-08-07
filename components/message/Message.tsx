@@ -14,7 +14,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
 import { extractJobsDetails, getMessageName, getMessageText } from '@/convex/shared/helpers'
-import { useMessageMutations } from '@/lib/api'
+import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -53,7 +53,7 @@ export const Message = ({
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
-  const { removeMessage } = useMessageMutations()
+  const deleteMessage = useDeleteMessage()
   const messageId = message._id
   const dropdownMenu = useMemo(
     () =>
@@ -70,17 +70,13 @@ export const Message = ({
               {showEditor ? 'Cancel Edit' : 'Edit'}
             </DropdownMenu.Item>
             <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
-            <DropdownMenu.Item
-              color="red"
-              disabled={!removeMessage}
-              onClick={() => removeMessage?.({ messageId })}
-            >
+            <DropdownMenu.Item color="red" onClick={() => deleteMessage({ messageId })}>
               Delete
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : null,
-    [isOwner, messageId, removeMessage, showEditor, showJson],
+    [deleteMessage, isOwner, messageId, showEditor, showJson],
   )
 
   return (

@@ -8,10 +8,10 @@ import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ModelsTable } from '@/app/admin/chat-models/ModelsTable'
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
 import { SearchField } from '@/components/form/SearchField'
-import { useChatModels } from '@/lib/api'
+import { useModels } from '@/lib/api'
 
 export default function Page() {
-  const chatModels = useChatModels()
+  const { chatModels } = useModels()
   const [searchValue, setSearchValue] = useState('')
 
   const sortResults = fuzzysort.go(searchValue, chatModels ?? [], {

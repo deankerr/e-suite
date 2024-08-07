@@ -5,7 +5,6 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import { AlertDialog, Dialog, TextField } from '@radix-ui/themes'
 import { useAtom } from 'jotai'
-import { useRouter } from 'next/navigation'
 
 import { Composer } from '@/components/composer/Composer'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
@@ -27,7 +26,6 @@ import { isSameAuthor } from '@/convex/shared/helpers'
 import { useDeleteThread, useThreadActions, useThreads, useUpdateThread } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
 
-import type { RunConfig } from '@/convex/types'
 import type { UsePaginatedQueryResult } from 'convex/react'
 
 export const ThreadPanel = () => {
@@ -39,41 +37,8 @@ export const ThreadPanel = () => {
 
   const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
   const { messages, loadMore, status, isLoading } = useMessagesQuery()
-  const router = useRouter()
 
   const actions = useThreadActions(thread?._id)
-
-  const handleSend = async (
-    method: 'run' | 'add',
-    { text, ...runConfig }: RunConfig & { text: string },
-  ) => {
-    if (!thread) return false
-
-    // * add / run chat
-    if (method === 'add' || (runConfig.type === 'chat' && text)) {
-      const result = await actions.append({
-        message: {
-          role: 'user',
-          text,
-        },
-        runConfig: method !== 'add' ? runConfig : undefined,
-      })
-
-      if (result && result.threadId !== thread._id) {
-        router.push(path.toThread(result.slug))
-      }
-      return !!result
-    }
-
-    // * run image
-    const result = await actions.run({
-      runConfig,
-    })
-    if (result && result.threadId !== thread._id) {
-      router.push(path.toThread(result.slug))
-    }
-    return !!result
-  }
 
   const [showJson, setShowJson] = useState(false)
 
@@ -224,7 +189,7 @@ export const ThreadPanel = () => {
             <Composer
               initialResourceKey={latestRunConfig.resourceKey}
               loading={actions.state !== 'ready'}
-              onSend={handleSend}
+              onSend={actions.send}
             />
           </ThreadOwner>
         )}

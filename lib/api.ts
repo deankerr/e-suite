@@ -3,19 +3,23 @@ import { useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useAtomValue } from 'jotai'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { messageQueryAtom } from '@/components/providers/atoms'
+import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 import { useSuitePath } from '@/lib/helpers'
 
-import type { EChatModel, EImageModel, EVoiceModel } from '@/convex/types'
+import type { EVoiceModel, RunConfig } from '@/convex/types'
 
 const RUN_THROTTLE = 2500
 const INITIAL_MESSAGE_LIMIT = 32
 
 // * mutations
+export type ThreadActions = ReturnType<typeof useThreadActions>
 export const useThreadActions = (threadId?: string) => {
+  const router = useRouter()
   const [actionState, setActionState] = useState<'ready' | 'pending' | 'rateLimited'>('ready')
 
   const [_, reset] = useTimeoutEffect(() => {
@@ -74,11 +78,32 @@ export const useThreadActions = (threadId?: string) => {
     [actionState, sendAppend, threadId, reset],
   )
 
-  return { run, append, state: actionState }
-}
+  const send = useCallback(
+    async ({ text, method, ...runConfig }: RunConfig & { text: string; method: 'run' | 'add' }) => {
+      if (!threadId) return false
 
-export const useUpdateCurrentThreadModel = () => {
-  return useMutation(api.db.threads.updateCurrentModel)
+      const addMessage = method === 'add' || (runConfig.type === 'chat' && text)
+      const result = addMessage
+        ? await append({
+            message: {
+              role: 'user',
+              text,
+            },
+            runConfig: method !== 'add' ? runConfig : undefined,
+          })
+        : await run({
+            runConfig,
+          })
+
+      if (result && result.threadId !== threadId) {
+        router.push(`${appConfig.threadUrl}/${result.slug}`)
+      }
+      return !!result
+    },
+    [append, router, run, threadId],
+  )
+
+  return { run, append, send, state: actionState }
 }
 
 export const useUpdateThread = () => {
@@ -89,17 +114,12 @@ export const useDeleteThread = () => {
   return useMutation(api.db.threads.remove)
 }
 
-export const useMessageMutations = () => {
-  const sendRemoveMessage = useMutation(api.db.messages.remove)
+export const useUpdateMessage = () => {
+  return useMutation(api.db.messages.update)
+}
 
-  const removeMessage = useCallback(
-    async (args: Omit<Parameters<typeof sendRemoveMessage>[0], 'apiKey'>) => {
-      await sendRemoveMessage(args)
-    },
-    [sendRemoveMessage],
-  )
-
-  return { removeMessage }
+export const useDeleteMessage = () => {
+  return useMutation(api.db.messages.remove)
 }
 
 // * queries
@@ -151,19 +171,6 @@ export const useMessagePages = ({
   })
 }
 
-export const useMessageInt = (slug?: string, mNum?: number) => {
-  const thread = useCacheQuery(api.db.threads.get, slug ? { slugOrId: slug } : 'skip')
-  const message = useCacheQuery(
-    api.db.threads.getMessage,
-    slug && mNum ? { slugOrId: slug, series: mNum } : 'skip',
-  )
-
-  return {
-    thread: thread as typeof thread | undefined,
-    message: message as typeof message | undefined,
-  }
-}
-
 export const useMessage = (slug?: string, msg?: string) => {
   const { thread } = useThreads(slug)
   const message = useCacheQuery(
@@ -175,22 +182,6 @@ export const useMessage = (slug?: string, msg?: string) => {
     thread,
     message,
   }
-}
-
-export const useChatModels = (): EChatModel[] | undefined => {
-  const result = useCacheQuery(api.db.models.listChatModels, {})
-  return result
-}
-
-export const useImageModels = (): EImageModel[] | undefined => {
-  const result = useCacheQuery(api.db.models.listImageModels, {})
-  return result
-}
-
-export const useImageModel = (resourceKey: string) => {
-  const list = useImageModels()
-  const model = list ? (list.find((model) => model.resourceKey === resourceKey) ?? null) : undefined
-  return { model, list }
 }
 
 export const useVoiceModels = (): EVoiceModel[] | undefined => {
