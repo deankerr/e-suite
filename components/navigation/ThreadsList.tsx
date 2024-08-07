@@ -8,12 +8,12 @@ import { useSelectedLayoutSegments } from 'next/navigation'
 
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { appConfig } from '@/config/config'
-import { useThreadsList } from '@/lib/api'
+import { useThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>) => {
   const segments = useSelectedLayoutSegments()
-  const threads = useThreadsList()
+  const { threadsList } = useThreads()
   const [containerRef] = useAutoAnimate()
 
   const modelTypeIcons = {
@@ -29,7 +29,7 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
 
   const activeClassNames = 'bg-gray-2 border-grayA-5 opacity-100'
 
-  if (threads.length === 0) return null
+  if (threadsList.length === 0) return null
 
   return (
     <div {...props} className={cn('flex grow flex-col gap-0.5 overflow-hidden', className)}>
@@ -39,8 +39,8 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
 
       <ScrollArea scrollbars="vertical">
         <div ref={containerRef} className="h-full space-y-1 px-2.5 py-1">
-          {threads
-            ? threads.map((thread) => {
+          {threadsList
+            ? threadsList.map((thread) => {
                 const IconComponent = modelTypeIcons.chat
                 const isActive = segments.includes(thread.slug)
 
@@ -57,7 +57,7 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
               })
             : null}
 
-          {threads === undefined && (
+          {threadsList === undefined && (
             <div className="flex h-full">
               <LoadingSpinner className="m-auto block" />
             </div>

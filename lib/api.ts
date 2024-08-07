@@ -103,37 +103,26 @@ export const useMessageMutations = () => {
 }
 
 // * queries
-export const useThreadsList = () => {
+export const useThreads = (selectSlug?: string) => {
   const { slug } = useSuitePath()
+  const selectedSlug = selectSlug ?? slug
 
-  const userThreads = useQuery(api.db.threads.list, {}) ?? []
-  const currentUserThread = userThreads?.find((thread) => thread.slug === slug)
-
-  const currentThreadFromSlug = useQuery(
-    api.db.threads.get,
-    slug && !currentUserThread ? { slugOrId: slug } : 'skip',
-  )
-
-  const threads = [...userThreads]
-  if (currentThreadFromSlug) {
-    threads.push(currentThreadFromSlug)
-  }
-
-  return threads.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
-}
-
-export const useThreads = (threadSlug?: string) => {
   const userThreads = useQuery(api.db.threads.list, {})
-  const currentUserThread = userThreads?.find((thread) => thread.slug === threadSlug)
+  userThreads?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
 
-  const threadFromSlug = useQuery(
+  // * get the current thread from users list instantly if it's their thread
+  const selectedUserThread = userThreads?.find((thread) => thread.slug === selectedSlug)
+  // * otherwise fetch it individually
+  const selectedThread = useQuery(
     api.db.threads.get,
-    threadSlug && !currentUserThread ? { slugOrId: threadSlug } : 'skip',
+    selectedSlug && !selectedUserThread ? { slugOrId: selectedSlug } : 'skip',
   )
+
+  const threadsList = (selectedThread ? [selectedThread] : []).concat(userThreads ?? [])
 
   return {
-    userThreads,
-    thread: currentUserThread ?? threadFromSlug,
+    threadsList,
+    thread: selectedUserThread ?? selectedThread,
   }
 }
 

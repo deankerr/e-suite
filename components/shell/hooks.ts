@@ -7,7 +7,7 @@ import {
   shellSelectedThreadIdAtom,
   shellStackAtom,
 } from '@/components/shell/atoms'
-import { useThreadsList } from '@/lib/api'
+import { useThreads } from '@/lib/api'
 
 import type { ShellPage } from '@/components/shell/Shell'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -48,16 +48,18 @@ export const useShellStack = () => {
 }
 
 export const useShellUserThreads = () => {
-  const list = useThreadsList()
+  const { threadsList } = useThreads()
   const [selectedThreadId, setSelectedThreadId] = useAtom(shellSelectedThreadIdAtom)
 
-  const current = list ? (list.find((t) => t._id === selectedThreadId) ?? null) : undefined
+  const current = threadsList
+    ? (threadsList.find((t) => t._id === selectedThreadId) ?? null)
+    : undefined
 
   const select = (thread: EThread | null) => {
     setSelectedThreadId(thread?._id ?? null)
   }
 
-  return { list, select, current }
+  return { threadsList, select, current }
 }
 
 export const useShellActions = () => {
