@@ -4,15 +4,14 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
-import { useSelectedLayoutSegments } from 'next/navigation'
 
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { appConfig } from '@/config/config'
 import { useThreads } from '@/lib/api'
+import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 
 export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>) => {
-  const segments = useSelectedLayoutSegments()
+  const path = useSuitePath()
   const { threadsList } = useThreads()
   const [containerRef] = useAutoAnimate()
 
@@ -42,12 +41,12 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
           {threadsList
             ? threadsList.map((thread) => {
                 const IconComponent = modelTypeIcons.chat
-                const isActive = segments.includes(thread.slug)
+                const isActive = path.slug === thread.slug
 
                 return (
                   <Link
                     key={thread._id}
-                    href={`${appConfig.threadUrl}/${thread.slug}`}
+                    href={path.toThread(thread.slug)}
                     className={cn(linkClassNames, isActive && activeClassNames)}
                   >
                     <IconComponent className="size-5 shrink-0 text-accentA-11" />

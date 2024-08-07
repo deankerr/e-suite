@@ -1,7 +1,6 @@
 import { LightboxProvider } from '@/components/lightbox/LightboxProvider'
 import { Navigation } from '@/components/navigation/Navigation'
 import { MessagesQueryProvider } from '@/components/providers/MessagesQueryProvider'
-import { ShellC } from '@/components/shell/Shell'
 import { ConvexClientLogger } from '@/components/util/ConvexClientLogger'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -12,7 +11,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <LightboxProvider />
-      <ShellC />
       <ConvexClientLogger />
     </MessagesQueryProvider>
   )

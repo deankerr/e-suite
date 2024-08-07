@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Dialog } from '@radix-ui/themes'
 
-import { CmdK } from '@/components/shell/CmdK'
+import { CmdK } from '@/components/command/CmdK'
 import { useModels } from '@/lib/api'
 
 export const ModelPickerCmd = ({

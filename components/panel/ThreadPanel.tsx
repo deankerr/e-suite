@@ -15,7 +15,6 @@ import { Panel } from '@/components/panel/Panel'
 import { ThreadOwner } from '@/components/panel/ThreadOwner'
 import { messageQueryAtom } from '@/components/providers/atoms'
 import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
-import { useShellActions } from '@/components/shell/hooks'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { Button, IconButton } from '@/components/ui/Button'
 import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
@@ -31,7 +30,6 @@ import type { RunConfig } from '@/convex/types'
 import type { UsePaginatedQueryResult } from 'convex/react'
 
 export const ThreadPanel = () => {
-  const shell = useShellActions()
   const path = useSuitePath()
 
   const { thread } = useThreads(path.slug)
@@ -61,7 +59,7 @@ export const ThreadPanel = () => {
       })
 
       if (result && result.threadId !== thread._id) {
-        router.push(`${appConfig.threadUrl}/${result.slug}`)
+        router.push(path.toThread(result.slug))
       }
       return !!result
     }
@@ -71,7 +69,7 @@ export const ThreadPanel = () => {
       runConfig,
     })
     if (result && result.threadId !== thread._id) {
-      router.push(`${appConfig.threadUrl}/${result.slug}`)
+      router.push(path.toThread(result.slug))
     }
     return !!result
   }
@@ -84,12 +82,7 @@ export const ThreadPanel = () => {
         <SidebarButton />
         <Panel.Title>{threadTitle}</Panel.Title>
         <ThreadOwner>
-          <IconButton
-            variant="ghost"
-            color="gray"
-            aria-label="More options"
-            onClick={() => shell.open({ threadId: thread?._id })}
-          >
+          <IconButton variant="ghost" color="gray" aria-label="More options" disabled>
             <DotsThreeFillX width={20} height={20} />
           </IconButton>
 
