@@ -1,6 +1,5 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar'
-import { ScrollArea } from '@radix-ui/themes'
 
 import { AppLogo } from '@/components/icons/AppLogo'
 import { IconButton } from '@/components/ui/Button'
@@ -74,11 +73,7 @@ const Toolbar = ({
 }
 
 const Content = ({ children }: { children?: React.ReactNode }) => {
-  return (
-    <ScrollArea scrollbars="vertical" className="grow">
-      {children}
-    </ScrollArea>
-  )
+  return <div className="grow overflow-hidden">{children}</div>
 }
 
 const Footer = ({ children }: { children?: React.ReactNode }) => {

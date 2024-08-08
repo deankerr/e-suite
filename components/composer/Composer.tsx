@@ -43,7 +43,7 @@ export const Composer = ({
             prompt: textValue,
             type: 'textToImage' as const,
             resourceKey,
-            n: Number(quantity),
+            n: Math.max(Number(quantity), getMaxQuantityForModel(resourceKey)),
             size: dimensions as 'portrait' | 'square' | 'landscape',
           }
         : {
@@ -73,7 +73,11 @@ export const Composer = ({
       </div>
       {type === 'image' && (
         <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
-          <QuantitySelect max={maxQuantity} value={quantity} onValueChange={setQuantity} />
+          <QuantitySelect
+            max={maxQuantity}
+            value={String(Math.max(Number(quantity), getMaxQuantityForModel(resourceKey)))}
+            onValueChange={setQuantity}
+          />
           <DimensionsSelect value={dimensions} onValueChange={setDimensions} />
         </div>
       )}

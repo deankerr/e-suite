@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
-import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
+import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/navigation'
@@ -12,9 +12,17 @@ import { api } from '@/convex/_generated/api'
 import { useSuitePath } from '@/lib/helpers'
 
 import type { EVoiceModel, RunConfig } from '@/convex/types'
+import type { FunctionReference, FunctionReturnType } from 'convex/server'
 
 const RUN_THROTTLE = 2500
 const INITIAL_MESSAGE_LIMIT = 32
+
+export function useCacheQuery<T extends FunctionReference<'query'>>(
+  query: T,
+  args: any,
+): FunctionReturnType<T> | undefined {
+  return useOriginalCacheQuery<T>(query, args)
+}
 
 // * mutations
 export type ThreadActions = ReturnType<typeof useThreadActions>

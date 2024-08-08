@@ -12,10 +12,11 @@ import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
 import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Panel } from '@/components/panel/Panel'
-import { ThreadOwner } from '@/components/panel/ThreadOwner'
 import { messageQueryAtom } from '@/components/providers/atoms'
 import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
+import { MessageFeed } from '@/components/thread-panel/MessageFeed'
+import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
 import { Button, IconButton } from '@/components/ui/Button'
 import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
@@ -158,23 +159,7 @@ export const ThreadPanel = () => {
       </Panel.Toolbar>
 
       <Panel.Content>
-        <div className="flex-center p-1">
-          <LoadMoreButton
-            color="gray"
-            variant="surface"
-            query={{ loadMore, status, isLoading, results: [] } as UsePaginatedQueryResult<any>}
-          />
-        </div>
-        <div className="flex flex-col-reverse px-1 text-sm">
-          {messages.map((message, i) => (
-            <Message
-              key={message._id}
-              message={message}
-              deepLinkUrl={`${appConfig.threadUrl}/${thread?.slug}/${message.series}`}
-              isSequential={isSameAuthor(message, messages.at(i + 1))}
-            />
-          ))}
-        </div>
+        <MessageFeed />
       </Panel.Content>
 
       {showJson && (

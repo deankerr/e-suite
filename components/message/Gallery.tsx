@@ -5,12 +5,7 @@ import { extractJobsDetails, extractRunConfig } from '@/convex/shared/helpers'
 
 import type { EMessage } from '@/convex/types'
 
-export const Gallery = ({
-  message,
-  priority,
-  className,
-  ...props
-}: { message: EMessage; priority?: boolean } & React.ComponentProps<'div'>) => {
+export const Gallery = ({ message, priority }: { message: EMessage; priority?: boolean }) => {
   const openLightbox = useLightbox()
   const slides = message.images.map((image) => ({
     type: 'image' as const,
@@ -29,7 +24,7 @@ export const Gallery = ({
 
   if (message.images.length === 0 && numImagePlaceholders === 0) return null
   return (
-    <div className="flex flex-wrap justify-center gap-2 py-1" {...props}>
+    <div className="flex grow flex-wrap justify-center gap-2 py-1">
       {message.images.map((image, index) => (
         <ImageCard
           key={image._id}
