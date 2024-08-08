@@ -17,10 +17,10 @@ export const MessageFeed = () => {
     limit: 25,
   })
   const { messages = [] } = useMessagesQuery()
-  const feedItems = latest ? latest.concat(messages.slice(8)).toReversed() : undefined
+  const feedItems = latest ? latest.concat(messages.slice(25)).toReversed() : undefined
   const virtuoso = useRef<VirtuosoHandle>(null)
 
-  if (!latest) return null
+  if (!feedItems) return null
 
   return (
     <Virtuoso
@@ -29,7 +29,10 @@ export const MessageFeed = () => {
       alignToBottom
       followOutput="smooth"
       data={feedItems}
-      initialTopMostItemIndex={latest.length - 1}
+      initialTopMostItemIndex={feedItems.length - 1}
+      firstItemIndex={1000000 - feedItems.length}
+      atTopStateChange={(atTop) => console.log('atTop', atTop)}
+      computeItemKey={(index, message) => message._id}
       itemContent={(index, message) => {
         return <Message message={message} deepLinkUrl={`${path.threadPath}/${message.series}`} />
       }}

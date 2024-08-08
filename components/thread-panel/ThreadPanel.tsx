@@ -9,25 +9,19 @@ import { useAtom } from 'jotai'
 import { Composer } from '@/components/composer/Composer'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { SidebarButton } from '@/components/layout/SidebarButton'
-import { Message } from '@/components/message/Message'
 import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Panel } from '@/components/panel/Panel'
 import { messageQueryAtom } from '@/components/providers/atoms'
-import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { MessageFeed } from '@/components/thread-panel/MessageFeed'
+import { MessageQueryInfo } from '@/components/thread-panel/MessageQueryInfo'
 import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
 import { Button, IconButton } from '@/components/ui/Button'
-import { LoadMoreButton } from '@/components/ui/LoadMoreButton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
-import { appConfig } from '@/config/config'
 import { defaultRunConfigChat } from '@/convex/shared/defaults'
-import { isSameAuthor } from '@/convex/shared/helpers'
 import { useDeleteThread, useThreadActions, useThreads, useUpdateThread } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
-
-import type { UsePaginatedQueryResult } from 'convex/react'
 
 export const ThreadPanel = () => {
   const path = useSuitePath()
@@ -37,7 +31,6 @@ export const ThreadPanel = () => {
   const latestRunConfig = thread?.latestRunConfig ?? defaultRunConfigChat
 
   const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
-  const { messages, loadMore, status, isLoading } = useMessagesQuery()
 
   const actions = useThreadActions(thread?._id)
 
@@ -52,7 +45,7 @@ export const ThreadPanel = () => {
   }
 
   return (
-    <Panel loading={!thread || status === 'LoadingFirstPage'}>
+    <Panel>
       <Panel.Header loading={!thread}>
         <SidebarButton />
         <div className="size-4" />
@@ -154,6 +147,8 @@ export const ThreadPanel = () => {
                 <Icons.FileJs size={20} />
               </IconButton>
             </Toolbar.Button>
+
+            <MessageQueryInfo />
           </AdminOnlyUi>
         </div>
       </Panel.Toolbar>
