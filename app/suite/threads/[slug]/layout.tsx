@@ -9,6 +9,8 @@ export async function generateMetadata({
   params,
 }: {
   params: { slug: string }
+  thread: React.ReactNode // NOTE next types require these for some reason
+  message: React.ReactNode // NOTE they're not really here
 }): Promise<Metadata> {
   const { slug } = params
   const threadData = await fetchQuery(api.db.threads.getPageMetadata, {

@@ -6,7 +6,6 @@ import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
 import { LoadingPage } from '@/components/pages/LoadingPage'
 import { Panel } from '@/components/panel/Panel'
-import { appConfig } from '@/config/config'
 import { getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { useMessage } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
@@ -35,10 +34,11 @@ const Body = ({ thread, message }: { thread: EThread; message: EMessage }) => {
     <>
       <Panel.Header>
         <SidebarButton />
+        <div className="size-4" />
         <Panel.Title>
           {thread.title} ⋅ {name} ⋅ {text}
         </Panel.Title>
-        <Panel.CloseButton onClick={() => router.replace(`${appConfig.threadUrl}/${path.slug}`)} />
+        <Panel.CloseButton onClick={() => router.replace(path.threadPath)} />
       </Panel.Header>
       <Panel.Content>
         <div className="p-2">

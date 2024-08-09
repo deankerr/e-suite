@@ -7,10 +7,9 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
 import { kvListV, runConfigV, threadFields } from '../schema'
-import { defaultChatInferenceConfig, defaultImageInferenceConfig } from '../shared/defaults'
 import {
-  extractInferenceConfig,
   extractValidUrlsFromText,
+  getMaxQuantityForModel,
   getMessageName,
   getMessageText,
 } from '../shared/helpers'
@@ -80,21 +79,10 @@ export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
   return thread && !thread.deletionTime ? thread : null
 }
 
-const getCurrentModel = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
-  const model =
-    thread.inference.type === 'chat-completion'
-      ? await getChatModelByResourceKey(ctx, thread.inference.resourceKey)
-      : thread.inference.type === 'text-to-image'
-        ? await getImageModelByResourceKey(ctx, thread.inference.resourceKey)
-        : null
-  return model
-}
-
 export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   return {
     ...thread,
     user: await getUser(ctx, thread.userId),
-    model: await getCurrentModel(ctx, thread),
   }
 }
 
@@ -109,7 +97,6 @@ const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
         userId: user._id,
         slug: await generateSlug(ctx),
         updatedAtTime: Date.now(),
-        inference: defaultChatInferenceConfig, // NOTE have to set this here, should be updated during run
       })
       .get()
 
@@ -297,47 +284,6 @@ export const update = mutation({
   },
 })
 
-export const updateCurrentModel = mutation({
-  args: {
-    threadId: v.string(),
-    type: literals('chat', 'image'),
-    resourceKey: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getUserThread(ctx, args.threadId)
-    if (!thread) throw new ConvexError('invalid thread')
-
-    const model =
-      args.type === 'chat'
-        ? await getChatModelByResourceKey(ctx, args.resourceKey)
-        : await getImageModelByResourceKey(ctx, args.resourceKey)
-    if (!model) throw new ConvexError('invalid model')
-
-    const { chatConfig, textToImageConfig } = extractInferenceConfig(thread.inference)
-    if (model.type === 'chat') {
-      const prev = chatConfig ?? defaultChatInferenceConfig
-      await thread.patch({
-        inference: {
-          ...prev,
-          endpoint: model.endpoint,
-          endpointModelId: model.endpointModelId,
-          resourceKey: model.resourceKey,
-        },
-      })
-    } else {
-      const prev = textToImageConfig ?? defaultImageInferenceConfig
-      await thread.patch({
-        inference: {
-          ...prev,
-          endpoint: model.endpoint,
-          endpointModelId: model.endpointModelId,
-          resourceKey: model.resourceKey,
-        },
-      })
-    }
-  },
-})
-
 export const remove = mutation({
   args: {
     threadId: v.string(),
@@ -515,12 +461,7 @@ const createTextToImageRun = async (
   const imageModel = await getImageModelByResourceKey(ctx, runConfig.resourceKey)
   if (!imageModel) throw new ConvexError('invalid resourceKey')
 
-  const maxQuantities: Record<string, number> = {
-    'fal-ai/aura-flow': 2,
-    'fal-ai/flux-pro': 1,
-  }
-
-  const nMax = maxQuantities[imageModel.endpointModelId] ?? 4
+  const nMax = getMaxQuantityForModel(imageModel.resourceKey)
   const input = z
     .object({
       prompt: z.string().max(4096),
@@ -545,33 +486,29 @@ const createTextToImageRun = async (
       }
       return vals
     })
+    .transform((conf) => ({
+      ...conf,
+      resourceKey: imageModel.resourceKey,
+      type: 'textToImage' as const,
+    }))
 
     .parse(runConfig)
-
-  const inference = {
-    type: 'text-to-image' as const,
-    resourceKey: imageModel.resourceKey,
-    endpoint: imageModel.endpoint,
-    endpointModelId: imageModel.endpointModelId,
-    ...input,
-  }
 
   const message = await createMessage(ctx, {
     threadId: thread._id,
     userId,
     contentType: 'image',
     role: 'assistant',
-    inference,
-    name: imageModel.name,
+    name: imageModel.name, // TODO evaluate if this is needed
   })
 
   const jobId = await createJobNext.textToImage(ctx, {
-    ...inference,
+    ...input,
     messageId: message._id,
   })
 
   await thread.patch({
-    inference: { ...inference, prompt: '' },
+    latestRunConfig: input,
     updatedAtTime: Date.now(),
     title: thread.title ? thread.title : imageModel.name, // TODO better title creation
   })
@@ -600,21 +537,13 @@ const createDuoRun = async (
   const imageModel2 = await getImageModelByResourceKey(ctx, resourceKey2)
   if (!imageModel1 || !imageModel2) throw new ConvexError('invalid resourceKey')
 
-  const input = z
-    .object({
-      prompt: z.string().max(4096),
-    })
-    .parse(runConfig)
-
-  const inference = {
-    type: 'text-to-image' as const,
+  const input1 = {
+    type: 'textToImage' as const,
     resourceKey: imageModel1.resourceKey,
-    endpoint: imageModel1.endpoint,
-    endpointModelId: imageModel1.endpointModelId,
     width: 1024,
     height: 1024,
     n: 1,
-    ...input,
+    prompt: z.string().parse(runConfig.prompt),
   }
 
   const message = await createMessage(ctx, {
@@ -622,34 +551,25 @@ const createDuoRun = async (
     userId,
     contentType: 'image',
     role: 'assistant',
-    inference,
     name: imageModel1.name,
   })
 
   const jobId = await createJobNext.textToImage(ctx, {
-    ...inference,
+    ...input1,
     messageId: message._id,
   })
 
-  await thread.patch({
-    inference: { ...inference, prompt: '' },
-    updatedAtTime: Date.now(),
-    title: thread.title ? thread.title : imageModel1.name,
-  })
-
-  const inference2 = {
-    type: 'text-to-image' as const,
+  const input2 = {
+    type: 'textToImage' as const,
     resourceKey: imageModel2.resourceKey,
-    endpoint: imageModel2.endpoint,
-    endpointModelId: imageModel2.endpointModelId,
     width: 1024,
     height: 1024,
     n: 1,
-    ...input,
+    prompt: z.string().parse(runConfig.prompt),
   }
 
-  const jobId2 = await createJobNext.textToImage(ctx, {
-    ...inference2,
+  await createJobNext.textToImage(ctx, {
+    ...input2,
     messageId: message._id,
   })
 
@@ -687,14 +607,7 @@ const createTextToAudioRun = async (
     userId,
     contentType: 'audio',
     role: 'assistant',
-    inference: {
-      type: 'sound-generation',
-      resourceKey: 'elevenlabs::sound-generation', // NOTE current only this source
-      endpoint: 'elevenlabs',
-      endpointModelId: 'sound-generation',
-      ...input,
-    },
-    name: 'ElevenLabs Sound Generation',
+    name: 'ElevenLabs Sound Generation', // TODO evaluate if this is needed
   })
 
   const jobId = await createJobNext.textToAudio(ctx, {
@@ -729,32 +642,28 @@ const createChatRun = async (
       maxHistoryMessages: z.number().max(64).default(64),
       stream: z.boolean().default(true),
     })
+    .transform((conf) => ({
+      ...conf,
+      resourceKey: chatModel.resourceKey,
+      type: 'chat' as const,
+    }))
     .parse(runConfig)
-
-  const inference = {
-    type: 'chat-completion' as const,
-    resourceKey: chatModel.resourceKey,
-    endpoint: chatModel.endpoint,
-    endpointModelId: chatModel.endpointModelId,
-    ...input,
-  }
 
   const message = await createMessage(ctx, {
     threadId: thread._id,
     userId,
     contentType: 'text',
     role: 'assistant',
-    inference,
     name: chatModel.name,
   })
 
   const jobId = await createJobNext.chat(ctx, {
-    ...inference,
+    ...input,
     messageId: message._id,
   })
 
   await thread.patch({
-    inference,
+    latestRunConfig: input,
     updatedAtTime: Date.now(),
   })
 

@@ -43,7 +43,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
     api.db.threads.listMessages,
     queryKey,
     {
-      initialNumItems: 20,
+      initialNumItems: 32,
     },
   )
 

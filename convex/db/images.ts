@@ -1,16 +1,15 @@
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
+import * as vb from 'valibot'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery } from '../functions'
 import { imageFields } from '../schema'
-import { extractInferenceConfig } from '../shared/helpers'
 import { generateUid } from '../utils'
 
-import type { Doc } from '../_generated/dataModel'
-import type { MutationCtx } from '../types'
+import type { Ent, MutationCtx } from '../types'
 
 export const createImage = internalMutation({
   args: {
@@ -32,19 +31,25 @@ export const createImage = internalMutation({
   },
 })
 
-const getGenerationData = async (ctx: MutationCtx, message: Doc<'messages'>) => {
-  const { textToImageConfig } = extractInferenceConfig(message.inference)
-  if (!textToImageConfig) {
-    return undefined
-  }
+const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>) => {
+  const job = await ctx
+    .table('jobs3', 'messageId', (q) => q.eq('messageId', message._id))
+    .order('desc')
+    .first()
+  const result = vb.safeParse(
+    vb.object({ resourceKey: vb.string(), prompt: vb.string() }),
+    job?.input,
+  )
+  if (!result.success) return undefined
 
-  const model = await getImageModelByResourceKey(ctx, textToImageConfig.resourceKey)
+  const { resourceKey, prompt } = result.output
+  const model = await getImageModelByResourceKey(ctx, resourceKey)
 
   return {
-    prompt: textToImageConfig.prompt,
-    endpointId: textToImageConfig.endpoint,
-    modelId: textToImageConfig.endpointModelId,
-    modelName: model?.name ?? textToImageConfig.endpointModelId,
+    prompt,
+    endpointId: model?.endpoint ?? '',
+    modelId: model?.endpointModelId ?? '',
+    modelName: model?.name ?? '',
   }
 }
 

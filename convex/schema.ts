@@ -1,5 +1,5 @@
 import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
-import { literals } from 'convex-helpers/validators'
+import { deprecated, literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 
@@ -12,38 +12,7 @@ export const runConfigChatV = v.object({
   excludeHistoryMessagesByName: v.optional(v.array(v.string())),
   maxHistoryMessages: v.optional(v.number()),
   stream: v.optional(v.boolean()),
-})
 
-export const runConfigTextToImageV = v.object({
-  type: v.literal('textToImage'),
-  resourceKey: v.string(),
-
-  prompt: v.string(),
-  n: v.optional(v.number()),
-  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
-  width: v.optional(v.number()),
-  height: v.optional(v.number()),
-})
-
-export const runConfigTextToAudioV = v.object({
-  type: v.literal('textToAudio'),
-  resourceKey: v.string(),
-  prompt: v.string(),
-  duration: v.optional(v.number()),
-})
-
-export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
-
-// * inference schemas
-export const chatCompletionConfigV = v.object({
-  type: v.literal('chat-completion'),
-  resourceKey: v.string(),
-  endpoint: v.string(),
-  endpointModelId: v.string(),
-  excludeHistoryMessagesByName: v.optional(v.array(v.string())),
-  maxHistoryMessages: v.optional(v.number()),
-
-  stream: v.optional(v.boolean()),
   temperature: v.optional(v.number()),
   max_tokens: v.optional(v.number()),
   top_p: v.optional(v.number()),
@@ -54,36 +23,25 @@ export const chatCompletionConfigV = v.object({
   presence_penalty: v.optional(v.number()),
 })
 
-export const textToImageConfigV = v.object({
-  type: v.literal('text-to-image'),
+export const runConfigTextToImageV = v.object({
+  type: v.literal('textToImage'),
   resourceKey: v.string(),
-  endpoint: v.string(),
-  endpointModelId: v.string(),
 
-  prompt: v.string(),
-  n: v.number(),
-  width: v.number(),
-  height: v.number(),
-  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
-})
-
-export const soundGenerationConfigV = v.object({
-  type: v.literal('sound-generation'),
-  resourceKey: v.string(),
-  endpoint: v.string(),
-  endpointModelId: v.string(),
-
-  prompt: v.string(),
-  duration_seconds: v.optional(v.number()),
-  prompt_influence: v.optional(v.number()),
+  prompt: v.optional(v.string()),
   n: v.optional(v.number()),
+  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
 })
 
-export const inferenceConfigV = v.union(
-  chatCompletionConfigV,
-  textToImageConfigV,
-  soundGenerationConfigV,
-)
+export const runConfigTextToAudioV = v.object({
+  type: v.literal('textToAudio'),
+  resourceKey: v.string(),
+  prompt: v.optional(v.string()),
+  duration: v.optional(v.number()),
+})
+
+export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
 
 export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
 
@@ -245,7 +203,7 @@ export const messageFields = {
 
   text: v.optional(v.string()),
 
-  inference: v.optional(inferenceConfigV),
+  inference: deprecated,
 
   metadata: v.optional(kvListV),
 }
@@ -264,17 +222,8 @@ const messages = defineEnt(messageFields)
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  inference: inferenceConfigV,
-  slashCommands: v.optional(
-    v.array(
-      v.object({
-        id: v.string(),
-        command: v.string(),
-        commandType: literals('startsWith', 'includesWord'),
-        inference: inferenceConfigV,
-      }),
-    ),
-  ),
+  latestRunConfig: v.optional(v.union(runConfigChatV, runConfigTextToImageV)),
+  inference: deprecated,
 
   voiceovers: v.optional(
     v.object({

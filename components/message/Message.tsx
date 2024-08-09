@@ -1,20 +1,23 @@
 import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Card, DropdownMenu, IconButton } from '@radix-ui/themes'
+import { Card, DropdownMenu } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 
 import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Gallery } from '@/components/message/Gallery'
 import { Markdown } from '@/components/message/Markdown'
 import { MessageEditor } from '@/components/message/MessageEditor'
+import { IconButton } from '@/components/ui/Button'
 import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { extractJobsDetails, getMessageName, getMessageText } from '@/convex/shared/helpers'
-import { useMessageMutations } from '@/lib/api'
+import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EMessage } from '@/convex/types'
@@ -42,6 +45,7 @@ export const Message = ({
   isSequential?: boolean
   priority?: boolean
 } & React.ComponentProps<'div'>) => {
+  const router = useRouter()
   const isOwner = message.user?.isViewer ?? false
   const jobs = extractJobsDetails(message.jobs)
 
@@ -49,45 +53,45 @@ export const Message = ({
   const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
   const shortMessageText = text && text.length < 300 ? text : undefined
+  const hasImageContent = message.images.length > 0 || message.contentType === 'image'
 
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
-  const { removeMessage } = useMessageMutations()
+  const deleteMessage = useDeleteMessage()
   const messageId = message._id
   const dropdownMenu = useMemo(
     () =>
       isOwner ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
-              <DotsThreeX />
+            <IconButton variant="ghost" size="1" color="gray" aria-label="More">
+              <DotsThreeX width={20} height={20} />
             </IconButton>
           </DropdownMenu.Trigger>
 
           <DropdownMenu.Content variant="soft" align="end">
+            {deepLinkUrl && (
+              <DropdownMenu.Item onClick={() => router.push(deepLinkUrl)}>Link</DropdownMenu.Item>
+            )}
             <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
               {showEditor ? 'Cancel Edit' : 'Edit'}
             </DropdownMenu.Item>
             <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
-            <DropdownMenu.Item
-              color="red"
-              disabled={!removeMessage}
-              onClick={() => removeMessage?.({ messageId })}
-            >
+            <DropdownMenu.Item color="red" onClick={() => deleteMessage({ messageId })}>
               Delete
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : null,
-    [isOwner, messageId, removeMessage, showEditor, showJson],
+    [deepLinkUrl, deleteMessage, isOwner, messageId, router, showEditor, showJson],
   )
 
   return (
     <div
       {...props}
       className={cn(
-        'flex min-h-7 w-full shrink-0 @container/message',
+        'flex min-h-7 w-full shrink-0 pr-2 @container/message',
         'rounded border border-transparent hover:border-grayA-4',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
         className,
@@ -121,17 +125,13 @@ export const Message = ({
           </p>
           {/* * buttons * */}
           <div className="flex shrink-0">
-            {deepLinkUrl ? (
-              <Link href={deepLinkUrl} prefetch={false}>
-                <IconButton variant="ghost" size="1" color="gray" className="m-0 shrink-0">
-                  <Icons.Share size={20} />
-                </IconButton>
-              </Link>
-            ) : null}
-
+            <AdminOnlyUi>
+              <div className="flex-end font-mono text-xs text-gray-10">{message.series}</div>
+            </AdminOnlyUi>
             {dropdownMenu}
           </div>
         </div>
+
         {/* * errors * */}
         {jobs.failedJobErrors.map(({ code, message }, i) => (
           <ErrorCallout
@@ -142,16 +142,37 @@ export const Message = ({
             className="mx-auto mb-1 max-w-xl"
           />
         ))}
+
         {/* * editor */}
         {showEditor && (
           <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
         )}
+
         {/* * markdown text */}
         {!showEditor && text && text.length >= 300 ? (
           <Markdown text={text} className="pb-2" />
         ) : null}
+
         {/* # images # */}
-        <Gallery message={message} priority={priority} />
+        <div className="flex-between">
+          <Gallery message={message} priority={priority} />
+
+          {hasImageContent && (
+            <div className="flex-col-start shrink-0 gap-1">
+              {deepLinkUrl ? (
+                <Link href={deepLinkUrl} prefetch={false}>
+                  <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
+                    <Icons.Share size={20} />
+                  </IconButton>
+                </Link>
+              ) : null}
+              <IconButton variant="ghost" color="gray" aria-label="Copy">
+                <Icons.Copy size={20} />
+              </IconButton>
+            </div>
+          )}
+        </div>
+
         {/* # audio # */}
         {message.audio.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-2 py-1">
@@ -166,12 +187,14 @@ export const Message = ({
             )}
           </div>
         ) : null}
+
         {/* * loading ping * */}
         {jobs.active.length > 0 && (
           <div className="col-start-2">
             <LoadingSpinner variant="ping" />
           </div>
         )}
+
         {/* * json * */}
         {showJson && <Pre className="max-w-screen-md">{JSON.stringify(message, null, 2)}</Pre>}
       </div>

@@ -8,15 +8,11 @@ import type {
 import type { getThreadEdges } from './db/threads'
 import type { mutation, query } from './functions'
 import type {
-  chatCompletionConfigV,
   entDefinitions,
-  inferenceConfigV,
   runConfigChatV,
   runConfigTextToAudioV,
   runConfigTextToImageV,
   runConfigV,
-  soundGenerationConfigV,
-  textToImageConfigV,
 } from './schema'
 import type { getViewer } from './users'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
@@ -43,11 +39,6 @@ export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByRes
 export type EImageModel = NonNullable<Awaited<ReturnType<typeof getImageModelByResourceKey>>>
 export type EVoiceModel = Awaited<ReturnType<typeof getVoiceModels>>[number]
 export type EModel = EChatModel | EImageModel | EVoiceModel
-
-export type ChatCompletionConfig = Infer<typeof chatCompletionConfigV>
-export type TextToImageConfig = Infer<typeof textToImageConfigV>
-export type TextToAudioConfig = Infer<typeof soundGenerationConfigV>
-export type InferenceConfig = Infer<typeof inferenceConfigV>
 
 export type RunConfig = Infer<typeof runConfigV>
 export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>

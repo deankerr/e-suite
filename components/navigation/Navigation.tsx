@@ -1,6 +1,5 @@
 'use client'
 
-import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtom } from 'jotai'
 import Link from 'next/link'
 
@@ -8,16 +7,13 @@ import { sidebarOpenAtom } from '@/components/layout/atoms'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { ThreadsList } from '@/components/navigation/ThreadsList'
-import { useShellActions } from '@/components/shell/hooks'
 import { AppTitle } from '@/components/ui/AppTitle'
-import { IconButton } from '@/components/ui/Button'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { appConfig } from '@/config/config'
 import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 
 export const Navigation = () => {
-  const shell = useShellActions()
   const [isSidebarOpen, toggleSidebar] = useAtom(sidebarOpenAtom)
   const path = useSuitePath()
   const isBlankPage = !path.slug
@@ -48,14 +44,6 @@ export const Navigation = () => {
           </Link>
 
           <div className="flex-end gap-1">
-            <IconButton
-              variant="ghost"
-              color="gray"
-              aria-label="Open command palette"
-              onClick={() => shell.open()}
-            >
-              <Icons.Terminal size={20} />
-            </IconButton>
             <SidebarButton />
           </div>
         </div>

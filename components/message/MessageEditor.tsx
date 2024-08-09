@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Label } from '@radix-ui/react-label'
 import { Button, Select } from '@radix-ui/themes'
-import { useMutation } from 'convex/react'
 import { toast } from 'sonner'
 
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { TextField } from '@/components/ui/TextField'
-import { api } from '@/convex/_generated/api'
 import { EMessage } from '@/convex/types'
+import { useUpdateMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { FormEvent } from 'react'
@@ -18,7 +17,7 @@ export const MessageEditor = ({
   className,
   ...props
 }: { message: EMessage; onClose: () => unknown } & React.ComponentProps<'form'>) => {
-  const sendUpdateMessage = useMutation(api.db.messages.update)
+  const updateMessage = useUpdateMessage()
   const [isPending, setIsPending] = useState(false)
 
   const [roleValue, setRoleValue] = useState<string>(message.role)
@@ -30,7 +29,7 @@ export const MessageEditor = ({
     setIsPending(true)
 
     try {
-      await sendUpdateMessage({
+      await updateMessage({
         messageId: message._id,
         role: roleValue as EMessage['role'],
         name: nameValue,

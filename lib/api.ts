@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
-import { useQuery as useCacheQuery } from 'convex-helpers/react/cache/hooks'
+import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useAtomValue } from 'jotai'
-import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { messageQueryAtom } from '@/components/providers/atoms'
@@ -11,13 +11,23 @@ import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 import { useSuitePath } from '@/lib/helpers'
 
-import type { EChatModel, EImageModel, EVoiceModel } from '@/convex/types'
+import type { EVoiceModel, RunConfig } from '@/convex/types'
+import type { FunctionReference, FunctionReturnType } from 'convex/server'
 
 const RUN_THROTTLE = 2500
 const INITIAL_MESSAGE_LIMIT = 32
 
+export function useCacheQuery<T extends FunctionReference<'query'>>(
+  query: T,
+  args: any,
+): FunctionReturnType<T> | undefined {
+  return useOriginalCacheQuery<T>(query, args)
+}
+
 // * mutations
+export type ThreadActions = ReturnType<typeof useThreadActions>
 export const useThreadActions = (threadId?: string) => {
+  const router = useRouter()
   const [actionState, setActionState] = useState<'ready' | 'pending' | 'rateLimited'>('ready')
 
   const [_, reset] = useTimeoutEffect(() => {
@@ -76,62 +86,71 @@ export const useThreadActions = (threadId?: string) => {
     [actionState, sendAppend, threadId, reset],
   )
 
-  return { run, append, state: actionState }
-}
+  const send = useCallback(
+    async ({ text, method, ...runConfig }: RunConfig & { text: string; method: 'run' | 'add' }) => {
+      if (!threadId) return false
 
-export const useUpdateCurrentThreadModel = () => {
-  return useMutation(api.db.threads.updateCurrentModel)
+      const addMessage = method === 'add' || (runConfig.type === 'chat' && text)
+      const result = addMessage
+        ? await append({
+            message: {
+              role: 'user',
+              text,
+            },
+            runConfig: method !== 'add' ? runConfig : undefined,
+          })
+        : await run({
+            runConfig,
+          })
+
+      if (result && result.threadId !== threadId) {
+        router.push(`${appConfig.threadUrl}/${result.slug}`)
+      }
+      return !!result
+    },
+    [append, router, run, threadId],
+  )
+
+  return { run, append, send, state: actionState }
 }
 
 export const useUpdateThread = () => {
   return useMutation(api.db.threads.update)
 }
 
-export const useMessageMutations = () => {
-  const sendRemoveMessage = useMutation(api.db.messages.remove)
+export const useDeleteThread = () => {
+  return useMutation(api.db.threads.remove)
+}
 
-  const removeMessage = useCallback(
-    async (args: Omit<Parameters<typeof sendRemoveMessage>[0], 'apiKey'>) => {
-      await sendRemoveMessage(args)
-    },
-    [sendRemoveMessage],
-  )
+export const useUpdateMessage = () => {
+  return useMutation(api.db.messages.update)
+}
 
-  return { removeMessage }
+export const useDeleteMessage = () => {
+  return useMutation(api.db.messages.remove)
 }
 
 // * queries
-export const useThreadsList = () => {
+export const useThreads = (selectSlug?: string) => {
   const { slug } = useSuitePath()
+  const selectedSlug = selectSlug ?? slug
 
-  const userThreads = useQuery(api.db.threads.list, {}) ?? []
-  const currentUserThread = userThreads?.find((thread) => thread.slug === slug)
-
-  const currentThreadFromSlug = useQuery(
-    api.db.threads.get,
-    slug && !currentUserThread ? { slugOrId: slug } : 'skip',
-  )
-
-  const threads = [...userThreads]
-  if (currentThreadFromSlug) {
-    threads.push(currentThreadFromSlug)
-  }
-
-  return threads.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
-}
-
-export const useThreads = (threadSlug?: string) => {
   const userThreads = useQuery(api.db.threads.list, {})
-  const currentUserThread = userThreads?.find((thread) => thread.slug === threadSlug)
+  userThreads?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
 
-  const threadFromSlug = useQuery(
+  // * get the current thread from users list instantly if it's their thread
+  const selectedUserThread = userThreads?.find((thread) => thread.slug === selectedSlug)
+  // * otherwise fetch it individually
+  const selectedThread = useQuery(
     api.db.threads.get,
-    threadSlug && !currentUserThread ? { slugOrId: threadSlug } : 'skip',
+    selectedSlug && !selectedUserThread ? { slugOrId: selectedSlug } : 'skip',
   )
+
+  const threadsList = (selectedThread ? [selectedThread] : []).concat(userThreads ?? [])
 
   return {
-    userThreads,
-    thread: currentUserThread ?? threadFromSlug,
+    threadsList,
+    thread: selectedUserThread ?? selectedThread,
   }
 }
 
@@ -160,19 +179,6 @@ export const useMessagePages = ({
   })
 }
 
-export const useMessageInt = (slug?: string, mNum?: number) => {
-  const thread = useCacheQuery(api.db.threads.get, slug ? { slugOrId: slug } : 'skip')
-  const message = useCacheQuery(
-    api.db.threads.getMessage,
-    slug && mNum ? { slugOrId: slug, series: mNum } : 'skip',
-  )
-
-  return {
-    thread: thread as typeof thread | undefined,
-    message: message as typeof message | undefined,
-  }
-}
-
 export const useMessage = (slug?: string, msg?: string) => {
   const { thread } = useThreads(slug)
   const message = useCacheQuery(
@@ -186,23 +192,27 @@ export const useMessage = (slug?: string, msg?: string) => {
   }
 }
 
-export const useChatModels = (): EChatModel[] | undefined => {
-  const result = useCacheQuery(api.db.models.listChatModels, {})
-  return result
-}
-
-export const useImageModels = (): EImageModel[] | undefined => {
-  const result = useCacheQuery(api.db.models.listImageModels, {})
-  return result
-}
-
-export const useImageModel = (resourceKey: string) => {
-  const list = useImageModels()
-  const model = list ? (list.find((model) => model.resourceKey === resourceKey) ?? null) : undefined
-  return { model, list }
-}
-
 export const useVoiceModels = (): EVoiceModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listVoiceModels, {})
   return result
+}
+
+export const useModels = (resourceKey?: string) => {
+  const chatModels = useCacheQuery(api.db.models.listChatModels, {})
+  const imageModels = useCacheQuery(api.db.models.listImageModels, {})
+
+  const model = useMemo(() => {
+    if (!resourceKey) return undefined
+    return (
+      chatModels?.find((model) => model.resourceKey === resourceKey) ??
+      imageModels?.find((model) => model.resourceKey === resourceKey) ??
+      null
+    )
+  }, [resourceKey, chatModels, imageModels])
+
+  const result = useMemo(() => {
+    return { chatModels, imageModels, model }
+  }, [chatModels, imageModels, model])
+
+  return result as Partial<typeof result>
 }

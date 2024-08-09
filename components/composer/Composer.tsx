@@ -1,315 +1,147 @@
+'use client'
+
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Label } from '@radix-ui/react-label'
-import { Button, Select } from '@radix-ui/themes'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import ReactTextareaAutosize from 'react-textarea-autosize'
 
-import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
-import { RectangleVertical } from '@/components/icons/RectangleVertical'
-import { useShellActions } from '@/components/shell/hooks'
-import { Badge } from '@/components/ui/Badge'
-import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
-import { appConfig } from '@/config/config'
-import { extractInferenceConfig } from '@/convex/shared/helpers'
-import { useThreadActions } from '@/lib/api'
-import { cn } from '@/lib/utils'
+import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
+import { DimensionsSelect, QuantitySelect } from '@/components/composer/Controls'
+import { ModelButton } from '@/components/composer/ModelButton'
+import { Button, IconButton } from '@/components/ui/Button'
+import { getMaxQuantityForModel } from '@/convex/shared/helpers'
+import { useModels } from '@/lib/api'
 
-import type { EChatModel, EImageModel, InferenceConfig, ThreadActionResult } from '@/convex/types'
+import type { ThreadActions } from '@/lib/api'
 
 export const Composer = ({
-  runConfig,
-  model,
-
-  onModelChange,
-  textareaMinRows = 2,
-  threadId,
-  className,
-  ...props
+  initialResourceKey = '',
+  defaultTextValue = '',
+  loading = false,
+  onSend,
 }: {
-  runConfig: InferenceConfig
-  model: EChatModel | EImageModel | null | undefined
-  onModelChange?: () => void
-  textareaMinRows?: number
-  threadId?: string
-} & React.ComponentProps<'form'>) => {
-  const { chatConfig, textToImageConfig } = extractInferenceConfig(runConfig)
-  const threadActions = useThreadActions(threadId)
-  const shell = useShellActions()
-  const router = useRouter()
+  initialResourceKey?: string
+  defaultTextValue?: string
+  loading?: boolean
+  onSend?: ThreadActions['send']
+}) => {
+  const [resourceKey, setResourceKey] = useState(initialResourceKey)
+  const { model } = useModels(resourceKey)
+  const type = model?.type ?? 'chat'
 
-  const [promptValue, setPromptValue] = useState('')
+  const [textValue, setTextValue] = useState(defaultTextValue)
+  const [dimensions, setDimensions] = useState('square')
+  const [quantity, setQuantity] = useState('1')
+  const maxQuantity = getMaxQuantityForModel(resourceKey)
 
-  const getValidQuantity = (n: string | number) => {
-    const num = Number(n) || 1
-    const max = model?.resourceKey === 'fal::fal-ai/aura-flow' ? 2 : 4
-
-    return Math.min(num, max)
-  }
-  const [textToImageN, setTextToImageN] = useState(() => getValidQuantity(4))
-
-  const [textToImageSize, setTextToImageSize] = useState<'square' | 'portrait' | 'landscape'>(
-    textToImageConfig?.size ?? 'square',
-  )
-
-  const currentRunConfig = model
-    ? chatConfig
-      ? {
-          type: 'chat' as const,
-          resourceKey: model.resourceKey,
-        }
-      : textToImageConfig
+  const handleSend = (method: 'run' | 'add') => {
+    const configType = type === 'image' ? 'textToImage' : 'chat'
+    const config =
+      configType === 'textToImage'
         ? {
+            method,
+            text: textValue,
+            prompt: textValue,
             type: 'textToImage' as const,
-            resourceKey: model.resourceKey,
-            prompt: promptValue,
-            n: textToImageN,
-            size: textToImageSize,
+            resourceKey,
+            n: Math.min(Number(quantity), getMaxQuantityForModel(resourceKey)),
+            size: dimensions as 'portrait' | 'square' | 'landscape',
           }
-        : null
-    : null
+        : {
+            method,
+            text: textValue,
+            type: 'chat' as const,
+            resourceKey,
+          }
 
-  const handleActionResult = (result?: ThreadActionResult | null) => {
-    if (result) setPromptValue('')
-    if (result && result.threadId !== threadId) {
-      shell.close()
-      router.push(`${appConfig.threadUrl}/${result.slug}`)
-    }
-  }
-
-  const send = () => {
-    if (!currentRunConfig) {
-      toast.error('Invalid configuration')
-      return
-    }
-
-    if (currentRunConfig.type === 'chat' && promptValue) {
-      threadActions
-        .append({
-          message: {
-            role: 'user',
-            text: promptValue,
-          },
-          runConfig: currentRunConfig,
-        })
-        .then(handleActionResult)
-    } else {
-      threadActions
-        .run({
-          runConfig: currentRunConfig,
-        })
-        .then(handleActionResult)
-    }
-  }
-
-  const add = () => {
-    threadActions
-      .append({
-        message: {
-          role: 'user',
-          text: promptValue,
-        },
-      })
-      .then(handleActionResult)
+    onSend?.(config).then((success) => {
+      if (success) {
+        setTextValue('')
+      }
+    })
   }
 
   return (
-    <form
-      className={cn(
-        'shrink-0',
-        threadActions.state !== 'ready' && 'pointer-events-none opacity-50',
-        className,
-      )}
-      {...props}
-    >
-      {/* * prompt * */}
-      <Label className="block px-2">
-        <span className="sr-only">Prompt</span>
-        <TextareaAutosize
-          name="prompt"
-          placeholder={`${chatConfig ? 'Enter your message...' : 'Enter your prompt...'}`}
-          className="border-none bg-transparent focus-visible:outline-none focus-visible:outline-transparent"
-          rows={textareaMinRows}
-          minRows={textareaMinRows}
-          value={promptValue}
-          onValueChange={(value) => setPromptValue(value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault()
-              send()
-            }
-          }}
-          disabled={threadActions.state !== 'ready'}
-          autoFocus
+    <div className="flex w-full flex-col overflow-hidden [&>div]:shrink-0">
+      <div className="flex">
+        <Textarea
+          minRows={2}
+          placeholder="Enter your prompt..."
+          value={textValue}
+          onValueChange={setTextValue}
+          onSend={() => handleSend('run')}
         />
-      </Label>
-
-      {/* * model / config * */}
-      <div className="flex flex-wrap gap-2 px-2 pb-2 pt-1.5">
-        <Button
-          type="button"
-          variant="surface"
-          color="gray"
-          highContrast
-          disabled={threadActions.state === 'rateLimited'}
-          onClick={() => onModelChange?.()}
-        >
-          <Icons.Cube className="size-4" />
-          {model?.name ?? 'No Model Selected'}
-          {onModelChange && <Icons.CaretUpDown className="phosphor" />}
-        </Button>
-
-        {model && (
-          <>
-            <div className="flex-start gap-1">
-              <Badge size="3" color="brown">
-                {model.endpoint}
-              </Badge>
-
-              {model.moderated && (
-                <Badge size="3" color="ruby">
-                  moderated
-                </Badge>
-              )}
-
-              {model.type === 'image' && model.architecture && (
-                <Badge size="3" color="brown">
-                  {model.architecture}
-                </Badge>
-              )}
-            </div>
-          </>
-        )}
-
-        {textToImageConfig && (
-          <>
-            <QuantitySelect
-              value={textToImageN.toString()}
-              onValueChange={(value) => setTextToImageN(getValidQuantity(value))}
-              max={model?.resourceKey === 'fal::fal-ai/aura-flow' ? 2 : 4}
-              disabled={threadActions.state === 'rateLimited'}
-            />
-            <DimensionsSelect
-              value={textToImageSize}
-              onValueChange={(value) =>
-                setTextToImageSize(value as 'portrait' | 'landscape' | 'square')
-              }
-              disabled={threadActions.state === 'rateLimited'}
-            />
-          </>
-        )}
       </div>
-
-      {/* * actions * */}
-      <div className="flex gap-2 border-t border-grayA-3 px-2 py-3">
-        <Button
-          type="button"
-          variant="soft"
-          color="gold"
-          highContrast
-          disabled={threadActions.state === 'rateLimited'}
-        >
-          {chatConfig ? (
-            <Icons.Chat className="phosphor" />
-          ) : (
-            <Icons.ImageSquare className="phosphor" />
-          )}
-          {chatConfig ? 'Chat' : 'Text To Image'}
-        </Button>
-
-        <div className="grow"></div>
-
-        <Button
-          type="button"
-          color="gray"
-          onClick={add}
-          loading={threadActions.state === 'pending'}
-          disabled={threadActions.state === 'rateLimited'}
-        >
-          Add
-        </Button>
-        <Button
-          type="button"
-          onClick={send}
-          loading={threadActions.state === 'pending'}
-          disabled={threadActions.state === 'rateLimited'}
-        >
-          Run
-          <div className="md:hidden">
-            <Icons.PaperPlane className="size-4" />
-          </div>
-          <div className="hidden rounded bg-grayA-5 p-0.5 md:flex">
-            <Icons.Command />
-            <Icons.ArrowElbowDownLeft />
-          </div>
-        </Button>
+      {type === 'image' && (
+        <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
+          <QuantitySelect
+            max={maxQuantity}
+            value={String(Math.min(Number(quantity), getMaxQuantityForModel(resourceKey)))}
+            onValueChange={setQuantity}
+          />
+          <DimensionsSelect value={dimensions} onValueChange={setDimensions} />
+        </div>
+      )}
+      <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
+        <ModelPickerCmd value={resourceKey} onValueChange={setResourceKey}>
+          <ModelButton resourceKey={resourceKey} />
+        </ModelPickerCmd>
+        <div className="flex-end ml-auto shrink-0 gap-2">
+          <AddButton loading={loading} onClick={() => handleSend('add')} />
+          <SendButton loading={loading} onClick={() => handleSend('run')} />
+        </div>
       </div>
-    </form>
+    </div>
   )
 }
 
-const QuantitySelect = ({
-  max,
+const Textarea = ({
+  onChange,
+  onValueChange,
+  onSend,
   ...props
-}: { max: number } & React.ComponentProps<typeof Select.Root>) => {
+}: { onValueChange?: (value: string) => unknown; onSend?: () => unknown } & Partial<
+  React.ComponentProps<typeof ReactTextareaAutosize>
+>) => {
   return (
-    <Select.Root {...props}>
-      <Select.Trigger placeholder="Quantity" className="min-w-24" variant="soft" color="gray" />
-      <Select.Content variant="soft" color="gray">
-        <Select.Group>
-          <Select.Label>Quantity</Select.Label>
-          <Select.Item value="1">
-            <div className="flex items-center gap-1">
-              <Icons.Stop className="size-5 shrink-0 -scale-75" />
-              Single
-            </div>
-          </Select.Item>
-          <Select.Item value="2" disabled={max < 2}>
-            <div className="flex items-center gap-1">
-              <Icons.Copy className="size-5 shrink-0 -scale-75" />
-              Double
-            </div>
-          </Select.Item>
-
-          <Select.Item value="4" className="items-center" disabled={max < 4}>
-            <div className="flex items-center gap-1">
-              <Icons.GridFour className="size-5 shrink-0" />
-              Grid
-            </div>
-          </Select.Item>
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
+    <ReactTextareaAutosize
+      {...props}
+      onChange={(e) => {
+        onValueChange?.(e.target.value)
+        onChange?.(e)
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault()
+          onSend?.()
+        }
+      }}
+      className="w-full resize-none bg-transparent p-2 text-base text-gray-12 outline-none placeholder:text-grayA-9"
+    />
   )
 }
 
-const DimensionsSelect = (props: React.ComponentProps<typeof Select.Root>) => {
+const AddButton = (props: Partial<React.ComponentProps<typeof IconButton>>) => {
   return (
-    <Select.Root {...props}>
-      <Select.Trigger placeholder="Dimensions" className="min-w-24" variant="soft" color="gray" />
-      <Select.Content variant="soft" color="gray">
-        <Select.Group>
-          <Select.Label>Dimensions</Select.Label>
-          <Select.Item value="portrait">
-            <div className="flex items-center gap-1">
-              <RectangleVertical className="size-4 shrink-0" />
-              Portrait
-            </div>
-          </Select.Item>
-          <Select.Item value="square" className="items-center">
-            <div className="flex items-center gap-1">
-              <Icons.Square className="size-4 shrink-0" />
-              Square
-            </div>
-          </Select.Item>
-          <Select.Item value="landscape">
-            <div className="flex items-center gap-1">
-              <RectangleHorizontal className="size-4 shrink-0" />
-              Landscape
-            </div>
-          </Select.Item>
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
+    <IconButton variant="surface" color="gray" aria-label="Add message" {...props}>
+      <Icons.ArrowUp size={18} />
+    </IconButton>
+  )
+}
+
+const SendButton = (props: Partial<React.ComponentProps<typeof Button>>) => {
+  return (
+    <Button variant="surface" {...props}>
+      Run
+      <CommandEnter />
+    </Button>
+  )
+}
+
+const CommandEnter = () => {
+  return (
+    <div className="flex rounded bg-grayA-5 p-0.5">
+      <Icons.Command />
+      <Icons.ArrowElbowDownLeft />
+    </div>
   )
 }

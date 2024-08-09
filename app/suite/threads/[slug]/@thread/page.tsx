@@ -1,15 +1,5 @@
-import { ThreadImagesView } from '@/components/pages/ThreadImagesView'
-import { ThreadPanel } from '@/components/panel/ThreadPanel'
+import { ThreadPanel } from '@/components/thread-panel/ThreadPanel'
 
-export default function Page({
-  params,
-  searchParams,
-}: {
-  params: { slug: string }
-  searchParams?: { images?: string }
-}) {
-  const slug = params.slug ?? ''
-  const showImageView = searchParams?.images !== undefined
-
-  return <>{showImageView ? <ThreadImagesView slug={slug} /> : <ThreadPanel />}</>
+export default function Page() {
+  return <ThreadPanel />
 }
