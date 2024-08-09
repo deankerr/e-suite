@@ -51,7 +51,7 @@ export const Message = ({
   const isOwner = message.user?.isViewer ?? false
   const jobs = extractJobsDetails(message.jobs)
 
-  const name = getMessageName(message)
+  const name = getMessageName(message) || message.role
   const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
   const shortMessageText = text && text.length < 300 ? text : undefined
@@ -160,7 +160,7 @@ export const Message = ({
           <Gallery message={message} priority={priority} />
 
           {hasImageContent && (
-            <div className="flex-col-start shrink-0 gap-1">
+            <div className="flex-col-start ml-auto shrink-0 gap-1">
               {deepLinkUrl ? (
                 <Link href={deepLinkUrl} prefetch={false}>
                   <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
@@ -168,7 +168,7 @@ export const Message = ({
                   </IconButton>
                 </Link>
               ) : null}
-              <IconButton variant="ghost" color="gray" aria-label="Copy">
+              <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
                 <Icons.Copy size={20} />
               </IconButton>
             </div>

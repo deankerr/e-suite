@@ -32,17 +32,17 @@ export const createImage = internalMutation({
 })
 
 const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>) => {
-  const job = await ctx
-    .table('jobs3', 'messageId', (q) => q.eq('messageId', message._id))
-    .order('desc')
-    .first()
+  const jobs = await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', message._id))
+  const job = jobs.find((job) => job.pipeline === 'textToImage')
   const result = vb.safeParse(
-    vb.object({ resourceKey: vb.string(), prompt: vb.string() }),
-    job?.input,
+    vb.object({ input: vb.object({ resourceKey: vb.string(), prompt: vb.string() }) }),
+    job,
   )
-  if (!result.success) return undefined
+  if (!result.success) {
+    return undefined
+  }
 
-  const { resourceKey, prompt } = result.output
+  const { resourceKey, prompt } = result.output.input
   const model = await getImageModelByResourceKey(ctx, resourceKey)
 
   return {
