@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Card, DropdownMenu } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 
 import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
@@ -13,6 +14,7 @@ import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { extractJobsDetails, getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
@@ -43,6 +45,7 @@ export const Message = ({
   isSequential?: boolean
   priority?: boolean
 } & React.ComponentProps<'div'>) => {
+  const router = useRouter()
   const isOwner = message.user?.isViewer ?? false
   const jobs = extractJobsDetails(message.jobs)
 
@@ -68,6 +71,9 @@ export const Message = ({
           </DropdownMenu.Trigger>
 
           <DropdownMenu.Content variant="soft" align="end">
+            {deepLinkUrl && (
+              <DropdownMenu.Item onClick={() => router.push(deepLinkUrl)}>Link</DropdownMenu.Item>
+            )}
             <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
               {showEditor ? 'Cancel Edit' : 'Edit'}
             </DropdownMenu.Item>
@@ -78,7 +84,7 @@ export const Message = ({
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : null,
-    [deleteMessage, isOwner, messageId, showEditor, showJson],
+    [deepLinkUrl, deleteMessage, isOwner, messageId, router, showEditor, showJson],
   )
 
   return (
@@ -119,15 +125,9 @@ export const Message = ({
           </p>
           {/* * buttons * */}
           <div className="flex shrink-0">
-            <div className="flex-end font-mono text-xs text-gray-10">{message.series}</div>
-            {/* {deepLinkUrl ? (
-              <Link href={deepLinkUrl} prefetch={false}>
-                <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
-                  <Icons.Share size={20} />
-                </IconButton>
-              </Link>
-            ) : null} */}
-
+            <AdminOnlyUi>
+              <div className="flex-end font-mono text-xs text-gray-10">{message.series}</div>
+            </AdminOnlyUi>
             {dropdownMenu}
           </div>
         </div>

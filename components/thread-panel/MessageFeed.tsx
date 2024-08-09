@@ -31,7 +31,7 @@ export const MessageFeed = () => {
       data={feedItems}
       initialTopMostItemIndex={feedItems.length - 1}
       firstItemIndex={1000000 - feedItems.length}
-      atTopStateChange={(atTop) => console.log('atTop', atTop)}
+      // atTopStateChange={(atTop) => console.log('atTop', atTop)}
       computeItemKey={(index, message) => message._id}
       itemContent={(index, message) => {
         return <Message message={message} deepLinkUrl={`${path.threadPath}/${message.series}`} />

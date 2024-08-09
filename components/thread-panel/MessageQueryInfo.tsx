@@ -4,17 +4,18 @@ import { useMessagesQuery } from '@/components/providers/MessagesQueryProvider'
 import { Button } from '@/components/ui/Button'
 
 export const MessageQueryInfo = () => {
-  const { messages = [], isLoading, status, loadMore } = useMessagesQuery()
+  const { isLoading, status, loadMore } = useMessagesQuery()
   return (
     <div>
       <Button
-        variant="ghost"
+        variant="soft"
         color="gray"
         size="1"
         onClick={() => loadMore(20)}
         loading={isLoading}
+        disabled={status !== 'CanLoadMore'}
       >
-        {status} ⋅ {messages.length}
+        {status === 'CanLoadMore' ? 'Load more' : 'Exhausted'}
       </Button>
     </div>
   )

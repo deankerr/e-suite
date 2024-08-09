@@ -34,6 +34,7 @@ const Body = ({ thread, message }: { thread: EThread; message: EMessage }) => {
     <>
       <Panel.Header>
         <SidebarButton />
+        <div className="size-4" />
         <Panel.Title>
           {thread.title} ⋅ {name} ⋅ {text}
         </Panel.Title>

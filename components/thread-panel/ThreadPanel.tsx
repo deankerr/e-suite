@@ -56,18 +56,19 @@ export const ThreadPanel = () => {
             <DotsThreeFillX width={20} height={20} />
           </IconButton>
 
-          <IconButton variant="ghost" color="gray" aria-label="Favorite">
+          {/* TODO */}
+          <IconButton variant="ghost" color="gray" aria-label="Favorite" disabled>
             <Icons.Star size={20} />
           </IconButton>
 
           <EditThreadTitleDialog threadId={thread?._id ?? ''} currentTitle={threadTitle}>
-            <IconButton variant="ghost" color="gray" aria-label="Edit">
+            <IconButton variant="ghost" color="gray" aria-label="Edit title">
               <Icons.Pencil size={20} />
             </IconButton>
           </EditThreadTitleDialog>
 
           <DeleteThreadDialog threadId={thread?._id ?? ''}>
-            <IconButton variant="ghost" color="gray" aria-label="Delete">
+            <IconButton variant="ghost" color="gray" aria-label="Delete thread">
               <Icons.Trash size={20} />
             </IconButton>
           </DeleteThreadDialog>
@@ -88,6 +89,7 @@ export const ThreadPanel = () => {
         >
           <Toolbar.ToggleItem
             value="images"
+            aria-label="View images"
             className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
           >
             <Icons.Images size={20} />
@@ -111,12 +113,14 @@ export const ThreadPanel = () => {
         >
           <Toolbar.ToggleItem
             value="user"
+            aria-label="View user messages"
             className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
           >
             <Icons.User size={20} />
           </Toolbar.ToggleItem>
           <Toolbar.ToggleItem
             value="assistant"
+            aria-label="View assistant messages"
             className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
           >
             <Icons.Robot size={20} />
@@ -129,7 +133,7 @@ export const ThreadPanel = () => {
           <ThreadOwner>
             <Toolbar.Button asChild>
               <TextEditorDialog slug={thread?.slug ?? ''}>
-                <Button variant="soft" color="gray" size="1">
+                <Button variant="soft" color="gray" size="1" aria-label="View/edit instructions">
                   Instructions
                 </Button>
               </TextEditorDialog>
