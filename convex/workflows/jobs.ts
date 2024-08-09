@@ -1,6 +1,7 @@
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
+import { logOpsEvent } from '../db/admin/events'
 import { internalMutation, internalQuery } from '../functions'
 
 import type { Id } from '../_generated/dataModel'
@@ -110,6 +111,10 @@ export const fail = internalMutation({
   },
   handler: async (ctx, { jobId }) => {
     const job = await ctx.table('jobs3').getX(jobId)
+    await logOpsEvent(ctx, {
+      type: 'error',
+      message: `Job ${jobId} failed`,
+    })
     return await job.patch({
       status: 'failed',
     })

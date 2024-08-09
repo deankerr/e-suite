@@ -282,6 +282,15 @@ const users_api_keys = defineEnt(usersApiKeysFields)
   .field('secret', v.string(), { unique: true })
   .edge('user')
 
+export const operationsEventLogFields = {
+  type: literals('debug', 'info', 'notice', 'warning', 'error'),
+  message: v.string(),
+  data: v.optional(v.any()),
+}
+const operationsEventLog = defineEnt(operationsEventLogFields).field('ack', v.boolean(), {
+  index: true,
+})
+
 export const job3Fields = {
   pipeline: v.string(),
   status: literals('pending', 'active', 'completed', 'failed'),
@@ -333,6 +342,7 @@ const schema = defineEntSchema(
     users_api_keys,
 
     jobs3,
+    operationsEventLog,
   },
   {
     schemaValidation: true,

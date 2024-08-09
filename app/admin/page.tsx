@@ -1,12 +1,16 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Badge, Button, Callout, IconButton } from '@radix-ui/themes'
+import { Badge, BadgeProps, Card, Heading } from '@radix-ui/themes'
 import { accentColors } from '@radix-ui/themes/props'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
+import { api } from '@/convex/_generated/api'
+import { useCacheQuery } from '@/lib/api'
 
 export default function Page() {
+  const events = useCacheQuery(api.db.admin.events.latest, {})
+
   return (
     <AdminPageWrapper>
       <div className="flex flex-wrap gap-3 bg-grayA-2 p-2">
@@ -17,35 +21,30 @@ export default function Page() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-3 bg-grayA-2 p-2">
-        <Button variant="solid">Accent</Button>
-        <Button variant="surface">Accent</Button>
-        <Button variant="outline">Accent</Button>
-        <Button variant="soft">Accent</Button>
+      <Card className="max-w-lg">
+        <Heading size="5" className="flex items-center gap-1">
+          <Icons.Info className="size-6" />
+          Events
+        </Heading>
 
-        <IconButton variant="solid">
-          <Icons.Chat />
-        </IconButton>
-        <IconButton variant="surface">
-          <Icons.Chat />
-        </IconButton>
-        <IconButton variant="outline">
-          <Icons.Chat />
-        </IconButton>
-        <IconButton variant="soft">
-          <Icons.Chat />
-        </IconButton>
-      </div>
+        <div className="divide-y">
+          {events?.map((event) => (
+            <div key={event._id} className="flex gap-1 py-2">
+              <Badge color={eventTypeColors[event.type]}>{event.type}</Badge>
 
-      <div className="flex flex-wrap gap-3 bg-grayA-2 p-2">
-        <Callout.Root>
-          Sit consequat incididunt sit laborum qui et cillum proident dolore et nulla. Lorem qui
-          sunt in. Commodo amet quis non veniam ullamco. Consequat nulla ex nostrud ut anim ad enim.
-          Lorem occaecat pariatur proident tempor. Aliqua ad laborum cupidatat irure officia amet
-          nisi id. Ullamco eiusmod anim officia culpa amet consequat. Voluptate reprehenderit
-          excepteur sunt cillum aute laboris consectetur id ex anim laborum.
-        </Callout.Root>
-      </div>
+              <div className="text-sm">{event.message}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
     </AdminPageWrapper>
   )
+}
+
+const eventTypeColors: Record<string, BadgeProps['color']> = {
+  error: 'red',
+  warning: 'yellow',
+  notice: 'blue',
+  info: 'green',
+  debug: 'gray',
 }
