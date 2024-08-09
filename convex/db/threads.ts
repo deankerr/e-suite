@@ -17,12 +17,13 @@ import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
-import { getUser } from './users'
+import { getUserPublic } from './users'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type {
   Ent,
   EntWriter,
+  EThread,
   MutationCtx,
   QueryCtx,
   RunConfig,
@@ -82,14 +83,30 @@ export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
 export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   return {
     ...thread,
-    user: await getUser(ctx, thread.userId),
+    user: await getUserPublic(ctx, thread.userId),
+  }
+}
+
+const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
+  const viewer = await ctx.viewer()
+  const user = viewer ? await getUserPublic(ctx, viewer._id) : null
+  if (!user) return null
+
+  return {
+    _id: 'new',
+    slug: 'new',
+    title: 'New Thread',
+    _creationTime: Date.now(),
+    updatedAtTime: Date.now(),
+    userId: user._id,
+    user,
   }
 }
 
 const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
   const user = await ctx.viewerX()
 
-  if (threadId === undefined) {
+  if (threadId === undefined || threadId === 'new') {
     // * create thread
     const thread = await ctx
       .table('threads')
@@ -116,6 +133,8 @@ export const get = query({
     slugOrId: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.slugOrId === 'new') return await getEmptyThread(ctx)
+
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return null
 
@@ -143,6 +162,7 @@ export const latestMessages = query({
     slugOrId: v.string(),
     limit: v.number(),
     byMediaType: v.optional(literals('images', 'audio')),
+    role: v.optional(literals('assistant', 'user')),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
@@ -161,7 +181,11 @@ export const latestMessages = query({
       const messages = await ctx.table('messages').getMany(messageIds)
 
       return await asyncMap(
-        messages.filter((message) => message !== null).filter((message) => !message.deletionTime),
+        messages
+          .filter((message) => message !== null)
+          .filter((message) =>
+            !message.deletionTime && args.role ? message.role === args.role : true,
+          ),
         async (message) => await getMessageEdges(ctx, message),
       )
     }
@@ -169,7 +193,12 @@ export const latestMessages = query({
     const messages = await thread
       .edge('messages')
       .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('deletionTime'), undefined),
+          args.role ? q.eq(q.field('role'), args.role) : true,
+        ),
+      )
       .take(args.limit)
       .map(async (message) => await getMessageEdges(ctx, message))
 
@@ -183,6 +212,7 @@ export const listMessages = query({
     paginationOpts: paginationOptsValidator,
     byMediaType: v.optional(literals('images', 'audio')),
     role: v.optional(literals('assistant', 'user')),
+    limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)

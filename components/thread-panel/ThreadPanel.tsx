@@ -4,33 +4,27 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import { AlertDialog, Dialog, TextField } from '@radix-ui/themes'
-import { useAtom } from 'jotai'
+import { useQueryState } from 'nuqs'
 
 import { Composer } from '@/components/composer/Composer'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Panel } from '@/components/panel/Panel'
-import { messageQueryAtom } from '@/components/providers/atoms'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { MessageFeed } from '@/components/thread-panel/MessageFeed'
-import { MessageQueryInfo } from '@/components/thread-panel/MessageQueryInfo'
 import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
 import { Button, IconButton } from '@/components/ui/Button'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
-import { defaultRunConfigChat } from '@/convex/shared/defaults'
 import { useDeleteThread, useThreadActions, useThreads, useUpdateThread } from '@/lib/api'
-import { useSuitePath } from '@/lib/helpers'
 
 export const ThreadPanel = () => {
-  const path = useSuitePath()
-
-  const { thread } = useThreads(path.slug)
+  const { thread } = useThreads()
   const threadTitle = thread ? (thread?.title ?? 'Untitled Thread') : ''
-  const latestRunConfig = thread?.latestRunConfig ?? defaultRunConfigChat
 
-  const [queryFilters, setQueryFilters] = useAtom(messageQueryAtom)
+  const [viewFilter, setViewFilter] = useQueryState('view')
+  const [roleFilter, setRoleFilter] = useQueryState('role')
 
   const actions = useThreadActions(thread?._id)
 
@@ -79,12 +73,9 @@ export const ThreadPanel = () => {
         <Toolbar.ToggleGroup
           type="single"
           aria-label="View"
-          value={queryFilters.byMediaType === 'images' ? 'images' : ''}
+          value={viewFilter === 'images' ? 'images' : ''}
           onValueChange={(value) => {
-            setQueryFilters({
-              ...queryFilters,
-              byMediaType: value === 'images' ? 'images' : undefined,
-            })
+            setViewFilter(value || null)
           }}
         >
           <Toolbar.ToggleItem
@@ -101,14 +92,9 @@ export const ThreadPanel = () => {
         <Toolbar.ToggleGroup
           type="single"
           aria-label="Role"
-          value={queryFilters.role ?? ''}
+          value={roleFilter || ''}
           onValueChange={(value) => {
-            setQueryFilters({
-              ...queryFilters,
-              role: ['assistant', 'user'].includes(value)
-                ? (value as 'assistant' | 'user')
-                : undefined,
-            })
+            setRoleFilter(value || null)
           }}
         >
           <Toolbar.ToggleItem
@@ -151,8 +137,6 @@ export const ThreadPanel = () => {
                 <Icons.FileJs size={20} />
               </IconButton>
             </Toolbar.Button>
-
-            <MessageQueryInfo />
           </AdminOnlyUi>
         </div>
       </Panel.Toolbar>
@@ -171,7 +155,7 @@ export const ThreadPanel = () => {
         {thread && (
           <ThreadOwner>
             <Composer
-              initialResourceKey={latestRunConfig.resourceKey}
+              initialResourceKey={thread.latestRunConfig?.resourceKey}
               loading={actions.state !== 'ready'}
               onSend={actions.send}
             />

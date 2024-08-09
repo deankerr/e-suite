@@ -1,5 +1,6 @@
 'use client'
 
+import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtom } from 'jotai'
 import Link from 'next/link'
 
@@ -12,6 +13,14 @@ import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { appConfig } from '@/config/config'
 import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
+
+const linkClassNames = cn(
+  'rounded border border-transparent text-sm font-medium opacity-90',
+  'flex gap-2 py-2 px-2',
+  'hover:bg-gray-2',
+)
+
+const activeLinkClassNames = 'bg-gray-2 border-grayA-5 opacity-100'
 
 export const Navigation = () => {
   const [isSidebarOpen, toggleSidebar] = useAtom(sidebarOpenAtom)
@@ -49,6 +58,15 @@ export const Navigation = () => {
         </div>
 
         {/* * threads * */}
+        <div className="px-1 py-1">
+          <Link
+            href={`${appConfig.threadUrl}/new`}
+            className={cn(linkClassNames, path.slug === 'new' && activeLinkClassNames)}
+          >
+            <Icons.NotePencil className="size-5 shrink-0 text-accentA-11" />
+            New
+          </Link>
+        </div>
         <ThreadsList />
 
         <div className="grow" />

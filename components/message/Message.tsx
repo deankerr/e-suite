@@ -36,6 +36,7 @@ export const Message = ({
   hideTimeline = false,
   isSequential = false,
   priority = false,
+  withText,
   className,
   ...props
 }: {
@@ -44,12 +45,13 @@ export const Message = ({
   hideTimeline?: boolean
   isSequential?: boolean
   priority?: boolean
+  withText?: string
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const isOwner = message.user?.isViewer ?? false
   const jobs = extractJobsDetails(message.jobs)
 
-  const name = getMessageName(message)
+  const name = getMessageName(message) || message.role
   const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
   const shortMessageText = text && text.length < 300 ? text : undefined
@@ -110,7 +112,7 @@ export const Message = ({
       {/* * content * */}
       <div className="grow">
         {/* * header * */}
-        <div className="flex-between">
+        <div className="flex-between min-h-7">
           <p>
             <span
               className={cn(
@@ -121,6 +123,7 @@ export const Message = ({
             >
               {name}
             </span>{' '}
+            {withText && <>{withText} </>}
             {shortMessageText}
           </p>
           {/* * buttons * */}
@@ -158,7 +161,7 @@ export const Message = ({
           <Gallery message={message} priority={priority} />
 
           {hasImageContent && (
-            <div className="flex-col-start shrink-0 gap-1">
+            <div className="flex-col-start ml-auto shrink-0 gap-1">
               {deepLinkUrl ? (
                 <Link href={deepLinkUrl} prefetch={false}>
                   <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
@@ -166,7 +169,7 @@ export const Message = ({
                   </IconButton>
                 </Link>
               ) : null}
-              <IconButton variant="ghost" color="gray" aria-label="Copy">
+              <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
                 <Icons.Copy size={20} />
               </IconButton>
             </div>

@@ -3,7 +3,7 @@ import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { internalMutation, mutation } from '../functions'
 import { messageFields } from '../schema'
-import { getUser } from './users'
+import { getUserPublic } from './users'
 
 import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
@@ -42,7 +42,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
     jobs: await getMessageJobs(ctx, message._id),
     images: await getMessageImages(ctx, message._id),
     audio: await getMessageAudio(ctx, message._id),
-    user: await getUser(ctx, message.userId),
+    user: await getUserPublic(ctx, message.userId),
   }
 }
 
