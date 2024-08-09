@@ -284,45 +284,6 @@ export const update = mutation({
   },
 })
 
-export const updateCurrentModel = mutation({
-  args: {
-    threadId: v.string(),
-    type: literals('chat', 'image'),
-    resourceKey: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // const thread = await getUserThread(ctx, args.threadId)
-    // if (!thread) throw new ConvexError('invalid thread')
-    // const model =
-    //   args.type === 'chat'
-    //     ? await getChatModelByResourceKey(ctx, args.resourceKey)
-    //     : await getImageModelByResourceKey(ctx, args.resourceKey)
-    // if (!model) throw new ConvexError('invalid model')
-    // const { chatConfig, textToImageConfig } = extractInferenceConfig(thread.inference)
-    // if (model.type === 'chat') {
-    //   const prev = chatConfig ?? defaultChatInferenceConfig
-    //   await thread.patch({
-    //     inference: {
-    //       ...prev,
-    //       endpoint: model.endpoint,
-    //       endpointModelId: model.endpointModelId,
-    //       resourceKey: model.resourceKey,
-    //     },
-    //   })
-    // } else {
-    //   const prev = textToImageConfig ?? defaultImageInferenceConfig
-    //   await thread.patch({
-    //     inference: {
-    //       ...prev,
-    //       endpoint: model.endpoint,
-    //       endpointModelId: model.endpointModelId,
-    //       resourceKey: model.resourceKey,
-    //     },
-    //   })
-    // }
-  },
-})
-
 export const remove = mutation({
   args: {
     threadId: v.string(),

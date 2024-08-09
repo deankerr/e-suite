@@ -14,7 +14,7 @@ export default function ComposerFixture() {
   return (
     <div className="flex-col-end h-full">
       <div className="mb-[50%] w-full max-w-2xl rounded border border-grayA-6 bg-gray-2">
-        <Composer key={initialResourceKey} initialResourceKey={initialResourceKey} />
+        <Composer key={initialResourceKey ?? 'empty'} initialResourceKey={initialResourceKey} />
       </div>
     </div>
   )
