@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
+import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import {
   extractValidUrlsFromText,
@@ -13,7 +14,6 @@ import {
   getMessageName,
   getMessageText,
 } from '../shared/helpers'
-import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'

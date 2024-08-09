@@ -6,8 +6,8 @@ import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery } from '../functions'
+import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
-import { generateUid } from '../utils'
 
 import type { Ent, MutationCtx } from '../types'
 

@@ -2,8 +2,8 @@ import { partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internalMutation, mutation, query } from './functions'
+import { generateRandomString } from './lib/utils'
 import { userFields } from './schema'
-import { generateRandomString } from './utils'
 
 const userBySchema = v.union(
   v.object({ id: v.id('users') }),

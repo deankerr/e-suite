@@ -1,10 +1,6 @@
-import { makeActionRetrier } from 'convex-helpers/server/retries'
 import { customAlphabet } from 'nanoid/non-secure'
-import { z } from 'zod'
 
-import type { MutationCtx } from './types'
-
-export const { runWithRetries, retry } = makeActionRetrier('utils:retry')
+import type { MutationCtx } from '../types'
 
 // see https://github.com/xixixao/saas-starter/blob/main/convex/utils.ts
 // permanent loading state for a paginated query until a different result is returned
@@ -34,15 +30,6 @@ export const generateRandomString = (length: number) => {
   return generate(length)
 }
 
-export const generateSha256Hash = async (input: string) => {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(input)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-  return hashHex
-}
-
 const uidMagic = 1627826378900 // turn back time to reduce the size of the uid
 export const generateUid = (number: number): string => {
   return base36Encode(Math.trunc(number) - uidMagic)
@@ -67,17 +54,3 @@ function base36Encode(number: number): string {
 
   return base36 || '0'
 }
-
-//* zod utils
-export const zTruncate = (max: number, min = 0) =>
-  z
-    .string()
-    .min(min)
-    .transform((value) => value.slice(0, max))
-
-export const zThreadTitle = zTruncate(256, 1)
-export const zMessageName = zTruncate(64)
-export const zMessageTextContent = zTruncate(32767)
-export const zStringToMessageRole = z
-  .string()
-  .transform((value) => z.enum(['user', 'assistant', 'system']).parse(value))
