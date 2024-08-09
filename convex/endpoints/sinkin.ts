@@ -4,14 +4,14 @@ import { z } from 'zod'
 import { api, internal } from '../_generated/api'
 import { shapeImageModel } from '../db/models'
 import { internalAction } from '../functions'
-import { env } from '../shared/utils'
+import { ENV } from '../lib/env'
 
 const endpoint = 'sinkin'
 
 export const fetchModelData = async () => {
   console.log('https://sinkin.ai/api/models')
   const body = new FormData()
-  body.append('access_token', env('SINKIN_API_KEY'))
+  body.append('access_token', ENV.SINKIN_API_KEY)
   const response = await ky.post('https://sinkin.ai/api/models', { body }).json()
   return response
 }

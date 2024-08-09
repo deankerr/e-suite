@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { api, internal } from '../_generated/api'
 import { shapeChatModel } from '../db/models'
 import { internalAction } from '../functions'
+import { ENV } from '../lib/env'
 
 import type { ActionCtx } from '../_generated/server'
 
@@ -81,7 +82,7 @@ export const importChatModels = internalAction(async (ctx: ActionCtx) => {
   const response = await ky
     .get('https://api.together.xyz/models/info', {
       headers: {
-        Authorization: `Bearer ${process.env.TOGETHER_API_KEY}`,
+        Authorization: `Bearer ${ENV.TOGETHER_API_KEY}`,
       },
     })
     .json()

@@ -1,4 +1,3 @@
-import * as client from '@fal-ai/serverless-client'
 import { v } from 'convex/values'
 import * as vb from 'valibot'
 
@@ -10,14 +9,6 @@ import type { Infer } from 'convex/values'
 
 const imageModelSchema = v.object(imageModelFields)
 export type ImageModelDataRecord = Infer<typeof imageModelSchema> & { resourceKey: string }
-
-export const createFalClient = () => {
-  client.config({
-    credentials: process.env.FAL_API_KEY!,
-  })
-
-  return client
-}
 
 const sdxlSizes = {
   portrait: [832, 1216],

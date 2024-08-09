@@ -3,13 +3,13 @@ import { Webhook } from 'svix'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
-import { env } from '../shared/utils'
+import { ENV } from './env'
 
 import type { WebhookEvent } from '@clerk/nextjs/server'
 
 export const handleWebhook = httpAction(async (ctx, request) => {
-  const webhookSecret = env('CLERK_WEBHOOK_SECRET')
-  const issuerDomain = env('CLERK_JWT_ISSUER_DOMAIN')
+  const webhookSecret = ENV.CLERK_WEBHOOK_SECRET
+  const issuerDomain = ENV.CLERK_JWT_ISSUER_DOMAIN
 
   try {
     const svix_id = request.headers.get('svix-id') ?? ''

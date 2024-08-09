@@ -32,6 +32,7 @@ import type * as endpoints_together from "../endpoints/together.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as lib_clerk from "../lib/clerk.js";
+import type * as lib_env from "../lib/env.js";
 import type * as lib_fetch from "../lib/fetch.js";
 import type * as lib_modelTags from "../lib/modelTags.js";
 import type * as lib_sharp from "../lib/sharp.js";
@@ -86,6 +87,7 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   http: typeof http;
   "lib/clerk": typeof lib_clerk;
+  "lib/env": typeof lib_env;
   "lib/fetch": typeof lib_fetch;
   "lib/modelTags": typeof lib_modelTags;
   "lib/sharp": typeof lib_sharp;

@@ -1,6 +1,7 @@
 import ky from 'ky'
 import * as vb from 'valibot'
 
+import { ENV } from '../../../lib/env'
 import { env } from '../../../shared/utils'
 import { WorkflowError } from '../../helpers'
 
@@ -40,7 +41,7 @@ export const textToImage = async (
   body.set('width', String(width))
   body.set('height', String(height))
   body.set('num_images', String(n))
-  body.set('access_token', env('SINKIN_API_KEY'))
+  body.set('access_token', ENV.SINKIN_API_KEY)
 
   console.log('textToImage.sinkin.input', body)
   const response = await api
