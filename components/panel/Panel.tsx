@@ -4,6 +4,7 @@ import * as ToolbarPrimitive from '@radix-ui/react-toolbar'
 import { AppLogo } from '@/components/icons/AppLogo'
 import { IconButton } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { ScrollArea } from '@radix-ui/themes'
 
 const Shell = ({
   children,
@@ -76,6 +77,14 @@ const Content = ({ children }: { children?: React.ReactNode }) => {
   return <div className="grow overflow-hidden">{children}</div>
 }
 
+const ScrollAreaContent = ({ children }: { children?: React.ReactNode }) => {
+  return (
+    <ScrollArea scrollbars="vertical" className="grow">
+      {children}
+    </ScrollArea>
+  )
+}
+
 const Footer = ({ children }: { children?: React.ReactNode }) => {
   return (
     <div className="flex-start shrink-0 border-t border-grayA-3 bg-gray-2 px-1">{children}</div>
@@ -100,4 +109,4 @@ const Title = ({ children }: { children?: React.ReactNode }) => {
   return <div className="flex-start truncate px-1 text-sm font-medium">{children}</div>
 }
 
-export const Panel = Object.assign(Shell, { Header, Toolbar, Content, Footer, CloseButton, Title })
+export const Panel = Object.assign(Shell, { Header, Toolbar, Content, ScrollAreaContent, Footer, CloseButton, Title })
