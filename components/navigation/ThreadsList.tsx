@@ -41,6 +41,7 @@ export const ThreadsList = ({ className, ...props }: React.ComponentProps<'div'>
                 const IconComponent = getIcon(thread.latestRunConfig?.type)
                 const isActive = path.slug === thread.slug
 
+                if (thread.slug === 'new') return null
                 return (
                   <Link
                     key={thread._id}

@@ -17,16 +17,11 @@ import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
 import { Button, IconButton } from '@/components/ui/Button'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
-import { defaultRunConfigChat } from '@/convex/shared/defaults'
 import { useDeleteThread, useThreadActions, useThreads, useUpdateThread } from '@/lib/api'
-import { useSuitePath } from '@/lib/helpers'
 
 export const ThreadPanel = () => {
-  const path = useSuitePath()
-
-  const { thread } = useThreads(path.slug)
+  const { thread } = useThreads()
   const threadTitle = thread ? (thread?.title ?? 'Untitled Thread') : ''
-  const latestRunConfig = thread?.latestRunConfig ?? defaultRunConfigChat
 
   const [viewFilter, setViewFilter] = useQueryState('view')
   const [roleFilter, setRoleFilter] = useQueryState('role')
@@ -160,7 +155,7 @@ export const ThreadPanel = () => {
         {thread && (
           <ThreadOwner>
             <Composer
-              initialResourceKey={latestRunConfig.resourceKey}
+              initialResourceKey={thread.latestRunConfig?.resourceKey}
               loading={actions.state !== 'ready'}
               onSend={actions.send}
             />

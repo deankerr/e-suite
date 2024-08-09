@@ -23,6 +23,7 @@ import type { Doc, Id } from '../_generated/dataModel'
 import type {
   Ent,
   EntWriter,
+  EThread,
   MutationCtx,
   QueryCtx,
   RunConfig,
@@ -86,10 +87,26 @@ export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   }
 }
 
+const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
+  const viewer = await ctx.viewer()
+  const user = viewer ? await getUserPublic(ctx, viewer._id) : null
+  if (!user) return null
+
+  return {
+    _id: 'new',
+    slug: 'new',
+    title: 'New Thread',
+    _creationTime: Date.now(),
+    updatedAtTime: Date.now(),
+    userId: user._id,
+    user,
+  }
+}
+
 const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
   const user = await ctx.viewerX()
 
-  if (threadId === undefined) {
+  if (threadId === undefined || threadId === 'new') {
     // * create thread
     const thread = await ctx
       .table('threads')
@@ -116,6 +133,8 @@ export const get = query({
     slugOrId: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.slugOrId === 'new') return await getEmptyThread(ctx)
+
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return null
 

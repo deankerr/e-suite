@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { useModels } from '@/lib/api'
 
 const modelIcons: Record<string, React.ReactNode> = {
+  fallback: <Icons.Cube size={18} />,
   chat: <Icons.Chat size={18} className="-translate-y-px" />,
   image: <Icons.ImageSquare size={18} />,
 }
@@ -14,7 +15,7 @@ export const ModelButton = forwardRef<
   { resourceKey?: string } & Partial<React.ComponentProps<typeof Button>>
 >(({ resourceKey, ...props }, ref) => {
   const { model } = useModels(resourceKey)
-  const icon = modelIcons[model?.type ?? 'chat']
+  const icon = modelIcons[model?.type ?? 'fallback']
   const label = model?.name ?? 'Select model'
   return (
     <Button
