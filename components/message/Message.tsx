@@ -123,7 +123,8 @@ export const Message = ({
             >
               {name}
             </span>{' '}
-            {withText} {shortMessageText}
+            {withText && <>{withText} </>}
+            {shortMessageText}
           </p>
           {/* * buttons * */}
           <div className="flex shrink-0">

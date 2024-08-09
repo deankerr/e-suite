@@ -48,10 +48,8 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
   const listLoadMore = useCallback(() => {
     if (isListQuery) {
       loadMore(nLatestMessages * 2)
-      console.log('loadMore')
     } else {
       setIsListQuery(true)
-      console.log('loadMore / start list query')
     }
   }, [isListQuery, loadMore, setIsListQuery])
 

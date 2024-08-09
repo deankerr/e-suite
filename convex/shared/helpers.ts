@@ -21,7 +21,6 @@ export function getMessageText(message: EMessage) {
 }
 
 export const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
-  console.log('i', messages)
   const firstMessage = messages.at(0)
   if (!firstMessage) return false
   return messages.every(
