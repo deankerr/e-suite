@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { mutation, query } from '../functions'
+import { ENV } from '../lib/env'
 import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import {
@@ -403,7 +404,9 @@ export const append = mutation({
     })
 
     if (message.text) {
-      const urls = extractValidUrlsFromText(message.text)
+      const urls = extractValidUrlsFromText(message.text).filter(
+        (url) => url.hostname !== ENV.APP_HOSTNAME,
+      )
       if (urls.length > 0) {
         await createJobNext.evaluateMessageUrls(ctx, {
           urls: urls.map((url) => url.toString()),

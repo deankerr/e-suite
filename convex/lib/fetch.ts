@@ -1,5 +1,7 @@
 import ky from 'ky'
 
+import { ENV } from './env'
+
 // Helper function to validate IP addresses
 const isValidIP = (ip: string): boolean => {
   // IPv4 regex pattern
@@ -25,6 +27,10 @@ export const fetch = ky.extend({
         const parsedUrl = new URL(request.url)
         if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
           throw new Error('Invalid URL protocol')
+        }
+
+        if (parsedUrl.hostname === ENV.APP_HOSTNAME) {
+          throw new Error('Blocked URL')
         }
 
         // IP Address Filtering

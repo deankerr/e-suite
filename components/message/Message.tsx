@@ -100,7 +100,7 @@ export const Message = ({
         className,
       )}
     >
-      {/* * timeline * */}
+      {/* > timeline */}
       {hideTimeline ? (
         <div className="w-1 shrink-0" />
       ) : (
@@ -112,9 +112,9 @@ export const Message = ({
         </div>
       )}
 
-      {/* * content * */}
+      {/* > content */}
       <div className="grow">
-        {/* * header * */}
+        {/* => header */}
         <div className="flex-between min-h-7">
           <p>
             <span
@@ -129,7 +129,7 @@ export const Message = ({
             {withText && <>{withText} </>}
             {shortMessageText}
           </p>
-          {/* * buttons * */}
+          {/* -> buttons */}
           <div className="flex shrink-0">
             <AdminOnlyUi>
               <div className="flex-end absolute -top-2 left-1/2 -translate-x-1/2 font-mono text-xs text-gray-6">
@@ -140,7 +140,7 @@ export const Message = ({
           </div>
         </div>
 
-        {/* * errors * */}
+        {/* => errors * */}
         {jobs.failedJobErrors.map(({ code, message }, i) => (
           <ErrorCallout
             key={i}
@@ -151,17 +151,17 @@ export const Message = ({
           />
         ))}
 
-        {/* * editor */}
+        {/* => editor */}
         {showEditor && (
           <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
         )}
 
-        {/* * markdown text */}
+        {/* => markdown text */}
         {!showEditor && text && text.length >= 300 ? (
           <Markdown text={text} className="pb-2" />
         ) : null}
 
-        {/* # images # */}
+        {/* => images  */}
         <div className="flex-between">
           <Gallery message={message} priority={priority} />
 
@@ -184,7 +184,7 @@ export const Message = ({
           )}
         </div>
 
-        {/* # audio # */}
+        {/* => audio  */}
         {message.audio.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-2 py-1">
             {message.audio.map((sfx) =>
@@ -199,14 +199,14 @@ export const Message = ({
           </div>
         ) : null}
 
-        {/* * loading ping * */}
+        {/* => loading ping  */}
         {jobs.active.length > 0 && (
           <div className="col-start-2">
             <LoadingSpinner variant="ping" />
           </div>
         )}
 
-        {/* * json * */}
+        {/* => json */}
         {showJson && <Pre className="max-w-screen-md">{JSON.stringify(message, null, 2)}</Pre>}
       </div>
     </div>
