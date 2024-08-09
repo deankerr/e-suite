@@ -143,6 +143,7 @@ export const latestMessages = query({
     slugOrId: v.string(),
     limit: v.number(),
     byMediaType: v.optional(literals('images', 'audio')),
+    role: v.optional(literals('assistant', 'user')),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
@@ -161,7 +162,11 @@ export const latestMessages = query({
       const messages = await ctx.table('messages').getMany(messageIds)
 
       return await asyncMap(
-        messages.filter((message) => message !== null).filter((message) => !message.deletionTime),
+        messages
+          .filter((message) => message !== null)
+          .filter((message) =>
+            !message.deletionTime && args.role ? message.role === args.role : true,
+          ),
         async (message) => await getMessageEdges(ctx, message),
       )
     }
@@ -169,7 +174,12 @@ export const latestMessages = query({
     const messages = await thread
       .edge('messages')
       .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('deletionTime'), undefined),
+          args.role ? q.eq(q.field('role'), args.role) : true,
+        ),
+      )
       .take(args.limit)
       .map(async (message) => await getMessageEdges(ctx, message))
 
@@ -183,6 +193,7 @@ export const listMessages = query({
     paginationOpts: paginationOptsValidator,
     byMediaType: v.optional(literals('images', 'audio')),
     role: v.optional(literals('assistant', 'user')),
+    limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)

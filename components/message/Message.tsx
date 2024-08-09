@@ -36,6 +36,7 @@ export const Message = ({
   hideTimeline = false,
   isSequential = false,
   priority = false,
+  withText,
   className,
   ...props
 }: {
@@ -44,6 +45,7 @@ export const Message = ({
   hideTimeline?: boolean
   isSequential?: boolean
   priority?: boolean
+  withText?: string
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const isOwner = message.user?.isViewer ?? false
@@ -121,7 +123,7 @@ export const Message = ({
             >
               {name}
             </span>{' '}
-            {shortMessageText}
+            {withText} {shortMessageText}
           </p>
           {/* * buttons * */}
           <div className="flex shrink-0">

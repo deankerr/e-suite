@@ -1,12 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
-import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
-import { useAtomValue } from 'jotai'
+import { useMutation, useQuery } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import { messageQueryAtom } from '@/components/providers/atoms'
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 import { useSuitePath } from '@/lib/helpers'
@@ -15,7 +13,6 @@ import type { EVoiceModel, RunConfig } from '@/convex/types'
 import type { FunctionReference, FunctionReturnType } from 'convex/server'
 
 const RUN_THROTTLE = 2500
-const INITIAL_MESSAGE_LIMIT = 32
 
 export function useCacheQuery<T extends FunctionReference<'query'>>(
   query: T,
@@ -152,31 +149,6 @@ export const useThreads = (selectSlug?: string) => {
     threadsList,
     thread: selectedUserThread ?? selectedThread,
   }
-}
-
-export const useLatestMessages = ({
-  slugOrId,
-  limit = INITIAL_MESSAGE_LIMIT,
-}: {
-  slugOrId?: string
-  limit?: number
-}) => {
-  const queryFilters = useAtomValue(messageQueryAtom)
-  const queryKey = slugOrId ? { slugOrId, limit, byMediaType: queryFilters.byMediaType } : 'skip'
-  return useCacheQuery(api.db.threads.latestMessages, queryKey) ?? []
-}
-
-export const useMessagePages = ({
-  slugOrId,
-  byMediaType,
-}: {
-  slugOrId?: string
-  byMediaType?: 'images' | 'audio'
-}) => {
-  const queryKey = slugOrId ? { slugOrId, byMediaType } : 'skip'
-  return usePaginatedQuery(api.db.threads.listMessages, queryKey, {
-    initialNumItems: INITIAL_MESSAGE_LIMIT * 2,
-  })
 }
 
 export const useMessage = (slug?: string, msg?: string) => {

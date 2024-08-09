@@ -1,7 +1,5 @@
-import { RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
-
 import type { Doc } from '../_generated/dataModel'
-import type { EMessage } from '../types'
+import type { EMessage, RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
 
 export function getMessageName(message: EMessage) {
   const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
@@ -23,6 +21,7 @@ export function getMessageText(message: EMessage) {
 }
 
 export const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
+  console.log('i', messages)
   const firstMessage = messages.at(0)
   if (!firstMessage) return false
   return messages.every(
