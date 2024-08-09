@@ -17,7 +17,7 @@ import { emptyPage, generateSlug } from '../utils'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
-import { getUser } from './users'
+import { getUserPublic } from './users'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type {
@@ -82,7 +82,7 @@ export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
 export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   return {
     ...thread,
-    user: await getUser(ctx, thread.userId),
+    user: await getUserPublic(ctx, thread.userId),
   }
 }
 
