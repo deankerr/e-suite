@@ -43,7 +43,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   )
 
-  const messages = (latest ?? []).concat(results.slice(latest?.length ?? 0)).toReversed()
+  const messages = [...(latest ?? []), ...results.slice(latest?.length ?? 0)].reverse()
 
   const listLoadMore = useCallback(() => {
     if (isListQuery) {

@@ -41,8 +41,8 @@ const Body = ({ thread, message }: { thread: EThread; message: EMessage }) => {
         <Panel.CloseButton onClick={() => router.replace(path.threadPath)} />
       </Panel.Header>
       <Panel.ScrollAreaContent>
-        <div className="p-2">
-          <Message message={message} hideTimeline priority />
+        <div className="p-2 text-sm">
+          <Message message={message} hideTimeline priority className="hover:border-transparent" />
         </div>
       </Panel.ScrollAreaContent>
     </>

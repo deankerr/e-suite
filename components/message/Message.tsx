@@ -9,6 +9,7 @@ import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Gallery } from '@/components/message/Gallery'
 import { Markdown } from '@/components/message/Markdown'
 import { MessageEditor } from '@/components/message/MessageEditor'
+import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
 import { IconButton } from '@/components/ui/Button'
 import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
@@ -100,7 +101,9 @@ export const Message = ({
       )}
     >
       {/* * timeline * */}
-      {!hideTimeline && (
+      {hideTimeline ? (
+        <div className="w-1 shrink-0" />
+      ) : (
         <div className="flex w-4 shrink-0 justify-center">
           <div
             className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
@@ -129,7 +132,9 @@ export const Message = ({
           {/* * buttons * */}
           <div className="flex shrink-0">
             <AdminOnlyUi>
-              <div className="flex-end font-mono text-xs text-gray-10">{message.series}</div>
+              <div className="flex-end absolute -top-2 left-1/2 -translate-x-1/2 font-mono text-xs text-gray-6">
+                {message.series}
+              </div>
             </AdminOnlyUi>
             {dropdownMenu}
           </div>
@@ -169,9 +174,12 @@ export const Message = ({
                   </IconButton>
                 </Link>
               ) : null}
-              <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
-                <Icons.Copy size={20} />
-              </IconButton>
+
+              <ThreadOwner>
+                <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
+                  <Icons.Copy size={20} />
+                </IconButton>
+              </ThreadOwner>
             </div>
           )}
         </div>
