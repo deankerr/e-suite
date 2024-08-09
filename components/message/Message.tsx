@@ -110,7 +110,7 @@ export const Message = ({
       {/* * content * */}
       <div className="grow">
         {/* * header * */}
-        <div className="flex-between">
+        <div className="flex-between min-h-7">
           <p>
             <span
               className={cn(
