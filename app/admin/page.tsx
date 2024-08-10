@@ -23,7 +23,7 @@ export default function Page() {
       </div>
 
       <Card className="max-w-lg">
-        <Heading size="5" className="flex items-center gap-1">
+        <Heading size="5" className="flex items-center gap-2">
           <Icons.Info className="size-6" />
           Events
         </Heading>
@@ -31,6 +31,10 @@ export default function Page() {
         <div className="divide-y">
           {events?.map((event) => (
             <div key={event._id} className="flex gap-1 py-2">
+              <div className="w-20 shrink-0 text-xs" suppressHydrationWarning>
+                {new Date(event._creationTime).toLocaleString()}
+              </div>
+
               <Badge color={eventTypeColors[event.type]}>{event.type}</Badge>
 
               <div className="text-sm">{event.message}</div>
@@ -40,7 +44,7 @@ export default function Page() {
       </Card>
 
       <Card className="max-w-lg">
-        <Heading size="5" className="flex items-center gap-1">
+        <Heading size="5" className="flex items-center gap-2">
           <Icons.Info className="size-6" />
           Models
         </Heading>
