@@ -3,6 +3,7 @@ import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation } from '../../functions'
+import { classifyImageContent } from '../actions/classifyImageContent'
 import { evaluateNsfwProbability } from '../actions/evaluateNsfwProbability'
 import { generateImageCaption } from '../actions/generateImageCaption'
 import { jobErrorHandling } from '../helpers'
@@ -59,6 +60,18 @@ export const ingestImageUrlPipeline: Pipeline = {
 
           return { imageId, fileId }
         }, 'ingestImageUrl.createImage')
+      },
+    },
+    {
+      name: 'classification',
+      retryLimit: 3,
+      action: async (ctx, input) => {
+        return jobErrorHandling(async () => {
+          const { createImage } = vb.parse(CreateImageResult, input)
+
+          const url = (await ctx.storage.getUrl(createImage.fileId)) as string
+          return await classifyImageContent(ctx, { url })
+        }, 'ingestImageUrl.classification')
       },
     },
     {
