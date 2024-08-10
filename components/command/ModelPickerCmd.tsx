@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Dialog } from '@radix-ui/themes'
 
 import { CmdK } from '@/components/command/CmdK'
+import { BrandIcon } from '@/components/icons/Brands'
 import { useModels } from '@/lib/api'
 
 export const ModelPickerCmd = ({
@@ -35,7 +36,7 @@ export const ModelPickerCmd = ({
         aria-describedby={undefined}
       >
         <Dialog.Title className="sr-only">Model Picker</Dialog.Title>
-        <CmdK tabIndex={0}>
+        <CmdK tabIndex={0} className="bg-gray-3">
           <CmdK.Input placeholder="Search models..." />
           <CmdK.List>
             <CmdK.Empty>No models found</CmdK.Empty>
@@ -45,8 +46,14 @@ export const ModelPickerCmd = ({
                 <CmdK.Item
                   value={`current ${model.resourceKey}`}
                   onSelect={() => handleSelect(model.resourceKey)}
+                  className="aria-selected:text-accent-11"
                 >
-                  {model.name}
+                  <div className="mr-2 shrink-0">
+                    <BrandIcon name={model.name} size={20} />
+                  </div>
+                  <div className="truncate">{model.name}</div>
+
+                  <div className="ml-auto shrink-0 text-xs text-gray-11">{model.endpoint}</div>
                 </CmdK.Item>
               </CmdK.Group>
             )}
@@ -58,8 +65,14 @@ export const ModelPickerCmd = ({
                     key={model.resourceKey}
                     value={model.resourceKey}
                     onSelect={() => handleSelect(model.resourceKey)}
+                    className="aria-selected:text-accent-11"
                   >
-                    {model.name}
+                    <div className="mr-2 shrink-0">
+                      <BrandIcon name={model.name} size={20} />
+                    </div>
+                    <div className="truncate">{model.name}</div>
+
+                    <div className="ml-auto shrink-0 text-xs text-gray-11">{model.endpoint}</div>
                   </CmdK.Item>
                 ))}
               </CmdK.Group>

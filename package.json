@@ -23,6 +23,7 @@
     "@egjs/react-infinitegrid": "^4.12.0",
     "@fal-ai/serverless-client": "^0.14.2",
     "@formkit/auto-animate": "^0.8.2",
+    "@lobehub/icons": "^1.28.0",
     "@mdxeditor/editor": "^3.11.0",
     "@million/lint": "1.0.0-rc.84",
     "@phosphor-icons/react": "^2.1.7",
