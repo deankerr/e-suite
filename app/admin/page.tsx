@@ -6,10 +6,11 @@ import { accentColors } from '@radix-ui/themes/props'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { api } from '@/convex/_generated/api'
-import { useCacheQuery } from '@/lib/api'
+import { useCacheQuery, useModels } from '@/lib/api'
 
 export default function Page() {
   const events = useCacheQuery(api.db.admin.events.latest, {})
+  const { chatModels, imageModels } = useModels()
 
   return (
     <AdminPageWrapper>
@@ -35,6 +36,24 @@ export default function Page() {
               <div className="text-sm">{event.message}</div>
             </div>
           ))}
+        </div>
+      </Card>
+
+      <Card className="max-w-lg">
+        <Heading size="5" className="flex items-center gap-1">
+          <Icons.Info className="size-6" />
+          Models
+        </Heading>
+
+        <div className="divide-y">
+          <div className="flex gap-1 py-2">
+            <Badge color="green">Chat</Badge>
+            <div className="text-sm">{chatModels?.length ?? '...'}</div>
+          </div>
+          <div className="flex gap-1 py-2">
+            <Badge color="green">Image</Badge>
+            <div className="text-sm">{imageModels?.length ?? '...'}</div>
+          </div>
         </div>
       </Card>
     </AdminPageWrapper>

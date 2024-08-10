@@ -7,6 +7,7 @@ import * as OpenAi from '../endpoints/openai'
 import { internalAction, internalMutation, query } from '../functions'
 import { chatModelFields, imageModelFields } from '../schema'
 import { QueryCtx } from '../types'
+import { logOpsEvent } from './admin/events'
 
 import type { Doc } from '../_generated/dataModel'
 import type { WithoutSystemFields } from 'convex/server'
@@ -160,6 +161,11 @@ export const listVoiceModels = query({
 
 // * admin
 export const importEndpointModels = internalAction(async (ctx) => {
+  await ctx.runMutation(internal.db.admin.events.log, {
+    type: 'info',
+    message: 'Importing endpoint models',
+  })
+
   await ctx.runMutation(internal.endpoints.openai.importChatModels, {})
   await ctx.runMutation(internal.endpoints.fal.importImageModels, {})
 

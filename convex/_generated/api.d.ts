@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
 import type * as db_admin_see from "../db/admin/see.js";
 import type * as db_images from "../db/images.js";
@@ -70,6 +71,7 @@ import type * as workflows_types from "../workflows/types.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  crons: typeof crons;
   "db/admin/events": typeof db_admin_events;
   "db/admin/see": typeof db_admin_see;
   "db/images": typeof db_images;
