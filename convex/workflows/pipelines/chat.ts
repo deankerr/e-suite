@@ -5,9 +5,9 @@ import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
 import { internalMutation, internalQuery } from '../../functions'
+import { ENV } from '../../lib/env'
 import { ResourceKey } from '../../lib/valibot'
 import { hasDelimiter } from '../../shared/helpers'
-import { env } from '../../shared/utils'
 import { jobErrorHandling, WorkflowError } from '../helpers'
 import { createJob } from '../jobs'
 
@@ -35,13 +35,13 @@ const createProvider = (endpoint: string) => {
 
     case 'together':
       return createOpenAI({
-        apiKey: env('TOGETHER_API_KEY'),
+        apiKey: ENV.TOGETHER_API_KEY,
         baseURL: 'https://api.together.xyz/v1',
       })
 
     case 'openrouter':
       return createOpenAI({
-        apiKey: env('OPENROUTER_API_KEY'),
+        apiKey: ENV.OPENROUTER_API_KEY,
         baseURL: 'https://openrouter.ai/api/v1',
       })
   }

@@ -46,24 +46,7 @@ const nextConfig = {
     },
   ],
 
-  // transpilePackages: ['jotai-devtools'],
-
-  // experimental: {
-  //   swcPlugins: [
-  //     [
-  //       '@swc-jotai/debug-label',
-  //       {
-  //         atomNames: ['customAtom'],
-  //       },
-  //     ],
-  //     [
-  //       '@swc-jotai/react-refresh',
-  //       {
-  //         atomNames: ['customAtom'],
-  //       },
-  //     ],
-  //   ],
-  // },
+  transpilePackages: ['@lobehub/icons'],
 }
 
 const withBundleAnalyzer = bundleAnalyzer({

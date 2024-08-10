@@ -1,6 +1,7 @@
 import * as client from '@fal-ai/serverless-client'
 import * as vb from 'valibot'
 
+import { ENV } from '../../../lib/env'
 import { ResourceKey } from '../../../lib/valibot'
 import { WorkflowError } from '../../helpers'
 
@@ -26,7 +27,7 @@ const Response = vb.object({
 })
 
 client.config({
-  credentials: process.env.FAL_API_KEY!,
+  credentials: ENV.FAL_API_KEY,
 })
 
 export const textToImage = async (

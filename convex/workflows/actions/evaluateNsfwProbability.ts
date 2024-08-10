@@ -1,10 +1,12 @@
 import * as falClient from '@fal-ai/serverless-client'
 import * as vb from 'valibot'
 
+import { ENV } from '../../lib/env'
+
 import type { ActionCtx } from '../../_generated/server'
 
 falClient.config({
-  credentials: process.env.FAL_API_KEY!,
+  credentials: ENV.FAL_API_KEY,
 })
 
 const Response = vb.object({

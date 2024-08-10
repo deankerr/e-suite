@@ -2,7 +2,11 @@ import { useState } from 'react'
 import { Dialog } from '@radix-ui/themes'
 
 import { CmdK } from '@/components/command/CmdK'
+import { ModelLogo } from '@/components/icons/ModelLogo'
 import { useModels } from '@/lib/api'
+import { cn } from '@/lib/utils'
+
+import type { EModel } from '@/convex/types'
 
 export const ModelPickerCmd = ({
   type,
@@ -35,32 +39,31 @@ export const ModelPickerCmd = ({
         aria-describedby={undefined}
       >
         <Dialog.Title className="sr-only">Model Picker</Dialog.Title>
-        <CmdK tabIndex={0}>
+        <CmdK tabIndex={0} className="bg-gray-3">
           <CmdK.Input placeholder="Search models..." />
           <CmdK.List>
             <CmdK.Empty>No models found</CmdK.Empty>
 
             {model && (
               <CmdK.Group heading="Current">
-                <CmdK.Item
+                <ModelItem
+                  key={model.resourceKey}
                   value={`current ${model.resourceKey}`}
                   onSelect={() => handleSelect(model.resourceKey)}
-                >
-                  {model.name}
-                </CmdK.Item>
+                  model={model}
+                />
               </CmdK.Group>
             )}
 
             {showChatModels && (
               <CmdK.Group heading="Chat Models">
                 {chatModels?.map((model) => (
-                  <CmdK.Item
+                  <ModelItem
                     key={model.resourceKey}
                     value={model.resourceKey}
                     onSelect={() => handleSelect(model.resourceKey)}
-                  >
-                    {model.name}
-                  </CmdK.Item>
+                    model={model}
+                  />
                 ))}
               </CmdK.Group>
             )}
@@ -68,13 +71,12 @@ export const ModelPickerCmd = ({
             {showImageModels && (
               <CmdK.Group heading="Image Models">
                 {imageModels?.map((model) => (
-                  <CmdK.Item
+                  <ModelItem
                     key={model.resourceKey}
                     value={model.resourceKey}
                     onSelect={() => handleSelect(model.resourceKey)}
-                  >
-                    {model.name}
-                  </CmdK.Item>
+                    model={model}
+                  />
                 ))}
               </CmdK.Group>
             )}
@@ -82,5 +84,20 @@ export const ModelPickerCmd = ({
         </CmdK>
       </Dialog.Content>
     </Dialog.Root>
+  )
+}
+
+const ModelItem = ({
+  model,
+  className,
+  ...props
+}: { model: EModel } & React.ComponentProps<typeof CmdK.Item>) => {
+  return (
+    <CmdK.Item {...props} className={cn('aria-selected:text-accent-11', className)}>
+      <div className="mr-2 shrink-0">
+        <ModelLogo modelName={model.name} size={20} />
+      </div>
+      <div className="truncate">{model.name}</div>
+    </CmdK.Item>
   )
 }

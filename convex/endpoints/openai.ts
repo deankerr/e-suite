@@ -1,5 +1,6 @@
+import { v } from 'convex/values'
+
 import { internalMutation } from '../functions'
-import { getModelTags } from '../lib/modelTags'
 
 import type { Doc } from '../_generated/dataModel'
 import type { WithoutSystemFields } from 'convex/server'
@@ -57,27 +58,25 @@ export const chatModelData: WithoutSystemFields<Doc<'chat_models'>>[] = definiti
   moderated: false,
   available: true,
   hidden: false,
-  internalScore: 2,
+  internalScore: 0,
 
   type: 'chat',
 }))
 
 export const importChatModels = internalMutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    replace: v.optional(v.boolean()),
+  },
+  handler: async (ctx, { replace = false }) => {
     console.info(endpoint, 'importing models')
 
     for (const model of chatModelData) {
-      const { tags, score } = getModelTags(model.endpointModelId)
-      model.tags.push(...tags)
-      model.internalScore = score
-
       const existing = await ctx
         .table('chat_models')
         .filter((q) => q.eq(q.field('resourceKey'), model.resourceKey))
         .first()
       if (existing) {
-        await existing.replace(model)
+        if (replace) await existing.replace(model)
       } else {
         await ctx.table('chat_models').insert(model)
         console.info(endpoint, 'created new model', model.name, model.resourceKey)

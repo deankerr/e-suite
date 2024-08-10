@@ -1,25 +1,18 @@
 import ky from 'ky'
 
 import { ActionCtx } from '../_generated/server'
-import { insist } from '../shared/utils'
+import { ENV } from '../lib/env'
 import ElevenLabsVoicesJson from './elevenlabs.voices.json'
-
-export const getElevenlabsApiKey = () => {
-  const apiKey = process.env.ELEVENLABS_API_KEY
-  insist(apiKey, 'ELEVENLABS_API_KEY is undefined')
-  return apiKey
-}
 
 export const textToSpeech = async (
   ctx: ActionCtx,
   { text, endpointModelId: voice_id }: { text: string; endpointModelId: string },
 ) => {
   try {
-    const apiKey = getElevenlabsApiKey()
     const blob = await ky
       .post(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
         headers: {
-          'xi-api-key': apiKey,
+          'xi-api-key': ENV.ELEVENLABS_API_KEY,
         },
         json: {
           text,
@@ -114,11 +107,10 @@ export const soundGeneration = async (
   }: { text: string; duration_seconds?: number; prompt_influence?: number },
 ) => {
   try {
-    const apiKey = getElevenlabsApiKey()
     const blob = await ky
       .post(`https://api.elevenlabs.io/v1/sound-generation`, {
         headers: {
-          'xi-api-key': apiKey,
+          'xi-api-key': ENV.ELEVENLABS_API_KEY,
         },
         json: {
           text,

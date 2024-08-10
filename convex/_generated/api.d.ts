@@ -14,6 +14,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as crons from "../crons.js";
+import type * as db_admin_events from "../db/admin/events.js";
 import type * as db_admin_see from "../db/admin/see.js";
 import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
@@ -32,9 +34,11 @@ import type * as endpoints_together from "../endpoints/together.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
 import type * as lib_clerk from "../lib/clerk.js";
+import type * as lib_env from "../lib/env.js";
 import type * as lib_fetch from "../lib/fetch.js";
 import type * as lib_modelTags from "../lib/modelTags.js";
 import type * as lib_sharp from "../lib/sharp.js";
+import type * as lib_utils from "../lib/utils.js";
 import type * as lib_valibot from "../lib/valibot.js";
 import type * as migrations from "../migrations.js";
 import type * as rules from "../rules.js";
@@ -43,7 +47,6 @@ import type * as shared_helpers from "../shared/helpers.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
-import type * as utils from "../utils.js";
 import type * as workflows_actions_evaluateNsfwProbability from "../workflows/actions/evaluateNsfwProbability.js";
 import type * as workflows_actions_generateImageCaption from "../workflows/actions/generateImageCaption.js";
 import type * as workflows_actions_textToImage_fal from "../workflows/actions/textToImage/fal.js";
@@ -68,6 +71,8 @@ import type * as workflows_types from "../workflows/types.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  crons: typeof crons;
+  "db/admin/events": typeof db_admin_events;
   "db/admin/see": typeof db_admin_see;
   "db/images": typeof db_images;
   "db/messages": typeof db_messages;
@@ -86,9 +91,11 @@ declare const fullApi: ApiFromModules<{
   functions: typeof functions;
   http: typeof http;
   "lib/clerk": typeof lib_clerk;
+  "lib/env": typeof lib_env;
   "lib/fetch": typeof lib_fetch;
   "lib/modelTags": typeof lib_modelTags;
   "lib/sharp": typeof lib_sharp;
+  "lib/utils": typeof lib_utils;
   "lib/valibot": typeof lib_valibot;
   migrations: typeof migrations;
   rules: typeof rules;
@@ -97,7 +104,6 @@ declare const fullApi: ApiFromModules<{
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;
-  utils: typeof utils;
   "workflows/actions/evaluateNsfwProbability": typeof workflows_actions_evaluateNsfwProbability;
   "workflows/actions/generateImageCaption": typeof workflows_actions_generateImageCaption;
   "workflows/actions/textToImage/fal": typeof workflows_actions_textToImage_fal;
