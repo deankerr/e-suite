@@ -1,7 +1,9 @@
+import { v } from 'convex/values'
 import ky from 'ky'
 import { z } from 'zod'
 
 import { api, internal } from '../_generated/api'
+import { logActionOpsEvent } from '../db/admin/events'
 import { shapeImageModel } from '../db/models'
 import { internalAction } from '../functions'
 import { ENV } from '../lib/env'
@@ -30,63 +32,74 @@ const modelDataSchema = z.object({
     .array(),
 })
 
-export const importImageModels = internalAction(async (ctx) => {
-  console.info(endpoint, 'importing models')
+export const importImageModels = internalAction({
+  args: {
+    replace: v.optional(v.boolean()),
+  },
+  handler: async (ctx, { replace = false }) => {
+    console.info(endpoint, 'importing models')
 
-  const records = await fetchModelData()
-  const parsedRecords = modelDataSchema.parse(records)
+    const records = await fetchModelData()
+    const parsedRecords = modelDataSchema.parse(records)
 
-  const existingModels = await ctx.runQuery(api.db.models.listImageModels, { endpoint })
+    const existingModels = await ctx.runQuery(api.db.models.listImageModels, { endpoint })
 
-  for (const record of parsedRecords.models) {
-    const architecture = record.name.includes('XL') ? 'SDXL' : 'SD'
-    const shape = shapeImageModel({
-      name: record.name,
-      description: '',
+    for (const record of parsedRecords.models) {
+      const architecture = record.name.includes('XL') ? 'SDXL' : 'SD'
+      const shape = shapeImageModel({
+        name: record.name,
+        description: '',
 
-      creatorName: '',
-      link: record.link,
-      license: '',
-      tags: [],
-      coverImageUrl: record.cover_img,
+        creatorName: '',
+        link: record.link,
+        license: '',
+        tags: [],
+        coverImageUrl: record.cover_img,
 
-      architecture,
-      sizes:
-        architecture === 'SD'
-          ? {
-              portrait: [512, 768],
-              landscape: [768, 512],
-              square: [512, 512],
-            }
-          : {
-              portrait: [832, 1216],
-              landscape: [1216, 832],
-              square: [1024, 1024],
-            },
+        architecture,
+        sizes:
+          architecture === 'SD'
+            ? {
+                portrait: [512, 768],
+                landscape: [768, 512],
+                square: [512, 512],
+              }
+            : {
+                portrait: [832, 1216],
+                landscape: [1216, 832],
+                square: [1024, 1024],
+              },
 
-      endpoint: 'sinkin',
-      modelId: record.id,
-      endpointModelId: record.id,
-      pricing: {
-        type: 'perRequest',
-        // * lazy estimate based of a 512px or 1024px square image at default settings
-        value: architecture === 'SD' ? 0.00225 : 0.009,
-      },
-      moderated: false,
-      available: true,
-      hidden: false,
-      internalScore: 0,
-    })
-
-    const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
-    if (existing) {
-      await ctx.runMutation(internal.db.models.updateImageModel, {
-        id: existing._id,
-        ...shape,
+        endpoint: 'sinkin',
+        modelId: record.id,
+        endpointModelId: record.id,
+        pricing: {
+          type: 'perRequest',
+          // * lazy estimate based of a 512px or 1024px square image at default settings
+          value: architecture === 'SD' ? 0.00225 : 0.009,
+        },
+        moderated: false,
+        available: true,
+        hidden: false,
+        internalScore: 0,
       })
-    } else {
-      await ctx.runMutation(internal.db.models.createImageModel, shape)
-      console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
+
+      const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
+      if (existing) {
+        if (replace) {
+          await ctx.runMutation(internal.db.models.updateImageModel, {
+            id: existing._id,
+            ...shape,
+          })
+        }
+      } else {
+        await ctx.runMutation(internal.db.models.createImageModel, shape)
+        await logActionOpsEvent(ctx, {
+          message: `${endpoint} new model: ${shape.name}`,
+          type: 'notice',
+        })
+        console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
+      }
     }
-  }
+  },
 })

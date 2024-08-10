@@ -57,7 +57,7 @@ const sharedModelFields = {
   coverImageUrl: v.optional(v.string()),
 
   endpoint: v.string(),
-  modelId: v.optional(v.string()),
+  modelId: v.string(),
   endpointModelId: v.string(),
 
   pricing: v.union(

@@ -1,44 +1,47 @@
-export function getModelTags(modelId: string) {
-  const { tags, score } = tagDefs.reduce(
-    (acc, tag) => {
-      if (tag.includes.includes(modelId)) {
-        acc.tags.push(tag.tag)
-        acc.score += tag.score
-      }
-      return acc
-    },
-    { tags: [] as string[], score: 0 },
-  )
+import { asyncMap } from 'convex-helpers'
 
-  return { tags, score }
-}
+import { internalMutation } from '../functions'
 
-const tagDefs = [
+const tagData = [
   {
-    tag: 'flagship',
+    tag: 'base',
+    score: -30,
+    includes: ['base'],
+  },
+  {
+    tag: 'free',
+    score: 1,
+    includes: ['free'],
+  },
+  {
+    tag: 'frontier',
+    score: 30,
+    includes: ['gpt-4o', 'claude-3.5', 'gemini-pro-1.5', 'llama-3.1', 'mistral-large', 'yi-large'],
+  },
+  {
+    tag: 'high',
+    score: 20,
     includes: [
-      'gpt-4o',
+      'gpt-4',
       'claude-3',
-      'command',
       'gemini',
       'llama-3',
-      'mixtral',
       'mistral',
-      'qwen-2',
+      'mixtral',
+      'yi',
+      'qwen',
+      'deepseek',
+      'command',
     ],
-    score: 10,
   },
   {
-    tag: 'multimodal',
-    includes: ['gpt-4o', 'gpt-4-turbo', 'vision', 'llava', 'gemini', 'claude-3'],
-    score: 5,
+    tag: 'finetune',
+    score: 10,
+    includes: ['nous', 'dolphin', 'wizardlm-2'],
   },
-
-  { tag: 'online', includes: ['online'], score: 1 },
-  { tag: 'free', includes: ['free'], score: -1 },
-  { tag: 'code', includes: ['code'], score: -1 },
   {
     tag: 'roleplay',
+    score: -1,
     includes: [
       'mytho',
       'lumimaid',
@@ -51,8 +54,41 @@ const tagDefs = [
       'toppy',
       'weaver',
     ],
-    score: -1,
   },
-  { tag: 'legacy', includes: ['gpt-3.5', 'palm-2', 'claude-2', 'claude-instant'], score: -10 },
-  { tag: 'vintage', includes: ['alpaca'], score: -10 },
+  {
+    tag: 'exotic',
+    score: -5,
+    includes: ['stripedhyena', 'rwkv'],
+  },
+  {
+    tag: 'legacy',
+    score: -10,
+    includes: ['gpt-3.5', 'palm', 'claude-1', 'claude-2', 'claude-instant'],
+  },
 ]
+
+export const getModelTag = (model: { name: string; endpointModelId: string }) => {
+  if (model.name.toLowerCase().includes('base')) {
+    return { tag: 'base', score: -30 }
+  }
+
+  for (const { tag, score, includes } of tagData) {
+    if (includes.find((val) => model.endpointModelId.toLowerCase().includes(val))) {
+      return { tag, score }
+    }
+  }
+}
+
+export const tagAll = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const models = await ctx.table('chat_models')
+
+    await asyncMap(models, async (model) => {
+      const tagScore = getModelTag(model)
+      if (tagScore) {
+        await model.patch({ tags: [tagScore.tag], internalScore: tagScore.score })
+      }
+    })
+  },
+})

@@ -1,8 +1,10 @@
 import { ConvexError, v } from 'convex/values'
 
+import { internal } from '../../_generated/api'
 import { internalMutation, mutation, query } from '../../functions'
 import { operationsEventLogFields } from '../../schema'
 
+import type { ActionCtx } from '../../_generated/server'
 import type { MutationCtx } from '../../types'
 import type { Infer } from 'convex/values'
 
@@ -13,6 +15,10 @@ export const logOpsEvent = async (ctx: MutationCtx, args: Infer<typeof createEve
     ...args,
     ack: false,
   })
+}
+
+export const logActionOpsEvent = async (ctx: ActionCtx, args: Infer<typeof createEventArgs>) => {
+  return await ctx.runMutation(internal.db.admin.events.log, args)
 }
 
 export const log = internalMutation({

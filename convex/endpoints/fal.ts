@@ -70,8 +70,10 @@ function buildModelData(): ImageModelDataRecord[] {
 }
 
 export const importImageModels = internalMutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    replace: v.optional(v.boolean()),
+  },
+  handler: async (ctx, { replace = false }) => {
     const models = buildModelData()
 
     for (const model of models) {
@@ -80,8 +82,7 @@ export const importImageModels = internalMutation({
         .filter((q) => q.eq(q.field('endpointModelId'), model.endpointModelId))
         .unique()
       if (existing) {
-        await existing.replace(model)
-        console.log('updated:', model.name)
+        if (replace) await existing.replace(model)
       } else {
         await ctx.table('image_models').insert(model)
         console.log('new:', model.name)

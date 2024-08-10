@@ -1,8 +1,10 @@
+import { v } from 'convex/values'
 import ky from 'ky'
 import * as vb from 'valibot'
 import { z } from 'zod'
 
 import { api, internal } from '../_generated/api'
+import { logActionOpsEvent } from '../db/admin/events'
 import { shapeChatModel } from '../db/models'
 import { internalAction } from '../functions'
 import { ENV } from '../lib/env'
@@ -11,7 +13,11 @@ import type { ActionCtx } from '../_generated/server'
 
 const endpoint = 'together'
 
-const processModelRecords = async (ctx: ActionCtx, records: z.infer<typeof ApiModelsResponse>) => {
+const processModelRecords = async (
+  ctx: ActionCtx,
+  records: z.infer<typeof ApiModelsResponse>,
+  replace = false,
+) => {
   const existingModels = await ctx.runQuery(api.db.models.listChatModels, { endpoint })
   const availabilityCheck = new Set(existingModels.map((m) => m.resourceKey))
   console.info(endpoint, 'existing models', existingModels.length)
@@ -53,15 +59,21 @@ const processModelRecords = async (ctx: ActionCtx, records: z.infer<typeof ApiMo
       // * compare with any existing
       const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
       if (existing) {
-        await ctx.runMutation(internal.db.models.updateChatModel, {
-          id: existing._id,
-          ...shape,
-        })
+        if (replace) {
+          await ctx.runMutation(internal.db.models.updateChatModel, {
+            id: existing._id,
+            ...shape,
+          })
+        }
         if (!existing.available) {
           console.warn(endpoint, 'model now available', shape.name, shape.resourceKey)
         }
       } else {
         await ctx.runMutation(internal.db.models.createChatModel, shape)
+        await logActionOpsEvent(ctx, {
+          message: `${endpoint} new model: ${shape.name}`,
+          type: 'notice',
+        })
         console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
       }
 
@@ -76,20 +88,25 @@ const processModelRecords = async (ctx: ActionCtx, records: z.infer<typeof ApiMo
   }
 }
 
-export const importChatModels = internalAction(async (ctx: ActionCtx) => {
-  console.info(endpoint, 'importing models')
-  console.log('https://api.together.xyz/models/info')
-  const response = await ky
-    .get('https://api.together.xyz/models/info', {
-      headers: {
-        Authorization: `Bearer ${ENV.TOGETHER_API_KEY}`,
-      },
-    })
-    .json()
-  const records = ApiModelsResponse.parse(response).filter(
-    (m) => m.display_type === DisplayType.Chat,
-  )
-  await processModelRecords(ctx, records)
+export const importChatModels = internalAction({
+  args: {
+    replace: v.optional(v.boolean()),
+  },
+  handler: async (ctx: ActionCtx, { replace = false }) => {
+    console.info(endpoint, 'importing models')
+    console.log('https://api.together.xyz/models/info')
+    const response = await ky
+      .get('https://api.together.xyz/models/info', {
+        headers: {
+          Authorization: `Bearer ${ENV.TOGETHER_API_KEY}`,
+        },
+      })
+      .json()
+    const records = ApiModelsResponse.parse(response).filter(
+      (m) => m.display_type === DisplayType.Chat,
+    )
+    await processModelRecords(ctx, records, replace)
+  },
 })
 
 enum DisplayType {

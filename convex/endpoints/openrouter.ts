@@ -1,8 +1,10 @@
 import { omit } from 'convex-helpers'
+import { v } from 'convex/values'
 import ky from 'ky'
 import * as vb from 'valibot'
 
 import { api, internal } from '../_generated/api'
+import { logActionOpsEvent } from '../db/admin/events'
 import { shapeChatModel } from '../db/models'
 import { internalAction } from '../functions'
 
@@ -27,6 +29,19 @@ const excludedModelIds = [
   'anthropic/claude-1.2',
   'anthropic/claude-instant-1.0',
   'anthropic/claude-instant-1.1',
+  'anthropic/claude-instant-1:beta',
+  'anthropic/claude-2.1:beta',
+  'anthropic/claude-2.0:beta',
+  'anthropic/claude-2:beta',
+  'anthropic/claude-instant-1',
+  'anthropic/claude-2.1',
+  'anthropic/claude-2.0',
+  'anthropic/claude-2',
+
+  // remove moderated versions
+  'anthropic/claude-3-haiku',
+  'anthropic/claude-3-opus',
+  'anthropic/claude-3-sonnet',
 ]
 
 const ApiModelRecord = vb.object({
@@ -56,7 +71,7 @@ const ApiModelsResponse = vb.object({
   data: vb.array(vb.unknown()),
 })
 
-const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
+const processModelRecords = async (ctx: ActionCtx, records: unknown[], replace = false) => {
   const existingModels = await ctx.runQuery(api.db.models.listChatModels, { endpoint })
   const availabilityCheck = new Set(existingModels.map((m) => m.resourceKey))
   console.info(endpoint, 'existing models', existingModels.length)
@@ -66,6 +81,8 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
       const parsed = vb.parse(ApiModelRecord, record)
       // * excluded model skip
       if (excludedModelIds.includes(parsed.id)) continue
+      // * snip "self-moderated" model names
+      parsed.name = parsed.name.replace(/ \(self-moderated\)$/, '')
 
       // * build model shape
       const pricing =
@@ -107,15 +124,21 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
       // * compare with any existing
       const existing = existingModels.find((m) => m.resourceKey === shape.resourceKey)
       if (existing) {
-        await ctx.runMutation(internal.db.models.updateChatModel, {
-          id: existing._id,
-          ...shape,
-        })
+        if (replace) {
+          await ctx.runMutation(internal.db.models.updateChatModel, {
+            id: existing._id,
+            ...shape,
+          })
+        }
         if (!existing.available) {
           console.warn(endpoint, 'model now available', shape.name, shape.resourceKey)
         }
       } else {
         await ctx.runMutation(internal.db.models.createChatModel, shape)
+        await logActionOpsEvent(ctx, {
+          message: `${endpoint} new model: ${shape.name}`,
+          type: 'notice',
+        })
         console.info(endpoint, 'created new model', shape.name, shape.resourceKey)
       }
 
@@ -142,13 +165,18 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[]) => {
   }
 }
 
-export const importChatModels = internalAction(async (ctx: ActionCtx) => {
-  console.info(endpoint, 'importing models')
-  console.log('https://openrouter.ai/api/v1/models')
-  const response = await ky.get('https://openrouter.ai/api/v1/models').json()
-  const records = vb.parse(ApiModelsResponse, response)
+export const importChatModels = internalAction({
+  args: {
+    replace: v.optional(v.boolean()),
+  },
+  handler: async (ctx: ActionCtx, { replace = false }) => {
+    console.info(endpoint, 'importing models')
+    console.log('https://openrouter.ai/api/v1/models')
+    const response = await ky.get('https://openrouter.ai/api/v1/models').json()
+    const records = vb.parse(ApiModelsResponse, response)
 
-  await processModelRecords(ctx, records.data)
+    await processModelRecords(ctx, records.data, replace)
+  },
 })
 
 function toPerMillionTokens(value: string): number {
