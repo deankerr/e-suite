@@ -2,6 +2,7 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Table } from '@radix-ui/themes'
 
+import { ModelLogo } from '@/components/icons/ModelLogo'
 import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/types'
@@ -28,6 +29,7 @@ export const ModelsTable = ({
       <Table.Root size="1" variant="surface" layout="fixed">
         <Table.Header>
           <Table.Row>
+            <Table.ColumnHeaderCell>Logo</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell maxWidth="240px">resourceKey</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell maxWidth="360px">name</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell maxWidth="360px">endpoint</Table.ColumnHeaderCell>
@@ -65,8 +67,12 @@ export const ModelsTable = ({
           {sorted.map((model) => (
             <Table.Row key={model._id}>
               <Table.Cell maxWidth="240px" className="break-all font-mono text-xs">
+                <ModelLogo modelName={model.name} size={20} />
+              </Table.Cell>
+              <Table.Cell maxWidth="240px" className="break-all font-mono text-xs">
                 {model.resourceKey}
               </Table.Cell>
+
               <Table.Cell maxWidth="360px">{model.name}</Table.Cell>
               <Table.Cell maxWidth="360px">{model.endpoint}</Table.Cell>
               <Table.Cell justify="end">{model.internalScore}</Table.Cell>

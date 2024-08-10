@@ -45,7 +45,7 @@ export default function Page() {
           Models
         </Heading>
 
-        <div className="divide-y">
+        <div className="flex-start gap-2">
           <div className="flex gap-1 py-2">
             <Badge color="green">Chat</Badge>
             <div className="text-sm">{chatModels?.length ?? '...'}</div>
