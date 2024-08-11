@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Gallery } from '@/components/message/Gallery'
+import { LinkBadge } from '@/components/message/LinkBadge'
 import { Markdown } from '@/components/message/Markdown'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
@@ -53,7 +54,7 @@ export const Message = ({
   const jobs = extractJobsDetails(message.jobs)
 
   const name = getMessageName(message) || message.role
-  const text = getMessageText(message)
+  const text = `${getMessageText(message)}`
   const marbleProps = useMarbleProperties(name)
   const shortMessageText = text && text.length < 300 ? text : undefined
   const hasImageContent = message.images.length > 0 || message.contentType === 'image'
@@ -157,7 +158,7 @@ export const Message = ({
         )}
 
         {/* => markdown text */}
-        {!showEditor && text && text.length >= 300 ? (
+        {!showEditor && text && !shortMessageText ? (
           <Markdown text={text} className="pb-2" />
         ) : null}
 

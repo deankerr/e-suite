@@ -1,12 +1,12 @@
 import './syntax.css'
 
 import { memo } from 'react'
-import { Link } from '@radix-ui/themes'
 import ReactMarkdown from 'react-markdown'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
+import { LinkBadge } from '@/components/message/LinkBadge'
 import { cn } from '@/lib/utils'
 
 const Component = (props: { text?: string; className?: string }) => {
@@ -17,7 +17,7 @@ const Component = (props: { text?: string; className?: string }) => {
       remarkPlugins={[remarkGfm, remarkBreaks]}
       className={cn('markdown-body', props.className)}
       components={{
-        a: ({ color: _, ...props }) => <Link {...props} />,
+        a: ({ color: _, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
         code(props) {
           const { children, className, node, ref, ...rest } = props
           const match = /language-(\w+)/.exec(className || '')
