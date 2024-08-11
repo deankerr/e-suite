@@ -7,15 +7,13 @@ import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
 import { LinkBadge } from '@/components/message/LinkBadge'
-import { cn } from '@/lib/utils'
 
-const Component = (props: { text?: string; className?: string }) => {
+const Component = (props: { text?: string }) => {
   if (!props.text) return null
 
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
-      className={cn('markdown-body', props.className)}
       components={{
         a: ({ color: _, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
         code(props) {

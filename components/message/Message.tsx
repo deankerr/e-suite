@@ -54,7 +54,7 @@ export const Message = ({
   const jobs = extractJobsDetails(message.jobs)
 
   const name = getMessageName(message) || message.role
-  const text = `${getMessageText(message)}`
+  const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
   const shortMessageText = text && text.length < 300 ? text : undefined
   const hasImageContent = message.images.length > 0 || message.contentType === 'image'
@@ -116,21 +116,7 @@ export const Message = ({
       {/* > content */}
       <div className="grow">
         {/* => header */}
-        <div className="flex-between min-h-7">
-          <p>
-            <span
-              className={cn(
-                'brightness-125 saturate-[.75]',
-                isSequential && message.role === 'user' && shortMessageText && 'hidden',
-              )}
-              style={{ color: marbleProps[0].color }}
-            >
-              {name}
-            </span>{' '}
-            {withText && <>{withText} </>}
-            {shortMessageText}
-          </p>
-          {/* -> buttons */}
+        <div className="absolute right-0 z-10 min-h-7">
           <div className="flex shrink-0">
             <AdminOnlyUi>
               <div className="flex-end absolute -top-2 left-1/2 -translate-x-1/2 font-mono text-xs text-gray-6">
@@ -157,10 +143,20 @@ export const Message = ({
           <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
         )}
 
-        {/* => markdown text */}
-        {!showEditor && text && !shortMessageText ? (
-          <Markdown text={text} className="pb-2" />
-        ) : null}
+        <div className="min-h-7 pt-1 last:[&:nth-child(2)]:[&_p]:inline-block">
+          <p
+            className={cn(
+              'mr-1 inline-block brightness-125 saturate-[.75]',
+              isSequential && 'hidden',
+            )}
+            style={{ color: marbleProps[0].color }}
+          >
+            {name}
+          </p>
+
+          {/* => markdown text */}
+          {!showEditor && text ? <Markdown text={text} /> : null}
+        </div>
 
         {/* => images  */}
         <div className="flex-between">
