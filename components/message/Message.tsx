@@ -99,16 +99,12 @@ export const Message = ({
       )}
     >
       {/* > timeline */}
-      {hideTimeline ? (
-        <div className="w-1 shrink-0" />
-      ) : (
-        <div className="flex w-4 shrink-0 justify-center">
-          <div
-            className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
-            style={{ backgroundColor: marbleProps[0].color }}
-          />
-        </div>
-      )}
+      <div className={cn('flex w-4 shrink-0 justify-center', hideTimeline && 'hidden')}>
+        <div
+          className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
+          style={{ backgroundColor: marbleProps[0].color }}
+        />
+      </div>
 
       {/* > content */}
       <div className="grow">
@@ -132,7 +128,8 @@ export const Message = ({
           )}
         </div>
 
-        <div className="markdown-body min-h-7 pt-1 last:[&:nth-child(2)]:[&_p]:inline-block">
+        <div className="markdown-body min-h-7 py-1 last:[&:nth-child(2)]:[&_p]:inline-block">
+          {/* => name */}
           <div
             className={cn(
               'mb-0 mr-1 inline-block brightness-125 saturate-[.75]',
