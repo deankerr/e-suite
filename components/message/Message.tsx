@@ -15,7 +15,6 @@ import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { extractJobsDetails, getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
@@ -55,7 +54,6 @@ export const Message = ({
   const name = getMessageName(message) || message.role
   const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
-  const shortMessageText = text && text.length < 300 ? text : undefined
   const hasImageContent = message.images.length > 0 || message.contentType === 'image'
 
   const [showJson, setShowJson] = useState(false)
@@ -101,44 +99,55 @@ export const Message = ({
       )}
     >
       {/* > timeline */}
-      {hideTimeline ? (
-        <div className="w-1 shrink-0" />
-      ) : (
-        <div className="flex w-4 shrink-0 justify-center">
-          <div
-            className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
-            style={{ backgroundColor: marbleProps[0].color }}
-          />
-        </div>
-      )}
+      <div className={cn('flex w-4 shrink-0 justify-center', hideTimeline && 'hidden')}>
+        <div
+          className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
+          style={{ backgroundColor: marbleProps[0].color }}
+        />
+      </div>
 
       {/* > content */}
       <div className="grow">
-        {/* => header */}
-        <div className="flex-between min-h-7">
-          <p>
-            <span
-              className={cn(
-                'brightness-125 saturate-[.75]',
-                isSequential && message.role === 'user' && shortMessageText && 'hidden',
-              )}
-              style={{ color: marbleProps[0].color }}
-            >
-              {name}
-            </span>{' '}
-            {withText && <>{withText} </>}
-            {shortMessageText}
-          </p>
-          {/* -> buttons */}
-          <div className="flex shrink-0">
-            <AdminOnlyUi>
-              <div className="flex-end absolute -top-2 left-1/2 -translate-x-1/2 font-mono text-xs text-gray-6">
-                {message.series}
-              </div>
-            </AdminOnlyUi>
-            {dropdownMenu}
-          </div>
+        {/* => menu */}
+        <div className="flex-col-start absolute right-0 z-10">
+          {dropdownMenu}
+          {hasImageContent && deepLinkUrl ? (
+            <Link href={deepLinkUrl} prefetch={false}>
+              <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
+                <Icons.Share size={20} />
+              </IconButton>
+            </Link>
+          ) : null}
+
+          {hasImageContent && (
+            <ThreadOwner>
+              <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
+                <Icons.Copy size={20} />
+              </IconButton>
+            </ThreadOwner>
+          )}
         </div>
+
+        <div className="markdown-body min-h-7 py-1 last:[&:nth-child(2)]:[&_p]:inline-block">
+          {/* => name */}
+          <div
+            className={cn(
+              'mb-0 mr-1 inline-block brightness-125 saturate-[.75]',
+              isSequential && 'hidden',
+            )}
+            style={{ color: marbleProps[0].color }}
+          >
+            {name}
+          </div>
+
+          {/* => markdown text */}
+          {!showEditor && text ? <Markdown text={text} /> : null}
+        </div>
+
+        {/* => editor */}
+        {showEditor && (
+          <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
+        )}
 
         {/* => errors * */}
         {jobs.failedJobErrors.map(({ code, message }, i) => (
@@ -151,38 +160,8 @@ export const Message = ({
           />
         ))}
 
-        {/* => editor */}
-        {showEditor && (
-          <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
-        )}
-
-        {/* => markdown text */}
-        {!showEditor && text && text.length >= 300 ? (
-          <Markdown text={text} className="pb-2" />
-        ) : null}
-
         {/* => images  */}
-        <div className="flex-between">
-          <Gallery message={message} priority={priority} />
-
-          {hasImageContent && (
-            <div className="flex-col-start ml-auto shrink-0 gap-1">
-              {deepLinkUrl ? (
-                <Link href={deepLinkUrl} prefetch={false}>
-                  <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
-                    <Icons.Share size={20} />
-                  </IconButton>
-                </Link>
-              ) : null}
-
-              <ThreadOwner>
-                <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
-                  <Icons.Copy size={20} />
-                </IconButton>
-              </ThreadOwner>
-            </div>
-          )}
-        </div>
+        <Gallery message={message} priority={priority} />
 
         {/* => audio  */}
         {message.audio.length > 0 ? (

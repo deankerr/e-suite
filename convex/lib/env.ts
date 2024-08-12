@@ -4,6 +4,8 @@ const schema = vb.object({
   APP_HOSTNAME: vb.string(),
   CLERK_JWT_ISSUER_DOMAIN: vb.string(),
   CLERK_WEBHOOK_SECRET: vb.string(),
+  WORKERS_IMAGE_CLASSIFICATION_URL: vb.string(),
+  WORKERS_API_KEY: vb.string(),
   // * endpoint keys
   AWS_ACCESS_KEY_ID: vb.string(),
   AWS_SECRET_ACCESS_KEY: vb.string(),
