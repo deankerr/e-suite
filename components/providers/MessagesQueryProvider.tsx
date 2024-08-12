@@ -34,7 +34,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     : 'skip'
 
-  const latest = useCacheQuery(api.db.threads.latestMessages, queryKey)
+  const latest = useCacheQuery(api.db.threads.latestMessages, queryKey) ?? []
   const { results, loadMore, status } = usePaginatedQuery(
     api.db.threads.listMessages,
     isListQuery ? queryKey : 'skip',
@@ -43,7 +43,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   )
 
-  const messages = [...(latest ?? []), ...results.slice(latest?.length ?? 0)].reverse()
+  const messages = isListQuery && results.length > 0 ? results : latest
 
   const listLoadMore = useCallback(() => {
     if (isListQuery) {
@@ -54,7 +54,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [isListQuery, loadMore, setIsListQuery])
 
   const value = {
-    messages,
+    messages: [...messages].reverse(),
     loadMore: listLoadMore,
     status,
   }
