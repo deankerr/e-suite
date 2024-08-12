@@ -3,8 +3,6 @@ import * as vb from 'valibot'
 
 import { ENV } from '../../lib/env'
 
-import type { ActionCtx } from '../../_generated/server'
-
 const Response = vb.object({
   image: vb.object({
     modelId: vb.string(),
@@ -32,7 +30,7 @@ const Response = vb.object({
   }),
 })
 
-export const classifyImageContent = async (ctx: ActionCtx, args: { url: string }) => {
+export const classifyImageContent = async (args: { url: string }) => {
   const response = await ky
     .get(ENV.WORKERS_IMAGE_CLASSIFICATION_URL, {
       headers: {

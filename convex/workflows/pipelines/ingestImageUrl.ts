@@ -70,7 +70,7 @@ export const ingestImageUrlPipeline: Pipeline = {
           const { createImage } = vb.parse(CreateImageResult, input)
 
           const url = (await ctx.storage.getUrl(createImage.fileId)) as string
-          return await classifyImageContent(ctx, { url })
+          return await classifyImageContent({ url })
         }, 'ingestImageUrl.classification')
       },
     },
@@ -82,7 +82,7 @@ export const ingestImageUrlPipeline: Pipeline = {
           const { createImage } = vb.parse(CreateImageResult, input)
 
           const url = (await ctx.storage.getUrl(createImage.fileId)) as string
-          const { nsfwProbability } = await evaluateNsfwProbability(ctx, { url })
+          const { nsfwProbability } = await evaluateNsfwProbability({ url })
 
           await ctx.runMutation(internal.workflows.pipelines.ingestImageUrl.addImageDetails, {
             imageId: createImage.imageId,
@@ -101,7 +101,7 @@ export const ingestImageUrlPipeline: Pipeline = {
           const { createImage } = vb.parse(CreateImageResult, input)
 
           const url = (await ctx.storage.getUrl(createImage.fileId)) as string
-          const { caption, modelId } = await generateImageCaption(ctx, { url })
+          const { caption, modelId } = await generateImageCaption({ url })
 
           await ctx.runMutation(internal.workflows.pipelines.ingestImageUrl.addImageDetails, {
             imageId: createImage.imageId,

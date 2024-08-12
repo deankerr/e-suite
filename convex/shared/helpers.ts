@@ -2,13 +2,15 @@ import type { Doc } from '../_generated/dataModel'
 import type { EMessage, RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
 
 export function getMessageName(message: EMessage) {
+  if (message.name) return message.name
+
   const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
   if (textToAudioConfig) return 'elevenlabs sound generation'
   if (textToImageConfig) {
     const modelName = message.images[0]?.generationData?.modelName
     return modelName ?? textToImageConfig.resourceKey
   }
-  if (message.name) return message.name
+
   if (message.role === 'user') return 'You'
   return 'Assistant'
 }

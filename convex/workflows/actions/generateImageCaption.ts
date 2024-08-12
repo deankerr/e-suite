@@ -3,8 +3,6 @@ import * as vb from 'valibot'
 
 import { ENV } from '../../lib/env'
 
-import type { ActionCtx } from '../../_generated/server'
-
 falClient.config({
   credentials: ENV.FAL_API_KEY,
 })
@@ -15,7 +13,7 @@ const Response = vb.object({
   output: vb.string(),
 })
 
-export const generateImageCaption = async (ctx: ActionCtx, args: { url: string }) => {
+export const generateImageCaption = async (args: { url: string }) => {
   const response = await falClient.subscribe(modelId, {
     input: {
       image_url: args.url,
