@@ -1,3 +1,4 @@
+import { partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 import * as vb from 'valibot'
@@ -8,6 +9,7 @@ import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery } from '../functions'
 import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
+import { createJob } from '../workflows/jobs'
 
 import type { Ent, MutationCtx } from '../types'
 
@@ -27,7 +29,22 @@ export const createImage = internalMutation({
       uid: generateUid(Date.now()),
     })
 
+    const url = await ctx.storage.getUrl(args.fileId)
+    if (url) {
+      await createJob.generateImageMetadata(ctx, { imageId, url })
+    }
+
     return imageId
+  },
+})
+
+export const updateImage = internalMutation({
+  args: {
+    imageId: v.id('images'),
+    ...partial(imageFields),
+  },
+  handler: async (ctx, { imageId, ...args }) => {
+    return await ctx.table('images').getX(imageId).patch(args)
   },
 })
 

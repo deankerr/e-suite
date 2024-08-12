@@ -11,10 +11,6 @@ export const latestImages = query({
     const user = await ctx.viewerX()
     if (user.role !== 'admin') throw createError('Unauthorized', { code: 'unauthorized' })
 
-    return await ctx
-      .table('images')
-      .order('desc')
-      .filter((q) => q.neq(q.field('generationData'), undefined))
-      .paginate(args.paginationOpts)
+    return await ctx.table('images').order('desc').paginate(args.paginationOpts)
   },
 })

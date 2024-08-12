@@ -8,6 +8,7 @@ import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 import type { ChatPipelineInput } from './pipelines/chat'
 import type { EvaluateMessageUrlsPipelineInput } from './pipelines/evaluateMessageUrls'
+import type { GenerateImageMetadataPipelineInput } from './pipelines/generateImageMetadata'
 import type { GenerateThreadTitlePipelineInput } from './pipelines/generateThreadTitle'
 import type { IngestImageUrlPipelineInput } from './pipelines/ingestImageUrl'
 import type { TextToAudioPipelineInput } from './pipelines/textToAudio'
@@ -18,9 +19,15 @@ const register = async (
   {
     pipeline,
     input,
+    delay = 0,
   }: {
     pipeline: string
-    input: Record<string, unknown> & { messageId?: Id<'messages'>; threadId?: Id<'threads'> }
+    input: Record<string, unknown> & {
+      messageId?: Id<'messages'>
+      threadId?: Id<'threads'>
+      imageId?: Id<'images'>
+    }
+    delay?: number
   },
 ) => {
   const jobId = await ctx.table('jobs3').insert({
@@ -32,9 +39,10 @@ const register = async (
     input,
     messageId: input.messageId,
     threadId: input.threadId,
+    imageId: input.imageId,
   })
 
-  await ctx.scheduler.runAfter(0, internal.workflows.engine.executeStep, { jobId })
+  await ctx.scheduler.runAfter(delay, internal.workflows.engine.executeStep, { jobId })
   return jobId
 }
 
@@ -78,6 +86,18 @@ export const createJob = {
     return await register(ctx, {
       pipeline: 'textToImage',
       input,
+    })
+  },
+
+  generateImageMetadata: async (
+    ctx: MutationCtx,
+    input: GenerateImageMetadataPipelineInput,
+    delay = 0,
+  ) => {
+    return await register(ctx, {
+      pipeline: 'generateImageMetadata',
+      input,
+      delay,
     })
   },
 }

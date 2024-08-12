@@ -132,8 +132,25 @@ export const imageFields = {
   color: v.string(),
 
   nsfwProbability: v.optional(v.number()),
+  captionTitle: v.optional(v.string()),
   captionText: v.optional(v.string()), // main caption, searchable
   captionModelId: v.optional(v.string()),
+  objects: v.optional(
+    v.array(
+      v.object({
+        label: v.string(),
+        score: v.number(),
+        box: v.object({
+          xmin: v.number(),
+          ymin: v.number(),
+          xmax: v.number(),
+          ymax: v.number(),
+        }),
+      }),
+    ),
+  ),
+  objectsModelId: v.optional(v.string()),
+
   // alternate/regenerated captions
   captions: v.optional(
     v.array(
@@ -296,7 +313,7 @@ export const job3Fields = {
   status: literals('pending', 'active', 'completed', 'failed'),
   currentStep: v.number(),
 
-  input: v.any(), // NOTE runtime check
+  input: v.any(), // * runtime check
   output: v.optional(v.any()), // NOTE currently unused
 
   stepResults: v.array(
@@ -321,11 +338,13 @@ export const job3Fields = {
 
   messageId: v.optional(v.id('messages')),
   threadId: v.optional(v.id('threads')),
+  imageId: v.optional(v.id('images')),
 }
 const jobs3 = defineEnt(job3Fields)
   .index('status', ['status'])
   .index('threadId', ['threadId'])
   .index('messageId', ['messageId'])
+  .index('imageId', ['imageId'])
 
 // * Schema
 const schema = defineEntSchema(
