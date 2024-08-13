@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
-import { AlertDialog, Dialog, TextField } from '@radix-ui/themes'
+import { AlertDialog, Card, Dialog, DropdownMenu, TextField } from '@radix-ui/themes'
 import { useQueryState } from 'nuqs'
 
 import { Composer } from '@/components/composer/Composer'
@@ -29,6 +29,8 @@ export const ThreadPanel = () => {
   const actions = useThreadActions(thread?._id)
 
   const [showJson, setShowJson] = useState(false)
+  const [showEditTitleDialog, setShowEditTitleDialog] = useState(false)
+  const [showDeleteThreadDialog, setShowDeleteThreadDialog] = useState(false)
 
   if (thread === null) {
     return (
@@ -46,26 +48,29 @@ export const ThreadPanel = () => {
         <Panel.Title>{threadTitle}</Panel.Title>
         <div className="size-4" />
         <ThreadOwner>
-          <IconButton variant="ghost" color="gray" aria-label="More options" disabled>
-            <DotsThreeFillX width={20} height={20} />
-          </IconButton>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton variant="ghost" color="gray" aria-label="More options" disabled>
+                <DotsThreeFillX width={20} height={20} />
+              </IconButton>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Content variant="soft">
+              <DropdownMenu.Item onClick={() => setShowEditTitleDialog(true)}>
+                <Icons.Pencil /> Edit title
+              </DropdownMenu.Item>
+
+              <DropdownMenu.Item color="red" onClick={() => setShowDeleteThreadDialog(true)}>
+                <Icons.Trash />
+                Delete thread
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
 
           {/* TODO */}
           <IconButton variant="ghost" color="gray" aria-label="Favorite" disabled>
             <Icons.Star size={20} />
           </IconButton>
-
-          <EditThreadTitleDialog threadId={thread?._id ?? ''} currentTitle={threadTitle}>
-            <IconButton variant="ghost" color="gray" aria-label="Edit title">
-              <Icons.Pencil size={20} />
-            </IconButton>
-          </EditThreadTitleDialog>
-
-          <DeleteThreadDialog threadId={thread?._id ?? ''}>
-            <IconButton variant="ghost" color="gray" aria-label="Delete thread">
-              <Icons.Trash size={20} />
-            </IconButton>
-          </DeleteThreadDialog>
         </ThreadOwner>
       </Panel.Header>
 
@@ -77,17 +82,18 @@ export const ThreadPanel = () => {
           onValueChange={(value) => {
             setViewFilter(value || null)
           }}
+          className="pl-1"
         >
           <Toolbar.ToggleItem
             value="images"
             aria-label="View images"
-            className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
+            className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-grayA-3 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
           >
             <Icons.Images size={20} />
           </Toolbar.ToggleItem>
         </Toolbar.ToggleGroup>
 
-        <Toolbar.Separator className="mx-[10px] h-3/4 w-[1px] bg-grayA-3" />
+        <Toolbar.Separator className="mx-2 h-3/4 w-px bg-grayA-3" />
 
         <Toolbar.ToggleGroup
           type="single"
@@ -100,20 +106,20 @@ export const ThreadPanel = () => {
           <Toolbar.ToggleItem
             value="user"
             aria-label="View user messages"
-            className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
+            className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-grayA-3 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
           >
             <Icons.User size={20} />
           </Toolbar.ToggleItem>
           <Toolbar.ToggleItem
             value="assistant"
             aria-label="View assistant messages"
-            className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-accentA-3 hover:text-accentA-12 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
+            className="inline-flex size-8 items-center justify-center rounded-md text-grayA-11 hover:bg-grayA-3 data-[state=on]:bg-accentA-4 data-[state=on]:text-accentA-11"
           >
             <Icons.Robot size={20} />
           </Toolbar.ToggleItem>
         </Toolbar.ToggleGroup>
 
-        <Toolbar.Separator className="mx-[10px] h-3/4 w-[1px] bg-grayA-3" />
+        <Toolbar.Separator className="mx-2 h-3/4 w-px bg-grayA-3" />
 
         <div className="flex-start gap-2">
           <ThreadOwner>
@@ -162,6 +168,19 @@ export const ThreadPanel = () => {
           </ThreadOwner>
         )}
       </Panel.Footer>
+
+      <EditThreadTitleDialog
+        threadId={thread?._id ?? ''}
+        currentTitle={threadTitle}
+        open={showEditTitleDialog}
+        onOpenChange={setShowEditTitleDialog}
+      />
+
+      <DeleteThreadDialog
+        threadId={thread?._id ?? ''}
+        open={showDeleteThreadDialog}
+        onOpenChange={setShowDeleteThreadDialog}
+      />
     </Panel>
   )
 }
@@ -170,16 +189,16 @@ const EditThreadTitleDialog = ({
   threadId,
   currentTitle,
   children,
+  ...props
 }: {
   threadId: string
   currentTitle: string
-  children: React.ReactNode
-}) => {
+} & React.ComponentProps<typeof Dialog.Root>) => {
   const sendUpdateThread = useUpdateThread()
   const [title, setTitle] = useState(currentTitle)
   return (
-    <Dialog.Root>
-      <Dialog.Trigger>{children}</Dialog.Trigger>
+    <Dialog.Root {...props}>
+      {children ? <Dialog.Trigger>{children}</Dialog.Trigger> : null}
 
       <Dialog.Content maxWidth="450px">
         <Dialog.Title>Edit title</Dialog.Title>
@@ -216,15 +235,15 @@ const EditThreadTitleDialog = ({
 const DeleteThreadDialog = ({
   threadId,
   children,
+  ...props
 }: {
   threadId: string
-  children: React.ReactNode
-}) => {
+} & React.ComponentProps<typeof AlertDialog.Root>) => {
   const sendDeleteThread = useDeleteThread()
 
   return (
-    <AlertDialog.Root>
-      <AlertDialog.Trigger>{children}</AlertDialog.Trigger>
+    <AlertDialog.Root {...props}>
+      {children ? <AlertDialog.Trigger>{children}</AlertDialog.Trigger> : null}
 
       <AlertDialog.Content maxWidth="450px">
         <AlertDialog.Title>Delete Thread</AlertDialog.Title>
