@@ -132,17 +132,30 @@ export const imageFields = {
   color: v.string(),
 
   nsfwProbability: v.optional(v.number()),
-  captionText: v.optional(v.string()), // main caption, searchable
+
   captionModelId: v.optional(v.string()),
-  // alternate/regenerated captions
-  captions: v.optional(
+  captionTitle: v.optional(v.string()),
+  captionDescription: v.optional(v.string()),
+  captionOCR: v.optional(v.string()),
+  captionText: deprecated,
+
+  objects: v.optional(
     v.array(
       v.object({
-        text: v.optional(v.string()),
-        modelId: v.string(),
+        label: v.string(),
+        score: v.number(),
+        box: v.object({
+          xmin: v.number(),
+          ymin: v.number(),
+          xmax: v.number(),
+          ymax: v.number(),
+        }),
       }),
     ),
   ),
+  objectsModelId: v.optional(v.string()),
+
+  captions: deprecated,
 
   // inference parameter data - not present on eg. message images uploaded/linked by user
   generationData: v.optional(
@@ -153,6 +166,8 @@ export const imageFields = {
       endpointId: v.string(),
     }),
   ),
+
+  searchText: v.optional(v.string()),
 }
 const images = defineEnt(imageFields)
   .deletion('scheduled', {
@@ -296,7 +311,7 @@ export const job3Fields = {
   status: literals('pending', 'active', 'completed', 'failed'),
   currentStep: v.number(),
 
-  input: v.any(), // NOTE runtime check
+  input: v.any(), // * runtime check
   output: v.optional(v.any()), // NOTE currently unused
 
   stepResults: v.array(
@@ -321,11 +336,13 @@ export const job3Fields = {
 
   messageId: v.optional(v.id('messages')),
   threadId: v.optional(v.id('threads')),
+  imageId: v.optional(v.id('images')),
 }
 const jobs3 = defineEnt(job3Fields)
   .index('status', ['status'])
   .index('threadId', ['threadId'])
   .index('messageId', ['messageId'])
+  .index('imageId', ['imageId'])
 
 // * Schema
 const schema = defineEntSchema(

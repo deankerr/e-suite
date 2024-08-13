@@ -14,7 +14,7 @@ export const latestImages = query({
     return await ctx
       .table('images')
       .order('desc')
-      .filter((q) => q.neq(q.field('generationData'), undefined))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
   },
 })

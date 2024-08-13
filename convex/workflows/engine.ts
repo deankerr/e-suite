@@ -6,6 +6,7 @@ import { stringifyValueForError } from '../shared/utils'
 import { WorkflowError } from './helpers'
 import { chatPipeline } from './pipelines/chat'
 import { evaluateMessageUrlsPipeline } from './pipelines/evaluateMessageUrls'
+import { generateImageMetadataPipeline } from './pipelines/generateImageMetadata'
 import { generateThreadTitlePipeline } from './pipelines/generateThreadTitle'
 import { ingestImageUrlPipeline } from './pipelines/ingestImageUrl'
 import { textToAudioPipeline } from './pipelines/textToAudio'
@@ -20,6 +21,7 @@ const pipelines = {
   ingestImageUrl: ingestImageUrlPipeline,
   textToAudio: textToAudioPipeline,
   textToImage: textToImagePipeline,
+  generateImageMetadata: generateImageMetadataPipeline,
 }
 
 export const executeStep = internalAction({
