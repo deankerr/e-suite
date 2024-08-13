@@ -9,9 +9,9 @@ export const imageSearchableFields = migration({
   table: 'images',
   migrateOne: async (ctx, doc) => {
     await ctx.db.patch(doc._id, {
-      captionText: undefined,
-      captions: undefined,
-      searchText: '',
+      // captionText: undefined,
+      // captions: undefined,
+      // searchText: '',
     })
   },
 })

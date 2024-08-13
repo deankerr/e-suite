@@ -137,7 +137,6 @@ export const imageFields = {
   captionTitle: v.optional(v.string()),
   captionDescription: v.optional(v.string()),
   captionOCR: v.optional(v.string()),
-  captionText: deprecated,
 
   objects: v.optional(
     v.array(
@@ -155,9 +154,6 @@ export const imageFields = {
   ),
   objectsModelId: v.optional(v.string()),
 
-  captions: deprecated,
-
-  // inference parameter data - not present on eg. message images uploaded/linked by user
   generationData: v.optional(
     v.object({
       prompt: v.string(),
@@ -167,7 +163,7 @@ export const imageFields = {
     }),
   ),
 
-  searchText: v.optional(v.string()),
+  searchText: v.string(),
 }
 const images = defineEnt(imageFields)
   .deletion('scheduled', {
@@ -178,7 +174,10 @@ const images = defineEnt(imageFields)
   .edge('thread')
   .edge('user')
   .index('sourceUrl', ['sourceUrl'])
-  .index('threadId_sourceType', ['threadId', 'sourceType'])
+  .searchIndex('searchText', {
+    searchField: 'searchText',
+    filterFields: ['threadId', 'userId'],
+  })
 
 // * audio
 export const audioFields = {
@@ -238,7 +237,6 @@ export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
   latestRunConfig: v.optional(v.union(runConfigChatV, runConfigTextToImageV)),
-  inference: deprecated,
 
   voiceovers: v.optional(
     v.object({
