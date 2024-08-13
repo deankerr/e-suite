@@ -6,7 +6,7 @@ import { ModelLogo } from '@/components/icons/ModelLogo'
 import { useModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EModel } from '@/convex/types'
+import type { EChatModel, EImageModel } from '@/convex/types'
 
 export const ModelPickerCmd = ({
   type,
@@ -39,7 +39,7 @@ export const ModelPickerCmd = ({
         aria-describedby={undefined}
       >
         <Dialog.Title className="sr-only">Model Picker</Dialog.Title>
-        <CmdK tabIndex={0} className="bg-gray-3">
+        <CmdK tabIndex={0} className="bg-gray-2">
           <CmdK.Input placeholder="Search models..." />
           <CmdK.List>
             <CmdK.Empty>No models found</CmdK.Empty>
@@ -91,13 +91,14 @@ const ModelItem = ({
   model,
   className,
   ...props
-}: { model: EModel } & React.ComponentProps<typeof CmdK.Item>) => {
+}: { model: EChatModel | EImageModel } & React.ComponentProps<typeof CmdK.Item>) => {
   return (
-    <CmdK.Item {...props} className={cn('aria-selected:text-accent-11', className)}>
+    <CmdK.Item {...props} className={cn('font-medium aria-selected:text-orange-11', className)}>
       <div className="mr-2 shrink-0">
         <ModelLogo modelName={model.name} size={20} />
       </div>
       <div className="truncate">{model.name}</div>
+      <div className="ml-auto shrink-0 text-xs text-gray-11">{model.endpoint}</div>
     </CmdK.Item>
   )
 }
