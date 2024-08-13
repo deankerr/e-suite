@@ -7,20 +7,13 @@ import Link from 'next/link'
 import { sidebarOpenAtom } from '@/components/layout/atoms'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { UserButtons } from '@/components/layout/UserButtons'
+import { NavLink } from '@/components/navigation/NavLink'
 import { ThreadsList } from '@/components/navigation/ThreadsList'
 import { AppTitle } from '@/components/ui/AppTitle'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { appConfig } from '@/config/config'
 import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
-
-const linkClassNames = cn(
-  'rounded border border-transparent text-sm font-medium opacity-90',
-  'flex gap-2 py-2 px-2',
-  'hover:bg-gray-2',
-)
-
-const activeLinkClassNames = 'bg-gray-2 border-grayA-5 opacity-100'
 
 export const Navigation = () => {
   const [isSidebarOpen, toggleSidebar] = useAtom(sidebarOpenAtom)
@@ -59,13 +52,10 @@ export const Navigation = () => {
 
         {/* * threads * */}
         <div className="px-1 py-1">
-          <Link
-            href={`${appConfig.threadUrl}/new`}
-            className={cn(linkClassNames, path.slug === 'new' && activeLinkClassNames)}
-          >
-            <Icons.NotePencil className="size-5 shrink-0 text-accentA-11" />
-            New
-          </Link>
+          <NavLink href={path.toThread('new')} aria-current={path.slug === 'new' && 'page'}>
+            <Icons.NotePencil size={18} className="text-accentA-11" />
+            New thread
+          </NavLink>
         </div>
         <ThreadsList />
 
