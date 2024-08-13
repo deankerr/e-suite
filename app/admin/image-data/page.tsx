@@ -18,8 +18,12 @@ export default function Page() {
         {imagesQuery.results.map((image) => (
           <div key={image._id} className="grid grid-cols-2 gap-2">
             <ImageCard image={image} imageProps={{ sizes: '50vw' }} className="" />
-            <div className="divide-y p-2 [&>div]:p-2">
-              <div className="font-mono text-xs">{image._id}</div>
+
+            <div className="divide-y [&>div]:p-2">
+              <div className="font-mono text-xs" style={{ backgroundColor: image.color }}>
+                {image._id}
+              </div>
+
               {image.generationData && (
                 <>
                   <div>prompt: {image.generationData?.prompt}</div>
@@ -36,7 +40,25 @@ export default function Page() {
                 <DataItem label="captionText" value={image.captionText} />
               </div>
 
-              {/* <pre className="font-mono text-xs">{JSON.stringify(image, null, 2)}</pre> */}
+              {image.objects ? (
+                <div className="">
+                  <div className="">
+                    Objects detected{' '}
+                    <span className="font-mono text-gray-11">{image.objectsModelId}</span>
+                  </div>
+                  <div className="columns-3 text-sm">
+                    {image.objects
+                      .filter((obj) => obj.score >= 0.1)
+                      .map((obj, i) => (
+                        <div key={i}>
+                          <DataItem label={obj.label} value={obj.score.toFixed(2)} />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <pre className="font-mono text-xs">{JSON.stringify(image, null, 2)}</pre>
             </div>
           </div>
         ))}

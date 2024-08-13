@@ -33,7 +33,11 @@ export const classifyImageObjects = async (args: { url: string }) => {
       })
       .json()
 
-    return vb.parse(Response, response)
+    const result = vb.parse(Response, response)
+    return {
+      ...result,
+      objects: result.objects.filter((obj) => obj.score >= 0.3).slice(0, 12),
+    }
   } catch (err) {
     console.error(err)
     return { error: getErrorMessage(err) }
