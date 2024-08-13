@@ -253,6 +253,7 @@ export const threadFields = {
   ),
 
   updatedAtTime: v.number(),
+  favorite: v.optional(v.boolean()),
   metadata: v.optional(kvListV),
 }
 const threads = defineEnt(threadFields)

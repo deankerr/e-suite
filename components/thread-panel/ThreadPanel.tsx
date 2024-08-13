@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Toolbar from '@radix-ui/react-toolbar'
-import { AlertDialog, Card, Dialog, DropdownMenu, TextField } from '@radix-ui/themes'
+import { AlertDialog, Dialog, DropdownMenu, TextField } from '@radix-ui/themes'
 import { useQueryState } from 'nuqs'
 
 import { Composer } from '@/components/composer/Composer'
@@ -67,10 +67,7 @@ export const ThreadPanel = () => {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
 
-          {/* TODO */}
-          <IconButton variant="ghost" color="gray" aria-label="Favorite" disabled>
-            <Icons.Star size={20} />
-          </IconButton>
+          <FavoriteThreadButton threadId={thread?._id ?? ''} favorite={thread?.favorite ?? false} />
         </ThreadOwner>
       </Panel.Header>
 
@@ -182,6 +179,21 @@ export const ThreadPanel = () => {
         onOpenChange={setShowDeleteThreadDialog}
       />
     </Panel>
+  )
+}
+
+const FavoriteThreadButton = ({ threadId, favorite }: { threadId: string; favorite: boolean }) => {
+  const sendUpdateThread = useUpdateThread()
+
+  return (
+    <IconButton
+      aria-label={favorite ? 'Unfavorite thread' : 'Favorite thread'}
+      variant="ghost"
+      color={favorite ? 'orange' : 'gray'}
+      onClick={() => sendUpdateThread({ threadId, fields: { favorite: !favorite } })}
+    >
+      <Icons.Star size={20} weight={favorite ? 'fill' : 'regular'} />
+    </IconButton>
   )
 }
 
