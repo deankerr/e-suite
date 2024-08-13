@@ -70,7 +70,7 @@ export const ImageCard = ({
         )}
         onClick={() => setShowCaption((prev) => !prev)}
       >
-        {image.captionText}
+        {image.captionDescription}
       </div>
     </Card>
   )
