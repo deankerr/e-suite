@@ -1,5 +1,5 @@
-import type { Doc, Id, TableNames } from './_generated/dataModel'
-import type { getMessageEdges } from './db/messages'
+import type { Id, TableNames } from './_generated/dataModel'
+import type { getMessageEdges, getMessageImages } from './db/messages'
 import type {
   getChatModelByResourceKey,
   getImageModelByResourceKey,
@@ -32,7 +32,7 @@ export type EThread = Omit<Awaited<ReturnType<typeof getThreadEdges>>, '_id' | '
   userId: string
 }
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
-export type EImage = Doc<'images'>
+export type EImage = Awaited<ReturnType<typeof getMessageImages>>[number]
 export type EUser = Awaited<ReturnType<typeof getViewer>>
 
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
