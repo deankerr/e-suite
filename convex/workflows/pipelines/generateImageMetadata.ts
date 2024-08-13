@@ -1,7 +1,7 @@
 import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
-import { classifyImageContent } from '../actions/classifyImageContent'
+import { classifyImageObjects } from '../actions/classifyImageObjects'
 import { evaluateNsfwProbability } from '../actions/evaluateNsfwProbability'
 import { generateImageMetadata } from '../actions/generateImageMetadata'
 import { jobErrorHandling } from '../helpers'
@@ -55,13 +55,21 @@ export const generateImageMetadataPipeline: Pipeline = {
             initial: { imageId, url },
           } = vb.parse(vb.object({ initial: InitialInput }), input)
 
-          const { object } = await classifyImageContent({ url })
+          const result = await classifyImageObjects({ url })
+
+          if ('error' in result) {
+            return { error: result.error }
+          }
+
+          const { objects, modelId } = result
+
           await ctx.runMutation(internal.db.images.updateImage, {
             imageId,
-            objects: object.results,
-            objectsModelId: object.modelId,
+            objects,
+            objectsModelId: modelId,
           })
-          return object
+
+          return { objects, objectsModelId: modelId }
         }, 'generateImageMetadata.objects')
       },
     },

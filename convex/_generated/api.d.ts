@@ -47,7 +47,7 @@ import type * as shared_helpers from "../shared/helpers.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
-import type * as workflows_actions_classifyImageContent from "../workflows/actions/classifyImageContent.js";
+import type * as workflows_actions_classifyImageObjects from "../workflows/actions/classifyImageObjects.js";
 import type * as workflows_actions_evaluateNsfwProbability from "../workflows/actions/evaluateNsfwProbability.js";
 import type * as workflows_actions_generateImageCaption from "../workflows/actions/generateImageCaption.js";
 import type * as workflows_actions_generateImageMetadata from "../workflows/actions/generateImageMetadata.js";
@@ -107,7 +107,7 @@ declare const fullApi: ApiFromModules<{
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;
-  "workflows/actions/classifyImageContent": typeof workflows_actions_classifyImageContent;
+  "workflows/actions/classifyImageObjects": typeof workflows_actions_classifyImageObjects;
   "workflows/actions/evaluateNsfwProbability": typeof workflows_actions_evaluateNsfwProbability;
   "workflows/actions/generateImageCaption": typeof workflows_actions_generateImageCaption;
   "workflows/actions/generateImageMetadata": typeof workflows_actions_generateImageMetadata;
