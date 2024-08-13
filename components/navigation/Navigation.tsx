@@ -1,17 +1,19 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
+import { Authenticated } from 'convex/react'
 import { useAtom } from 'jotai'
 import Link from 'next/link'
 
 import { sidebarOpenAtom } from '@/components/layout/atoms'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { UserButtons } from '@/components/layout/UserButtons'
+import { NavGroup } from '@/components/navigation/NavGroup'
 import { NavLink } from '@/components/navigation/NavLink'
-import { ThreadsList } from '@/components/navigation/ThreadsList'
 import { AppTitle } from '@/components/ui/AppTitle'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { appConfig } from '@/config/config'
+import { useThreads } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +21,9 @@ export const Navigation = () => {
   const [isSidebarOpen, toggleSidebar] = useAtom(sidebarOpenAtom)
   const path = useSuitePath()
   const isBlankPage = !path.slug
+
+  const { threadsList } = useThreads()
+  const favorites = threadsList?.filter((thread) => thread.favorite && thread.userIsViewer) ?? []
 
   return (
     <>
@@ -31,7 +36,7 @@ export const Navigation = () => {
 
       <nav
         className={cn(
-          'flex w-60 shrink-0 flex-col gap-1 rounded-md border border-gray-5 bg-gray-1',
+          'flex w-60 shrink-0 flex-col gap-1 overflow-hidden rounded-md border border-gray-5 bg-gray-1',
           'fixed left-1.5 top-1.5 z-10 h-[calc(100dvh-0.75rem)] transition-transform',
           isSidebarOpen || isBlankPage
             ? '-translate-x-0'
@@ -50,14 +55,42 @@ export const Navigation = () => {
           </div>
         </div>
 
-        {/* * threads * */}
-        <div className="px-1 py-1">
-          <NavLink href={path.toThread('new')} aria-current={path.slug === 'new' && 'page'}>
-            <Icons.NotePencil size={18} className="text-accentA-11" />
-            New thread
-          </NavLink>
-        </div>
-        <ThreadsList />
+        <Authenticated>
+          <div className="px-1 py-1">
+            <NavLink href={path.toThread('new')} aria-current={path.slug === 'new' && 'page'}>
+              <Icons.NotePencil size={18} className="text-accentA-11" />
+              New thread
+            </NavLink>
+          </div>
+        </Authenticated>
+
+        <NavGroup heading="Favorites" hidden={favorites.length === 0}>
+          {favorites.map((thread) => (
+            <NavLink
+              key={thread._id}
+              href={path.toThread(thread.slug)}
+              aria-current={path.slug === thread.slug && 'page'}
+            >
+              <ThreadIcon type={thread.latestRunConfig?.type} />
+              <div className="line-clamp-2 select-none">{thread.title ?? 'Untitled'}</div>
+            </NavLink>
+          ))}
+        </NavGroup>
+
+        <NavGroup heading="Threads" hidden={threadsList?.length === 0}>
+          {threadsList
+            ?.filter((thread) => !favorites.includes(thread) && thread.slug !== 'new')
+            .map((thread) => (
+              <NavLink
+                key={thread._id}
+                href={path.toThread(thread.slug)}
+                aria-current={path.slug === thread.slug && 'page'}
+              >
+                <ThreadIcon type={thread.latestRunConfig?.type} />
+                <div className="line-clamp-2 select-none">{thread.title ?? 'Untitled'}</div>
+              </NavLink>
+            ))}
+        </NavGroup>
 
         <div className="grow" />
         {/* * footer * */}
@@ -72,4 +105,15 @@ export const Navigation = () => {
       </nav>
     </>
   )
+}
+
+const ThreadIcon = ({ type = '' }: { type?: string }) => {
+  switch (type) {
+    case 'chat':
+      return <Icons.Chat size={18} className="text-accentA-11" />
+    case 'textToImage':
+      return <Icons.Images size={18} className="text-accentA-11" />
+    default:
+      return <Icons.NotePencil size={18} className="text-accentA-11" />
+  }
 }

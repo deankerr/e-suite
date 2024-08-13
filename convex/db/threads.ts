@@ -18,7 +18,7 @@ import {
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
-import { getUserPublic } from './users'
+import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Doc, Id } from '../_generated/dataModel'
 import type {
@@ -85,6 +85,7 @@ export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   return {
     ...thread,
     user: await getUserPublic(ctx, thread.userId),
+    userIsViewer: getUserIsViewer(ctx, thread.userId),
   }
 }
 
@@ -100,6 +101,7 @@ const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
     _creationTime: Date.now(),
     updatedAtTime: Date.now(),
     userId: user._id,
+    userIsViewer: true,
     user,
   }
 }
