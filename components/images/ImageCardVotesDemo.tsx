@@ -101,11 +101,11 @@ const CaptionPanel = ({
       </div>
       <div className="my-1 grow overflow-y-auto text-sm">
         {/* {image.captionText?.concat(' ').repeat(20)} */}
-        {!image.captionModelId && !image.captionText && (
+        {/* {!image.captionModelId && !image.captionText && (
           <span className="italic">No caption available</span>
-        )}
-        {image.captionModelId && !image.captionText && <LoadingSpinner className="size-4" />}
-        {image.captionText}
+        )} */}
+        {/* {image.captionModelId && !image.captionText && <LoadingSpinner className="size-4" />} */}
+        {/* {image.captionText} */}
       </div>
 
       <div className="flex shrink-0 items-center justify-between gap-2 border-t border-grayA-6 pt-1 font-mono text-xs text-gray-11">

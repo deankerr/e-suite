@@ -96,7 +96,7 @@ const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>) => 
   }
 }
 
-export const getImage = internalQuery({
+export const get = internalQuery({
   args: {
     imageId: v.string(),
   },
@@ -107,7 +107,7 @@ export const getImage = internalQuery({
   },
 })
 
-export const getImageByUid = internalQuery({
+export const getByUid = internalQuery({
   args: {
     uid: v.string(),
   },
@@ -121,7 +121,7 @@ export const getImageByUid = internalQuery({
 export const serve = httpAction(async (ctx, request) => {
   const [uid] = parseUrlToUid(request.url)
   const image = uid
-    ? await ctx.runQuery(internal.db.images.getImageByUid, {
+    ? await ctx.runQuery(internal.db.images.getByUid, {
         uid,
       })
     : null

@@ -48,7 +48,6 @@ export const Message = ({
   withText?: string
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
-  const isOwner = message.user?.isViewer ?? false
 
   const name = getMessageName(message) || message.role
   const text = getMessageText(message)
@@ -62,7 +61,7 @@ export const Message = ({
   const messageId = message._id
   const dropdownMenu = useMemo(
     () =>
-      isOwner ? (
+      message.userIsViewer ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" color="gray" aria-label="More">
@@ -84,7 +83,7 @@ export const Message = ({
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : null,
-    [deepLinkUrl, deleteMessage, isOwner, messageId, router, showEditor, showJson],
+    [deepLinkUrl, deleteMessage, message.userIsViewer, messageId, router, showEditor, showJson],
   )
 
   return (

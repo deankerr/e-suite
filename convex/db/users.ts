@@ -16,3 +16,7 @@ export const getUserPublic = async (ctx: QueryCtx, userId: Id<'users'>) => {
   const isViewer = ctx.viewerId === user._id
   return { ...omit(user, ['tokenIdentifier', 'runConfigs']), isViewer }
 }
+
+export const getUserIsViewer = (ctx: QueryCtx, userId: Id<'users'>) => {
+  return ctx.viewerId ? ctx.viewerId === userId : false
+}

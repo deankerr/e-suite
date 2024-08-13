@@ -59,10 +59,6 @@ export default function Page() {
                 </div>
               ) : null}
 
-              <div>
-                <DataItem label="searchText" value={image.searchText} />
-              </div>
-
               <pre className="font-mono text-xs">{JSON.stringify(image, null, 2)}</pre>
             </div>
           </div>

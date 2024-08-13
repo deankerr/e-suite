@@ -1,10 +1,10 @@
-import { pick } from 'convex-helpers'
+import { omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation } from '../functions'
 import { messageFields } from '../schema'
-import { getUserPublic } from './users'
+import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
@@ -43,6 +43,10 @@ export const getMessageImages = async (ctx: QueryCtx, messageId: Id<'messages'>)
   const images = await ctx
     .table('images', 'messageId', (q) => q.eq('messageId', messageId))
     .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .map((image) => ({
+      ...omit(image, ['fileId', 'searchText']),
+      userIsViewer: getUserIsViewer(ctx, image.userId),
+    }))
   return images
 }
 
@@ -52,7 +56,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
     jobs: await getMessageJobs(ctx, message._id),
     images: await getMessageImages(ctx, message._id),
     audio: await getMessageAudio(ctx, message._id),
-    user: await getUserPublic(ctx, message.userId),
+    userIsViewer: getUserIsViewer(ctx, message.userId),
   }
 }
 
