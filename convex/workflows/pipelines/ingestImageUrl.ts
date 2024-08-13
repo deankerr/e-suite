@@ -36,6 +36,7 @@ export const ingestImageUrlPipeline: Pipeline = {
           const imageId = await ctx.runMutation(internal.db.images.createImage, {
             fileId,
             ...metadata,
+            searchText: '',
             sourceUrl: url,
             messageId,
           })

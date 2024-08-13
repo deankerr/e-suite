@@ -11,6 +11,7 @@ import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
 import { createJob } from '../workflows/jobs'
 
+import type { Doc } from '../_generated/dataModel'
 import type { Ent, MutationCtx } from '../types'
 
 export const createImage = internalMutation({
@@ -25,6 +26,7 @@ export const createImage = internalMutation({
       ...args,
       userId: message.userId,
       threadId: message.threadId,
+      searchText: buildSearchText(args),
       generationData: await getGenerationData(ctx, message),
       uid: generateUid(Date.now()),
     })
@@ -44,9 +46,33 @@ export const updateImage = internalMutation({
     ...partial(imageFields),
   },
   handler: async (ctx, { imageId, ...args }) => {
-    return await ctx.table('images').getX(imageId).patch(args)
+    const image = await ctx.table('images').getX(imageId)
+    const searchText = buildSearchText({ ...image, ...args })
+    return await ctx
+      .table('images')
+      .getX(imageId)
+      .patch({ ...args, searchText })
   },
 })
+
+const buildSearchText = (fields: Partial<Doc<'images'>>) => {
+  let searchText = ''
+
+  if (fields.captionTitle) {
+    searchText += fields.captionTitle + ' '
+  }
+  if (fields.captionDescription) {
+    searchText += fields.captionDescription + ' '
+  }
+  if (fields.captionOCR) {
+    searchText += fields.captionOCR + ' '
+  }
+  if (fields.objects) {
+    const set = new Set(fields.objects.map((obj) => obj.label))
+    searchText += Array.from(set).join(' ')
+  }
+  return searchText
+}
 
 const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>) => {
   const jobs = await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', message._id))

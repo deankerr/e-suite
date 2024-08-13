@@ -132,9 +132,13 @@ export const imageFields = {
   color: v.string(),
 
   nsfwProbability: v.optional(v.number()),
-  captionTitle: v.optional(v.string()),
-  captionText: v.optional(v.string()), // main caption, searchable
+
   captionModelId: v.optional(v.string()),
+  captionTitle: v.optional(v.string()),
+  captionDescription: v.optional(v.string()),
+  captionOCR: v.optional(v.string()),
+  captionText: deprecated,
+
   objects: v.optional(
     v.array(
       v.object({
@@ -151,15 +155,7 @@ export const imageFields = {
   ),
   objectsModelId: v.optional(v.string()),
 
-  // alternate/regenerated captions
-  captions: v.optional(
-    v.array(
-      v.object({
-        text: v.optional(v.string()),
-        modelId: v.string(),
-      }),
-    ),
-  ),
+  captions: deprecated,
 
   // inference parameter data - not present on eg. message images uploaded/linked by user
   generationData: v.optional(
@@ -170,6 +166,8 @@ export const imageFields = {
       endpointId: v.string(),
     }),
   ),
+
+  searchText: v.optional(v.string()),
 }
 const images = defineEnt(imageFields)
   .deletion('scheduled', {

@@ -33,12 +33,13 @@ export const generateImageMetadataPipeline: Pipeline = {
           } = vb.parse(vb.object({ initial: InitialInput }), input)
 
           const result = await generateImageMetadata({ url })
-          const { title, description } = result.object.image
+          const { title, description, text } = result.object.image
 
           await ctx.runMutation(internal.db.images.updateImage, {
             imageId,
             captionTitle: title,
-            captionText: description,
+            captionDescription: description,
+            captionOCR: text.length > 0 ? text.join('\n') : undefined,
             captionModelId: 'gpt-4o-mini',
           })
 

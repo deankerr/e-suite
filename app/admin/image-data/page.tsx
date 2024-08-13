@@ -13,11 +13,11 @@ export default function Page() {
   const imagesQuery = usePaginatedQuery(api.db.admin.see.latestImages, {}, { initialNumItems: 50 })
 
   return (
-    <AdminPageWrapper className="">
+    <AdminPageWrapper>
       <div className="space-y-4">
         {imagesQuery.results.map((image) => (
           <div key={image._id} className="grid grid-cols-2 gap-2">
-            <ImageCard image={image} imageProps={{ sizes: '50vw' }} className="" />
+            <ImageCard image={image} imageProps={{ sizes: '50vw' }} />
 
             <div className="divide-y [&>div]:p-2">
               <div className="font-mono text-xs" style={{ backgroundColor: image.color }}>
@@ -37,12 +37,13 @@ export default function Page() {
               <div>
                 <DataItem label="captionModelId" value={image.captionModelId} />
                 <DataItem label="captionTitle" value={image.captionTitle} />
-                <DataItem label="captionText" value={image.captionText} />
+                <DataItem label="captionDescription" value={image.captionDescription} />
+                <DataItem label="captionOCR" value={image.captionOCR} />
               </div>
 
               {image.objects ? (
-                <div className="">
-                  <div className="">
+                <div>
+                  <div>
                     Objects detected{' '}
                     <span className="font-mono text-gray-11">{image.objectsModelId}</span>
                   </div>
@@ -57,6 +58,10 @@ export default function Page() {
                   </div>
                 </div>
               ) : null}
+
+              <div>
+                <DataItem label="searchText" value={image.searchText} />
+              </div>
 
               <pre className="font-mono text-xs">{JSON.stringify(image, null, 2)}</pre>
             </div>
