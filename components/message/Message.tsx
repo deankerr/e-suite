@@ -16,7 +16,7 @@ import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Pre } from '@/components/util/Pre'
-import { extractJobsDetails, getMessageName, getMessageText } from '@/convex/shared/helpers'
+import { getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -49,7 +49,6 @@ export const Message = ({
 } & React.ComponentProps<'div'>) => {
   const router = useRouter()
   const isOwner = message.user?.isViewer ?? false
-  const jobs = extractJobsDetails(message.jobs)
 
   const name = getMessageName(message) || message.role
   const text = getMessageText(message)
@@ -150,15 +149,17 @@ export const Message = ({
         )}
 
         {/* => errors * */}
-        {jobs.failedJobErrors.map(({ code, message }, i) => (
-          <ErrorCallout
-            key={i}
-            title={code}
-            message={message}
-            size="1"
-            className="mx-auto mb-1 max-w-xl"
-          />
-        ))}
+        {message.jobs.map(({ error }, i) =>
+          error ? (
+            <ErrorCallout
+              key={i}
+              title={error.code}
+              message={error.message}
+              size="1"
+              className="mx-auto mb-1 max-w-xl"
+            />
+          ) : null,
+        )}
 
         {/* => images  */}
         <Gallery message={message} priority={priority} />
@@ -179,7 +180,8 @@ export const Message = ({
         ) : null}
 
         {/* => loading ping  */}
-        {jobs.active.length > 0 && (
+        {message.jobs.filter((job) => job.status === 'active' || job.status === 'pending').length >
+          0 && (
           <div className="col-start-2">
             <LoadingSpinner variant="ping" />
           </div>

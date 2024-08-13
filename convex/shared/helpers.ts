@@ -1,4 +1,3 @@
-import type { Doc } from '../_generated/dataModel'
 import type { EMessage, RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
 
 export function getMessageName(message: EMessage) {
@@ -40,16 +39,16 @@ export const getMaxQuantityForModel = (resourceKey: string) => {
 }
 
 const runConfigNames = ['chat', 'textToImage', 'textToAudio'] as const
-export function extractRunConfig(jobs: Doc<'jobs3'>[]): {
+export function extractRunConfig(jobs: EMessage['jobs']): {
   chatConfig: RunConfigChat | null
   textToImageConfig: RunConfigTextToImage | null
   textToAudioConfig: RunConfigTextToAudio | null
 } {
-  const relevantJob = jobs.find((job) =>
-    runConfigNames.includes(job.pipeline as (typeof runConfigNames)[number]),
+  const runConfigJob = jobs.find((job) =>
+    runConfigNames.includes(job.name as (typeof runConfigNames)[number]),
   )
 
-  if (!relevantJob || typeof relevantJob.input !== 'object') {
+  if (!runConfigJob || typeof runConfigJob.input !== 'object') {
     return {
       chatConfig: null,
       textToImageConfig: null,
@@ -57,24 +56,24 @@ export function extractRunConfig(jobs: Doc<'jobs3'>[]): {
     }
   }
 
-  switch (relevantJob.pipeline) {
+  switch (runConfigJob.name) {
     case 'chat':
       return {
-        chatConfig: relevantJob.input as RunConfigChat,
+        chatConfig: runConfigJob.input as RunConfigChat,
         textToImageConfig: null,
         textToAudioConfig: null,
       }
     case 'textToImage':
       return {
         chatConfig: null,
-        textToImageConfig: relevantJob.input as RunConfigTextToImage,
+        textToImageConfig: runConfigJob.input as RunConfigTextToImage,
         textToAudioConfig: null,
       }
     case 'textToAudio':
       return {
         chatConfig: null,
         textToImageConfig: null,
-        textToAudioConfig: relevantJob.input as RunConfigTextToAudio,
+        textToAudioConfig: runConfigJob.input as RunConfigTextToAudio,
       }
     default:
       return {
@@ -83,16 +82,6 @@ export function extractRunConfig(jobs: Doc<'jobs3'>[]): {
         textToAudioConfig: null,
       }
   }
-}
-
-export function extractJobsDetails(jobs: Doc<'jobs3'>[]) {
-  const active = jobs.filter((job) => job.status === 'active' || job.status === 'pending')
-  const failed = jobs.filter((job) => job.status === 'failed')
-  const failedJobErrors = failed
-    .map((job) => job.stepResults.at(-1)?.error)
-    .filter((err) => err !== undefined)
-
-  return { active, failed, failedJobErrors }
 }
 
 export function isValidUrl(url: string) {

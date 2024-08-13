@@ -1,7 +1,7 @@
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
-import { extractJobsDetails, extractRunConfig } from '@/convex/shared/helpers'
+import { extractRunConfig } from '@/convex/shared/helpers'
 
 import type { EMessage } from '@/convex/types'
 
@@ -15,8 +15,7 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
     blurDataURL: image.blurDataUrl,
   }))
 
-  const jobs = extractJobsDetails(message.jobs)
-  const hasFailedJobs = jobs.failed.length > 0
+  const hasFailedJobs = message.jobs.filter((job) => job.error !== undefined).length > 0
 
   const { textToImageConfig } = extractRunConfig(message.jobs)
   const numExpectedImages = hasFailedJobs ? 0 : (textToImageConfig?.n ?? 0)

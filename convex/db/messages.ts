@@ -1,3 +1,4 @@
+import { pick } from 'convex-helpers'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
@@ -14,7 +15,16 @@ export const getMessage = async (ctx: QueryCtx, messageId: string) => {
 }
 
 export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
-  const jobs = await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', messageId))
+  const jobs = await ctx
+    .table('jobs3', 'messageId', (q) => q.eq('messageId', messageId))
+    .map(async (job) => {
+      const fields = pick(job, ['_id', '_creationTime', 'updatedAt', 'status', 'input'])
+      return {
+        ...fields,
+        name: job.pipeline,
+        error: job.status === 'failed' ? job.stepResults.at(-1)?.error : undefined,
+      }
+    })
   return jobs
 }
 
