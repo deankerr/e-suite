@@ -31,6 +31,7 @@ import type {
   RunConfigChat,
   RunConfigTextToAudio,
   RunConfigTextToImage,
+  ThreadActionResult,
 } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
 
@@ -62,15 +63,6 @@ const getMessageBySeries = async (
   if (!messageEnt || messageEnt?.deletionTime) return null
 
   return await getMessageEdges(ctx, messageEnt)
-}
-
-const getUserThread = async (ctx: MutationCtx, threadId: string) => {
-  const user = await ctx.viewerX()
-  const id = ctx.table('threads').normalizeId(threadId)
-  const thread = id ? await ctx.table('threads').getX(id) : null
-
-  if (thread?.userId !== user._id || thread.deletionTime) return null
-  return thread
 }
 
 export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
@@ -335,14 +327,16 @@ export const remove = mutation({
 const defaultConfigs = [
   {
     name: 'sound generation',
-    runConfig: {
-      type: 'textToAudio',
-      resourceKey: 'elevenlabs::sound-generation',
-      prompt: '',
-    },
+    runConfig: [
+      {
+        type: 'textToAudio' as const,
+        resourceKey: 'elevenlabs::sound-generation',
+        prompt: '',
+      },
+    ],
     keyword: '@sfx',
   },
-] as const
+]
 
 export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) => {
   if (!text) return null
@@ -367,8 +361,11 @@ export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) 
     .map((conf) => {
       const match = conf.keyword ? getMatch(conf.keyword) : null
       if (match) {
-        console.log('matched config keyword', match.keyword, conf.name)
-        if ('prompt' in conf.runConfig) conf.runConfig.prompt = match.text
+        for (const c of conf.runConfig) {
+          if ('prompt' in c) {
+            c.prompt = match.text
+          }
+        }
         return conf.runConfig
       }
     })
@@ -420,16 +417,17 @@ export const append = mutation({
     if (args.ignoreKeywordCommands !== true) {
       const userConfig = await matchUserCommandKeywords(ctx, args.message.text)
       if (userConfig) {
+        const runConfigs = Array.isArray(userConfig) ? userConfig : [userConfig]
         return await createRun(ctx, {
           thread,
           userId: thread.userId,
-          runConfig: userConfig,
+          runConfigs,
         })
       }
     }
 
     if (args.runConfig) {
-      return await createRun(ctx, { thread, userId: thread.userId, runConfig: args.runConfig })
+      return await createRun(ctx, { thread, userId: thread.userId, runConfigs: [args.runConfig] })
     }
 
     return {
@@ -452,7 +450,7 @@ export const run = mutation({
     const thread = await getOrCreateUserThread(ctx, threadId)
     if (!thread) throw new ConvexError('invalid thread')
 
-    return await createRun(ctx, { thread, userId: thread.userId, runConfig })
+    return await createRun(ctx, { thread, userId: thread.userId, runConfigs: [runConfig] })
   },
 })
 
@@ -462,16 +460,33 @@ const createRun = async (
   {
     thread,
     userId,
-    runConfig,
-  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfig: RunConfig },
-) => {
-  switch (runConfig.type) {
-    case 'textToImage':
-      return createTextToImageRun(ctx, { thread, userId, runConfig })
-    case 'textToAudio':
-      return createTextToAudioRun(ctx, { thread, userId, runConfig })
-    case 'chat':
-      return createChatRun(ctx, { thread, userId, runConfig })
+    runConfigs,
+  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfigs: RunConfig[] },
+): Promise<ThreadActionResult> => {
+  const message = await createMessage(ctx, {
+    threadId: thread._id,
+    userId,
+    contentType: 'text',
+    role: 'assistant',
+  })
+
+  const jobIds = await asyncMap(runConfigs, async (runConfig) => {
+    switch (runConfig.type) {
+      case 'textToImage':
+        return createTextToImageRun(ctx, { thread, messageId: message._id, runConfig })
+      case 'textToAudio':
+        return createTextToAudioRun(ctx, { thread, messageId: message._id, runConfig })
+      case 'chat':
+        return createChatRun(ctx, { thread, messageId: message._id, runConfig })
+    }
+  })
+
+  return {
+    threadId: thread._id,
+    slug: thread.slug,
+    messageId: message._id,
+    series: message.series,
+    jobIds,
   }
 }
 
@@ -481,18 +496,14 @@ const createTextToImageRun = async (
   ctx: MutationCtx,
   {
     thread,
-    userId,
+    messageId,
     runConfig,
   }: {
     thread: EntWriter<'threads'>
-    userId: Id<'users'>
+    messageId: Id<'messages'>
     runConfig: RunConfigTextToImage
   },
 ) => {
-  if (runConfig.resourceKey.includes('%%')) {
-    return createDuoRun(ctx, { thread, userId, runConfig })
-  }
-
   const imageModel = await getImageModelByResourceKey(ctx, runConfig.resourceKey)
   if (!imageModel) throw new ConvexError('invalid resourceKey')
 
@@ -529,17 +540,9 @@ const createTextToImageRun = async (
 
     .parse(runConfig)
 
-  const message = await createMessage(ctx, {
-    threadId: thread._id,
-    userId,
-    contentType: 'image',
-    role: 'assistant',
-    name: imageModel.name, // TODO evaluate if this is needed
-  })
-
   const jobId = await createJobNext.textToImage(ctx, {
     ...input,
-    messageId: message._id,
+    messageId,
   })
 
   await thread.patch({
@@ -548,85 +551,18 @@ const createTextToImageRun = async (
     title: thread.title ? thread.title : imageModel.name, // TODO better title creation
   })
 
-  return {
-    threadId: thread._id,
-    slug: thread.slug,
-    messageId: message._id,
-    series: message.series,
-    jobId,
-  }
-}
-
-const createDuoRun = async (
-  ctx: MutationCtx,
-  {
-    thread,
-    userId,
-    runConfig,
-  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfig: RunConfigTextToImage },
-) => {
-  const [resourceKey1, resourceKey2] = runConfig.resourceKey.split('%%')
-  if (!resourceKey1 || !resourceKey2) throw new ConvexError('invalid resourceKey')
-
-  const imageModel1 = await getImageModelByResourceKey(ctx, resourceKey1)
-  const imageModel2 = await getImageModelByResourceKey(ctx, resourceKey2)
-  if (!imageModel1 || !imageModel2) throw new ConvexError('invalid resourceKey')
-
-  const input1 = {
-    type: 'textToImage' as const,
-    resourceKey: imageModel1.resourceKey,
-    width: 1024,
-    height: 1024,
-    n: 1,
-    prompt: z.string().parse(runConfig.prompt),
-  }
-
-  const message = await createMessage(ctx, {
-    threadId: thread._id,
-    userId,
-    contentType: 'image',
-    role: 'assistant',
-    name: imageModel1.name,
-  })
-
-  const jobId = await createJobNext.textToImage(ctx, {
-    ...input1,
-    messageId: message._id,
-  })
-
-  const input2 = {
-    type: 'textToImage' as const,
-    resourceKey: imageModel2.resourceKey,
-    width: 1024,
-    height: 1024,
-    n: 1,
-    prompt: z.string().parse(runConfig.prompt),
-  }
-
-  await createJobNext.textToImage(ctx, {
-    ...input2,
-    messageId: message._id,
-  })
-
-  return {
-    threadId: thread._id,
-    slug: thread.slug,
-    messageId: message._id,
-    series: message.series,
-    jobId,
-  }
+  return jobId
 }
 
 // * textToAudio
 const createTextToAudioRun = async (
   ctx: MutationCtx,
   {
-    thread,
-    userId,
+    messageId,
     runConfig,
   }: {
     thread: Ent<'threads'>
-    userId: Id<'users'>
+    messageId: Id<'messages'>
     runConfig: RunConfigTextToAudio
   },
 ) => {
@@ -637,26 +573,12 @@ const createTextToAudioRun = async (
     })
     .parse(runConfig)
 
-  const message = await createMessage(ctx, {
-    threadId: thread._id,
-    userId,
-    contentType: 'audio',
-    role: 'assistant',
-    name: 'ElevenLabs Sound Generation', // TODO evaluate if this is needed
-  })
-
   const jobId = await createJobNext.textToAudio(ctx, {
     ...input,
-    messageId: message._id,
+    messageId,
   })
 
-  return {
-    threadId: thread._id,
-    slug: thread.slug,
-    messageId: message._id,
-    series: message.series,
-    jobId,
-  }
+  return jobId
 }
 
 // * chat
@@ -664,9 +586,9 @@ const createChatRun = async (
   ctx: MutationCtx,
   {
     thread,
-    userId,
+    messageId,
     runConfig,
-  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfig: RunConfigChat },
+  }: { thread: EntWriter<'threads'>; messageId: Id<'messages'>; runConfig: RunConfigChat },
 ) => {
   const chatModel = await getChatModelByResourceKey(ctx, runConfig.resourceKey)
   if (!chatModel) throw new ConvexError('invalid resourceKey')
@@ -684,17 +606,9 @@ const createChatRun = async (
     }))
     .parse(runConfig)
 
-  const message = await createMessage(ctx, {
-    threadId: thread._id,
-    userId,
-    contentType: 'text',
-    role: 'assistant',
-    name: chatModel.name,
-  })
-
   const jobId = await createJobNext.chat(ctx, {
     ...input,
-    messageId: message._id,
+    messageId,
   })
 
   await thread.patch({
@@ -702,11 +616,5 @@ const createChatRun = async (
     updatedAtTime: Date.now(),
   })
 
-  return {
-    threadId: thread._id,
-    slug: thread.slug,
-    messageId: message._id,
-    series: message.series,
-    jobId,
-  }
+  return jobId
 }

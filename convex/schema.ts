@@ -273,7 +273,7 @@ export const userFields = {
     v.array(
       v.object({
         name: v.string(),
-        runConfig: runConfigV,
+        runConfig: v.array(runConfigV),
         keyword: v.optional(v.string()),
       }),
     ),
