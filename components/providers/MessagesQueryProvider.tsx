@@ -1,32 +1,24 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext } from 'react'
 import { usePaginatedQuery } from 'convex/react'
 import { useQueryState } from 'nuqs'
 
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
-import { useCacheQuery } from '@/lib/api'
 import { useSuitePath } from '@/lib/helpers'
 
 import type { EMessage } from '@/convex/types'
 import type { UsePaginatedQueryReturnType } from 'convex/react'
 
-const { nLatestMessages } = appConfig
 export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { slug } = useSuitePath()
   const [viewFilter] = useQueryState('view')
   const [roleFilter] = useQueryState('role')
-  const [isListQuery, setIsListQuery] = useState(false)
-
-  useEffect(() => {
-    setIsListQuery(false)
-  }, [viewFilter, roleFilter, slug])
 
   const queryKey = slug
     ? {
         slugOrId: slug,
-        limit: nLatestMessages,
         byMediaType: viewFilter === 'images' ? ('images' as const) : undefined,
         role: ['user', 'assistant'].includes(roleFilter || '')
           ? (roleFilter as 'user' | 'assistant')
@@ -34,28 +26,15 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     : 'skip'
 
-  const latest = useCacheQuery(api.db.threads.latestMessages, queryKey) ?? []
-  const { results, loadMore, status } = usePaginatedQuery(
-    api.db.threads.listMessages,
-    isListQuery ? queryKey : 'skip',
-    {
-      initialNumItems: nLatestMessages * 2,
-    },
-  )
+  const { results, loadMore, status } = usePaginatedQuery(api.db.threads.listMessages, queryKey, {
+    initialNumItems: appConfig.nInitialMessages,
+  })
 
-  const messages = isListQuery && results.length > 0 ? results : latest
-
-  const listLoadMore = useCallback(() => {
-    if (isListQuery) {
-      loadMore(nLatestMessages * 2)
-    } else {
-      setIsListQuery(true)
-    }
-  }, [isListQuery, loadMore, setIsListQuery])
+  const messages = [...results].reverse()
 
   const value = {
-    messages: [...messages].reverse(),
-    loadMore: listLoadMore,
+    messages,
+    loadMore: useCallback(() => loadMore(appConfig.nInitialMessages * 2), [loadMore]),
     status,
   }
 
