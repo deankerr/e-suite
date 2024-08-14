@@ -77,7 +77,7 @@ export const Navigation = () => {
           ))}
         </NavGroup>
 
-        <NavGroup heading="Threads" hidden={threadsList?.length === 0}>
+        <NavGroup heading="Threads" hidden={threadsList?.length === 0} scrollable>
           {threadsList
             ?.filter((thread) => !favorites.includes(thread) && thread.slug !== 'new')
             .map((thread) => (
