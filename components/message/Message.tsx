@@ -15,6 +15,7 @@ import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
@@ -124,6 +125,12 @@ export const Message = ({
               </IconButton>
             </ThreadOwner>
           )}
+
+          <AdminOnlyUi>
+            <div className="absolute right-7 top-1.5 pt-px font-mono text-xxs text-gray-6">
+              {message.series}
+            </div>
+          </AdminOnlyUi>
         </div>
 
         <div className="markdown-body min-h-7 py-1 last:[&:nth-child(2)]:[&_p]:inline-block">
