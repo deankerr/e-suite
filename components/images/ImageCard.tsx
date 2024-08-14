@@ -44,9 +44,7 @@ export const ImageCard = ({
       {/* * top panel * */}
       <div className="flex shrink-0 justify-between">
         <div className="font-mono text-xs text-gray-11">
-          <AdminOnlyUi>
-            {image.width}x{image.height}
-          </AdminOnlyUi>
+          {image.width}x{image.height}
         </div>
 
         <Link href={`/convex/${image.uid}?download`}>
