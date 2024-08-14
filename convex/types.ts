@@ -49,5 +49,6 @@ export type ThreadActionResult = {
   threadId: Id<'threads'>
   slug: string
   messageId: string
-  jobId?: Id<'jobs3'>
+  series: number
+  jobIds?: Id<'jobs3'>[]
 }
