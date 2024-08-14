@@ -140,6 +140,9 @@ const config: Config = {
         sans: ['var(--font-sans)', ...fontFamily.sans],
         mono: ['var(--font-mono)', ...fontFamily.mono],
       },
+      fontSize: {
+        xxs: ['0.625rem', '0.75rem'],
+      },
       maxWidth: {
         '8xl': '96rem',
       },
