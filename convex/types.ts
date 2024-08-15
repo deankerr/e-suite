@@ -6,6 +6,7 @@ import type {
   getVoiceModels,
 } from './db/models'
 import type { getThreadEdges } from './db/threads'
+import type { getUserPublic } from './db/users'
 import type { mutation, query } from './functions'
 import type {
   entDefinitions,
@@ -14,7 +15,6 @@ import type {
   runConfigTextToImageV,
   runConfigV,
 } from './schema'
-import type { getViewer } from './users'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
 import type { Infer } from 'convex/values'
@@ -33,7 +33,7 @@ export type EThread = Omit<Awaited<ReturnType<typeof getThreadEdges>>, '_id' | '
 }
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
 export type EImage = Awaited<ReturnType<typeof getMessageImages>>[number]
-export type EUser = Awaited<ReturnType<typeof getViewer>>
+export type EUser = Awaited<ReturnType<typeof getUserPublic>>
 
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
 export type EImageModel = NonNullable<Awaited<ReturnType<typeof getImageModelByResourceKey>>>

@@ -11,7 +11,7 @@ import { internalMutation, internalQuery, query } from '../functions'
 import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
 import { createJob } from '../workflows/jobs'
-import { getUserIsViewer } from './users'
+import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Doc } from '../_generated/dataModel'
 import type { Ent, MutationCtx } from '../types'
@@ -119,6 +119,7 @@ export const getByUid = query({
     return {
       ...omit(image, ['searchText']),
       userIsViewer: getUserIsViewer(ctx, image.userId),
+      user: await getUserPublic(ctx, image.userId),
     }
   },
 })
