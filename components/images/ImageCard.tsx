@@ -47,6 +47,20 @@ export const ImageCard = ({
           {image.width}x{image.height}
         </div>
 
+        <AdminOnlyUi>
+          <Link href={`/suite/image/${image.uid}`}>
+            <IconButton
+              aria-label="View image"
+              variant="ghost"
+              color="gray"
+              size="1"
+              className="m-0 group-hover:bg-blackA-4 group-hover:backdrop-blur"
+            >
+              <Icons.Eye className="size-6 group-hover:text-white" weight="bold" />
+            </IconButton>
+          </Link>
+        </AdminOnlyUi>
+
         <Link href={`/convex/${image.uid}?download`}>
           <IconButton
             aria-label="Download image"

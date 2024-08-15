@@ -1,10 +1,10 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar'
+import { ScrollArea } from '@radix-ui/themes'
 
 import { AppLogo } from '@/components/icons/AppLogo'
 import { IconButton } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
-import { ScrollArea } from '@radix-ui/themes'
 
 const Shell = ({
   children,
@@ -17,7 +17,7 @@ const Shell = ({
     <div className="hidden h-full w-full flex-col overflow-hidden border-grayA-5 bg-gray-2 transition-colors last:flex md:flex md:rounded-md md:border">
       {loading && (
         <div className="absolute inset-0 flex bg-gray-1">
-          <AppLogo className="text-mauve-3 m-auto size-48 animate-pulse" />
+          <AppLogo className="m-auto size-48 animate-pulse text-mauve-3" />
         </div>
       )}
       {children}
@@ -36,9 +36,9 @@ const Header = ({
     <header className="flex-start h-10 shrink-0 overflow-hidden border-b border-grayA-3 bg-gray-2 px-1 font-medium">
       {loading ? (
         <div className="flex-start w-full animate-pulse gap-2 px-1">
-          <Skeleton className="bg-mauve-3 h-5 w-8 animate-none" />
-          <Skeleton className="bg-mauve-3 h-5 w-48 animate-none" />
-          <Skeleton className="bg-mauve-3 h-5 grow animate-none" />
+          <Skeleton className="h-5 w-8 animate-none bg-mauve-3" />
+          <Skeleton className="h-5 w-48 animate-none bg-mauve-3" />
+          <Skeleton className="h-5 grow animate-none bg-mauve-3" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-2" />
         </div>
       ) : (
@@ -59,11 +59,11 @@ const Toolbar = ({
     <ToolbarPrimitive.Root className="flex-start h-10 shrink-0 border-b border-grayA-3 bg-gray-2 px-1">
       {loading ? (
         <div className="flex-start w-full animate-pulse gap-2 px-1">
-          <Skeleton className="bg-mauve-3 h-5 w-8 animate-none" />
-          <Skeleton className="bg-mauve-3 h-5 w-8 animate-none" />
-          <Skeleton className="bg-mauve-3 h-5 w-16 animate-none" />
-          <Skeleton className="bg-mauve-3 h-5 w-32 animate-none" />
-          <Skeleton className="bg-mauve-3 h-5 grow animate-none" />
+          <Skeleton className="h-5 w-8 animate-none bg-mauve-3" />
+          <Skeleton className="h-5 w-8 animate-none bg-mauve-3" />
+          <Skeleton className="h-5 w-16 animate-none bg-mauve-3" />
+          <Skeleton className="h-5 w-32 animate-none bg-mauve-3" />
+          <Skeleton className="h-5 grow animate-none bg-mauve-3" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-2" />
         </div>
       ) : (
@@ -106,7 +106,15 @@ const CloseButton = ({ onClick }: { onClick: () => void }) => {
 }
 
 const Title = ({ children }: { children?: React.ReactNode }) => {
-  return <div className="flex-start truncate px-1 text-sm font-medium">{children}</div>
+  return <h2 className="flex-start truncate px-1 text-sm font-medium">{children}</h2>
 }
 
-export const Panel = Object.assign(Shell, { Header, Toolbar, Content, ScrollAreaContent, Footer, CloseButton, Title })
+export const Panel = Object.assign(Shell, {
+  Header,
+  Toolbar,
+  Content,
+  ScrollAreaContent,
+  Footer,
+  CloseButton,
+  Title,
+})

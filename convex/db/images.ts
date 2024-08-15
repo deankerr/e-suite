@@ -1,15 +1,17 @@
+import { omit } from 'convex-helpers'
 import { partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 import * as vb from 'valibot'
 
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
-import { internalMutation, internalQuery } from '../functions'
+import { internalMutation, internalQuery, query } from '../functions'
 import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
 import { createJob } from '../workflows/jobs'
+import { getUserIsViewer } from './users'
 
 import type { Doc } from '../_generated/dataModel'
 import type { Ent, MutationCtx } from '../types'
@@ -107,13 +109,17 @@ export const get = internalQuery({
   },
 })
 
-export const getByUid = internalQuery({
+export const getByUid = query({
   args: {
     uid: v.string(),
   },
   handler: async (ctx, args) => {
     const image = await ctx.table('images').get('uid', args.uid)
-    return image
+    if (!image) return null
+    return {
+      ...omit(image, ['searchText']),
+      userIsViewer: getUserIsViewer(ctx, image.userId),
+    }
   },
 })
 
@@ -121,7 +127,7 @@ export const getByUid = internalQuery({
 export const serve = httpAction(async (ctx, request) => {
   const [uid] = parseUrlToUid(request.url)
   const image = uid
-    ? await ctx.runQuery(internal.db.images.getByUid, {
+    ? await ctx.runQuery(api.db.images.getByUid, {
         uid,
       })
     : null
