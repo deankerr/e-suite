@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
+import { Image } from '@/components/images/Image'
 import { SidebarButton } from '@/components/layout/SidebarButton'
 import { Message } from '@/components/message/Message'
 import { LoadingPage } from '@/components/pages/LoadingPage'
@@ -13,7 +14,7 @@ import { useSuitePath } from '@/lib/helpers'
 
 import type { EMessage, EThread } from '@/convex/types'
 
-export const MessageDetailPanel = () => {
+export default function Page() {
   const path = useSuitePath()
   const { thread, message } = useMessage(path.slug, path.msg)
 
@@ -37,16 +38,37 @@ const Body = ({ thread, message }: { thread: EThread; message: EMessage }) => {
         <SidebarButton />
         <div className="size-4" />
         <Panel.Title>
-          {thread.title} ⋅ {name} ⋅ {text}
+          {thread.title} ⋅ {name} ⋅ {text} ⋅ <span className="text-accent-11"> Images</span>
         </Panel.Title>
         <Panel.CloseButton onClick={() => router.replace(path.threadPath)} />
       </Panel.Header>
       <Panel.ScrollAreaContent>
-        <div className="p-2 text-sm">
-          {message.images.length > 0 && (
-            <Link href={`/suite/threads/${path.slug}/${path.msg}/images`}>Images</Link>
-          )}
-          <Message message={message} hideTimeline priority className="hover:border-transparent" />
+        <div className="space-y-2 p-2 text-sm">
+          {message.images.map((image) => (
+            <div key={image._id} className="flex">
+              <div className="h-60 w-1/2 overflow-hidden">
+                <Image
+                  alt=""
+                  src={`/i/${image.uid}`}
+                  placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
+                  blurDataURL={image?.blurDataUrl}
+                  style={{
+                    objectFit: 'contain',
+                  }}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                />
+              </div>
+
+              <div className="w-1/2">
+                <div className="text-sm">{image.captionTitle}</div>
+                <div className="text-xs">{image.captionDescription}</div>
+                <Link href={`/suite/threads/${path.slug}/${path.msg}/images/${image.uid}`}>
+                  View
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </Panel.ScrollAreaContent>
     </>
