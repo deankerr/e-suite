@@ -30,7 +30,7 @@ export const MessagesQueryProvider: React.FC<{ children: React.ReactNode }> = ({
     initialNumItems: appConfig.nInitialMessages,
   })
 
-  const messages = [...results].reverse()
+  const messages = [...results].reverse().sort((a, b) => a.series - b.series)
 
   const value = {
     messages,
