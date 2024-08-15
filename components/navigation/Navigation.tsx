@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 export const Navigation = () => {
   const [isSidebarOpen, toggleSidebar] = useAtom(sidebarOpenAtom)
   const path = useSuitePath()
-  const isBlankPage = !path.slug
+  const isBlankPage = !path.segments[1]
 
   const { threadsList } = useThreads()
   const favorites = threadsList?.filter((thread) => thread.favorite && thread.userIsViewer) ?? []

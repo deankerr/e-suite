@@ -164,6 +164,11 @@ export const useMessage = (slug?: string, msg?: string) => {
   }
 }
 
+export const useImage = (uid?: string) => {
+  const image = useCacheQuery(api.db.images.getByUid, { uid })
+  return image
+}
+
 export const useVoiceModels = (): EVoiceModel[] | undefined => {
   const result = useCacheQuery(api.db.models.listVoiceModels, {})
   return result

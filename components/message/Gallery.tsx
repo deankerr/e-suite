@@ -32,7 +32,7 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
       {message.images.map((image, index) => (
         <ImageCard
           key={image._id}
-          className="max-w-xs cursor-pointer"
+          className="max-w-sm cursor-pointer"
           image={image}
           imageProps={{
             sizes: '(max-width: 410px) 90vw, 20rem',
