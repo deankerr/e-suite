@@ -2,7 +2,7 @@ import { omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { internalMutation, mutation } from '../functions'
+import { internalMutation, mutation, query } from '../functions'
 import { messageFields } from '../schema'
 import { getUserIsViewer } from './users'
 
@@ -59,6 +59,16 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
     userIsViewer: getUserIsViewer(ctx, message.userId),
   }
 }
+
+export const get = query({
+  args: {
+    messageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const message = await getMessage(ctx, args.messageId)
+    return message ? await getMessageEdges(ctx, message) : null
+  },
+})
 
 export const update = mutation({
   args: {

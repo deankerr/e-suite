@@ -66,7 +66,7 @@ export const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }
       {image.generationData ? (
         <Card className="space-y-2" size="2">
           <div className="pb-px font-medium">Generation Data</div>
-          <DataList.Root size="2" orientation="horizontal">
+          <DataList.Root size="2" orientation="vertical">
             <DataList.Item>
               <DataList.Label>prompt</DataList.Label>
               <DataList.Value>{image.generationData.prompt}</DataList.Value>
@@ -123,7 +123,7 @@ export const ImageDetailsPicker = ({ images }: { images: EImage[] }) => {
       {images.map((image) => (
         <Link
           key={image._id}
-          href={`/suite/threads/${path.slug}/${path.msg}/images/${image.uid}`}
+          href={`/su/thread/${path.slug}/images/${image.uid}`}
           className={cn(
             'h-36 overflow-hidden rounded-md border-2 border-gray-3',
             path.pathname.endsWith(image.uid) && 'border-gray-7',

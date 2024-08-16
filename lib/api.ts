@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -149,6 +149,18 @@ export const useThreads = (selectSlug?: string) => {
     threadsList,
     thread: selectedUserThread ?? selectedThread,
   }
+}
+
+export const useThreadImages = (slug?: string) => {
+  const images = usePaginatedQuery(api.db.threads.listImages, slug ? { slugOrId: slug } : 'skip', {
+    initialNumItems: 27,
+  })
+  return images
+}
+
+export const useMessageId = (messageId?: string) => {
+  const message = useQuery(api.db.messages.get, messageId ? { messageId } : 'skip')
+  return message
 }
 
 export const useMessage = (slug?: string, msg?: string) => {

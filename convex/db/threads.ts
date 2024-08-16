@@ -250,6 +250,27 @@ export const listMessages = query({
   },
 })
 
+export const listImages = query({
+  args: {
+    slugOrId: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return emptyPage()
+
+    return await thread
+      .edge('images')
+      .order('desc')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(args.paginationOpts)
+      .map((image) => ({
+        ...omit(image, ['fileId', 'searchText']),
+        userIsViewer: getUserIsViewer(ctx, image.userId),
+      }))
+  },
+})
+
 export const getMessage = query({
   args: {
     slugOrId: v.string(),

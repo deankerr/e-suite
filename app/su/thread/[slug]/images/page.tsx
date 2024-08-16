@@ -1,0 +1,60 @@
+'use client'
+
+import Link from 'next/link'
+
+import { Image } from '@/components/images/Image'
+import InfiniteScroll from '@/components/ui/InfiniteScroll'
+import { LineZoom, Orbit } from '@/components/ui/Ldrs'
+import { useThreadImages } from '@/lib/api'
+import { cn } from '@/lib/utils'
+
+export default function Page({ params }: { params: { slug: string } }) {
+  const { results, loadMore, status, isLoading } = useThreadImages(params.slug)
+
+  if (status === 'LoadingFirstPage')
+    return (
+      <div className="flex-col-center h-full">
+        <LineZoom />
+      </div>
+    )
+
+  return (
+    <div className="h-full overflow-y-auto">
+      <div className="grid auto-rows-max grid-cols-3 gap-2 p-2">
+        {results.map((image) => (
+          <Link
+            key={image._id}
+            href={`/su/thread/${params.slug}/images/${image.uid}`}
+            className="overflow-hidden rounded-md border border-grayA-3"
+            style={{ aspectRatio: image.width / image.height }}
+          >
+            <Image
+              alt=""
+              src={`/i/${image.uid}`}
+              placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
+              blurDataURL={image?.blurDataUrl}
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'top',
+              }}
+              fill
+              sizes="(max-width: 768px) 33vw, calc((100vw - 240px) / 3)"
+            />
+          </Link>
+        ))}
+      </div>
+
+      <div className={cn('flex-col-center h-16', status === 'Exhausted' && 'hidden')}>
+        <InfiniteScroll
+          isLoading={isLoading}
+          hasMore={status !== 'Exhausted'}
+          next={() => loadMore(27)}
+        >
+          <div>
+            <Orbit />
+          </div>
+        </InfiniteScroll>
+      </div>
+    </div>
+  )
+}
