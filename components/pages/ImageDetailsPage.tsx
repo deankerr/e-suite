@@ -119,11 +119,11 @@ export const ImageDetailsPicker = ({ images }: { images: EImage[] }) => {
   const path = useSuitePath()
 
   return (
-    <div className="grid auto-cols-[9rem] grid-flow-col gap-2">
+    <div className="grid h-40 auto-cols-[9rem] grid-flow-col gap-2">
       {images.map((image) => (
         <Link
           key={image._id}
-          href={`/su/thread/${path.slug}/images/${image.uid}`}
+          href={`/image/${image.uid}`}
           className={cn(
             'h-36 overflow-hidden rounded-md border-2 border-gray-3',
             path.pathname.endsWith(image.uid) && 'border-gray-7',
