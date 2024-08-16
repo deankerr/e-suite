@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { AlertDialog, Dialog, DropdownMenu, TextField } from '@radix-ui/themes'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { Button, IconButton } from '@/components/ui/Button'
@@ -11,6 +13,8 @@ import { useDeleteThread, useThreads, useUpdateThread } from '@/lib/api'
 export const ThreadHeader = ({ thread_id }: { thread_id: string }) => {
   const { thread } = useThreads(thread_id)
   const sendUpdateThread = useUpdateThread()
+  const pathname = usePathname()
+  const segment = pathname.split('/')[1]
 
   const [showEditTitleDialog, setShowEditTitleDialog] = useState(false)
   const [showDeleteThreadDialog, setShowDeleteThreadDialog] = useState(false)
@@ -55,6 +59,16 @@ export const ThreadHeader = ({ thread_id }: { thread_id: string }) => {
         >
           <Icons.Star size={20} weight={thread.favorite ? 'fill' : 'regular'} />
         </IconButton>
+
+        {segment === 'chat' ? (
+          <Link href={`/images/${thread.slug}`}>
+            <Icons.Images size={18} />
+          </Link>
+        ) : segment === 'images' ? (
+          <Link href={`/chat/${thread.slug}`}>
+            <Icons.Chat size={18} />
+          </Link>
+        ) : null}
       </Wrapper>
 
       <EditThreadTitleDialog
