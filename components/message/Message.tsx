@@ -9,7 +9,6 @@ import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Gallery } from '@/components/message/Gallery'
 import { Markdown } from '@/components/message/Markdown'
 import { MessageEditor } from '@/components/message/MessageEditor'
-import { ThreadOwner } from '@/components/thread-panel/ThreadOwner'
 import { IconButton } from '@/components/ui/Button'
 import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
@@ -118,13 +117,11 @@ export const Message = ({
             </Link>
           ) : null}
 
-          {hasImageContent && (
-            <ThreadOwner>
-              <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
-                <Icons.Copy size={20} />
-              </IconButton>
-            </ThreadOwner>
-          )}
+          {/* {hasImageContent && (
+            <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
+              <Icons.Copy size={20} />
+            </IconButton>
+          )} */}
 
           <AdminOnlyUi>
             <div className="absolute right-7 top-1.5 pt-px font-mono text-xxs text-gray-6">
