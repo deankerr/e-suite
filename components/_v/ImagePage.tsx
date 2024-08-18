@@ -5,7 +5,6 @@ import Link from 'next/link'
 
 import { Image } from '@/components/images/Image'
 import { EmptyPage } from '@/components/pages/EmptyPage'
-import { LoadingPage } from '@/components/pages/LoadingPage'
 import { useImage, useMessageId } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -20,40 +19,42 @@ export const ImagePage = ({ params }: { params: { image_id: string } }) => {
   }
 
   if (image === undefined) {
-    return <LoadingPage />
+    return null
   }
 
   return (
     <>
-      <div className="grid h-full grid-cols-[1fr_20rem] grid-rows-[1fr_auto] gap-x-2 gap-y-2 p-2 text-sm">
-        <div
-          className="col-start-1 justify-self-center overflow-hidden rounded-md border border-grayA-3"
-          style={{ aspectRatio: image.width / image.height, maxWidth: '100%' }}
-        >
-          <Image
-            key={image._id}
-            alt=""
-            src={`/i/${image.uid}`}
-            placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
-            blurDataURL={image?.blurDataUrl}
-            style={{
-              objectFit: 'contain',
-              objectPosition: 'center',
-            }}
-            fill
-            sizes="(min-width: 768px) 50vw, 100vw"
-          />
+      <div className="mx-auto grid h-full w-full max-w-7xl gap-2 overflow-y-auto p-2 md:grid-cols-[2fr_1fr]">
+        <div className="space-y-2">
+          <div
+            className="overflow-hidden rounded-md border border-grayA-3"
+            style={{ aspectRatio: image.width / image.height, maxWidth: '100%' }}
+          >
+            <Image
+              key={image._id}
+              alt=""
+              src={`/i/${image.uid}`}
+              placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
+              blurDataURL={image?.blurDataUrl}
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'center',
+              }}
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+            />
+          </div>
+
+          <div className="flex-center overflow-hidden">
+            <ImagePicker images={message?.images ?? []} activeUid={image.uid} />
+          </div>
         </div>
 
-        <div className="flex-center col-start-1 row-start-2 h-full w-full">
-          <ImageDetailsPicker images={message?.images ?? []} activeUid={image.uid} />
-        </div>
-
-        <div className="row-span-2 space-y-3 justify-self-center overflow-y-auto">
+        <div className="mx-auto w-full max-w-md space-y-3">
           <ImageDetailsCards image={image} />
           {message?.name && message?.text ? (
-            <Card className="break-all">
-              {message.name}: {message.text}
+            <Card className="break-all text-sm">
+              <span className="font-semibold">{message.name}</span> {message.text}
             </Card>
           ) : null}
         </div>
@@ -68,7 +69,7 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
       {image.captionModelId ? (
         <Card className="space-y-2" size="2">
           <div className="pb-px text-base font-semibold">{image.captionTitle}</div>
-          <p>{image.captionDescription}</p>
+          <p className="text-sm">{image.captionDescription}</p>
           <p className="text-xs">
             caption by{' '}
             <span className="font-mono text-[0.95em] text-gray-11">{image.captionModelId}</span>
@@ -79,7 +80,7 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
       {image.captionOCR ? (
         <Card className="space-y-2" size="2">
           <div className="pb-px font-medium">OCR</div>
-          <p>{image.captionOCR}</p>
+          <p className="text-sm">{image.captionOCR}</p>
           <p className="text-xs">
             ocr by{' '}
             <span className="font-mono text-[0.95em] text-gray-11">{image.captionModelId}</span>
@@ -90,7 +91,7 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
       {image.generationData ? (
         <Card className="space-y-2" size="2">
           <div className="pb-px font-medium">Generation Data</div>
-          <DataList.Root size="2" orientation="vertical">
+          <DataList.Root orientation="vertical">
             <DataList.Item>
               <DataList.Label>prompt</DataList.Label>
               <DataList.Value>{image.generationData.prompt}</DataList.Value>
@@ -111,7 +112,7 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
 
       <Card className="space-y-3" size="2">
         <div className="pb-px font-medium">File Data</div>
-        <DataList.Root size="2" orientation="horizontal">
+        <DataList.Root orientation="vertical">
           <DataList.Item>
             <DataList.Label>created</DataList.Label>
             <DataList.Value>{new Date(image._creationTime).toLocaleString()}</DataList.Value>
@@ -139,15 +140,15 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
   )
 }
 
-const ImageDetailsPicker = ({ images, activeUid }: { images: EImage[]; activeUid?: string }) => {
+const ImagePicker = ({ images, activeUid }: { images: EImage[]; activeUid?: string }) => {
   return (
-    <div className="grid auto-cols-[8rem] grid-flow-col grid-rows-[8rem] gap-2">
+    <div className="grid max-w-md grid-cols-[repeat(auto-fit,8rem)] gap-2 p-2">
       {images.map((image) => (
         <Link
           key={image._id}
           href={`/image/${image.uid}`}
           className={cn(
-            'overflow-hidden rounded-md border-2 border-gray-3',
+            'aspect-square overflow-hidden rounded-md border-2 border-gray-3',
             activeUid === image.uid && 'border-accent-9',
           )}
         >
