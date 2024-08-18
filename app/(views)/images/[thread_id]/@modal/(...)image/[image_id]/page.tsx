@@ -1,21 +1,10 @@
-'use client'
-
-import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { useRouter } from 'next/navigation'
-
+import { Modal } from '@/app/(views)/images/[thread_id]/@modal/(...)image/[image_id]/Modal'
 import { ImagePage } from '@/components/_v/ImagePage'
-import { IconButton } from '@/components/ui/Button'
 
-export default function Page({ params }: { params: { image_id: string } }) {
-  const router = useRouter()
+export default function Page({ params }: { params: { image_id: string; thread_id: string } }) {
   return (
-    <div className="absolute bottom-0 top-10 w-full bg-blackA-11 backdrop-blur">
-      <div className="absolute -top-9 right-1">
-        <IconButton aria-label="Close" variant="surface" onClick={() => router.back()}>
-          <Icons.X size={18} />
-        </IconButton>
-      </div>
+    <Modal closePathname={`/images/${params.thread_id}`}>
       <ImagePage params={params} />
-    </div>
+    </Modal>
   )
 }

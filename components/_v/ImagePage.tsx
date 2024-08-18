@@ -2,7 +2,6 @@
 
 import { Card, DataList } from '@radix-ui/themes'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 import { Image } from '@/components/images/Image'
 import { EmptyPage } from '@/components/pages/EmptyPage'
@@ -26,10 +25,10 @@ export const ImagePage = ({ params }: { params: { image_id: string } }) => {
 
   return (
     <>
-      <div className="grid h-full grid-cols-[1fr_20rem] grid-rows-[1fr_auto] gap-x-2 gap-y-4 p-2 text-sm">
+      <div className="grid h-full grid-cols-[1fr_20rem] grid-rows-[1fr_auto] gap-x-2 gap-y-2 p-2 text-sm">
         <div
           className="col-start-1 justify-self-center overflow-hidden rounded-md border border-grayA-3"
-          style={{ aspectRatio: image.width / image.height, maxWidth: image.width }}
+          style={{ aspectRatio: image.width / image.height, maxWidth: '100%' }}
         >
           <Image
             key={image._id}
@@ -47,7 +46,7 @@ export const ImagePage = ({ params }: { params: { image_id: string } }) => {
         </div>
 
         <div className="flex-center col-start-1 row-start-2 h-full w-full">
-          <ImageDetailsPicker images={message?.images ?? []} />
+          <ImageDetailsPicker images={message?.images ?? []} activeUid={image.uid} />
         </div>
 
         <div className="row-span-2 space-y-3 justify-self-center overflow-y-auto">
@@ -66,14 +65,16 @@ export const ImagePage = ({ params }: { params: { image_id: string } }) => {
 const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
   return (
     <>
-      <Card className="space-y-2" size="2">
-        <div className="pb-px text-base font-semibold">{image.captionTitle}</div>
-        <p>{image.captionDescription}</p>
-        <p className="text-xs">
-          caption by{' '}
-          <span className="font-mono text-[0.95em] text-gray-11">{image.captionModelId}</span>
-        </p>
-      </Card>
+      {image.captionModelId ? (
+        <Card className="space-y-2" size="2">
+          <div className="pb-px text-base font-semibold">{image.captionTitle}</div>
+          <p>{image.captionDescription}</p>
+          <p className="text-xs">
+            caption by{' '}
+            <span className="font-mono text-[0.95em] text-gray-11">{image.captionModelId}</span>
+          </p>
+        </Card>
+      ) : null}
 
       {image.captionOCR ? (
         <Card className="space-y-2" size="2">
@@ -138,18 +139,16 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
   )
 }
 
-const ImageDetailsPicker = ({ images }: { images: EImage[] }) => {
-  const pathname = usePathname()
-
+const ImageDetailsPicker = ({ images, activeUid }: { images: EImage[]; activeUid?: string }) => {
   return (
-    <div className="grid h-40 auto-cols-[9rem] grid-flow-col gap-2">
+    <div className="grid auto-cols-[8rem] grid-flow-col grid-rows-[8rem] gap-2">
       {images.map((image) => (
         <Link
           key={image._id}
           href={`/image/${image.uid}`}
           className={cn(
-            'h-36 overflow-hidden rounded-md border-2 border-gray-3',
-            pathname.endsWith(image.uid) && 'border-gray-7',
+            'overflow-hidden rounded-md border-2 border-gray-3',
+            activeUid === image.uid && 'border-accent-9',
           )}
         >
           <Image
