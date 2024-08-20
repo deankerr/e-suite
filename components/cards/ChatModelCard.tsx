@@ -1,5 +1,7 @@
-import { Card } from '@radix-ui/themes'
+import { Button, ButtonProps, Card } from '@radix-ui/themes'
+import { accentColors } from '@radix-ui/themes/props'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { EndpointBadge, endpointTokens } from '@/app/admin/Badges'
 import AnthropicLogo from '@/assets/logos/anthropic.svg'
@@ -8,7 +10,6 @@ import GoogleLogo from '@/assets/logos/google.svg'
 import MetaLogo from '@/assets/logos/meta.svg'
 import MistralAiLogo from '@/assets/logos/mistral.svg'
 import OpenAiLogo from '@/assets/logos/openai.svg'
-import { LinkButton } from '@/components/ui/LinkButton'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { isValidUrl } from '@/convex/shared/helpers'
 import { cn } from '@/lib/utils'
@@ -77,4 +78,23 @@ const llmAuthorLogos: Record<string, string | StaticImport> = {
   'meta-llama': MetaLogo,
   mistralai: MistralAiLogo,
   openai: OpenAiLogo,
+}
+
+const LinkButton = ({
+  color,
+  variant,
+  className,
+  children,
+  ...props
+}: {
+  color?: (typeof accentColors)[number]
+  variant?: ButtonProps['variant']
+} & React.ComponentProps<typeof Link>) => {
+  return (
+    <Link {...props} className={cn('shrink-0', className)}>
+      <Button variant={variant ?? 'soft'} color={color} size="1">
+        {children}
+      </Button>
+    </Link>
+  )
 }

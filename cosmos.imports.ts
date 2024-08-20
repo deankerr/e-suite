@@ -5,7 +5,6 @@ import { RendererConfig, UserModuleWrappers } from 'react-cosmos-core';
 
 import * as fixture0 from './components/text-document-editor/__fixtures__/TextDocumentEditor';
 import * as fixture1 from './components/composer/__fixtures__/Composer';
-import * as fixture2 from './components/navigation/Navigation.fixture';
 
 import * as decorator0 from './components/cosmos.decorator';
 import * as decorator1 from './components/text-document-editor/__fixtures__/cosmos.decorator';
@@ -17,8 +16,7 @@ export const rendererConfig: RendererConfig = {
 
 const fixtures = {
   'components/text-document-editor/__fixtures__/TextDocumentEditor.tsx': { module: fixture0 },
-  'components/composer/__fixtures__/Composer.tsx': { module: fixture1 },
-  'components/navigation/Navigation.fixture.tsx': { module: fixture2 }
+  'components/composer/__fixtures__/Composer.tsx': { module: fixture1 }
 };
 
 const decorators = {
