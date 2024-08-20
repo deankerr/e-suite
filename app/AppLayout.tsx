@@ -1,6 +1,6 @@
-import { NavRail } from '@/app/(views)/NavRail'
+import { NavRail } from '@/app/NavRail'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-dvh bg-midnight md:gap-1.5 md:p-1.5">
       <NavRail />

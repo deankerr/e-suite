@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
+import { AppLayout } from '@/app/AppLayout'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { appConfig } from '@/config/config'
@@ -69,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <ClientProviders>
             <Theme accentColor="orange" grayColor="slate" appearance="dark" panelBackground="solid">
-              {children}
+              <AppLayout>{children}</AppLayout>
               <Toaster position="top-right" theme="light" richColors />
               {environment === 'dev' && <ThemePanel defaultOpen={false} />}
             </Theme>

@@ -1,6 +1,6 @@
 import { preloadQuery } from 'convex/nextjs'
 
-import { Modal } from '@/app/(views)/images/[thread_id]/@modal/(...)image/[image_id]/Modal'
+import { Modal } from '@/app/images/[thread_id]/@modal/(...)image/[image_id]/Modal'
 import { ImageMessageDetailPageLoader } from '@/components/pages/ImageDetailPage'
 import { api } from '@/convex/_generated/api'
 import { getConvexSiteUrl } from '@/lib/utils'

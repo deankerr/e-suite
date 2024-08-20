@@ -1,6 +1,6 @@
 'use client'
 
-import { ImagesFeed } from '@/app/(views)/images/[thread_id]/ImagesFeed'
+import { MessageFeed } from '@/app/chat/[thread_id]/MessageFeed'
 import { Composer } from '@/components/composer/Composer'
 import { useThreadActions, useThreads } from '@/lib/api'
 
@@ -10,8 +10,8 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
   return (
     <>
-      <div className="h-96 grow overflow-hidden">
-        <ImagesFeed thread_id={params.thread_id} />
+      <div className="grow">
+        <MessageFeed slug={params.thread_id} />
       </div>
       {thread && thread.userIsViewer && (
         <Composer
