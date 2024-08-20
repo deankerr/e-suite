@@ -14,6 +14,11 @@ export const getMessage = async (ctx: QueryCtx, messageId: string) => {
   return id ? await ctx.table('messages').get(id) : null
 }
 
+export const getMessageAndEdges = async (ctx: QueryCtx, messageId: string) => {
+  const message = await getMessage(ctx, messageId)
+  return message ? await getMessageEdges(ctx, message) : null
+}
+
 export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
   const jobs = await ctx
     .table('jobs3', 'messageId', (q) => q.eq('messageId', messageId))

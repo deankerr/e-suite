@@ -9,6 +9,7 @@ import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ClientProviders } from '@/components/util/ClientProviders'
+import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { appConfig } from '@/config/config'
 import { cn, environment } from '@/lib/utils'
 
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Analytics />
           </>
         )}
+        <TailwindBreakpointIndicator />
       </body>
     </html>
   )

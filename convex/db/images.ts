@@ -11,6 +11,7 @@ import { internalMutation, internalQuery, query } from '../functions'
 import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
 import { createJob } from '../workflows/jobs'
+import { getMessage, getMessageAndEdges } from './messages'
 import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Doc } from '../_generated/dataModel'
@@ -121,6 +122,17 @@ export const getByUid = query({
       userIsViewer: getUserIsViewer(ctx, image.userId),
       user: await getUserPublic(ctx, image.userId),
     }
+  },
+})
+
+export const getImageMessage = query({
+  args: {
+    uid: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const image = await ctx.table('images').get('uid', args.uid)
+    if (!image) return null
+    return await getMessageAndEdges(ctx, image.messageId)
   },
 })
 

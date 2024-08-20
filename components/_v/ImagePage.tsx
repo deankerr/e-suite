@@ -1,6 +1,7 @@
 'use client'
 
 import { Card, DataList } from '@radix-ui/themes'
+import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
 import { Image } from '@/components/images/Image'
@@ -8,23 +9,47 @@ import { EmptyPage } from '@/components/pages/EmptyPage'
 import { useImage, useMessageId } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EImage, EUser } from '@/convex/types'
+import type { api } from '@/convex/_generated/api'
+import type { EImage, EMessage, EUser } from '@/convex/types'
 
-export const ImagePage = ({ params }: { params: { image_id: string } }) => {
+export const ImagePageLoader1 = ({ params }: { params: { image_id: string } }) => {
   const image = useImage(params.image_id)
   const message = useMessageId(image?.messageId)
 
-  if (image === null) {
+  if (image === null || message === null) {
     return <EmptyPage />
   }
 
-  if (image === undefined) {
+  if (image === undefined || message === undefined) {
     return null
+  }
+
+  return <ImagePage image_id={params.image_id} message={message} />
+}
+
+export const ImagePagePreloaded = ({
+  preloadedImageMessage,
+  image_id,
+}: {
+  preloadedImageMessage: Preloaded<typeof api.db.images.getImageMessage>
+  image_id: string
+}) => {
+  const message = usePreloadedQuery(preloadedImageMessage)
+
+  if (!message) return <EmptyPage />
+  return <ImagePage image_id={image_id} message={message} />
+}
+
+export const ImagePage = ({ image_id, message }: { image_id: string; message: EMessage }) => {
+  const image = message.images.find((image) => image.uid === image_id)
+
+  if (!image) {
+    return <EmptyPage />
   }
 
   return (
     <>
-      <div className="mx-auto grid h-full w-full max-w-7xl gap-2 overflow-y-auto p-2 md:grid-cols-[2fr_1fr]">
+      <div className="mx-auto grid h-full w-full max-w-7xl gap-2 overflow-y-auto p-2 md:grid-cols-[2.5fr_1fr]">
         <div className="space-y-2">
           <div
             className="overflow-hidden rounded-md border border-grayA-3"
@@ -63,7 +88,7 @@ export const ImagePage = ({ params }: { params: { image_id: string } }) => {
   )
 }
 
-const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
+const ImageDetailsCards = ({ image }: { image: EImage & { user?: EUser } }) => {
   return (
     <>
       {image.captionModelId ? (
@@ -115,7 +140,9 @@ const ImageDetailsCards = ({ image }: { image: EImage & { user: EUser } }) => {
         <DataList.Root orientation="vertical">
           <DataList.Item>
             <DataList.Label>created</DataList.Label>
-            <DataList.Value>{new Date(image._creationTime).toLocaleString()}</DataList.Value>
+            <DataList.Value suppressHydrationWarning>
+              {new Date(image._creationTime).toLocaleString()}
+            </DataList.Value>
           </DataList.Item>
 
           <DataList.Item>

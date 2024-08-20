@@ -20,7 +20,7 @@ export const ImagesFeed = ({ thread_id }: { thread_id: string }) => {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="grid auto-rows-max grid-cols-3 gap-2 p-2">
+      <div className="grid auto-rows-max grid-cols-3 gap-2 p-2 xl:grid-cols-4">
         {results.map((image) => (
           <Link
             key={image._id}
@@ -38,7 +38,7 @@ export const ImagesFeed = ({ thread_id }: { thread_id: string }) => {
                 objectPosition: 'top',
               }}
               fill
-              sizes="(max-width: 768px) 33vw, calc((100vw - 240px) / 3)"
+              sizes="(max-width: 1280px) 33vw, 25vw"
             />
           </Link>
         ))}
