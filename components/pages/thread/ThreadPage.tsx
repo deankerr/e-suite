@@ -3,8 +3,10 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { twc } from 'react-twc'
 
+import { NavSheet } from '@/app/NavRail'
 import { FavouriteButton } from '@/components/pages/thread/FavouriteButton'
 import { ThreadMenu } from '@/components/pages/thread/ThreadMenu'
+import { IconButton } from '@/components/ui/Button'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
 import { useImage, useThread } from '@/lib/api'
 
@@ -40,11 +42,18 @@ export const ThreadHeader = ({
 
   return (
     <ThreadHeaderWrapper>
-      <div className="size-4" />
+      <NavSheet>
+        <IconButton variant="ghost" aria-label="Open navigation sheet" className="md:hidden">
+          <Icons.List size={20} />
+        </IconButton>
+      </NavSheet>
+      <div className="hidden size-4 md:block" />
+
       <h1 className="truncate px-1 text-sm font-medium">{thread.title ?? 'Untitled Thread'}</h1>
 
       <ThreadMenu thread_id={thread.slug} />
       <FavouriteButton thread_id={thread.slug} />
+      <div className="grow" />
     </ThreadHeaderWrapper>
   )
 }
