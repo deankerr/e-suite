@@ -129,7 +129,15 @@ export const useDeleteMessage = () => {
 // * queries
 export const useThreads = () => {
   const threads = useQuery(api.db.threads.list, {})
-  threads?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
+  threads?.sort((a, b) => {
+    if (a.favorite === true && b.favorite !== true) {
+      return -1 // Favorites come first
+    }
+    if (b.favorite === true && a.favorite !== true) {
+      return 1 // Favorites come first
+    }
+    return b.updatedAtTime - a.updatedAtTime // Then sort by updatedAtTime
+  })
   return threads
 }
 

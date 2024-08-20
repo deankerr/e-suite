@@ -1,11 +1,14 @@
 'use client'
 
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
+import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { AppLogo } from '@/components/icons/AppLogo'
 import { UserButtons } from '@/components/layout/UserButtons'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { useThreads } from '@/lib/api'
 import { getThreadPath } from '@/lib/helpers'
 
@@ -23,14 +26,15 @@ const ThreadIcon = ({ type = '' }: { type?: string }) => {
 export const NavRail = () => {
   const threads = useThreads()
   const pathname = usePathname()
+  const [containerRef] = useAutoAnimate()
 
   return (
     <div className="z-10 w-11 shrink-0">
-      <div className="group flex h-full w-11 flex-col items-start gap-1 overflow-hidden rounded-md border border-gray-5 bg-gray-1 transition-all hover:w-60">
+      <div className="group flex h-full w-11 flex-col items-start gap-1 overflow-hidden rounded-md border border-gray-5 bg-gray-1 transition-all hover:w-64">
         <Link
           href="/"
           aria-label="Go to home page"
-          className="grid h-10 w-60 grid-cols-[2.75rem_12rem]"
+          className="mb-0.5 grid h-10 min-w-60 shrink-0 grid-cols-[2.75rem_auto]"
         >
           <div className="flex-col-center">
             <AppLogo className="size-6 text-accent-11" />
@@ -41,36 +45,41 @@ export const NavRail = () => {
           </div>
         </Link>
 
-        <div className="flex flex-col gap-1.5">
-          {threads
-            ?.filter((thread) => thread.slug !== 'new')
-            .map((thread) => (
-              <Link
-                key={thread._id}
-                href={getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })}
-                aria-current={
-                  pathname ===
-                  getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })
-                    ? 'page'
-                    : undefined
-                }
-                className="grid h-12 w-60 grid-cols-[2.75rem_12rem] py-1 font-medium opacity-90 hover:bg-grayA-2 aria-[current=page]:bg-grayA-3 aria-[current=page]:opacity-100"
-              >
-                <div className="flex justify-center">
+        <ScrollArea>
+          <div ref={containerRef} className="flex flex-col px-1">
+            {threads
+              ?.filter((thread) => thread.slug !== 'new')
+              .map((thread) => (
+                <Link
+                  key={thread._id}
+                  href={getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })}
+                  aria-current={
+                    pathname ===
+                    getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })
+                      ? 'page'
+                      : undefined
+                  }
+                  className="grid h-12 min-w-60 grid-cols-[2.75rem_auto] items-center rounded font-medium opacity-90 transition-all hover:bg-grayA-2 aria-[current=page]:opacity-100 group-hover:aria-[current=page]:bg-grayA-3 [&>svg]:-translate-x-1 [&>svg]:place-self-center"
+                >
                   <ThreadIcon type={thread.latestRunConfig?.type} />
-                </div>
 
-                <div className="line-clamp-2 select-none overflow-hidden text-sm opacity-0 group-hover:opacity-100">
-                  {thread.title ?? 'Untitled'}
-                </div>
-              </Link>
-            ))}
-        </div>
+                  <div className="line-clamp-2 select-none overflow-hidden text-sm">
+                    {thread.title ?? 'Untitled'}
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </ScrollArea>
 
         <div className="grow" />
 
-        <div className="flex-col-center h-10 w-11 border-b border-gray-3">
-          <UserButtons />
+        <div className="flex-col-center h-10 w-11 shrink-0 border-b border-gray-3">
+          <UserButtons />{' '}
+          <AdminOnlyUi>
+            <Link href="/admin" className="text-xs text-gray-10 hover:text-gray-12">
+              Admin
+            </Link>
+          </AdminOnlyUi>
         </div>
       </div>
     </div>
