@@ -4,14 +4,15 @@ import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 import * as vb from 'valibot'
 
-import { api, internal } from '../_generated/api'
+import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery, query } from '../functions'
 import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
 import { createJob } from '../workflows/jobs'
-import { getUserIsViewer } from './users'
+import { getMessageAndEdges } from './messages'
+import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Doc } from '../_generated/dataModel'
 import type { Ent, MutationCtx } from '../types'
@@ -29,7 +30,7 @@ export const createImage = internalMutation({
       userId: message.userId,
       threadId: message.threadId,
       searchText: buildSearchText(args),
-      generationData: await getGenerationData(ctx, message),
+      generationData: await getGenerationData(ctx, message, args.sourceUrl),
       uid: generateUid(Date.now()),
     })
 
@@ -76,25 +77,42 @@ const buildSearchText = (fields: Partial<Doc<'images'>>) => {
   return searchText
 }
 
-const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>) => {
-  const jobs = await ctx.table('jobs3', 'messageId', (q) => q.eq('messageId', message._id))
-  const job = jobs.find((job) => job.pipeline === 'textToImage')
-  const result = vb.safeParse(
-    vb.object({ input: vb.object({ resourceKey: vb.string(), prompt: vb.string() }) }),
-    job,
-  )
-  if (!result.success) {
-    return undefined
-  }
+const getGenerationData = async (ctx: MutationCtx, message: Ent<'messages'>, sourceUrl: string) => {
+  const jobs = await ctx
+    .table('jobs3', 'messageId', (q) => q.eq('messageId', message._id))
+    .filter((q) => q.eq(q.field('pipeline'), 'textToImage'))
 
-  const { resourceKey, prompt } = result.output.input
-  const model = await getImageModelByResourceKey(ctx, resourceKey)
+  for (const job of jobs) {
+    const result = vb.safeParse(
+      vb.object({
+        input: vb.object({ resourceKey: vb.string(), prompt: vb.string() }),
+        stepResults: vb.array(
+          vb.object({
+            result: vb.object({
+              imageUrls: vb.array(vb.string()),
+            }),
+          }),
+        ),
+      }),
+      job,
+    )
 
-  return {
-    prompt,
-    endpointId: model?.endpoint ?? '',
-    modelId: model?.endpointModelId ?? '',
-    modelName: model?.name ?? '',
+    if (!result.success) continue
+    // find the matching source url
+    const match = result.output.stepResults.find((step) =>
+      step.result.imageUrls.includes(sourceUrl),
+    )
+    if (match) {
+      const { resourceKey, prompt } = result.output.input
+      const model = await getImageModelByResourceKey(ctx, resourceKey)
+
+      return {
+        prompt,
+        endpointId: model?.endpoint ?? '',
+        modelId: model?.endpointModelId ?? '',
+        modelName: model?.name ?? '',
+      }
+    }
   }
 }
 
@@ -119,7 +137,19 @@ export const getByUid = query({
     return {
       ...omit(image, ['searchText']),
       userIsViewer: getUserIsViewer(ctx, image.userId),
+      user: await getUserPublic(ctx, image.userId),
     }
+  },
+})
+
+export const getImageMessage = query({
+  args: {
+    uid: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const image = await ctx.table('images').get('uid', args.uid)
+    if (!image) return null
+    return await getMessageAndEdges(ctx, image.messageId)
   },
 })
 

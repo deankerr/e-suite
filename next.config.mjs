@@ -27,13 +27,13 @@ const nextConfig = {
   redirects: async () => {
     return [
       {
-        source: '/',
-        destination: '/suite',
-        permanent: false,
+        source: '/c/:slug*',
+        destination: '/chat/:slug*',
+        permanent: true,
       },
       {
-        source: '/c/:slug*',
-        destination: '/suite/threads/:slug*',
+        source: '/suite/threads/:slug*',
+        destination: '/chat/:slug*',
         permanent: true,
       },
     ]
@@ -45,8 +45,6 @@ const nextConfig = {
       destination: `${backendUrl}/i/:slug`,
     },
   ],
-
-  transpilePackages: ['@lobehub/icons'],
 }
 
 const withBundleAnalyzer = bundleAnalyzer({

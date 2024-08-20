@@ -1,6 +1,6 @@
 export const appConfig = {
   baseUrl: '/',
-  threadUrl: '/suite/threads',
+  threadUrl: '/chat',
   siteTitle: 'e⋆suite',
   siteDescription: "it's the e⋆suite",
   nInitialMessages: 25,

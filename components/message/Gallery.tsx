@@ -1,3 +1,5 @@
+import { ms } from 'itty-time'
+
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
@@ -15,7 +17,12 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
   }))
 
   const placeholders = message.jobs
-    .filter((job) => job.name === 'textToImage' && job.status !== 'failed')
+    .filter(
+      (job) =>
+        job.name === 'textToImage' &&
+        job.status !== 'failed' &&
+        Date.now() - job._creationTime < ms('1 minute'),
+    )
     .flatMap((job) => {
       const input = job.input as RunConfigTextToImage
       return [...Array(input.n ?? 1)].map((_, i) => ({

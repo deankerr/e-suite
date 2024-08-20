@@ -16,6 +16,10 @@ const InitialInput = vb.object({
     vb.string(),
     vb.transform((input) => input as Id<'messages'>),
   ),
+  threadId: vb.pipe(
+    vb.string(),
+    vb.transform((input) => input as Id<'threads'>),
+  ),
   resourceKey: vb.string(),
   prompt: vb.string(),
   n: vb.optional(vb.number()),

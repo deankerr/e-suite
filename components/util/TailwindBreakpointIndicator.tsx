@@ -2,6 +2,7 @@
 
 import { useWindowSize } from '@react-hookz/web'
 
+import { ClientOnly } from '@/components/util/ClientOnly'
 import { cn } from '@/lib/utils'
 
 export function TailwindBreakpointIndicator() {
@@ -12,13 +13,16 @@ export function TailwindBreakpointIndicator() {
   const dimensions = width && height ? `⋅${width}x${height}` : null
 
   return (
-    <div
-      className={cn(
-        'fixed left-0 top-0 z-[99999] bg-[#111111] text-[0.5rem] text-[#BBBBBB]',
-        content,
-      )}
-    >
-      <span>{dimensions}</span>
-    </div>
+    <ClientOnly>
+      <div
+        suppressHydrationWarning
+        className={cn(
+          'fixed bottom-0 right-0 z-[99999] bg-[#111111] text-[0.5rem] text-[#BBBBBB] opacity-30',
+          content,
+        )}
+      >
+        <span>{dimensions}</span>
+      </div>
+    </ClientOnly>
   )
 }
