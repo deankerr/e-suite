@@ -4,7 +4,8 @@ import { getConvexSiteUrl } from '@/lib/utils'
 export async function generateMetadata({
   params,
 }: {
-  params: { thread_id: string; modal: React.ReactNode }
+  params: { thread_id: string }
+  modal: React.ReactNode
 }) {
   const response = await fetch(`${getConvexSiteUrl()}/page?route=images&id=${params.thread_id}`)
   if (!response.ok) return {}
