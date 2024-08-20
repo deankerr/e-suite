@@ -22,8 +22,8 @@ export const Navigation = () => {
   const path = useSuitePath()
   const isBlankPage = !path.segments[1]
 
-  const { threadsList } = useThreads()
-  const favorites = threadsList?.filter((thread) => thread.favorite && thread.userIsViewer) ?? []
+  const threads = useThreads()
+  const favorites = threads?.filter((thread) => thread.favorite && thread.userIsViewer) ?? []
 
   return (
     <>
@@ -77,8 +77,8 @@ export const Navigation = () => {
           ))}
         </NavGroup>
 
-        <NavGroup heading="Threads" hidden={threadsList?.length === 0} scrollable>
-          {threadsList
+        <NavGroup heading="Threads" hidden={threads?.length === 0} scrollable>
+          {threads
             ?.filter((thread) => !favorites.includes(thread) && thread.slug !== 'new')
             .map((thread) => (
               <NavLink

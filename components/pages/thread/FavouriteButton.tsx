@@ -3,10 +3,10 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 
 import { IconButton } from '@/components/ui/Button'
-import { useThreads, useUpdateThread } from '@/lib/api'
+import { useThread, useUpdateThread } from '@/lib/api'
 
 export const FavouriteButton = ({ thread_id }: { thread_id: string }) => {
-  const { thread } = useThreads(thread_id)
+  const thread = useThread(thread_id)
   const sendUpdateThread = useUpdateThread()
 
   if (!thread || !thread.userIsViewer) {

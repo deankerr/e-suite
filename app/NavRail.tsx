@@ -21,7 +21,7 @@ const ThreadIcon = ({ type = '' }: { type?: string }) => {
 }
 
 export const NavRail = () => {
-  const { threadsList } = useThreads()
+  const threads = useThreads()
   const pathname = usePathname()
 
   return (
@@ -42,7 +42,7 @@ export const NavRail = () => {
         </Link>
 
         <div className="flex flex-col gap-1.5">
-          {threadsList
+          {threads
             ?.filter((thread) => thread.slug !== 'new')
             .map((thread) => (
               <Link

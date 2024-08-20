@@ -5,7 +5,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, Dialog, IconButton } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
-import { useThreads, useUpdateThread } from '@/lib/api'
+import { useThread, useUpdateThread } from '@/lib/api'
 import { MDXEditor } from '../mdx-editor/MDXEditor'
 
 import type { MDXEditorMethods } from '@mdxeditor/editor'
@@ -23,7 +23,7 @@ export interface TextEditorDialogProps {
 
 export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialogProps>(
   ({ slug, children, ...props }, ref) => {
-    const { thread } = useThreads(slug)
+    const thread = useThread(slug)
     const [open, setOpen] = useState(false)
     const editorRef = useRef<MDXEditorMethods>(null)
 

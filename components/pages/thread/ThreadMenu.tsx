@@ -7,10 +7,10 @@ import { DropdownMenu } from '@radix-ui/themes'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { DeleteThreadDialog, EditThreadTitleDialog } from '@/components/pages/thread/dialogs'
 import { IconButton } from '@/components/ui/Button'
-import { useThreads } from '@/lib/api'
+import { useThread } from '@/lib/api'
 
 export const ThreadMenu = ({ thread_id }: { thread_id: string }) => {
-  const { thread } = useThreads(thread_id)
+  const thread = useThread(thread_id)
 
   const [showEditTitleDialog, setShowEditTitleDialog] = useState(false)
   const [showDeleteThreadDialog, setShowDeleteThreadDialog] = useState(false)

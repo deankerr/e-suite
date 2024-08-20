@@ -4,14 +4,14 @@ import { twc } from 'react-twc'
 
 import { FavouriteButton } from '@/components/pages/thread/FavouriteButton'
 import { ThreadMenu } from '@/components/pages/thread/ThreadMenu'
-import { useThreads } from '@/lib/api'
+import { useThread } from '@/lib/api'
 
 export const ThreadPage = twc.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
 
 export const ThreadHeaderWrapper = twc.div`flex-start h-10 shrink-0 overflow-hidden border-b border-gray-5 px-1 font-medium`
 
 export const ThreadHeader = ({ thread_id }: { thread_id: string }) => {
-  const { thread } = useThreads(thread_id)
+  const thread = useThread(thread_id)
 
   if (thread === null) return <ThreadHeaderWrapper />
 
