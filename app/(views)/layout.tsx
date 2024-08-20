@@ -1,9 +1,5 @@
 import { NavRail } from '@/app/(views)/NavRail'
 
-export const metadata = {
-  title: 'eViews',
-}
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-dvh bg-midnight md:gap-1.5 md:p-1.5">

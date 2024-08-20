@@ -9,12 +9,7 @@ import { mutation, query } from '../functions'
 import { ENV } from '../lib/env'
 import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
-import {
-  extractValidUrlsFromText,
-  getMaxQuantityForModel,
-  getMessageName,
-  getMessageText,
-} from '../shared/helpers'
+import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
@@ -281,37 +276,6 @@ export const getMessage = query({
     if (!thread) return null
 
     return await getMessageBySeries(ctx, { threadId: thread._id, series: args.series })
-  },
-})
-
-export const getPageMetadata = query({
-  args: {
-    slugOrId: v.string(),
-    series: v.optional(v.number()),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (thread) {
-      const threadTitle = thread.title ?? 'Untitled Thread'
-
-      const message = args.series
-        ? await getMessageBySeries(ctx, { threadId: thread._id, series: args.series })
-        : null
-      if (message) {
-        const name = getMessageName(message)
-        const text = getMessageText(message)
-        if (name && text) {
-          return {
-            title: `${threadTitle} · ${name}: ${text}`,
-            description: `${threadTitle} · ${name}: ${text}`,
-          }
-        }
-      }
-
-      return {
-        title: threadTitle,
-      }
-    }
   },
 })
 

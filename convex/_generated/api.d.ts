@@ -20,6 +20,7 @@ import type * as db_admin_see from "../db/admin/see.js";
 import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_models from "../db/models.js";
+import type * as db_page from "../db/page.js";
 import type * as db_threads from "../db/threads.js";
 import type * as db_users from "../db/users.js";
 import type * as deletion from "../deletion.js";
@@ -80,6 +81,7 @@ declare const fullApi: ApiFromModules<{
   "db/images": typeof db_images;
   "db/messages": typeof db_messages;
   "db/models": typeof db_models;
+  "db/page": typeof db_page;
   "db/threads": typeof db_threads;
   "db/users": typeof db_users;
   deletion: typeof deletion;
