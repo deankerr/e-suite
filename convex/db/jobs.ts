@@ -17,7 +17,7 @@ export const get = query({
 
     return await ctx
       .table('jobs3', 'threadId', (q) =>
-        q.eq('threadId', thread._id).gte('_creationTime', Date.now() - ms('5 minutes')),
+        q.eq('threadId', thread._id).gte('_creationTime', Date.now() - ms('10 minutes')),
       )
       .order('desc')
       .map(async (job) => {

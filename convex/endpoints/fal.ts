@@ -17,6 +17,7 @@ const sdxlSizes = {
 } satisfies ImageModelDataRecord['sizes']
 
 const importModelIds = [
+  'fal-ai/flux-general',
   'fal-ai/flux/dev',
   'fal-ai/flux/schnell',
   'fal-ai/flux-pro',

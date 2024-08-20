@@ -1,5 +1,18 @@
 [
   {
+    "cover_image": "https://storage.googleapis.com/falserverless/gallery/flux-lora/flux_general.png",
+    "description": "A general purpose endpoint for the FLUX.1 [dev] model, which can be used with a variety of extensions including any LoRA support.",
+    "link": "https://fal.ai/models/fal-ai/flux-general",
+    "model_id": "fal-ai/flux-general",
+    "name": "FLUX.1 [dev] - loras",
+    "tags": "text-to-image inference loras",
+    "creatorName": "Black Forest Labs",
+    "pricing": {
+      "type": "perMegapixel",
+      "value": "0.075"
+    }
+  },
+  {
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/flux-dev-thumb.webp",
     "description": "FLUX.1, a 12B parameters text-to-image model with outstanding aesthetics.",
     "link": "https://fal.ai/models/fal-ai/flux/dev/playground",

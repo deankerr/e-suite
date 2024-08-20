@@ -34,13 +34,14 @@ export const textToImage = async (
   args: Omit<RunConfigTextToImage, 'type' | 'size'> & { size?: string },
 ) => {
   try {
-    const { resourceKey, width, height, size, prompt, n } = args
+    const { resourceKey, width, height, size, prompt, n, loras } = args
     const { modelId } = vb.parse(ResourceKey, resourceKey)
 
     const input = {
       prompt,
       image_size: width && height ? { width, height } : size,
       num_images: n,
+      loras,
 
       prompt_expansion: false,
       expand_prompt: false,

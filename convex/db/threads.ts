@@ -503,6 +503,14 @@ const createTextToImageRun = async (
       width: z.number().max(2048).default(1024),
       height: z.number().max(2048).default(1024),
       size: z.enum(['portrait', 'square', 'landscape']).optional(),
+      loras: z
+        .array(
+          z.object({
+            path: z.string(),
+            scale: z.number().optional(),
+          }),
+        )
+        .optional(),
     })
     .transform((vals) => {
       if (vals.size) {

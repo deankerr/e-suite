@@ -22,6 +22,14 @@ const InitialInput = vb.object({
   ),
   resourceKey: vb.string(),
   prompt: vb.string(),
+  loras: vb.optional(
+    vb.array(
+      vb.object({
+        path: vb.string(),
+        scale: vb.optional(vb.number()),
+      }),
+    ),
+  ),
   n: vb.optional(vb.number()),
   size: vb.optional(vb.string()),
   width: vb.optional(vb.number()),

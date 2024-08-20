@@ -32,6 +32,15 @@ export const runConfigTextToImageV = v.object({
   size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
   width: v.optional(v.number()),
   height: v.optional(v.number()),
+
+  loras: v.optional(
+    v.array(
+      v.object({
+        path: v.string(),
+        scale: v.optional(v.number()),
+      }),
+    ),
+  ),
 })
 
 export const runConfigTextToAudioV = v.object({
