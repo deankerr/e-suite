@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { Button, IconButton } from '@/components/ui/Button'
 import { useDeleteThread, useThreads, useUpdateThread } from '@/lib/api'
+import { getThreadPath } from '@/lib/helpers'
 
 export const ThreadHeader = ({ thread_id }: { thread_id: string }) => {
   const { thread } = useThreads(thread_id)
@@ -29,7 +30,11 @@ export const ThreadHeader = ({ thread_id }: { thread_id: string }) => {
     <>
       <Wrapper>
         <div className="size-4" />
-        <h1 className="truncate px-1 text-sm font-medium">{threadTitle}</h1>
+        <h1 className="truncate px-1 text-sm font-medium">
+          <Link href={getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })}>
+            {threadTitle}
+          </Link>
+        </h1>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" color="gray" aria-label="More options" disabled>

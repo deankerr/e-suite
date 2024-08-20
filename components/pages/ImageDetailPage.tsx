@@ -4,6 +4,7 @@ import { Card, DataList } from '@radix-ui/themes'
 import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
+import { ThreadHeader } from '@/components/_v/ThreadHeader'
 import { IImage } from '@/components/images/IImage'
 import {
   Carousel,
@@ -12,6 +13,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/Carousel'
+import { useThreads } from '@/lib/api'
+import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
 import type { EImage, EUser } from '@/convex/types'
@@ -19,41 +22,50 @@ import type { EImage, EUser } from '@/convex/types'
 export const ImageMessageDetailPageLoader = (props: {
   initialImageId: string
   preloadedImageMessage: Preloaded<typeof api.db.images.getImageMessage>
+  showHeader?: boolean
 }) => {
   const message = usePreloadedQuery(props.preloadedImageMessage)
+  const { thread } = useThreads(message?.threadId)
 
-  return <ImageDetailPage images={message?.images ?? []} currentImageId={props.initialImageId} />
+  return (
+    <>
+      {props.showHeader && <ThreadHeader thread_id={thread?._id ?? ''} />}
+      <ImageDetailPage images={message?.images ?? []} currentImageId={props.initialImageId} />
+    </>
+  )
 }
 
 export const ImageDetailPage = (props: { images: EImage[]; currentImageId: string }) => {
   const image = props.images.find((image) => image.uid === props.currentImageId)
 
   return (
-    <div className="grid h-full w-full grid-rows-[1fr_auto_6rem] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
-      <div className="p-2 md:overflow-hidden">{image && <IImage image={image} />}</div>
+    <>
+      <div className="grid h-full w-full grid-rows-[1fr_auto_6rem] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
+        <div className="p-2 md:overflow-hidden">{image && <IImage image={image} />}</div>
 
-      <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
-        <div className="space-y-2">{image && <ImageDetailsCards image={image} />}</div>
-      </div>
+        <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
+          <div className="space-y-2">{image && <ImageDetailsCards image={image} />}</div>
+        </div>
 
-      <div className="flex-center">
-        <Carousel className="w-[60%]">
-          <CarouselContent className="">
-            {props.images.map((image) => (
-              <CarouselItem key={image.uid} className="flex-col-center basis-24">
-                <Link href={`/image/${image.uid}`}>
-                  <Card className="aspect-square p-0">
-                    <IImage image={image} className="object-cover" />
-                  </Card>
-                </Link>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        <div className={cn('flex-center', props.images.length < 2 && 'hidden')}>
+          <Carousel className="w-[60%]">
+            <CarouselContent className="">
+              {props.images.map((image) => (
+                <CarouselItem key={image.uid} className="flex-col-center basis-24">
+                  <Link href={`/image/${image.uid}`}>
+                    <Card className="aspect-square p-0">
+                      <IImage image={image} className="object-cover" />
+                    </Card>
+                  </Link>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

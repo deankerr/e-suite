@@ -20,7 +20,7 @@ export const Modal = ({
       <div className="absolute -top-9 right-1">
         <IconButton
           aria-label="Close"
-          variant="surface"
+          variant="ghost"
           onClick={() => (closePathname ? router.push(closePathname) : router.back())}
         >
           <Icons.X size={18} />

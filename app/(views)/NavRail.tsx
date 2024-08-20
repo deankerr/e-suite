@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { AppLogo } from '@/components/icons/AppLogo'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { useThreads } from '@/lib/api'
+import { getThreadPath } from '@/lib/helpers'
 
 const ThreadIcon = ({ type = '' }: { type?: string }) => {
   switch (type) {
@@ -16,17 +17,6 @@ const ThreadIcon = ({ type = '' }: { type?: string }) => {
       return <Icons.Images size={20} className="text-accentA-11" />
     default:
       return <Icons.NotePencil size={20} className="text-accentA-11" />
-  }
-}
-
-const getThreadPath = ({ slug, type = '' }: { type?: string; slug: string }) => {
-  switch (type) {
-    case 'chat':
-      return `/chat/${slug}`
-    case 'textToImage':
-      return `/images/${slug}`
-    default:
-      return `/chat/${slug}`
   }
 }
 

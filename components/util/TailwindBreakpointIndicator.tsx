@@ -17,7 +17,7 @@ export function TailwindBreakpointIndicator() {
       <div
         suppressHydrationWarning
         className={cn(
-          'fixed left-0 top-0 z-[99999] bg-[#111111] text-[0.5rem] text-[#BBBBBB]',
+          'fixed bottom-0 right-0 z-[99999] bg-[#111111] text-[0.5rem] text-[#BBBBBB] opacity-30',
           content,
         )}
       >

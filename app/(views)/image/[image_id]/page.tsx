@@ -9,9 +9,12 @@ export default async function Page({ params }: { params: { image_id: string } })
   })
 
   return (
-    <ImageMessageDetailPageLoader
-      preloadedImageMessage={preloadedImageMessage}
-      initialImageId={params.image_id}
-    />
+    <>
+      <ImageMessageDetailPageLoader
+        preloadedImageMessage={preloadedImageMessage}
+        initialImageId={params.image_id}
+        showHeader
+      />
+    </>
   )
 }
