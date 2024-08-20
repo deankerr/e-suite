@@ -1,6 +1,6 @@
 import { preloadQuery } from 'convex/nextjs'
 
-import { ImagePagePreloaded } from '@/components/_v/ImagePage'
+import { ImageMessageDetailPageLoader } from '@/components/pages/ImageDetailPage'
 import { api } from '@/convex/_generated/api'
 
 export default async function Page({ params }: { params: { image_id: string } }) {
@@ -9,6 +9,9 @@ export default async function Page({ params }: { params: { image_id: string } })
   })
 
   return (
-    <ImagePagePreloaded preloadedImageMessage={preloadedImageMessage} image_id={params.image_id} />
+    <ImageMessageDetailPageLoader
+      preloadedImageMessage={preloadedImageMessage}
+      initialImageId={params.image_id}
+    />
   )
 }

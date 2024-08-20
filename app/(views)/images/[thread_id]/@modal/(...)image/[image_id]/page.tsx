@@ -1,7 +1,7 @@
 import { preloadQuery } from 'convex/nextjs'
 
 import { Modal } from '@/app/(views)/images/[thread_id]/@modal/(...)image/[image_id]/Modal'
-import { ImagePagePreloaded } from '@/components/_v/ImagePage'
+import { ImageMessageDetailPageLoader } from '@/components/pages/ImageDetailPage'
 import { api } from '@/convex/_generated/api'
 
 export default async function Page({
@@ -14,9 +14,9 @@ export default async function Page({
   })
   return (
     <Modal closePathname={`/images/${params.thread_id}`}>
-      <ImagePagePreloaded
+      <ImageMessageDetailPageLoader
         preloadedImageMessage={preloadedImageMessage}
-        image_id={params.image_id}
+        initialImageId={params.image_id}
       />
     </Modal>
   )
