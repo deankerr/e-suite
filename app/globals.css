@@ -67,6 +67,10 @@
   transition: height 100ms ease;
 }
 
+.shimmer {
+  @apply before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-grayA-3 before:bg-gradient-to-r before:from-transparent before:via-grayA-3 before:to-transparent;
+}
+
 .dark,
 .dark-theme {
   --orange-1: #15100d;

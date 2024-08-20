@@ -4,7 +4,7 @@ import { ScrollArea } from '@radix-ui/themes'
 
 import { AppLogo } from '@/components/icons/AppLogo'
 import { IconButton } from '@/components/ui/Button'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { SkeletonPulse } from '@/components/ui/Skeleton'
 
 const Shell = ({
   children,
@@ -36,9 +36,9 @@ const Header = ({
     <header className="flex-start h-10 shrink-0 overflow-hidden border-b border-grayA-3 bg-gray-2 px-1 font-medium">
       {loading ? (
         <div className="flex-start w-full animate-pulse gap-2 px-1">
-          <Skeleton className="h-5 w-8 animate-none bg-mauve-3" />
-          <Skeleton className="h-5 w-48 animate-none bg-mauve-3" />
-          <Skeleton className="h-5 grow animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 w-8 animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 w-48 animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 grow animate-none bg-mauve-3" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-2" />
         </div>
       ) : (
@@ -59,11 +59,11 @@ const Toolbar = ({
     <ToolbarPrimitive.Root className="flex-start h-10 shrink-0 border-b border-grayA-3 bg-gray-2 px-1">
       {loading ? (
         <div className="flex-start w-full animate-pulse gap-2 px-1">
-          <Skeleton className="h-5 w-8 animate-none bg-mauve-3" />
-          <Skeleton className="h-5 w-8 animate-none bg-mauve-3" />
-          <Skeleton className="h-5 w-16 animate-none bg-mauve-3" />
-          <Skeleton className="h-5 w-32 animate-none bg-mauve-3" />
-          <Skeleton className="h-5 grow animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 w-8 animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 w-8 animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 w-16 animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 w-32 animate-none bg-mauve-3" />
+          <SkeletonPulse className="h-5 grow animate-none bg-mauve-3" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-2" />
         </div>
       ) : (

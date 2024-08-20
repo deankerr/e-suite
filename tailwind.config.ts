@@ -147,7 +147,7 @@ const config: Config = {
         '8xl': '96rem',
       },
       keyframes: {
-        shimmerRight: {
+        shimmer: {
           '100%': {
             transform: 'translateX(100%)',
           },

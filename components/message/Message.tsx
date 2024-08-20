@@ -13,7 +13,7 @@ import { IconButton } from '@/components/ui/Button'
 import { ErrorCallout } from '@/components/ui/Callouts'
 import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { Pre } from '@/components/util/Pre'
 import { getMessageName, getMessageText } from '@/convex/shared/helpers'
@@ -25,7 +25,7 @@ import type { EMessage } from '@/convex/types'
 const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'), {
   loading: () => (
     <Card className="mx-auto aspect-[8/5] w-80">
-      <Skeleton className="absolute inset-0" />
+      <SkeletonPulse className="absolute inset-0" />
     </Card>
   ),
 })
