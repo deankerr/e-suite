@@ -1,20 +1,13 @@
 import { ms } from 'itty-time'
+import { useRouter } from 'next/navigation'
 
 import { ImageCard } from '@/components/images/ImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
-import { useLightbox } from '@/components/lightbox/hooks'
 
 import type { EMessage, RunConfigTextToImage } from '@/convex/types'
 
 export const Gallery = ({ message, priority }: { message: EMessage; priority?: boolean }) => {
-  const openLightbox = useLightbox()
-  const slides = message.images.map((image) => ({
-    type: 'image' as const,
-    src: `/i/${image.uid}`,
-    width: image.width,
-    height: image.height,
-    blurDataURL: image.blurDataUrl,
-  }))
+  const router = useRouter()
 
   const placeholders = message.jobs
     .filter(
@@ -36,7 +29,7 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
   if (message.images.length === 0 && placeholders.length === 0) return null
   return (
     <div className="flex grow flex-wrap justify-center gap-2 py-1">
-      {message.images.map((image, index) => (
+      {message.images.map((image) => (
         <ImageCard
           key={image._id}
           className="max-w-sm cursor-pointer"
@@ -45,10 +38,7 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
             sizes: '(max-width: 410px) 90vw, 20rem',
             priority,
             onClick: () => {
-              openLightbox({
-                slides,
-                index,
-              })
+              router.push(`/image/${image.uid}`)
             },
           }}
         />
