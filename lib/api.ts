@@ -173,7 +173,7 @@ export const useMessage = (slug?: string, msg?: string) => {
 }
 
 export const useImage = (uid?: string) => {
-  const image = useCacheQuery(api.db.images.getByUid, { uid })
+  const image = useCacheQuery(api.db.images.getByUid, uid ? { uid } : 'skip')
   return image
 }
 
