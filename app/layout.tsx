@@ -5,7 +5,7 @@ import { dark } from '@clerk/themes'
 import { Theme, ThemePanel } from '@radix-ui/themes'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Chakra_Petch, IBM_Plex_Mono, Inter } from 'next/font/google'
+import { IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { AppLayout } from '@/app/AppLayout'
@@ -42,19 +42,9 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-mono',
 })
 
-const chakraPetch = Chakra_Petch({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400'],
-  variable: '--font-chakra-petch',
-})
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={cn('overscroll-none', inter.variable, ibmPlexMono.variable, chakraPetch.variable)}
-    >
+    <html lang="en" className={cn('overscroll-none', inter.variable, ibmPlexMono.variable)}>
       {process.env.METICULOUS === 'true' && (
         <head>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}

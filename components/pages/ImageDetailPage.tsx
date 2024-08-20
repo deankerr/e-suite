@@ -4,7 +4,6 @@ import { Card, DataList } from '@radix-ui/themes'
 import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
-import { ThreadHeader } from '@/components/_v/ThreadHeader'
 import { IImage } from '@/components/images/IImage'
 import {
   Carousel,
@@ -13,7 +12,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/Carousel'
-import { useThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
@@ -22,14 +20,11 @@ import type { EImage, EUser } from '@/convex/types'
 export const ImageMessageDetailPageLoader = (props: {
   initialImageId: string
   preloadedImageMessage: Preloaded<typeof api.db.images.getImageMessage>
-  showHeader?: boolean
 }) => {
   const message = usePreloadedQuery(props.preloadedImageMessage)
-  const { thread } = useThreads(message?.threadId)
 
   return (
     <>
-      {props.showHeader && <ThreadHeader thread_id={thread?._id ?? ''} />}
       <ImageDetailPage images={message?.images ?? []} currentImageId={props.initialImageId} />
     </>
   )
