@@ -3,15 +3,21 @@
 import Link from 'next/link'
 
 import { Image } from '@/components/images/Image'
+import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import InfiniteScroll from '@/components/ui/InfiniteScroll'
 import { LineZoom, Orbit } from '@/components/ui/Ldrs'
-import { useThreadImages } from '@/lib/api'
+import { useThreadImages, useThreadJobs } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const ImagesFeed = ({ thread_id }: { thread_id: string }) => {
   const { results, loadMore, status, isLoading } = useThreadImages(thread_id)
+  const jobs = useThreadJobs(thread_id)
+  const imagesGenerating =
+    jobs?.filter(
+      (job) => job.name === 'textToImage' && (job.status === 'pending' || job.status === 'active'),
+    ) ?? []
 
-  if (status === 'LoadingFirstPage')
+  if (status === 'LoadingFirstPage' && thread_id !== 'new')
     return (
       <div className="flex-col-center h-full">
         <LineZoom />
@@ -21,6 +27,11 @@ export const ImagesFeed = ({ thread_id }: { thread_id: string }) => {
   return (
     <div className="h-full overflow-y-auto">
       <div className="grid auto-rows-max grid-cols-3 gap-2 p-2 xl:grid-cols-4">
+        {imagesGenerating.map((job) => (
+          <div key={job._id} className="w-full">
+            <ImageGeneratingEffect className="aspect-square w-full" />
+          </div>
+        ))}
         {results.map((image) => (
           <Link
             key={image._id}

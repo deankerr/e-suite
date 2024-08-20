@@ -528,6 +528,7 @@ const createTextToImageRun = async (
   const jobId = await createJobNext.textToImage(ctx, {
     ...input,
     messageId,
+    threadId: thread._id,
   })
 
   await thread.patch({

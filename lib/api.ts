@@ -158,6 +158,11 @@ export const useThreadImages = (slug?: string, initialNumItems = 3) => {
   return images
 }
 
+export const useThreadJobs = (slug?: string) => {
+  const jobs = useQuery(api.db.jobs.get, slug ? { threadId: slug } : 'skip')
+  return jobs
+}
+
 export const useMessageId = (messageId?: string) => {
   const message = useQuery(api.db.messages.get, messageId ? { messageId } : 'skip')
   return message

@@ -24,7 +24,7 @@ export const MessageFeed = ({ slug }: { slug: string }) => {
 
   const virtuoso = useRef<VirtuosoHandle>(null)
 
-  if (status === 'LoadingFirstPage')
+  if (status === 'LoadingFirstPage' && slug !== 'new')
     return (
       <div className="flex-col-center h-full">
         <LineZoom />
