@@ -35,35 +35,39 @@ export const ThreadHeader = ({ thread_id }: { thread_id: string }) => {
             {threadTitle}
           </Link>
         </h1>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <IconButton variant="ghost" color="gray" aria-label="More options" disabled>
-              <DotsThreeFillX width={20} height={20} />
+        {thread.userIsViewer && (
+          <>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <IconButton variant="ghost" color="gray" aria-label="More options">
+                  <DotsThreeFillX width={20} height={20} />
+                </IconButton>
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Content variant="soft">
+                <DropdownMenu.Item onClick={() => setShowEditTitleDialog(true)}>
+                  <Icons.Pencil /> Edit title
+                </DropdownMenu.Item>
+
+                <DropdownMenu.Item color="red" onClick={() => setShowDeleteThreadDialog(true)}>
+                  <Icons.Trash />
+                  Delete thread
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+
+            <IconButton
+              aria-label={thread.favorite ? 'Unfavorite thread' : 'Favorite thread'}
+              variant="ghost"
+              color={thread.favorite ? 'orange' : 'gray'}
+              onClick={() =>
+                sendUpdateThread({ threadId: thread._id, fields: { favorite: !thread.favorite } })
+              }
+            >
+              <Icons.Star size={20} weight={thread.favorite ? 'fill' : 'regular'} />
             </IconButton>
-          </DropdownMenu.Trigger>
-
-          <DropdownMenu.Content variant="soft">
-            <DropdownMenu.Item onClick={() => setShowEditTitleDialog(true)}>
-              <Icons.Pencil /> Edit title
-            </DropdownMenu.Item>
-
-            <DropdownMenu.Item color="red" onClick={() => setShowDeleteThreadDialog(true)}>
-              <Icons.Trash />
-              Delete thread
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-
-        <IconButton
-          aria-label={thread.favorite ? 'Unfavorite thread' : 'Favorite thread'}
-          variant="ghost"
-          color={thread.favorite ? 'orange' : 'gray'}
-          onClick={() =>
-            sendUpdateThread({ threadId: thread._id, fields: { favorite: !thread.favorite } })
-          }
-        >
-          <Icons.Star size={20} weight={thread.favorite ? 'fill' : 'regular'} />
-        </IconButton>
+          </>
+        )}
 
         {segment === 'chat' ? (
           <Link href={`/images/${thread.slug}`}>
