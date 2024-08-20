@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils'
+import { cn, twx } from '@/lib/utils'
 
-export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function SkeletonPulse({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn('animate-pulse rounded-md border-grayA-3 bg-grayA-2', className)}
@@ -10,3 +10,10 @@ export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivEl
     />
   )
 }
+
+export const SkeletonShimmer = twx.div.attrs({
+  tabIndex: -1,
+  'aria-hidden': true,
+})`
+  isolate h-8 w-full overflow-hidden rounded-md bg-grayA-2 shimmer
+`

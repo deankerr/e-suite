@@ -8,7 +8,9 @@ export const EmptyPage = ({ className, ...props }: React.ComponentProps<'div'>) 
     <div {...props} className={cn('flex-col-center h-full w-full', className)}>
       <Icons.Cat weight="thin" className="size-64 shrink-0 text-accentA-11 opacity-60" />
 
-      <div className="my-8 text-xl">There doesn&apos;t appear to be anything at this address.</div>
+      <div className="my-8 font-mono text-xl">
+        There doesn&apos;t appear to be anything at this address.
+      </div>
 
       <Link href="/">Home</Link>
     </div>

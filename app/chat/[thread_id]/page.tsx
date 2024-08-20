@@ -2,10 +2,10 @@
 
 import { MessageFeed } from '@/app/chat/[thread_id]/MessageFeed'
 import { Composer } from '@/components/composer/Composer'
-import { useThreadActions, useThreads } from '@/lib/api'
+import { useThread, useThreadActions } from '@/lib/api'
 
 export default function Page({ params }: { params: { thread_id: string } }) {
-  const { thread } = useThreads(params.thread_id)
+  const thread = useThread(params.thread_id)
   const actions = useThreadActions(thread?._id)
 
   return (

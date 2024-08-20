@@ -14,6 +14,7 @@ const config: Config = {
   plugins: [
     require('@tailwindcss/container-queries'),
     require('tailwindcss-animated'),
+    require('tailwindcss-animate'),
     plugin(({ addBase }) => {
       // css reset
       addBase({
@@ -147,7 +148,7 @@ const config: Config = {
         '8xl': '96rem',
       },
       keyframes: {
-        shimmerRight: {
+        shimmer: {
           '100%': {
             transform: 'translateX(100%)',
           },

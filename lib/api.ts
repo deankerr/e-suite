@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
-import { useSuitePath } from '@/lib/helpers'
 
 import type { EVoiceModel, RunConfig } from '@/convex/types'
 import type { FunctionReference, FunctionReturnType } from 'convex/server'
@@ -128,27 +127,27 @@ export const useDeleteMessage = () => {
 }
 
 // * queries
-export const useThreads = (selectSlug?: string) => {
-  const { slug } = useSuitePath()
-  const selectedSlug = selectSlug ?? slug
+export const useThreads = () => {
+  const threads = useQuery(api.db.threads.list, {})
+  threads?.sort((a, b) => {
+    if (a.favorite === true && b.favorite !== true) {
+      return -1 // Favorites come first
+    }
+    if (b.favorite === true && a.favorite !== true) {
+      return 1 // Favorites come first
+    }
+    return b.updatedAtTime - a.updatedAtTime // Then sort by updatedAtTime
+  })
+  return threads
+}
 
-  const userThreads = useQuery(api.db.threads.list, {})
-  userThreads?.sort((a, b) => b.updatedAtTime - a.updatedAtTime)
-
-  // * get the current thread from users list instantly if it's their thread
-  const selectedUserThread = userThreads?.find((thread) => thread.slug === selectedSlug)
-  // * otherwise fetch it individually
-  const selectedThread = useQuery(
-    api.db.threads.get,
-    selectedSlug && !selectedUserThread ? { slugOrId: selectedSlug } : 'skip',
-  )
-
-  const threadsList = (selectedThread ? [selectedThread] : []).concat(userThreads ?? [])
-
-  return {
-    threadsList,
-    thread: selectedUserThread ?? selectedThread,
+export const useThread = (threadId: string) => {
+  const thread = useQuery(api.db.threads.get, { slugOrId: threadId })
+  if (thread) {
+    thread.title ??= 'Untitled Thread'
   }
+
+  return thread
 }
 
 export const useThreadImages = (slug?: string, initialNumItems = 3) => {
@@ -169,7 +168,7 @@ export const useMessageId = (messageId?: string) => {
 }
 
 export const useMessage = (slug?: string, msg?: string) => {
-  const { thread } = useThreads(slug)
+  const thread = useThread(slug ?? '')
   const message = useCacheQuery(
     api.db.threads.getMessage,
     slug && msg ? { slugOrId: slug, series: parseInt(msg) } : 'skip',
@@ -182,7 +181,7 @@ export const useMessage = (slug?: string, msg?: string) => {
 }
 
 export const useImage = (uid?: string) => {
-  const image = useCacheQuery(api.db.images.getByUid, { uid })
+  const image = useCacheQuery(api.db.images.getByUid, uid ? { uid } : 'skip')
   return image
 }
 

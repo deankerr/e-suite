@@ -1,4 +1,4 @@
-import { ThreadHeader } from '@/components/_v/ThreadHeader'
+import { ThreadHeader, ThreadPage } from '@/components/pages/thread/ThreadPage'
 import { getConvexSiteUrl } from '@/lib/utils'
 
 export async function generateMetadata({
@@ -27,10 +27,10 @@ export default function Layout({
   params: { thread_id: string }
 }) {
   return (
-    <>
+    <ThreadPage>
       <ThreadHeader thread_id={params.thread_id} />
       {children}
       {modal}
-    </>
+    </ThreadPage>
   )
 }

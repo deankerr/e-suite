@@ -1,4 +1,5 @@
 import { clsx } from 'clsx'
+import { createTwc } from 'react-twc'
 import { twMerge } from 'tailwind-merge'
 
 import type { ClassValue } from 'clsx'
@@ -8,6 +9,8 @@ export type { ClassNameValue } from 'tailwind-merge'
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export const twx = createTwc({ compose: cn })
 
 function getEnvironment() {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return 'prod'

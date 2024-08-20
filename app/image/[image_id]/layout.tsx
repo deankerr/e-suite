@@ -1,8 +1,8 @@
 import { ThreadHeader, ThreadPage } from '@/components/pages/thread/ThreadPage'
 import { getConvexSiteUrl } from '@/lib/utils'
 
-export async function generateMetadata({ params }: { params: { thread_id: string } }) {
-  const response = await fetch(`${getConvexSiteUrl()}/page?route=chat&id=${params.thread_id}`)
+export async function generateMetadata({ params }: { params: { image_id: string } }) {
+  const response = await fetch(`${getConvexSiteUrl()}/page?route=image&id=${params.image_id}`)
   if (!response.ok) return {}
 
   const data = await response.json()
@@ -17,11 +17,11 @@ export default function Layout({
   params,
 }: {
   children: React.ReactNode
-  params: { thread_id: string }
+  params: { image_id: string }
 }) {
   return (
     <ThreadPage>
-      <ThreadHeader thread_id={params.thread_id} />
+      <ThreadHeader image_id={params.image_id} />
       {children}
     </ThreadPage>
   )
