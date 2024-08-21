@@ -16,7 +16,12 @@ export const latestImages = query({
     return await ctx
       .table('images')
       .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('deletionTime'), undefined),
+          q.eq(q.field('generationData.endpointId'), 'fal'),
+        ),
+      )
       .paginate(args.paginationOpts)
       .map((image) => ({
         ...omit(image, ['fileId', 'searchText']),

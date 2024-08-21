@@ -14,9 +14,9 @@ export default function Page() {
 
   return (
     <AdminPageWrapper className="">
-      <div className="grid grid-cols-4 place-items-center gap-3">
+      <div className="grid grid-cols-6 place-items-center gap-3">
         {imagesQuery.results.map((image) =>
-          image ? <ImageCard key={image._id} image={image} imageProps={{ sizes: '25vw' }} /> : null,
+          image ? <ImageCard key={image._id} image={image} imageProps={{ sizes: '16vw' }} /> : null,
         )}
       </div>
 
