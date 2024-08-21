@@ -1,6 +1,7 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
+import Link from 'next/link'
 import { twc } from 'react-twc'
 
 import { NavSheet } from '@/app/NavRail'
@@ -9,6 +10,7 @@ import { ThreadMenu } from '@/components/pages/thread/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
 import { useImage, useThread } from '@/lib/api'
+import { getThreadPath } from '@/lib/helpers'
 
 export const ThreadPage = twc.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
 
@@ -49,7 +51,14 @@ export const ThreadHeader = ({
       </NavSheet>
       <div className="hidden size-4 md:block" />
 
-      <h1 className="truncate px-1 text-sm font-medium">{thread.title ?? 'Untitled Thread'}</h1>
+      <h1 className="truncate px-1 text-sm font-medium">
+        <Link
+          href={getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })}
+          className="underline-offset-4 hover:underline"
+        >
+          {thread.title ?? 'Untitled Thread'}
+        </Link>
+      </h1>
 
       <ThreadMenu thread_id={thread.slug} />
       <FavouriteButton thread_id={thread.slug} />
