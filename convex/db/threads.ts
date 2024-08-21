@@ -348,7 +348,7 @@ export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) 
       if (match) {
         for (const c of conf.runConfig) {
           if ('prompt' in c) {
-            c.prompt = match.text
+            c.prompt = `${match.text} ${c.prompt}`
           }
         }
         return conf.runConfig
