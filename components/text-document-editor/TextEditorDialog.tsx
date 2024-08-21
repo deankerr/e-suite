@@ -91,6 +91,7 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
               <MDXEditor
                 ref={editorRef}
                 markdown={thread?.instructions ?? ''}
+                readOnly={!thread?.userIsViewer}
                 placeholder="Write your instructions here..."
                 className="markdown-body"
               />
@@ -98,7 +99,7 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
 
             {/* footer */}
             <div className="flex h-12 items-center border-t border-grayA-3 px-2 text-sm">
-              <Button variant="soft" size="1" color="gray">
+              <Button variant="soft" size="1" color="gray" disabled>
                 {thread?.title ?? 'Untitled Thread'}
               </Button>
 
@@ -107,9 +108,11 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
                 {/* <Button color="gray" variant="solid">
                   Cancel
                 </Button> */}
-                <Button variant="solid" onClick={handleSave}>
-                  Save
-                </Button>
+                {thread?.userIsViewer && (
+                  <Button variant="solid" onClick={handleSave}>
+                    Save
+                  </Button>
+                )}
               </div>
             </div>
           </div>

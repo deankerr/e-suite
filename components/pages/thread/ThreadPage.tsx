@@ -2,7 +2,6 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
-import { twc } from 'react-twc'
 
 import { NavSheet } from '@/app/NavRail'
 import { FavouriteButton } from '@/components/pages/thread/FavouriteButton'
@@ -11,10 +10,11 @@ import { IconButton } from '@/components/ui/Button'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
 import { useImage, useThread } from '@/lib/api'
 import { getThreadPath } from '@/lib/helpers'
+import { twx } from '@/lib/utils'
 
-export const ThreadPage = twc.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
+export const ThreadPage = twx.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
 
-export const ThreadHeaderWrapper = twc.div`flex-start h-10 shrink-0 overflow-hidden border-b border-gray-5 px-1 font-medium`
+export const ThreadHeaderWrapper = twx.div`flex-start h-10 shrink-0 overflow-hidden border-b border-gray-5 px-1 font-medium`
 
 export const ThreadHeader = ({
   thread_id,
