@@ -167,6 +167,10 @@ export const serve = httpAction(async (ctx, request) => {
     return new Response('Not Found', { status: 404 })
   }
 
+  if (image.sourceUrl.startsWith('https://fal.media/files/')) {
+    return Response.redirect(image.sourceUrl, 307)
+  }
+
   const blob = await ctx.storage.get(image.fileId)
   if (!blob) {
     console.error('unable to get blob for fileId:', image.fileId, uid)
