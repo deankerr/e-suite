@@ -26,6 +26,7 @@ const InitialInput = vb.object({
   excludeHistoryMessagesByName: vb.optional(vb.array(vb.string())),
   maxHistoryMessages: vb.optional(vb.number()),
   stream: vb.optional(vb.boolean()),
+  max_tokens: vb.optional(vb.number()),
 })
 
 const createProvider = (endpoint: string) => {
@@ -65,6 +66,7 @@ export const chatPipeline: Pipeline = {
               excludeHistoryMessagesByName,
               maxHistoryMessages,
               stream,
+              max_tokens,
             },
           } = vb.parse(vb.object({ initial: InitialInput }), input)
 
@@ -88,6 +90,7 @@ export const chatPipeline: Pipeline = {
             const result = await streamText({
               model,
               messages,
+              maxTokens: max_tokens,
               onFinish: async ({ text, finishReason, usage }) => {
                 // * final message update
                 await ctx.runMutation(internal.workflows.pipelines.chat.result, {
