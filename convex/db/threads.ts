@@ -266,6 +266,26 @@ export const listImages = query({
   },
 })
 
+export const searchImages = query({
+  args: {
+    slugOrId: v.string(),
+    query: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return []
+
+    return await ctx
+      .table('images')
+      .search('searchText', (q) => q.search('searchText', args.query).eq('threadId', thread._id))
+      .take(20)
+      .map((image) => ({
+        ...omit(image, ['fileId', 'searchText']),
+        userIsViewer: getUserIsViewer(ctx, image.userId),
+      }))
+  },
+})
+
 export const getMessage = query({
   args: {
     slugOrId: v.string(),
