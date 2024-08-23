@@ -10,16 +10,6 @@ import { getUserIsViewer } from './users'
 import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
 
-export const getMessage = async (ctx: QueryCtx, messageId: string) => {
-  const id = ctx.unsafeDb.normalizeId('messages', messageId)
-  return id ? await ctx.table('messages').get(id) : null
-}
-
-export const getMessageAndEdges = async (ctx: QueryCtx, messageId: string) => {
-  const message = await getMessage(ctx, messageId)
-  return message ? await getMessageEdges(ctx, message) : null
-}
-
 export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
   const jobs = await ctx
     .table('jobs3', 'messageId', (q) => q.eq('messageId', messageId))
@@ -47,7 +37,7 @@ export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) 
 
 export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   return {
-    ...message,
+    ...message.doc(),
     jobs: await getMessageJobs(ctx, message._id),
     images: await message.edge('images_v1').map(async (image) => await getImageV1Edges(ctx, image)),
     audio: await getMessageAudio(ctx, message._id),
@@ -60,7 +50,9 @@ export const get = query({
     messageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const message = await getMessage(ctx, args.messageId)
+    const id = ctx.unsafeDb.normalizeId('messages', args.messageId)
+    const message = id ? await ctx.table('messages').get(id) : null
+
     return message ? await getMessageEdges(ctx, message) : null
   },
 })
