@@ -14,9 +14,12 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
+import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
 import type * as db_admin_see from "../db/admin/see.js";
+import type * as db_generations from "../db/generations.js";
 import type * as db_images from "../db/images.js";
 import type * as db_jobs from "../db/jobs.js";
 import type * as db_messages from "../db/messages.js";
@@ -76,9 +79,12 @@ import type * as workflows_types from "../workflows/types.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "action/ingestImageUrl": typeof action_ingestImageUrl;
+  "action/textToImage": typeof action_textToImage;
   crons: typeof crons;
   "db/admin/events": typeof db_admin_events;
   "db/admin/see": typeof db_admin_see;
+  "db/generations": typeof db_generations;
   "db/images": typeof db_images;
   "db/jobs": typeof db_jobs;
   "db/messages": typeof db_messages;

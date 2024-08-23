@@ -9,7 +9,7 @@ import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { generateUid } from '../lib/utils'
-import { imageFields } from '../schema'
+import { imageFields, imagesFieldsV1 } from '../schema'
 import { createJob } from '../workflows/jobs'
 import { getMessageAndEdges } from './messages'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -205,3 +205,21 @@ function parseUrlToUid(url: string) {
   const [uid, ext] = filename?.split('.') ?? []
   return [uid, ext] as const
 }
+
+export const createImageV1 = internalMutation({
+  args: {
+    ...imagesFieldsV1,
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, { messageId, ...args }) => {
+    const message = await ctx.table('messages').getX(messageId)
+
+    return await ctx.table('images_v1').insert({
+      ...args,
+      ownerId: message.userId,
+      messages: [messageId],
+      threads: [message.threadId],
+      id: generateUid(Date.now()),
+    })
+  },
+})

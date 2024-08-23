@@ -7,13 +7,15 @@ import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
 
-type Props = { image: EImage } & Partial<React.ComponentPropsWithoutRef<typeof NextImage>>
+type Props = { image: EImage & { url?: string } } & Partial<
+  React.ComponentPropsWithoutRef<typeof NextImage>
+>
 
 export const IImage = forwardRef<HTMLImageElement, Props>(({ image, className, ...props }, ref) => {
   return (
     <NextImage
       alt=""
-      src={`/i/${image.uid}`}
+      src={image.url ?? `/i/${image.uid}`}
       placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
       blurDataURL={image?.blurDataUrl}
       width={image.width}

@@ -11,6 +11,7 @@ import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
 import { createJob as createJobNext } from '../workflows/jobs'
+import { createGeneration } from './generations'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -266,6 +267,27 @@ export const listImages = query({
   },
 })
 
+export const listImagesV1 = query({
+  args: {
+    slugOrId: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    if (!thread) return emptyPage()
+
+    return await thread
+      .edge('images_v1')
+      .order('desc')
+      .paginate(args.paginationOpts)
+      .map(async (image) => ({
+        ...omit(image, ['fileId']),
+        userIsViewer: getUserIsViewer(ctx, image.ownerId),
+        url: await ctx.storage.getUrl(image.fileId),
+      }))
+  },
+})
+
 export const searchImages = query({
   args: {
     slugOrId: v.string(),
@@ -480,7 +502,7 @@ const createRun = async (
   const jobIds = await asyncMap(runConfigs, async (runConfig) => {
     switch (runConfig.type) {
       case 'textToImage':
-        return createTextToImageRun(ctx, { thread, messageId: message._id, runConfig })
+        return createTextToImageRun(ctx, { thread, messageId: message._id, runConfig, userId })
       case 'textToAudio':
         return createTextToAudioRun(ctx, { thread, messageId: message._id, runConfig })
       case 'chat':
@@ -505,9 +527,11 @@ const createTextToImageRun = async (
     thread,
     messageId,
     runConfig,
+    userId,
   }: {
     thread: EntWriter<'threads'>
     messageId: Id<'messages'>
+    userId: Id<'users'>
     runConfig: RunConfigTextToImage
   },
 ) => {
@@ -554,6 +578,13 @@ const createTextToImageRun = async (
     }))
 
     .parse(runConfig)
+
+  await createGeneration(ctx, {
+    input,
+    messageId,
+    threadId: thread._id,
+    userId,
+  })
 
   const jobId = await createJobNext.textToImage(ctx, {
     ...input,

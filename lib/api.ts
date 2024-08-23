@@ -155,9 +155,13 @@ export const useThread = (threadId: string) => {
 }
 
 export const useThreadImages = (slug?: string, initialNumItems = 3) => {
-  const images = usePaginatedQuery(api.db.threads.listImages, slug ? { slugOrId: slug } : 'skip', {
-    initialNumItems,
-  })
+  const images = usePaginatedQuery(
+    api.db.threads.listImagesV1,
+    slug ? { slugOrId: slug } : 'skip',
+    {
+      initialNumItems,
+    },
+  )
   return images
 }
 
