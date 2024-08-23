@@ -5,7 +5,7 @@ import { getQuery, parseFilename } from 'ufo'
 import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, mutation, query } from '../functions'
-import { generateUid } from '../lib/utils'
+import { generateId } from '../lib/utils'
 import { imagesFieldsV1 } from '../schema'
 import { getUserIsViewer, getUserPublic } from './users'
 
@@ -119,7 +119,7 @@ export const createImageV1 = internalMutation({
       ownerId: message.userId,
       messages: [messageId],
       threads: [message.threadId],
-      id: generateUid(Date.now()),
+      id: generateId('i', Date.now()),
     })
   },
 })

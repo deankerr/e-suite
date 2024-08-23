@@ -1,4 +1,5 @@
-import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
+import { defineEnt, defineEntFromTable, defineEntSchema, getEntDefinitions } from 'convex-ents'
+import { migrationsTable } from 'convex-helpers/server/migrations'
 import { deprecated, literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
@@ -199,6 +200,7 @@ export const imagesFieldsV1 = {
   color: v.string(),
 
   generationId: v.optional(v.id('generations_v1')),
+  originalCreationTime: v.optional(v.number()),
 }
 const images_v1 = defineEnt(imagesFieldsV1)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -206,7 +208,37 @@ const images_v1 = defineEnt(imagesFieldsV1)
   .index('generationId', ['generationId'])
   .edges('messages')
   .edges('threads')
+  .edges('image_metadata', { to: 'images_metadata', ref: 'imageId' })
   .edge('user', { field: 'ownerId' })
+
+export const imagesMetadataFields = {
+  data: v.union(
+    v.object({
+      type: v.literal('captionOCR_V0'),
+      captionModelId: v.string(),
+      captionTitle: v.string(),
+      captionDescription: v.string(),
+      captionOCR: v.string(),
+    }),
+
+    v.object({
+      type: v.literal('nsfwProbability'),
+      nsfwProbability: v.number(),
+    }),
+
+    v.object({
+      type: v.literal('generationData_V0'),
+      prompt: v.string(),
+      modelId: v.string(),
+      modelName: v.string(),
+      endpointId: v.string(),
+    }),
+  ),
+}
+const images_metadata = defineEnt(imagesMetadataFields).edge('image', {
+  to: 'images_v1',
+  field: 'imageId',
+})
 
 export const generationFieldsV1 = {
   status: literals('pending', 'active', 'completed', 'failed'),
@@ -406,6 +438,7 @@ const schema = defineEntSchema(
     chat_models,
     images,
     images_v1,
+    images_metadata,
     generations_v1,
     image_models,
 
@@ -417,6 +450,7 @@ const schema = defineEntSchema(
 
     jobs3,
     operationsEventLog,
+    migrations: defineEntFromTable(migrationsTable),
   },
   {
     schemaValidation: true,
