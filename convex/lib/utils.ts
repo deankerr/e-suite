@@ -31,8 +31,11 @@ export const generateRandomString = (length: number) => {
 }
 
 const uidMagic = 1627826378900 // turn back time to reduce the size of the uid
-export const generateUid = (number: number): string => {
-  return base36Encode(Math.trunc(number) - uidMagic)
+export const generateId = (letter: string, number: number): string => {
+  const char1 = letter.charAt(0)
+  const code = base36Encode(Math.trunc(number) - uidMagic)
+  const char2 = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 1)
+  return `${char1}${code}${char2()}`
 }
 
 function base36Encode(number: number): string {

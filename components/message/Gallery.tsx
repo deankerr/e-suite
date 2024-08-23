@@ -1,7 +1,7 @@
 import { ms } from 'itty-time'
 import { useRouter } from 'next/navigation'
 
-import { ImageCard } from '@/components/images/ImageCard'
+import { IImageCard } from '@/components/images/IImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 
 import type { EMessage, RunConfigTextToImage } from '@/convex/types'
@@ -30,15 +30,15 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
   return (
     <div className="flex grow flex-wrap justify-center gap-2 py-1">
       {message.images.map((image) => (
-        <ImageCard
+        <IImageCard
           key={image._id}
-          className="max-w-sm cursor-pointer"
           image={image}
           imageProps={{
+            className: 'max-w-sm cursor-pointer',
             sizes: '(max-width: 410px) 90vw, 20rem',
             priority,
             onClick: () => {
-              router.push(`/image/${image.uid}`)
+              router.push(`/image/${image.id}`)
             },
           }}
         />

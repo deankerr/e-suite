@@ -14,9 +14,13 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
+import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
+import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
 import type * as db_admin_see from "../db/admin/see.js";
+import type * as db_generations from "../db/generations.js";
 import type * as db_images from "../db/images.js";
 import type * as db_jobs from "../db/jobs.js";
 import type * as db_messages from "../db/messages.js";
@@ -31,7 +35,6 @@ import type * as endpoints_elevenlabs from "../endpoints/elevenlabs.js";
 import type * as endpoints_fal from "../endpoints/fal.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
 import type * as endpoints_openrouter from "../endpoints/openrouter.js";
-import type * as endpoints_sinkin from "../endpoints/sinkin.js";
 import type * as endpoints_together from "../endpoints/together.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
@@ -49,22 +52,14 @@ import type * as shared_helpers from "../shared/helpers.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
-import type * as workflows_actions_classifyImageObjects from "../workflows/actions/classifyImageObjects.js";
 import type * as workflows_actions_evaluateNsfwProbability from "../workflows/actions/evaluateNsfwProbability.js";
-import type * as workflows_actions_generateImageCaption from "../workflows/actions/generateImageCaption.js";
 import type * as workflows_actions_generateImageMetadata from "../workflows/actions/generateImageMetadata.js";
-import type * as workflows_actions_textToImage_fal from "../workflows/actions/textToImage/fal.js";
-import type * as workflows_actions_textToImage_sinkin from "../workflows/actions/textToImage/sinkin.js";
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_helpers from "../workflows/helpers.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
-import type * as workflows_pipelines_evaluateMessageUrls from "../workflows/pipelines/evaluateMessageUrls.js";
-import type * as workflows_pipelines_generateImageMetadata from "../workflows/pipelines/generateImageMetadata.js";
 import type * as workflows_pipelines_generateThreadTitle from "../workflows/pipelines/generateThreadTitle.js";
-import type * as workflows_pipelines_ingestImageUrl from "../workflows/pipelines/ingestImageUrl.js";
 import type * as workflows_pipelines_textToAudio from "../workflows/pipelines/textToAudio.js";
-import type * as workflows_pipelines_textToImage from "../workflows/pipelines/textToImage.js";
 import type * as workflows_types from "../workflows/types.js";
 
 /**
@@ -76,9 +71,13 @@ import type * as workflows_types from "../workflows/types.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
+  "action/ingestImageUrl": typeof action_ingestImageUrl;
+  "action/textToImage": typeof action_textToImage;
   crons: typeof crons;
   "db/admin/events": typeof db_admin_events;
   "db/admin/see": typeof db_admin_see;
+  "db/generations": typeof db_generations;
   "db/images": typeof db_images;
   "db/jobs": typeof db_jobs;
   "db/messages": typeof db_messages;
@@ -93,7 +92,6 @@ declare const fullApi: ApiFromModules<{
   "endpoints/fal": typeof endpoints_fal;
   "endpoints/openai": typeof endpoints_openai;
   "endpoints/openrouter": typeof endpoints_openrouter;
-  "endpoints/sinkin": typeof endpoints_sinkin;
   "endpoints/together": typeof endpoints_together;
   functions: typeof functions;
   http: typeof http;
@@ -111,22 +109,14 @@ declare const fullApi: ApiFromModules<{
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;
-  "workflows/actions/classifyImageObjects": typeof workflows_actions_classifyImageObjects;
   "workflows/actions/evaluateNsfwProbability": typeof workflows_actions_evaluateNsfwProbability;
-  "workflows/actions/generateImageCaption": typeof workflows_actions_generateImageCaption;
   "workflows/actions/generateImageMetadata": typeof workflows_actions_generateImageMetadata;
-  "workflows/actions/textToImage/fal": typeof workflows_actions_textToImage_fal;
-  "workflows/actions/textToImage/sinkin": typeof workflows_actions_textToImage_sinkin;
   "workflows/engine": typeof workflows_engine;
   "workflows/helpers": typeof workflows_helpers;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/chat": typeof workflows_pipelines_chat;
-  "workflows/pipelines/evaluateMessageUrls": typeof workflows_pipelines_evaluateMessageUrls;
-  "workflows/pipelines/generateImageMetadata": typeof workflows_pipelines_generateImageMetadata;
   "workflows/pipelines/generateThreadTitle": typeof workflows_pipelines_generateThreadTitle;
-  "workflows/pipelines/ingestImageUrl": typeof workflows_pipelines_ingestImageUrl;
   "workflows/pipelines/textToAudio": typeof workflows_pipelines_textToAudio;
-  "workflows/pipelines/textToImage": typeof workflows_pipelines_textToImage;
   "workflows/types": typeof workflows_types;
 }>;
 export declare const api: FilterApi<

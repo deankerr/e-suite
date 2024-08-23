@@ -7,12 +7,8 @@ import { internalMutation, internalQuery } from '../functions'
 import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../types'
 import type { ChatPipelineInput } from './pipelines/chat'
-import type { EvaluateMessageUrlsPipelineInput } from './pipelines/evaluateMessageUrls'
-import type { GenerateImageMetadataPipelineInput } from './pipelines/generateImageMetadata'
 import type { GenerateThreadTitlePipelineInput } from './pipelines/generateThreadTitle'
-import type { IngestImageUrlPipelineInput } from './pipelines/ingestImageUrl'
 import type { TextToAudioPipelineInput } from './pipelines/textToAudio'
-import type { TextToImagePipelineInput } from './pipelines/textToImage'
 
 const register = async (
   ctx: MutationCtx,
@@ -54,23 +50,9 @@ export const createJob = {
     })
   },
 
-  evaluateMessageUrls: async (ctx: MutationCtx, input: EvaluateMessageUrlsPipelineInput) => {
-    return await register(ctx, {
-      pipeline: 'evaluateMessageUrls',
-      input,
-    })
-  },
-
   generateThreadTitle: async (ctx: MutationCtx, input: GenerateThreadTitlePipelineInput) => {
     return await register(ctx, {
       pipeline: 'generateThreadTitle',
-      input,
-    })
-  },
-
-  ingestImageUrl: async (ctx: MutationCtx, input: IngestImageUrlPipelineInput) => {
-    return await register(ctx, {
-      pipeline: 'ingestImageUrl',
       input,
     })
   },
@@ -81,28 +63,7 @@ export const createJob = {
       input,
     })
   },
-
-  textToImage: async (ctx: MutationCtx, input: TextToImagePipelineInput) => {
-    return await register(ctx, {
-      pipeline: 'textToImage',
-      input,
-    })
-  },
-
-  generateImageMetadata: async (
-    ctx: MutationCtx,
-    input: GenerateImageMetadataPipelineInput,
-    delay = 0,
-  ) => {
-    return await register(ctx, {
-      pipeline: 'generateImageMetadata',
-      input,
-      delay,
-    })
-  },
 }
-
-export const createIngestImageUrlJob = internalMutation(createJob.ingestImageUrl)
 
 export const get = internalQuery({
   args: {

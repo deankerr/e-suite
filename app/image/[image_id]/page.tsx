@@ -1,19 +1,18 @@
-import { preloadQuery } from 'convex/nextjs'
+'use client'
 
-import { ImageMessageDetailPageLoader } from '@/components/pages/ImageDetailPage'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
+
+import { ImageDetailPage } from '@/components/pages/ImageDetailPage'
 import { api } from '@/convex/_generated/api'
 
-export default async function Page({ params }: { params: { image_id: string } }) {
-  const preloadedImageMessage = await preloadQuery(api.db.images.getImageMessage, {
-    uid: params.image_id,
+export default function Page({ params }: { params: { image_id: string } }) {
+  const image = useQuery(api.db.images.get, {
+    id: params.image_id,
   })
 
   return (
     <>
-      <ImageMessageDetailPageLoader
-        preloadedImageMessage={preloadedImageMessage}
-        initialImageId={params.image_id}
-      />
+      <ImageDetailPage images={image ? [image] : []} currentImageId={image?.id ?? ''} />
     </>
   )
 }

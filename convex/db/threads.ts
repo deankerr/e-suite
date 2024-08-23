@@ -11,6 +11,9 @@ import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
 import { createJob as createJobNext } from '../workflows/jobs'
+import { createGeneration } from './generations'
+import { getImageV1Edges } from './images'
+import { createEvaluateMessageUrlsJob } from './jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -245,7 +248,7 @@ export const listMessages = query({
   },
 })
 
-export const listImages = query({
+export const listImagesV1 = query({
   args: {
     slugOrId: v.string(),
     paginationOpts: paginationOptsValidator,
@@ -255,14 +258,10 @@ export const listImages = query({
     if (!thread) return emptyPage()
 
     return await thread
-      .edge('images')
+      .edge('images_v1')
       .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map((image) => ({
-        ...omit(image, ['fileId', 'searchText']),
-        userIsViewer: getUserIsViewer(ctx, image.userId),
-      }))
+      .map(async (image) => await getImageV1Edges(ctx, image))
   },
 })
 
@@ -414,7 +413,7 @@ export const append = mutation({
         (url) => url.hostname !== ENV.APP_HOSTNAME,
       )
       if (urls.length > 0) {
-        await createJobNext.evaluateMessageUrls(ctx, {
+        await createEvaluateMessageUrlsJob(ctx, {
           urls: urls.map((url) => url.toString()),
           messageId: message._id,
         })
@@ -480,7 +479,7 @@ const createRun = async (
   const jobIds = await asyncMap(runConfigs, async (runConfig) => {
     switch (runConfig.type) {
       case 'textToImage':
-        return createTextToImageRun(ctx, { thread, messageId: message._id, runConfig })
+        return createTextToImageRun(ctx, { thread, messageId: message._id, runConfig, userId })
       case 'textToAudio':
         return createTextToAudioRun(ctx, { thread, messageId: message._id, runConfig })
       case 'chat':
@@ -505,9 +504,11 @@ const createTextToImageRun = async (
     thread,
     messageId,
     runConfig,
+    userId,
   }: {
     thread: EntWriter<'threads'>
     messageId: Id<'messages'>
+    userId: Id<'users'>
     runConfig: RunConfigTextToImage
   },
 ) => {
@@ -555,10 +556,11 @@ const createTextToImageRun = async (
 
     .parse(runConfig)
 
-  const jobId = await createJobNext.textToImage(ctx, {
-    ...input,
+  const jobId = await createGeneration(ctx, {
+    input,
     messageId,
     threadId: thread._id,
+    userId,
   })
 
   await thread.patch({

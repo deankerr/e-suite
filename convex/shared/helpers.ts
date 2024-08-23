@@ -3,12 +3,12 @@ import type { EMessage, RunConfigChat, RunConfigTextToAudio, RunConfigTextToImag
 export function getMessageName(message: EMessage) {
   if (message.name) return message.name
 
-  const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
+  const { textToAudioConfig } = extractRunConfig(message.jobs)
   if (textToAudioConfig) return 'elevenlabs sound generation'
-  if (textToImageConfig) {
-    const modelName = message.images[0]?.generationData?.modelName
-    return modelName ?? textToImageConfig.resourceKey
-  }
+  // if (textToImageConfig) {
+  //   const modelName = message.images[0]?.generationData?.modelName
+  //   return modelName ?? textToImageConfig.resourceKey
+  // }
 
   if (message.role === 'user') return 'You'
   return 'Assistant'

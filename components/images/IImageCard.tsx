@@ -8,13 +8,19 @@ import { DeleteImageDialog } from '@/components/images/dialogs'
 import { IImageBordered } from '@/components/images/IImage'
 import { IconButton } from '@/components/ui/Button'
 
-import type { EImage } from '@/convex/types'
+import type { EImageV1 } from '@/convex/types'
 
-export const IImageCard = ({ image }: { image: EImage }) => {
+export const IImageCard = ({
+  image,
+  imageProps,
+}: {
+  image: EImageV1
+  imageProps?: Partial<React.ComponentPropsWithoutRef<typeof IImageBordered>>
+}) => {
   const [showDeleteImageDialog, setShowDeleteImageDialog] = useState(false)
 
   return (
-    <IImageBordered image={image}>
+    <IImageBordered image={image} {...imageProps}>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <IconButton
@@ -28,7 +34,7 @@ export const IImageCard = ({ image }: { image: EImage }) => {
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content variant="soft">
-          <Link href={`/convex/${image.uid}?download`} target="_blank">
+          <Link href={image.url} target="_blank">
             <DropdownMenu.Item>
               <Icons.DownloadSimple size={16} />
               Download
@@ -36,7 +42,7 @@ export const IImageCard = ({ image }: { image: EImage }) => {
           </Link>
 
           {image.userIsViewer && (
-            <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)}>
+            <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)} disabled>
               <Icons.Trash size={16} />
               Delete
             </DropdownMenu.Item>
@@ -45,7 +51,7 @@ export const IImageCard = ({ image }: { image: EImage }) => {
       </DropdownMenu.Root>
 
       <DeleteImageDialog
-        imageId={image._id}
+        id={image.id}
         open={showDeleteImageDialog}
         onOpenChange={setShowDeleteImageDialog}
       />

@@ -1,4 +1,5 @@
-import { defineEnt, defineEntSchema, getEntDefinitions } from 'convex-ents'
+import { defineEnt, defineEntFromTable, defineEntSchema, getEntDefinitions } from 'convex-ents'
+import { migrationsTable } from 'convex-helpers/server/migrations'
 import { deprecated, literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
@@ -188,6 +189,81 @@ const images = defineEnt(imageFields)
     filterFields: ['threadId', 'userId'],
   })
 
+export const imagesFieldsV1 = {
+  sourceUrl: v.string(),
+  sourceType: v.union(v.literal('generation'), v.literal('userMessageUrl')),
+  fileId: v.id('_storage'),
+  format: v.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
+
+  generationId: v.optional(v.id('generations_v1')),
+  originalCreationTime: v.optional(v.number()),
+}
+const images_v1 = defineEnt(imagesFieldsV1)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .field('id', v.string(), { unique: true })
+  .index('generationId', ['generationId'])
+  .edges('messages')
+  .edges('threads')
+  .edges('image_metadata', { to: 'images_metadata', ref: 'imageId' })
+  .edge('user', { field: 'ownerId' })
+
+export const imagesMetadataFields = {
+  data: v.union(
+    v.object({
+      type: v.literal('captionOCR_V0'),
+      captionModelId: v.string(),
+      captionTitle: v.string(),
+      captionDescription: v.string(),
+      captionOCR: v.string(),
+    }),
+
+    v.object({
+      type: v.literal('nsfwProbability'),
+      nsfwProbability: v.number(),
+    }),
+
+    v.object({
+      type: v.literal('generationData_V0'),
+      prompt: v.string(),
+      modelId: v.string(),
+      modelName: v.string(),
+      endpointId: v.string(),
+    }),
+  ),
+}
+const images_metadata = defineEnt(imagesMetadataFields).edge('image', {
+  to: 'images_v1',
+  field: 'imageId',
+})
+
+export const generationFieldsV1 = {
+  status: literals('pending', 'active', 'completed', 'failed'),
+  updatedAt: v.number(),
+  input: v.any(),
+  results: v.array(
+    v.object({
+      type: v.literal('image'),
+      url: v.string(),
+      width: v.number(),
+      height: v.number(),
+      content_type: v.string(),
+    }),
+  ),
+  output: v.optional(v.any()),
+  messageId: v.id('messages'),
+  threadId: v.id('threads'),
+  userId: v.id('users'),
+}
+const generations_v1 = defineEnt(generationFieldsV1)
+  .index('status', ['status'])
+  .index('threadId', ['threadId'])
+  .index('messageId', ['messageId'])
+  .index('userId', ['userId'])
+
 // * audio
 export const audioFields = {
   fileId: v.id('_storage'),
@@ -237,6 +313,7 @@ const messages = defineEnt(messageFields)
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
+  .edges('images_v1')
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
   .index('threadId_contentType', ['threadId', 'contentType'])
@@ -269,6 +346,7 @@ const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('slug', v.string(), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
+  .edges('images_v1')
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
@@ -296,6 +374,7 @@ const users = defineEnt(userFields)
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images', { ref: true, deletion: 'soft' })
+  .edges('images_v1', { ref: 'ownerId', deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -358,6 +437,9 @@ const schema = defineEntSchema(
     audio,
     chat_models,
     images,
+    images_v1,
+    images_metadata,
+    generations_v1,
     image_models,
 
     messages,
@@ -368,6 +450,7 @@ const schema = defineEntSchema(
 
     jobs3,
     operationsEventLog,
+    migrations: defineEntFromTable(migrationsTable),
   },
   {
     schemaValidation: true,

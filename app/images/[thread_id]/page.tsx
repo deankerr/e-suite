@@ -60,7 +60,8 @@ export default function Page({ params }: { params: { thread_id: string } }) {
   const [searchValue, setSearchValue] = useSearchParamValue()
 
   const searchImages = useThreadImagesSearch(params.thread_id, searchValue)
-  const images = searchValue ? searchImages : imagesFeed
+  // const images = searchValue ? searchImages : imagesFeed
+  const images = imagesFeed
 
   const actions = useThreadActions(thread?._id)
   const [containerRef] = useAutoAnimate()
@@ -76,7 +77,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
             {images.results.map((image) => (
               <Link
                 key={image._id}
-                href={`/image/${image.uid}`}
+                href={`/image/${image.id}`}
                 className="overflow-hidden rounded-md border border-grayA-3"
                 style={{ aspectRatio: image.width / image.height }}
               >

@@ -1,5 +1,6 @@
 import type { Id, TableNames } from './_generated/dataModel'
-import type { getMessageEdges, getMessageImages } from './db/messages'
+import type { getImageV1 } from './db/images'
+import type { getMessageEdges } from './db/messages'
 import type {
   getChatModelByResourceKey,
   getImageModelByResourceKey,
@@ -32,7 +33,7 @@ export type EThread = Omit<Awaited<ReturnType<typeof getThreadEdges>>, '_id' | '
   userId: string
 }
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
-export type EImage = Awaited<ReturnType<typeof getMessageImages>>[number]
+export type EImageV1 = Awaited<ReturnType<typeof getImageV1>>
 export type EUser = Awaited<ReturnType<typeof getUserPublic>>
 
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
@@ -50,5 +51,5 @@ export type ThreadActionResult = {
   slug: string
   messageId: string
   series: number
-  jobIds?: Id<'jobs3'>[]
+  jobIds?: (Id<'jobs3'> | Id<'generations_v1'>)[]
 }

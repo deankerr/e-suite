@@ -5,15 +5,15 @@ import NextImage from 'next/image'
 
 import { cn } from '@/lib/utils'
 
-import type { EImage } from '@/convex/types'
+import type { EImageV1 } from '@/convex/types'
 
-type Props = { image: EImage } & Partial<React.ComponentPropsWithoutRef<typeof NextImage>>
+type Props = { image: EImageV1 } & Partial<React.ComponentPropsWithoutRef<typeof NextImage>>
 
 export const IImage = forwardRef<HTMLImageElement, Props>(({ image, className, ...props }, ref) => {
   return (
     <NextImage
       alt=""
-      src={`/i/${image.uid}`}
+      src={image.url}
       placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
       blurDataURL={image?.blurDataUrl}
       width={image.width}
@@ -26,7 +26,7 @@ export const IImage = forwardRef<HTMLImageElement, Props>(({ image, className, .
 })
 IImage.displayName = 'IImage'
 
-export const IImageBordered = forwardRef<HTMLDivElement, Props>(
+export const IImageBordered = forwardRef<HTMLImageElement, Props>(
   ({ image, className, children, ...props }, ref) => {
     return (
       <div
@@ -34,10 +34,18 @@ export const IImageBordered = forwardRef<HTMLDivElement, Props>(
           aspectRatio: `${image.width} / ${image.height}`,
         }}
         className="m-auto max-h-full overflow-hidden rounded-lg border border-gray-4"
-        {...props}
-        ref={ref}
       >
-        <IImage image={image} />
+        <NextImage
+          alt=""
+          src={image.url}
+          placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
+          blurDataURL={image?.blurDataUrl}
+          width={image.width}
+          height={image.height}
+          className={cn('h-full w-full object-contain', className)}
+          {...props}
+          ref={ref}
+        />
         {children}
       </div>
     )

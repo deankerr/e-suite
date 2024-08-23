@@ -1,9 +1,8 @@
-import { omit } from 'convex-helpers'
 import { paginationOptsValidator } from 'convex/server'
 
 import { query } from '../../functions'
 import { createError } from '../../shared/utils'
-import { getUserIsViewer } from '../users'
+import { getImageV1Edges } from '../images'
 
 export const latestImages = query({
   args: {
@@ -14,18 +13,10 @@ export const latestImages = query({
     if (user.role !== 'admin') throw createError('Unauthorized', { code: 'unauthorized' })
 
     return await ctx
-      .table('images')
+      .table('images_v1')
       .order('desc')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('deletionTime'), undefined),
-          q.eq(q.field('generationData.endpointId'), 'fal'),
-        ),
-      )
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map((image) => ({
-        ...omit(image, ['fileId', 'searchText']),
-        userIsViewer: getUserIsViewer(ctx, image.userId),
-      }))
+      .map(async (image) => await getImageV1Edges(ctx, image))
   },
 })
