@@ -5,13 +5,7 @@ import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
 import { IImage, IImageBordered } from '@/components/images/IImage'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/Carousel'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel'
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
@@ -43,7 +37,7 @@ export const ImageDetailPage = (props: {
 
   return (
     <>
-      <div className="grid h-full w-full grid-rows-[1fr_auto_6rem] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
+      <div className="grid h-full w-full grid-rows-[1fr_6rem_auto] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
         <div className="p-2 md:overflow-hidden">{image && <IImageBordered image={image} />}</div>
 
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
@@ -61,12 +55,14 @@ export const ImageDetailPage = (props: {
           </div>
         </div>
 
-        <div className={cn('flex-center', props.images.length < 2 && 'hidden')}>
-          <Carousel className="w-[60%]">
-            <CarouselContent>
+        <div
+          className={cn('flex-center row-start-2 px-4 py-1', props.images.length < 2 && 'hidden')}
+        >
+          <Carousel>
+            <CarouselContent className="-ml-2 px-1">
               {props.images.map((image) => (
-                <CarouselItem key={image.uid} className="flex-col-center basis-1/4">
-                  <Link href={`/image/${image.uid}`} className="w-24 p-1" replace>
+                <CarouselItem key={image.uid} className="basis-24 pl-2">
+                  <Link href={`/image/${image.uid}`} className="w-full p-1" replace>
                     <Card
                       className={cn(
                         'aspect-square w-full p-0',
@@ -79,8 +75,6 @@ export const ImageDetailPage = (props: {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
           </Carousel>
         </div>
       </div>
