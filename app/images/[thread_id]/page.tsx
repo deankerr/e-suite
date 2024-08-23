@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { useDebouncedState } from '@react-hookz/web'
 import Link from 'next/link'
 import { useQueryState } from 'nuqs'
 
@@ -39,18 +41,25 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
   const imagesFeed = useImagesFeed(params.thread_id)
 
-  const [searchValue, setSearchValue] = useQueryState('search', {
+  const [searchParamValue, setSearchParamValue] = useQueryState('search', {
     defaultValue: '',
     clearOnDefault: true,
   })
-  const searchImages = useThreadImagesSearch(params.thread_id, searchValue ?? undefined)
+
+  const [searchValue, setSearchValue] = useState(searchParamValue)
+
+  useEffect(() => {
+    setSearchParamValue(searchValue)
+  }, [searchValue, setSearchParamValue])
+
+  const searchImages = useThreadImagesSearch(params.thread_id, searchValue)
   const images = searchValue ? searchImages : imagesFeed
 
   const actions = useThreadActions(thread?._id)
   return (
     <>
       <ImagesToolbarWrapper>
-        <SearchField value={searchValue ?? ''} onValueChange={setSearchValue} />
+        <SearchField value={searchValue} onValueChange={setSearchValue} />
       </ImagesToolbarWrapper>
 
       <div className="h-96 grow overflow-hidden">

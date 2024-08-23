@@ -273,6 +273,7 @@ export const searchImages = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
+    console.log('query', args.query)
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return emptyPage()
 

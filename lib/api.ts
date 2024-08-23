@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
-import { useTimeoutEffect } from '@react-hookz/web'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDebouncedState, useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useRouter } from 'next/navigation'
@@ -157,10 +157,15 @@ export const useThreadImages = (slug?: string, initialNumItems = 3) => {
   return images
 }
 
-export const useThreadImagesSearch = (slug?: string, query?: string, initialNumItems = 3) => {
+export const useThreadImagesSearch = (slug?: string, query = '', initialNumItems = 3) => {
+  const [queryValue, setQueryValue] = useDebouncedState(query, 300)
+  useEffect(() => {
+    setQueryValue(query)
+  }, [query, setQueryValue])
+
   const images = usePaginatedQuery(
     api.db.threads.searchImages,
-    slug && query ? { slugOrId: slug, query } : 'skip',
+    slug && query && queryValue ? { slugOrId: slug, query: queryValue } : 'skip',
     {
       initialNumItems,
     },

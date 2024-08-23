@@ -47,7 +47,7 @@ export const ImageDetailPage = (props: { images: EImage[]; currentImageId: strin
             <CarouselContent className="">
               {props.images.map((image) => (
                 <CarouselItem key={image.uid} className="flex-col-center basis-24">
-                  <Link href={`/image/${image.uid}`}>
+                  <Link href={`/image/${image.uid}`} replace>
                     <Card className="aspect-square p-0">
                       <IImage image={image} className="object-cover" />
                     </Card>

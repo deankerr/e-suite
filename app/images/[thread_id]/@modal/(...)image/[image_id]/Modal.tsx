@@ -16,13 +16,9 @@ export const Modal = ({
   const pathname = usePathname()
   if (pathname === closePathname) return null
   return (
-    <div className="absolute bottom-0 top-10 w-full bg-blackA-11 backdrop-blur">
+    <div className="absolute bottom-0 top-10 w-full bg-blackA-1">
       <div className="absolute -top-9 right-1">
-        <IconButton
-          aria-label="Close"
-          variant="ghost"
-          onClick={() => (closePathname ? router.push(closePathname) : router.back())}
-        >
+        <IconButton aria-label="Close" variant="ghost" onClick={() => router.back()}>
           <Icons.X size={18} />
         </IconButton>
       </div>
