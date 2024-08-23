@@ -4,7 +4,7 @@ import { usePaginatedQuery } from 'convex/react'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ImageCard } from '@/components/images/ImageCard'
-import InfiniteScroll from '@/components/ui/InfiniteScroll'
+import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'

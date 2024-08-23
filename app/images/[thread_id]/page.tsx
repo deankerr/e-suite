@@ -6,7 +6,7 @@ import { useQueryState } from 'nuqs'
 import { Composer } from '@/components/composer/Composer'
 import { SearchField } from '@/components/form/SearchField'
 import { IImage } from '@/components/images/IImage'
-import InfiniteScroll from '@/components/ui/InfiniteScroll'
+import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Orbit } from '@/components/ui/Ldrs'
 import {
   useThread,
@@ -43,7 +43,6 @@ export default function Page({ params }: { params: { thread_id: string } }) {
     defaultValue: '',
     clearOnDefault: true,
   })
-
   const searchImages = useThreadImagesSearch(params.thread_id, searchValue ?? undefined)
   const images = searchValue ? searchImages : imagesFeed
 
@@ -67,18 +66,20 @@ export default function Page({ params }: { params: { thread_id: string } }) {
                 <IImage image={image} />
               </Link>
             ))}
-          </ResultsGrid>
 
-          <div className={cn('flex-col-center h-16', images.status === 'Exhausted' && 'hidden')}>
             <InfiniteScroll
               isLoading={images.isLoading}
               hasMore={images.status !== 'Exhausted'}
               next={() => images.loadMore(30)}
             >
-              <div>
-                <Orbit />
-              </div>
+              <div />
             </InfiniteScroll>
+          </ResultsGrid>
+
+          <div className={cn('flex-col-center h-16', images.status === 'Exhausted' && 'hidden')}>
+            <div>
+              <Orbit />
+            </div>
           </div>
         </div>
       </div>

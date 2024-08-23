@@ -13,7 +13,7 @@ interface InfiniteScrollProps {
   children?: React.ReactNode
 }
 
-export default function InfiniteScroll({
+export const InfiniteScroll = ({
   isLoading,
   hasMore,
   next,
@@ -22,7 +22,7 @@ export default function InfiniteScroll({
   rootMargin = '0px',
   reverse,
   children,
-}: InfiniteScrollProps) {
+}: InfiniteScrollProps) => {
   const observer = React.useRef<IntersectionObserver>()
   // This callback ref will be called when it is dispatched to an element or detached from an element,
   // or when the callback function changes.
