@@ -11,22 +11,18 @@ import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Ent, QueryCtx } from '../types'
 
-export const getImageV1 = async (ctx: QueryCtx, imageId: string) => {
-  const image = await ctx.table('images_v1').getX('id', imageId)
-  return {
-    ...image.doc(),
-    userIsViewer: getUserIsViewer(ctx, image.ownerId),
-    url: (await ctx.storage.getUrl(image.fileId)) || '',
-  }
-}
-
 export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
   return {
     ...image.doc(),
     userIsViewer: getUserIsViewer(ctx, image.ownerId),
-    user: await getUserPublic(ctx, image.ownerId),
     url: (await ctx.storage.getUrl(image.fileId)) || '',
+    metadata: await image.edge('image_metadata').map(async (metadata) => metadata.data),
   }
+}
+
+export const getImageV1 = async (ctx: QueryCtx, imageId: string) => {
+  const image = await ctx.table('images_v1').getX('id', imageId)
+  return await getImageV1Edges(ctx, image)
 }
 
 export const getByUid = query({

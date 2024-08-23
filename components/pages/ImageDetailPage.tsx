@@ -8,7 +8,7 @@ import { IImageCard } from '@/components/images/IImageCard'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel'
 import { cn } from '@/lib/utils'
 
-import type { EImageV1, EMessage, EUser } from '@/convex/types'
+import type { EImageMetadata, EImageV1, EMessage } from '@/convex/types'
 
 export const ImageDetailPage = (props: {
   images: EImageV1[]
@@ -62,83 +62,93 @@ export const ImageDetailPage = (props: {
   )
 }
 
-export const ImageDetailsCards = ({ image }: { image: EImageV1 & { user?: EUser } }) => {
+const ImageDetailsCards = ({ image }: { image: EImageV1 }) => {
   return (
     <>
-      {/* {image.captionModelId ? (
-        <Card className="space-y-2" size="2">
-          <div className="pb-px text-base font-semibold">{image.captionTitle}</div>
-          <p className="text-sm">{image.captionDescription}</p>
-          <p className="text-xs">
-            caption by{' '}
-            <span className="font-mono text-[0.95em] text-gray-11">{image.captionModelId}</span>
-          </p>
-        </Card>
-      ) : null}
+      <ImageCaptionOCRV0Cards metadata={image.metadata} />
+      <ImageGenerationDataV0Card metadata={image.metadata} />
+      <ImageFileDataCard image={image} />
+    </>
+  )
+}
 
-      {image.captionOCR ? (
-        <Card className="space-y-2" size="2">
-          <div className="pb-px text-sm font-medium">OCR</div>
-          <p className="text-sm">{image.captionOCR}</p>
-          <p className="text-xs">
-            ocr by{' '}
-            <span className="font-mono text-[0.95em] text-gray-11">{image.captionModelId}</span>
-          </p>
-        </Card>
-      ) : null}
+const ImageCaptionOCRV0Cards = ({ metadata }: { metadata: EImageMetadata[] }) => {
+  const data = metadata.find((m) => m.type === 'captionOCR_V0')
+  if (!data) return null
 
-      {image.generationData ? (
-        <Card className="space-y-2" size="2">
-          <div className="pb-px text-sm font-medium">Generation Data</div>
-          <DataList.Root orientation="vertical">
-            <DataList.Item>
-              <DataList.Label>prompt</DataList.Label>
-              <DataList.Value>{image.generationData.prompt}</DataList.Value>
-            </DataList.Item>
-
-            <DataList.Item>
-              <DataList.Label>model</DataList.Label>
-              <DataList.Value>{image.generationData.modelName}</DataList.Value>
-            </DataList.Item>
-
-            <DataList.Item>
-              <DataList.Label>endpoint</DataList.Label>
-              <DataList.Value>{image.generationData.endpointId}</DataList.Value>
-            </DataList.Item>
-          </DataList.Root>
-        </Card>
-      ) : null} */}
+  return (
+    <>
+      <Card className="space-y-2" size="2">
+        <div className="pb-px text-base font-semibold">{data.captionTitle}</div>
+        <p className="text-sm">{data.captionDescription}</p>
+        <p className="text-xs">
+          caption by{' '}
+          <span className="font-mono text-[0.95em] text-gray-11">{data.captionModelId}</span>
+        </p>
+      </Card>
 
       <Card className="space-y-2" size="2">
-        <div className="pb-px text-sm font-medium">File Data</div>
-        <DataList.Root orientation="vertical">
-          <DataList.Item>
-            <DataList.Label>created</DataList.Label>
-            <DataList.Value suppressHydrationWarning>
-              {new Date(image._creationTime).toLocaleString()}
-            </DataList.Value>
-          </DataList.Item>
-
-          <DataList.Item>
-            <DataList.Label>dimensions</DataList.Label>
-            <DataList.Value>
-              {image.width}x{image.height} px
-            </DataList.Value>
-          </DataList.Item>
-
-          <DataList.Item>
-            <DataList.Label>id</DataList.Label>
-            <DataList.Value className="font-mono">{image.id}</DataList.Value>
-          </DataList.Item>
-
-          {image.user && (
-            <DataList.Item>
-              <DataList.Label>user</DataList.Label>
-              <DataList.Value className="font-mono">{image.user?.name}</DataList.Value>
-            </DataList.Item>
-          )}
-        </DataList.Root>
+        <div className="pb-px text-sm font-medium">OCR</div>
+        <p className="text-sm">{data.captionOCR}</p>
+        <p className="text-xs">
+          ocr by <span className="font-mono text-[0.95em] text-gray-11">{data.captionModelId}</span>
+        </p>
       </Card>
     </>
+  )
+}
+
+const ImageGenerationDataV0Card = ({ metadata }: { metadata: EImageMetadata[] }) => {
+  const data = metadata.find((m) => m.type === 'generationData_V0')
+  if (!data) return null
+
+  return (
+    <Card className="space-y-2" size="2">
+      <div className="pb-px text-sm font-medium">Generation Data</div>
+      <DataList.Root orientation="vertical">
+        <DataList.Item>
+          <DataList.Label>prompt</DataList.Label>
+          <DataList.Value>{data.prompt}</DataList.Value>
+        </DataList.Item>
+
+        <DataList.Item>
+          <DataList.Label>model</DataList.Label>
+          <DataList.Value>{data.modelName}</DataList.Value>
+        </DataList.Item>
+
+        <DataList.Item>
+          <DataList.Label>endpoint</DataList.Label>
+          <DataList.Value>{data.endpointId}</DataList.Value>
+        </DataList.Item>
+      </DataList.Root>
+    </Card>
+  )
+}
+
+const ImageFileDataCard = ({ image }: { image: EImageV1 }) => {
+  return (
+    <Card className="space-y-2" size="2">
+      <div className="pb-px text-sm font-medium">File Data</div>
+      <DataList.Root orientation="vertical">
+        <DataList.Item>
+          <DataList.Label>created</DataList.Label>
+          <DataList.Value suppressHydrationWarning>
+            {new Date(image.originalCreationTime ?? image._creationTime).toLocaleString()}
+          </DataList.Value>
+        </DataList.Item>
+
+        <DataList.Item>
+          <DataList.Label>dimensions</DataList.Label>
+          <DataList.Value>
+            {image.width}x{image.height} px
+          </DataList.Value>
+        </DataList.Item>
+
+        <DataList.Item>
+          <DataList.Label>id</DataList.Label>
+          <DataList.Value className="font-mono">{image.id}</DataList.Value>
+        </DataList.Item>
+      </DataList.Root>
+    </Card>
   )
 }
