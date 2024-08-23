@@ -270,15 +270,16 @@ export const searchImages = query({
   args: {
     slugOrId: v.string(),
     query: v.string(),
+    paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return []
+    if (!thread) return emptyPage()
 
     return await ctx
       .table('images')
       .search('searchText', (q) => q.search('searchText', args.query).eq('threadId', thread._id))
-      .take(20)
+      .paginate(args.paginationOpts)
       .map((image) => ({
         ...omit(image, ['fileId', 'searchText']),
         userIsViewer: getUserIsViewer(ctx, image.userId),

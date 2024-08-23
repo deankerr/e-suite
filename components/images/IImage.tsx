@@ -12,7 +12,6 @@ type Props = { image: EImage } & Partial<React.ComponentPropsWithoutRef<typeof N
 export const IImage = forwardRef<HTMLImageElement, Props>(({ image, className, ...props }, ref) => {
   return (
     <NextImage
-      draggable={false}
       alt=""
       src={`/i/${image.uid}`}
       placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
