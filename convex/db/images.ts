@@ -7,7 +7,7 @@ import * as vb from 'valibot'
 import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { getImageModelByResourceKey } from '../db/models'
-import { internalMutation, internalQuery, query } from '../functions'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { generateUid } from '../lib/utils'
 import { imageFields } from '../schema'
 import { createJob } from '../workflows/jobs'
@@ -150,6 +150,15 @@ export const getImageMessage = query({
     const image = await ctx.table('images').get('uid', args.uid)
     if (!image) return null
     return await getMessageAndEdges(ctx, image.messageId)
+  },
+})
+
+export const remove = mutation({
+  args: {
+    imageId: v.id('images'),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('images').getX(args.imageId).delete()
   },
 })
 

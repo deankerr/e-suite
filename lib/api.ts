@@ -126,6 +126,10 @@ export const useDeleteMessage = () => {
   return useMutation(api.db.messages.remove)
 }
 
+export const useDeleteImage = () => {
+  return useMutation(api.db.images.remove)
+}
+
 // * queries
 export const useThreads = () => {
   const threads = useQuery(api.db.threads.list, {})

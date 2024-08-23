@@ -6,7 +6,7 @@ import { useQueryState } from 'nuqs'
 
 import { Composer } from '@/components/composer/Composer'
 import { SearchField } from '@/components/form/SearchField'
-import { IImage } from '@/components/images/IImage'
+import { IImageCard } from '@/components/images/IImageCard'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Orbit } from '@/components/ui/Ldrs'
 import {
@@ -77,7 +77,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
                 className="overflow-hidden rounded-md border border-grayA-3"
                 style={{ aspectRatio: image.width / image.height }}
               >
-                <IImage image={image} />
+                <IImageCard image={image} />
               </Link>
             ))}
 
