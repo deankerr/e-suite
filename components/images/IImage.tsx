@@ -25,3 +25,29 @@ export const IImage = forwardRef<HTMLImageElement, Props>(({ image, className, .
   )
 })
 IImage.displayName = 'IImage'
+
+export const IImageBordered = forwardRef<HTMLImageElement, Props>(
+  ({ image, className, ...props }, ref) => {
+    return (
+      <div
+        style={{
+          aspectRatio: `${image.width} / ${image.height}`,
+        }}
+        className="m-auto max-h-full overflow-hidden rounded-lg border border-gray-4"
+      >
+        <NextImage
+          alt=""
+          src={`/i/${image.uid}`}
+          placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
+          blurDataURL={image?.blurDataUrl}
+          width={image.width}
+          height={image.height}
+          className={cn('h-full w-full object-contain', className)}
+          {...props}
+          ref={ref}
+        />
+      </div>
+    )
+  },
+)
+IImageBordered.displayName = 'IImageBordered'

@@ -4,7 +4,7 @@ import { Card, DataList } from '@radix-ui/themes'
 import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
-import { IImage } from '@/components/images/IImage'
+import { IImage, IImageBordered } from '@/components/images/IImage'
 import {
   Carousel,
   CarouselContent,
@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
-import type { EImage, EUser } from '@/convex/types'
+import type { EImage, EMessage, EUser } from '@/convex/types'
 
 export const ImageMessageDetailPageLoader = (props: {
   initialImageId: string
@@ -25,31 +25,55 @@ export const ImageMessageDetailPageLoader = (props: {
 
   return (
     <>
-      <ImageDetailPage images={message?.images ?? []} currentImageId={props.initialImageId} />
+      <ImageDetailPage
+        images={message?.images ?? []}
+        currentImageId={props.initialImageId}
+        message={message}
+      />
     </>
   )
 }
 
-export const ImageDetailPage = (props: { images: EImage[]; currentImageId: string }) => {
+export const ImageDetailPage = (props: {
+  images: EImage[]
+  currentImageId: string
+  message?: EMessage | null
+}) => {
   const image = props.images.find((image) => image.uid === props.currentImageId)
 
   return (
     <>
       <div className="grid h-full w-full grid-rows-[1fr_auto_6rem] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
-        <div className="p-2 md:overflow-hidden">{image && <IImage image={image} />}</div>
+        <div className="p-2 md:overflow-hidden">{image && <IImageBordered image={image} />}</div>
 
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
-          <div className="space-y-2">{image && <ImageDetailsCards image={image} />}</div>
+          <div className="space-y-2">
+            {image && <ImageDetailsCards image={image} />}
+
+            {props.message?.name && props.message?.text ? (
+              <Card>
+                <div className="text-sm">
+                  <span className="font-medium">{props.message.name} </span>
+                  {props.message.text}
+                </div>
+              </Card>
+            ) : null}
+          </div>
         </div>
 
         <div className={cn('flex-center', props.images.length < 2 && 'hidden')}>
           <Carousel className="w-[60%]">
-            <CarouselContent className="">
+            <CarouselContent>
               {props.images.map((image) => (
-                <CarouselItem key={image.uid} className="flex-col-center basis-24">
-                  <Link href={`/image/${image.uid}`} replace>
-                    <Card className="aspect-square p-0">
-                      <IImage image={image} className="object-cover" />
+                <CarouselItem key={image.uid} className="flex-col-center basis-1/4">
+                  <Link href={`/image/${image.uid}`} className="w-24 p-1" replace>
+                    <Card
+                      className={cn(
+                        'aspect-square w-full p-0',
+                        image.uid === props.currentImageId && 'outline outline-2 outline-orange-9',
+                      )}
+                    >
+                      <IImage image={image} />
                     </Card>
                   </Link>
                 </CarouselItem>
