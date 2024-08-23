@@ -8,9 +8,10 @@ import { DeleteImageDialog } from '@/components/images/dialogs'
 import { IImageBordered } from '@/components/images/IImage'
 import { IconButton } from '@/components/ui/Button'
 
-import type { EImage } from '@/convex/types'
+import type { Id } from '@/convex/_generated/dataModel'
+import type { EImageV1 } from '@/convex/types'
 
-export const IImageCard = ({ image }: { image: EImage }) => {
+export const IImageCard = ({ image }: { image: EImageV1 }) => {
   const [showDeleteImageDialog, setShowDeleteImageDialog] = useState(false)
 
   return (
@@ -28,7 +29,7 @@ export const IImageCard = ({ image }: { image: EImage }) => {
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content variant="soft">
-          <Link href={`/convex/${image.uid}?download`} target="_blank">
+          <Link href={image.url} target="_blank">
             <DropdownMenu.Item>
               <Icons.DownloadSimple size={16} />
               Download
@@ -36,7 +37,7 @@ export const IImageCard = ({ image }: { image: EImage }) => {
           </Link>
 
           {image.userIsViewer && (
-            <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)}>
+            <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)} disabled>
               <Icons.Trash size={16} />
               Delete
             </DropdownMenu.Item>
@@ -45,7 +46,8 @@ export const IImageCard = ({ image }: { image: EImage }) => {
       </DropdownMenu.Root>
 
       <DeleteImageDialog
-        imageId={image._id}
+        // TODO update
+        imageId={image.id as Id<'images'>}
         open={showDeleteImageDialog}
         onOpenChange={setShowDeleteImageDialog}
       />

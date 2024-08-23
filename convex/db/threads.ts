@@ -281,9 +281,9 @@ export const listImagesV1 = query({
       .order('desc')
       .paginate(args.paginationOpts)
       .map(async (image) => ({
-        ...omit(image, ['fileId']),
+        ...image,
         userIsViewer: getUserIsViewer(ctx, image.ownerId),
-        url: await ctx.storage.getUrl(image.fileId),
+        url: (await ctx.storage.getUrl(image.fileId)) || '',
       }))
   },
 })

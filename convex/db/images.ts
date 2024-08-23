@@ -15,7 +15,16 @@ import { getMessageAndEdges } from './messages'
 import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Doc } from '../_generated/dataModel'
-import type { Ent, MutationCtx } from '../types'
+import type { Ent, MutationCtx, QueryCtx } from '../types'
+
+export const getImageV1 = async (ctx: QueryCtx, imageId: string) => {
+  const image = await ctx.table('images_v1').getX('id', imageId)
+  return {
+    ...image,
+    userIsViewer: getUserIsViewer(ctx, image.ownerId),
+    url: (await ctx.storage.getUrl(image.fileId)) || '',
+  }
+}
 
 export const createImage = internalMutation({
   args: {
@@ -138,6 +147,21 @@ export const getByUid = query({
       ...omit(image, ['searchText']),
       userIsViewer: getUserIsViewer(ctx, image.userId),
       user: await getUserPublic(ctx, image.userId),
+    }
+  },
+})
+
+export const getById = query({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const image = await ctx.table('images_v1').get('id', args.id)
+    if (!image) return null
+    return {
+      ...image,
+      userIsViewer: getUserIsViewer(ctx, image.ownerId),
+      url: (await ctx.storage.getUrl(image.fileId)) || '',
     }
   },
 })

@@ -10,7 +10,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carouse
 import { cn } from '@/lib/utils'
 
 import type { api } from '@/convex/_generated/api'
-import type { EImage, EMessage, EUser } from '@/convex/types'
+import type { EImage, EImageV1, EMessage, EUser } from '@/convex/types'
 
 export const ImageMessageDetailPageLoader = (props: {
   initialImageId: string
@@ -20,21 +20,21 @@ export const ImageMessageDetailPageLoader = (props: {
 
   return (
     <>
-      <ImageDetailPage
+      {/* <ImageDetailPage
         images={message?.images ?? []}
         currentImageId={props.initialImageId}
         message={message}
-      />
+      /> */}
     </>
   )
 }
 
 export const ImageDetailPage = (props: {
-  images: EImage[]
+  images: EImageV1[]
   currentImageId: string
   message?: EMessage | null
 }) => {
-  const image = props.images.find((image) => image.uid === props.currentImageId)
+  const image = props.images.find((image) => image.id === props.currentImageId)
 
   return (
     <>
@@ -43,7 +43,7 @@ export const ImageDetailPage = (props: {
 
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
-            {image && <ImageDetailsCards image={image} />}
+            {/* {image && <ImageDetailsCards image={image} />} */}
 
             {props.message?.name && props.message?.text ? (
               <Card>
@@ -60,12 +60,12 @@ export const ImageDetailPage = (props: {
           <Carousel>
             <CarouselContent className="-ml-2 px-1">
               {props.images.map((image) => (
-                <CarouselItem key={image.uid} className="basis-24 pl-2">
-                  <Link href={`/image/${image.uid}`} className="w-full p-1" replace>
+                <CarouselItem key={image.id} className="basis-24 pl-2">
+                  <Link href={`/image/${image.id}`} className="w-full p-1" replace>
                     <Card
                       className={cn(
                         'aspect-square w-full p-0',
-                        image.uid === props.currentImageId && 'outline outline-2 outline-orange-9',
+                        image.id === props.currentImageId && 'outline outline-2 outline-orange-9',
                       )}
                     >
                       <IImage image={image} />
