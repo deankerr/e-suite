@@ -25,7 +25,7 @@ export const createImage = internalMutation({
   handler: async (ctx, args) => {
     const message = await ctx.skipRules.table('messages').getX(args.messageId)
 
-    const imageId = await ctx.table('images').insert({
+    const imageId = await ctx.skipRules.table('images').insert({
       ...args,
       userId: message.userId,
       threadId: message.threadId,
@@ -49,9 +49,9 @@ export const updateImage = internalMutation({
     ...partial(imageFields),
   },
   handler: async (ctx, { imageId, ...args }) => {
-    const image = await ctx.table('images').getX(imageId)
+    const image = await ctx.skipRules.table('images').getX(imageId)
     const searchText = buildSearchText({ ...image, ...args })
-    return await ctx
+    return await ctx.skipRules
       .table('images')
       .getX(imageId)
       .patch({ ...args, searchText })
