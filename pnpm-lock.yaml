@@ -9,10 +9,10 @@ importers:
   .:
     dependencies:
       '@ai-sdk/anthropic':
-        specifier: ^0.0.39
+        specifier: 0.0.39
         version: 0.0.39(zod@3.23.8)
       '@ai-sdk/openai':
-        specifier: ^0.0.44
+        specifier: 0.0.44
         version: 0.0.44(zod@3.23.8)
       '@aws-sdk/client-polly':
         specifier: ^3.637.0
@@ -84,7 +84,7 @@ importers:
         specifier: ^1.0.12
         version: 1.0.12(next@14.2.6(@babel/core@7.24.6)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(svelte@4.2.18)(vue@3.4.38(typescript@5.5.4))
       ai:
-        specifier: ^3.3.5
+        specifier: 3.3.5
         version: 3.3.5(openai@4.56.0(zod@3.23.8))(react@18.3.1)(sswr@2.1.0(svelte@4.2.18))(svelte@4.2.18)(vue@3.4.38(typescript@5.5.4))(zod@3.23.8)
       audiomotion-analyzer:
         specifier: ^4.5.0
