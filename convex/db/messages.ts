@@ -57,6 +57,15 @@ export const get = query({
   },
 })
 
+export const getDoc = query({
+  args: {
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('messages').get(args.messageId).doc()
+  },
+})
+
 export const update = mutation({
   args: {
     messageId: v.id('messages'),

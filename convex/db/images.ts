@@ -17,6 +17,10 @@ export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) =>
     userIsViewer: getUserIsViewer(ctx, image.ownerId),
     url: (await ctx.storage.getUrl(image.fileId)) || '',
     metadata: await image.edge('image_metadata').map(async (metadata) => metadata.data),
+    messageId: await image
+      .edge('messages')
+      .first()
+      .then((message) => message?._id),
   }
 }
 

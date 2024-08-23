@@ -6,16 +6,16 @@ import Link from 'next/link'
 import { IImage } from '@/components/images/IImage'
 import { IImageCard } from '@/components/images/IImageCard'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel'
+import { api } from '@/convex/_generated/api'
+import { useCacheQuery } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EImageMetadata, EImageV1, EMessage } from '@/convex/types'
+import type { EImageMetadata, EImageV1 } from '@/convex/types'
 
-export const ImageDetailPage = (props: {
-  images: EImageV1[]
-  currentImageId: string
-  message?: EMessage | null
-}) => {
+export const ImageDetailPage = (props: { images: EImageV1[]; currentImageId: string }) => {
   const image = props.images.find((image) => image.id === props.currentImageId)
+  const messageId = image?.messageId
+  const message = useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
 
   return (
     <>
@@ -26,11 +26,11 @@ export const ImageDetailPage = (props: {
           <div className="space-y-2">
             {image && <ImageDetailsCards image={image} />}
 
-            {props.message?.name && props.message?.text ? (
+            {message?.name && message?.text ? (
               <Card>
                 <div className="text-sm">
-                  <span className="font-medium">{props.message.name} </span>
-                  {props.message.text}
+                  <span className="font-medium">{message.name} </span>
+                  {message.text}
                 </div>
               </Card>
             ) : null}
