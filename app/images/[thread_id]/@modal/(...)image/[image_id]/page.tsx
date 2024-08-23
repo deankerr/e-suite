@@ -25,7 +25,7 @@ export default async function Page({
     uid: params.image_id,
   })
   return (
-    <Modal closePathname={`/images/${params.thread_id}`}>
+    <Modal>
       <ImageMessageDetailPageLoader
         preloadedImageMessage={preloadedImageMessage}
         initialImageId={params.image_id}
