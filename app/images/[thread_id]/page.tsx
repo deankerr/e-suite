@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useDebouncedState } from '@react-hookz/web'
 import Link from 'next/link'
 import { useQueryState } from 'nuqs'
 
@@ -33,15 +32,8 @@ const useImagesFeed = (thread_id: string) => {
   }
 }
 
-const ImagesToolbarWrapper = twx.div`flex-start h-10 border-b border-gray-5 w-full gap-1 px-1 text-sm`
-const ResultsGrid = twx.div`grid auto-rows-max grid-cols-3 gap-2 p-2 xl:grid-cols-4`
-
-export default function Page({ params }: { params: { thread_id: string } }) {
-  const thread = useThread(params.thread_id)
-
-  const imagesFeed = useImagesFeed(params.thread_id)
-
-  const [searchParamValue, setSearchParamValue] = useQueryState('search', {
+const useSearchParamValue = (key = 'search') => {
+  const [searchParamValue, setSearchParamValue] = useQueryState(key, {
     defaultValue: '',
     clearOnDefault: true,
   })
@@ -50,7 +42,20 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
   useEffect(() => {
     setSearchParamValue(searchValue)
-  }, [searchValue, setSearchParamValue])
+  }, [searchValue, setSearchParamValue, key])
+
+  return [searchValue, setSearchValue] as const
+}
+
+const ImagesToolbarWrapper = twx.div`flex-start h-10 border-b border-gray-5 w-full gap-1 px-1 text-sm`
+const ResultsGrid = twx.div`grid auto-rows-max grid-cols-3 gap-2 p-2 xl:grid-cols-4`
+
+export default function Page({ params }: { params: { thread_id: string } }) {
+  const thread = useThread(params.thread_id)
+
+  const imagesFeed = useImagesFeed(params.thread_id)
+
+  const [searchValue, setSearchValue] = useSearchParamValue()
 
   const searchImages = useThreadImagesSearch(params.thread_id, searchValue)
   const images = searchValue ? searchImages : imagesFeed
