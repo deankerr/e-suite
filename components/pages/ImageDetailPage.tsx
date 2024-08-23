@@ -1,7 +1,6 @@
 'use client'
 
 import { Card, DataList } from '@radix-ui/themes'
-import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
 import { IImage } from '@/components/images/IImage'
@@ -9,25 +8,7 @@ import { IImageCard } from '@/components/images/IImageCard'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel'
 import { cn } from '@/lib/utils'
 
-import type { api } from '@/convex/_generated/api'
-import type { EImage, EImageV1, EMessage, EUser } from '@/convex/types'
-
-export const ImageMessageDetailPageLoader = (props: {
-  initialImageId: string
-  preloadedImageMessage: Preloaded<typeof api.db.images.getImageMessage>
-}) => {
-  const message = usePreloadedQuery(props.preloadedImageMessage)
-
-  return (
-    <>
-      {/* <ImageDetailPage
-        images={message?.images ?? []}
-        currentImageId={props.initialImageId}
-        message={message}
-      /> */}
-    </>
-  )
-}
+import type { EImageV1, EMessage, EUser } from '@/convex/types'
 
 export const ImageDetailPage = (props: {
   images: EImageV1[]
@@ -43,7 +24,7 @@ export const ImageDetailPage = (props: {
 
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
-            {/* {image && <ImageDetailsCards image={image} />} */}
+            {image && <ImageDetailsCards image={image} />}
 
             {props.message?.name && props.message?.text ? (
               <Card>
@@ -81,10 +62,10 @@ export const ImageDetailPage = (props: {
   )
 }
 
-export const ImageDetailsCards = ({ image }: { image: EImage & { user?: EUser } }) => {
+export const ImageDetailsCards = ({ image }: { image: EImageV1 & { user?: EUser } }) => {
   return (
     <>
-      {image.captionModelId ? (
+      {/* {image.captionModelId ? (
         <Card className="space-y-2" size="2">
           <div className="pb-px text-base font-semibold">{image.captionTitle}</div>
           <p className="text-sm">{image.captionDescription}</p>
@@ -126,7 +107,7 @@ export const ImageDetailsCards = ({ image }: { image: EImage & { user?: EUser } 
             </DataList.Item>
           </DataList.Root>
         </Card>
-      ) : null}
+      ) : null} */}
 
       <Card className="space-y-2" size="2">
         <div className="pb-px text-sm font-medium">File Data</div>
@@ -146,8 +127,8 @@ export const ImageDetailsCards = ({ image }: { image: EImage & { user?: EUser } 
           </DataList.Item>
 
           <DataList.Item>
-            <DataList.Label>uid</DataList.Label>
-            <DataList.Value className="font-mono">{image.uid}</DataList.Value>
+            <DataList.Label>id</DataList.Label>
+            <DataList.Value className="font-mono">{image.id}</DataList.Value>
           </DataList.Item>
 
           {image.user && (

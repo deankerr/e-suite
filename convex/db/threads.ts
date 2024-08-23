@@ -12,6 +12,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { createGeneration } from './generations'
+import { getImageV1Edges } from './images'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -246,27 +247,6 @@ export const listMessages = query({
   },
 })
 
-export const listImages = query({
-  args: {
-    slugOrId: v.string(),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return emptyPage()
-
-    return await thread
-      .edge('images')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .paginate(args.paginationOpts)
-      .map((image) => ({
-        ...omit(image, ['fileId', 'searchText']),
-        userIsViewer: getUserIsViewer(ctx, image.userId),
-      }))
-  },
-})
-
 export const listImagesV1 = query({
   args: {
     slugOrId: v.string(),
@@ -280,11 +260,7 @@ export const listImagesV1 = query({
       .edge('images_v1')
       .order('desc')
       .paginate(args.paginationOpts)
-      .map(async (image) => ({
-        ...image,
-        userIsViewer: getUserIsViewer(ctx, image.ownerId),
-        url: (await ctx.storage.getUrl(image.fileId)) || '',
-      }))
+      .map(async (image) => await getImageV1Edges(ctx, image))
   },
 })
 
@@ -436,10 +412,10 @@ export const append = mutation({
         (url) => url.hostname !== ENV.APP_HOSTNAME,
       )
       if (urls.length > 0) {
-        await createJobNext.evaluateMessageUrls(ctx, {
-          urls: urls.map((url) => url.toString()),
-          messageId: message._id,
-        })
+        // await createJobNext.evaluateMessageUrls(ctx, {
+        //   urls: urls.map((url) => url.toString()),
+        //   messageId: message._id,
+        // })
       }
     }
 
@@ -579,17 +555,11 @@ const createTextToImageRun = async (
 
     .parse(runConfig)
 
-  await createGeneration(ctx, {
+  const jobId = await createGeneration(ctx, {
     input,
     messageId,
     threadId: thread._id,
     userId,
-  })
-
-  const jobId = await createJobNext.textToImage(ctx, {
-    ...input,
-    messageId,
-    threadId: thread._id,
   })
 
   await thread.patch({

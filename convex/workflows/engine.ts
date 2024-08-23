@@ -5,23 +5,15 @@ import { internalAction } from '../functions'
 import { stringifyValueForError } from '../shared/utils'
 import { WorkflowError } from './helpers'
 import { chatPipeline } from './pipelines/chat'
-import { evaluateMessageUrlsPipeline } from './pipelines/evaluateMessageUrls'
-import { generateImageMetadataPipeline } from './pipelines/generateImageMetadata'
 import { generateThreadTitlePipeline } from './pipelines/generateThreadTitle'
-import { ingestImageUrlPipeline } from './pipelines/ingestImageUrl'
 import { textToAudioPipeline } from './pipelines/textToAudio'
-import { textToImagePipeline } from './pipelines/textToImage'
 
 import type { Doc } from '../_generated/dataModel'
 
 const pipelines = {
   chat: chatPipeline,
-  evaluateMessageUrls: evaluateMessageUrlsPipeline,
   generateThreadTitle: generateThreadTitlePipeline,
-  ingestImageUrl: ingestImageUrlPipeline,
   textToAudio: textToAudioPipeline,
-  textToImage: textToImagePipeline,
-  generateImageMetadata: generateImageMetadataPipeline,
 }
 
 export const executeStep = internalAction({

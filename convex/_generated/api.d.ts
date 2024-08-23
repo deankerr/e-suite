@@ -62,12 +62,8 @@ import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_helpers from "../workflows/helpers.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
 import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
-import type * as workflows_pipelines_evaluateMessageUrls from "../workflows/pipelines/evaluateMessageUrls.js";
-import type * as workflows_pipelines_generateImageMetadata from "../workflows/pipelines/generateImageMetadata.js";
 import type * as workflows_pipelines_generateThreadTitle from "../workflows/pipelines/generateThreadTitle.js";
-import type * as workflows_pipelines_ingestImageUrl from "../workflows/pipelines/ingestImageUrl.js";
 import type * as workflows_pipelines_textToAudio from "../workflows/pipelines/textToAudio.js";
-import type * as workflows_pipelines_textToImage from "../workflows/pipelines/textToImage.js";
 import type * as workflows_types from "../workflows/types.js";
 
 /**
@@ -127,12 +123,8 @@ declare const fullApi: ApiFromModules<{
   "workflows/helpers": typeof workflows_helpers;
   "workflows/jobs": typeof workflows_jobs;
   "workflows/pipelines/chat": typeof workflows_pipelines_chat;
-  "workflows/pipelines/evaluateMessageUrls": typeof workflows_pipelines_evaluateMessageUrls;
-  "workflows/pipelines/generateImageMetadata": typeof workflows_pipelines_generateImageMetadata;
   "workflows/pipelines/generateThreadTitle": typeof workflows_pipelines_generateThreadTitle;
-  "workflows/pipelines/ingestImageUrl": typeof workflows_pipelines_ingestImageUrl;
   "workflows/pipelines/textToAudio": typeof workflows_pipelines_textToAudio;
-  "workflows/pipelines/textToImage": typeof workflows_pipelines_textToImage;
   "workflows/types": typeof workflows_types;
 }>;
 export declare const api: FilterApi<

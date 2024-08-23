@@ -2,11 +2,7 @@ import ky from 'ky'
 import * as vb from 'valibot'
 
 import { ENV } from '../../../lib/env'
-import { env } from '../../../shared/utils'
 import { WorkflowError } from '../../helpers'
-
-import type { EImageModel } from '../../../types'
-import type { TextToImagePipelineInput } from '../../pipelines/textToImage'
 
 const SuccessResponse = vb.object({
   inf_id: vb.string(),
@@ -28,9 +24,7 @@ const api = ky.extend({
   retry: 0,
 })
 
-export const textToImage = async (
-  args: TextToImagePipelineInput & { model: EImageModel | null },
-) => {
+export const textToImage = async (args: any) => {
   const { prompt, width = 512, height = 512, n = 1, model } = args
 
   if (!model) throw new WorkflowError('model data required', 'model_data_required', true)

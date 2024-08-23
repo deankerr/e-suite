@@ -8,14 +8,19 @@ import { DeleteImageDialog } from '@/components/images/dialogs'
 import { IImageBordered } from '@/components/images/IImage'
 import { IconButton } from '@/components/ui/Button'
 
-import type { Id } from '@/convex/_generated/dataModel'
 import type { EImageV1 } from '@/convex/types'
 
-export const IImageCard = ({ image }: { image: EImageV1 }) => {
+export const IImageCard = ({
+  image,
+  imageProps,
+}: {
+  image: EImageV1
+  imageProps?: Partial<React.ComponentPropsWithoutRef<typeof IImageBordered>>
+}) => {
   const [showDeleteImageDialog, setShowDeleteImageDialog] = useState(false)
 
   return (
-    <IImageBordered image={image}>
+    <IImageBordered image={image} {...imageProps}>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <IconButton
@@ -46,8 +51,7 @@ export const IImageCard = ({ image }: { image: EImageV1 }) => {
       </DropdownMenu.Root>
 
       <DeleteImageDialog
-        // TODO update
-        imageId={image.id as Id<'images'>}
+        id={image.id}
         open={showDeleteImageDialog}
         onOpenChange={setShowDeleteImageDialog}
       />

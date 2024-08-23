@@ -10,7 +10,6 @@ const routes = [
   { path: '/admin/image-models', label: 'image models' },
   { path: '/admin/voice-models', label: 'voice models' },
   { path: '/admin/images', label: 'images' },
-  { path: '/admin/image-data', label: 'image data' },
 ]
 
 export const AdminNav = () => {

@@ -3,14 +3,12 @@ import { AlertDialog } from '@radix-ui/themes'
 import { Button } from '@/components/ui/Button'
 import { useDeleteImage } from '@/lib/api'
 
-import type { Id } from '@/convex/_generated/dataModel'
-
 export const DeleteImageDialog = ({
-  imageId,
+  id,
   children,
   ...props
 }: {
-  imageId: Id<'images'>
+  id: string
 } & React.ComponentProps<typeof AlertDialog.Root>) => {
   const sendDeleteImage = useDeleteImage()
 
@@ -31,7 +29,7 @@ export const DeleteImageDialog = ({
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
-            <Button variant="solid" color="red" onClick={() => sendDeleteImage({ imageId })}>
+            <Button variant="solid" color="red" onClick={() => sendDeleteImage({ id })}>
               Delete
             </Button>
           </AlertDialog.Action>
