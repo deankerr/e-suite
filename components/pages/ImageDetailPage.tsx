@@ -4,7 +4,8 @@ import { Card, DataList } from '@radix-ui/themes'
 import { Preloaded, usePreloadedQuery } from 'convex/react'
 import Link from 'next/link'
 
-import { IImage, IImageBordered } from '@/components/images/IImage'
+import { IImage } from '@/components/images/IImage'
+import { IImageCard } from '@/components/images/IImageCard'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel'
 import { cn } from '@/lib/utils'
 
@@ -38,7 +39,7 @@ export const ImageDetailPage = (props: {
   return (
     <>
       <div className="grid h-full w-full grid-rows-[1fr_6rem_auto] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
-        <div className="p-2 md:overflow-hidden">{image && <IImageBordered image={image} />}</div>
+        <div className="p-2 md:overflow-hidden">{image && <IImageCard image={image} />}</div>
 
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
@@ -55,9 +56,7 @@ export const ImageDetailPage = (props: {
           </div>
         </div>
 
-        <div
-          className={cn('flex-center row-start-2 px-4 py-1', props.images.length < 2 && 'hidden')}
-        >
+        <div className={cn('flex-center row-start-2 px-4', props.images.length < 2 && 'hidden')}>
           <Carousel>
             <CarouselContent className="-ml-2 px-1">
               {props.images.map((image) => (

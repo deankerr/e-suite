@@ -24,6 +24,12 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return ctx.viewerId === message.userId
       },
     },
+    images: {
+      write: async ({ operation, ent: image, value }) => {
+        if (operation === 'create') return ctx.viewerId === value.userId
+        return ctx.viewerId === image.userId
+      },
+    },
   })
 }
 
