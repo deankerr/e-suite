@@ -13,6 +13,7 @@ import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/help
 import { createJob as createJobNext } from '../workflows/jobs'
 import { createGeneration } from './generations'
 import { getImageV1Edges } from './images'
+import { createEvaluateMessageUrlsJob } from './jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -412,10 +413,10 @@ export const append = mutation({
         (url) => url.hostname !== ENV.APP_HOSTNAME,
       )
       if (urls.length > 0) {
-        // await createJobNext.evaluateMessageUrls(ctx, {
-        //   urls: urls.map((url) => url.toString()),
-        //   messageId: message._id,
-        // })
+        await createEvaluateMessageUrlsJob(ctx, {
+          urls: urls.map((url) => url.toString()),
+          messageId: message._id,
+        })
       }
     }
 

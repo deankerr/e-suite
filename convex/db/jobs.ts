@@ -2,8 +2,12 @@ import { pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 
-import { query } from '../functions'
+import { internal } from '../_generated/api'
+import { internalMutation, query } from '../functions'
 import { getThreadBySlugOrId } from './threads'
+
+import type { Id } from '../_generated/dataModel'
+import type { MutationCtx } from '../types'
 
 export const get = query({
   args: {
@@ -30,3 +34,27 @@ export const get = query({
       })
   },
 })
+
+export const createIngestImageUrlJob = internalMutation({
+  args: {
+    url: v.string(),
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, args) => {
+    await ctx.scheduler.runAfter(0, internal.action.ingestImageUrl.run, {
+      sourceUrl: args.url,
+      sourceType: 'userMessageUrl',
+      messageId: args.messageId,
+    })
+  },
+})
+
+export const createEvaluateMessageUrlsJob = async (
+  ctx: MutationCtx,
+  args: { urls: string[]; messageId: Id<'messages'> },
+) => {
+  await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
+    urls: args.urls,
+    messageId: args.messageId,
+  })
+}
