@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 import { useQueryState } from 'nuqs'
 
@@ -61,6 +63,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
   const images = searchValue ? searchImages : imagesFeed
 
   const actions = useThreadActions(thread?._id)
+  const [containerRef] = useAutoAnimate()
   return (
     <>
       <ImagesToolbarWrapper>
@@ -68,8 +71,8 @@ export default function Page({ params }: { params: { thread_id: string } }) {
       </ImagesToolbarWrapper>
 
       <div className="h-96 grow overflow-hidden">
-        <div className="h-full overflow-y-auto">
-          <ResultsGrid>
+        <ScrollArea scrollbars="vertical">
+          <ResultsGrid ref={containerRef}>
             {images.results.map((image) => (
               <Link
                 key={image._id}
@@ -95,7 +98,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
               <Orbit />
             </div>
           </div>
-        </div>
+        </ScrollArea>
       </div>
 
       {thread && thread.userIsViewer && (
