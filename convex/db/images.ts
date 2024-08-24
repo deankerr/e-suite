@@ -200,7 +200,7 @@ export const createImageMetadata = internalMutation({
   },
 })
 
-const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
+export const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
   const image = await getImageV1(ctx, id)
 
   const texts: string[] = []
@@ -222,6 +222,11 @@ const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
   if (image.generation?.input) {
     const input = image.generation.input as RunConfigTextToImage
     texts.push(input.prompt ?? '')
+  } else {
+    const generationDataV0 = image.metadata.find((m) => m.type === 'generationData_V0')
+    if (generationDataV0) {
+      texts.push(generationDataV0.prompt)
+    }
   }
 
   const existing = await ctx.table('images_search_text').get('imageId', image._id)
