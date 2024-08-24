@@ -50,7 +50,7 @@ const useSearchParamValue = (key = 'search') => {
 }
 
 const ImagesToolbarWrapper = twx.div`flex-start h-10 border-b border-gray-5 w-full gap-1 px-1 text-sm`
-const ResultsGrid = twx.div`grid auto-rows-max grid-cols-3 gap-2 p-2 xl:grid-cols-4`
+const ResultsGrid = twx.div`grid auto-rows-max grid-cols-2 md:grid-cols-3 gap-2 p-2 xl:grid-cols-4`
 
 export default function Page({ params }: { params: { thread_id: string } }) {
   const thread = useThread(params.thread_id)

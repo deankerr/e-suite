@@ -12,15 +12,17 @@ import type { EImageV1 } from '@/convex/types'
 
 export const IImageCard = ({
   image,
-  imageProps,
+  sizes,
+  priority,
 }: {
   image: EImageV1
-  imageProps?: Partial<React.ComponentPropsWithoutRef<typeof IImageBordered>>
+  sizes?: string
+  priority?: boolean
 }) => {
   const [showDeleteImageDialog, setShowDeleteImageDialog] = useState(false)
 
   return (
-    <IImageBordered image={image} {...imageProps}>
+    <IImageBordered image={image} sizes={sizes} priority={priority}>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <IconButton
@@ -42,7 +44,7 @@ export const IImageCard = ({
           </Link>
 
           {image.userIsViewer && (
-            <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)} disabled>
+            <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)}>
               <Icons.Trash size={16} />
               Delete
             </DropdownMenu.Item>

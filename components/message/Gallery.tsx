@@ -1,5 +1,5 @@
 import { ms } from 'itty-time'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 import { IImageCard } from '@/components/images/IImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
@@ -7,8 +7,6 @@ import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect
 import type { EMessage, RunConfigTextToImage } from '@/convex/types'
 
 export const Gallery = ({ message, priority }: { message: EMessage; priority?: boolean }) => {
-  const router = useRouter()
-
   const placeholders = message.jobs
     .filter(
       (job) =>
@@ -30,18 +28,9 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
   return (
     <div className="flex grow flex-wrap justify-center gap-2 py-1">
       {message.images.map((image) => (
-        <IImageCard
-          key={image._id}
-          image={image}
-          imageProps={{
-            className: 'max-w-sm cursor-pointer',
-            sizes: '(max-width: 410px) 90vw, 20rem',
-            priority,
-            onClick: () => {
-              router.push(`/image/${image.id}`)
-            },
-          }}
-        />
+        <Link href={`/image/${image.id}`} key={image._id}>
+          <IImageCard image={image} sizes="(max-width: 410px) 90vw, 20rem" priority={priority} />
+        </Link>
       ))}
 
       {placeholders.map((placeholder) => (
