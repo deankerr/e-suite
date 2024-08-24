@@ -9,13 +9,13 @@ import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
 import type { EVoiceModel, RunConfig } from '@/convex/types'
-import type { FunctionReference, FunctionReturnType } from 'convex/server'
+import type { FunctionArgs, FunctionReference, FunctionReturnType } from 'convex/server'
 
 const RUN_THROTTLE = 2500
 
 export function useCacheQuery<T extends FunctionReference<'query'>>(
   query: T,
-  args: any,
+  args: FunctionArgs<T> | 'skip',
 ): FunctionReturnType<T> | undefined {
   return useOriginalCacheQuery<T>(query, args)
 }
