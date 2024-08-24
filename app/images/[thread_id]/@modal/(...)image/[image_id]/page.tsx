@@ -22,9 +22,5 @@ export default function Page({ params }: { params: { image_id: string; thread_id
     id: params.image_id,
   })
 
-  return (
-    <Modal>
-      <ImageDetailPage images={image ? [image] : []} currentImageId={image?.id ?? ''} />
-    </Modal>
-  )
+  return <Modal>{image && <ImageDetailPage imageId={params.image_id} />}</Modal>
 }

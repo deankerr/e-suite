@@ -1,6 +1,7 @@
 'use client'
 
 import { Card, DataList } from '@radix-ui/themes'
+import { useQuery } from 'convex/react'
 import Link from 'next/link'
 
 import { IImage } from '@/components/images/IImage'
@@ -10,12 +11,30 @@ import { api } from '@/convex/_generated/api'
 import { useCacheQuery } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { EImageMetadata, EImageV1 } from '@/convex/types'
+import type {
+  EImageGenerationData,
+  EImageMetadata,
+  EImageV1,
+  RunConfigTextToImage,
+} from '@/convex/types'
 
-export const ImageDetailPage = (props: { images: EImageV1[]; currentImageId: string }) => {
-  const image = props.images.find((image) => image.id === props.currentImageId)
+export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
+  const image = useQuery(api.db.images.get, {
+    id: imageId,
+  })
+
   const messageId = image?.messageId
   const message = useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
+
+  const generation = useCacheQuery(
+    api.db.images.getGenerationImages,
+    image?.generationId ? { generationId: image.generationId } : 'skip',
+  )
+
+  const images = generation ? generation.images : [image]
+
+  if (!image) return null
+  const currentImageId = image.id
 
   return (
     <>
@@ -25,6 +44,7 @@ export const ImageDetailPage = (props: { images: EImageV1[]; currentImageId: str
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
             {image && <ImageDetailsCards image={image} />}
+            {generation && <ImageGenerationDataCard generation={generation.data} />}
 
             {message?.name && message?.text ? (
               <Card>
@@ -37,19 +57,19 @@ export const ImageDetailPage = (props: { images: EImageV1[]; currentImageId: str
           </div>
         </div>
 
-        <div className={cn('flex-center row-start-2 px-4', props.images.length < 2 && 'hidden')}>
+        <div className={cn('flex-center row-start-2 px-4', images.length < 2 && 'hidden')}>
           <Carousel>
             <CarouselContent className="-ml-2 px-1">
-              {props.images.map((image) => (
-                <CarouselItem key={image.id} className="basis-24 pl-2">
-                  <Link href={`/image/${image.id}`} className="w-full p-1" replace>
+              {images.map((image) => (
+                <CarouselItem key={image?.id} className="basis-24 pl-2">
+                  <Link href={`/image/${image?.id}`} className="w-full p-1" replace>
                     <Card
                       className={cn(
                         'aspect-square w-full p-0',
-                        image.id === props.currentImageId && 'outline outline-2 outline-orange-9',
+                        image?.id === currentImageId && 'outline outline-2 outline-orange-9',
                       )}
                     >
-                      <IImage image={image} />
+                      {image && <IImage image={image} />}
                     </Card>
                   </Link>
                 </CarouselItem>
@@ -69,6 +89,32 @@ const ImageDetailsCards = ({ image }: { image: EImageV1 }) => {
       <ImageGenerationDataV0Card metadata={image.metadata} />
       <ImageFileDataCard image={image} />
     </>
+  )
+}
+
+const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationData }) => {
+  if (!generation) return null
+  const input = generation.input as RunConfigTextToImage
+  return (
+    <Card className="space-y-2" size="2">
+      <div className="pb-px text-sm font-medium">Generation Data</div>
+      <DataList.Root orientation="vertical">
+        <DataList.Item>
+          <DataList.Label>prompt</DataList.Label>
+          <DataList.Value>{input.prompt}</DataList.Value>
+        </DataList.Item>
+
+        <DataList.Item>
+          <DataList.Label>model</DataList.Label>
+          <DataList.Value>{input.resourceKey.split('::')[1]}</DataList.Value>
+        </DataList.Item>
+
+        <DataList.Item>
+          <DataList.Label>endpoint</DataList.Label>
+          <DataList.Value>{input.resourceKey.split('::')[0]}</DataList.Value>
+        </DataList.Item>
+      </DataList.Root>
+    </Card>
   )
 }
 

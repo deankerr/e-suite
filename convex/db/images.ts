@@ -1,4 +1,4 @@
-import { omit } from 'convex-helpers'
+import { omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
@@ -9,7 +9,14 @@ import { generateId } from '../lib/utils'
 import { imagesFieldsV1 } from '../schema'
 import { getUserIsViewer, getUserPublic } from './users'
 
+import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
+
+export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations_v1'>) => {
+  const generation = await ctx.table('generations_v1').get(generationId)
+  if (!generation) return null
+  return pick(generation, ['input', 'status', 'updatedAt', '_creationTime'])
+}
 
 export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
   return {
@@ -50,6 +57,26 @@ export const get = query({
   },
   handler: async (ctx, args) => {
     return await getImageV1(ctx, args.id)
+  },
+})
+
+export const getGenerationImages = query({
+  args: {
+    generationId: v.id('generations_v1'),
+  },
+  handler: async (ctx, { generationId }) => {
+    const generation = await getGeneration(ctx, generationId)
+    if (!generation) {
+      return null
+    }
+
+    const images = await ctx
+      .table('images_v1', 'generationId', (q) => q.eq('generationId', generationId))
+      .map(async (image) => getImageV1Edges(ctx, image))
+    return {
+      data: generation,
+      images,
+    }
   },
 })
 
