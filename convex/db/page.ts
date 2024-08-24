@@ -4,7 +4,7 @@ import { getQuery } from 'ufo'
 import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { query } from '../functions'
-import { getImageV1 } from './images'
+import { getImageWithEdges } from './images'
 
 import type { RunConfigTextToImage } from '../types'
 
@@ -15,7 +15,7 @@ export const getMetadata = query({
   },
   handler: async (ctx, args) => {
     if (args.route === 'image') {
-      const image = await getImageV1(ctx, args.id)
+      const image = await getImageWithEdges(ctx, args.id)
       if (image) {
         const caption = image.metadata.find((m) => m.type === 'captionOCR_V1')
         if (caption) {

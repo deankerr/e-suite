@@ -1,4 +1,4 @@
-import { asyncMap, omit, pick } from 'convex-helpers'
+import { asyncMap, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
@@ -7,7 +7,7 @@ import { httpAction } from '../_generated/server'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { generateId } from '../lib/utils'
 import { imagesFieldsV1, imagesMetadataFields } from '../schema'
-import { getUserIsViewer, getUserPublic } from './users'
+import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
 import type { Ent, MutationCtx, QueryCtx, RunConfigTextToImage } from '../types'
@@ -25,45 +25,56 @@ export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations
   ])
 }
 
-export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
+export const getImageEnt = async (ctx: QueryCtx, imageId: string) => {
+  const _id = ctx.unsafeDb.normalizeId('images_v1', imageId)
+  return _id
+    ? await ctx.table('images_v1').getX(_id)
+    : await ctx.table('images_v1').getX('id', imageId)
+}
+
+export const getImageEdges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
   return {
     ...image.doc(),
-    userIsViewer: getUserIsViewer(ctx, image.ownerId),
-    url: (await ctx.storage.getUrl(image.fileId)) || '',
-    metadata: await image.edge('image_metadata').map(async (metadata) => metadata.data),
     generation: image.generationId ? await getGeneration(ctx, image.generationId) : undefined,
+    metadata: await image.edge('image_metadata').map(async (metadata) => metadata.data),
+    userIsViewer: getUserIsViewer(ctx, image.ownerId),
   }
 }
 
-export const getImageV1 = async (ctx: QueryCtx, imageId: string) => {
-  const _id = ctx.unsafeDb.normalizeId('images_v1', imageId)
-  const image = _id
-    ? await ctx.table('images_v1').getX(_id)
-    : await ctx.table('images_v1').getX('id', imageId)
-  return await getImageV1Edges(ctx, image)
+export const getImageWithEdges = async (ctx: QueryCtx, imageId: string) => {
+  const image = await getImageEnt(ctx, imageId)
+  return await getImageEdges(ctx, image)
 }
-
-export const getByUid = query({
-  args: {
-    uid: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const image = await ctx.table('images').get('uid', args.uid)
-    if (!image) return null
-    return {
-      ...omit(image, ['searchText']),
-      userIsViewer: getUserIsViewer(ctx, image.userId),
-      user: await getUserPublic(ctx, image.userId),
-    }
-  },
-})
 
 export const get = query({
   args: {
     id: v.string(),
   },
   handler: async (ctx, args) => {
-    return await getImageV1(ctx, args.id)
+    return await getImageWithEdges(ctx, args.id)
+  },
+})
+
+export const getDoc = internalQuery({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('images_v1').get('id', args.id)
+  },
+})
+
+export const getUrl = internalQuery({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const image = await ctx.table('images_v1').getX('id', args.id)
+    const url = await ctx.storage.getUrl(image.fileId)
+    if (!url) {
+      throw new Error('Unable to get url')
+    }
+    return url
   },
 })
 
@@ -88,79 +99,14 @@ export const getGenerationImages = query({
     const images = await asyncMap(generations, async (generation) => {
       return await ctx
         .table('images_v1', 'generationId', (q) => q.eq('generationId', generation._id))
-        .map(async (image) => await getImageV1Edges(ctx, image))
+        .map(async (image) => await getImageWithEdges(ctx, image._id))
     })
 
     return images.flat()
   },
 })
 
-export const remove = mutation({
-  args: {
-    id: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.table('images_v1').getX('id', args.id).delete()
-  },
-})
-
-export const getImageFileId = internalQuery({
-  args: {
-    id: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const image = await ctx.table('images_v1').get('id', args.id)
-    return image ? image.fileId : null
-  },
-})
-
-export const getImageDoc = internalQuery({
-  args: {
-    id: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.table('images_v1').get('id', args.id)
-  },
-})
-
-// * http
-export const serve = httpAction(async (ctx, request) => {
-  const [imageId] = parseUrlToImageId(request.url)
-  const image = imageId
-    ? await ctx.runQuery(internal.db.images.getImageDoc, {
-        id: imageId,
-      })
-    : null
-
-  if (!image) {
-    return new Response('Not Found', { status: 404 })
-  }
-
-  const blob = await ctx.storage.get(image.fileId)
-  if (!blob) {
-    console.error('unable to get blob for fileId:', image.fileId, imageId)
-    return new Response('Internal Server Error', { status: 500 })
-  }
-
-  const { download } = getQuery(request.url)
-  if (download !== undefined) {
-    return new Response(blob, {
-      headers: {
-        'Content-Disposition': `attachment; filename="${imageId}.${image.format}"`,
-      },
-    })
-  }
-
-  return new Response(blob)
-})
-
-function parseUrlToImageId(url: string) {
-  const filename = parseFilename(url, { strict: false })
-  const [uid, ext] = filename?.split('.') ?? []
-  return [uid, ext] as const
-}
-
-export const createImageV1 = internalMutation({
+export const createImage = internalMutation({
   args: {
     ...imagesFieldsV1,
     messageId: v.id('messages'),
@@ -201,48 +147,98 @@ export const createImageMetadata = internalMutation({
 })
 
 export const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
-  const image = await getImageV1(ctx, id)
+  try {
+    const image = await getImageWithEdges(ctx, id)
 
-  const texts: string[] = []
+    const texts: string[] = []
 
-  const captionV1 = image.metadata.find((m) => m.type === 'captionOCR_V1')
-  if (captionV1) {
-    texts.push(captionV1.title)
-    texts.push(captionV1.description)
-    texts.push(captionV1.ocr_texts.join(' '))
-  } else {
-    const captionV0 = image.metadata.find((m) => m.type === 'captionOCR_V0')
-    if (captionV0) {
-      texts.push(captionV0.captionTitle)
-      texts.push(captionV0.captionDescription)
-      texts.push(captionV0.captionOCR)
-    }
-  }
-
-  if (image.generation?.input) {
-    const input = image.generation.input as RunConfigTextToImage
-    texts.push(input.prompt ?? '')
-  } else {
-    const generationDataV0 = image.metadata.find((m) => m.type === 'generationData_V0')
-    if (generationDataV0) {
-      texts.push(generationDataV0.prompt)
-    }
-  }
-
-  const existing = await ctx.table('images_search_text').get('imageId', image._id)
-  if (existing) {
-    if (texts.length > 0) {
-      return await existing.replace({
-        imageId: image._id,
-        text: texts.join('\n'),
-      })
+    const captionV1 = image.metadata.find((m) => m.type === 'captionOCR_V1')
+    if (captionV1) {
+      texts.push(captionV1.title)
+      texts.push(captionV1.description)
+      texts.push(captionV1.ocr_texts.join(' '))
     } else {
-      return await existing.delete()
+      const captionV0 = image.metadata.find((m) => m.type === 'captionOCR_V0')
+      if (captionV0) {
+        texts.push(captionV0.captionTitle)
+        texts.push(captionV0.captionDescription)
+        texts.push(captionV0.captionOCR)
+      }
     }
+
+    if (image.generation?.input) {
+      const input = image.generation.input as RunConfigTextToImage
+      texts.push(input.prompt ?? '')
+    } else {
+      const generationDataV0 = image.metadata.find((m) => m.type === 'generationData_V0')
+      if (generationDataV0) {
+        texts.push(generationDataV0.prompt)
+      }
+    }
+
+    const existing = await ctx.table('images_search_text').get('imageId', image._id)
+    if (existing) {
+      if (texts.length > 0) {
+        return await existing.replace({
+          imageId: image._id,
+          text: texts.join('\n'),
+        })
+      } else {
+        return await existing.delete()
+      }
+    }
+
+    await ctx.table('images_search_text').insert({
+      imageId: image._id,
+      text: texts.join('\n'),
+    })
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const remove = mutation({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('images_v1').getX('id', args.id).delete()
+  },
+})
+
+// * http
+export const serve = httpAction(async (ctx, request) => {
+  const [imageId] = parseUrlToImageId(request.url)
+  const image = imageId
+    ? await ctx.runQuery(internal.db.images.getDoc, {
+        id: imageId,
+      })
+    : null
+
+  if (!image) {
+    return new Response('Not Found', { status: 404 })
   }
 
-  await ctx.table('images_search_text').insert({
-    imageId: image._id,
-    text: texts.join('\n'),
-  })
+  const blob = await ctx.storage.get(image.fileId)
+  if (!blob) {
+    console.error('unable to get blob for fileId:', image.fileId, imageId)
+    return new Response('Internal Server Error', { status: 500 })
+  }
+
+  const { download } = getQuery(request.url)
+  if (download !== undefined) {
+    return new Response(blob, {
+      headers: {
+        'Content-Disposition': `attachment; filename="${imageId}.${image.format}"`,
+      },
+    })
+  }
+
+  return new Response(blob)
+})
+
+function parseUrlToImageId(url: string) {
+  const filename = parseFilename(url, { strict: false })
+  const [uid, ext] = filename?.split('.') ?? []
+  return [uid, ext] as const
 }

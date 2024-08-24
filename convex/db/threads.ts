@@ -12,7 +12,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { createGeneration } from './generations'
-import { getImageV1, getImageV1Edges } from './images'
+import { getImageEdges, getImageWithEdges } from './images'
 import { createEvaluateMessageUrlsJob } from './jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
@@ -261,7 +261,7 @@ export const listImagesV1 = query({
       .edge('images_v1')
       .order('desc')
       .paginate(args.paginationOpts)
-      .map(async (image) => await getImageV1Edges(ctx, image))
+      .map(async (image) => await getImageEdges(ctx, image))
   },
 })
 
@@ -281,7 +281,7 @@ export const searchImages = query({
       .paginate(args.paginationOpts)
       .map(async ({ imageId }) => {
         if (await thread.edge('images_v1').has(imageId)) {
-          return await getImageV1(ctx, imageId)
+          return await getImageWithEdges(ctx, imageId)
         }
         return null
       })

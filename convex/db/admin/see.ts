@@ -2,7 +2,7 @@ import { paginationOptsValidator } from 'convex/server'
 
 import { query } from '../../functions'
 import { createError } from '../../shared/utils'
-import { getImageV1Edges } from '../images'
+import { getImageEdges } from '../images'
 
 export const latestImages = query({
   args: {
@@ -17,6 +17,6 @@ export const latestImages = query({
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map(async (image) => await getImageV1Edges(ctx, image))
+      .map(async (image) => await getImageEdges(ctx, image))
   },
 })

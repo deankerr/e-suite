@@ -15,7 +15,7 @@ export const run = internalAction({
       url: args.sourceUrl,
     })
 
-    await ctx.runMutation(internal.db.images.createImageV1, {
+    await ctx.runMutation(internal.db.images.createImage, {
       fileId,
       ...metadata,
       ...args,

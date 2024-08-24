@@ -4,7 +4,7 @@ import { omit } from 'convex-helpers'
 import { v } from 'convex/values'
 import { z } from 'zod'
 
-import { api, internal } from '../_generated/api'
+import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
 
 export const run = internalAction({
@@ -12,7 +12,7 @@ export const run = internalAction({
     imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const image = await ctx.runQuery(api.db.images.get, { id: args.imageId })
+    const url = await ctx.runQuery(internal.db.images.getUrl, { id: args.imageId })
 
     const response = await generateObject({
       model: openai('gpt-4o-mini'),
@@ -26,7 +26,7 @@ export const run = internalAction({
             },
             {
               type: 'image',
-              image: image.url,
+              image: url,
             },
           ],
         },

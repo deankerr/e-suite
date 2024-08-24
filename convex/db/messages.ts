@@ -4,7 +4,7 @@ import { v } from 'convex/values'
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { messageFields } from '../schema'
-import { getImageV1Edges } from './images'
+import { getImageEdges } from './images'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
@@ -38,9 +38,9 @@ export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) 
 export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   return {
     ...message.doc(),
-    jobs: await getMessageJobs(ctx, message._id),
-    images: await message.edge('images_v1').map(async (image) => await getImageV1Edges(ctx, image)),
     audio: await getMessageAudio(ctx, message._id),
+    images: await message.edge('images_v1').map(async (image) => await getImageEdges(ctx, image)),
+    jobs: await getMessageJobs(ctx, message._id),
     userIsViewer: getUserIsViewer(ctx, message.userId),
   }
 }
