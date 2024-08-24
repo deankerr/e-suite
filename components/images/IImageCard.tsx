@@ -5,24 +5,24 @@ import Link from 'next/link'
 
 import { DotsThreeFillY } from '@/components/icons/DotsThreeFillY'
 import { DeleteImageDialog } from '@/components/images/dialogs'
-import { IImageBordered } from '@/components/images/IImage'
+import { IImage } from '@/components/images/IImage'
 import { IconButton } from '@/components/ui/Button'
 
-import type { EImageV1 } from '@/convex/types'
+import type { EImage } from '@/convex/types'
 
 export const IImageCard = ({
   image,
   sizes,
   priority,
 }: {
-  image: EImageV1
+  image: EImage
   sizes?: string
   priority?: boolean
 }) => {
   const [showDeleteImageDialog, setShowDeleteImageDialog] = useState(false)
 
   return (
-    <IImageBordered image={image} sizes={sizes} priority={priority}>
+    <IImage image={image} sizes={sizes} priority={priority}>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <IconButton
@@ -36,7 +36,7 @@ export const IImageCard = ({
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content variant="soft">
-          <Link href={image.url} target="_blank">
+          <Link href={`/convex/${image.id}?download`} target="_blank">
             <DropdownMenu.Item>
               <Icons.DownloadSimple size={16} />
               Download
@@ -57,6 +57,6 @@ export const IImageCard = ({
         open={showDeleteImageDialog}
         onOpenChange={setShowDeleteImageDialog}
       />
-    </IImageBordered>
+    </IImage>
   )
 }

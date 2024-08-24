@@ -12,9 +12,9 @@ import { useCacheQuery } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type {
+  EImage,
   EImageGenerationData,
   EImageMetadata,
-  EImageV1,
   RunConfigTextToImage,
 } from '@/convex/types'
 
@@ -87,7 +87,7 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
   )
 }
 
-const ImageDetailsCards = ({ image }: { image: EImageV1 }) => {
+const ImageDetailsCards = ({ image }: { image: EImage }) => {
   return (
     <>
       <ImageCaptionOCRV0Cards metadata={image.metadata} />
@@ -202,7 +202,7 @@ const ImageGenerationDataV0Card = ({ metadata }: { metadata: EImageMetadata[] })
   )
 }
 
-const ImageFileDataCard = ({ image }: { image: EImageV1 }) => {
+const ImageFileDataCard = ({ image }: { image: EImage }) => {
   return (
     <Card className="space-y-2" size="2">
       <div className="pb-px text-sm font-medium">File Data</div>

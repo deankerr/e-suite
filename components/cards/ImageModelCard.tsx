@@ -1,7 +1,7 @@
 import { Badge, Card, Inset } from '@radix-ui/themes'
+import Image from 'next/image'
 
 import { EndpointBadge } from '@/app/admin/Badges'
-import { Image } from '@/components/images/Image'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
