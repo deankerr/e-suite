@@ -16,6 +16,7 @@ export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations
   const generation = await ctx.table('generations_v1').get(generationId)
   if (!generation) return null
   return pick(generation, [
+    '_id',
     'input',
     'status',
     'updatedAt',
