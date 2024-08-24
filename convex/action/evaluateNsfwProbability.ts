@@ -1,7 +1,7 @@
 import * as falClient from '@fal-ai/serverless-client'
 import * as vb from 'valibot'
 
-import { ENV } from '../../lib/env'
+import { ENV } from '../lib/env'
 
 falClient.config({
   credentials: ENV.FAL_API_KEY,

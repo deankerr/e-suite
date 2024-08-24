@@ -222,6 +222,14 @@ export const imagesMetadataFields = {
     }),
 
     v.object({
+      type: v.literal('captionOCR_V1'),
+      modelId: v.string(),
+      title: v.string(),
+      description: v.string(),
+      ocr_texts: v.array(v.string()),
+    }),
+
+    v.object({
       type: v.literal('nsfwProbability'),
       nsfwProbability: v.number(),
     }),

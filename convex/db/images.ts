@@ -2,11 +2,11 @@ import { omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
-import { api } from '../_generated/api'
+import { api, internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, mutation, query } from '../functions'
 import { generateId } from '../lib/utils'
-import { imagesFieldsV1 } from '../schema'
+import { imagesFieldsV1, imagesMetadataFields } from '../schema'
 import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Id } from '../_generated/dataModel'
@@ -141,12 +141,28 @@ export const createImageV1 = internalMutation({
   handler: async (ctx, { messageId, ...args }) => {
     const message = await ctx.table('messages').getX(messageId)
 
-    return await ctx.table('images_v1').insert({
+    const id = generateId('i', Date.now())
+    await ctx.table('images_v1').insert({
       ...args,
       ownerId: message.userId,
       messages: [messageId],
       threads: [message.threadId],
-      id: generateId('i', Date.now()),
+      id,
+    })
+
+    await ctx.scheduler.runAfter(0, internal.action.generateImageVisionData.run, { imageId: id })
+    return id
+  },
+})
+
+export const createImageMetadata = internalMutation({
+  args: {
+    imageId: v.id('images_v1'),
+    data: imagesMetadataFields.data,
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('images_metadata').insert({
+      ...args,
     })
   },
 })

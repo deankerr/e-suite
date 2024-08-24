@@ -15,6 +15,8 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
+import type * as action_evaluateNsfwProbability from "../action/evaluateNsfwProbability.js";
+import type * as action_generateImageVisionData from "../action/generateImageVisionData.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
 import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
@@ -52,8 +54,6 @@ import type * as shared_helpers from "../shared/helpers.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
-import type * as workflows_actions_evaluateNsfwProbability from "../workflows/actions/evaluateNsfwProbability.js";
-import type * as workflows_actions_generateImageMetadata from "../workflows/actions/generateImageMetadata.js";
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_helpers from "../workflows/helpers.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
@@ -72,6 +72,8 @@ import type * as workflows_types from "../workflows/types.js";
  */
 declare const fullApi: ApiFromModules<{
   "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
+  "action/evaluateNsfwProbability": typeof action_evaluateNsfwProbability;
+  "action/generateImageVisionData": typeof action_generateImageVisionData;
   "action/ingestImageUrl": typeof action_ingestImageUrl;
   "action/textToImage": typeof action_textToImage;
   crons: typeof crons;
@@ -109,8 +111,6 @@ declare const fullApi: ApiFromModules<{
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;
-  "workflows/actions/evaluateNsfwProbability": typeof workflows_actions_evaluateNsfwProbability;
-  "workflows/actions/generateImageMetadata": typeof workflows_actions_generateImageMetadata;
   "workflows/engine": typeof workflows_engine;
   "workflows/helpers": typeof workflows_helpers;
   "workflows/jobs": typeof workflows_jobs;

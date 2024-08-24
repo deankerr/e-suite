@@ -86,6 +86,7 @@ const ImageDetailsCards = ({ image }: { image: EImageV1 }) => {
   return (
     <>
       <ImageCaptionOCRV0Cards metadata={image.metadata} />
+      <ImageCaptionOCRV1Cards metadata={image.metadata} />
       <ImageGenerationDataV0Card metadata={image.metadata} />
       <ImageFileDataCard image={image} />
     </>
@@ -115,6 +116,31 @@ const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationD
         </DataList.Item>
       </DataList.Root>
     </Card>
+  )
+}
+
+const ImageCaptionOCRV1Cards = ({ metadata }: { metadata: EImageMetadata[] }) => {
+  const data = metadata.find((m) => m.type === 'captionOCR_V1')
+  if (!data) return null
+
+  return (
+    <>
+      <Card className="space-y-2" size="2">
+        <div className="pb-px text-base font-semibold">{data.title}</div>
+        <p className="text-sm">{data.description}</p>
+        <p className="text-xs">
+          caption by <span className="font-mono text-[0.95em] text-gray-11">{data.modelId}</span>
+        </p>
+      </Card>
+
+      <Card className="space-y-2" size="2">
+        <div className="pb-px text-sm font-medium">OCR</div>
+        <p className="text-sm">{data.ocr_texts.join('\n')}</p>
+        <p className="text-xs">
+          ocr by <span className="font-mono text-[0.95em] text-gray-11">{data.modelId}</span>
+        </p>
+      </Card>
+    </>
   )
 }
 
