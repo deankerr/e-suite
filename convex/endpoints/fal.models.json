@@ -3,8 +3,21 @@
     "cover_image": "https://storage.googleapis.com/falserverless/gallery/flux-lora/flux_general.png",
     "description": "A general purpose endpoint for the FLUX.1 [dev] model, which can be used with a variety of extensions including any LoRA support.",
     "link": "https://fal.ai/models/fal-ai/flux-general",
+    "model_id": "fal-ai/flux-loras",
+    "name": "FLUX.1 [dev] with LoRAs",
+    "tags": "text-to-image inference loras",
+    "creatorName": "Black Forest Labs",
+    "pricing": {
+      "type": "perMegapixel",
+      "value": "0.035"
+    }
+  },
+  {
+    "cover_image": "https://storage.googleapis.com/falserverless/gallery/flux-lora/flux_general.png",
+    "description": "A general purpose endpoint for the FLUX.1 [dev] model, which can be used with a variety of extensions including any LoRA support.",
+    "link": "https://fal.ai/models/fal-ai/flux-general",
     "model_id": "fal-ai/flux-general",
-    "name": "FLUX.1 [dev] - loras",
+    "name": "FLUX.1 [dev] General - Controlnets/LoRAs",
     "tags": "text-to-image inference loras",
     "creatorName": "Black Forest Labs",
     "pricing": {
