@@ -27,9 +27,14 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
   const message = useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
 
   const images =
-    useCacheQuery(api.db.images.getGenerationImages, {
-      generationId: image?.generationId,
-    }) ?? []
+    useCacheQuery(
+      api.db.images.getGenerationImages,
+      image?.generationId
+        ? {
+            generationId: image.generationId,
+          }
+        : 'skip',
+    ) ?? []
 
   if (!image) return null
   const currentImageId = image.id
