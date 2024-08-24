@@ -2,11 +2,9 @@
 
 import { Card, DataList } from '@radix-ui/themes'
 import { useQuery } from 'convex/react'
-import Link from 'next/link'
 
 import { IImage } from '@/components/images/IImage'
 import { IImageCard } from '@/components/images/IImageCard'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel'
 import { api } from '@/convex/_generated/api'
 import { useCacheQuery } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -41,12 +39,24 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
 
   return (
     <>
-      <div className="grid h-full w-full grid-rows-[1fr_6rem_auto] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
-        <div className="p-2 md:overflow-hidden">
-          {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" />}
+      <div className="grid h-full w-full grid-rows-[1fr_6rem_auto] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_8rem] md:overflow-y-hidden">
+        <div>
+          <div className="p-2 md:overflow-hidden">
+            {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" />}
+          </div>
+
+          <div className={cn('flex-center p-1', images.length < 2 && 'hidden')}>
+            <div className="flex gap-2">
+              {images.map((image) => (
+                <div key={image.id} className="h-28 w-28 overflow-hidden">
+                  <IImage image={image} />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
+        <div className="min-w-72 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
             {image && <ImageDetailsCards image={image} />}
             {image.generation && <ImageGenerationDataCard generation={image.generation} />}
@@ -60,27 +70,6 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
               </Card>
             ) : null}
           </div>
-        </div>
-
-        <div className={cn('flex-center row-start-2 px-4', images.length < 2 && 'hidden')}>
-          <Carousel>
-            <CarouselContent className="-ml-2 px-1">
-              {images.map((image) => (
-                <CarouselItem key={image?.id} className="basis-24 pl-2">
-                  <Link href={`/image/${image?.id}`} className="w-full p-1" replace>
-                    <Card
-                      className={cn(
-                        'aspect-square w-full p-0',
-                        image?.id === currentImageId && 'outline outline-2 outline-orange-9',
-                      )}
-                    >
-                      {image && <IImage image={image} />}
-                    </Card>
-                  </Link>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
         </div>
       </div>
     </>
@@ -132,19 +121,28 @@ const ImageCaptionOCRV1Cards = ({ metadata }: { metadata: EImageMetadata[] }) =>
     <>
       <Card className="space-y-2" size="2">
         <div className="pb-px text-base font-semibold">{data.title}</div>
-        <p className="text-sm">{data.description}</p>
+        {data.description.split('.').map(
+          (chunk, index) =>
+            chunk && (
+              <p key={index} className="text-sm">
+                {chunk}.
+              </p>
+            ),
+        )}
         <p className="text-xs">
           caption by <span className="font-mono text-[0.95em] text-gray-11">{data.modelId}</span>
         </p>
       </Card>
 
-      <Card className="space-y-2" size="2">
-        <div className="pb-px text-sm font-medium">OCR</div>
-        <p className="text-sm">{data.ocr_texts.join('\n')}</p>
-        <p className="text-xs">
-          ocr by <span className="font-mono text-[0.95em] text-gray-11">{data.modelId}</span>
-        </p>
-      </Card>
+      {data.ocr_texts.length > 0 && (
+        <Card className="space-y-2" size="2">
+          <div className="pb-px text-sm font-medium">OCR</div>
+          <p className="text-sm">{data.ocr_texts.join('\n')}</p>
+          <p className="text-xs">
+            ocr by <span className="font-mono text-[0.95em] text-gray-11">{data.modelId}</span>
+          </p>
+        </Card>
+      )}
     </>
   )
 }
