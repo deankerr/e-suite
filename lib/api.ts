@@ -204,8 +204,8 @@ export const useMessage = (slug?: string, msg?: string) => {
   }
 }
 
-export const useImage = (uid?: string) => {
-  const image = useCacheQuery(api.db.images.getByUid, uid ? { uid } : 'skip')
+export const useImage = (id?: string) => {
+  const image = useCacheQuery(api.db.images.get, id ? { id } : 'skip')
   return image
 }
 

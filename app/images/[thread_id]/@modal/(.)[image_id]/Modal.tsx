@@ -8,7 +8,7 @@ import { IconButton } from '@/components/ui/Button'
 export const Modal = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
   const pathname = usePathname()
-  if (pathname.split('/')[1] !== 'image') return null
+  if (!pathname.split('/')[3]) return null
 
   return (
     <div className="absolute bottom-0 top-10 w-full bg-gray-1">

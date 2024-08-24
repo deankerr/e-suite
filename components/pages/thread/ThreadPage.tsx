@@ -8,7 +8,7 @@ import { FavouriteButton } from '@/components/pages/thread/FavouriteButton'
 import { ThreadMenu } from '@/components/pages/thread/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
-import { useImage, useThread } from '@/lib/api'
+import { useThread } from '@/lib/api'
 import { getThreadPath } from '@/lib/helpers'
 import { twx } from '@/lib/utils'
 
@@ -16,15 +16,8 @@ export const ThreadPage = twx.div`flex h-full w-full flex-col overflow-hidden bo
 
 export const ThreadHeaderWrapper = twx.div`flex-start h-10 shrink-0 overflow-hidden border-b border-gray-5 px-1 font-medium`
 
-export const ThreadHeader = ({
-  thread_id,
-  image_id,
-}: {
-  thread_id?: string
-  image_id?: string
-}) => {
-  const image = useImage(image_id)
-  const thread = useThread(thread_id ?? image?.threadId ?? '')
+export const ThreadHeader = ({ thread_id }: { thread_id?: string; image_id?: string }) => {
+  const thread = useThread(thread_id ?? '')
 
   if (thread === undefined) {
     return (
