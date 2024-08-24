@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 
 import { AppLogo } from '@/components/icons/AppLogo'
 import { UserButtons } from '@/components/layout/UserButtons'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/Sheet'
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/Sheet'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { useThreads } from '@/lib/api'
 import { getThreadPath } from '@/lib/helpers'
@@ -112,7 +112,8 @@ export const NavSheet = ({ children }: { children: React.ReactNode }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent side="left" className="w-64 p-1">
+      <SheetContent side="left" aria-describedby={undefined} className="w-64 p-1">
+        <SheetTitle className="sr-only">Navigation</SheetTitle>
         <Nav className="w-full border-none hover:w-full" />
       </SheetContent>
     </Sheet>
