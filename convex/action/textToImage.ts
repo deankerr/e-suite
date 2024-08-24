@@ -42,12 +42,16 @@ export const run = internalAction({
     })
     const runConfig = generation.input as RunConfigTextToImage
 
-    const { resourceKey, n, ...input } = runConfig
+    const { resourceKey, n, width, height, ...input } = runConfig
     const { modelId } = vb.parse(ResourceKey, resourceKey)
 
     const response = await fal.subscribe(modelId, {
       input: {
         ...input,
+        image_size: {
+          width,
+          height,
+        },
         num_images: n,
         enable_safety_checker: false,
       },
