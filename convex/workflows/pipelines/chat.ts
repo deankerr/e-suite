@@ -1,6 +1,7 @@
 import { createOpenAI, openai } from '@ai-sdk/openai'
 import { generateText, streamText } from 'ai'
 import { v } from 'convex/values'
+import OpenAI from 'openai'
 import * as vb from 'valibot'
 
 import { internal } from '../../_generated/api'
@@ -28,6 +29,26 @@ const InitialInput = vb.object({
   stream: vb.optional(vb.boolean()),
   max_tokens: vb.optional(vb.number()),
 })
+
+const createOpenAIClient = (endpoint: string) => {
+  switch (endpoint) {
+    case 'openai':
+      return new OpenAI()
+
+    case 'together':
+      return new OpenAI({
+        apiKey: ENV.TOGETHER_API_KEY,
+        baseURL: 'https://api.together.xyz/v1',
+      })
+
+    case 'openrouter':
+      return new OpenAI({
+        apiKey: ENV.OPENROUTER_API_KEY,
+        baseURL: 'https://openrouter.ai/api/v1',
+      })
+  }
+  throw new WorkflowError(`invalid endpoint: ${endpoint}`, 'invalid_endpoint', true)
+}
 
 const createProvider = (endpoint: string) => {
   switch (endpoint) {
@@ -65,11 +86,11 @@ export const chatPipeline: Pipeline = {
               resourceKey,
               excludeHistoryMessagesByName,
               maxHistoryMessages,
-              stream,
+              // stream,
               max_tokens,
             },
           } = vb.parse(vb.object({ initial: InitialInput }), input)
-
+          const stream = false
           const { endpoint, modelId } = vb.parse(ResourceKey, resourceKey)
 
           const api = createProvider(endpoint)
@@ -122,12 +143,27 @@ export const chatPipeline: Pipeline = {
             }
           } else {
             // * non-streaming generation
-            const results = await generateText({
-              model,
+            const api = createOpenAIClient(endpoint)
+            const results = await api.chat.completions.create({
+              model: modelId,
               messages,
-              maxTokens: max_tokens,
+              max_tokens,
+              stream: false,
             })
-            const { text, finishReason, usage, ...output } = results
+            console.log('oai', results)
+            const usage = results.usage
+            const text = results.choices[0]?.message?.content
+            const finishReason = results.choices[0]?.finish_reason
+            if (!text || !finishReason) {
+              throw new WorkflowError(`no text in response`, 'no_text_in_response', true)
+            }
+
+            // const results = await generateText({
+            //   model,
+            //   messages,
+            //   maxTokens: max_tokens,
+            // })
+            // const { text, finishReason, usage, ...output } = results
             console.log(`[chat] [${endpoint}] [output]`, text, finishReason, usage)
 
             await ctx.runMutation(internal.workflows.pipelines.chat.result, {
@@ -135,7 +171,7 @@ export const chatPipeline: Pipeline = {
               text,
             })
 
-            return { text, finishReason, usage, output }
+            return { text, finishReason, usage }
           }
         }, 'chat.inference')
       },
