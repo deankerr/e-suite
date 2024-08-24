@@ -61,7 +61,7 @@ const ApiModelRecord = vb.object({
     instruct_type: vb.nullable(vb.string()),
   }),
   top_provider: vb.object({
-    max_completion_tokens: vb.number(),
+    max_completion_tokens: vb.nullable(vb.number()),
     is_moderated: vb.boolean(),
   }),
   per_request_limits: vb.null(),
@@ -131,7 +131,7 @@ const processModelRecords = async (ctx: ActionCtx, records: unknown[], replace =
           })
         }
         if (!existing.available) {
-          console.warn(endpoint, 'model now available', shape.name, shape.resourceKey)
+          console.info(endpoint, 'model now available', shape.name, shape.resourceKey)
         }
       } else {
         await ctx.runMutation(internal.db.models.createChatModel, shape)

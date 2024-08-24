@@ -98,7 +98,20 @@ const ModelItem = ({
         <ModelLogo modelName={model.name} size={20} />
       </div>
       <div className="truncate">{model.name}</div>
-      <div className="ml-auto shrink-0 text-xs text-gray-11">{model.endpoint}</div>
+      <div className="grow" />
+
+      {!model.available && <div className="text-xs text-red-11">Not available</div>}
+      {model.pricing.type === 'llm' ? (
+        <div className="flex w-20 shrink-0 justify-evenly gap-2 text-right text-xs tabular-nums">
+          <div className="text-right">{model.pricing.tokenInput.toFixed(2)}</div>
+          <div className="text-right">{model.pricing.tokenOutput.toFixed(2)}</div>
+        </div>
+      ) : model.pricing.type === 'free' ? (
+        <div className="flex shrink-0 gap-1 text-xs tabular-nums">
+          <div className="w-20 text-center text-grass-11">free</div>
+        </div>
+      ) : null}
+      <div className="w-16 shrink-0 text-center text-xs">{model.endpoint}</div>
     </CmdK.Item>
   )
 }
