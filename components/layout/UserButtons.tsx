@@ -14,7 +14,11 @@ export const UserButtons = () => {
       </SignedOut>
 
       <SignedIn>
-        <UserButton />
+        <UserButton
+          appearance={{
+            elements: { userButtonPopoverCard: { pointerEvents: 'initial' } },
+          }}
+        />
       </SignedIn>
     </>
   )
