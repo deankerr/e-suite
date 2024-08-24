@@ -4,6 +4,9 @@ import { getQuery } from 'ufo'
 import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { query } from '../functions'
+import { getImageV1 } from './images'
+
+import type { RunConfigTextToImage } from '../types'
 
 export const getMetadata = query({
   args: {
@@ -12,24 +15,30 @@ export const getMetadata = query({
   },
   handler: async (ctx, args) => {
     if (args.route === 'image') {
-      const image = await ctx.table('images').get('uid', args.id)
-      const thread = image ? await ctx.table('threads').get(image.threadId) : null
+      const image = await getImageV1(ctx, args.id)
       if (image) {
-        const imageTitle = image.generationData
-          ? `${image.generationData.prompt} (${image.generationData.modelName})`
-          : (image.captionTitle ?? 'Image')
-        return {
-          title: `${thread?.title ? thread.title + ' · ' : ''}${imageTitle}`,
-          description: image.captionDescription ?? undefined,
+        const caption = image.metadata.find((m) => m.type === 'captionOCR_V1')
+        if (caption) {
+          return {
+            title: caption.title,
+            description: caption.description,
+          }
+        }
+        const input = image.generation?.input as RunConfigTextToImage | undefined
+        if (input) {
+          return {
+            title: input.prompt,
+            description: input.prompt,
+          }
         }
       }
     }
 
     if (args.route === 'images' || args.route === 'chat') {
       const thread = await ctx.table('threads').get('slug', args.id)
-      if (thread) {
+      if (thread && thread.title) {
         return {
-          title: thread.title ?? 'Untitled Thread',
+          title: thread.title,
         }
       }
     }
