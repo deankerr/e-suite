@@ -42,7 +42,9 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
   return (
     <>
       <div className="grid h-full w-full grid-rows-[1fr_6rem_auto] overflow-y-auto overflow-x-hidden md:grid-cols-[3fr_1fr] md:grid-rows-[1fr_6rem] md:overflow-y-hidden">
-        <div className="p-2 md:overflow-hidden">{image && <IImageCard image={image} />}</div>
+        <div className="p-2 md:overflow-hidden">
+          {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" />}
+        </div>
 
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">

@@ -37,7 +37,7 @@ export const IImageBordered = forwardRef<HTMLImageElement, Props>(
       >
         <NextImage
           alt=""
-          src={image.url}
+          src={`/i/${image.id}`}
           placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
           blurDataURL={image?.blurDataUrl}
           width={image.width}

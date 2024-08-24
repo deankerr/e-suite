@@ -2,9 +2,9 @@ import { asyncMap, omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
-import { api, internal } from '../_generated/api'
+import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
-import { internalMutation, mutation, query } from '../functions'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { generateId } from '../lib/utils'
 import { imagesFieldsV1, imagesMetadataFields } from '../schema'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -101,27 +101,41 @@ export const remove = mutation({
   },
 })
 
+export const getImageFileId = internalQuery({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const image = await ctx.table('images_v1').get('id', args.id)
+    return image ? image.fileId : null
+  },
+})
+
+export const getImageDoc = internalQuery({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.table('images_v1').get('id', args.id)
+  },
+})
+
 // * http
 export const serve = httpAction(async (ctx, request) => {
-  const [uid] = parseUrlToUid(request.url)
-  const image = uid
-    ? await ctx.runQuery(api.db.images.getByUid, {
-        uid,
+  const [imageId] = parseUrlToImageId(request.url)
+  const image = imageId
+    ? await ctx.runQuery(internal.db.images.getImageDoc, {
+        id: imageId,
       })
     : null
 
   if (!image) {
-    console.error('not found', uid)
     return new Response('Not Found', { status: 404 })
-  }
-
-  if (image.sourceUrl.startsWith('https://fal.media/files/')) {
-    return Response.redirect(image.sourceUrl, 307)
   }
 
   const blob = await ctx.storage.get(image.fileId)
   if (!blob) {
-    console.error('unable to get blob for fileId:', image.fileId, uid)
+    console.error('unable to get blob for fileId:', image.fileId, imageId)
     return new Response('Internal Server Error', { status: 500 })
   }
 
@@ -129,17 +143,15 @@ export const serve = httpAction(async (ctx, request) => {
   if (download !== undefined) {
     return new Response(blob, {
       headers: {
-        'Content-Disposition': `attachment; filename="${uid}.${image.format}"`,
+        'Content-Disposition': `attachment; filename="${imageId}.${image.format}"`,
       },
     })
   }
 
-  console.log('serve', uid, image.fileId, image.format)
-
   return new Response(blob)
 })
 
-function parseUrlToUid(url: string) {
+function parseUrlToImageId(url: string) {
   const filename = parseFilename(url, { strict: false })
   const [uid, ext] = filename?.split('.') ?? []
   return [uid, ext] as const

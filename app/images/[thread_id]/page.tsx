@@ -81,7 +81,10 @@ export default function Page({ params }: { params: { thread_id: string } }) {
                 className="overflow-hidden rounded-md border border-grayA-3"
                 style={{ aspectRatio: image.width / image.height }}
               >
-                <IImageCard image={image} />
+                <IImageCard
+                  image={image}
+                  sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33.33vw, 50vw"
+                />
               </Link>
             ))}
 
