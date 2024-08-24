@@ -1,12 +1,14 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { IconButton } from '@/components/ui/Button'
 
 export const Modal = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
+  const pathname = usePathname()
+  if (pathname.split('/')[1] !== 'image') return null
 
   return (
     <div className="absolute bottom-0 top-10 w-full bg-gray-1">
