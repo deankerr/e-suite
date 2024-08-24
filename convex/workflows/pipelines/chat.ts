@@ -125,6 +125,7 @@ export const chatPipeline: Pipeline = {
             const results = await generateText({
               model,
               messages,
+              maxTokens: max_tokens,
             })
             const { text, finishReason, usage, ...output } = results
             console.log(`[chat] [${endpoint}] [output]`, text, finishReason, usage)
