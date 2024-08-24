@@ -19,7 +19,9 @@ const processModelRecords = async (
   replace = false,
 ) => {
   const existingModels = await ctx.runQuery(api.db.models.listChatModels, { endpoint })
-  const availabilityCheck = new Set(existingModels.map((m) => m.resourceKey))
+  const availabilityCheck = new Set(
+    existingModels.filter((m) => m.available).map((m) => m.resourceKey),
+  )
   console.info(endpoint, 'existing models', existingModels.length)
 
   for (const record of records) {
