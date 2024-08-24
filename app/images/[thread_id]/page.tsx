@@ -61,8 +61,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
   const [searchValue, setSearchValue] = useSearchParamValue()
 
   const searchImages = useThreadImagesSearch(params.thread_id, searchValue)
-  // const images = searchValue ? searchImages : imagesFeed
-  const images = imagesFeed
+  const images = searchValue ? searchImages : imagesFeed
 
   const actions = useThreadActions(thread?._id)
   const [containerRef] = useAutoAnimate()

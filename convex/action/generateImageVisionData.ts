@@ -49,7 +49,7 @@ export const run = internalAction({
     console.log(result)
 
     await ctx.runMutation(internal.db.images.createImageMetadata, {
-      imageId: image._id,
+      imageId: args.imageId,
       data: {
         type: 'captionOCR_V1',
         modelId: 'gpt-4o-mini',

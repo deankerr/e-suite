@@ -205,11 +205,17 @@ export const imagesFieldsV1 = {
 const images_v1 = defineEnt(imagesFieldsV1)
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('id', v.string(), { unique: true })
-  .index('generationId', ['generationId'])
   .edges('messages')
   .edges('threads')
-  .edges('image_metadata', { to: 'images_metadata', ref: 'imageId' })
   .edge('user', { field: 'ownerId' })
+  .edges('image_metadata', { to: 'images_metadata', ref: 'imageId' })
+  .edge('images_search_text', {
+    optional: true,
+    deletion: 'soft',
+    ref: 'imageId',
+    to: 'images_search_text',
+  })
+  .index('generationId', ['generationId'])
 
 export const imagesMetadataFields = {
   data: v.union(
@@ -247,6 +253,18 @@ const images_metadata = defineEnt(imagesMetadataFields).edge('image', {
   to: 'images_v1',
   field: 'imageId',
 })
+
+const images_search_text = defineEnt({
+  text: v.string(),
+})
+  .edge('image_v1', {
+    to: 'images_v1',
+    field: 'imageId',
+  })
+  .searchIndex('text', {
+    searchField: 'text',
+    filterFields: ['imageId'],
+  })
 
 export const generationFieldsV1 = {
   status: literals('pending', 'active', 'completed', 'failed'),
@@ -447,6 +465,7 @@ const schema = defineEntSchema(
     images,
     images_v1,
     images_metadata,
+    images_search_text,
     generations_v1,
     image_models,
 

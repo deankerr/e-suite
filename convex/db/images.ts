@@ -10,7 +10,7 @@ import { imagesFieldsV1, imagesMetadataFields } from '../schema'
 import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Id } from '../_generated/dataModel'
-import type { Ent, QueryCtx } from '../types'
+import type { Ent, MutationCtx, QueryCtx, RunConfigTextToImage } from '../types'
 
 export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations_v1'>) => {
   const generation = await ctx.table('generations_v1').get(generationId)
@@ -36,7 +36,10 @@ export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) =>
 }
 
 export const getImageV1 = async (ctx: QueryCtx, imageId: string) => {
-  const image = await ctx.table('images_v1').getX('id', imageId)
+  const _id = ctx.unsafeDb.normalizeId('images_v1', imageId)
+  const image = _id
+    ? await ctx.table('images_v1').getX(_id)
+    : await ctx.table('images_v1').getX('id', imageId)
   return await getImageV1Edges(ctx, image)
 }
 
@@ -181,12 +184,60 @@ export const createImageV1 = internalMutation({
 
 export const createImageMetadata = internalMutation({
   args: {
-    imageId: v.id('images_v1'),
+    imageId: v.string(),
     data: imagesMetadataFields.data,
   },
   handler: async (ctx, args) => {
-    return await ctx.table('images_metadata').insert({
+    const image = await ctx.table('images_v1').getX('id', args.imageId)
+
+    const metadataId = await ctx.table('images_metadata').insert({
       ...args,
+      imageId: image._id,
     })
+
+    await updateImageSearchText(ctx, args.imageId)
+    return metadataId
   },
 })
+
+const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
+  const image = await getImageV1(ctx, id)
+
+  const texts: string[] = []
+
+  const captionV1 = image.metadata.find((m) => m.type === 'captionOCR_V1')
+  if (captionV1) {
+    texts.push(captionV1.title)
+    texts.push(captionV1.description)
+    texts.push(captionV1.ocr_texts.join(' '))
+  } else {
+    const captionV0 = image.metadata.find((m) => m.type === 'captionOCR_V0')
+    if (captionV0) {
+      texts.push(captionV0.captionTitle)
+      texts.push(captionV0.captionDescription)
+      texts.push(captionV0.captionOCR)
+    }
+  }
+
+  if (image.generation?.input) {
+    const input = image.generation.input as RunConfigTextToImage
+    texts.push(input.prompt ?? '')
+  }
+
+  const existing = await ctx.table('images_search_text').get('imageId', image._id)
+  if (existing) {
+    if (texts.length > 0) {
+      return await existing.replace({
+        imageId: image._id,
+        text: texts.join('\n'),
+      })
+    } else {
+      return await existing.delete()
+    }
+  }
+
+  await ctx.table('images_search_text').insert({
+    imageId: image._id,
+    text: texts.join('\n'),
+  })
+}

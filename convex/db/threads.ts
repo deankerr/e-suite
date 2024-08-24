@@ -1,4 +1,4 @@
-import { asyncMap, omit } from 'convex-helpers'
+import { asyncMap, omit, pruneNull } from 'convex-helpers'
 import { literals, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
@@ -12,7 +12,7 @@ import { kvListV, runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { createGeneration } from './generations'
-import { getImageV1Edges } from './images'
+import { getImageV1, getImageV1Edges } from './images'
 import { createEvaluateMessageUrlsJob } from './jobs'
 import { getMessageEdges } from './messages'
 import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
@@ -272,18 +272,24 @@ export const searchImages = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    console.log('query', args.query)
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return emptyPage()
 
-    return await ctx
-      .table('images')
-      .search('searchText', (q) => q.search('searchText', args.query).eq('threadId', thread._id))
+    const results = await ctx
+      .table('images_search_text')
+      .search('text', (q) => q.search('text', args.query))
       .paginate(args.paginationOpts)
-      .map((image) => ({
-        ...omit(image, ['fileId', 'searchText']),
-        userIsViewer: getUserIsViewer(ctx, image.userId),
-      }))
+      .map(async ({ imageId }) => {
+        if (await thread.edge('images_v1').has(imageId)) {
+          return await getImageV1(ctx, imageId)
+        }
+        return null
+      })
+
+    return {
+      ...results,
+      page: pruneNull(results.page),
+    }
   },
 })
 
