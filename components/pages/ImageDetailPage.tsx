@@ -23,15 +23,13 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
     id: imageId,
   })
 
-  const messageId = image?.messageId
+  const messageId = image?.generation?.messageId
   const message = useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
 
-  const generation = useCacheQuery(
-    api.db.images.getGenerationImages,
-    image?.generationId ? { generationId: image.generationId } : 'skip',
-  )
-
-  const images = generation ? generation.images : [image]
+  const images =
+    useCacheQuery(api.db.images.getGenerationImages, {
+      generationId: image?.generationId,
+    }) ?? []
 
   if (!image) return null
   const currentImageId = image.id
@@ -44,7 +42,7 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
         <div className="min-w-64 p-2 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
             {image && <ImageDetailsCards image={image} />}
-            {generation && <ImageGenerationDataCard generation={generation.data} />}
+            {image.generation && <ImageGenerationDataCard generation={image.generation} />}
 
             {message?.name && message?.text ? (
               <Card>

@@ -1,4 +1,4 @@
-import { omit, pick } from 'convex-helpers'
+import { asyncMap, omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
@@ -15,7 +15,14 @@ import type { Ent, QueryCtx } from '../types'
 export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations_v1'>) => {
   const generation = await ctx.table('generations_v1').get(generationId)
   if (!generation) return null
-  return pick(generation, ['input', 'status', 'updatedAt', '_creationTime'])
+  return pick(generation, [
+    'input',
+    'status',
+    'updatedAt',
+    '_creationTime',
+    'messageId',
+    'threadId',
+  ])
 }
 
 export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
@@ -24,10 +31,7 @@ export const getImageV1Edges = async (ctx: QueryCtx, image: Ent<'images_v1'>) =>
     userIsViewer: getUserIsViewer(ctx, image.ownerId),
     url: (await ctx.storage.getUrl(image.fileId)) || '',
     metadata: await image.edge('image_metadata').map(async (metadata) => metadata.data),
-    messageId: await image
-      .edge('messages')
-      .first()
-      .then((message) => message?._id),
+    generation: image.generationId ? await getGeneration(ctx, image.generationId) : undefined,
   }
 }
 
@@ -65,18 +69,26 @@ export const getGenerationImages = query({
     generationId: v.id('generations_v1'),
   },
   handler: async (ctx, { generationId }) => {
-    const generation = await getGeneration(ctx, generationId)
+    const generation = await ctx.table('generations_v1').get(generationId)
     if (!generation) {
-      return null
+      return []
     }
 
-    const images = await ctx
-      .table('images_v1', 'generationId', (q) => q.eq('generationId', generationId))
-      .map(async (image) => getImageV1Edges(ctx, image))
-    return {
-      data: generation,
-      images,
+    // * find other generations with the same messageId
+    const generations = await ctx.table('generations_v1', 'messageId', (q) =>
+      q.eq('messageId', generation.messageId),
+    )
+    if (!generations.find((g) => g._id === generationId)) {
+      generations.push(generation)
     }
+
+    const images = await asyncMap(generations, async (generation) => {
+      return await ctx
+        .table('images_v1', 'generationId', (q) => q.eq('generationId', generation._id))
+        .map(async (image) => await getImageV1Edges(ctx, image))
+    })
+
+    return images.flat()
   },
 })
 
