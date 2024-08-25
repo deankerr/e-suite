@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { ScrollArea } from '@radix-ui/themes'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
@@ -75,17 +74,12 @@ export default function Page({ params }: { params: { thread_id: string } }) {
         <ScrollArea scrollbars="vertical">
           <ResultsGrid ref={containerRef}>
             {images.results.map((image) => (
-              <Link
+              <IImageCard
                 key={image._id}
+                image={image}
+                sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33.33vw, 50vw"
                 href={`${pathname}/${image.id}`}
-                className="overflow-hidden rounded-md border border-grayA-3"
-                style={{ aspectRatio: image.width / image.height }}
-              >
-                <IImageCard
-                  image={image}
-                  sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33.33vw, 50vw"
-                />
-              </Link>
+              />
             ))}
 
             <InfiniteScroll
