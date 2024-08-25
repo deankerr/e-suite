@@ -248,7 +248,7 @@ export const listMessages = query({
   },
 })
 
-export const listImagesV1 = query({
+export const listImages = query({
   args: {
     slugOrId: v.string(),
     paginationOpts: paginationOptsValidator,

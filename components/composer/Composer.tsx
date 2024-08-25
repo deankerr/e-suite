@@ -61,7 +61,7 @@ export const Composer = ({
   }
 
   return (
-    <div className="flex w-full flex-col overflow-hidden border-t border-gray-5 [&>div]:shrink-0">
+    <div className="flex w-full shrink-0 flex-col overflow-hidden border-t border-gray-5 [&>div]:shrink-0">
       <div className="flex">
         <Textarea
           minRows={2}

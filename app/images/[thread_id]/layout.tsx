@@ -1,12 +1,8 @@
+import { ImagesQueryProvider } from '@/app/images/ImagesQueryProvider'
 import { ThreadHeader, ThreadPage } from '@/components/pages/thread/ThreadPage'
 import { getConvexSiteUrl } from '@/lib/utils'
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { thread_id: string }
-  modal: React.ReactNode
-}) {
+export async function generateMetadata({ params }: { params: { thread_id: string } }) {
   const response = await fetch(`${getConvexSiteUrl()}/page?route=images&id=${params.thread_id}`)
   if (!response.ok) return {}
 
@@ -19,18 +15,17 @@ export async function generateMetadata({
 
 export default function Layout({
   children,
-  modal,
   params,
 }: {
   children: React.ReactNode
-  modal: React.ReactNode
   params: { thread_id: string }
 }) {
   return (
-    <ThreadPage>
-      <ThreadHeader thread_id={params.thread_id} />
-      {children}
-      {modal}
-    </ThreadPage>
+    <ImagesQueryProvider thread_id={params.thread_id}>
+      <ThreadPage>
+        <ThreadHeader thread_id={params.thread_id} />
+        {children}
+      </ThreadPage>
+    </ImagesQueryProvider>
   )
 }

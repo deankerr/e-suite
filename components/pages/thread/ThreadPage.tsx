@@ -3,6 +3,7 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
 
+import { useImagesQueryContext } from '@/app/images/ImagesQueryProvider'
 import { NavSheet } from '@/app/NavRail'
 import { FavouriteButton } from '@/components/pages/thread/FavouriteButton'
 import { ThreadMenu } from '@/components/pages/thread/ThreadMenu'
@@ -18,7 +19,7 @@ export const ThreadHeaderWrapper = twx.div`flex-start h-10 shrink-0 overflow-hid
 
 export const ThreadHeader = ({ thread_id }: { thread_id?: string; image_id?: string }) => {
   const thread = useThread(thread_id ?? '')
-
+  const { latestImages, searchImages } = useImagesQueryContext()
   if (thread === undefined) {
     return (
       <ThreadHeaderWrapper>
@@ -56,6 +57,10 @@ export const ThreadHeader = ({ thread_id }: { thread_id?: string; image_id?: str
       <ThreadMenu thread_id={thread.slug} />
       <FavouriteButton thread_id={thread.slug} />
       <div className="grow" />
+
+      <div>
+        {latestImages.results.length} / {searchImages.results.length}
+      </div>
     </ThreadHeaderWrapper>
   )
 }

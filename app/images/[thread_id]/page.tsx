@@ -1,78 +1,49 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { ScrollArea } from '@radix-ui/themes'
 import { usePathname } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
+import { useImagesQueryContext } from '@/app/images/ImagesQueryProvider'
 import { Composer } from '@/components/composer/Composer'
 import { SearchField } from '@/components/form/SearchField'
 import { IImageCard } from '@/components/images/IImageCard'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Orbit } from '@/components/ui/Ldrs'
-import {
-  useThread,
-  useThreadActions,
-  useThreadImages,
-  useThreadImagesSearch,
-  useThreadJobs,
-} from '@/lib/api'
+import { useThread, useThreadActions } from '@/lib/api'
 import { cn, twx } from '@/lib/utils'
 
-const useImagesFeed = (thread_id: string) => {
-  const images = useThreadImages(thread_id)
-  const jobs = useThreadJobs(thread_id)
-  const generating =
-    jobs?.filter(
-      (job) => job.name === 'textToImage' && (job.status === 'pending' || job.status === 'active'),
-    ) ?? []
-
-  return {
-    ...images,
-    generating,
-  }
-}
-
-const useSearchParamValue = (key = 'search') => {
-  const [searchParamValue, setSearchParamValue] = useQueryState(key, {
-    defaultValue: '',
-    clearOnDefault: true,
-  })
-
-  const [searchValue, setSearchValue] = useState(searchParamValue)
-
-  useEffect(() => {
-    setSearchParamValue(searchValue)
-  }, [searchValue, setSearchParamValue, key])
-
-  return [searchValue, setSearchValue] as const
-}
-
-const ImagesToolbarWrapper = twx.div`flex-start h-10 border-b border-gray-5 w-full gap-1 px-1 text-sm`
+const ImagesToolbarWrapper = twx.div`flex-start h-10 shrink-0 border-b border-gray-5 px-1 w-full gap-1 text-sm`
 const ResultsGrid = twx.div`grid auto-rows-max grid-cols-2 md:grid-cols-3 gap-2 p-2 xl:grid-cols-4`
 
 export default function Page({ params }: { params: { thread_id: string } }) {
   const pathname = usePathname()
   const thread = useThread(params.thread_id)
-  const imagesFeed = useImagesFeed(params.thread_id)
+  const { latestImages, searchImages } = useImagesQueryContext()
 
-  const [searchValue, setSearchValue] = useSearchParamValue()
+  const [searchParamValue, setSearchParamValue] = useQueryState('search', {
+    defaultValue: '',
+    clearOnDefault: true,
+  })
 
-  const searchImages = useThreadImagesSearch(params.thread_id, searchValue)
-  const images = searchValue ? searchImages : imagesFeed
+  const images = searchParamValue ? searchImages : latestImages
 
   const actions = useThreadActions(thread?._id)
-  const [containerRef] = useAutoAnimate()
+
   return (
     <>
       <ImagesToolbarWrapper>
-        <SearchField value={searchValue} onValueChange={setSearchValue} />
+        <SearchField
+          size="2"
+          radius="small"
+          value={searchParamValue}
+          onValueChange={setSearchParamValue}
+        />
       </ImagesToolbarWrapper>
 
       <div className="h-96 grow overflow-hidden">
         <ScrollArea scrollbars="vertical">
-          <ResultsGrid ref={containerRef} className="[&>div]:aspect-square">
+          <ResultsGrid className="[&>div]:aspect-square">
             {images.results.map((image) => (
               <IImageCard
                 key={image._id}
