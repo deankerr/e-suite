@@ -1,18 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Card, DataList } from '@radix-ui/themes'
-import { useQuery } from 'convex/react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 import { IImage } from '@/components/images/IImage'
 import { IImageCard } from '@/components/images/IImageCard'
-import { api } from '@/convex/_generated/api'
-import { useCacheQuery } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
-import type { Id } from '@/convex/_generated/dataModel'
 import type {
   EImage,
   EImageGenerationData,
@@ -20,52 +14,36 @@ import type {
   RunConfigTextToImage,
 } from '@/convex/types'
 
-export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
-  const pathname = usePathname()
-  const basePath = pathname.split('/').slice(0, -1).join('/')
+export const ImageGalleryPage = ({
+  imageId,
+  images,
+  basePath,
+}: {
+  imageId: string
+  images: EImage[]
+  basePath: string
+}) => {
+  const image = images.find((image) => image.id === imageId)
 
-  const [generationId, setGenerationId] = useState<Id<'generations_v1'> | null>(null)
-
-  const image = useQuery(api.db.images.get, {
-    id: imageId,
-  })
-  const genId = image?.generationId
-
-  useEffect(() => {
-    if (genId) {
-      setGenerationId(genId)
-    }
-  }, [genId])
-
-  const images =
-    useCacheQuery(
-      api.db.images.getGenerationImages,
-      generationId
-        ? {
-            generationId,
-          }
-        : 'skip',
-    ) ?? []
-
-  const currentImage = images.find((image) => image.id === imageId) ?? image
-
-  const messageId = image?.generation?.messageId
-  const message = useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
-
-  if (!currentImage) return null
-
+  if (!image) return null
   return (
     <>
       <div className="grid h-full w-full grid-rows-[1fr_auto_auto] gap-3 overflow-y-auto overflow-x-hidden p-3 md:grid-cols-[3fr_1fr] md:grid-rows-[auto_1fr] md:overflow-y-hidden">
-        <div className="md:overflow-hidden">
-          <IImageCard image={currentImage} sizes="(min-width: 768px) 75vw, 100vw" />
+        <div className="md:overflow-hidden [&>div]:m-auto">
+          {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" />}
         </div>
 
-        <div className={cn('flex-col-start row-start-2', images.length < 2 && 'hidden')}>
+        <div className={cn('flex-col-start row-start-2 w-full', images.length < 2 && 'hidden')}>
           <div className="flex gap-2">
             {images.map((image) => (
-              <Link href={`${basePath}/${image.id}`} key={image.id}>
-                <div key={image.id} className="h-28 w-28 overflow-hidden">
+              <Link href={`${basePath}/${image.id}`} key={image.id} replace>
+                <div
+                  key={image.id}
+                  className={cn(
+                    'aspect-square w-full max-w-28 overflow-hidden',
+                    image.id === imageId && 'rounded-md border-2 border-accent-9',
+                  )}
+                >
                   <IImage image={image} />
                 </div>
               </Link>
@@ -75,22 +53,11 @@ export const ImageDetailPage = ({ imageId }: { imageId: string }) => {
 
         <div className="min-w-72 md:row-span-2 md:overflow-y-auto">
           <div className="space-y-2">
-            <ImageCaptionOCRV0Cards metadata={currentImage.metadata} />
-            <ImageCaptionOCRV1Cards metadata={currentImage.metadata} />
-            <ImageGenerationDataV0Card metadata={currentImage.metadata} />
-            <ImageFileDataCard image={currentImage} />
-            {currentImage.generation && (
-              <ImageGenerationDataCard generation={currentImage.generation} />
-            )}
-
-            {message?.name && message?.text ? (
-              <Card>
-                <div className="text-sm">
-                  <span className="font-medium">{message.name} </span>
-                  {message.text}
-                </div>
-              </Card>
-            ) : null}
+            <ImageCaptionOCRV0Cards metadata={image.metadata} />
+            <ImageCaptionOCRV1Cards metadata={image.metadata} />
+            <ImageGenerationDataV0Card metadata={image.metadata} />
+            <ImageFileDataCard image={image} />
+            {image.generation && <ImageGenerationDataCard generation={image.generation} />}
           </div>
         </div>
       </div>

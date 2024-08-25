@@ -51,28 +51,58 @@ export const getImageEdges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
 
 export const get = query({
   args: {
-    id: v.string(),
+    imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await getImageWithEdges(ctx, args.id)
+    return await getImageWithEdges(ctx, args.imageId)
+  },
+})
+
+export const getGenerationBatches = query({
+  args: {
+    imageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const image = await getImageEnt(ctx, args.imageId)
+    if (!image) return null
+
+    const generation = image.generationId ? await getGeneration(ctx, image.generationId) : null
+    if (!generation) {
+      return [await getImageEdges(ctx, image)]
+    }
+
+    const generations = await ctx.table('generations_v1', 'messageId', (q) =>
+      q.eq('messageId', generation.messageId),
+    )
+
+    const images = await asyncMap(generations, async (generation) => {
+      const imageBatch = await ctx
+        .table('images_v1', 'generationId', (q) => q.eq('generationId', generation._id))
+        .map(async (image) => await getImageEdges(ctx, image))
+        .then((images) => images.filter((image) => image !== null))
+
+      return imageBatch
+    })
+
+    return images.flat()
   },
 })
 
 export const getDoc = internalQuery({
   args: {
-    id: v.string(),
+    imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await getImageEnt(ctx, args.id)
+    return await getImageEnt(ctx, args.imageId)
   },
 })
 
 export const getUrl = internalQuery({
   args: {
-    id: v.string(),
+    imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const image = await getImageEnt(ctx, args.id)
+    const image = await getImageEnt(ctx, args.imageId)
     const url = image ? await ctx.storage.getUrl(image.fileId) : null
     return url
   },
@@ -100,6 +130,7 @@ export const getGenerationImages = query({
       return await ctx
         .table('images_v1', 'generationId', (q) => q.eq('generationId', generation._id))
         .map(async (image) => await getImageWithEdges(ctx, image._id))
+        .then((images) => images.filter((image) => image !== null))
     })
 
     return images.flat()
@@ -212,7 +243,7 @@ export const serve = httpAction(async (ctx, request) => {
   const [imageId] = parseUrlToImageId(request.url)
   const image = imageId
     ? await ctx.runQuery(internal.db.images.getDoc, {
-        id: imageId,
+        imageId,
       })
     : null
 

@@ -12,7 +12,7 @@ export const run = internalAction({
     imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const url = await ctx.runQuery(internal.db.images.getUrl, { id: args.imageId })
+    const url = await ctx.runQuery(internal.db.images.getUrl, { imageId: args.imageId })
     if (!url) throw new Error('Image not found')
 
     const response = await generateObject({

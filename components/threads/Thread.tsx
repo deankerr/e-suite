@@ -2,6 +2,7 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
 import { NavSheet } from '@/app/NavRail'
@@ -11,7 +12,7 @@ import { ThreadMenu } from '@/components/threads/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
 import { useThread } from '@/lib/api'
 import { getThreadPath } from '@/lib/helpers'
-import { twx } from '@/lib/utils'
+import { cn, twx } from '@/lib/utils'
 
 const Root = twx.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
 
@@ -39,6 +40,8 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
     clearOnDefault: true,
   })
 
+  const params = useParams()
+
   if (!thread) return <HeaderC />
   return (
     <HeaderC>
@@ -62,7 +65,11 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
       <div className="grow" />
 
       <div className="max-w-[30%]">
-        <SearchField value={searchValue} onValueChange={setSearchValue} />
+        <SearchField
+          value={searchValue}
+          onValueChange={setSearchValue}
+          className={cn(params.image_id && 'hidden')}
+        />
       </div>
     </HeaderC>
   )

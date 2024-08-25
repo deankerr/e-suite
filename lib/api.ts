@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDebouncedState, useTimeoutEffect } from '@react-hookz/web'
 import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
+import type { Id } from '@/convex/_generated/dataModel'
 import type { EVoiceModel, RunConfig } from '@/convex/types'
 import type { FunctionArgs, FunctionReference, FunctionReturnType } from 'convex/server'
 
@@ -200,9 +201,24 @@ export const useMessage = (slug?: string, msg?: string) => {
   }
 }
 
-export const useImage = (id?: string) => {
-  const image = useCacheQuery(api.db.images.get, id ? { id } : 'skip')
+export const useMessageDoc = (messageId?: Id<'messages'>) => {
+  return useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
+}
+
+export const useImage = (imageId?: string) => {
+  const image = useCacheQuery(api.db.images.get, imageId ? { imageId } : 'skip')
   return image
+}
+
+export const useImageGenerationBatches = (imageId = '') => {
+  const results = useQuery(api.db.images.getGenerationBatches, imageId ? { imageId } : 'skip')
+  const buffer = useRef(results)
+
+  if (results !== undefined) {
+    buffer.current = results
+  }
+
+  return buffer.current
 }
 
 export const useVoiceModels = (): EVoiceModel[] | undefined => {

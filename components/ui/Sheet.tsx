@@ -61,7 +61,7 @@ const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
 >(({ side = 'right', className, children, ...props }, ref) => {
-  const element = document.querySelector('#app-layout')
+  const element = document?.querySelector('#app-layout')
 
   return (
     <SheetPortal container={element}>
