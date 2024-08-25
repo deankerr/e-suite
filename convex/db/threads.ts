@@ -257,11 +257,16 @@ export const listImages = query({
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return emptyPage()
 
-    return await thread
+    const images = await thread
       .edge('images_v1')
       .order('desc')
       .paginate(args.paginationOpts)
       .map(async (image) => await getImageEdges(ctx, image))
+
+    return {
+      ...images,
+      page: images.page.filter((image) => !image.deletionTime),
+    }
   },
 })
 

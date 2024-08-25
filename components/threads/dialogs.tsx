@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { AlertDialog, Dialog, TextField } from '@radix-ui/themes'
+import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/Button'
 import { useDeleteThread, useUpdateThread } from '@/lib/api'
@@ -61,6 +62,7 @@ export const DeleteThreadDialog = ({
   threadId: string
 } & React.ComponentProps<typeof AlertDialog.Root>) => {
   const sendDeleteThread = useDeleteThread()
+  const router = useRouter()
 
   return (
     <AlertDialog.Root {...props}>
@@ -79,7 +81,13 @@ export const DeleteThreadDialog = ({
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
-            <Button variant="solid" color="red" onClick={() => sendDeleteThread({ threadId })}>
+            <Button
+              variant="solid"
+              color="red"
+              onClick={() => {
+                sendDeleteThread({ threadId }).then(() => router.push('/'))
+              }}
+            >
               Delete
             </Button>
           </AlertDialog.Action>

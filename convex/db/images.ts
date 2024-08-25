@@ -28,9 +28,16 @@ export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations
 
 export const getImageEnt = async (ctx: QueryCtx, imageId: string) => {
   const _id = ctx.unsafeDb.normalizeId('images_v1', imageId)
-  return _id
-    ? await ctx.table('images_v1').getX(_id)
-    : await ctx.table('images_v1').getX('id', imageId)
+  const image = _id
+    ? await ctx.table('images_v1').get(_id)
+    : await ctx.table('images_v1').get('id', imageId)
+
+  return image && !image.deletionTime ? image : null
+}
+
+export const getImageWithEdges = async (ctx: QueryCtx, imageId: string) => {
+  const image = await getImageEnt(ctx, imageId)
+  return image ? await getImageEdges(ctx, image) : null
 }
 
 export const getImageEdges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
@@ -40,11 +47,6 @@ export const getImageEdges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
     metadata: await image.edge('image_metadata').map(async (metadata) => metadata.data),
     userIsViewer: getUserIsViewer(ctx, image.ownerId),
   }
-}
-
-export const getImageWithEdges = async (ctx: QueryCtx, imageId: string) => {
-  const image = await getImageEnt(ctx, imageId)
-  return await getImageEdges(ctx, image)
 }
 
 export const get = query({
@@ -61,7 +63,7 @@ export const getDoc = internalQuery({
     id: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.table('images_v1').get('id', args.id)
+    return await getImageEnt(ctx, args.id)
   },
 })
 
@@ -70,11 +72,8 @@ export const getUrl = internalQuery({
     id: v.string(),
   },
   handler: async (ctx, args) => {
-    const image = await ctx.table('images_v1').getX('id', args.id)
-    const url = await ctx.storage.getUrl(image.fileId)
-    if (!url) {
-      throw new Error('Unable to get url')
-    }
+    const image = await getImageEnt(ctx, args.id)
+    const url = image ? await ctx.storage.getUrl(image.fileId) : null
     return url
   },
 })
@@ -150,6 +149,7 @@ export const createImageMetadata = internalMutation({
 export const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
   try {
     const image = await getImageWithEdges(ctx, id)
+    if (!image) return
 
     const texts: string[] = []
 

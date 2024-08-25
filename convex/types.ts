@@ -33,7 +33,7 @@ export type EThread = Omit<Awaited<ReturnType<typeof getThreadEdges>>, '_id' | '
   userId: string
 }
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
-export type EImage = Awaited<ReturnType<typeof getImageWithEdges>>
+export type EImage = NonNullable<Awaited<ReturnType<typeof getImageWithEdges>>>
 export type EImageMetadata = Doc<'images_metadata'>['data']
 export type EImageGenerationData = Awaited<ReturnType<typeof getGeneration>>
 export type EUser = Awaited<ReturnType<typeof getUserPublic>>

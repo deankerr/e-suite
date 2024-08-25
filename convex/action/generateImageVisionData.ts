@@ -13,6 +13,7 @@ export const run = internalAction({
   },
   handler: async (ctx, args) => {
     const url = await ctx.runQuery(internal.db.images.getUrl, { id: args.imageId })
+    if (!url) throw new Error('Image not found')
 
     const response = await generateObject({
       model: openai('gpt-4o-mini'),
