@@ -31,7 +31,10 @@ export const IImageCard = ({
       style={{
         aspectRatio: `${image.width} / ${image.height}`,
       }}
-      className={cn('max-h-full overflow-hidden rounded-lg border border-gray-4', className)}
+      className={cn(
+        'max-h-full overflow-hidden rounded-lg border border-gray-4 @container',
+        className,
+      )}
       {...props}
     >
       <NextImage
@@ -54,7 +57,7 @@ export const IImageCard = ({
             aria-label="Options menu"
             variant="ghost"
             highContrast
-            className="absolute right-1 top-1"
+            className="absolute right-1 top-1 hidden @xs:flex"
           >
             <DotsThreeFillY width={28} height={28} />
           </IconButton>
