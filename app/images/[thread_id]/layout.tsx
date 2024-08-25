@@ -1,5 +1,5 @@
 import { ImagesQueryProvider } from '@/app/images/ImagesQueryProvider'
-import { ThreadHeader, ThreadPage } from '@/components/pages/thread/ThreadPage'
+import { Thread } from '@/components/threads/Thread'
 import { getConvexSiteUrl } from '@/lib/utils'
 
 export async function generateMetadata({ params }: { params: { thread_id: string } }) {
@@ -22,10 +22,7 @@ export default function Layout({
 }) {
   return (
     <ImagesQueryProvider thread_id={params.thread_id}>
-      <ThreadPage>
-        <ThreadHeader thread_id={params.thread_id} />
-        {children}
-      </ThreadPage>
+      <Thread thread_id={params.thread_id}>{children}</Thread>
     </ImagesQueryProvider>
   )
 }

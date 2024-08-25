@@ -57,7 +57,7 @@ export const IImageCard = ({
             aria-label="Options menu"
             variant="ghost"
             highContrast
-            className="absolute right-1 top-1 hidden @xs:flex"
+            className="absolute right-1 top-1 hidden @[12rem]:flex"
           >
             <DotsThreeFillY width={28} height={28} />
           </IconButton>

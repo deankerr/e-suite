@@ -5,7 +5,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
 
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
-import { DeleteThreadDialog, EditThreadTitleDialog } from '@/components/pages/thread/dialogs'
+import { DeleteThreadDialog, EditThreadTitleDialog } from '@/components/threads/dialogs'
 import { IconButton } from '@/components/ui/Button'
 import { useThread } from '@/lib/api'
 

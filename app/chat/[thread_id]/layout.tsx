@@ -1,5 +1,5 @@
-import { ChatToolbar } from '@/components/pages/thread/ChatToolbar'
-import { ThreadHeader, ThreadPage } from '@/components/pages/thread/ThreadPage'
+import { ChatToolbar } from '@/components/threads/ChatToolbar'
+import { Thread } from '@/components/threads/Thread'
 import { getConvexSiteUrl } from '@/lib/utils'
 
 export async function generateMetadata({ params }: { params: { thread_id: string } }) {
@@ -21,10 +21,9 @@ export default function Layout({
   params: { thread_id: string }
 }) {
   return (
-    <ThreadPage>
-      <ThreadHeader thread_id={params.thread_id} />
+    <Thread thread_id={params.thread_id}>
       <ChatToolbar thread_id={params.thread_id} />
       {children}
-    </ThreadPage>
+    </Thread>
   )
 }

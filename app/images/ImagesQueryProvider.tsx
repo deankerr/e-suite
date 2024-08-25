@@ -1,7 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useEffect } from 'react'
-import { useDebouncedState } from '@react-hookz/web'
+import React, { createContext, useContext, useRef } from 'react'
+import { useDebouncedEffect } from '@react-hookz/web'
 import { usePaginatedQuery } from 'convex/react'
 import { useQueryState } from 'nuqs'
 
@@ -11,8 +11,7 @@ import { useThreadImages } from '@/lib/api'
 import type { UsePaginatedQueryReturnType } from 'convex/react'
 
 type ImagesQueryContextType = {
-  latestImages: UsePaginatedQueryReturnType<typeof api.db.threads.listImages>
-  searchImages: UsePaginatedQueryReturnType<typeof api.db.threads.searchImages>
+  imagesFeed: UsePaginatedQueryReturnType<typeof api.db.threads.listImages>
 }
 
 const ImagesQueryContext = createContext<ImagesQueryContextType | undefined>(undefined)
@@ -22,24 +21,27 @@ export const useSearchParamValue = (slug?: string, initialNumItems = 3) => {
     defaultValue: '',
     clearOnDefault: true,
   })
+  const queryValue = useRef(searchParamValue)
 
-  const [queryValue, setQueryValue] = useDebouncedState(searchParamValue, 300)
-
-  useEffect(() => {
-    if (searchParamValue) {
-      setQueryValue(searchParamValue)
-    }
-  }, [searchParamValue, setQueryValue])
+  useDebouncedEffect(
+    () => {
+      if (searchParamValue) {
+        queryValue.current = searchParamValue
+      }
+    },
+    [searchParamValue],
+    300,
+  )
 
   const images = usePaginatedQuery(
     api.db.threads.searchImages,
-    slug && queryValue ? { slugOrId: slug, query: queryValue } : 'skip',
+    slug && queryValue.current ? { slugOrId: slug, query: queryValue.current } : 'skip',
     {
       initialNumItems,
     },
   )
 
-  return images
+  return queryValue.current ? images : undefined
 }
 
 export const useImagesQueryContext = () => {
@@ -61,9 +63,9 @@ export const ImagesQueryProvider = ({
   const latestImages = useThreadImages(thread_id)
   const searchImages = useSearchParamValue(thread_id)
 
+  const imagesFeed = searchImages ?? latestImages
   const value = {
-    latestImages,
-    searchImages,
+    imagesFeed,
   }
 
   return <ImagesQueryContext.Provider value={value}>{children}</ImagesQueryContext.Provider>

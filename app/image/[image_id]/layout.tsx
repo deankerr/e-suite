@@ -1,4 +1,4 @@
-import { ThreadHeader, ThreadPage } from '@/components/pages/thread/ThreadPage'
+import { Thread } from '@/components/threads/Thread'
 import { getConvexSiteUrl } from '@/lib/utils'
 
 export async function generateMetadata({ params }: { params: { image_id: string } }) {
@@ -19,10 +19,5 @@ export default function Layout({
   children: React.ReactNode
   params: { image_id: string }
 }) {
-  return (
-    <ThreadPage>
-      <ThreadHeader image_id={params.image_id} />
-      {children}
-    </ThreadPage>
-  )
+  return <Thread thread_id={params.image_id}>{children}</Thread>
 }
