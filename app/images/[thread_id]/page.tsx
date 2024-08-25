@@ -72,13 +72,15 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
       <div className="h-96 grow overflow-hidden">
         <ScrollArea scrollbars="vertical">
-          <ResultsGrid ref={containerRef}>
+          <ResultsGrid ref={containerRef} className="[&>div]:aspect-square">
             {images.results.map((image) => (
               <IImageCard
                 key={image._id}
                 image={image}
                 sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33.33vw, 50vw"
                 href={`${pathname}/${image.id}`}
+                style={{ aspectRatio: 1 }}
+                className="[&>img]:object-cover"
               />
             ))}
 
