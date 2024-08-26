@@ -35,7 +35,11 @@ export const run = internalAction({
       system,
       schema: z.object({
         data: z.object({
-          description: z.string().describe('A detailed description of the image content.'),
+          description: z
+            .string()
+            .describe(
+              'A detailed description of the image content. Do not begin your description with "The image depicts ..." etc., just state what you can see.',
+            ),
           title: z.string().describe('A concise title for the image.'),
           ocr_texts: z
             .array(z.string())
