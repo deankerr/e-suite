@@ -4,7 +4,6 @@ export async function generateMetadata({
   params,
 }: {
   params: { thread_id: string; image_id: string }
-  modal: React.ReactNode
 }) {
   const response = await fetch(`${getConvexSiteUrl()}/page?route=image&id=${params.image_id}`)
   if (!response.ok) return {}
