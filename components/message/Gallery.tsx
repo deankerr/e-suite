@@ -26,10 +26,16 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
 
   if (message.images.length === 0 && placeholders.length === 0) return null
   return (
-    <div className="flex grow flex-wrap justify-center gap-2 py-1">
+    <div className="flex grow flex-wrap gap-2 py-1">
       {message.images.map((image) => (
-        <Link href={`/image/${image.id}`} key={image._id}>
-          <IImageCard image={image} sizes="(max-width: 410px) 90vw, 20rem" priority={priority} />
+        <Link href={`/image/${image.id}`} key={image._id} className="w-full max-w-xs">
+          <IImageCard
+            image={image}
+            sizes="(max-width: 410px) 20rem"
+            priority={priority}
+            className="w-full max-w-xs [&>img]:object-cover"
+            style={{ aspectRatio: 1 }}
+          />
         </Link>
       ))}
 

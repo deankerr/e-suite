@@ -35,13 +35,11 @@ export const ThreadMenu = ({ thread_id }: { thread_id: string }) => {
         <DropdownMenu.Content variant="soft">
           {route === 'images' ? (
             <DropdownMenu.Item onClick={() => router.push(`/chat/${thread.slug}`)}>
-              <Icons.Chat />
-              Chat view
+              <Icons.Chat /> Chat view
             </DropdownMenu.Item>
           ) : route === 'chat' ? (
             <DropdownMenu.Item onClick={() => router.push(`/images/${thread.slug}`)}>
-              <Icons.ImagesSquare />
-              Image view
+              <Icons.ImagesSquare /> Image view
             </DropdownMenu.Item>
           ) : null}
 
@@ -50,8 +48,7 @@ export const ThreadMenu = ({ thread_id }: { thread_id: string }) => {
           </DropdownMenu.Item>
 
           <DropdownMenu.Item color="red" onClick={() => setShowDeleteThreadDialog(true)}>
-            <Icons.Trash />
-            Delete thread
+            <Icons.Trash /> Delete thread
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
