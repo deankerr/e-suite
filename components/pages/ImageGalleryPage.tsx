@@ -44,7 +44,7 @@ export const ImageGalleryPage = ({
                   image.id === imageId && 'border-accent-9',
                 )}
               >
-                <IImage image={image} />
+                <IImage image={image} sizes="7rem" />
               </Link>
             ))}
           </div>
