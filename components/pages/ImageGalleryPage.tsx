@@ -34,18 +34,17 @@ export const ImageGalleryPage = ({
         </div>
 
         <div className={cn('flex-col-start row-start-2 w-full', images.length < 2 && 'hidden')}>
-          <div className="flex gap-2">
+          <div className="grid h-28 auto-cols-[minmax(1fr,7rem)] grid-flow-col gap-1">
             {images.map((image) => (
-              <Link href={`${basePath}/${image.id}`} key={image.id}>
-                <div
-                  key={image.id}
-                  className={cn(
-                    'aspect-square w-full max-w-28 overflow-hidden rounded-md border-2 border-transparent',
-                    image.id === imageId && 'border-accent-9',
-                  )}
-                >
-                  <IImage image={image} />
-                </div>
+              <Link
+                href={`${basePath}/${image.id}`}
+                key={image.id}
+                className={cn(
+                  'flex-col-center aspect-square h-full max-h-28 w-full max-w-28 overflow-hidden rounded-md border-2 border-gray-4 bg-grayA-1',
+                  image.id === imageId && 'border-accent-9',
+                )}
+              >
+                <IImage image={image} />
               </Link>
             ))}
           </div>

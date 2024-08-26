@@ -16,7 +16,7 @@ export const IImage = forwardRef<HTMLImageElement, Props>(
         style={{
           aspectRatio: `${image.width} / ${image.height}`,
         }}
-        className="m-auto max-h-full overflow-hidden rounded-lg border border-gray-4"
+        className="max-h-full w-full overflow-hidden"
       >
         <NextImage
           alt=""
