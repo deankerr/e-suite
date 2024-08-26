@@ -36,12 +36,12 @@ export const ImageGalleryPage = ({
         <div className={cn('flex-col-start row-start-2 w-full', images.length < 2 && 'hidden')}>
           <div className="flex gap-2">
             {images.map((image) => (
-              <Link href={`${basePath}/${image.id}`} key={image.id} replace>
+              <Link href={`${basePath}/${image.id}`} key={image.id}>
                 <div
                   key={image.id}
                   className={cn(
-                    'aspect-square w-full max-w-28 overflow-hidden',
-                    image.id === imageId && 'rounded-md border-2 border-accent-9',
+                    'aspect-square w-full max-w-28 overflow-hidden rounded-md border-2 border-transparent',
+                    image.id === imageId && 'border-accent-9',
                   )}
                 >
                   <IImage image={image} />

@@ -2,7 +2,7 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
 import { NavSheet } from '@/app/NavRail'
@@ -41,6 +41,7 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
   })
 
   const params = useParams()
+  const pathname = usePathname()
 
   if (!thread) return <HeaderC />
   return (
@@ -53,7 +54,7 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
 
       <h1 className="truncate px-1 text-sm font-medium">
         <Link
-          href={getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })}
+          href={pathname.split('/').slice(0, 3).join('/')}
           className="underline-offset-4 hover:underline"
         >
           {thread.title ?? 'Untitled Thread'}
