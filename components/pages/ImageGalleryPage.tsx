@@ -55,8 +55,8 @@ export const ImageGalleryPage = ({
             <ImageCaptionOCRV0Cards metadata={image.metadata} />
             <ImageCaptionOCRV1Cards metadata={image.metadata} />
             <ImageGenerationDataV0Card metadata={image.metadata} />
-            <ImageFileDataCard image={image} />
             {image.generation && <ImageGenerationDataCard generation={image.generation} />}
+            <ImageFileDataCard image={image} />
           </div>
         </div>
       </div>
@@ -99,18 +99,19 @@ const ImageCaptionOCRV1Cards = ({ metadata }: { metadata: EImageMetadata[] }) =>
   const data = metadata.find((m) => m.type === 'captionOCR_V1')
   if (!data) return null
 
+  const paragraphs = data.description
+    .split('. ')
+    .map((p) => (p.charAt(p.length - 1) === '.' ? p : p + '.'))
+
   return (
     <>
       <Card className="space-y-2" size="2">
         <div className="pb-px text-base font-semibold">{data.title}</div>
-        {data.description.split('.').map(
-          (chunk, index) =>
-            chunk && (
-              <p key={index} className="text-sm">
-                {chunk}.
-              </p>
-            ),
-        )}
+        {paragraphs.map((p, index) => (
+          <p key={index} className="text-sm">
+            {p}
+          </p>
+        ))}
         <p className="text-xs">
           caption by <span className="font-mono text-[0.95em] text-gray-11">{data.modelId}</span>
         </p>
