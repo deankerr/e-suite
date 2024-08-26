@@ -30,7 +30,7 @@ export const ImageGalleryPage = ({
     <>
       <div className="grid h-full w-full grid-rows-[1fr_auto_auto] gap-3 overflow-y-auto overflow-x-hidden p-3 md:grid-cols-[3fr_1fr] md:grid-rows-[auto_1fr] md:overflow-y-hidden">
         <div className="md:overflow-hidden [&>div]:m-auto">
-          {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" />}
+          {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" priority />}
         </div>
 
         <div className={cn('flex-col-start row-start-2 w-full', images.length < 2 && 'hidden')}>
