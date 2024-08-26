@@ -44,7 +44,7 @@ export const useSearchParamValue = (slug?: string, initialNumItems = 3) => {
     },
   )
 
-  return queryValue.current ? images : undefined
+  return searchParamValue ? images : undefined
 }
 
 export const useImagesQueryContext = () => {

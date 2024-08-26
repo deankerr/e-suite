@@ -11,7 +11,6 @@ import { FavouriteButton } from '@/components/threads/FavouriteButton'
 import { ThreadMenu } from '@/components/threads/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
 import { useThread } from '@/lib/api'
-import { getThreadPath } from '@/lib/helpers'
 import { cn, twx } from '@/lib/utils'
 
 const Root = twx.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
@@ -69,7 +68,7 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
         <SearchField
           value={searchValue}
           onValueChange={setSearchValue}
-          className={cn(params.image_id && 'hidden')}
+          className={cn(params.image_id && 'invisible')}
         />
       </div>
     </HeaderC>
