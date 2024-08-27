@@ -57,7 +57,7 @@ export const run = internalAction({
 
     const input = {
       ...rest,
-      prompt: prompt + ' wearing clown makeup',
+      prompt,
       image_size,
       num_images: n,
       enable_safety_checker: false,
