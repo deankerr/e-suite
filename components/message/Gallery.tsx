@@ -1,5 +1,6 @@
 import { ms } from 'itty-time'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
 import { IImageCard } from '@/components/images/IImageCard'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
@@ -7,6 +8,9 @@ import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect
 import type { EMessage, RunConfigTextToImage } from '@/convex/types'
 
 export const Gallery = ({ message, priority }: { message: EMessage; priority?: boolean }) => {
+  const params = useParams()
+  const slug = params.thread_id as string
+
   const placeholders = message.jobs
     .filter(
       (job) =>
@@ -28,7 +32,7 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
   return (
     <div className="flex grow flex-wrap gap-2 py-1">
       {message.images.map((image) => (
-        <Link href={`/image/${image.id}`} key={image._id} className="w-full max-w-xs">
+        <Link href={`/images/${slug}/${image.id}`} key={image._id} className="w-full max-w-xs">
           <IImageCard
             image={image}
             sizes="(max-width: 410px) 20rem"
