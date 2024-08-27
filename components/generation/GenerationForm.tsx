@@ -7,7 +7,6 @@ import { Label as LabelPrimitive } from '@radix-ui/react-label'
 import { RadioCards, SegmentedControl } from '@radix-ui/themes'
 import { nanoid } from 'nanoid/non-secure'
 
-import { NavSheet } from '@/app/NavRail'
 import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
 import { RectangleVertical } from '@/components/icons/RectangleVertical'
 import { Button, IconButton } from '@/components/ui/Button'
@@ -72,24 +71,7 @@ export const GenerationForm = () => {
   const [lorasContainer] = useAutoAnimate()
 
   return (
-    <div className="min-w-80 space-y-4 rounded-md border bg-gray-1">
-      <div className="flex-between h-10 border-b px-1 text-sm font-medium">
-        <div className="flex-start">
-          <NavSheet>
-            <IconButton variant="ghost" aria-label="Open navigation sheet" className="md:invisible">
-              <Icons.List size={20} />
-            </IconButton>
-          </NavSheet>
-          Generate
-        </div>
-
-        <div>
-          <IconButton variant="ghost" aria-label="Close">
-            <Icons.X size={18} />
-          </IconButton>
-        </div>
-      </div>
-
+    <div className="space-y-4 py-2">
       <div className="space-y-3 px-2">
         <Label>
           Model

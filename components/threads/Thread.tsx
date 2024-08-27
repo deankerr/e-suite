@@ -10,12 +10,9 @@ import { FavouriteButton } from '@/components/threads/FavouriteButton'
 import { ThreadMenu } from '@/components/threads/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
 import { SearchField } from '@/components/ui/SearchField'
+import { Section, SectionHeader } from '@/components/ui/Section'
 import { useThread } from '@/lib/api'
-import { cn, twx } from '@/lib/utils'
-
-const Root = twx.div`flex h-full w-full flex-col overflow-hidden border-gray-5 bg-gray-1 md:rounded-md md:border`
-
-const HeaderC = twx.div`flex-start h-10 shrink-0 overflow-hidden border-b border-gray-5 px-1 font-medium`
+import { cn } from '@/lib/utils'
 
 export const Thread = ({
   thread_id,
@@ -25,10 +22,10 @@ export const Thread = ({
   children: React.ReactNode
 }) => {
   return (
-    <Root>
+    <Section>
       <Header thread_id={thread_id} />
       {children}
-    </Root>
+    </Section>
   )
 }
 
@@ -42,9 +39,9 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
   const params = useParams()
   const pathname = usePathname()
 
-  if (!thread) return <HeaderC />
+  if (!thread) return <SectionHeader />
   return (
-    <HeaderC>
+    <SectionHeader>
       <NavSheet>
         <IconButton variant="ghost" aria-label="Open navigation sheet" className="md:invisible">
           <Icons.List size={20} />
@@ -71,6 +68,6 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
           className={cn(params.image_id && 'invisible')}
         />
       </div>
-    </HeaderC>
+    </SectionHeader>
   )
 }

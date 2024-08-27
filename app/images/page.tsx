@@ -1,5 +1,11 @@
-import { GenerationForm } from '@/components/generation/GenerationForm'
+import { GenerationSection } from '@/components/generation/GenerationSection'
+import { Section } from '@/components/ui/Section'
 
 export default function Page() {
-  return <GenerationForm />
+  return (
+    <>
+      <GenerationSection />
+      <Section></Section>
+    </>
+  )
 }
