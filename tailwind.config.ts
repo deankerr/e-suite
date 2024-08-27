@@ -104,12 +104,50 @@ const config: Config = {
       current: 'currentColor',
       black: '#000000',
       white: '#ffffff',
+
+      // radix themes
       ...radixColors.css,
       surface: 'var(--color-surface)',
       overlay: 'var(--color-overlay)',
       'panel-solid': 'var(--color-panel-solid)',
       'panel-translucent': 'var(--color-panel-translucent)',
       midnight: '#090909',
+
+      // shadcn/ui
+      border: radixColors.css.gray[5],
+      input: radixColors.css.gray[3],
+      ring: 'var(--focus-8)',
+      background: radixColors.css.gray[1],
+      foreground: radixColors.css.gray[12],
+      primary: {
+        DEFAULT: radixColors.css.accent[9],
+        foreground: radixColors.css.gray[12],
+      },
+      secondary: {
+        DEFAULT: radixColors.css.gray[3],
+        foreground: radixColors.css.gray[12],
+      },
+      destructive: {
+        DEFAULT: radixColors.css.gray[3],
+        foreground: radixColors.css.gray[12],
+      },
+      muted: {
+        DEFAULT: radixColors.css.gray[3],
+        foreground: radixColors.css.gray[12],
+      },
+      popover: {
+        DEFAULT: radixColors.css.gray[2],
+        foreground: radixColors.css.gray[12],
+      },
+      card: {
+        DEFAULT: radixColors.css.gray[2],
+        foreground: radixColors.css.gray[12],
+      },
+      accent: {
+        ...radixColors.css.accent,
+        DEFAULT: radixColors.css.accentA[4],
+        foreground: radixColors.css.gray[12],
+      },
     },
     container: {
       center: true,
@@ -132,7 +170,7 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
       borderColor: {
-        DEFAULT: 'var(--gray-6)',
+        DEFAULT: 'var(--gray-5)',
       },
       containers: {
         '2xs': '16rem',
