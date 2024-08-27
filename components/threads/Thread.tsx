@@ -6,10 +6,10 @@ import { useParams, usePathname } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
 import { NavSheet } from '@/app/NavRail'
-import { SearchField } from '@/components/form/SearchField'
 import { FavouriteButton } from '@/components/threads/FavouriteButton'
 import { ThreadMenu } from '@/components/threads/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
+import { SearchField } from '@/components/ui/SearchField'
 import { useThread } from '@/lib/api'
 import { cn, twx } from '@/lib/utils'
 

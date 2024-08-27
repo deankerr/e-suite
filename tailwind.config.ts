@@ -145,7 +145,7 @@ const config: Config = {
       },
       accent: {
         ...radixColors.css.accent,
-        DEFAULT: radixColors.css.accentA[4],
+        DEFAULT: radixColors.css.gray[3],
         foreground: radixColors.css.gray[12],
       },
     },

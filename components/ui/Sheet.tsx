@@ -3,7 +3,6 @@
 import * as React from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
-import { Theme } from '@radix-ui/themes'
 import { cva } from 'class-variance-authority'
 
 import { IconButton } from '@/components/ui/Button'
@@ -61,10 +60,8 @@ const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
 >(({ side = 'right', className, children, ...props }, ref) => {
-  const element = document?.querySelector('#app-layout')
-
   return (
-    <SheetPortal container={element}>
+    <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content
         ref={ref}
