@@ -86,12 +86,14 @@ export const fail = internalMutation({
   },
 })
 
-const createArgs = v.object(pick(generationFieldsV1, ['input', 'messageId', 'threadId', 'userId']))
+const createArgs = v.object(
+  pick(generationFieldsV1, ['input', 'messageId', 'threadId', 'userId', 'workflow']),
+)
 export const create = internalMutation({
   args: {
     ...createArgs.fields,
   },
-  handler: async (ctx, { input, messageId, threadId, userId }) => {
+  handler: async (ctx, { input, messageId, threadId, userId, workflow }) => {
     const generationId = await ctx.table('generations_v1').insert({
       input,
       messageId,
@@ -102,15 +104,24 @@ export const create = internalMutation({
       results: [],
     })
 
-    await ctx.scheduler.runAfter(0, internal.action.textToImage.run, {
-      generationId,
-    })
+    if (workflow === 'guided') {
+      await ctx.scheduler.runAfter(0, internal.action.guidedTextToImage.run, {
+        generationId,
+      })
+    } else {
+      await ctx.scheduler.runAfter(0, internal.action.textToImage.run, {
+        generationId,
+      })
+    }
 
     return generationId
   },
 })
 
-export const createGeneration = async (ctx: MutationCtx, args: Infer<typeof createArgs>) => {
+export const createGeneration = async (
+  ctx: MutationCtx,
+  { workflow, ...args }: Infer<typeof createArgs>,
+) => {
   const generationId = await ctx.table('generations_v1').insert({
     ...args,
     status: 'pending',
@@ -118,9 +129,15 @@ export const createGeneration = async (ctx: MutationCtx, args: Infer<typeof crea
     results: [],
   })
 
-  await ctx.scheduler.runAfter(0, internal.action.textToImage.run, {
-    generationId,
-  })
+  if (workflow === 'guided') {
+    await ctx.scheduler.runAfter(0, internal.action.guidedTextToImage.run, {
+      generationId,
+    })
+  } else {
+    await ctx.scheduler.runAfter(0, internal.action.textToImage.run, {
+      generationId,
+    })
+  }
 
   return generationId
 }

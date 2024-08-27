@@ -26,6 +26,7 @@ export const runConfigChatV = v.object({
 
 export const runConfigTextToImageV = v.object({
   type: v.literal('textToImage'),
+  workflow: v.optional(v.string()),
   resourceKey: v.string(),
 
   prompt: v.optional(v.string()),
@@ -280,6 +281,7 @@ export const generationFieldsV1 = {
     }),
   ),
   output: v.optional(v.any()),
+  workflow: v.optional(v.string()),
   messageId: v.id('messages'),
   threadId: v.id('threads'),
   userId: v.id('users'),

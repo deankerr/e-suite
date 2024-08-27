@@ -17,6 +17,7 @@ import type {
 import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
 import type * as action_evaluateNsfwProbability from "../action/evaluateNsfwProbability.js";
 import type * as action_generateImageVisionData from "../action/generateImageVisionData.js";
+import type * as action_guidedTextToImage from "../action/guidedTextToImage.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
 import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
@@ -40,6 +41,7 @@ import type * as endpoints_openrouter from "../endpoints/openrouter.js";
 import type * as endpoints_together from "../endpoints/together.js";
 import type * as functions from "../functions.js";
 import type * as http from "../http.js";
+import type * as lib_ai from "../lib/ai.js";
 import type * as lib_clerk from "../lib/clerk.js";
 import type * as lib_env from "../lib/env.js";
 import type * as lib_fetch from "../lib/fetch.js";
@@ -74,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
   "action/evaluateNsfwProbability": typeof action_evaluateNsfwProbability;
   "action/generateImageVisionData": typeof action_generateImageVisionData;
+  "action/guidedTextToImage": typeof action_guidedTextToImage;
   "action/ingestImageUrl": typeof action_ingestImageUrl;
   "action/textToImage": typeof action_textToImage;
   crons: typeof crons;
@@ -97,6 +100,7 @@ declare const fullApi: ApiFromModules<{
   "endpoints/together": typeof endpoints_together;
   functions: typeof functions;
   http: typeof http;
+  "lib/ai": typeof lib_ai;
   "lib/clerk": typeof lib_clerk;
   "lib/env": typeof lib_env;
   "lib/fetch": typeof lib_fetch;

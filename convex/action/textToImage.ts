@@ -41,6 +41,7 @@ export const run = internalAction({
       generationId,
     })
     const runConfig = generation.input as RunConfigTextToImage
+    console.log('runConfig', runConfig)
 
     const { resourceKey, n, width, height, ...input } = runConfig
     const { modelId } = vb.parse(ResourceKey, resourceKey)

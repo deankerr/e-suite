@@ -545,6 +545,7 @@ const createTextToImageRun = async (
           }),
         )
         .optional(),
+      workflow: z.string().optional(),
     })
     .transform((vals) => {
       if (vals.size) {
@@ -572,6 +573,7 @@ const createTextToImageRun = async (
     messageId,
     threadId: thread._id,
     userId,
+    workflow: input.workflow,
   })
 
   await thread.patch({
