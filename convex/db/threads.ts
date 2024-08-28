@@ -577,7 +577,6 @@ const createTextToImageRun = async (
     messageId,
     threadId: thread._id,
     userId,
-    workflow: input.workflow,
   })
 
   await thread.patch({

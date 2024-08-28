@@ -32,13 +32,12 @@ export const Gallery = ({ message, priority }: { message: EMessage; priority?: b
   return (
     <div className="flex grow flex-wrap gap-2 py-1">
       {message.images.map((image) => (
-        <Link href={`/images/${slug}/${image.id}`} key={image._id} className="w-full max-w-xs">
+        <Link href={`/images/${slug}/${image.id}`} key={image._id}>
           <IImageCard
             image={image}
             sizes="(max-width: 410px) 20rem"
             priority={priority}
-            className="w-full max-w-xs [&>img]:object-cover"
-            style={{ aspectRatio: 1 }}
+            className="h-72 w-auto [&>img]:object-cover"
           />
         </Link>
       ))}

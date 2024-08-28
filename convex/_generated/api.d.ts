@@ -17,7 +17,6 @@ import type {
 import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
 import type * as action_evaluateNsfwProbability from "../action/evaluateNsfwProbability.js";
 import type * as action_generateImageVisionData from "../action/generateImageVisionData.js";
-import type * as action_guidedTextToImage from "../action/guidedTextToImage.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
 import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
@@ -77,7 +76,6 @@ declare const fullApi: ApiFromModules<{
   "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
   "action/evaluateNsfwProbability": typeof action_evaluateNsfwProbability;
   "action/generateImageVisionData": typeof action_generateImageVisionData;
-  "action/guidedTextToImage": typeof action_guidedTextToImage;
   "action/ingestImageUrl": typeof action_ingestImageUrl;
   "action/textToImage": typeof action_textToImage;
   crons: typeof crons;

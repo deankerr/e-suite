@@ -1,10 +1,15 @@
 import * as fal from '@fal-ai/serverless-client'
+import { generateObject } from 'ai'
+import { omit } from 'convex-helpers'
 import { v } from 'convex/values'
 import * as vb from 'valibot'
+import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
+import { createApi } from '../lib/ai'
 import { ENV } from '../lib/env'
+import { defaultSizes } from '../shared/defaults'
 
 import type { RunConfigTextToImage } from '../types'
 
@@ -42,24 +47,30 @@ export const run = internalAction({
     const runConfig = generation.input as RunConfigTextToImage
     console.log('runConfig', runConfig)
 
-    const { modelId = 'fal-ai/flux/dev', n, width, height, loras, ...input } = runConfig
+    const { modelId = 'fal-ai/flux/dev', workflow, width, height, n, ...rest } = runConfig
+
+    const input = {
+      ...rest,
+      image_size:
+        workflow === 'guided'
+          ? await generateDimensions({ prompt: rest.prompt, resourceKey: 'openai::gpt-4o-mini' })
+          : {
+              width,
+              height,
+            },
+      num_images: n,
+      enable_safety_checker: false,
+    }
 
     let model = modelId
-    if (modelId === 'fal-ai/flux/dev' && loras && loras.length > 0) {
+    if (modelId === 'fal-ai/flux/dev' && input?.loras && input.loras.length > 0) {
       model = 'fal-ai/flux-lora'
     }
 
+    console.log('input', model, input)
+
     const response = await fal.subscribe(model, {
-      input: {
-        ...input,
-        image_size: {
-          width,
-          height,
-        },
-        num_images: n,
-        loras,
-        enable_safety_checker: false,
-      },
+      input,
     })
     console.log('response', response)
     const output = vb.parse(Response, response)
@@ -74,3 +85,36 @@ export const run = internalAction({
     })
   },
 })
+
+const generateDimensions = async (args: { prompt?: string; resourceKey: string }) => {
+  const fallback = {
+    width: 512,
+    height: 512,
+  }
+
+  if (!args.prompt) return fallback
+
+  const { model } = createApi(args.resourceKey)
+
+  const response = await generateObject({
+    model,
+    system:
+      'You will be given a prompt that has been entered by a user for image generation. Respond with a JSON object containing a recommended dimensions for the image, being square, portrait, or landscape. If it is unclear what the user is asking for, use your best judgement to choose the most appropriate dimensions.',
+    schema: z.object({
+      dimensions: z
+        .enum(['square', 'portrait', 'landscape'])
+        .describe('The recommended dimensions for the image.'),
+    }),
+    messages: [
+      {
+        role: 'user',
+        content: args.prompt,
+      },
+    ],
+  })
+
+  const result = omit(response, ['rawResponse', 'toJsonResponse'])
+  console.log(result)
+
+  return defaultSizes.find((size) => size.name === result.object.dimensions) ?? fallback
+}
