@@ -11,6 +11,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 ) {
   return (
     <RxTextField.Root
+      size={{ initial: '3', sm: '2' }}
       {...props}
       onChange={(e) => {
         onValueChange?.(e.target.value)

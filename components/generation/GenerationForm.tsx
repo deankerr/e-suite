@@ -57,41 +57,39 @@ const Lora = ({
   const [scale, setScale] = useState(value.scale)
 
   return (
-    <div className="space-y-2 rounded border border-gray-4 p-2">
-      <IconButton
-        variant="ghost"
-        aria-label="Remove"
-        className="absolute right-0.5 top-0.5 z-10"
-        onClick={onRemove}
-      >
-        <Icons.X size={18} />
-      </IconButton>
+    <div className="flex rounded border border-gray-4">
+      <div className="grow space-y-2 p-2 pr-0">
+        <Label className="text-sm font-medium">
+          Path
+          <TextField
+            value={path}
+            onValueChange={(v) => {
+              setPath(v)
+              onValueChange({ id: value.id, path: v, scale: value.scale })
+            }}
+          />
+        </Label>
+        <Label>
+          Scale
+          <SliderWithInput
+            label="Scale"
+            min={0}
+            max={1}
+            step={0.01}
+            value={scale}
+            onValueChange={(v) => {
+              setScale(v)
+              onValueChange({ id: value.id, path: value.path, scale: v })
+            }}
+          />
+        </Label>
+      </div>
 
-      <Label className="text-sm font-medium">
-        Path
-        <TextField
-          size="3"
-          value={path}
-          onValueChange={(v) => {
-            setPath(v)
-            onValueChange({ id: value.id, path: v, scale: value.scale })
-          }}
-        />
-      </Label>
-      <Label>
-        Scale
-        <SliderWithInput
-          label="Scale"
-          min={0}
-          max={1}
-          step={0.01}
-          value={scale}
-          onValueChange={(v) => {
-            setScale(v)
-            onValueChange({ id: value.id, path: value.path, scale: v })
-          }}
-        />
-      </Label>
+      <div className="flex-col-center shrink-0 p-1">
+        <IconButton variant="ghost" aria-label="Remove" className="" onClick={onRemove}>
+          <Icons.X size={18} />
+        </IconButton>
+      </div>
     </div>
   )
 }
@@ -163,9 +161,8 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
               <Button
                 variant="surface"
                 size="1"
-                onClick={() =>
-                  setLoras((prev) => [...prev, { id: nanoid(), path: '', scale: 0.75 }])
-                }
+                onClick={() => setLoras((prev) => [...prev, { id: nanoid(), path: '', scale: 1 }])}
+                className="-mb-1"
               >
                 Add
               </Button>
@@ -197,8 +194,8 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
           </Label>
         )}
 
-        <Label>
-          Dimensions
+        <div>
+          <Label>Dimensions</Label>
           <RadioCards.Root columns="3" gap="2" value={dimensions} onValueChange={setDimensions}>
             <RadioCards.Item
               value="portrait"
@@ -228,18 +225,17 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
               <p className="text-xs text-gray-11">1216x832</p>
             </RadioCards.Item>
           </RadioCards.Root>
-        </Label>
+        </div>
 
         <div className="flex-between">
           <Label htmlFor="quantity">Quantity</Label>
           <TextField
             id="quantity"
             type="number"
-            size="3"
             className="w-16"
             min={1}
             max={model?.inputs.maxQuantity ?? 4}
-            value={quantity}
+            value={Math.min(quantity, model?.inputs.maxQuantity ?? 4)}
             onValueChange={(value) => setQuantity(Number(value))}
           />
         </div>
@@ -249,7 +245,6 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
           <TextField
             id="seed"
             type="number"
-            size="3"
             value={seed}
             onValueChange={(value) => setSeed(Number(value))}
             placeholder="random"

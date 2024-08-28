@@ -23,7 +23,6 @@ export const SliderWithInput = ({
       <TextField
         type="number"
         className="w-full max-w-20 px-1 py-0.5 text-right"
-        size="3"
         defaultValue={defaultValue}
         value={value}
         onValueChange={(value) => onValueChange?.(Number(value))}
@@ -34,7 +33,6 @@ export const SliderWithInput = ({
       />
       <Slider
         {...props}
-        size="2"
         defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
         value={value !== undefined ? [value] : undefined}
         onValueChange={(values) =>

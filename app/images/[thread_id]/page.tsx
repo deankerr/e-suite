@@ -4,7 +4,6 @@ import { ScrollArea } from '@radix-ui/themes'
 import { usePathname } from 'next/navigation'
 
 import { useImagesQueryContext } from '@/app/images/ImagesQueryProvider'
-import { Composer } from '@/components/composer/Composer'
 import { GenerationForm } from '@/components/generation/GenerationForm'
 import { IImageCard } from '@/components/images/IImageCard'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
@@ -60,14 +59,6 @@ export default function Page({ params }: { params: { thread_id: string } }) {
               <Orbit />
             </div>
           </ScrollArea>
-
-          {thread?.userIsViewer && (
-            <Composer
-              initialResourceKey={thread.latestRunConfig?.resourceKey}
-              loading={actions.state !== 'ready'}
-              onSend={actions.send}
-            />
-          )}
         </div>
 
         <aside className="flex w-80 shrink-0 flex-col">
