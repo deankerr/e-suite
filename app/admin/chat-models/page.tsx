@@ -7,7 +7,7 @@ import fuzzysort from 'fuzzysort'
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ModelsTable } from '@/app/admin/chat-models/ModelsTable'
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
-import { SearchField } from '@/components/form/SearchField'
+import { SearchField } from '@/components/ui/SearchField'
 import { useModels } from '@/lib/api'
 
 export default function Page() {

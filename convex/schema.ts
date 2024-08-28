@@ -26,14 +26,17 @@ export const runConfigChatV = v.object({
 
 export const runConfigTextToImageV = v.object({
   type: v.literal('textToImage'),
+  modelId: v.optional(v.string()),
   workflow: v.optional(v.string()),
-  resourceKey: v.string(),
+  resourceKey: v.optional(v.string()),
 
   prompt: v.optional(v.string()),
+  negativePrompt: v.optional(v.string()),
   n: v.optional(v.number()),
   size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
   width: v.optional(v.number()),
   height: v.optional(v.number()),
+  seed: v.optional(v.number()),
 
   loras: v.optional(
     v.array(
@@ -482,7 +485,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: true,
+    schemaValidation: false,
   },
 )
 

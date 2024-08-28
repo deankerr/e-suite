@@ -6,7 +6,7 @@ import { IconButton, Table, Tabs } from '@radix-ui/themes'
 import fuzzysort from 'fuzzysort'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
-import { SearchField } from '@/components/form/SearchField'
+import { SearchField } from '@/components/ui/SearchField'
 import { useVoiceModels } from '@/lib/api'
 
 export default function Page() {

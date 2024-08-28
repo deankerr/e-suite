@@ -9,13 +9,14 @@ import { mutation, query } from '../functions'
 import { ENV } from '../lib/env'
 import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
-import { extractValidUrlsFromText, getMaxQuantityForModel } from '../shared/helpers'
+import { extractValidUrlsFromText } from '../shared/helpers'
+import { imageModels } from '../shared/imageModels'
 import { createJob as createJobNext } from '../workflows/jobs'
 import { createGeneration } from './generations'
 import { getImageEdges, getImageWithEdges } from './images'
 import { createEvaluateMessageUrlsJob } from './jobs'
 import { getMessageEdges } from './messages'
-import { getChatModelByResourceKey, getImageModelByResourceKey } from './models'
+import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Doc, Id } from '../_generated/dataModel'
@@ -523,20 +524,22 @@ const createTextToImageRun = async (
     runConfig: RunConfigTextToImage
   },
 ) => {
-  const imageModel = await getImageModelByResourceKey(ctx, runConfig.resourceKey)
-  if (!imageModel) throw new ConvexError('invalid resourceKey')
+  const imageModel = imageModels.find((m) => m.modelId === runConfig.modelId)
+  if (!imageModel) throw new ConvexError('invalid modelId')
 
-  const nMax = getMaxQuantityForModel(imageModel.resourceKey)
+  const nMax = imageModel.inputs.maxQuantity
   const input = z
     .object({
       prompt: z.string().max(4096),
+      negativePrompt: z.string().max(4096).optional(),
       n: z
         .number()
         .default(1)
         .transform((n) => Math.max(Math.min(n, nMax), 1)),
-      width: z.number().max(2048).default(1024),
-      height: z.number().max(2048).default(1024),
+      width: z.number().max(2048).optional(),
+      height: z.number().max(2048).optional(),
       size: z.enum(['portrait', 'square', 'landscape']).optional(),
+      seed: z.number().optional(),
       loras: z
         .array(
           z.object({
@@ -548,21 +551,19 @@ const createTextToImageRun = async (
       workflow: z.string().optional(),
     })
     .transform((vals) => {
-      if (vals.size) {
-        const [width, height] = imageModel.sizes[vals.size]
-        return width && height
-          ? {
-              ...vals,
-              width,
-              height,
-            }
-          : vals
+      if (vals.size && !(vals.width && vals.height)) {
+        const size = imageModel.inputs.sizes.find((s) => s.name === vals.size)
+        return {
+          ...vals,
+          width: size?.width,
+          height: size?.height,
+        }
       }
       return vals
     })
     .transform((conf) => ({
       ...conf,
-      resourceKey: imageModel.resourceKey,
+      modelId: imageModel.modelId,
       type: 'textToImage' as const,
     }))
 
@@ -573,7 +574,6 @@ const createTextToImageRun = async (
     messageId,
     threadId: thread._id,
     userId,
-    workflow: input.workflow,
   })
 
   await thread.patch({

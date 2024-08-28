@@ -4,10 +4,12 @@
 import { RendererConfig, UserModuleWrappers } from 'react-cosmos-core';
 
 import * as fixture0 from './components/text-document-editor/__fixtures__/TextDocumentEditor';
-import * as fixture1 from './components/composer/__fixtures__/Composer';
+import * as fixture1 from './components/generation/__fixtures__/GenerationForm';
+import * as fixture2 from './components/composer/__fixtures__/Composer';
 
 import * as decorator0 from './components/cosmos.decorator';
 import * as decorator1 from './components/text-document-editor/__fixtures__/cosmos.decorator';
+import * as decorator2 from './components/generation/__fixtures__/cosmos.decorator';
 
 export const rendererConfig: RendererConfig = {
   "playgroundUrl": "http://localhost:3344",
@@ -16,12 +18,14 @@ export const rendererConfig: RendererConfig = {
 
 const fixtures = {
   'components/text-document-editor/__fixtures__/TextDocumentEditor.tsx': { module: fixture0 },
-  'components/composer/__fixtures__/Composer.tsx': { module: fixture1 }
+  'components/generation/__fixtures__/GenerationForm.tsx': { module: fixture1 },
+  'components/composer/__fixtures__/Composer.tsx': { module: fixture2 }
 };
 
 const decorators = {
   'components/cosmos.decorator.tsx': { module: decorator0 },
-  'components/text-document-editor/__fixtures__/cosmos.decorator.tsx': { module: decorator1 }
+  'components/text-document-editor/__fixtures__/cosmos.decorator.tsx': { module: decorator1 },
+  'components/generation/__fixtures__/cosmos.decorator.tsx': { module: decorator2 }
 };
 
 export const moduleWrappers: UserModuleWrappers = {

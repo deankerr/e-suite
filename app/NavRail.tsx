@@ -68,6 +68,15 @@ const Nav = ({ className }: { className?: string }) => {
         <div className="line-clamp-2 select-none overflow-hidden text-sm">New</div>
       </Link>
 
+      <Link
+        href={'/images'}
+        aria-current={pathname === '/images' ? 'page' : undefined}
+        className="mx-1 grid h-12 w-full min-w-56 grid-cols-[2.75rem_auto] items-center rounded font-medium opacity-90 transition-all hover:bg-grayA-2 aria-[current=page]:opacity-100 group-hover:aria-[current=page]:bg-grayA-3 [&>svg]:-translate-x-1 [&>svg]:place-self-center"
+      >
+        <Icons.Images size={20} className="text-accentA-11" />
+        <div className="line-clamp-2 select-none overflow-hidden text-sm">Generate</div>
+      </Link>
+
       <ScrollArea scrollbars="vertical">
         <div ref={containerRef} className="flex flex-col px-1">
           {threads

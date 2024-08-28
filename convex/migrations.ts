@@ -101,3 +101,21 @@ export const runSearchMigration = internalAction(
     }
   },
 )
+
+export const migThreadConfig = entsInternalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const threads = await ctx.skipRules.table('threads')
+    for (const thread of threads) {
+      const latestRunConfig =
+        thread.latestRunConfig?.type === 'textToImage'
+          ? {
+              ...thread.latestRunConfig,
+              modelId: 'fal-ai/flex/dev',
+            }
+          : thread.latestRunConfig
+
+      await thread.patch({ latestRunConfig })
+    }
+  },
+})
