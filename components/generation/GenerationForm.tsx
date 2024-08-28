@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label as LabelPrimitive } from '@radix-ui/react-label'
-import { RadioCards, SegmentedControl } from '@radix-ui/themes'
+import { RadioCards } from '@radix-ui/themes'
 import { nanoid } from 'nanoid/non-secure'
 
 import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
@@ -23,10 +23,30 @@ import { TextField } from '@/components/ui/TextField'
 import { twx } from '@/lib/utils'
 import Models from './models.json'
 
+import type { ThreadActions } from '@/lib/api'
+
+const modelData = Models.map((model) => {
+  return {
+    ...model,
+    inputs: {
+      loras: false,
+      negativePrompt: false,
+      maxQuantity: 4,
+      dimensions: {
+        portrait: { width: 832, height: 1216 },
+        square: { width: 1024, height: 1024 },
+        landscape: { width: 1216, height: 832 },
+      },
+      ...model.inputs,
+    },
+  }
+})
+
 const Label = twx(LabelPrimitive)`text-sm font-medium block`
 
 const Lora = ({
   value,
+  onValueChange,
   onRemove = () => {},
 }: {
   value: { id: string; path: string; scale: number }
@@ -49,7 +69,14 @@ const Lora = ({
 
       <Label className="text-sm font-medium">
         Path
-        <TextField size="3" value={path} onValueChange={setPath} />
+        <TextField
+          size="3"
+          value={path}
+          onValueChange={(v) => {
+            setPath(v)
+            onValueChange({ id: value.id, path: v, scale: value.scale })
+          }}
+        />
       </Label>
       <Label>
         Scale
@@ -59,23 +86,60 @@ const Lora = ({
           max={1}
           step={0.01}
           value={scale}
-          onValueChange={setScale}
+          onValueChange={(v) => {
+            setScale(v)
+            onValueChange({ id: value.id, path: value.path, scale: v })
+          }}
         />
       </Label>
     </div>
   )
 }
 
-export const GenerationForm = () => {
+export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: boolean }) => {
+  const [modelId, setModelId] = useState(modelData[0]?.model_id ?? '')
+  const model = modelData.find((model) => model.model_id === modelId)
+
   const [loras, setLoras] = useState<{ id: string; path: string; scale: number }[]>([])
+
+  const [prompt, setPrompt] = useState('')
+  const [negativePrompt, setNegativePrompt] = useState('')
+  const [quantity, setQuantity] = useState(1)
+  const [seed, setSeed] = useState<number | undefined>(undefined)
+  const [dimensions, setDimensions] = useState('square')
+
+  const [inputsContainer] = useAutoAnimate()
   const [lorasContainer] = useAutoAnimate()
+
+  const run = () => {
+    if (!props.onRun) {
+      console.error('No run function provided')
+      return
+    }
+
+    props.onRun({
+      runConfig: {
+        type: 'textToImage' as const,
+        resourceKey: `fal::${modelId}`,
+        loras: loras.map((lora) => ({
+          path: lora.path,
+          scale: lora.scale,
+        })),
+        prompt,
+        negativePrompt,
+        n: quantity,
+        seed,
+        size: dimensions as 'portrait' | 'square' | 'landscape',
+      },
+    })
+  }
 
   return (
     <div className="space-y-4 py-2">
-      <div className="space-y-3 px-2">
+      <div ref={inputsContainer} className="space-y-3 px-2">
         <Label>
           Model
-          <Select defaultValue={Models[0]?.model_id ?? ''}>
+          <Select value={modelId} onValueChange={setModelId}>
             <SelectTrigger className="items-start [&_[data-description]]:hidden">
               <SelectValue placeholder="Model" />
             </SelectTrigger>
@@ -92,53 +156,73 @@ export const GenerationForm = () => {
           </Select>
         </Label>
 
-        <div className="space-y-2 text-sm font-medium">
-          <div className="flex-between">
-            LoRAs
-            <Button
-              variant="surface"
-              size="1"
-              onClick={() => setLoras((prev) => [...prev, { id: nanoid(), path: '', scale: 0.75 }])}
-            >
-              Add
-            </Button>
+        {model?.inputs.loras && (
+          <div className="space-y-2 text-sm font-medium">
+            <div className="flex-between">
+              LoRAs
+              <Button
+                variant="surface"
+                size="1"
+                onClick={() =>
+                  setLoras((prev) => [...prev, { id: nanoid(), path: '', scale: 0.75 }])
+                }
+              >
+                Add
+              </Button>
+            </div>
+            <div ref={lorasContainer} className="space-y-2">
+              {loras.map((lora) => (
+                <Lora
+                  key={lora.id}
+                  value={lora}
+                  onValueChange={(v) => {
+                    setLoras((prev) => prev.map((lora) => (lora.id === v.id ? v : lora)))
+                  }}
+                  onRemove={() => setLoras((prev) => prev.filter(({ id }) => id !== lora.id))}
+                />
+              ))}
+            </div>
           </div>
-          <div ref={lorasContainer} className="space-y-2">
-            {loras.map((lora) => (
-              <Lora
-                key={lora.id}
-                value={lora}
-                onValueChange={() => {}}
-                onRemove={() => setLoras((prev) => prev.filter(({ id }) => id !== lora.id))}
-              />
-            ))}
-          </div>
-        </div>
+        )}
 
         <Label>
           Prompt
-          <TextareaAutosize />
+          <TextareaAutosize value={prompt} onValueChange={setPrompt} />
         </Label>
 
-        <Label>
-          Negative Prompt
-          <TextareaAutosize />
-        </Label>
+        {model?.inputs.negativePrompt && (
+          <Label>
+            Negative Prompt
+            <TextareaAutosize value={negativePrompt} onValueChange={setNegativePrompt} />
+          </Label>
+        )}
 
         <Label>
           Dimensions
-          <RadioCards.Root columns="3" gap="2">
-            <RadioCards.Item value="portrait" className="flex-col gap-1">
+          <RadioCards.Root columns="3" gap="2" value={dimensions} onValueChange={setDimensions}>
+            <RadioCards.Item
+              value="portrait"
+              className="flex-col gap-1"
+              disabled={!model?.inputs.dimensions.portrait}
+            >
               <RectangleVertical className="text-gray-11" />
               <p>Portrait</p>
               <p className="text-xs text-gray-11">832x1216</p>
             </RadioCards.Item>
-            <RadioCards.Item value="square" className="flex-col gap-1">
+            <RadioCards.Item
+              value="square"
+              className="flex-col gap-1"
+              disabled={!model?.inputs.dimensions.square}
+            >
               <Icons.Square size={24} className="text-gray-11" />
               <p>Square</p>
               <p className="text-xs text-gray-11">1024x1024</p>
             </RadioCards.Item>
-            <RadioCards.Item value="landscape" className="flex-col gap-1">
+            <RadioCards.Item
+              value="landscape"
+              className="flex-col gap-1"
+              disabled={!model?.inputs.dimensions.landscape}
+            >
               <RectangleHorizontal className="text-gray-11" />
               <p>Landscape</p>
               <p className="text-xs text-gray-11">1216x832</p>
@@ -146,26 +230,37 @@ export const GenerationForm = () => {
           </RadioCards.Root>
         </Label>
 
-        <Label>
-          Quantity
-          <div className="mx-auto max-w-52">
-            <SegmentedControl.Root className="grid" size="3">
-              <SegmentedControl.Item value="1">1</SegmentedControl.Item>
-              <SegmentedControl.Item value="2">2</SegmentedControl.Item>
-              <SegmentedControl.Item value="3">3</SegmentedControl.Item>
-              <SegmentedControl.Item value="4">4</SegmentedControl.Item>
-            </SegmentedControl.Root>
-          </div>
-        </Label>
+        <div className="flex-between">
+          <Label htmlFor="quantity">Quantity</Label>
+          <TextField
+            id="quantity"
+            type="number"
+            size="3"
+            className="w-16"
+            min={1}
+            max={model?.inputs.maxQuantity ?? 4}
+            value={quantity}
+            onValueChange={(value) => setQuantity(Number(value))}
+          />
+        </div>
 
-        <Label>
-          Seed
-          <TextField type="number" size="3" />
-        </Label>
+        <div className="flex-between">
+          <Label htmlFor="seed">Seed</Label>
+          <TextField
+            id="seed"
+            type="number"
+            size="3"
+            value={seed}
+            onValueChange={(value) => setSeed(Number(value))}
+            placeholder="random"
+          />
+        </div>
       </div>
 
       <div className="flex justify-end px-2">
-        <Button variant="surface">Run</Button>
+        <Button variant="surface" loading={props.loading} onClick={run} disabled={!props.onRun}>
+          Run
+        </Button>
       </div>
     </div>
   )

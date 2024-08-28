@@ -10,6 +10,9 @@
     "pricing": {
       "type": "perMegapixel",
       "value": "0.025"
+    },
+    "inputs": {
+      "loras": true
     }
   },
   {
@@ -36,6 +39,9 @@
     "pricing": {
       "type": "perMegapixel",
       "value": "0.05"
+    },
+    "inputs": {
+      "maxQuantity": 1
     }
   },
   {
@@ -49,6 +55,14 @@
     "pricing": {
       "type": "perSecond",
       "value": "0.00111"
+    },
+    "inputs": {
+      "maxQuantity": 2,
+      "dimensions": {
+        "portrait": null,
+        "square": { "width": 1024, "height": 1024 },
+        "landscape": null
+      }
     }
   },
   {
@@ -62,6 +76,10 @@
     "pricing": {
       "type": "perRequest",
       "value": "0.035"
+    },
+    "inputs": {
+      "maxQuantity": 1,
+      "negativePrompt": true
     }
   },
   {
@@ -101,6 +119,9 @@
     "pricing": {
       "type": "perSecond",
       "value": "0.000575"
+    },
+    "inputs": {
+      "negativePrompt": true
     }
   }
 ]

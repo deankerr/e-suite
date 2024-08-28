@@ -530,6 +530,7 @@ const createTextToImageRun = async (
   const input = z
     .object({
       prompt: z.string().max(4096),
+      negativePrompt: z.string().max(4096).optional(),
       n: z
         .number()
         .default(1)
@@ -537,6 +538,7 @@ const createTextToImageRun = async (
       width: z.number().max(2048).default(1024),
       height: z.number().max(2048).default(1024),
       size: z.enum(['portrait', 'square', 'landscape']).optional(),
+      seed: z.number().optional(),
       loras: z
         .array(
           z.object({

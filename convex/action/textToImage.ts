@@ -43,10 +43,15 @@ export const run = internalAction({
     const runConfig = generation.input as RunConfigTextToImage
     console.log('runConfig', runConfig)
 
-    const { resourceKey, n, width, height, ...input } = runConfig
+    const { resourceKey, n, width, height, loras, ...input } = runConfig
     const { modelId } = vb.parse(ResourceKey, resourceKey)
 
-    const response = await fal.subscribe(modelId, {
+    let model = modelId
+    if (modelId === 'fal-ai/flux/dev' && loras && loras.length > 0) {
+      model = 'fal-ai/flux-lora'
+    }
+
+    const response = await fal.subscribe(model, {
       input: {
         ...input,
         image_size: {
@@ -54,10 +59,11 @@ export const run = internalAction({
           height,
         },
         num_images: n,
+        loras,
         enable_safety_checker: false,
       },
     })
-
+    console.log('response', response)
     const output = vb.parse(Response, response)
 
     await ctx.runMutation(internal.db.generations.complete, {

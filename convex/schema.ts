@@ -30,10 +30,12 @@ export const runConfigTextToImageV = v.object({
   resourceKey: v.string(),
 
   prompt: v.optional(v.string()),
+  negativePrompt: v.optional(v.string()),
   n: v.optional(v.number()),
   size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
   width: v.optional(v.number()),
   height: v.optional(v.number()),
+  seed: v.optional(v.number()),
 
   loras: v.optional(
     v.array(
