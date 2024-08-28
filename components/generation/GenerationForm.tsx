@@ -20,27 +20,11 @@ import {
 import { SliderWithInput } from '@/components/ui/SliderWithInput'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { TextField } from '@/components/ui/TextField'
+import { defaultImageModelInputs } from '@/convex/shared/defaults'
+import { imageModels } from '@/convex/shared/imageModels'
 import { twx } from '@/lib/utils'
-import Models from './models.json'
 
 import type { ThreadActions } from '@/lib/api'
-
-const modelData = Models.map((model) => {
-  return {
-    ...model,
-    inputs: {
-      loras: false,
-      negativePrompt: false,
-      maxQuantity: 4,
-      dimensions: {
-        portrait: { width: 832, height: 1216 },
-        square: { width: 1024, height: 1024 },
-        landscape: { width: 1216, height: 832 },
-      },
-      ...model.inputs,
-    },
-  }
-})
 
 const Label = twx(LabelPrimitive)`text-sm font-medium block`
 
@@ -95,8 +79,9 @@ const Lora = ({
 }
 
 export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: boolean }) => {
-  const [modelId, setModelId] = useState(modelData[0]?.model_id ?? '')
-  const model = modelData.find((model) => model.model_id === modelId)
+  const [modelId, setModelId] = useState(imageModels[0]?.modelId ?? '')
+  const model = imageModels.find((model) => model.modelId === modelId)
+  const inputs = model?.inputs ?? defaultImageModelInputs
 
   const [loras, setLoras] = useState<{ id: string; path: string; scale: number }[]>([])
 
@@ -142,8 +127,8 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
               <SelectValue placeholder="Model" />
             </SelectTrigger>
             <SelectContent className="max-w-[96vw]">
-              {Models.map((model) => (
-                <SelectItem key={model.model_id} value={model.model_id}>
+              {imageModels.map((model) => (
+                <SelectItem key={model.modelId} value={model.modelId}>
                   <p className="font-medium">{model.name}</p>
                   <p className="truncate text-sm text-gray-11" data-description>
                     {model.description}
@@ -154,7 +139,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
           </Select>
         </Label>
 
-        {model?.inputs.loras && (
+        {inputs.loras && (
           <div className="space-y-2 text-sm font-medium">
             <div className="flex-between">
               LoRAs
@@ -187,7 +172,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
           <TextareaAutosize value={prompt} onValueChange={setPrompt} />
         </Label>
 
-        {model?.inputs.negativePrompt && (
+        {inputs.negativePrompt && (
           <Label>
             Negative Prompt
             <TextareaAutosize value={negativePrompt} onValueChange={setNegativePrompt} />
@@ -200,7 +185,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
             <RadioCards.Item
               value="portrait"
               className="flex-col gap-1"
-              disabled={!model?.inputs.dimensions.portrait}
+              disabled={!inputs.sizes.some((size) => size.name === 'portrait')}
             >
               <RectangleVertical className="text-gray-11" />
               <p>Portrait</p>
@@ -209,7 +194,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
             <RadioCards.Item
               value="square"
               className="flex-col gap-1"
-              disabled={!model?.inputs.dimensions.square}
+              disabled={!inputs.sizes.some((size) => size.name === 'square')}
             >
               <Icons.Square size={24} className="text-gray-11" />
               <p>Square</p>
@@ -218,7 +203,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
             <RadioCards.Item
               value="landscape"
               className="flex-col gap-1"
-              disabled={!model?.inputs.dimensions.landscape}
+              disabled={!inputs.sizes.some((size) => size.name === 'landscape')}
             >
               <RectangleHorizontal className="text-gray-11" />
               <p>Landscape</p>
@@ -234,8 +219,8 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
             type="number"
             className="w-16"
             min={1}
-            max={model?.inputs.maxQuantity ?? 4}
-            value={Math.min(quantity, model?.inputs.maxQuantity ?? 4)}
+            max={inputs.maxQuantity ?? 4}
+            value={Math.min(quantity, inputs.maxQuantity ?? 4)}
             onValueChange={(value) => setQuantity(Number(value))}
           />
         </div>
