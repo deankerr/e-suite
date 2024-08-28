@@ -26,8 +26,9 @@ export const runConfigChatV = v.object({
 
 export const runConfigTextToImageV = v.object({
   type: v.literal('textToImage'),
+  modelId: v.optional(v.string()),
   workflow: v.optional(v.string()),
-  resourceKey: v.string(),
+  resourceKey: v.optional(v.string()),
 
   prompt: v.optional(v.string()),
   negativePrompt: v.optional(v.string()),
@@ -484,7 +485,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: true,
+    schemaValidation: false,
   },
 )
 

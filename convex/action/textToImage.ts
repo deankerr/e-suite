@@ -5,7 +5,6 @@ import * as vb from 'valibot'
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
 import { ENV } from '../lib/env'
-import { ResourceKey } from '../lib/valibot'
 
 import type { RunConfigTextToImage } from '../types'
 
@@ -43,8 +42,7 @@ export const run = internalAction({
     const runConfig = generation.input as RunConfigTextToImage
     console.log('runConfig', runConfig)
 
-    const { resourceKey, n, width, height, loras, ...input } = runConfig
-    const { modelId } = vb.parse(ResourceKey, resourceKey)
+    const { modelId = 'fal-ai/flux/dev', n, width, height, loras, ...input } = runConfig
 
     let model = modelId
     if (modelId === 'fal-ai/flux/dev' && loras && loras.length > 0) {

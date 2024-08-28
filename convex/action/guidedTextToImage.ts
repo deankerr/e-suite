@@ -9,7 +9,6 @@ import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
 import { createApi } from '../lib/ai'
 import { ENV } from '../lib/env'
-import { ResourceKey } from '../lib/valibot'
 
 import type { RunConfigTextToImage } from '../types'
 
@@ -47,8 +46,7 @@ export const run = internalAction({
     const runConfig = generation.input as RunConfigTextToImage
     console.log('runConfig', runConfig)
 
-    const { resourceKey, n, width, height, prompt = '', size, ...rest } = runConfig
-    const { modelId } = vb.parse(ResourceKey, resourceKey)
+    const { modelId = 'fal-ai/flux/dev', n, width, height, prompt = '', size, ...rest } = runConfig
 
     const image_size = await generateDimensions({
       prompt,
@@ -57,7 +55,7 @@ export const run = internalAction({
 
     const input = {
       ...rest,
-      prompt: prompt + ' wearing clown makeup',
+      prompt,
       image_size,
       num_images: n,
       enable_safety_checker: false,

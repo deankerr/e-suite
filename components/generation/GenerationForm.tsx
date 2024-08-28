@@ -103,7 +103,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
     props.onRun({
       runConfig: {
         type: 'textToImage' as const,
-        resourceKey: `fal::${modelId}`,
+        modelId,
         loras: loras.map((lora) => ({
           path: lora.path,
           scale: lora.scale,

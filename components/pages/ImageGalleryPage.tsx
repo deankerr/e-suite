@@ -67,6 +67,12 @@ export const ImageGalleryPage = ({
 const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationData }) => {
   if (!generation) return null
   const input = generation.input as RunConfigTextToImage
+  const model = input.resourceKey
+    ? input.resourceKey.split('::')[1]
+    : input.modelId
+      ? input.modelId
+      : null
+  const endpoint = input.resourceKey ? input.resourceKey.split('::')[0] : null
   return (
     <Card className="space-y-2" size="2">
       <div className="pb-px text-sm font-medium">Generation Data</div>
@@ -78,12 +84,12 @@ const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationD
 
         <DataList.Item>
           <DataList.Label>model</DataList.Label>
-          <DataList.Value>{input.resourceKey.split('::')[1]}</DataList.Value>
+          <DataList.Value>{model}</DataList.Value>
         </DataList.Item>
 
         <DataList.Item>
           <DataList.Label>endpoint</DataList.Label>
-          <DataList.Value>{input.resourceKey.split('::')[0]}</DataList.Value>
+          <DataList.Value>{endpoint}</DataList.Value>
         </DataList.Item>
 
         <DataList.Item>
