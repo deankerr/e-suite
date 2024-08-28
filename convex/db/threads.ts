@@ -536,8 +536,8 @@ const createTextToImageRun = async (
         .number()
         .default(1)
         .transform((n) => Math.max(Math.min(n, nMax), 1)),
-      width: z.number().max(2048).default(1024),
-      height: z.number().max(2048).default(1024),
+      width: z.number().max(2048).optional(),
+      height: z.number().max(2048).optional(),
       size: z.enum(['portrait', 'square', 'landscape']).optional(),
       seed: z.number().optional(),
       loras: z
@@ -552,14 +552,11 @@ const createTextToImageRun = async (
     })
     .transform((vals) => {
       if (vals.size && !(vals.width && vals.height)) {
-        const size = imageModel.inputs.sizes.find((s) => s.name === vals.size) ?? {
-          width: 1024,
-          height: 1024,
-        }
+        const size = imageModel.inputs.sizes.find((s) => s.name === vals.size)
         return {
           ...vals,
-          width: size.width,
-          height: size.height,
+          width: size?.width,
+          height: size?.height,
         }
       }
       return vals

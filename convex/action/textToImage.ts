@@ -52,7 +52,7 @@ export const run = internalAction({
     const input = {
       ...rest,
       image_size:
-        workflow === 'guided'
+        workflow === 'guided' || !width || !height
           ? await generateDimensions({ prompt: rest.prompt, resourceKey: 'openai::gpt-4o-mini' })
           : {
               width,
