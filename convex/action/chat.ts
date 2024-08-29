@@ -1,7 +1,7 @@
 import { generateText, streamText } from 'ai'
 import { v } from 'convex/values'
 
-import { internal } from '../_generated/api'
+import { api, internal } from '../_generated/api'
 import { internalAction } from '../functions'
 import { createAi } from '../lib/ai'
 import { runConfigChatV } from '../schema'
@@ -32,6 +32,7 @@ export const run = internalAction({
       frequencyPenalty: runConfig.frequency_penalty,
       stopSequences: runConfig.stop,
     }
+    console.log(input)
 
     if (runConfig.stream) {
       // * stream
@@ -72,7 +73,7 @@ export const run = internalAction({
     }
 
     // * update thread title
-    const message = await ctx.runQuery(internal.db.messages.getDoc, {
+    const message = await ctx.runQuery(api.db.messages.getDoc, {
       messageId,
     })
     if (!message) return

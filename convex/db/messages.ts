@@ -2,7 +2,7 @@ import { pick } from 'convex-helpers'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { internalMutation, internalQuery, mutation, query } from '../functions'
+import { internalMutation, mutation, query } from '../functions'
 import { messageFields } from '../schema'
 import { getImageEdges } from './images'
 import { getUserIsViewer } from './users'
@@ -57,7 +57,7 @@ export const get = query({
   },
 })
 
-export const getDoc = internalQuery({
+export const getDoc = query({
   args: {
     messageId: v.id('messages'),
   },

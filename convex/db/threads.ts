@@ -692,6 +692,7 @@ const createChatRun = async (
     .object({
       excludeHistoryMessagesByName: z.array(z.string().max(64)).max(64).optional(),
       maxHistoryMessages: z.number().max(64).default(64),
+      prependNamesToContent: z.boolean().default(false),
       stream: z.boolean().default(true),
       max_tokens: z.number().optional(),
     })
@@ -702,10 +703,6 @@ const createChatRun = async (
     }))
     .parse(runConfig)
 
-  // const jobId = await createJobNext.chat(ctx, {
-  //   ...input,
-  //   messageId,
-  // })
   await ctx.scheduler.runAfter(0, internal.action.chat.run, {
     messageId,
     runConfig: input,
