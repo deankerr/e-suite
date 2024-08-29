@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from 'react'
+import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { ScrollArea } from '@radix-ui/themes'
 import { usePathname } from 'next/navigation'
 
 import { useImagesQueryContext } from '@/app/images/ImagesQueryProvider'
 import { GenerationForm } from '@/components/generation/GenerationForm'
 import { IImageCard } from '@/components/images/IImageCard'
+import { IconButton } from '@/components/ui/Button'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Orbit } from '@/components/ui/Ldrs'
 import { SectionHeader } from '@/components/ui/Section'
@@ -21,10 +24,12 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
   const actions = useThreadActions(thread?._id)
 
+  const [showGenerate, setShowGenerate] = useState(false)
+
   return (
     <>
       <div className="flex h-96 grow items-stretch divide-x overflow-hidden">
-        <div className="flex grow flex-col overflow-hidden">
+        <div className={cn('flex grow flex-col overflow-hidden', showGenerate && 'hidden sm:flex')}>
           <ScrollArea scrollbars="vertical">
             <ResultsGrid className="mb-16 [&>div]:aspect-square">
               {imagesFeed.results.map((image) => (
@@ -61,12 +66,22 @@ export default function Page({ params }: { params: { thread_id: string } }) {
           </ScrollArea>
         </div>
 
-        <aside className="flex w-80 shrink-0 flex-col">
-          <SectionHeader className="px-2">Generate</SectionHeader>
-          <ScrollArea scrollbars="vertical">
-            <GenerationForm onRun={actions.run} loading={actions.state !== 'ready'} />
-          </ScrollArea>
-        </aside>
+        {showGenerate ? (
+          <aside className="flex w-full shrink-0 flex-col sm:w-80">
+            <SectionHeader className="px-2">Generate</SectionHeader>
+            <ScrollArea scrollbars="vertical">
+              <GenerationForm onRun={actions.run} loading={actions.state !== 'ready'} />
+            </ScrollArea>
+          </aside>
+        ) : null}
+
+        <IconButton
+          onClick={() => setShowGenerate(!showGenerate)}
+          aria-label={showGenerate ? 'Close' : 'Generate'}
+          className="absolute right-1 top-1"
+        >
+          {showGenerate ? <Icons.X /> : <Icons.Plus />}
+        </IconButton>
       </div>
     </>
   )
