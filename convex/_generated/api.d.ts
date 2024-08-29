@@ -61,8 +61,6 @@ import type * as users from "../users.js";
 import type * as workflows_engine from "../workflows/engine.js";
 import type * as workflows_helpers from "../workflows/helpers.js";
 import type * as workflows_jobs from "../workflows/jobs.js";
-import type * as workflows_pipelines_chat from "../workflows/pipelines/chat.js";
-import type * as workflows_pipelines_generateThreadTitle from "../workflows/pipelines/generateThreadTitle.js";
 import type * as workflows_pipelines_textToAudio from "../workflows/pipelines/textToAudio.js";
 import type * as workflows_types from "../workflows/types.js";
 
@@ -122,8 +120,6 @@ declare const fullApi: ApiFromModules<{
   "workflows/engine": typeof workflows_engine;
   "workflows/helpers": typeof workflows_helpers;
   "workflows/jobs": typeof workflows_jobs;
-  "workflows/pipelines/chat": typeof workflows_pipelines_chat;
-  "workflows/pipelines/generateThreadTitle": typeof workflows_pipelines_generateThreadTitle;
   "workflows/pipelines/textToAudio": typeof workflows_pipelines_textToAudio;
   "workflows/types": typeof workflows_types;
 }>;
