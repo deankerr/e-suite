@@ -2,7 +2,7 @@ import { pick } from 'convex-helpers'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { internalMutation, mutation, query } from '../functions'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { messageFields } from '../schema'
 import { getImageEdges } from './images'
 import { getUserIsViewer } from './users'
@@ -57,7 +57,7 @@ export const get = query({
   },
 })
 
-export const getDoc = query({
+export const getDoc = internalQuery({
   args: {
     messageId: v.id('messages'),
   },
@@ -86,6 +86,36 @@ export const update = mutation({
   },
 })
 
+export const updateSR = internalMutation({
+  args: {
+    messageId: v.id('messages'),
+
+    role: messageFields.role,
+    name: v.optional(v.string()),
+    text: v.optional(v.string()),
+  },
+  handler: async (ctx, { messageId, role, name, text }) => {
+    return await ctx.skipRules
+      .table('messages')
+      .getX(messageId)
+      .patch({
+        role,
+        name: name || undefined,
+        text: text || undefined,
+      })
+  },
+})
+
+export const streamText = internalMutation({
+  args: {
+    messageId: v.id('messages'),
+    text: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.skipRules.table('messages').getX(args.messageId).patch({ text: args.text })
+  },
+})
+
 export const remove = mutation({
   args: {
     messageId: v.string(),
@@ -97,15 +127,5 @@ export const remove = mutation({
       .delete()
 
     await ctx.scheduler.runAfter(0, internal.deletion.scheduleFileDeletion, {})
-  },
-})
-
-export const streamText = internalMutation({
-  args: {
-    messageId: v.id('messages'),
-    text: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.skipRules.table('messages').getX(args.messageId).patch({ text: args.text })
   },
 })

@@ -26,7 +26,7 @@ const createProvider = (endpoint: string) => {
   throw new ConvexError(`invalid endpoint: ${endpoint}`)
 }
 
-export const createApi = (resourceKey: string) => {
+export const createAi = (resourceKey: string) => {
   const { endpoint, modelId } = vb.parse(ResourceKey, resourceKey)
 
   const provider = createProvider(endpoint)

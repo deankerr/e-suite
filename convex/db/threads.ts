@@ -5,7 +5,7 @@ import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
-import { mutation, query } from '../functions'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { ENV } from '../lib/env'
 import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
@@ -133,6 +133,17 @@ export const get = query({
     if (!thread) return null
 
     return await getThreadEdges(ctx, thread)
+  },
+})
+
+export const getDoc = internalQuery({
+  args: {
+    slugOrId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+
+    return thread ? thread.doc() : null
   },
 })
 
@@ -312,6 +323,42 @@ export const getMessage = query({
   },
 })
 
+export const getConversation = internalQuery({
+  args: {
+    messageId: v.id('messages'),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { messageId, limit = 20 }) => {
+    const message = await ctx.table('messages').getX(messageId)
+
+    const messages = await ctx
+      .table('messages', 'threadId', (q) =>
+        q.eq('threadId', message.threadId).lt('_creationTime', message._creationTime),
+      )
+      .order('desc')
+      .filter((q) =>
+        q.and(q.eq(q.field('deletionTime'), undefined), q.neq(q.field('text'), undefined)),
+      )
+      .take(limit)
+      .map((message) => ({
+        role: message.role,
+        name: message.name,
+        content: message.text || '',
+      }))
+
+    const thread = await ctx.skipRules.table('threads').getX(message.threadId)
+    if (thread.instructions) {
+      messages.push({
+        role: 'system',
+        content: thread.instructions,
+        name: undefined,
+      })
+    }
+
+    return messages.reverse()
+  },
+})
+
 // * Mutations
 const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime', 'metadata'])))
 export const update = mutation({
@@ -321,6 +368,19 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     return await ctx
+      .table('threads')
+      .getX(args.threadId as Id<'threads'>)
+      .patch({ ...args.fields, updatedAtTime: Date.now() })
+  },
+})
+
+export const updateSR = internalMutation({
+  args: {
+    threadId: v.string(),
+    fields: updateArgs,
+  },
+  handler: async (ctx, args) => {
+    return await ctx.skipRules
       .table('threads')
       .getX(args.threadId as Id<'threads'>)
       .patch({ ...args.fields, updatedAtTime: Date.now() })
@@ -638,9 +698,13 @@ const createChatRun = async (
     }))
     .parse(runConfig)
 
-  const jobId = await createJobNext.chat(ctx, {
-    ...input,
+  // const jobId = await createJobNext.chat(ctx, {
+  //   ...input,
+  //   messageId,
+  // })
+  await ctx.scheduler.runAfter(0, internal.action.chat.run, {
     messageId,
+    runConfig: input,
   })
 
   await thread.patch({
@@ -648,5 +712,5 @@ const createChatRun = async (
     updatedAtTime: Date.now(),
   })
 
-  return jobId
+  return '' as Id<'jobs3'>
 }

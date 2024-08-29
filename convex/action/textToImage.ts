@@ -7,7 +7,7 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
-import { createApi } from '../lib/ai'
+import { createAi } from '../lib/ai'
 import { ENV } from '../lib/env'
 import { defaultSizes } from '../shared/defaults'
 
@@ -94,7 +94,7 @@ const generateDimensions = async (args: { prompt?: string; resourceKey: string }
 
   if (!args.prompt) return fallback
 
-  const { model } = createApi(args.resourceKey)
+  const { model } = createAi(args.resourceKey)
 
   const response = await generateObject({
     model,
