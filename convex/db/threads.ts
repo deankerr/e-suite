@@ -327,8 +327,9 @@ export const getConversation = internalQuery({
   args: {
     messageId: v.id('messages'),
     limit: v.optional(v.number()),
+    prependNamesToContent: v.optional(v.boolean()),
   },
-  handler: async (ctx, { messageId, limit = 20 }) => {
+  handler: async (ctx, { messageId, limit = 20, prependNamesToContent = false }) => {
     const message = await ctx.table('messages').getX(messageId)
 
     const messages = await ctx
@@ -342,8 +343,11 @@ export const getConversation = internalQuery({
       .take(limit)
       .map((message) => ({
         role: message.role,
-        name: message.name,
-        content: message.text || '',
+        name: prependNamesToContent ? undefined : message.name,
+        content:
+          prependNamesToContent && message.name !== undefined
+            ? `${message.name}: ${message.text}`
+            : message.text || '',
       }))
 
     const thread = await ctx.skipRules.table('threads').getX(message.threadId)

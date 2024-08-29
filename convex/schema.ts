@@ -12,6 +12,7 @@ export const runConfigChatV = v.object({
   resourceKey: v.string(),
   excludeHistoryMessagesByName: v.optional(v.array(v.string())),
   maxHistoryMessages: v.optional(v.number()),
+  prependNamesToContent: v.optional(v.boolean()),
   stream: v.optional(v.boolean()),
 
   temperature: v.optional(v.number()),

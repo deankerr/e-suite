@@ -18,6 +18,7 @@ export const run = internalAction({
     const messages = await ctx.runQuery(internal.db.threads.getConversation, {
       messageId,
       limit: runConfig.maxHistoryMessages,
+      prependNamesToContent: runConfig.prependNamesToContent,
     })
 
     const input = {
