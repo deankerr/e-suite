@@ -70,7 +70,11 @@ export default function Page({ params }: { params: { thread_id: string } }) {
           <aside className="flex w-full shrink-0 flex-col sm:w-80">
             <SectionHeader className="px-2">Generate</SectionHeader>
             <ScrollArea scrollbars="vertical" className="[&>div>div]:max-w-full">
-              <GenerationForm onRun={actions.run} loading={actions.state !== 'ready'} />
+              <GenerationForm
+                onRun={actions.run}
+                loading={actions.state !== 'ready'}
+                storageKey={thread?.slug}
+              />
             </ScrollArea>
           </aside>
         ) : null}

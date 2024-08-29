@@ -8,6 +8,7 @@ import { RadioCards } from '@radix-ui/themes'
 import { nanoid } from 'nanoid/non-secure'
 import Image from 'next/image'
 
+import { useGenerationFormState } from '@/components/generation/useGenerationFormState'
 import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
 import { RectangleVertical } from '@/components/icons/RectangleVertical'
 import { Button, IconButton } from '@/components/ui/Button'
@@ -79,29 +80,32 @@ const Lora = ({
   )
 }
 
-export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: boolean }) => {
-  const [modelId, setModelId] = useState(imageModels[0]?.modelId ?? '')
-  const model = imageModels.find((model) => model.modelId === modelId)
-  const inputs = model?.inputs ?? defaultImageModelInputs
-
-  const [loras, setLoras] = useState<{ id: string; path: string; scale: number }[]>([])
-
-  const [prompt, setPrompt] = useState('')
-  const [negativePrompt, setNegativePrompt] = useState('')
-  const [quantity, setQuantity] = useState(1)
-  const [seed, setSeed] = useState<number | undefined>(undefined)
-  const [dimensions, setDimensions] = useState('square')
-
+export const GenerationForm = ({
+  onRun,
+  loading,
+  storageKey = '',
+}: {
+  onRun?: ThreadActions['run']
+  loading?: boolean
+  storageKey?: string
+}) => {
   const [inputsContainer] = useAutoAnimate()
   const [lorasContainer] = useAutoAnimate()
 
+  const { value, setState } = useGenerationFormState(storageKey)
+  if (!value) return null
+  const { modelId, loras, prompt, negativePrompt, quantity, seed, dimensions } = value
+
+  const model = imageModels.find((model) => model.modelId === modelId)
+  const inputs = model?.inputs ?? defaultImageModelInputs
+
   const run = () => {
-    if (!props.onRun) {
+    if (!onRun) {
       console.error('No run function provided')
       return
     }
 
-    props.onRun({
+    onRun({
       runConfig: {
         type: 'textToImage' as const,
         modelId,
@@ -122,7 +126,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
     <div className="space-y-4 overflow-hidden py-2">
       <div ref={inputsContainer} className="space-y-3 overflow-hidden px-2">
         <Label htmlFor="model">Model</Label>
-        <Select value={modelId} onValueChange={setModelId}>
+        <Select value={modelId} onValueChange={(v) => setState({ modelId: v })}>
           <SelectTrigger id="model" className="h-auto max-w-full whitespace-normal text-left">
             <SelectValue placeholder="Model" />
           </SelectTrigger>
@@ -159,7 +163,9 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
               <Button
                 variant="surface"
                 size="1"
-                onClick={() => setLoras((prev) => [...prev, { id: nanoid(), path: '', scale: 1 }])}
+                onClick={() =>
+                  setState({ loras: [...loras, { id: nanoid(), path: '', scale: 1 }] })
+                }
                 className="-mb-1"
               >
                 Add
@@ -171,9 +177,9 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
                   key={lora.id}
                   value={lora}
                   onValueChange={(v) => {
-                    setLoras((prev) => prev.map((lora) => (lora.id === v.id ? v : lora)))
+                    setState({ loras: loras.map((lora) => (lora.id === v.id ? v : lora)) })
                   }}
-                  onRemove={() => setLoras((prev) => prev.filter(({ id }) => id !== lora.id))}
+                  onRemove={() => setState({ loras: loras.filter(({ id }) => id !== lora.id) })}
                 />
               ))}
             </div>
@@ -182,19 +188,27 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
 
         <Label>
           Prompt
-          <TextareaAutosize value={prompt} onValueChange={setPrompt} />
+          <TextareaAutosize value={prompt} onValueChange={(v) => setState({ prompt: v })} />
         </Label>
 
         {inputs.negativePrompt && (
           <Label>
             Negative Prompt
-            <TextareaAutosize value={negativePrompt} onValueChange={setNegativePrompt} />
+            <TextareaAutosize
+              value={negativePrompt}
+              onValueChange={(v) => setState({ negativePrompt: v })}
+            />
           </Label>
         )}
 
         <div>
           <Label>Dimensions</Label>
-          <RadioCards.Root columns="3" gap="2" value={dimensions} onValueChange={setDimensions}>
+          <RadioCards.Root
+            columns="3"
+            gap="2"
+            value={dimensions}
+            onValueChange={(v) => setState({ dimensions: v })}
+          >
             <RadioCards.Item
               value="portrait"
               className="flex-col gap-1"
@@ -234,7 +248,7 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
             min={1}
             max={inputs.maxQuantity ?? 4}
             value={Math.min(quantity, inputs.maxQuantity ?? 4)}
-            onValueChange={(value) => setQuantity(Number(value))}
+            onValueChange={(value) => setState({ quantity: Number(value) })}
           />
         </div>
 
@@ -244,14 +258,14 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
             id="seed"
             type="number"
             value={seed}
-            onValueChange={(value) => setSeed(Number(value))}
+            onValueChange={(value) => setState({ seed: Number(value) || undefined })}
             placeholder="random"
           />
         </div>
       </div>
 
       <div className="flex justify-end px-2">
-        <Button variant="surface" loading={props.loading} onClick={run} disabled={!props.onRun}>
+        <Button variant="surface" loading={loading} onClick={run} disabled={!onRun}>
           Run
         </Button>
       </div>
