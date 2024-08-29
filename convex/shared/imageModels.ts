@@ -68,7 +68,7 @@ const data = [
   },
   {
     modelId: 'fal-ai/stable-diffusion-v3-medium',
-    coverImage: 'https://storage.googleapis.com/falserverless/landing/sd13-sample-03.webp',
+    coverImage: 'https://storage.googleapis.com/falserverless/landing/sd3-sample-03.webp',
     name: 'Stable Diffusion V3',
     description: 'Run SD3 at the speed of light.',
     creatorName: 'Stability AI',
