@@ -24,7 +24,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
   const actions = useThreadActions(thread?._id)
 
-  const [showGenerate, setShowGenerate] = useState(false)
+  const [showGenerate, setShowGenerate] = useState(true)
 
   return (
     <>
@@ -69,7 +69,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
         {showGenerate ? (
           <aside className="flex w-full shrink-0 flex-col sm:w-80">
             <SectionHeader className="px-2">Generate</SectionHeader>
-            <ScrollArea scrollbars="vertical">
+            <ScrollArea scrollbars="vertical" className="[&>div>div]:max-w-full">
               <GenerationForm onRun={actions.run} loading={actions.state !== 'ready'} />
             </ScrollArea>
           </aside>

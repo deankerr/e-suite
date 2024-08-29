@@ -6,6 +6,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label as LabelPrimitive } from '@radix-ui/react-label'
 import { RadioCards } from '@radix-ui/themes'
 import { nanoid } from 'nanoid/non-secure'
+import Image from 'next/image'
 
 import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
 import { RectangleVertical } from '@/components/icons/RectangleVertical'
@@ -118,26 +119,38 @@ export const GenerationForm = (props: { onRun?: ThreadActions['run']; loading?: 
   }
 
   return (
-    <div className="space-y-4 py-2">
-      <div ref={inputsContainer} className="space-y-3 px-2">
-        <Label>
-          Model
-          <Select value={modelId} onValueChange={setModelId}>
-            <SelectTrigger className="items-start [&_[data-description]]:hidden">
-              <SelectValue placeholder="Model" />
-            </SelectTrigger>
-            <SelectContent className="max-w-[96vw]">
-              {imageModels.map((model) => (
-                <SelectItem key={model.modelId} value={model.modelId}>
-                  <p className="font-medium">{model.name}</p>
-                  <p className="truncate text-sm text-gray-11" data-description>
-                    {model.description}
-                  </p>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Label>
+    <div className="space-y-4 overflow-hidden py-2">
+      <div ref={inputsContainer} className="space-y-3 overflow-hidden px-2">
+        <Label htmlFor="model">Model</Label>
+        <Select value={modelId} onValueChange={setModelId}>
+          <SelectTrigger id="model" className="h-auto max-w-full whitespace-normal text-left">
+            <SelectValue placeholder="Model" />
+          </SelectTrigger>
+          <SelectContent className="max-w-80">
+            {imageModels.map((model) => (
+              <SelectItem key={model.modelId} value={model.modelId}>
+                <div className="flex gap-2">
+                  <div className="h-16 w-16 shrink-0">
+                    <Image
+                      src={model.coverImage}
+                      alt={model.name}
+                      fill
+                      className="object-cover"
+                      sizes="4rem"
+                    />
+                  </div>
+
+                  <div className="grow">
+                    <p className="font-medium">{model.name}</p>
+                    <p className="text-xs text-gray-11" data-description>
+                      {model.description}
+                    </p>
+                  </div>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         {inputs.loras && (
           <div className="space-y-2 text-sm font-medium">
