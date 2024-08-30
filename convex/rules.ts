@@ -24,10 +24,10 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return ctx.viewerId === message.userId
       },
     },
-    images: {
+    images_v1: {
       write: async ({ operation, ent: image, value }) => {
-        if (operation === 'create') return ctx.viewerId === value.userId
-        return ctx.viewerId === image.userId
+        if (operation === 'create') return ctx.viewerId === value.ownerId
+        return ctx.viewerId === image.ownerId
       },
     },
   })

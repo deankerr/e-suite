@@ -19,7 +19,7 @@ const register = async (
     input: Record<string, unknown> & {
       messageId?: Id<'messages'>
       threadId?: Id<'threads'>
-      imageId?: Id<'images'>
+      imageId?: string
     }
     delay?: number
   },
