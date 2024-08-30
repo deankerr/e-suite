@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Tabs } from '@radix-ui/themes'
+import { Card, Tabs } from '@radix-ui/themes'
 import fuzzysort from 'fuzzysort'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ModelsTable } from '@/app/admin/chat-models/ModelsTable'
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
+import { ModelLogo } from '@/components/icons/ModelLogo'
 import { SearchField } from '@/components/ui/SearchField'
 import { useModels } from '@/lib/api'
 
@@ -37,10 +38,53 @@ export default function Page() {
           </div>
 
           <Tabs.Content value="badges">
-            <div className="flex flex-wrap gap-2">
-              {sortResults.map(({ obj: model }) => (
-                <ChatModelCard key={model._id} model={model} />
-              ))}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-wrap gap-2">
+                {sortResults.map(({ obj: model }) => (
+                  <ChatModelCard key={model._id} model={model} />
+                ))}
+              </div>
+
+              <div className="flex h-fit shrink-0 flex-wrap gap-1">
+                {chatModels?.map((model) => (
+                  <Card key={model._id} className="h-20 w-80 p-2.5">
+                    <div className="grid h-full grid-rows-[auto_1fr] items-center gap-y-1">
+                      <div className="grid grid-cols-[1.5rem_1fr] items-center gap-2">
+                        <ModelLogo
+                          modelName={model.name}
+                          size={18}
+                          className="justify-self-center"
+                        />
+                        <div className="truncate text-sm font-medium">{model.name}</div>
+                      </div>
+
+                      <div className="grid grid-flow-col grid-cols-[4rem_1fr_auto] grid-rows-2 gap-x-1 text-xs">
+                        <div className="row-span-2 text-center text-xs">
+                          {model.contextLength.toLocaleString()}
+                          <br />
+                          context
+                        </div>
+
+                        <div>{model.creatorName}</div>
+                        <div>{model.endpoint}</div>
+
+                        {model.pricing.type === 'llm' ? (
+                          <>
+                            <div className="text-right tabular-nums">
+                              in ${model.pricing.tokenInput.toFixed(2)} / Mtok
+                            </div>
+                            <div className="text-right tabular-nums">
+                              out ${model.pricing.tokenOutput.toFixed(2)} / Mtok
+                            </div>
+                          </>
+                        ) : model.pricing.type === 'free' ? (
+                          <div className="row-span-2 place-self-center text-grass-11">free</div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
           </Tabs.Content>
 
