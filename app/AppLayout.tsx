@@ -1,4 +1,4 @@
-import { NavRail } from '@/app/NavRail'
+import { NavigationRail } from '@/components/navigation/NavigationRail'
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -7,7 +7,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
       id="app-layout"
       vaul-drawer-wrapper=""
     >
-      <NavRail />
+      <NavigationRail />
       {children}
     </div>
   )
