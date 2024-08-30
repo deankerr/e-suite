@@ -15,7 +15,7 @@ export const metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <Theme className="flex h-screen flex-col gap-2 p-3">
+    <Theme className="flex h-dvh flex-col gap-2 px-3">
       <div className="flex-start h-12 shrink-0 gap-3 rounded-lg border border-grayA-3 bg-grayA-2 px-3">
         <Link href={appConfig.baseUrl} aria-label="Go to home page">
           <AppTitle />
