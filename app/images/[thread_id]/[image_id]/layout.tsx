@@ -8,10 +8,13 @@ export async function generateMetadata({
   const response = await fetch(`${getConvexSiteUrl()}/page?route=image&id=${params.image_id}`)
   if (!response.ok) return {}
 
-  const data = await response.json()
+  const data = (await response.json()) as Partial<{ title: string; description: string }>
   return {
     title: data.title,
-    description: data.description,
+    description:
+      data.description && data.description.length > 200
+        ? data.description.slice(0, 200) + '...'
+        : data.description,
   }
 }
 
