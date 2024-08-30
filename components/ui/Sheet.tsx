@@ -3,6 +3,7 @@
 import * as React from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
+import { Theme } from '@radix-ui/themes'
 import { cva } from 'class-variance-authority'
 
 import { IconButton } from '@/components/ui/Button'
@@ -63,18 +64,20 @@ const SheetContent = React.forwardRef<
   return (
     <SheetPortal>
       <SheetOverlay />
-      <SheetPrimitive.Content
-        ref={ref}
-        className={cn(sheetVariants({ side }), className)}
-        {...props}
-      >
-        <SheetPrimitive.Close className="absolute right-2 top-2 z-10" asChild>
-          <IconButton variant="ghost" aria-label="Close">
-            <Icons.X size={20} />
-          </IconButton>
-        </SheetPrimitive.Close>
-        {children}
-      </SheetPrimitive.Content>
+      <Theme asChild>
+        <SheetPrimitive.Content
+          ref={ref}
+          className={cn(sheetVariants({ side }), className)}
+          {...props}
+        >
+          <SheetPrimitive.Close className="absolute right-2 top-2 z-10" asChild>
+            <IconButton variant="ghost" size="3" aria-label="Close">
+              <Icons.X size={20} />
+            </IconButton>
+          </SheetPrimitive.Close>
+          {children}
+        </SheetPrimitive.Content>
+      </Theme>
     </SheetPortal>
   )
 })
@@ -99,7 +102,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn('text-foreground text-lg font-semibold', className)}
+    className={cn('text-lg font-semibold text-foreground', className)}
     {...props}
   />
 ))
@@ -111,7 +114,7 @@ const SheetDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
-    className={cn('text-muted-foreground text-sm', className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ))

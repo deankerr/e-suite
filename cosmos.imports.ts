@@ -4,8 +4,11 @@
 import { RendererConfig, UserModuleWrappers } from 'react-cosmos-core';
 
 import * as fixture0 from './components/text-document-editor/__fixtures__/TextDocumentEditor';
-import * as fixture1 from './components/generation/__fixtures__/GenerationForm';
-import * as fixture2 from './components/composer/__fixtures__/Composer';
+import * as fixture1 from './components/navigation/__fixtures__/NavigationSheet';
+import * as fixture2 from './components/navigation/__fixtures__/NavigationRail';
+import * as fixture3 from './components/navigation/__fixtures__/Navigation';
+import * as fixture4 from './components/generation/__fixtures__/GenerationForm';
+import * as fixture5 from './components/composer/__fixtures__/Composer';
 
 import * as decorator0 from './components/cosmos.decorator';
 import * as decorator1 from './components/text-document-editor/__fixtures__/cosmos.decorator';
@@ -18,8 +21,11 @@ export const rendererConfig: RendererConfig = {
 
 const fixtures = {
   'components/text-document-editor/__fixtures__/TextDocumentEditor.tsx': { module: fixture0 },
-  'components/generation/__fixtures__/GenerationForm.tsx': { module: fixture1 },
-  'components/composer/__fixtures__/Composer.tsx': { module: fixture2 }
+  'components/navigation/__fixtures__/NavigationSheet.tsx': { module: fixture1 },
+  'components/navigation/__fixtures__/NavigationRail.tsx': { module: fixture2 },
+  'components/navigation/__fixtures__/Navigation.tsx': { module: fixture3 },
+  'components/generation/__fixtures__/GenerationForm.tsx': { module: fixture4 },
+  'components/composer/__fixtures__/Composer.tsx': { module: fixture5 }
 };
 
 const decorators = {

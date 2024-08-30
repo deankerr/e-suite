@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
-import { NavSheet } from '@/app/NavRail'
+import { NavigationSheet } from '@/components/navigation/NavigationSheet'
 import { FavouriteButton } from '@/components/threads/FavouriteButton'
 import { ThreadMenu } from '@/components/threads/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
@@ -42,11 +42,11 @@ export const Header = ({ thread_id }: { thread_id: string }) => {
   if (!thread) return <SectionHeader />
   return (
     <SectionHeader>
-      <NavSheet>
+      <NavigationSheet>
         <IconButton variant="ghost" aria-label="Open navigation sheet" className="md:invisible">
           <Icons.List size={20} />
         </IconButton>
-      </NavSheet>
+      </NavigationSheet>
 
       <h1 className="truncate px-1 text-sm font-medium">
         <Link
