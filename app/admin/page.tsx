@@ -10,7 +10,7 @@ import { useCacheQuery, useModels } from '@/lib/api'
 
 export default function Page() {
   const events = useCacheQuery(api.db.admin.events.latest, {})
-  const { chatModels, imageModelsDb } = useModels()
+  const { chatModels, imageModels } = useModels()
 
   return (
     <AdminPageWrapper>
@@ -56,7 +56,7 @@ export default function Page() {
           </div>
           <div className="flex gap-1 py-2">
             <Badge color="green">Image</Badge>
-            <div className="text-sm">{imageModelsDb?.length ?? '...'}</div>
+            <div className="text-sm">{imageModels?.length ?? '...'}</div>
           </div>
         </div>
       </Card>
