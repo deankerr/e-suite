@@ -135,65 +135,6 @@ const image_models = defineEnt(imageModelFields).field('resourceKey', v.string()
 })
 
 // * images
-export const imageFields = {
-  sourceType: v.optional(v.union(v.literal('textToImage'), v.literal('user'))),
-  sourceUrl: v.string(),
-
-  fileId: v.id('_storage'),
-  format: v.string(),
-  width: v.number(),
-  height: v.number(),
-  blurDataUrl: v.string(),
-  color: v.string(),
-
-  nsfwProbability: v.optional(v.number()),
-
-  captionModelId: v.optional(v.string()),
-  captionTitle: v.optional(v.string()),
-  captionDescription: v.optional(v.string()),
-  captionOCR: v.optional(v.string()),
-
-  objects: v.optional(
-    v.array(
-      v.object({
-        label: v.string(),
-        score: v.number(),
-        box: v.object({
-          xmin: v.number(),
-          ymin: v.number(),
-          xmax: v.number(),
-          ymax: v.number(),
-        }),
-      }),
-    ),
-  ),
-  objectsModelId: v.optional(v.string()),
-
-  generationData: v.optional(
-    v.object({
-      prompt: v.string(),
-      modelId: v.string(),
-      modelName: v.string(),
-      endpointId: v.string(),
-    }),
-  ),
-
-  searchText: v.string(),
-}
-const images = defineEnt(imageFields)
-  .deletion('scheduled', {
-    delayMs: timeToDelete,
-  })
-  .field('uid', v.string(), { unique: true })
-  .edge('message')
-  .edge('thread')
-  .edge('user')
-  .index('sourceUrl', ['sourceUrl'])
-  .searchIndex('searchText', {
-    searchField: 'searchText',
-    filterFields: ['threadId', 'userId'],
-  })
-
 export const imagesFieldsV1 = {
   sourceUrl: v.string(),
   sourceType: v.union(v.literal('generation'), v.literal('userMessageUrl')),
@@ -344,7 +285,6 @@ const messages = defineEnt(messageFields)
   .edge('thread')
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
-  .edges('images', { ref: true, deletion: 'soft' })
   .edges('images_v1')
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
@@ -381,7 +321,6 @@ const threads = defineEnt(threadFields)
   .edges('images_v1')
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
-  .edges('images', { ref: true, deletion: 'soft' })
 
 // * Users
 export const userFields = {
@@ -405,7 +344,6 @@ const users = defineEnt(userFields)
   .edges('threads', { ref: true, deletion: 'soft' })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
-  .edges('images', { ref: true, deletion: 'soft' })
   .edges('images_v1', { ref: 'ownerId', deletion: 'soft' })
 
 export const usersApiKeysFields = {
@@ -455,7 +393,7 @@ export const job3Fields = {
 
   messageId: v.optional(v.id('messages')),
   threadId: v.optional(v.id('threads')),
-  imageId: v.optional(v.id('images')),
+  imageId: v.optional(v.string()),
 }
 const jobs3 = defineEnt(job3Fields)
   .index('status', ['status'])
@@ -468,7 +406,6 @@ const schema = defineEntSchema(
   {
     audio,
     chat_models,
-    images,
     images_v1,
     images_metadata,
     images_search_text,
@@ -486,7 +423,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: false,
+    schemaValidation: true,
   },
 )
 

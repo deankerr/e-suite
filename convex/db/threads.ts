@@ -162,87 +162,16 @@ export const list = query({
   },
 })
 
-export const latestMessages = query({
-  args: {
-    slugOrId: v.string(),
-    limit: v.number(),
-    byMediaType: v.optional(literals('images', 'audio')),
-    role: v.optional(literals('assistant', 'user')),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return []
-
-    if (args.byMediaType) {
-      const messageIdsAll = await thread
-        .edge(args.byMediaType)
-        .order('desc')
-        .filter((q) => q.eq(q.field('deletionTime'), undefined))
-        .take(args.limit)
-        .map(async (media) => media.messageId)
-
-      const messageIds = [...new Set(messageIdsAll)]
-
-      const messages = await ctx.table('messages').getMany(messageIds)
-
-      return await asyncMap(
-        messages
-          .filter((message) => message !== null)
-          .filter((message) =>
-            !message.deletionTime && args.role ? message.role === args.role : true,
-          ),
-        async (message) => await getMessageEdges(ctx, message),
-      )
-    }
-
-    const messages = await thread
-      .edge('messages')
-      .order('desc')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('deletionTime'), undefined),
-          args.role ? q.eq(q.field('role'), args.role) : true,
-        ),
-      )
-      .take(args.limit)
-      .map(async (message) => await getMessageEdges(ctx, message))
-
-    return messages
-  },
-})
-
 export const listMessages = query({
   args: {
     slugOrId: v.string(),
     paginationOpts: paginationOptsValidator,
-    byMediaType: v.optional(literals('images', 'audio')),
     role: v.optional(literals('assistant', 'user')),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
     if (!thread) return emptyPage()
-
-    if (args.byMediaType) {
-      const messages = await thread
-        .edge(args.byMediaType)
-        .order('desc')
-        .filter((q) => q.eq(q.field('deletionTime'), undefined))
-        .paginate(args.paginationOpts)
-        .map(
-          async (media) =>
-            await media
-              .edgeX('message')
-              .then(async (message) => await getMessageEdges(ctx, message)),
-        )
-
-      const uniqueIds = new Set(messages.page.map((m) => m._id))
-      const page = [...uniqueIds].map((id) =>
-        messages.page.find((m) => m._id === id),
-      ) as (typeof messages)['page']
-
-      return { ...messages, page: args.role ? page.filter((m) => m.role === args.role) : page }
-    }
 
     const messages = await thread
       .edge('messages')

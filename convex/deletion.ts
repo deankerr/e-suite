@@ -12,7 +12,7 @@ const searchTime = ms('2 seconds')
 const timeToDelete = ms('1 day')
 const deleteFilesDelay = ms('1 minute')
 
-const fileTables: TableNames[] = ['audio', 'images', 'speech']
+const fileTables: TableNames[] = ['audio', 'images_v1', 'speech']
 
 const argsSchema = z.tuple([
   z.object({
@@ -44,7 +44,7 @@ export const scheduleFileDeletion = internalMutation({
         const { id, table } = args[0].origin
 
         if (fileTables.includes(table)) {
-          const ent = await ctx.unsafeDb.get(id as Id<'images'>)
+          const ent = await ctx.unsafeDb.get(id as Id<'images_v1'>)
           const fileId = ent?.fileId
           if (!fileId) {
             console.error('no fileId found for', id, table)
@@ -89,7 +89,7 @@ export const deleteFiles = internalMutation({
   },
   handler: async (ctx, { files }) => {
     for (const file of files) {
-      const ent = await ctx.unsafeDb.get(file.entId as Id<'images'>)
+      const ent = await ctx.unsafeDb.get(file.entId as Id<'images_v1'>)
       if (ent) {
         console.warn('owner of scheduled file deletion still exists')
         continue
