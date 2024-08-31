@@ -16,6 +16,7 @@ import type {
 import type * as action_chat from "../action/chat.js";
 import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
 import type * as action_evaluateNsfwProbability from "../action/evaluateNsfwProbability.js";
+import type * as action_generate from "../action/generate.js";
 import type * as action_generateImageVisionData from "../action/generateImageVisionData.js";
 import type * as action_generateThreadTitle from "../action/generateThreadTitle.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
@@ -75,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "action/chat": typeof action_chat;
   "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
   "action/evaluateNsfwProbability": typeof action_evaluateNsfwProbability;
+  "action/generate": typeof action_generate;
   "action/generateImageVisionData": typeof action_generateImageVisionData;
   "action/generateThreadTitle": typeof action_generateThreadTitle;
   "action/ingestImageUrl": typeof action_ingestImageUrl;

@@ -14,6 +14,7 @@ import type {
   runConfigChatV,
   runConfigTextToAudioV,
   runConfigTextToImageV,
+  runConfigTextToImageV2,
   runConfigV,
 } from './schema'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
@@ -45,6 +46,7 @@ export type EModel = EChatModel | EImageModel | EVoiceModel
 
 export type RunConfig = Infer<typeof runConfigV>
 export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>
+export type RunConfigTextToImageV2 = Infer<typeof runConfigTextToImageV2>
 export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
 export type RunConfigChat = Infer<typeof runConfigChatV>
 

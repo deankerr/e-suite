@@ -1,4 +1,4 @@
-import { asyncMap, pick } from 'convex-helpers'
+import { asyncMap, omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
@@ -6,7 +6,7 @@ import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { generateId } from '../lib/utils'
-import { imagesFieldsV1, imagesMetadataFields } from '../schema'
+import { imagesFieldsV1, imagesMetadataFields, imagesV2Fields } from '../schema'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
@@ -274,3 +274,23 @@ function parseUrlToImageId(url: string) {
   const [uid, ext] = filename?.split('.') ?? []
   return [uid, ext] as const
 }
+
+export const createImageV2 = internalMutation({
+  args: {
+    ...omit(imagesV2Fields, ['createdAt']),
+    createdAt: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const createdAt = args.createdAt ?? Date.now()
+    const id = generateId('i', Date.now())
+
+    await ctx.skipRules.table('images_v2').insert({
+      ...args,
+      id,
+      createdAt,
+    })
+
+    // await ctx.scheduler.runAfter(0, internal.action.generateImageVisionData.run, { imageId: id })
+    return id
+  },
+})

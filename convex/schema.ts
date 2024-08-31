@@ -49,6 +49,31 @@ export const runConfigTextToImageV = v.object({
   ),
 })
 
+export const runConfigTextToImageV2 = v.object({
+  type: v.literal('textToImage'),
+  modelId: v.string(),
+  workflow: v.optional(v.string()),
+
+  prompt: v.string(),
+  negativePrompt: v.optional(v.string()),
+  n: v.optional(v.number()),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
+  size: v.optional(v.string()),
+  seed: v.optional(v.number()),
+  guidanceScale: v.optional(v.number()),
+  steps: v.optional(v.number()),
+
+  loras: v.optional(
+    v.array(
+      v.object({
+        path: v.string(),
+        scale: v.optional(v.number()),
+      }),
+    ),
+  ),
+})
+
 export const runConfigTextToAudioV = v.object({
   type: v.literal('textToAudio'),
   resourceKey: v.string(),
@@ -163,6 +188,27 @@ const images_v1 = defineEnt(imagesFieldsV1)
   })
   .index('generationId', ['generationId'])
 
+export const imagesV2Fields = {
+  sourceUrl: v.string(),
+  sourceType: v.string(),
+  fileId: v.id('_storage'),
+  format: v.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  color: v.string(),
+
+  generationId: v.optional(v.id('generations_v2')),
+  runId: v.string(),
+  createdAt: v.optional(v.number()),
+  ownerId: v.id('users'),
+}
+const images_v2 = defineEnt(imagesV2Fields)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .field('id', v.string(), { unique: true })
+  .index('generationId', ['generationId'])
+  .index('ownerId', ['ownerId'])
+
 export const imagesMetadataFields = {
   data: v.union(
     v.object({
@@ -236,6 +282,31 @@ const generations_v1 = defineEnt(generationFieldsV1)
   .index('threadId', ['threadId'])
   .index('messageId', ['messageId'])
   .index('userId', ['userId'])
+
+export const generationV2Fields = {
+  status: literals('queued', 'active', 'done', 'failed'),
+  updatedAt: v.number(),
+  workflow: v.optional(v.string()),
+  input: v.any(),
+  output: v.optional(v.any()),
+  results: v.optional(
+    v.array(
+      v.object({
+        contentType: v.string(),
+        url: v.string(),
+        width: v.number(),
+        height: v.number(),
+      }),
+    ),
+  ),
+  errors: v.optional(v.array(v.any())),
+  runId: v.string(),
+  ownerId: v.id('users'),
+}
+const generations_v2 = defineEnt(generationV2Fields)
+  .index('status', ['status'])
+  .index('runId', ['runId'])
+  .index('ownerId', ['ownerId'])
 
 // * audio
 export const audioFields = {
@@ -407,9 +478,11 @@ const schema = defineEntSchema(
     audio,
     chat_models,
     images_v1,
+    images_v2,
     images_metadata,
     images_search_text,
     generations_v1,
+    generations_v2,
     image_models,
 
     messages,
