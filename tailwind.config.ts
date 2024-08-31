@@ -203,11 +203,21 @@ const config: Config = {
           from: { transform: 'translateY(0)' },
           to: { transform: 'translateY(10%)' },
         },
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
       },
       animation: {
         shimmerDown: 'shimmerDown 8s linear infinite',
         starfieldDown: 'starfieldDown 20s linear infinite',
         scanlinesDown: 'scanlinesDown 20s linear infinite',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
       boxShadow: {
         glow: '0 0 10px 0px #ff720021, 0 0 5px 0px #ff720021',

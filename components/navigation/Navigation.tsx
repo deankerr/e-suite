@@ -62,6 +62,13 @@ export const Navigation = ({
           <div className="line-clamp-2 select-none overflow-hidden pr-3">New</div>
         </NavItem>
 
+        <AdminOnlyUi>
+          <NavItem href={'/generate-demo'}>
+            <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">Generate Demo</div>
+          </NavItem>
+        </AdminOnlyUi>
+
         <ScrollArea scrollbars="vertical">
           <div ref={containerRef}>
             {threads

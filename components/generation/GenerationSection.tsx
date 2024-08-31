@@ -1,3 +1,5 @@
+'use client'
+
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { ScrollArea } from '@radix-ui/themes'
 
@@ -5,8 +7,11 @@ import { GenerationForm } from '@/components/generation/GenerationForm'
 import { NavigationSheet } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { useGenerate } from '@/lib/api'
 
 export const GenerationSection = () => {
+  const generate = useGenerate()
+
   return (
     <Section className="w-80 shrink-0">
       <SectionHeader>
@@ -29,7 +34,7 @@ export const GenerationSection = () => {
       </SectionHeader>
 
       <ScrollArea>
-        <GenerationForm />
+        <GenerationForm onRun2={generate} />
       </ScrollArea>
     </Section>
   )

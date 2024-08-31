@@ -26,7 +26,7 @@ import { defaultImageModelInputs } from '@/convex/shared/defaults'
 import { imageModels } from '@/convex/shared/imageModels'
 import { twx } from '@/lib/utils'
 
-import type { ThreadActions } from '@/lib/api'
+import type { RunConfigTextToImage, RunConfigTextToImageV2 } from '@/convex/types'
 
 const Label = twx(LabelPrimitive)`text-sm font-medium block`
 
@@ -82,10 +82,12 @@ const Lora = ({
 
 export const GenerationForm = ({
   onRun,
+  onRun2,
   loading,
   storageKey = '',
 }: {
-  onRun?: ThreadActions['run']
+  onRun?: ({ runConfig }: { runConfig: RunConfigTextToImage }) => void
+  onRun2?: ({ inputs }: { inputs: RunConfigTextToImageV2[] }) => void
   loading?: boolean
   storageKey?: string
 }) => {
@@ -100,26 +102,27 @@ export const GenerationForm = ({
   const inputs = model?.inputs ?? defaultImageModelInputs
 
   const run = () => {
-    if (!onRun) {
-      console.error('No run function provided')
-      return
+    const runConfig = {
+      type: 'textToImage' as const,
+      modelId,
+      loras: loras.map((lora) => ({
+        path: lora.path,
+        scale: lora.scale,
+      })),
+      prompt,
+      negativePrompt,
+      n: quantity,
+      seed,
+      size: dimensions as 'portrait' | 'square' | 'landscape',
     }
 
-    onRun({
-      runConfig: {
-        type: 'textToImage' as const,
-        modelId,
-        loras: loras.map((lora) => ({
-          path: lora.path,
-          scale: lora.scale,
-        })),
-        prompt,
-        negativePrompt,
-        n: quantity,
-        seed,
-        size: dimensions as 'portrait' | 'square' | 'landscape',
-      },
-    })
+    if (onRun) {
+      onRun({ runConfig })
+    }
+
+    if (onRun2) {
+      onRun2({ inputs: [runConfig] })
+    }
   }
 
   return (
@@ -265,7 +268,7 @@ export const GenerationForm = ({
       </div>
 
       <div className="flex justify-end px-2">
-        <Button variant="surface" loading={loading} onClick={run} disabled={!onRun}>
+        <Button variant="surface" loading={loading} onClick={run} disabled={!onRun && !onRun2}>
           Run
         </Button>
       </div>
