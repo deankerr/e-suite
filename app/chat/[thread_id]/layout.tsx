@@ -9,7 +9,6 @@ export async function generateMetadata({ params }: { params: { thread_id: string
   const data = await response.json()
   return {
     title: data.title,
-    description: data.description,
   }
 }
 
