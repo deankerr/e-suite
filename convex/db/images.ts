@@ -146,7 +146,7 @@ export const createImage = internalMutation({
     const message = await ctx.table('messages').getX(messageId)
 
     const id = generateId('i', Date.now())
-    await ctx.table('images_v1').insert({
+    await ctx.skipRules.table('images_v1').insert({
       ...args,
       ownerId: message.userId,
       messages: [messageId],
