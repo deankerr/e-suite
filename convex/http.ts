@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server'
 
-import { serve } from './db/images'
+import { serve, serveUrl } from './db/images'
 import { serveMetadata } from './db/page'
 import { handleWebhook } from './lib/clerk'
 
@@ -13,6 +13,7 @@ http.route({
 })
 
 http.route({ pathPrefix: '/i/', method: 'GET', handler: serve })
+http.route({ pathPrefix: '/image-url/', method: 'GET', handler: serveUrl })
 
 http.route({
   path: '/page',

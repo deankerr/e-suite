@@ -269,6 +269,30 @@ export const serve = httpAction(async (ctx, request) => {
   return new Response(blob)
 })
 
+export const serveUrl = httpAction(async (ctx, request) => {
+  const [imageId] = parseUrlToImageId(request.url)
+  const image = imageId
+    ? await ctx.runQuery(internal.db.images.getDoc, {
+        imageId,
+      })
+    : null
+
+  if (!image) {
+    return new Response('Not Found', { status: 404 })
+  }
+
+  if (image.sourceUrl.startsWith('https://fal.media/')) {
+    return new Response(image.sourceUrl)
+  }
+
+  const url = await ctx.storage.getUrl(image.fileId)
+  if (!url) {
+    throw new Error('Unable to get url for imageId: ' + image.id)
+  }
+
+  return new Response(url)
+})
+
 function parseUrlToImageId(url: string) {
   const filename = parseFilename(url, { strict: false })
   const [uid, ext] = filename?.split('.') ?? []
