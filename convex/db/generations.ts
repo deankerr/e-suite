@@ -105,6 +105,30 @@ export const fail = internalMutation({
 })
 
 // => V2
+export const getV2 = query({
+  args: {
+    generationId: v.id('generations_v2'),
+  },
+  handler: async (ctx, { generationId }) => {
+    return await ctx
+      .table('generations_v2')
+      .get(generationId)
+      .then(async (gen) =>
+        gen
+          ? {
+              ...gen,
+              images: await ctx
+                .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
+                .map(async (image) => ({
+                  ...image,
+                  fileUrl: await ctx.storage.getUrl(image.fileId),
+                })),
+            }
+          : null,
+      )
+  },
+})
+
 export const list = query({
   args: {
     paginationOpts: paginationOptsValidator,
