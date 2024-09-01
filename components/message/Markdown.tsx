@@ -1,12 +1,14 @@
 import './syntax.css'
 
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
+import { useSetAtom } from 'jotai'
 import ReactMarkdown from 'react-markdown'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
+import { htmlTextAtom } from '@/components/artifacts/atoms'
 import { LinkBadge } from '@/components/message/LinkBadge'
 import { IconButton } from '@/components/ui/Button'
 
@@ -45,14 +47,7 @@ const Component = (props: { text?: string }) => {
             </code>
           )
         },
-        pre: ({ children, node, ...props }) => {
-          return (
-            <pre {...props}>
-              {children}
-              <CopyToClipboardButton code={children} />
-            </pre>
-          )
-        },
+        pre: ({ node, ...props }) => <Pre {...props} />,
       }}
     >
       {props.text}
@@ -62,25 +57,45 @@ const Component = (props: { text?: string }) => {
 
 export const Markdown = memo(Component)
 
-const CopyToClipboardButton = ({ code }: { code: React.ReactNode }) => {
+const Pre = ({ children, ...props }: React.ComponentProps<'pre'>) => {
   let text = ''
 
-  if (code && typeof code === 'object' && 'props' in code) {
-    const { children } = code.props
-    if (children && typeof children === 'string') {
-      text = children
+  if (children && typeof children === 'object' && 'props' in children) {
+    if (children.props.children && typeof children.props.children === 'string') {
+      text = children.props.children
     }
   }
 
+  return (
+    <pre {...props}>
+      {children}
+      <div className="absolute right-2 top-2 space-x-2">
+        <CopyToHTMLArtifactButton text={text} />
+        <CopyToClipboardButton text={text} />
+      </div>
+    </pre>
+  )
+}
+
+const CopyToClipboardButton = ({ text }: { text: string }) => {
   return (
     <IconButton
       aria-label="Copy to clipboard"
       onClick={() => navigator.clipboard.writeText(text)}
       variant="soft"
-      className="absolute right-2 top-2"
       disabled={!text}
     >
       <Icons.Copy size={18} />
+    </IconButton>
+  )
+}
+
+const CopyToHTMLArtifactButton = ({ text }: { text: string }) => {
+  const setHtmlText = useSetAtom(htmlTextAtom)
+
+  return (
+    <IconButton aria-label="Copy to HTML artifact" onClick={() => setHtmlText(text)} variant="soft">
+      <Icons.FileHtml size={18} />
     </IconButton>
   )
 }
