@@ -159,6 +159,15 @@ const image_models = defineEnt(imageModelFields).field('resourceKey', v.string()
   unique: true,
 })
 
+export const collectionFields = {
+  title: v.string(),
+}
+export const collections = defineEnt(collectionFields)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .field('id', v.string(), { unique: true })
+  .edge('user', { field: 'ownerId' })
+  .edges('images_v2')
+
 // * images
 export const imagesFieldsV1 = {
   sourceUrl: v.string(),
@@ -208,6 +217,7 @@ const images_v2 = defineEnt(imagesV2Fields)
   .field('id', v.string(), { unique: true })
   .index('generationId', ['generationId'])
   .index('ownerId', ['ownerId'])
+  .edges('collections')
 
 export const imagesMetadataFields = {
   data: v.union(
@@ -416,6 +426,7 @@ const users = defineEnt(userFields)
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images_v1', { ref: 'ownerId', deletion: 'soft' })
+  .edges('collections', { ref: 'ownerId', deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -477,6 +488,7 @@ const schema = defineEntSchema(
   {
     audio,
     chat_models,
+    collections,
     images_v1,
     images_v2,
     images_metadata,

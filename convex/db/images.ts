@@ -299,6 +299,16 @@ function parseUrlToImageId(url: string) {
   return [uid, ext] as const
 }
 
+// => V2
+
+export const getImageV2Edges = async (ctx: QueryCtx, image: Ent<'images_v2'>) => {
+  return {
+    ...image.doc(),
+    fileUrl: await ctx.storage.getUrl(image.fileId),
+    collectionIds: await image.edge('collections').map((c) => c._id),
+  }
+}
+
 export const createImageV2 = internalMutation({
   args: {
     ...omit(imagesV2Fields, ['createdAt']),

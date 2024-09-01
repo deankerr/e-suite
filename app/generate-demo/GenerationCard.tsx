@@ -2,9 +2,9 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Accordion from '@radix-ui/react-accordion'
 import { Badge } from '@radix-ui/themes'
 import { UsePaginatedQueryReturnType } from 'convex/react'
-import NextImage from 'next/image'
 import Link from 'next/link'
 
+import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
 import { IconButton } from '@/components/ui/Button'
@@ -73,35 +73,23 @@ export const GenerationCard = ({
       {/* > images */}
       <div className="flex min-h-32 flex-wrap gap-2 px-2 py-2">
         {generation.images.map((image, index) => (
-          <div
-            key={image.id}
-            style={{ aspectRatio: image.width / image.height }}
-            className="w-52 cursor-pointer overflow-hidden rounded-md"
-            onClick={() =>
-              openLightbox({
-                slides: generation.images.map((image) => ({
-                  type: 'image',
-                  src: image.fileUrl ?? '',
-                  width: image.width,
-                  height: image.height,
-                  blurDataURL: image?.blurDataUrl,
-                })),
-                index,
-              })
-            }
-          >
-            <NextImage
-              alt=""
-              key={image.id}
-              src={image.fileUrl ?? ''}
-              placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
-              blurDataURL={image?.blurDataUrl}
-              width={image.width}
-              height={image.height}
-              className=""
+          <ImageCardNext key={image.id} image={image}>
+            <div
+              className="absolute inset-0 cursor-pointer"
+              onClick={() =>
+                openLightbox({
+                  slides: generation.images.map((image) => ({
+                    type: 'image',
+                    src: image.fileUrl ?? '',
+                    width: image.width,
+                    height: image.height,
+                    blurDataURL: image?.blurDataUrl,
+                  })),
+                  index,
+                })
+              }
             />
-            <div className="absolute inset-0 rounded-md border-2 border-grayA-6" />
-          </div>
+          </ImageCardNext>
         ))}
 
         {generation.status !== 'failed' &&
