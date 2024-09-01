@@ -2,7 +2,7 @@
 
 import { useQuery } from 'convex/react'
 
-import { GenerationCard } from '@/app/generate-demo/GenerationCard'
+import { GenerationCard } from '@/app/generations/GenerationCard'
 import { api } from '@/convex/_generated/api'
 
 import type { Id } from '@/convex/_generated/dataModel'

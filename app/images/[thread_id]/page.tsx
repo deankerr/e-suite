@@ -24,7 +24,7 @@ export default function Page({ params }: { params: { thread_id: string } }) {
 
   const actions = useThreadActions(thread?._id)
 
-  const [showGenerate, setShowGenerate] = useState(true)
+  const [showGenerate, setShowGenerate] = useState(false)
 
   return (
     <>

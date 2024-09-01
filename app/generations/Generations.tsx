@@ -1,6 +1,5 @@
 'use client'
 
-import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { usePaginatedQuery } from 'convex/react'
 
 import { Section } from '@/components/ui/Section'
