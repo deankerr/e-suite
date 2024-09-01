@@ -4,12 +4,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { EndpointBadge, endpointTokens } from '@/app/admin/Badges'
-import AnthropicLogo from '@/assets/logos/anthropic.svg'
-import CohereLogo from '@/assets/logos/cohere.svg'
-import GoogleLogo from '@/assets/logos/google.svg'
-import MetaLogo from '@/assets/logos/meta.svg'
-import MistralAiLogo from '@/assets/logos/mistral.svg'
-import OpenAiLogo from '@/assets/logos/openai.svg'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { isValidUrl } from '@/convex/shared/helpers'
 import { cn } from '@/lib/utils'
@@ -71,13 +65,13 @@ export const ChatModelCardSkeleton = () => {
 }
 
 const llmAuthorLogos: Record<string, string | StaticImport> = {
-  anthropic: AnthropicLogo,
-  cohere: CohereLogo,
-  google: GoogleLogo,
-  meta: MetaLogo,
-  'meta-llama': MetaLogo,
-  mistralai: MistralAiLogo,
-  openai: OpenAiLogo,
+  // anthropic: AnthropicLogo,
+  // cohere: CohereLogo,
+  // google: GoogleLogo,
+  // meta: MetaLogo,
+  // 'meta-llama': MetaLogo,
+  // mistralai: MistralAiLogo,
+  // openai: OpenAiLogo,
 }
 
 const LinkButton = ({
