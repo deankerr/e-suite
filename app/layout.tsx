@@ -2,8 +2,8 @@ import './globals.css'
 
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
+import { OpenPanelComponent } from '@openpanel/nextjs'
 import { Theme, ThemePanel } from '@radix-ui/themes'
-import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
@@ -71,7 +71,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {environment === 'prod' && (
           <>
             <SpeedInsights />
-            <Analytics />
+            <OpenPanelComponent
+              clientId="6f2e9c18-cc3c-49d1-a2ac-9e482c2e4a66"
+              trackScreenViews={true}
+              trackAttributes={true}
+              trackOutgoingLinks={true}
+            />
           </>
         )}
         <TailwindBreakpointIndicator />
