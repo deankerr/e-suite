@@ -9,6 +9,7 @@ import { IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { AppLayout } from '@/app/AppLayout'
+import { LightboxProvider } from '@/components/lightbox/LightboxProvider'
 import { ClientProviders } from '@/components/util/ClientProviders'
 import { TailwindBreakpointIndicator } from '@/components/util/TailwindBreakpointIndicator'
 import { appConfig } from '@/config/config'
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Theme accentColor="orange" grayColor="slate" appearance="dark" panelBackground="solid">
               <AppLayout>{children}</AppLayout>
               <Toaster position="top-right" theme="light" richColors />
+              <LightboxProvider />
               {environment === 'dev' && <ThemePanel defaultOpen={false} />}
             </Theme>
           </ClientProviders>

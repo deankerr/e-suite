@@ -5,7 +5,7 @@ import { getQuery, parseFilename } from 'ufo'
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { generateId } from '../lib/utils'
+import { generateId, generateTimestampId } from '../lib/utils'
 import { imagesFieldsV1, imagesMetadataFields, imagesV2Fields } from '../schema'
 import { getUserIsViewer } from './users'
 
@@ -306,7 +306,11 @@ export const createImageV2 = internalMutation({
   },
   handler: async (ctx, args) => {
     const createdAt = args.createdAt ?? Date.now()
-    const id = generateId('i', Date.now())
+
+    let id
+    while (!id || (await ctx.skipRules.table('images_v2').get('id', id))) {
+      id = generateTimestampId(createdAt)
+    }
 
     await ctx.skipRules.table('images_v2').insert({
       ...args,
