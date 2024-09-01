@@ -249,3 +249,9 @@ export const useModels = (resourceKey?: string) => {
 
   return result as Partial<typeof result>
 }
+
+// * collections
+export const useCollection = (collectionId?: Id<'collections'>) => {
+  const collection = useQuery(api.db.collections.get, collectionId ? { collectionId } : 'skip')
+  return collection
+}

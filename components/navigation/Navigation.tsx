@@ -69,6 +69,11 @@ export const Navigation = ({
           </NavItem>
         </AdminOnlyUi>
 
+        <NavItem href={'/collections'}>
+          <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
+          <div className="line-clamp-2 select-none overflow-hidden pr-3">Collections</div>
+        </NavItem>
+
         <ScrollArea scrollbars="vertical">
           <div ref={containerRef}>
             {threads

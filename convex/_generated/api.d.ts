@@ -24,6 +24,7 @@ import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
 import type * as db_admin_see from "../db/admin/see.js";
+import type * as db_collections from "../db/collections.js";
 import type * as db_generations from "../db/generations.js";
 import type * as db_images from "../db/images.js";
 import type * as db_jobs from "../db/jobs.js";
@@ -84,6 +85,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   "db/admin/events": typeof db_admin_events;
   "db/admin/see": typeof db_admin_see;
+  "db/collections": typeof db_collections;
   "db/generations": typeof db_generations;
   "db/images": typeof db_images;
   "db/jobs": typeof db_jobs;

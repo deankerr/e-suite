@@ -1,4 +1,4 @@
-import { asyncMap, omit, pick } from 'convex-helpers'
+import { asyncMap, pick } from 'convex-helpers'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { nanoid } from 'nanoid/non-secure'
@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid/non-secure'
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { generationFieldsV1, generationV2Fields, runConfigTextToImageV2 } from '../schema'
+import { getImageV2Edges } from './images'
 
 import type { MutationCtx } from '../types'
 import type { Infer } from 'convex/values'
@@ -119,10 +120,7 @@ export const getV2 = query({
               ...gen,
               images: await ctx
                 .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
-                .map(async (image) => ({
-                  ...image,
-                  fileUrl: await ctx.storage.getUrl(image.fileId),
-                })),
+                .map(async (image) => getImageV2Edges(ctx, image)),
             }
           : null,
       )
@@ -143,10 +141,7 @@ export const list = query({
         ...gen,
         images: await ctx
           .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
-          .map(async (image) => ({
-            ...image,
-            fileUrl: await ctx.storage.getUrl(image.fileId),
-          })),
+          .map(async (image) => getImageV2Edges(ctx, image)),
       }))
   },
 })

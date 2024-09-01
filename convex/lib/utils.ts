@@ -88,3 +88,8 @@ export function generateTimestampId(timestamp: number, pad = ID_PADDING): string
   const padding = customAlphabet(BASE62, pad)()
   return `${base62Timestamp}${padding}`
 }
+
+export function generateSlugId(length = 8) {
+  const nanoid = customAlphabet(BASE62, length)
+  return nanoid()
+}
