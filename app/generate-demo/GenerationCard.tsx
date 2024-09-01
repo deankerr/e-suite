@@ -6,8 +6,11 @@ import NextImage from 'next/image'
 import Link from 'next/link'
 
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
+import { useLightbox } from '@/components/lightbox/hooks'
 import { IconButton } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
+
+import type { RunConfigTextToImageV2 } from '@/convex/types'
 
 const statusColor = {
   queued: 'yellow',
@@ -30,21 +33,24 @@ export const GenerationCard = ({
   generation: UsePaginatedQueryReturnType<typeof api.db.generations.list>['results'][number]
   defaultOpen?: boolean
 }) => {
-  const gen = generation
+  const input = generation.input as RunConfigTextToImageV2
+  const openLightbox = useLightbox()
+
   return (
-    <div key={gen._id} className="divide-y rounded border bg-gray-1">
+    <div key={generation._id} className="divide-y rounded border bg-gray-1">
       {/* > header */}
       <div className="flex-start h-10 gap-2 px-1 pl-2 text-sm">
-        <Badge color={statusColor[gen.status]} size="2">
-          {statusIcon[gen.status]}
-          {gen.status}
+        <Badge color={statusColor[generation.status]} size="2">
+          {statusIcon[generation.status]}
+          {generation.status}
         </Badge>
 
-        <div className="text-xs text-gray-11" suppressHydrationWarning>
-          <Link href={`/generate-demo/g/${gen._id}`}>
-            {new Date(gen._creationTime).toLocaleString()}
-          </Link>
-        </div>
+        <Link
+          href={`/generate-demo/g/${generation._id}`}
+          className="text-xs text-gray-11 hover:underline"
+        >
+          {new Date(generation._creationTime).toLocaleString()}
+        </Link>
         <div className="grow" />
         <IconButton variant="ghost" color="red" aria-label="Delete">
           <Icons.Trash size={18} />
@@ -53,45 +59,61 @@ export const GenerationCard = ({
 
       {/* > details */}
       <div className="min-h-10 space-y-2 p-2 text-sm">
-        <p>{gen.input?.prompt}</p>
+        <p>{input.prompt}</p>
         <div className="flex flex-wrap gap-1">
-          <Badge>{gen.input?.modelId}</Badge>
-          <Badge>{gen.input?.size}</Badge>
+          <Badge>{input.modelId}</Badge>
+          {input.size && <Badge>{input.size}</Badge>}
           <Badge>
             <Icons.ImageSquare />
-            {gen.input?.n}
+            {input.n ?? 1}
           </Badge>
         </div>
       </div>
 
       {/* > images */}
-      <div className="flex min-h-32 flex-wrap gap-2 p-2">
-        {gen.images.map((image) => (
+      <div className="flex min-h-32 flex-wrap gap-2 px-2 py-2">
+        {generation.images.map((image, index) => (
           <div
             key={image.id}
-            className="aspect-square w-64 overflow-hidden"
-            style={{ backgroundColor: image.color + '30' }}
+            style={{ aspectRatio: image.width / image.height }}
+            className="w-52 cursor-pointer overflow-hidden rounded-md"
+            onClick={() =>
+              openLightbox({
+                slides: generation.images.map((image) => ({
+                  type: 'image',
+                  src: image.fileUrl ?? '',
+                  width: image.width,
+                  height: image.height,
+                  blurDataURL: image?.blurDataUrl,
+                })),
+                index,
+              })
+            }
           >
             <NextImage
               alt=""
+              key={image.id}
               src={image.fileUrl ?? ''}
               placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
               blurDataURL={image?.blurDataUrl}
               width={image.width}
               height={image.height}
-              className="h-full w-full object-contain"
+              className=""
             />
+            <div className="absolute inset-0 rounded-md border-2 border-grayA-6" />
           </div>
         ))}
 
-        {gen.status !== 'failed' &&
-          [...Array(Math.max(0, (gen.input?.n ?? 0) - gen.images.length))].map((_, i) => (
-            <div key={i} className="aspect-square w-64 overflow-hidden">
-              <ImageGeneratingEffect />
-            </div>
-          ))}
+        {generation.status !== 'failed' &&
+          [...Array(Math.max(0, (generation.input?.n ?? 0) - generation.images.length))].map(
+            (_, i) => (
+              <div key={i} className="aspect-square w-64 overflow-hidden">
+                <ImageGeneratingEffect />
+              </div>
+            ),
+          )}
 
-        {gen.errors?.map((error, index) => (
+        {generation.errors?.map((error, index) => (
           <pre
             key={index}
             className="h-fit text-wrap rounded border border-red-7 bg-red-4 p-2 text-xs text-red-12"
@@ -118,8 +140,8 @@ export const GenerationCard = ({
           <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
             <div className="p-2">
               <pre className="max-h-64 overflow-y-auto text-wrap font-mono text-xs">
-                {JSON.stringify({ ...gen, images: undefined }, null, 2)}
-                {JSON.stringify(gen.images, null, 2)}
+                {JSON.stringify({ ...generation, images: undefined }, null, 2)}
+                {JSON.stringify(generation.images, null, 2)}
               </pre>
             </div>
           </Accordion.Content>
