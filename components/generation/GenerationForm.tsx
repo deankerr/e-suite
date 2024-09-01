@@ -5,6 +5,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Label as LabelPrimitive } from '@radix-ui/react-label'
 import { RadioCards } from '@radix-ui/themes'
+import { Authenticated } from 'convex/react'
 import { nanoid } from 'nanoid/non-secure'
 import Image from 'next/image'
 
@@ -96,6 +97,7 @@ export const GenerationForm = ({
 
   const { value, setState } = useGenerationFormState(storageKey)
   if (!value) return null
+
   const { modelId, loras, prompt, negativePrompt, quantity, seed, dimensions } = value
 
   const model = imageModels.find((model) => model.modelId === modelId)
@@ -265,12 +267,14 @@ export const GenerationForm = ({
             placeholder="random"
           />
         </div>
-      </div>
 
-      <div className="flex justify-end px-2">
-        <Button variant="surface" loading={loading} onClick={run} disabled={!onRun && !onRun2}>
-          Run
-        </Button>
+        <div className="flex justify-end px-2">
+          <Authenticated>
+            <Button variant="surface" loading={loading} onClick={run} disabled={!onRun && !onRun2}>
+              Run
+            </Button>
+          </Authenticated>
+        </div>
       </div>
     </div>
   )

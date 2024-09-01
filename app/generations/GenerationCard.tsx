@@ -46,7 +46,7 @@ export const GenerationCard = ({
         </Badge>
 
         <Link
-          href={`/generate-demo/g/${generation._id}`}
+          href={`/generations/g/${generation._id}`}
           className="text-xs text-gray-11 hover:underline"
         >
           {new Date(generation._creationTime).toLocaleString()}

@@ -63,16 +63,16 @@ export const Navigation = ({
         </NavItem>
 
         <AdminOnlyUi>
-          <NavItem href={'/generate-demo'}>
-            <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
-            <div className="line-clamp-2 select-none overflow-hidden pr-3">Generate Demo</div>
+          <NavItem href={'/generations'}>
+            <Icons.FlowerLotus size={20} className="place-self-center text-iris-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">Generate</div>
+          </NavItem>
+
+          <NavItem href={'/collections'}>
+            <Icons.FolderStar size={20} className="place-self-center text-iris-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">Collections</div>
           </NavItem>
         </AdminOnlyUi>
-
-        <NavItem href={'/collections'}>
-          <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
-          <div className="line-clamp-2 select-none overflow-hidden pr-3">Collections</div>
-        </NavItem>
 
         <ScrollArea scrollbars="vertical">
           <div ref={containerRef}>
