@@ -65,6 +65,7 @@ export const Composer = ({
       <div className="flex">
         <Textarea
           minRows={2}
+          maxRows={20}
           placeholder="Enter your prompt..."
           value={textValue}
           onValueChange={setTextValue}

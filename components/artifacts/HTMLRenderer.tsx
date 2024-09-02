@@ -1,30 +1,35 @@
-import { useEffect, useRef } from 'react'
-import DOMPurify from 'dompurify'
+'use client'
 
-export const HTMLRenderer = ({
-  htmlText,
-  className = '',
-  sanitize = true,
-}: {
-  htmlText: string
-  className?: string
-  sanitize?: boolean
-}) => {
+import { useEffect, useRef } from 'react'
+
+export const HTMLRenderer = ({ htmlText }: { htmlText: string }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const sanitizedHtml = sanitize ? DOMPurify.sanitize(htmlText, { WHOLE_DOCUMENT: true }) : htmlText
+  const processedHtml = htmlText
 
   useEffect(() => {
     const iframe = iframeRef.current
     if (!iframe) return
-    iframe.srcdoc = sanitizedHtml
-  }, [sanitizedHtml])
+
+    const csp = `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self';`
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta http-equiv="Content-Security-Policy" content="${csp}">
+        </head>
+        <body>${processedHtml}</body>
+      </html>
+    `
+
+    iframe.srcdoc = htmlContent
+  }, [processedHtml])
 
   return (
     <iframe
       ref={iframeRef}
-      title="Safe HTML Content"
+      title="Rendered HTML Content"
       sandbox="allow-scripts"
-      className={`h-full w-full border-0 ${className}`}
+      className="h-full w-full"
       tabIndex={0}
       aria-label="Rendered HTML content"
     />
