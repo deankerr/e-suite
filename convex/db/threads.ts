@@ -11,7 +11,6 @@ import { emptyPage, generateSlug } from '../lib/utils'
 import { kvListV, runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
 import { imageModels } from '../shared/imageModels'
-import { createJob as createJobNext } from '../workflows/jobs'
 import { createGeneration } from './generations'
 import { getImageEdges, getImageWithEdges } from './images'
 import { createEvaluateMessageUrlsJob } from './jobs'
@@ -597,12 +596,12 @@ const createTextToAudioRun = async (
     })
     .parse(runConfig)
 
-  const jobId = await createJobNext.textToAudio(ctx, {
-    ...input,
+  await ctx.scheduler.runAfter(0, internal.action.textToAudio.run, {
     messageId,
+    input,
   })
 
-  return jobId
+  return '' as Id<'jobs3'>
 }
 
 // * chat
