@@ -3,6 +3,7 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { ScrollArea } from '@radix-ui/themes'
+import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -58,22 +59,22 @@ export const Navigation = ({
           </div>
         </NavItem>
 
-        <NavItem href={'/chat/new'}>
-          <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
-          <div className="line-clamp-2 select-none overflow-hidden pr-3">New</div>
-        </NavItem>
+        <Authenticated>
+          <NavItem href={'/chat/new'}>
+            <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">New Chat</div>
+          </NavItem>
 
-        <AdminOnlyUi>
           <NavItem href={'/generations'}>
-            <Icons.FlowerLotus size={20} className="place-self-center text-iris-11" />
+            <Icons.FlowerLotus size={20} className="place-self-center text-accent-11" />
             <div className="line-clamp-2 select-none overflow-hidden pr-3">Generate</div>
           </NavItem>
 
           <NavItem href={'/collections'}>
-            <Icons.FolderStar size={20} className="place-self-center text-iris-11" />
+            <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
             <div className="line-clamp-2 select-none overflow-hidden pr-3">Collections</div>
           </NavItem>
-        </AdminOnlyUi>
+        </Authenticated>
 
         <ScrollArea scrollbars="vertical">
           <div ref={containerRef}>
