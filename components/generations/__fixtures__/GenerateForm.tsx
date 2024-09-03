@@ -1,11 +1,11 @@
 'use client'
 
-import { GenerationForm } from '@/components/generation/GenerationForm'
+import { GenerateForm } from '@/components/generations/GenerateForm'
 
 export default function Fixture() {
   return (
     <div className="mx-auto h-full">
-      <GenerationForm />
+      <GenerateForm />
     </div>
   )
 }

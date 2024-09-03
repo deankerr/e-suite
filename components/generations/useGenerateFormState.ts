@@ -3,7 +3,7 @@ import { useSessionStorageValue } from '@react-hookz/web'
 
 import { defaultImageModel } from '@/convex/shared/defaults'
 
-type GenerationFormState = {
+type GenerateFormState = {
   modelId: string
   prompt: string
   negativePrompt: string
@@ -13,7 +13,7 @@ type GenerationFormState = {
   loras: { id: string; path: string; scale: number }[]
 }
 
-const defaultValue: GenerationFormState = {
+const defaultValue: GenerateFormState = {
   modelId: defaultImageModel,
   prompt: '',
   negativePrompt: '',
@@ -23,8 +23,8 @@ const defaultValue: GenerationFormState = {
   loras: [],
 }
 
-export const useGenerationFormState = (storageKey: string) => {
-  const { set, ...rest } = useSessionStorageValue<GenerationFormState>(
+export const useGenerateFormState = (storageKey: string) => {
+  const { set, ...rest } = useSessionStorageValue<GenerateFormState>(
     `generation-form-state-${storageKey}`,
     {
       defaultValue,
@@ -33,7 +33,7 @@ export const useGenerationFormState = (storageKey: string) => {
   )
 
   const setState = useCallback(
-    (state: Partial<GenerationFormState>) => {
+    (state: Partial<GenerateFormState>) => {
       set((prev) => {
         return {
           ...defaultValue,

@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { ImageGeneratingEffect } from '@/components/images/ImageGeneratingEffect'
 import { useLightbox } from '@/components/lightbox/hooks'
-import { IconButton } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
 
 import type { RunConfigTextToImageV2 } from '@/convex/types'
@@ -52,9 +51,9 @@ export const GenerationCard = ({
           {new Date(generation._creationTime).toLocaleString()}
         </Link>
         <div className="grow" />
-        <IconButton variant="ghost" color="red" aria-label="Delete">
+        {/* <IconButton variant="ghost" color="red" aria-label="Delete">
           <Icons.Trash size={18} />
-        </IconButton>
+        </IconButton> */}
       </div>
 
       {/* > details */}

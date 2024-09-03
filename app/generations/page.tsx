@@ -1,10 +1,10 @@
-import { GenerationSection } from '@/components/generation/GenerationSection'
+import { GenerateSection } from '@/components/generations/GenerateSection'
 import { Generations } from '@/components/generations/Generations'
 
 export default function Page() {
   return (
     <>
-      <GenerationSection />
+      <GenerateSection />
       <Generations />
     </>
   )
