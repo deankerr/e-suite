@@ -1,8 +1,7 @@
 'use client'
 
+import { Select } from '@radix-ui/themes'
 import { usePathname, useRouter } from 'next/navigation'
-
-import { SelectList } from '@/components/ui/SelectList'
 
 const routes = [
   { path: '/admin', label: 'Dashboard' },
@@ -17,11 +16,15 @@ export const AdminNav = () => {
   const pathname = usePathname()
 
   return (
-    <SelectList
-      items={routes.map((r) => ({ value: r.path, label: r.label }))}
-      placeholder="Select a page"
-      defaultValue={pathname}
-      onValueChange={(path) => router.push(path)}
-    />
+    <Select.Root defaultValue={pathname} onValueChange={(path) => router.push(path)}>
+      <Select.Trigger placeholder="Select a page" />
+      <Select.Content>
+        {routes.map((r) => (
+          <Select.Item key={r.path} value={r.path}>
+            {r.label}
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select.Root>
   )
 }
