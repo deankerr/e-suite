@@ -253,9 +253,3 @@ export const useModels = (resourceKey?: string) => {
 export const useViewer = () => {
   return useQuery(api.users.getViewer, {})
 }
-
-// * collections
-export const useCollection = (collectionId?: Id<'collections'>) => {
-  const collection = useQuery(api.db.collections.get, collectionId ? { collectionId } : 'skip')
-  return collection
-}
