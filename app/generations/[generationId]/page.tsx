@@ -1,16 +1,12 @@
 'use client'
 
-import { useQuery } from 'convex/react'
-
 import { GenerationCard } from '@/app/generations/GenerationCard'
-import { api } from '@/convex/_generated/api'
+import { useGeneration } from '@/app/lib/api/generations'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
-export default function Page({ params }: { params: { genId: Id<'generations_v2'> } }) {
-  const generation = useQuery(api.db.generations.getV2, {
-    generationId: params.genId,
-  })
+export default function Page({ params }: { params: { generationId: Id<'generations_v2'> } }) {
+  const generation = useGeneration(params.generationId)
 
   return generation ? (
     <div className="w-full">

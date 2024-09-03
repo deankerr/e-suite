@@ -1,13 +1,11 @@
 'use client'
 
-import { usePaginatedQuery } from 'convex/react'
-
+import { useGenerations } from '@/app/lib/api/generations'
 import { Section } from '@/components/ui/Section'
-import { api } from '@/convex/_generated/api'
 import { GenerationCard } from './GenerationCard'
 
 export const Generations = () => {
-  const generations = usePaginatedQuery(api.db.generations.list, {}, { initialNumItems: 10 })
+  const generations = useGenerations()
 
   return (
     <Section className="overflow-y-auto border-none bg-transparent px-1">
