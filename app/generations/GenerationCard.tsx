@@ -46,7 +46,7 @@ export const GenerationCard = ({
         </Badge>
 
         <Link
-          href={`/generations/g/${generation._id}`}
+          href={`/generations/${generation._id}`}
           className="text-xs text-gray-11 hover:underline"
         >
           {new Date(generation._creationTime).toLocaleString()}
@@ -73,23 +73,25 @@ export const GenerationCard = ({
       {/* > images */}
       <div className="flex min-h-32 flex-wrap gap-2 px-2 py-2">
         {generation.images.map((image, index) => (
-          <ImageCardNext key={image.id} image={image}>
-            <div
-              className="absolute inset-0 cursor-pointer"
-              onClick={() =>
-                openLightbox({
-                  slides: generation.images.map((image) => ({
-                    type: 'image',
-                    src: `/i/${image.id}`,
-                    width: image.width,
-                    height: image.height,
-                    blurDataURL: image?.blurDataUrl,
-                  })),
-                  index,
-                })
-              }
-            />
-          </ImageCardNext>
+          <div key={image.id} className="w-72">
+            <ImageCardNext image={image}>
+              <div
+                className="absolute inset-0 cursor-pointer"
+                onClick={() =>
+                  openLightbox({
+                    slides: generation.images.map((image) => ({
+                      type: 'image',
+                      src: `/i/${image.id}`,
+                      width: image.width,
+                      height: image.height,
+                      blurDataURL: image?.blurDataUrl,
+                    })),
+                    index,
+                  })
+                }
+              />
+            </ImageCardNext>
+          </div>
         ))}
 
         {generation.status !== 'failed' &&
