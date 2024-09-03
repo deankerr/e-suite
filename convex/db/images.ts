@@ -93,7 +93,11 @@ export const getDoc = internalQuery({
     imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await getImageEnt(ctx, args.imageId)
+    const image = await getImageEnt(ctx, args.imageId)
+    if (image) return image
+
+    const imageV2 = await getImageV2Ent(ctx, args.imageId)
+    return imageV2
   },
 })
 
@@ -301,10 +305,16 @@ function parseUrlToImageId(url: string) {
 
 // => V2
 
+export const getImageV2Ent = async (ctx: QueryCtx, imageId: string) => {
+  const _id = ctx.unsafeDb.normalizeId('images_v2', imageId)
+  return _id
+    ? await ctx.table('images_v2').get(_id)
+    : await ctx.table('images_v2').get('id', imageId)
+}
+
 export const getImageV2Edges = async (ctx: QueryCtx, image: Ent<'images_v2'>) => {
   return {
     ...image.doc(),
-    fileUrl: await ctx.storage.getUrl(image.fileId),
     collectionIds: await image.edge('collections').map((c) => c._id),
   }
 }

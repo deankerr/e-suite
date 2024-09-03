@@ -80,7 +80,7 @@ export const GenerationCard = ({
                 openLightbox({
                   slides: generation.images.map((image) => ({
                     type: 'image',
-                    src: image.fileUrl ?? '',
+                    src: `/i/${image.id}`,
                     width: image.width,
                     height: image.height,
                     blurDataURL: image?.blurDataUrl,
