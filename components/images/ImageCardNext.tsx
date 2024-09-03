@@ -1,10 +1,11 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
-import { useMutation, usePaginatedQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { CreateCollectionDialog } from '@/components/collections/dialogs'
 import { DotsThreeFillY } from '@/components/icons/DotsThreeFillY'
 import { IconButton } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
@@ -20,14 +21,14 @@ export const ImageCardNext = ({
   }
   children?: React.ReactNode
 }) => {
-  const collections = usePaginatedQuery(api.db.collections.list, {}, { initialNumItems: 50 })
+  const collections = useQuery(api.db.collections.latest, {})
   const updateCollection = useMutation(api.db.collections.update)
 
   return (
     <div
       key={image.id}
       style={{ aspectRatio: image.width / image.height }}
-      className="w-52 overflow-hidden rounded-lg"
+      className="overflow-hidden rounded-lg"
     >
       <NextImage
         alt=""
@@ -67,13 +68,14 @@ export const ImageCardNext = ({
               Add to collection
             </DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent>
-              <DropdownMenu.Item>
-                <Icons.Plus />
-                Create new…
-              </DropdownMenu.Item>
+              <CreateCollectionDialog imageId={image._id}>
+                <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+                  Create new…
+                </DropdownMenu.Item>
+              </CreateCollectionDialog>
               <DropdownMenu.Separator />
 
-              {collections.results.map((collection) => {
+              {collections?.map((collection) => {
                 const isInCollection = image.collectionIds?.some((id) => id === collection._id)
 
                 return (

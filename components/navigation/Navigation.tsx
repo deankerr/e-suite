@@ -26,10 +26,11 @@ const ThreadIcon = ({ type = '', className }: { type?: string; className?: strin
 
 const NavItem = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof Link>) => {
   const pathname = usePathname()
-
+  const path = props.href.toString()
+  const isActive = path !== '/' && pathname.startsWith(path)
   return (
     <Link
-      aria-current={pathname === props.href ? 'page' : undefined}
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
         'grid h-12 shrink-0 grid-cols-[2.75rem_13.25rem] items-center transition-all hover:bg-grayA-2 aria-[current=page]:bg-grayA-3',
         className,
