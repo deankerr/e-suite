@@ -9,7 +9,7 @@ import { Authenticated } from 'convex/react'
 import { nanoid } from 'nanoid/non-secure'
 import Image from 'next/image'
 
-import { useGenerationFormState } from '@/components/generation/useGenerationFormState'
+import { useGenerateFormState } from '@/components/generations/useGenerateFormState'
 import { RectangleHorizontal } from '@/components/icons/RectangleHorizontal'
 import { RectangleVertical } from '@/components/icons/RectangleVertical'
 import { Button, IconButton } from '@/components/ui/Button'
@@ -81,7 +81,7 @@ const Lora = ({
   )
 }
 
-export const GenerationForm = ({
+export const GenerateForm = ({
   onRun,
   onRun2,
   loading,
@@ -95,7 +95,7 @@ export const GenerationForm = ({
   const [inputsContainer] = useAutoAnimate()
   const [lorasContainer] = useAutoAnimate()
 
-  const { value, setState } = useGenerationFormState(storageKey)
+  const { value, setState } = useGenerateFormState(storageKey)
   if (!value) return null
 
   const { modelId, loras, prompt, negativePrompt, quantity, seed, dimensions } = value

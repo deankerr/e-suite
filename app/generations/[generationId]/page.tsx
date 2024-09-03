@@ -1,7 +1,7 @@
 'use client'
 
-import { GenerationCard } from '@/app/generations/GenerationCard'
 import { useGeneration } from '@/app/lib/api/generations'
+import { GenerationCard } from '@/components/generations/GenerationCard'
 
 import type { Id } from '@/convex/_generated/dataModel'
 

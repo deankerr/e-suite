@@ -3,13 +3,13 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { ScrollArea } from '@radix-ui/themes'
 
-import { GenerationForm } from '@/components/generation/GenerationForm'
+import { GenerateForm } from '@/components/generations/GenerateForm'
 import { NavigationSheet } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { useGenerate } from '@/lib/api'
 
-export const GenerationSection = () => {
+export const GenerateSection = () => {
   const generate = useGenerate()
 
   return (
@@ -34,7 +34,7 @@ export const GenerationSection = () => {
       </SectionHeader>
 
       <ScrollArea>
-        <GenerationForm onRun2={generate} />
+        <GenerateForm onRun2={generate} />
       </ScrollArea>
     </Section>
   )

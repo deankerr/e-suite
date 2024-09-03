@@ -7,12 +7,12 @@ import * as fixture0 from './components/text-document-editor/__fixtures__/TextDo
 import * as fixture1 from './components/navigation/__fixtures__/NavigationSheet';
 import * as fixture2 from './components/navigation/__fixtures__/NavigationRail';
 import * as fixture3 from './components/navigation/__fixtures__/Navigation';
-import * as fixture4 from './components/generation/__fixtures__/GenerationForm';
+import * as fixture4 from './components/generations/__fixtures__/GenerateForm';
 import * as fixture5 from './components/composer/__fixtures__/Composer';
 
 import * as decorator0 from './components/cosmos.decorator';
 import * as decorator1 from './components/text-document-editor/__fixtures__/cosmos.decorator';
-import * as decorator2 from './components/generation/__fixtures__/cosmos.decorator';
+import * as decorator2 from './components/generations/__fixtures__/cosmos.decorator';
 
 export const rendererConfig: RendererConfig = {
   "playgroundUrl": "http://localhost:3344",
@@ -24,14 +24,14 @@ const fixtures = {
   'components/navigation/__fixtures__/NavigationSheet.tsx': { module: fixture1 },
   'components/navigation/__fixtures__/NavigationRail.tsx': { module: fixture2 },
   'components/navigation/__fixtures__/Navigation.tsx': { module: fixture3 },
-  'components/generation/__fixtures__/GenerationForm.tsx': { module: fixture4 },
+  'components/generations/__fixtures__/GenerateForm.tsx': { module: fixture4 },
   'components/composer/__fixtures__/Composer.tsx': { module: fixture5 }
 };
 
 const decorators = {
   'components/cosmos.decorator.tsx': { module: decorator0 },
   'components/text-document-editor/__fixtures__/cosmos.decorator.tsx': { module: decorator1 },
-  'components/generation/__fixtures__/cosmos.decorator.tsx': { module: decorator2 }
+  'components/generations/__fixtures__/cosmos.decorator.tsx': { module: decorator2 }
 };
 
 export const moduleWrappers: UserModuleWrappers = {
