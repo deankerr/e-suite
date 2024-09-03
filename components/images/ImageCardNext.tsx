@@ -15,7 +15,6 @@ export const ImageCardNext = ({
   children,
 }: {
   image: Doc<'images_v2'> & {
-    fileUrl: string | null
     collectionIds: Id<'collections'>[]
   }
   children?: React.ReactNode
@@ -32,7 +31,7 @@ export const ImageCardNext = ({
       <NextImage
         alt=""
         key={image.id}
-        src={image.fileUrl ?? ''}
+        src={`/i/${image.id}`}
         placeholder={image?.blurDataUrl ? 'blur' : 'empty'}
         blurDataURL={image?.blurDataUrl}
         width={image.width}
