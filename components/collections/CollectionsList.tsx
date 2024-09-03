@@ -5,16 +5,15 @@ import { Button, ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
+import { useCollections } from '@/app/lib/api/collections'
 import { CreateCollectionDialog } from '@/components/collections/dialogs'
 import { NavigationSheet } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { api } from '@/convex/_generated/api'
-import { useCacheQuery } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const CollectionsList = () => {
-  const collections = useCacheQuery(api.db.collections.latest, {})
+  const collections = useCollections()
   const params = useParams()
 
   return (

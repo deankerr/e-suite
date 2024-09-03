@@ -4,6 +4,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu, ScrollArea } from '@radix-ui/themes'
 import Link from 'next/link'
 
+import { useCollection } from '@/app/lib/api/collections'
 import { DeleteCollectionDialog, EditCollectionTitleDialog } from '@/components/collections/dialogs'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
@@ -11,17 +12,15 @@ import { useLightbox } from '@/components/lightbox/hooks'
 import { NavigationSheet } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { api } from '@/convex/_generated/api'
-import { useCacheQuery } from '@/lib/api'
 
 export const Collection = ({ collectionId }: { collectionId: string }) => {
-  const collection = useCacheQuery(api.db.collections.get, { collectionId })
+  const collection = useCollection(collectionId)
   const openLightbox = useLightbox()
 
   if (collection === undefined) {
     return (
       <Section>
-        <SectionHeader className="gap-1"></SectionHeader>
+        <SectionHeader>Loading...</SectionHeader>
       </Section>
     )
   }

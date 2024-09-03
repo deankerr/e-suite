@@ -33,7 +33,8 @@ export const get = query({
 export const latest = query({
   args: {},
   handler: async (ctx) => {
-    const viewer = await ctx.viewerX()
+    const viewer = await ctx.viewer()
+    if (!viewer) return null
 
     return await ctx
       .table('collections', 'ownerId', (q) => q.eq('ownerId', viewer._id))

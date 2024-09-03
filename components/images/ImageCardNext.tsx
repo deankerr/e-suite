@@ -1,10 +1,11 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
+import { useCollections } from '@/app/lib/api/collections'
 import { CreateCollectionDialog } from '@/components/collections/dialogs'
 import { DotsThreeFillY } from '@/components/icons/DotsThreeFillY'
 import { IconButton } from '@/components/ui/Button'
@@ -21,7 +22,7 @@ export const ImageCardNext = ({
   }
   children?: React.ReactNode
 }) => {
-  const collections = useQuery(api.db.collections.latest, {})
+  const collections = useCollections()
   const updateCollection = useMutation(api.db.collections.update)
 
   return (
