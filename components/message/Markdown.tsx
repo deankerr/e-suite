@@ -1,6 +1,6 @@
 import './syntax.css'
 
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useSetAtom } from 'jotai'
 import ReactMarkdown from 'react-markdown'
@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm'
 import { htmlTextAtom } from '@/components/artifacts/atoms'
 import { LinkBadge } from '@/components/message/LinkBadge'
 import { IconButton } from '@/components/ui/Button'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 
 const Component = (props: { text?: string }) => {
   if (!props.text) return null
@@ -70,7 +71,9 @@ const Pre = ({ children, ...props }: React.ComponentProps<'pre'>) => {
     <pre {...props}>
       {children}
       <div className="absolute right-2 top-2 space-x-2">
-        <CopyToHTMLArtifactButton text={text} />
+        <AdminOnlyUi>
+          <CopyToHTMLArtifactButton text={text} />
+        </AdminOnlyUi>
         <CopyToClipboardButton text={text} />
       </div>
     </pre>
