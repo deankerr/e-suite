@@ -115,7 +115,7 @@ const config: Config = {
 
       // shadcn/ui
       border: radixColors.css.gray[5],
-      input: radixColors.css.gray[3],
+      input: radixColors.css.gray[6],
       ring: 'var(--focus-8)',
       background: radixColors.css.gray[1],
       foreground: radixColors.css.gray[12],

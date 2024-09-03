@@ -34,7 +34,7 @@ export const GenerateSection = () => {
       </SectionHeader>
 
       <ScrollArea>
-        <GenerateForm onRun2={generate} />
+        <GenerateForm onRun={generate} />
       </ScrollArea>
     </Section>
   )
