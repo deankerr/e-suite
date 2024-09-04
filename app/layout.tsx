@@ -5,7 +5,7 @@ import { dark } from '@clerk/themes'
 import { OpenPanelComponent } from '@openpanel/nextjs'
 import { Theme, ThemePanel } from '@radix-ui/themes'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { IBM_Plex_Mono, Inter } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { AppLayout } from '@/app/AppLayout'
@@ -26,26 +26,25 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#111113',
+  themeColor: '#090909',
   colorScheme: 'dark',
 }
 
-const inter = Inter({
+const sans = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
 })
 
-const ibmPlexMono = IBM_Plex_Mono({
+const mono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
-  weight: ['400'],
   variable: '--font-mono',
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn('overscroll-none', inter.variable, ibmPlexMono.variable)}>
+    <html lang="en" className={cn('overscroll-none', sans.variable, mono.variable)}>
       {process.env.METICULOUS === 'true' && (
         <head>
           {/* eslint-disable-next-line @next/next/no-sync-scripts */}
