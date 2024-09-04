@@ -5,12 +5,9 @@ export function getMessageName(message: EMessage) {
 
   const { textToAudioConfig } = extractRunConfig(message.jobs)
   if (textToAudioConfig) return 'elevenlabs sound generation'
-  // if (textToImageConfig) {
-  //   const modelName = message.images[0]?.generationData?.modelName
-  //   return modelName ?? textToImageConfig.resourceKey
-  // }
 
   if (message.role === 'user') return 'You'
+  if (message.role === 'system') return 'System'
   return 'Assistant'
 }
 

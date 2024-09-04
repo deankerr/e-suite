@@ -1,10 +1,8 @@
-import './syntax.css'
-
 import { memo } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useSetAtom } from 'jotai'
+import { Highlight, themes } from 'prism-react-renderer'
 import ReactMarkdown from 'react-markdown'
-import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
@@ -25,23 +23,23 @@ const Component = (props: { text?: string }) => {
           const { children, className, node, ref, ...rest } = props
           const match = /language-(\w+)/.exec(className || '')
           return match ? (
-            <SyntaxHighlighter
-              {...rest}
-              language={match[1]}
-              style={{}}
-              useInlineStyles
-              customStyle={{
-                margin: 0,
-                padding: 0,
-                fontFamily: 'unset',
-                fontSize: 'unset',
-                lineHeight: 'unset',
-                backgroundColor: '#1D1F21',
-              }}
-              codeTagProps={{ style: {} }}
+            <Highlight
+              theme={themes.gruvboxMaterialDark}
+              code={String(children).replace(/\n$/, '')}
+              language={match[1] ?? ''}
             >
-              {String(children).replace(/\n$/, '')}
-            </SyntaxHighlighter>
+              {({ className, style, tokens, getLineProps, getTokenProps }) => (
+                <code style={style} className={className}>
+                  {tokens.map((line, i) => (
+                    <div key={i} {...getLineProps({ line })}>
+                      {line.map((token, key) => (
+                        <span key={key} {...getTokenProps({ token })} />
+                      ))}
+                    </div>
+                  ))}
+                </code>
+              )}
+            </Highlight>
           ) : (
             <code {...rest} className={className}>
               {children}
@@ -68,7 +66,7 @@ const Pre = ({ children, ...props }: React.ComponentProps<'pre'>) => {
   }
 
   return (
-    <pre {...props}>
+    <pre {...props} className="overflow-auto rounded-md bg-grayA-2 p-2">
       {children}
       <div className="absolute right-2 top-2 space-x-2">
         <AdminOnlyUi>
