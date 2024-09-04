@@ -3,37 +3,23 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtom } from 'jotai'
 
-import { MessageFeed } from '@/app/chat/[thread_id]/MessageFeed'
 import { htmlTextAtom } from '@/components/artifacts/atoms'
 import { HTMLRenderer } from '@/components/artifacts/HTMLRenderer'
-import { Composer } from '@/components/composer/Composer'
-import { ChatToolbar } from '@/components/threads/ChatToolbar'
-import { Thread } from '@/components/threads/Thread'
+import { Chat } from '@/components/chat/Chat'
+import { MessageFeed } from '@/components/chat/MessageFeed'
 import { IconButton } from '@/components/ui/Button'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { useThread, useThreadActions } from '@/lib/api'
 
-export default function Page({ params }: { params: { thread_id: string } }) {
-  const thread = useThread(params.thread_id)
-  const actions = useThreadActions(thread?._id)
-
+export default function Page({ params }: { params: { threadId: string } }) {
   const [htmlText, setHtmlText] = useAtom(htmlTextAtom)
 
   return (
     <>
-      <Thread thread_id={params.thread_id}>
-        <ChatToolbar thread_id={params.thread_id} />
+      <Chat threadId={params.threadId}>
         <div className="grow">
-          <MessageFeed slug={params.thread_id} />
+          <MessageFeed threadId={params.threadId} />
         </div>
-        {thread && thread.userIsViewer && (
-          <Composer
-            initialResourceKey={thread.latestRunConfig?.resourceKey}
-            loading={actions.state !== 'ready'}
-            onSend={actions.send}
-          />
-        )}
-      </Thread>
+      </Chat>
 
       {htmlText && (
         <Section>

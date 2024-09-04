@@ -83,7 +83,7 @@ export const Composer = ({
         </div>
       )}
       <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
-        <ModelPickerCmd value={resourceKey} onValueChange={setResourceKey}>
+        <ModelPickerCmd type="chat" value={resourceKey} onValueChange={setResourceKey}>
           <ModelButton resourceKey={resourceKey} />
         </ModelPickerCmd>
         <div className="flex-end ml-auto shrink-0 gap-2">
