@@ -24,7 +24,7 @@ export const ChatsList = () => {
           </IconButton>
         </NavigationSheet>
 
-        <Link href="/chat" className="underline-offset-2 hover:underline">
+        <Link href="/chats" className="underline-offset-2 hover:underline">
           Chats
         </Link>
 
@@ -40,7 +40,7 @@ export const ChatsList = () => {
           {threads?.map((thread) => (
             <Link
               key={thread._id}
-              href={`/chat/${thread.slug}`}
+              href={`/chats/${thread.slug}`}
               className={cn(
                 'truncate rounded-sm border-gray-3 px-2 py-3 text-sm font-medium hover:bg-gray-2',
                 thread.slug === params.threadId && 'bg-gray-3 hover:bg-gray-3',

@@ -1,4 +1,3 @@
-import { ChatsList } from '@/components/chat/ChatsList'
 import { getConvexSiteUrl } from '@/lib/utils'
 
 export async function generateMetadata({ params }: { params: { thread_id: string } }) {
@@ -12,10 +11,5 @@ export async function generateMetadata({ params }: { params: { thread_id: string
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <ChatsList />
-      {children}
-    </>
-  )
+  return <>{children}</>
 }
