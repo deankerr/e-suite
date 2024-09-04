@@ -11,10 +11,10 @@ import { api } from '@/convex/_generated/api'
 
 import type { VirtuosoHandle } from 'react-virtuoso'
 
-export const MessageFeed = ({ slug }: { slug: string }) => {
+export const MessageFeed = ({ threadId }: { threadId: string }) => {
   const { results, loadMore, status } = usePaginatedQuery(
     api.db.threads.listMessages,
-    { slugOrId: slug },
+    { slugOrId: threadId },
     {
       initialNumItems: appConfig.nInitialMessages,
     },
@@ -24,7 +24,7 @@ export const MessageFeed = ({ slug }: { slug: string }) => {
 
   const virtuoso = useRef<VirtuosoHandle>(null)
 
-  if (status === 'LoadingFirstPage' && slug !== 'new')
+  if (status === 'LoadingFirstPage' && threadId !== 'new')
     return (
       <div className="flex-col-center h-full">
         <LineZoom />
@@ -36,7 +36,7 @@ export const MessageFeed = ({ slug }: { slug: string }) => {
   return (
     <Virtuoso
       ref={virtuoso}
-      className="h-full text-sm"
+      className="h-full"
       alignToBottom
       followOutput="smooth"
       data={messages}
