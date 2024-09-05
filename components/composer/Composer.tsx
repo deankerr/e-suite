@@ -7,7 +7,6 @@ import ReactTextareaAutosize from 'react-textarea-autosize'
 import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
 import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
-import { useModels } from '@/lib/api'
 
 import type { ThreadActions } from '@/lib/api'
 
@@ -23,15 +22,10 @@ export const Composer = ({
   onSend?: ThreadActions['send']
 }) => {
   const [resourceKey, setResourceKey] = useState(initialResourceKey)
-  const { model } = useModels(resourceKey)
-  const type = model?.type ?? 'chat'
 
   const [textValue, setTextValue] = useState(defaultTextValue)
 
   const handleSend = (method: 'run' | 'add') => {
-    const configType = type === 'image' ? 'textToImage' : 'chat'
-    if (configType !== 'chat') return
-
     const config = {
       method,
       text: textValue,
@@ -60,7 +54,7 @@ export const Composer = ({
       </div>
 
       <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
-        <ModelPickerCmd type="chat" value={resourceKey} onValueChange={setResourceKey}>
+        <ModelPickerCmd value={resourceKey} onValueChange={setResourceKey}>
           <ModelButton resourceKey={resourceKey} />
         </ModelPickerCmd>
         <div className="flex-end ml-auto shrink-0 gap-2">

@@ -6,13 +6,13 @@ import fuzzysort from 'fuzzysort'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ModelsTable } from '@/app/admin/chat-models/ModelsTable'
+import { useChatModels } from '@/app/lib/api/models'
 import { ChatModelCard } from '@/components/cards/ChatModelCard'
 import { ModelLogo } from '@/components/icons/ModelLogo'
 import { SearchField } from '@/components/ui/SearchField'
-import { useModels } from '@/lib/api'
 
 export default function Page() {
-  const { chatModels } = useModels()
+  const chatModels = useChatModels()
   const [searchValue, setSearchValue] = useState('')
 
   const sortResults = fuzzysort.go(searchValue, chatModels ?? [], {
