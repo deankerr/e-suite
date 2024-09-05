@@ -8,7 +8,7 @@ import { HTMLRenderer } from '@/components/artifacts/HTMLRenderer'
 import { Chat } from '@/components/chat/Chat'
 import { MessageFeed } from '@/components/chat/MessageFeed'
 import { IconButton } from '@/components/ui/Button'
-import { Section, SectionHeader } from '@/components/ui/Section'
+import { Panel, PanelHeader } from '@/components/ui/Panel'
 
 export default function Page({ params }: { params: { threadId: string } }) {
   const [htmlText, setHtmlText] = useAtom(htmlTextAtom)
@@ -22,18 +22,18 @@ export default function Page({ params }: { params: { threadId: string } }) {
       </Chat>
 
       {htmlText && (
-        <Section>
-          <SectionHeader className="pl-3 pr-1">
+        <Panel>
+          <PanelHeader className="pl-3 pr-1">
             Artifact
             <div className="grow" />
             <IconButton aria-label="Close" variant="ghost" onClick={() => setHtmlText('')}>
               <Icons.X size={18} />
             </IconButton>
-          </SectionHeader>
+          </PanelHeader>
           <div className="grow">
             <HTMLRenderer htmlText={htmlText} />
           </div>
-        </Section>
+        </Panel>
       )}
     </>
   )

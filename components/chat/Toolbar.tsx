@@ -2,7 +2,7 @@
 
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { Button } from '@/components/ui/Button'
-import { SectionToolbar } from '@/components/ui/Section'
+import { PanelToolbar } from '@/components/ui/Panel'
 import { useThread } from '@/lib/api'
 
 export const Toolbar = ({ threadId }: { threadId: string }) => {
@@ -10,12 +10,12 @@ export const Toolbar = ({ threadId }: { threadId: string }) => {
 
   if (!thread) return null
   return (
-    <SectionToolbar>
+    <PanelToolbar>
       <TextEditorDialog slug={thread.slug}>
         <Button variant="soft" color="gray" size="1">
           Instructions
         </Button>
       </TextEditorDialog>
-    </SectionToolbar>
+    </PanelToolbar>
   )
 }

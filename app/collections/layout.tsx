@@ -1,4 +1,4 @@
-import { CollectionsList } from '@/components/collections/CollectionsList'
+import { CollectionsNavPanel } from '@/components/collections/CollectionsNavPanel'
 
 export const metadata = {
   title: 'Collections',
@@ -7,7 +7,7 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <CollectionsList />
+      <CollectionsNavPanel />
       {children}
     </>
   )
