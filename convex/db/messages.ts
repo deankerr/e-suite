@@ -36,11 +36,13 @@ export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) 
 }
 
 export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const thread = await message.edgeX('thread')
   return {
     ...message.doc(),
     audio: await getMessageAudio(ctx, message._id),
     images: await message.edge('images_v1').map(async (image) => await getImageEdges(ctx, image)),
     jobs: await getMessageJobs(ctx, message._id),
+    threadSlug: thread.slug,
     userIsViewer: getUserIsViewer(ctx, message.userId),
   }
 }

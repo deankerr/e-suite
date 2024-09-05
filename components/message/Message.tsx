@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Card, DropdownMenu } from '@radix-ui/themes'
+import { RiMoreFill } from '@remixicon/react'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
-import { DotsThreeX } from '@/components/icons/DotsThreeX'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
@@ -12,10 +12,8 @@ import { Gallery } from '@/components/message/Gallery'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { IconButton } from '@/components/ui/Button'
 import { ErrorCallout } from '@/components/ui/Callouts'
-import { Link } from '@/components/ui/Link'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
-import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { getMessageName, getMessageText } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -34,7 +32,6 @@ export const Message = ({
   message,
   deepLinkUrl,
   hideTimeline = false,
-  isSequential = false,
   priority = false,
   withText,
   className,
@@ -43,47 +40,57 @@ export const Message = ({
   message: EMessage
   deepLinkUrl?: string
   hideTimeline?: boolean
-  isSequential?: boolean
   priority?: boolean
   withText?: string
 } & React.ComponentProps<'div'>) => {
-  const router = useRouter()
-
   const name = getMessageName(message) || message.role
   const text = getMessageText(message)
   const marbleProps = useMarbleProperties(name)
-  const hasImageContent = message.images.length > 0 || message.contentType === 'image'
 
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
   const deleteMessage = useDeleteMessage()
-  const messageId = message._id
+
   const dropdownMenu = useMemo(
     () =>
       message.userIsViewer ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" color="gray" aria-label="More">
-              <DotsThreeX width={20} height={20} />
+              <RiMoreFill size={20} />
             </IconButton>
           </DropdownMenu.Trigger>
 
-          <DropdownMenu.Content variant="soft" align="end">
-            {deepLinkUrl && (
-              <DropdownMenu.Item onClick={() => router.push(deepLinkUrl)}>Link</DropdownMenu.Item>
-            )}
+          <DropdownMenu.Content variant="soft">
+            <Link href={`/chats/${message.threadSlug}/${message.series}`}>
+              <DropdownMenu.Item>
+                <Icons.Share /> Link
+              </DropdownMenu.Item>
+            </Link>
+
             <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
               {showEditor ? 'Cancel Edit' : 'Edit'}
             </DropdownMenu.Item>
             <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
-            <DropdownMenu.Item color="red" onClick={() => deleteMessage({ messageId })}>
+            <DropdownMenu.Item
+              color="red"
+              onClick={() => deleteMessage({ messageId: message._id })}
+            >
               Delete
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       ) : null,
-    [deepLinkUrl, deleteMessage, message.userIsViewer, messageId, router, showEditor, showJson],
+    [
+      deleteMessage,
+      message.userIsViewer,
+      message.threadSlug,
+      message.series,
+      message._id,
+      showEditor,
+      showJson,
+    ],
   )
 
   return (
@@ -99,52 +106,28 @@ export const Message = ({
       {/* > timeline */}
       <div className={cn('flex w-4 shrink-0 justify-center', hideTimeline && 'hidden')}>
         <div
-          className={cn('absolute inset-y-1 w-px', isSequential && '-top-2.5')}
+          className="absolute inset-y-1 w-px"
           style={{ backgroundColor: marbleProps[0].color }}
         />
       </div>
 
       {/* > content */}
       <div className="grow">
-        {/* => menu */}
-        <div className="flex-col-start absolute right-0 z-10">
-          {dropdownMenu}
-          {hasImageContent && deepLinkUrl ? (
-            <Link href={deepLinkUrl} prefetch={false}>
-              <IconButton variant="ghost" size="1" color="gray" aria-label="Link">
-                <Icons.Share size={20} />
-              </IconButton>
-            </Link>
-          ) : null}
-
-          {/* {hasImageContent && (
-            <IconButton variant="ghost" color="gray" aria-label="Copy" disabled>
-              <Icons.Copy size={20} />
-            </IconButton>
-          )} */}
-
-          <AdminOnlyUi>
-            <div className="absolute right-7 top-1.5 pt-px font-mono text-xxs text-gray-6">
-              {message.series}
-            </div>
-          </AdminOnlyUi>
-        </div>
-
-        <div className="markdown-body min-h-7 py-1 last:[&:nth-child(2)]:[&_p]:inline-block">
+        <div className="flex-start gap-1">
           {/* => name */}
-          <div
-            className={cn(
-              'mb-0 mr-1 inline-block brightness-125 saturate-[.75]',
-              isSequential && 'hidden',
-            )}
-            style={{ color: marbleProps[0].color }}
-          >
+          <div className="brightness-125 saturate-[.75]" style={{ color: marbleProps[0].color }}>
             {name}
           </div>
-
-          {/* => markdown text */}
-          {!showEditor && text ? <Markdown text={text} /> : null}
+          {/* => menu */}
+          {dropdownMenu}
         </div>
+
+        {!showEditor && text ? (
+          <div className="markdown-body min-h-7 py-1">
+            {/* => markdown text */}
+            <Markdown text={text} />
+          </div>
+        ) : null}
 
         {/* => editor */}
         {showEditor && (
