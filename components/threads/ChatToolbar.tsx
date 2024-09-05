@@ -2,10 +2,10 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 
+import { useThread } from '@/app/lib/api/threads'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { Button } from '@/components/ui/Button'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
-import { useThread } from '@/lib/api'
 import { twx } from '@/lib/utils'
 
 export const ChatToolbar = ({ thread_id }: { thread_id: string }) => {

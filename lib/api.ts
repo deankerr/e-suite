@@ -8,8 +8,7 @@ import { toast } from 'sonner'
 import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
-import type { Id } from '@/convex/_generated/dataModel'
-import type { EVoiceModel, RunConfig } from '@/convex/types'
+import type { RunConfig } from '@/convex/types'
 import type { FunctionArgs, FunctionReference, FunctionReturnType } from 'convex/server'
 
 const RUN_THROTTLE = 2500
@@ -136,29 +135,6 @@ export const useDeleteImage = () => {
 }
 
 // * queries
-export const useThreads = () => {
-  const threads = useQuery(api.db.threads.list, {})
-  threads?.sort((a, b) => {
-    if (a.favorite === true && b.favorite !== true) {
-      return -1 // Favorites come first
-    }
-    if (b.favorite === true && a.favorite !== true) {
-      return 1 // Favorites come first
-    }
-    return b.updatedAtTime - a.updatedAtTime // Then sort by updatedAtTime
-  })
-  return threads
-}
-
-export const useThread = (threadId: string) => {
-  const thread = useQuery(api.db.threads.get, { slugOrId: threadId })
-  if (thread) {
-    thread.title ??= 'Untitled Thread'
-  }
-
-  return thread
-}
-
 export const useThreadImages = (slug?: string, initialNumItems = 3) => {
   const images = usePaginatedQuery(api.db.threads.listImages, slug ? { slugOrId: slug } : 'skip', {
     initialNumItems,
@@ -182,38 +158,6 @@ export const useThreadImagesSearch = (slug?: string, query = '', initialNumItems
   return images
 }
 
-export const useThreadJobs = (slug?: string) => {
-  const jobs = useQuery(api.db.jobs.get, slug ? { threadId: slug } : 'skip')
-  return jobs
-}
-
-export const useMessageId = (messageId?: string) => {
-  const message = useQuery(api.db.messages.get, messageId ? { messageId } : 'skip')
-  return message
-}
-
-export const useMessage = (slug?: string, msg?: string) => {
-  const thread = useThread(slug ?? '')
-  const message = useCacheQuery(
-    api.db.threads.getMessage,
-    slug && msg ? { slugOrId: slug, series: parseInt(msg) } : 'skip',
-  )
-
-  return {
-    thread,
-    message,
-  }
-}
-
-export const useMessageDoc = (messageId?: Id<'messages'>) => {
-  return useCacheQuery(api.db.messages.getDoc, messageId ? { messageId } : 'skip')
-}
-
-export const useImage = (imageId?: string) => {
-  const image = useCacheQuery(api.db.images.get, imageId ? { imageId } : 'skip')
-  return image
-}
-
 export const useImageGenerationBatches = (imageId = '') => {
   const results = useQuery(api.db.images.getGenerationBatches, imageId ? { imageId } : 'skip')
   const buffer = useRef(results)
@@ -223,11 +167,6 @@ export const useImageGenerationBatches = (imageId = '') => {
   }
 
   return buffer.current
-}
-
-export const useVoiceModels = (): EVoiceModel[] | undefined => {
-  const result = useCacheQuery(api.db.models.listVoiceModels, {})
-  return result
 }
 
 export const useModels = (resourceKey?: string) => {

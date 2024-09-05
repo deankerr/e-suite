@@ -350,14 +350,12 @@ const speech = defineEnt(speechFields).index('textHash_resourceKey', ['textHash'
 
 // * Messages
 export const messageFields = {
-  contentType: literals('text', 'image', 'audio'),
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
   text: v.optional(v.string()),
 
+  contentType: deprecated,
   inference: deprecated,
-
-  metadata: v.optional(kvListV),
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -368,31 +366,17 @@ const messages = defineEnt(messageFields)
   .edges('images_v1')
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
-  .index('threadId_contentType', ['threadId', 'contentType'])
 
 // * Threads
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
   latestRunConfig: v.optional(v.union(runConfigChatV, runConfigTextToImageV)),
-
-  voiceovers: v.optional(
-    v.object({
-      default: v.string(),
-      names: v.optional(
-        v.array(
-          v.object({
-            name: v.string(),
-            resourceKey: v.string(),
-          }),
-        ),
-      ),
-    }),
-  ),
-
   updatedAtTime: v.number(),
-  favorite: v.optional(v.boolean()),
-  metadata: v.optional(kvListV),
+  favourite: v.optional(v.boolean()),
+
+  voiceovers: deprecated,
+  favorite: deprecated,
 }
 const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })

@@ -6,10 +6,10 @@ import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { useThreads } from '@/app/lib/api/threads'
 import { AppLogo } from '@/components/icons/AppLogo'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
-import { useThreads } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 const ThreadIcon = ({ type = '', className }: { type?: string; className?: string }) => {

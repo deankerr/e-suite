@@ -5,10 +5,10 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
 import { usePathname, useRouter } from 'next/navigation'
 
+import { useThread } from '@/app/lib/api/threads'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { DeleteThreadDialog, EditThreadTitleDialog } from '@/components/threads/dialogs'
 import { IconButton } from '@/components/ui/Button'
-import { useThread } from '@/lib/api'
 
 export const ThreadMenu = ({ thread_id }: { thread_id: string }) => {
   const thread = useThread(thread_id)

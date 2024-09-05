@@ -1,5 +1,5 @@
 import { asyncMap, omit, pruneNull } from 'convex-helpers'
-import { literals, partial } from 'convex-helpers/validators'
+import { deprecated, literals, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
@@ -41,13 +41,15 @@ const threadReturnFields = {
   instructions: v.optional(v.string()),
 
   updatedAtTime: v.number(),
-  favorite: v.optional(v.boolean()),
+  favourite: v.optional(v.boolean()),
   userId: v.id('users'),
   userIsViewer: v.boolean(),
   user: v.any(),
 
   latestRunConfig: v.optional(v.any()),
-  voiceovers: v.optional(v.any()),
+
+  favorite: deprecated,
+  voiceovers: deprecated,
 }
 
 const paginatedResultFields = {
@@ -320,7 +322,7 @@ export const getConversation = internalQuery({
 })
 
 // * Mutations
-const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime', 'metadata'])))
+const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime'])))
 export const update = mutation({
   args: {
     threadId: v.string(),
@@ -437,7 +439,6 @@ export const append = mutation({
       threadId: thread._id,
       userId: thread.userId,
       ...args.message,
-      contentType: 'text',
     })
 
     if (message.text) {
@@ -504,7 +505,6 @@ const createRun = async (
   const message = await createMessage(ctx, {
     threadId: thread._id,
     userId,
-    contentType: 'text',
     role: 'assistant',
   })
 
