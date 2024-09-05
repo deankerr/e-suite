@@ -5,13 +5,13 @@ import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 
+import { useThread } from '@/app/lib/api/threads'
 import { NavigationSheet } from '@/components/navigation/NavigationSheet'
 import { FavouriteButton } from '@/components/threads/FavouriteButton'
 import { ThreadMenu } from '@/components/threads/ThreadMenu'
 import { IconButton } from '@/components/ui/Button'
 import { SearchField } from '@/components/ui/SearchField'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { useThread } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 export const Thread = ({

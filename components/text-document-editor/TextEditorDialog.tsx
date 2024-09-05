@@ -5,7 +5,8 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Button, Dialog, IconButton } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
-import { useThread, useUpdateThread } from '@/lib/api'
+import { useThread } from '@/app/lib/api/threads'
+import { useUpdateThread } from '@/lib/api'
 import { MDXEditor } from '../mdx-editor/MDXEditor'
 
 import type { MDXEditorMethods } from '@mdxeditor/editor'

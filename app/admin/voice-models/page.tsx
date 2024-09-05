@@ -6,8 +6,9 @@ import { IconButton, Table, Tabs } from '@radix-ui/themes'
 import fuzzysort from 'fuzzysort'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
+import { useCachedQuery } from '@/app/lib/api/helpers'
 import { SearchField } from '@/components/ui/SearchField'
-import { useVoiceModels } from '@/lib/api'
+import { api } from '@/convex/_generated/api'
 
 export default function Page() {
   // const textVoiceover = useMutation(api.db.voiceover.text)
@@ -16,7 +17,7 @@ export default function Page() {
   //   format: ['mp3'],
   // })
 
-  const voiceModels = useVoiceModels()
+  const voiceModels = useCachedQuery(api.db.models.listVoiceModels, {})
   const [searchValue, setSearchValue] = useState('')
 
   const sortResults = fuzzysort.go(searchValue, voiceModels ?? [], {

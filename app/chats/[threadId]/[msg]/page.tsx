@@ -1,8 +1,8 @@
 'use client'
 
+import { useMessage } from '@/app/lib/api/threads'
 import { Message } from '@/components/message/Message'
 import { Panel } from '@/components/ui/Panel'
-import { useMessage } from '@/lib/api'
 
 export default function Page({ params }: { params: { threadId: string; msg: string } }) {
   const result = useMessage(params.threadId, params.msg)

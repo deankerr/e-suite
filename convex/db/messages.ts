@@ -1,4 +1,4 @@
-import { literals } from 'convex-helpers/validators'
+import { deprecated, literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
@@ -22,7 +22,7 @@ export const messageReturnFields = {
   userId: v.id('users'),
   userIsViewer: v.boolean(),
 
-  contentType: v.optional(v.any()),
+  contentType: deprecated,
 }
 
 export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
