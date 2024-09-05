@@ -31,7 +31,7 @@ const NavItem = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof 
     <Link
       aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'grid h-12 shrink-0 grid-cols-[2.75rem_13.25rem] items-center transition-all hover:bg-grayA-2 aria-[current=page]:bg-grayA-3',
+        'grid h-10 shrink-0 grid-cols-[2.75rem_13.25rem] items-center transition-all hover:bg-grayA-2 aria-[current=page]:bg-grayA-3',
         className,
       )}
       {...props}

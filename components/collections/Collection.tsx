@@ -1,17 +1,17 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { DropdownMenu, ScrollArea } from '@radix-ui/themes'
-import Link from 'next/link'
+import { DropdownMenu } from '@radix-ui/themes'
 
 import { useCollection } from '@/app/lib/api/collections'
 import { DeleteCollectionDialog, EditCollectionTitleDialog } from '@/components/collections/dialogs'
 import { DotsThreeFillX } from '@/components/icons/DotsThreeFillX'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { useLightbox } from '@/components/lightbox/hooks'
-import { NavigationSheet } from '@/components/navigation/NavigationSheet'
+import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
-import { Section, SectionHeader } from '@/components/ui/Section'
+import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
+import { VScrollArea } from '@/components/ui/VScrollArea'
 
 export const Collection = ({ collectionId }: { collectionId: string }) => {
   const collection = useCollection(collectionId)
@@ -19,28 +19,21 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
 
   if (collection === undefined) {
     return (
-      <Section>
-        <SectionHeader>Loading...</SectionHeader>
-      </Section>
+      <Panel>
+        <PanelHeader>Loading...</PanelHeader>
+      </Panel>
     )
   }
 
   if (!collection) {
-    return <Section>Collection not found</Section>
+    return <Panel>Collection not found</Panel>
   }
 
   return (
-    <Section>
-      <SectionHeader className="gap-1">
-        <NavigationSheet>
-          <IconButton variant="ghost" aria-label="Open navigation sheet" className="md:invisible">
-            <Icons.List size={20} />
-          </IconButton>
-        </NavigationSheet>
-
-        <Link href={`/collections/${collection.id}`} className="underline-offset-2 hover:underline">
-          {collection.title}
-        </Link>
+    <Panel>
+      <PanelHeader className="gap-1">
+        <NavigationButton />
+        <PanelTitle href={`/collections/${collection.id}`}>{collection.title}</PanelTitle>
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
@@ -63,9 +56,9 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
             </DeleteCollectionDialog>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
-      </SectionHeader>
+      </PanelHeader>
 
-      <ScrollArea scrollbars="vertical">
+      <VScrollArea>
         <div className="flex flex-wrap gap-2 p-2">
           {collection.images.map((image, index) => (
             <div key={image._id} className="w-72">
@@ -93,7 +86,7 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
             <div className="text-gray-11">This collection is empty.</div>
           )}
         </div>
-      </ScrollArea>
-    </Section>
+      </VScrollArea>
+    </Panel>
   )
 }

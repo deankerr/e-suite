@@ -1,10 +1,10 @@
-import { GenerateSection } from '@/components/generations/GenerateSection'
+import { GeneratePanel } from '@/components/generations/GeneratePanel'
 import { Generations } from '@/components/generations/Generations'
 
 export default function Page() {
   return (
     <>
-      <GenerateSection />
+      <GeneratePanel />
       <Generations />
     </>
   )

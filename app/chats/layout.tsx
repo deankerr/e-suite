@@ -1,9 +1,9 @@
-import { ChatsList } from '@/components/chat/ChatsList'
+import { ChatsNavPanel } from '@/components/chat/ChatsNavPanel'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <ChatsList />
+      <ChatsNavPanel />
       {children}
     </>
   )
