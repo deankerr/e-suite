@@ -1,27 +1,28 @@
-import { pick } from 'convex-helpers'
+import { literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { messageFields } from '../schema'
-import { getImageEdges } from './images'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
 import type { Ent, QueryCtx } from '../types'
 
-export const getMessageJobs = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
-  const jobs = await ctx
-    .table('jobs3', 'messageId', (q) => q.eq('messageId', messageId))
-    .map(async (job) => {
-      const fields = pick(job, ['_id', '_creationTime', 'updatedAt', 'status', 'input'])
-      return {
-        ...fields,
-        name: job.pipeline,
-        error: job.status === 'failed' ? job.stepResults.at(-1)?.error : undefined,
-      }
-    })
-  return jobs
+export const messageReturnFields = {
+  _id: v.id('messages'),
+  _creationTime: v.number(),
+  role: literals('system', 'assistant', 'user'),
+  name: v.optional(v.string()),
+  text: v.optional(v.string()),
+
+  series: v.number(),
+  threadId: v.id('threads'),
+  threadSlug: v.string(),
+  userId: v.id('users'),
+  userIsViewer: v.boolean(),
+
+  contentType: v.optional(v.any()),
 }
 
 export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
@@ -39,9 +40,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
   const thread = await message.edgeX('thread')
   return {
     ...message.doc(),
-    audio: await getMessageAudio(ctx, message._id),
-    images: await message.edge('images_v1').map(async (image) => await getImageEdges(ctx, image)),
-    jobs: await getMessageJobs(ctx, message._id),
+    contentType: undefined,
     threadSlug: thread.slug,
     userIsViewer: getUserIsViewer(ctx, message.userId),
   }
@@ -51,6 +50,8 @@ export const get = query({
   args: {
     messageId: v.string(),
   },
+  returns: v.union(v.null(), v.object(messageReturnFields)),
+
   handler: async (ctx, args) => {
     const id = ctx.unsafeDb.normalizeId('messages', args.messageId)
     const message = id ? await ctx.table('messages').get(id) : null

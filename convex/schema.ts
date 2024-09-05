@@ -353,7 +353,6 @@ export const messageFields = {
   contentType: literals('text', 'image', 'audio'),
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
-
   text: v.optional(v.string()),
 
   inference: deprecated,

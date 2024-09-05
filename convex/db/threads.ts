@@ -14,7 +14,7 @@ import { imageModels } from '../shared/imageModels'
 import { createGeneration } from './generations'
 import { getImageEdges, getImageWithEdges } from './images'
 import { createEvaluateMessageUrlsJob } from './jobs'
-import { getMessageEdges } from './messages'
+import { getMessageEdges, messageReturnFields } from './messages'
 import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
 
@@ -32,6 +32,30 @@ import type {
   ThreadActionResult,
 } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
+
+const threadReturnFields = {
+  _id: v.id('threads'),
+  _creationTime: v.number(),
+  slug: v.string(),
+  title: v.optional(v.string()),
+  instructions: v.optional(v.string()),
+
+  updatedAtTime: v.number(),
+  favorite: v.optional(v.boolean()),
+  userId: v.id('users'),
+  userIsViewer: v.boolean(),
+  user: v.any(),
+
+  latestRunConfig: v.optional(v.any()),
+  voiceovers: v.optional(v.any()),
+}
+
+const paginatedResultFields = {
+  isDone: v.boolean(),
+  continueCursor: v.string(),
+  splitCursor: v.optional(v.union(v.string(), v.null())),
+  pageStatus: v.optional(v.union(literals('SplitRequired', 'SplitRecommended'), v.null())),
+}
 
 // * Helpers
 const createMessage = async (
@@ -85,7 +109,7 @@ const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
   if (!user) return null
 
   return {
-    _id: 'new',
+    _id: 'new' as Id<'threads'>,
     slug: 'new',
     title: 'New Thread',
     _creationTime: Date.now(),
@@ -133,6 +157,7 @@ export const get = query({
 
     return await getThreadEdges(ctx, thread)
   },
+  returns: v.union(v.object(threadReturnFields), v.null()),
 })
 
 export const getDoc = internalQuery({
@@ -159,6 +184,7 @@ export const list = query({
 
     return threads
   },
+  returns: v.array(v.object(threadReturnFields)),
 })
 
 export const listMessages = query({
@@ -186,6 +212,7 @@ export const listMessages = query({
 
     return messages
   },
+  returns: v.object({ ...paginatedResultFields, page: v.array(v.object(messageReturnFields)) }),
 })
 
 export const listImages = query({
@@ -249,6 +276,7 @@ export const getMessage = query({
 
     return await getMessageBySeries(ctx, { threadId: thread._id, series: args.series })
   },
+  returns: v.union(v.object(messageReturnFields), v.null()),
 })
 
 export const getConversation = internalQuery({

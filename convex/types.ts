@@ -29,10 +29,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
   TableName
 >
 
-export type EThread = Omit<Awaited<ReturnType<typeof getThreadEdges>>, '_id' | 'userId'> & {
-  _id: string
-  userId: string
-}
+export type EThread = Awaited<ReturnType<typeof getThreadEdges>>
 export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
 export type EImage = NonNullable<Awaited<ReturnType<typeof getImageWithEdges>>>
 export type EImageMetadata = Doc<'images_metadata'>['data']

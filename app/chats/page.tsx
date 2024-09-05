@@ -4,9 +4,9 @@ import { MessageFeed } from '@/components/chat/MessageFeed'
 export default function Page() {
   return (
     <>
-      <Chat threadId={'/new'}>
+      <Chat threadId={'new'}>
         <div className="grow">
-          <MessageFeed threadId={'/new'} />
+          <MessageFeed threadId={'new'} />
         </div>
       </Chat>
     </>

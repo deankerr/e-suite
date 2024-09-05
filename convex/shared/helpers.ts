@@ -1,29 +1,10 @@
-import type { EMessage, RunConfigChat, RunConfigTextToAudio, RunConfigTextToImage } from '../types'
+import type { EMessage } from '../types'
 
 export function getMessageName(message: EMessage) {
   if (message.name) return message.name
-
-  const { textToAudioConfig } = extractRunConfig(message.jobs)
-  if (textToAudioConfig) return 'elevenlabs sound generation'
-
   if (message.role === 'user') return 'You'
   if (message.role === 'system') return 'System'
   return 'Assistant'
-}
-
-export function getMessageText(message: EMessage) {
-  if (message.text) return message.text
-
-  const { textToImageConfig, textToAudioConfig } = extractRunConfig(message.jobs)
-  return textToImageConfig?.prompt ?? textToAudioConfig?.prompt
-}
-
-export const isSameAuthor = (...messages: (EMessage | undefined)[]) => {
-  const firstMessage = messages.at(0)
-  if (!firstMessage) return false
-  return messages.every(
-    (message) => message?.name === firstMessage.name && message?.role === firstMessage.role,
-  )
 }
 
 export const getMaxQuantityForModel = (resourceKey: string) => {
@@ -33,52 +14,6 @@ export const getMaxQuantityForModel = (resourceKey: string) => {
   }
 
   return maxQuantities[resourceKey] ?? 4
-}
-
-const runConfigNames = ['chat', 'textToImage', 'textToAudio'] as const
-export function extractRunConfig(jobs: EMessage['jobs']): {
-  chatConfig: RunConfigChat | null
-  textToImageConfig: RunConfigTextToImage | null
-  textToAudioConfig: RunConfigTextToAudio | null
-} {
-  const runConfigJob = jobs.find((job) =>
-    runConfigNames.includes(job.name as (typeof runConfigNames)[number]),
-  )
-
-  if (!runConfigJob || typeof runConfigJob.input !== 'object') {
-    return {
-      chatConfig: null,
-      textToImageConfig: null,
-      textToAudioConfig: null,
-    }
-  }
-
-  switch (runConfigJob.name) {
-    case 'chat':
-      return {
-        chatConfig: runConfigJob.input as RunConfigChat,
-        textToImageConfig: null,
-        textToAudioConfig: null,
-      }
-    case 'textToImage':
-      return {
-        chatConfig: null,
-        textToImageConfig: runConfigJob.input as RunConfigTextToImage,
-        textToAudioConfig: null,
-      }
-    case 'textToAudio':
-      return {
-        chatConfig: null,
-        textToImageConfig: null,
-        textToAudioConfig: runConfigJob.input as RunConfigTextToAudio,
-      }
-    default:
-      return {
-        chatConfig: null,
-        textToImageConfig: null,
-        textToAudioConfig: null,
-      }
-  }
 }
 
 export function isValidUrl(url: string) {

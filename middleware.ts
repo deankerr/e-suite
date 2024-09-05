@@ -11,7 +11,7 @@ export default clerkMiddleware((auth, request) => {
   const response = NextResponse.next()
   response.headers.set(
     'Content-Security-Policy',
-    "frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;",
+    "frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;",
   )
   return response
 })
