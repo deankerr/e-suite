@@ -5,12 +5,13 @@ import { Badge, BadgeProps, Card, Heading } from '@radix-ui/themes'
 import { accentColors } from '@radix-ui/themes/props'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
+import { useCachedQuery } from '@/app/lib/api/helpers'
+import { useChatModels } from '@/app/lib/api/models'
 import { api } from '@/convex/_generated/api'
-import { useCacheQuery, useModels } from '@/lib/api'
 
 export default function Page() {
-  const events = useCacheQuery(api.db.admin.events.latest, {})
-  const { chatModels, imageModels } = useModels()
+  const events = useCachedQuery(api.db.admin.events.latest, {})
+  const chatModels = useChatModels()
 
   return (
     <AdminPageWrapper>
@@ -53,10 +54,6 @@ export default function Page() {
           <div className="flex gap-1 py-2">
             <Badge color="green">Chat</Badge>
             <div className="text-sm">{chatModels?.length ?? '...'}</div>
-          </div>
-          <div className="flex gap-1 py-2">
-            <Badge color="green">Image</Badge>
-            <div className="text-sm">{imageModels?.length ?? '...'}</div>
           </div>
         </div>
       </Card>

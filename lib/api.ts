@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebouncedState, useTimeoutEffect } from '@react-hookz/web'
-import { useQuery as useOriginalCacheQuery } from 'convex-helpers/react/cache/hooks'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -9,16 +8,8 @@ import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
 import type { RunConfig } from '@/convex/types'
-import type { FunctionArgs, FunctionReference, FunctionReturnType } from 'convex/server'
 
 const RUN_THROTTLE = 2500
-
-export function useCacheQuery<T extends FunctionReference<'query'>>(
-  query: T,
-  args: FunctionArgs<T> | 'skip',
-): FunctionReturnType<T> | undefined {
-  return useOriginalCacheQuery<T>(query, args)
-}
 
 // * mutations
 export const useGenerate = () => {
@@ -167,26 +158,6 @@ export const useImageGenerationBatches = (imageId = '') => {
   }
 
   return buffer.current
-}
-
-export const useModels = (resourceKey?: string) => {
-  const chatModels = useCacheQuery(api.db.models.listChatModels, {})
-  const imageModels = useCacheQuery(api.db.models.listImageModels, {})
-
-  const model = useMemo(() => {
-    if (!resourceKey) return undefined
-    return (
-      chatModels?.find((model) => model.resourceKey === resourceKey) ??
-      imageModels?.find((model) => model.resourceKey === resourceKey) ??
-      null
-    )
-  }, [resourceKey, chatModels, imageModels])
-
-  const result = useMemo(() => {
-    return { chatModels, imageModels, model }
-  }, [chatModels, imageModels, model])
-
-  return result as Partial<typeof result>
 }
 
 export const useViewer = () => {

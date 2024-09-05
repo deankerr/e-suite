@@ -1,28 +1,24 @@
 import { useState } from 'react'
 import { Dialog } from '@radix-ui/themes'
 
+import { useChatModels } from '@/app/lib/api/models'
 import { CmdK } from '@/components/command/CmdK'
 import { ModelLogo } from '@/components/icons/ModelLogo'
-import { useModels } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EChatModel, EImageModel } from '@/convex/types'
 
 export const ModelPickerCmd = ({
-  type,
   value,
   onValueChange,
   children,
 }: {
-  type?: 'chat' | 'image'
   value: string
   onValueChange: (value: string) => unknown
   children?: React.ReactNode
 }) => {
-  const { chatModels, imageModels, model } = useModels(value)
-  const modelSet = model?.type ?? type
-  const showChatModels = modelSet === 'chat' || !modelSet
-  const showImageModels = modelSet === 'image' || !modelSet
+  const chatModels = useChatModels()
+  const model = chatModels?.find((model) => model.resourceKey === value)
 
   const [open, setOpen] = useState(false)
   const handleSelect = (value: string) => {
@@ -55,31 +51,16 @@ export const ModelPickerCmd = ({
               </CmdK.Group>
             )}
 
-            {showChatModels && (
-              <CmdK.Group heading="Chat Models">
-                {chatModels?.map((model) => (
-                  <ModelItem
-                    key={model.resourceKey}
-                    value={model.resourceKey}
-                    onSelect={() => handleSelect(model.resourceKey)}
-                    model={model}
-                  />
-                ))}
-              </CmdK.Group>
-            )}
-
-            {showImageModels && (
-              <CmdK.Group heading="Image Models">
-                {imageModels?.map((model) => (
-                  <ModelItem
-                    key={model.resourceKey}
-                    value={model.resourceKey}
-                    onSelect={() => handleSelect(model.resourceKey)}
-                    model={model}
-                  />
-                ))}
-              </CmdK.Group>
-            )}
+            <CmdK.Group heading="Chat Models">
+              {chatModels?.map((model) => (
+                <ModelItem
+                  key={model.resourceKey}
+                  value={model.resourceKey}
+                  onSelect={() => handleSelect(model.resourceKey)}
+                  model={model}
+                />
+              ))}
+            </CmdK.Group>
           </CmdK.List>
         </CmdK>
       </Dialog.Content>
