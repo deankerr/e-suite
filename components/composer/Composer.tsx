@@ -5,10 +5,8 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
 import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
-import { DimensionsSelect, QuantitySelect } from '@/components/composer/Controls'
 import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
-import { getMaxQuantityForModel } from '@/convex/shared/helpers'
 import { useModels } from '@/lib/api'
 
 import type { ThreadActions } from '@/lib/api'
@@ -29,29 +27,17 @@ export const Composer = ({
   const type = model?.type ?? 'chat'
 
   const [textValue, setTextValue] = useState(defaultTextValue)
-  const [dimensions, setDimensions] = useState('square')
-  const [quantity, setQuantity] = useState('1')
-  const maxQuantity = getMaxQuantityForModel(resourceKey)
 
   const handleSend = (method: 'run' | 'add') => {
     const configType = type === 'image' ? 'textToImage' : 'chat'
-    const config =
-      configType === 'textToImage'
-        ? {
-            method,
-            text: textValue,
-            prompt: textValue,
-            type: 'textToImage' as const,
-            resourceKey,
-            n: Math.min(Number(quantity), getMaxQuantityForModel(resourceKey)),
-            size: dimensions as 'portrait' | 'square' | 'landscape',
-          }
-        : {
-            method,
-            text: textValue,
-            type: 'chat' as const,
-            resourceKey,
-          }
+    if (configType !== 'chat') return
+
+    const config = {
+      method,
+      text: textValue,
+      type: 'chat' as const,
+      resourceKey,
+    }
 
     onSend?.(config).then((success) => {
       if (success) {
@@ -72,16 +58,7 @@ export const Composer = ({
           onSend={() => handleSend('run')}
         />
       </div>
-      {type === 'image' && (
-        <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
-          <QuantitySelect
-            max={maxQuantity}
-            value={String(Math.min(Number(quantity), getMaxQuantityForModel(resourceKey)))}
-            onValueChange={setQuantity}
-          />
-          <DimensionsSelect value={dimensions} onValueChange={setDimensions} />
-        </div>
-      )}
+
       <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
         <ModelPickerCmd type="chat" value={resourceKey} onValueChange={setResourceKey}>
           <ModelButton resourceKey={resourceKey} />
