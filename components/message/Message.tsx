@@ -8,13 +8,10 @@ import Link from 'next/link'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
-import { Gallery } from '@/components/message/Gallery'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { IconButton } from '@/components/ui/Button'
-import { ErrorCallout } from '@/components/ui/Callouts'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
-import { getMessageName, getMessageText } from '@/convex/shared/helpers'
+import { getMessageName } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
@@ -44,7 +41,7 @@ export const Message = ({
   withText?: string
 } & React.ComponentProps<'div'>) => {
   const name = getMessageName(message) || message.role
-  const text = getMessageText(message)
+  const text = message.text
   const marbleProps = useMarbleProperties(name)
 
   const [showJson, setShowJson] = useState(false)
@@ -135,7 +132,7 @@ export const Message = ({
         )}
 
         {/* => errors * */}
-        {message.jobs.map(({ error }, i) =>
+        {/* {message.jobs.map(({ error }, i) =>
           error ? (
             <ErrorCallout
               key={i}
@@ -145,13 +142,13 @@ export const Message = ({
               className="mx-auto mb-1 max-w-xl"
             />
           ) : null,
-        )}
+        )} */}
 
         {/* => images  */}
-        <Gallery message={message} priority={priority} />
+        {/* <Gallery message={message} priority={priority} /> */}
 
         {/* => audio  */}
-        {message.audio.length > 0 ? (
+        {/* {message.audio.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-2 py-1">
             {message.audio.map((sfx) =>
               sfx.fileUrl ? (
@@ -163,15 +160,15 @@ export const Message = ({
               ) : null,
             )}
           </div>
-        ) : null}
+        ) : null} */}
 
         {/* => loading ping  */}
-        {message.jobs.filter((job) => job.status === 'active' || job.status === 'pending').length >
+        {/* {message.jobs.filter((job) => job.status === 'active' || job.status === 'pending').length >
           0 && (
           <div className="col-start-2">
             <LoadingSpinner variant="ping" />
           </div>
-        )}
+        )} */}
 
         {/* => json */}
         {showJson && <Pre className="max-w-screen-md">{JSON.stringify(message, null, 2)}</Pre>}
