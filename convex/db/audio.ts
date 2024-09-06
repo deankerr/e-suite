@@ -1,6 +1,24 @@
+import { nullable } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
-import { internalMutation } from '../functions'
+import { internalMutation, query } from '../functions'
+
+export const audioReturnFields = v.object({
+  _id: v.id('audio'),
+  _creationTime: v.number(),
+  fileId: v.id('_storage'),
+  fileUrl: nullable(v.string()),
+  generationData: v.object({
+    prompt: v.string(),
+    modelId: v.string(),
+    modelName: v.string(),
+    endpointId: v.string(),
+    duration: v.optional(v.number()),
+  }),
+  messageId: v.id('messages'),
+  threadId: v.id('threads'),
+  userId: v.id('users'),
+})
 
 export const create = internalMutation({
   args: {
@@ -28,4 +46,15 @@ export const create = internalMutation({
 
     return audioId
   },
+})
+
+export const get = query({
+  args: {
+    audioId: v.id('audio'),
+  },
+  handler: async (ctx, { audioId }) => {
+    const audio = await ctx.table('audio').get(audioId)
+    return audio ? { ...audio, fileUrl: await ctx.storage.getUrl(audio.fileId) } : null
+  },
+  returns: nullable(audioReturnFields),
 })
