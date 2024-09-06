@@ -305,6 +305,25 @@ function parseUrlToImageId(url: string) {
 
 // => V2
 
+export const imageReturnFields = v.object({
+  _id: v.id('images_v2'),
+  _creationTime: v.number(),
+  sourceUrl: v.string(),
+  id: v.string(),
+  fileId: v.string(),
+  format: v.string(),
+  width: v.number(),
+  height: v.number(),
+  blurDataUrl: v.string(),
+  createdAt: v.optional(v.number()),
+  color: v.string(),
+
+  generationId: v.optional(v.id('generations_v2')),
+  runId: v.string(),
+  ownerId: v.id('users'),
+  collectionIds: v.array(v.id('collections')),
+})
+
 export const getImageV2Ent = async (ctx: QueryCtx, imageId: string) => {
   const _id = ctx.unsafeDb.normalizeId('images_v2', imageId)
   return _id

@@ -144,21 +144,6 @@ const chat_models = defineEnt(chatModelFields).field('resourceKey', v.string(), 
   unique: true,
 })
 
-export const imageModelFields = {
-  ...sharedModelFields,
-  architecture: v.string(),
-  sizes: v.object({
-    portrait: v.array(v.number()),
-    landscape: v.array(v.number()),
-    square: v.array(v.number()),
-  }),
-  civitaiModelId: v.optional(v.string()),
-  type: v.optional(v.literal('image')),
-}
-const image_models = defineEnt(imageModelFields).field('resourceKey', v.string(), {
-  unique: true,
-})
-
 export const collectionFields = {
   title: v.string(),
 }
@@ -478,7 +463,6 @@ const schema = defineEntSchema(
     images_search_text,
     generations_v1,
     generations_v2,
-    image_models,
 
     messages,
     speech,

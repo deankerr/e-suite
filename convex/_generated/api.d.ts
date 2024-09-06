@@ -39,7 +39,6 @@ import type * as deletion from "../deletion.js";
 import type * as endpoints_aws from "../endpoints/aws.js";
 import type * as endpoints_aws_node from "../endpoints/aws_node.js";
 import type * as endpoints_elevenlabs from "../endpoints/elevenlabs.js";
-import type * as endpoints_fal from "../endpoints/fal.js";
 import type * as endpoints_openai from "../endpoints/openai.js";
 import type * as endpoints_openrouter from "../endpoints/openrouter.js";
 import type * as endpoints_together from "../endpoints/together.js";
@@ -102,7 +101,6 @@ declare const fullApi: ApiFromModules<{
   "endpoints/aws": typeof endpoints_aws;
   "endpoints/aws_node": typeof endpoints_aws_node;
   "endpoints/elevenlabs": typeof endpoints_elevenlabs;
-  "endpoints/fal": typeof endpoints_fal;
   "endpoints/openai": typeof endpoints_openai;
   "endpoints/openrouter": typeof endpoints_openrouter;
   "endpoints/together": typeof endpoints_together;

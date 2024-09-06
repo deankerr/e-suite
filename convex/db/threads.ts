@@ -33,7 +33,7 @@ import type {
 } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
 
-const threadReturnFields = {
+export const threadReturnFields = {
   _id: v.id('threads'),
   _creationTime: v.number(),
   slug: v.string(),

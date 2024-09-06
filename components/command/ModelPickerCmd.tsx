@@ -6,7 +6,7 @@ import { CmdK } from '@/components/command/CmdK'
 import { ModelLogo } from '@/components/icons/ModelLogo'
 import { cn } from '@/lib/utils'
 
-import type { EChatModel, EImageModel } from '@/convex/types'
+import type { EChatModel } from '@/convex/types'
 
 export const ModelPickerCmd = ({
   value,
@@ -72,7 +72,7 @@ const ModelItem = ({
   model,
   className,
   ...props
-}: { model: EChatModel | EImageModel } & React.ComponentProps<typeof CmdK.Item>) => {
+}: { model: EChatModel } & React.ComponentProps<typeof CmdK.Item>) => {
   return (
     <CmdK.Item {...props} className={cn('font-medium aria-selected:text-orange-11', className)}>
       <div className="mr-2 shrink-0">
