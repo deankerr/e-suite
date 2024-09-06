@@ -10,9 +10,7 @@ import { ENV } from '../lib/env'
 import { emptyPage, generateSlug } from '../lib/utils'
 import { runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
-import { imageModels } from '../shared/imageModels'
-import { createGeneration } from './generations'
-import { getImageEdges, getImageWithEdges } from './images'
+import { getImageWithEdges } from './images'
 import { getMessageEdges, messageReturnFields } from './messages'
 import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -27,7 +25,6 @@ import type {
   RunConfig,
   RunConfigChat,
   RunConfigTextToAudio,
-  RunConfigTextToImage,
   ThreadActionResult,
 } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
@@ -215,28 +212,6 @@ export const listMessages = query({
     return messages
   },
   returns: v.object({ ...paginatedResultFields, page: v.array(v.object(messageReturnFields)) }),
-})
-
-export const listImages = query({
-  args: {
-    slugOrId: v.string(),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return emptyPage()
-
-    const images = await thread
-      .edge('images_v1')
-      .order('desc')
-      .paginate(args.paginationOpts)
-      .map(async (image) => await getImageEdges(ctx, image))
-
-    return {
-      ...images,
-      page: images.page.filter((image) => !image.deletionTime),
-    }
-  },
 })
 
 export const searchImages = query({
@@ -507,10 +482,8 @@ const createRun = async (
     role: 'assistant',
   })
 
-  const jobIds = await asyncMap(runConfigs, async (runConfig) => {
+  await asyncMap(runConfigs, async (runConfig) => {
     switch (runConfig.type) {
-      case 'textToImage':
-        return createTextToImageRun(ctx, { thread, messageId: message._id, runConfig, userId })
       case 'textToAudio':
         return createTextToAudioRun(ctx, { thread, messageId: message._id, runConfig })
       case 'chat':
@@ -523,86 +496,10 @@ const createRun = async (
     slug: thread.slug,
     messageId: message._id,
     series: message.series,
-    jobIds,
   }
 }
 
 // * Runs
-// * textToImage
-const createTextToImageRun = async (
-  ctx: MutationCtx,
-  {
-    thread,
-    messageId,
-    runConfig,
-    userId,
-  }: {
-    thread: EntWriter<'threads'>
-    messageId: Id<'messages'>
-    userId: Id<'users'>
-    runConfig: RunConfigTextToImage
-  },
-) => {
-  const imageModel = imageModels.find((m) => m.modelId === runConfig.modelId)
-  if (!imageModel) throw new ConvexError('invalid modelId')
-
-  const nMax = imageModel.inputs.maxQuantity
-  const input = z
-    .object({
-      prompt: z.string().max(4096),
-      negativePrompt: z.string().max(4096).optional(),
-      n: z
-        .number()
-        .default(1)
-        .transform((n) => Math.max(Math.min(n, nMax), 1)),
-      width: z.number().max(2048).optional(),
-      height: z.number().max(2048).optional(),
-      size: z.enum(['portrait', 'square', 'landscape']).optional(),
-      seed: z.number().optional(),
-      loras: z
-        .array(
-          z.object({
-            path: z.string(),
-            scale: z.number().optional(),
-          }),
-        )
-        .optional(),
-      workflow: z.string().optional(),
-    })
-    .transform((vals) => {
-      if (vals.size && !(vals.width && vals.height)) {
-        const size = imageModel.inputs.sizes.find((s) => s.name === vals.size)
-        return {
-          ...vals,
-          width: size?.width,
-          height: size?.height,
-        }
-      }
-      return vals
-    })
-    .transform((conf) => ({
-      ...conf,
-      modelId: imageModel.modelId,
-      type: 'textToImage' as const,
-    }))
-
-    .parse(runConfig)
-
-  const jobId = await createGeneration(ctx, {
-    input,
-    messageId,
-    threadId: thread._id,
-    userId,
-  })
-
-  await thread.patch({
-    latestRunConfig: input,
-    updatedAtTime: Date.now(),
-    title: thread.title ? thread.title : imageModel.name, // TODO better title creation
-  })
-
-  return jobId
-}
 
 // * textToAudio
 const createTextToAudioRun = async (
@@ -627,8 +524,6 @@ const createTextToAudioRun = async (
     messageId,
     input,
   })
-
-  return ''
 }
 
 // * chat
@@ -667,6 +562,4 @@ const createChatRun = async (
     latestRunConfig: input,
     updatedAtTime: Date.now(),
   })
-
-  return ''
 }

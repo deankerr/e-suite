@@ -10,7 +10,7 @@ import { imagesFieldsV1, imagesMetadataFields, imagesV2Fields } from '../schema'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
-import type { Ent, MutationCtx, QueryCtx, RunConfigTextToImage } from '../types'
+import type { Ent, MutationCtx, QueryCtx } from '../types'
 
 export const getGeneration = async (ctx: QueryCtx, generationId: Id<'generations_v1'>) => {
   const generation = await ctx.table('generations_v1').get(generationId)
@@ -203,7 +203,7 @@ export const updateImageSearchText = async (ctx: MutationCtx, id: string) => {
     }
 
     if (image.generation?.input) {
-      const input = image.generation.input as RunConfigTextToImage
+      const input = image.generation.input as any
       texts.push(input.prompt ?? '')
     } else {
       const generationDataV0 = image.metadata.find((m) => m.type === 'generationData_V0')

@@ -9,7 +9,6 @@ import type {
   entDefinitions,
   runConfigChatV,
   runConfigTextToAudioV,
-  runConfigTextToImageV,
   runConfigTextToImageV2,
   runConfigV,
 } from './schema'
@@ -35,7 +34,6 @@ export type EUser = Awaited<ReturnType<typeof getUserPublic>>
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
 
 export type RunConfig = Infer<typeof runConfigV>
-export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>
 export type RunConfigTextToImageV2 = Infer<typeof runConfigTextToImageV2>
 export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
 export type RunConfigChat = Infer<typeof runConfigChatV>
@@ -45,5 +43,4 @@ export type ThreadActionResult = {
   slug: string
   messageId: string
   series: number
-  jobIds?: string[]
 }

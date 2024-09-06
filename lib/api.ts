@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useDebouncedState, useTimeoutEffect } from '@react-hookz/web'
-import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { useCallback, useState } from 'react'
+import { useTimeoutEffect } from '@react-hookz/web'
+import { useMutation, useQuery } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -126,40 +126,6 @@ export const useDeleteImage = () => {
 }
 
 // * queries
-export const useThreadImages = (slug?: string, initialNumItems = 3) => {
-  const images = usePaginatedQuery(api.db.threads.listImages, slug ? { slugOrId: slug } : 'skip', {
-    initialNumItems,
-  })
-  return images
-}
-
-export const useThreadImagesSearch = (slug?: string, query = '', initialNumItems = 3) => {
-  const [queryValue, setQueryValue] = useDebouncedState(query, 300)
-  useEffect(() => {
-    setQueryValue(query)
-  }, [query, setQueryValue])
-
-  const images = usePaginatedQuery(
-    api.db.threads.searchImages,
-    slug && query && queryValue ? { slugOrId: slug, query: queryValue } : 'skip',
-    {
-      initialNumItems,
-    },
-  )
-  return images
-}
-
-export const useImageGenerationBatches = (imageId = '') => {
-  const results = useQuery(api.db.images.getGenerationBatches, imageId ? { imageId } : 'skip')
-  const buffer = useRef(results)
-
-  if (results !== undefined) {
-    buffer.current = results
-  }
-
-  return buffer.current
-}
-
 export const useViewer = () => {
   return useQuery(api.users.getViewer, {})
 }

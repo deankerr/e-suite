@@ -25,30 +25,6 @@ export const runConfigChatV = v.object({
   presence_penalty: v.optional(v.number()),
 })
 
-export const runConfigTextToImageV = v.object({
-  type: v.literal('textToImage'),
-  modelId: v.optional(v.string()),
-  workflow: v.optional(v.string()),
-  resourceKey: v.optional(v.string()),
-
-  prompt: v.optional(v.string()),
-  negativePrompt: v.optional(v.string()),
-  n: v.optional(v.number()),
-  size: v.optional(v.union(v.literal('portrait'), v.literal('square'), v.literal('landscape'))),
-  width: v.optional(v.number()),
-  height: v.optional(v.number()),
-  seed: v.optional(v.number()),
-
-  loras: v.optional(
-    v.array(
-      v.object({
-        path: v.string(),
-        scale: v.optional(v.number()),
-      }),
-    ),
-  ),
-})
-
 export const runConfigTextToImageV2 = v.object({
   type: v.literal('textToImage'),
   modelId: v.string(),
@@ -81,7 +57,7 @@ export const runConfigTextToAudioV = v.object({
   duration: v.optional(v.number()),
 })
 
-export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
+export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV2, runConfigTextToAudioV)
 
 // * Models
 const sharedModelFields = {
@@ -355,7 +331,7 @@ const messages = defineEnt(messageFields)
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  latestRunConfig: v.optional(v.union(runConfigChatV, runConfigTextToImageV)),
+  latestRunConfig: v.optional(v.any()),
   updatedAtTime: v.number(),
   favourite: v.optional(v.boolean()),
 

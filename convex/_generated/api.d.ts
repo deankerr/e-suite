@@ -16,12 +16,11 @@ import type {
 import type * as action_chat from "../action/chat.js";
 import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
 import type * as action_evaluateNsfwProbability from "../action/evaluateNsfwProbability.js";
-import type * as action_generate from "../action/generate.js";
 import type * as action_generateImageVisionData from "../action/generateImageVisionData.js";
+import type * as action_generateTextToImage from "../action/generateTextToImage.js";
 import type * as action_generateThreadTitle from "../action/generateThreadTitle.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
 import type * as action_textToAudio from "../action/textToAudio.js";
-import type * as action_textToImage from "../action/textToImage.js";
 import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
 import type * as db_admin_see from "../db/admin/see.js";
@@ -72,12 +71,11 @@ declare const fullApi: ApiFromModules<{
   "action/chat": typeof action_chat;
   "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
   "action/evaluateNsfwProbability": typeof action_evaluateNsfwProbability;
-  "action/generate": typeof action_generate;
   "action/generateImageVisionData": typeof action_generateImageVisionData;
+  "action/generateTextToImage": typeof action_generateTextToImage;
   "action/generateThreadTitle": typeof action_generateThreadTitle;
   "action/ingestImageUrl": typeof action_ingestImageUrl;
   "action/textToAudio": typeof action_textToAudio;
-  "action/textToImage": typeof action_textToImage;
   crons: typeof crons;
   "db/admin/events": typeof db_admin_events;
   "db/admin/see": typeof db_admin_see;
