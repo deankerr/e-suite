@@ -412,44 +412,6 @@ const operationsEventLog = defineEnt(operationsEventLogFields).field('ack', v.bo
   index: true,
 })
 
-export const job3Fields = {
-  pipeline: v.string(),
-  status: literals('pending', 'active', 'completed', 'failed'),
-  currentStep: v.number(),
-
-  input: v.any(), // * runtime check
-  output: v.optional(v.any()), // NOTE currently unused
-
-  stepResults: v.array(
-    v.object({
-      stepName: v.string(),
-      status: literals('completed', 'failed'),
-      result: v.any(),
-      error: v.optional(
-        v.object({
-          code: v.string(),
-          message: v.string(),
-          fatal: v.boolean(),
-          details: v.optional(v.any()),
-        }),
-      ),
-      startTime: v.number(),
-      endTime: v.number(),
-      retryCount: v.number(),
-    }),
-  ),
-  updatedAt: v.number(),
-
-  messageId: v.optional(v.id('messages')),
-  threadId: v.optional(v.id('threads')),
-  imageId: v.optional(v.string()),
-}
-const jobs3 = defineEnt(job3Fields)
-  .index('status', ['status'])
-  .index('threadId', ['threadId'])
-  .index('messageId', ['messageId'])
-  .index('imageId', ['imageId'])
-
 // * Schema
 const schema = defineEntSchema(
   {
@@ -469,7 +431,6 @@ const schema = defineEntSchema(
     users,
     users_api_keys,
 
-    jobs3,
     operationsEventLog,
     migrations: defineEntFromTable(migrationsTable),
   },

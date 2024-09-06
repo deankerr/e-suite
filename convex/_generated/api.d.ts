@@ -59,11 +59,6 @@ import type * as shared_imageModels from "../shared/imageModels.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
 import type * as users from "../users.js";
-import type * as workflows_engine from "../workflows/engine.js";
-import type * as workflows_helpers from "../workflows/helpers.js";
-import type * as workflows_jobs from "../workflows/jobs.js";
-import type * as workflows_pipelines_textToAudio from "../workflows/pipelines/textToAudio.js";
-import type * as workflows_types from "../workflows/types.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -120,11 +115,6 @@ declare const fullApi: ApiFromModules<{
   "shared/utils": typeof shared_utils;
   types: typeof types;
   users: typeof users;
-  "workflows/engine": typeof workflows_engine;
-  "workflows/helpers": typeof workflows_helpers;
-  "workflows/jobs": typeof workflows_jobs;
-  "workflows/pipelines/textToAudio": typeof workflows_pipelines_textToAudio;
-  "workflows/types": typeof workflows_types;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

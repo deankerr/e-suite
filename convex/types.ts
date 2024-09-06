@@ -1,5 +1,5 @@
 import type { Doc, Id, TableNames } from './_generated/dataModel'
-import type { getGeneration, getImageWithEdges, imageReturnFields } from './db/images'
+import type { getGeneration, imageReturnFields } from './db/images'
 import type { messageReturnFields } from './db/messages'
 import type { getChatModelByResourceKey } from './db/models'
 import type { threadReturnFields } from './db/threads'
@@ -45,5 +45,5 @@ export type ThreadActionResult = {
   slug: string
   messageId: string
   series: number
-  jobIds?: (Id<'jobs3'> | Id<'generations_v1'>)[]
+  jobIds?: string[]
 }
