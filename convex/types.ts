@@ -1,12 +1,8 @@
 import type { Doc, Id, TableNames } from './_generated/dataModel'
 import type { getGeneration, getImageWithEdges } from './db/images'
-import type { getMessageEdges } from './db/messages'
-import type {
-  getChatModelByResourceKey,
-  getImageModelByResourceKey,
-  getVoiceModels,
-} from './db/models'
-import type { getThreadEdges } from './db/threads'
+import type { messageReturnFields } from './db/messages'
+import type { getChatModelByResourceKey } from './db/models'
+import type { threadReturnFields } from './db/threads'
 import type { getUserPublic } from './db/users'
 import type { mutation, query } from './functions'
 import type {
@@ -19,7 +15,7 @@ import type {
 } from './schema'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
 import type { CustomCtx } from 'convex-helpers/server/customFunctions'
-import type { Infer } from 'convex/values'
+import type { AsObjectValidator, Infer } from 'convex/values'
 
 export type QueryCtx = CustomCtx<typeof query>
 export type MutationCtx = CustomCtx<typeof mutation>
@@ -29,17 +25,14 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
   TableName
 >
 
-export type EThread = Awaited<ReturnType<typeof getThreadEdges>>
-export type EMessage = Awaited<ReturnType<typeof getMessageEdges>>
+export type EThread = Infer<AsObjectValidator<typeof threadReturnFields>>
+export type EMessage = Infer<AsObjectValidator<typeof messageReturnFields>>
 export type EImage = NonNullable<Awaited<ReturnType<typeof getImageWithEdges>>>
 export type EImageMetadata = Doc<'images_metadata'>['data']
 export type EImageGenerationData = Awaited<ReturnType<typeof getGeneration>>
 export type EUser = Awaited<ReturnType<typeof getUserPublic>>
 
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
-export type EImageModel = NonNullable<Awaited<ReturnType<typeof getImageModelByResourceKey>>>
-export type EVoiceModel = Awaited<ReturnType<typeof getVoiceModels>>[number]
-export type EModel = EChatModel | EImageModel | EVoiceModel
 
 export type RunConfig = Infer<typeof runConfigV>
 export type RunConfigTextToImage = Infer<typeof runConfigTextToImageV>

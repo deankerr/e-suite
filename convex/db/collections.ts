@@ -2,9 +2,19 @@ import { ConvexError, v } from 'convex/values'
 
 import { mutation, query } from '../functions'
 import { generateSlugId } from '../lib/utils'
-import { getImageV2Edges } from './images'
+import { getImageV2Edges, imageReturnFields } from './images'
 
 import type { Ent, QueryCtx } from '../types'
+
+const collectionReturnFields = v.object({
+  _id: v.id('collections'),
+  _creationTime: v.number(),
+  id: v.string(),
+  title: v.string(),
+  ownerId: v.id('users'),
+
+  images: v.array(imageReturnFields),
+})
 
 export const getCollection = async (ctx: QueryCtx, collectionId: string) => {
   const _id = ctx.table('collections').normalizeId(collectionId)
@@ -28,6 +38,7 @@ export const get = query({
     const collection = await getCollection(ctx, collectionId)
     return collection ? await getCollectionEdges(ctx, collection) : null
   },
+  returns: v.union(collectionReturnFields, v.null()),
 })
 
 export const latest = query({
