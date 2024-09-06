@@ -4,7 +4,6 @@ import { getQuery } from 'ufo'
 import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { query } from '../functions'
-import { getImageWithEdges } from './images'
 
 export const getMetadata = query({
   args: {
@@ -12,27 +11,7 @@ export const getMetadata = query({
     id: v.string(),
   },
   handler: async (ctx, args) => {
-    if (args.route === 'image') {
-      const image = await getImageWithEdges(ctx, args.id)
-      if (image) {
-        const caption = image.metadata.find((m) => m.type === 'captionOCR_V1')
-        if (caption) {
-          return {
-            title: caption.title,
-            description: caption.description,
-          }
-        }
-        const input = image.generation?.input as { prompt: string } | undefined
-        if (input) {
-          return {
-            title: input.prompt,
-            description: input.prompt,
-          }
-        }
-      }
-    }
-
-    if (args.route === 'images' || args.route === 'chat') {
+    if (args.route === 'chat') {
       const thread = await ctx.table('threads').get('slug', args.id)
       if (thread && thread.title) {
         return {

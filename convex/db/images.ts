@@ -1,12 +1,12 @@
-import { asyncMap, omit, pick } from 'convex-helpers'
+import { omit, pick } from 'convex-helpers'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
-import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { generateId, generateTimestampId } from '../lib/utils'
-import { imagesFieldsV1, imagesMetadataFields, imagesV2Fields } from '../schema'
+import { internalMutation, internalQuery, mutation } from '../functions'
+import { generateTimestampId } from '../lib/utils'
+import { imagesMetadataFields, imagesV2Fields } from '../schema'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
@@ -49,45 +49,6 @@ export const getImageEdges = async (ctx: QueryCtx, image: Ent<'images_v1'>) => {
   }
 }
 
-export const get = query({
-  args: {
-    imageId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await getImageWithEdges(ctx, args.imageId)
-  },
-})
-
-export const getGenerationBatches = query({
-  args: {
-    imageId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const image = await getImageEnt(ctx, args.imageId)
-    if (!image) return null
-
-    const generation = image.generationId ? await getGeneration(ctx, image.generationId) : null
-    if (!generation) {
-      return [await getImageEdges(ctx, image)]
-    }
-
-    const generations = await ctx.table('generations_v1', 'messageId', (q) =>
-      q.eq('messageId', generation.messageId),
-    )
-
-    const images = await asyncMap(generations, async (generation) => {
-      const imageBatch = await ctx
-        .table('images_v1', 'generationId', (q) => q.eq('generationId', generation._id))
-        .map(async (image) => await getImageEdges(ctx, image))
-        .then((images) => images.filter((image) => image !== null))
-
-      return imageBatch
-    })
-
-    return images.flat()
-  },
-})
-
 export const getDoc = internalQuery({
   args: {
     imageId: v.string(),
@@ -109,57 +70,6 @@ export const getUrl = internalQuery({
     const image = await getImageEnt(ctx, args.imageId)
     const url = image ? await ctx.storage.getUrl(image.fileId) : null
     return url
-  },
-})
-
-export const getGenerationImages = query({
-  args: {
-    generationId: v.id('generations_v1'),
-  },
-  handler: async (ctx, { generationId }) => {
-    const generation = await ctx.table('generations_v1').get(generationId)
-    if (!generation) {
-      return []
-    }
-
-    // * find other generations with the same messageId
-    const generations = await ctx.table('generations_v1', 'messageId', (q) =>
-      q.eq('messageId', generation.messageId),
-    )
-    if (!generations.find((g) => g._id === generationId)) {
-      generations.push(generation)
-    }
-
-    const images = await asyncMap(generations, async (generation) => {
-      return await ctx
-        .table('images_v1', 'generationId', (q) => q.eq('generationId', generation._id))
-        .map(async (image) => await getImageWithEdges(ctx, image._id))
-        .then((images) => images.filter((image) => image !== null))
-    })
-
-    return images.flat()
-  },
-})
-
-export const createImage = internalMutation({
-  args: {
-    ...imagesFieldsV1,
-    messageId: v.id('messages'),
-  },
-  handler: async (ctx, { messageId, ...args }) => {
-    const message = await ctx.table('messages').getX(messageId)
-
-    const id = generateId('i', Date.now())
-    await ctx.skipRules.table('images_v1').insert({
-      ...args,
-      ownerId: message.userId,
-      messages: [messageId],
-      threads: [message.threadId],
-      id,
-    })
-
-    await ctx.scheduler.runAfter(0, internal.action.generateImageVisionData.run, { imageId: id })
-    return id
   },
 })
 
