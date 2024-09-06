@@ -2,7 +2,7 @@ import { paginationOptsValidator } from 'convex/server'
 
 import { query } from '../../functions'
 import { createError } from '../../shared/utils'
-import { getImageEdges } from '../images'
+import { getImageV2Edges } from '../images'
 
 export const latestImages = query({
   args: {
@@ -13,10 +13,10 @@ export const latestImages = query({
     if (user.role !== 'admin') throw createError('Unauthorized', { code: 'unauthorized' })
 
     return await ctx
-      .table('images_v1')
+      .table('images_v2')
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
-      .map(async (image) => await getImageEdges(ctx, image))
+      .map(async (image) => await getImageV2Edges(ctx, image))
   },
 })

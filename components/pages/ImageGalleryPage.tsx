@@ -20,7 +20,8 @@ export const ImageGalleryPage = ({
   basePath,
 }: {
   imageId: string
-  images: EImage[]
+  // images: EImage[]
+  images: any[]
   basePath: string
 }) => {
   const image = images.find((image) => image.id === imageId)
@@ -200,7 +201,7 @@ const ImageFileDataCard = ({ image }: { image: EImage }) => {
         <DataList.Item>
           <DataList.Label>created</DataList.Label>
           <DataList.Value suppressHydrationWarning>
-            {new Date(image.originalCreationTime ?? image._creationTime).toLocaleString()}
+            {new Date(image._creationTime).toLocaleString()}
           </DataList.Value>
         </DataList.Item>
 

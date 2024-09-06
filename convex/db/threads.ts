@@ -104,7 +104,7 @@ export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   }
 }
 
-const getEmptyThread = async (ctx: QueryCtx) => {
+const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
   const viewer = await ctx.viewer()
   const user = viewer ? await getUserPublic(ctx, viewer._id) : null
   if (!user) return null

@@ -7,6 +7,7 @@ import Link, { LinkProps } from 'next/link'
 import { DotsThreeFillY } from '@/components/icons/DotsThreeFillY'
 import { DeleteImageDialog } from '@/components/images/dialogs'
 import { IconButton } from '@/components/ui/Button'
+import { useViewer } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
@@ -25,6 +26,7 @@ export const IImageCard = ({
   href?: LinkProps['href']
 } & React.ComponentProps<'div'>) => {
   const [showDeleteImageDialog, setShowDeleteImageDialog] = useState(false)
+  const viewer = useViewer()
 
   return (
     <div
@@ -71,7 +73,7 @@ export const IImageCard = ({
             </DropdownMenu.Item>
           </Link>
 
-          {image.userIsViewer && (
+          {image.ownerId === viewer?._id && (
             <DropdownMenu.Item color="red" onClick={() => setShowDeleteImageDialog(true)}>
               <Icons.Trash size={16} />
               Delete
