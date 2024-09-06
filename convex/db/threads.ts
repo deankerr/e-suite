@@ -628,7 +628,7 @@ const createTextToAudioRun = async (
     input,
   })
 
-  return '' as Id<'jobs3'>
+  return ''
 }
 
 // * chat
@@ -668,5 +668,5 @@ const createChatRun = async (
     updatedAtTime: Date.now(),
   })
 
-  return '' as Id<'jobs3'>
+  return ''
 }
