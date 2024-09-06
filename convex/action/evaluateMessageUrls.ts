@@ -1,5 +1,6 @@
 import { v } from 'convex/values'
 import fastContentTypeParse from 'fast-content-type-parse'
+import { nanoid } from 'nanoid/non-secure'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
@@ -8,7 +9,7 @@ import { fetch } from '../lib/fetch'
 export const run = internalAction({
   args: {
     urls: v.array(v.string()),
-    messageId: v.id('messages'),
+    ownerId: v.id('users'),
   },
   handler: async (ctx, args) => {
     const urlData = await Promise.all(args.urls.map(fetchContentTypeData))
@@ -17,10 +18,16 @@ export const run = internalAction({
       .filter((data) => data.type.startsWith('image'))
       .map((data) => data.url)
 
+    if (imageUrls.length === 0) return
+
+    const runId = nanoid()
+
     for (const url of imageUrls) {
-      await ctx.runMutation(internal.db.jobs.createIngestImageUrlJob, {
-        url,
-        messageId: args.messageId,
+      await ctx.scheduler.runAfter(0, internal.action.ingestImageUrl.runV2, {
+        sourceUrl: url,
+        sourceType: 'message-url',
+        ownerId: args.ownerId,
+        runId,
       })
     }
   },

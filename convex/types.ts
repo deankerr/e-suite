@@ -1,5 +1,5 @@
 import type { Doc, Id, TableNames } from './_generated/dataModel'
-import type { getGeneration, getImageWithEdges } from './db/images'
+import type { getGeneration, getImageWithEdges, imageReturnFields } from './db/images'
 import type { messageReturnFields } from './db/messages'
 import type { getChatModelByResourceKey } from './db/models'
 import type { threadReturnFields } from './db/threads'
@@ -27,7 +27,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
 
 export type EThread = Infer<AsObjectValidator<typeof threadReturnFields>>
 export type EMessage = Infer<AsObjectValidator<typeof messageReturnFields>>
-export type EImage = NonNullable<Awaited<ReturnType<typeof getImageWithEdges>>>
+export type EImage = Infer<AsObjectValidator<typeof imageReturnFields>>
 export type EImageMetadata = Doc<'images_metadata'>['data']
 export type EImageGenerationData = Awaited<ReturnType<typeof getGeneration>>
 export type EUser = Awaited<ReturnType<typeof getUserPublic>>

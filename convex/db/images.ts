@@ -305,10 +305,13 @@ function parseUrlToImageId(url: string) {
 
 // => V2
 
+// TODO handle multiple image versions from same source url
+
 export const imageReturnFields = v.object({
   _id: v.id('images_v2'),
   _creationTime: v.number(),
   sourceUrl: v.string(),
+  sourceType: v.string(),
   id: v.string(),
   fileId: v.string(),
   format: v.string(),
@@ -336,6 +339,20 @@ export const getImageV2Edges = async (ctx: QueryCtx, image: Ent<'images_v2'>) =>
     ...image.doc(),
     collectionIds: await image.edge('collections').map((c) => c._id),
   }
+}
+
+export const getImageV2ByOwnerIdSourceUrl = async (
+  ctx: QueryCtx,
+  ownerId: Id<'users'>,
+  sourceUrl: string,
+) => {
+  const image = await ctx
+    .table('images_v2', 'ownerId_sourceUrl', (q) =>
+      q.eq('ownerId', ownerId).eq('sourceUrl', sourceUrl),
+    )
+    .filter((q) => q.eq(q.field('deletionTime'), undefined))
+    .first()
+  return image ? await getImageV2Edges(ctx, image) : null
 }
 
 export const createImageV2 = internalMutation({

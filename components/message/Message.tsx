@@ -5,6 +5,7 @@ import { RiMoreFill } from '@remixicon/react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 
+import { IImageCard } from '@/components/images/IImageCard'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
@@ -145,7 +146,20 @@ export const Message = ({
         )} */}
 
         {/* => images  */}
-        {/* <Gallery message={message} priority={priority} /> */}
+        {message.images?.length ? (
+          <div className="flex flex-wrap gap-2">
+            {message.images.map((image) => (
+              <div key={image._id}>
+                <IImageCard
+                  image={image}
+                  sizes="(max-width: 410px) 20rem"
+                  priority={priority}
+                  className="h-72 w-auto [&>img]:object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        ) : null}
 
         {/* => audio  */}
         {/* {message.audio.length > 0 ? (
