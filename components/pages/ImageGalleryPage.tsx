@@ -7,12 +7,7 @@ import { IImage } from '@/components/images/IImage'
 import { IImageCard } from '@/components/images/IImageCard'
 import { cn } from '@/lib/utils'
 
-import type {
-  EImage,
-  EImageGenerationData,
-  EImageMetadata,
-  RunConfigTextToImage,
-} from '@/convex/types'
+import type { EImage, EImageGenerationData, EImageMetadata } from '@/convex/types'
 
 export const ImageGalleryPage = ({
   imageId,
@@ -67,7 +62,7 @@ export const ImageGalleryPage = ({
 
 const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationData }) => {
   if (!generation) return null
-  const input = generation.input as RunConfigTextToImage
+  const input = generation.input as any
   const model = input.resourceKey
     ? input.resourceKey.split('::')[1]
     : input.modelId

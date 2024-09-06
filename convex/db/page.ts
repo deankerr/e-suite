@@ -6,8 +6,6 @@ import { httpAction } from '../_generated/server'
 import { query } from '../functions'
 import { getImageWithEdges } from './images'
 
-import type { RunConfigTextToImage } from '../types'
-
 export const getMetadata = query({
   args: {
     route: v.string(),
@@ -24,7 +22,7 @@ export const getMetadata = query({
             description: caption.description,
           }
         }
-        const input = image.generation?.input as RunConfigTextToImage | undefined
+        const input = image.generation?.input as { prompt: string } | undefined
         if (input) {
           return {
             title: input.prompt,

@@ -11,7 +11,7 @@ import { createAi } from '../lib/ai'
 import { ENV } from '../lib/env'
 import { defaultSizes } from '../shared/defaults'
 import { imageModels } from '../shared/imageModels'
-import { getErrorMessage, stringifyValueForError } from '../shared/utils'
+import { stringifyValueForError } from '../shared/utils'
 
 import type { RunConfigTextToImageV2 } from '../types'
 

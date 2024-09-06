@@ -5,107 +5,9 @@ import { nanoid } from 'nanoid/non-secure'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
-import { generationFieldsV1, generationV2Fields, runConfigTextToImageV2 } from '../schema'
+import { generationV2Fields, runConfigTextToImageV2 } from '../schema'
 import { getImageV2Edges } from './images'
 
-import type { MutationCtx } from '../types'
-import type { Infer } from 'convex/values'
-
-const createArgs = v.object(pick(generationFieldsV1, ['input', 'messageId', 'threadId', 'userId']))
-export const createGeneration = async (ctx: MutationCtx, args: Infer<typeof createArgs>) => {
-  const generationId = await ctx.table('generations_v1').insert({
-    ...args,
-    status: 'pending',
-    updatedAt: Date.now(),
-    results: [],
-  })
-
-  await ctx.scheduler.runAfter(0, internal.action.textToImage.run, {
-    generationId,
-  })
-
-  return generationId
-}
-
-export const get = query({
-  args: {
-    generationId: v.id('generations_v1'),
-  },
-  handler: async (ctx, { generationId }) => {
-    return await ctx.table('generations_v1').get(generationId)
-  },
-})
-
-export const activate = internalMutation({
-  args: {
-    generationId: v.id('generations_v1'),
-  },
-  handler: async (ctx, { generationId }) => {
-    const generation = await ctx.table('generations_v1').getX(generationId)
-    if (generation.status !== 'pending') {
-      throw new Error('Image generation is not pending')
-    }
-
-    await generation.patch({
-      status: 'active',
-      updatedAt: Date.now(),
-    })
-
-    return generation
-  },
-})
-
-export const complete = internalMutation({
-  args: {
-    generationId: v.id('generations_v1'),
-    ...pick(generationFieldsV1, ['results', 'output']),
-  },
-  handler: async (ctx, { generationId, results, output }) => {
-    const generation = await ctx.table('generations_v1').getX(generationId)
-    if (generation.status !== 'active') {
-      throw new Error('Image generation is not active')
-    }
-
-    await generation.patch({
-      status: 'completed',
-      updatedAt: Date.now(),
-      results,
-      output,
-    })
-
-    await asyncMap(results, async (result) => {
-      if (result.type === 'image') {
-        await ctx.scheduler.runAfter(0, internal.action.ingestImageUrl.run, {
-          messageId: generation.messageId,
-          sourceType: 'generation',
-          sourceUrl: result.url,
-          generationId,
-        })
-      }
-    })
-  },
-})
-
-export const fail = internalMutation({
-  args: {
-    generationId: v.id('generations_v1'),
-    ...pick(generationFieldsV1, ['output']),
-  },
-  handler: async (ctx, { generationId, output }) => {
-    const generation = await ctx.table('generations_v1').getX(generationId)
-    if (generation.status !== 'active') {
-      throw new Error('Image generation is not active')
-    }
-
-    await generation.patch({
-      status: 'failed',
-      updatedAt: Date.now(),
-      output,
-    })
-  },
-})
-
-// => V2
 export const getV2 = query({
   args: {
     generationId: v.id('generations_v2'),
@@ -163,7 +65,7 @@ export const create = mutation({
         ownerId: viewer._id,
       })
 
-      await ctx.scheduler.runAfter(0, internal.action.generate.run, {
+      await ctx.scheduler.runAfter(0, internal.action.generateTextToImage.run, {
         generationId: id,
       })
 
