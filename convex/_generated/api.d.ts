@@ -29,7 +29,6 @@ import type * as db_audio from "../db/audio.js";
 import type * as db_collections from "../db/collections.js";
 import type * as db_generations from "../db/generations.js";
 import type * as db_images from "../db/images.js";
-import type * as db_jobs from "../db/jobs.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_models from "../db/models.js";
 import type * as db_page from "../db/page.js";
@@ -91,7 +90,6 @@ declare const fullApi: ApiFromModules<{
   "db/collections": typeof db_collections;
   "db/generations": typeof db_generations;
   "db/images": typeof db_images;
-  "db/jobs": typeof db_jobs;
   "db/messages": typeof db_messages;
   "db/models": typeof db_models;
   "db/page": typeof db_page;

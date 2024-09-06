@@ -1,9 +1,13 @@
-import { deprecated, literals } from 'convex-helpers/validators'
+import { asyncMap, pruneNull } from 'convex-helpers'
+import { deprecated, literals, optional } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
+import { ENV } from '../lib/env'
 import { messageFields } from '../schema'
+import { extractValidUrlsFromText } from '../shared/helpers'
+import { getImageV2ByOwnerIdSourceUrl, imageReturnFields } from './images'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
@@ -21,6 +25,8 @@ export const messageReturnFields = {
   threadSlug: v.string(),
   userId: v.id('users'),
   userIsViewer: v.boolean(),
+
+  images: optional(v.array(imageReturnFields)),
 
   contentType: deprecated,
 }
@@ -43,7 +49,20 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
     contentType: undefined,
     threadSlug: thread.slug,
     userIsViewer: getUserIsViewer(ctx, message.userId),
+    images: await getMessageUrlImages(ctx, message),
   }
+}
+
+export const getMessageUrlImages = async (ctx: QueryCtx, message: Ent<'messages'>) => {
+  const urls = extractValidUrlsFromText(message.text || '').filter(
+    (url) => url.hostname !== ENV.APP_HOSTNAME,
+  )
+
+  const results = await asyncMap(
+    urls,
+    async (url) => await getImageV2ByOwnerIdSourceUrl(ctx, message.userId, url.toString()),
+  )
+  return pruneNull(results)
 }
 
 export const get = query({

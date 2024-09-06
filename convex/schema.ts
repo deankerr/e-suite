@@ -83,8 +83,6 @@ export const runConfigTextToAudioV = v.object({
 
 export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV, runConfigTextToAudioV)
 
-export const kvListV = v.array(v.object({ k: v.string(), v: v.string() }))
-
 // * Models
 const sharedModelFields = {
   name: v.string(),
@@ -202,6 +200,7 @@ const images_v2 = defineEnt(imagesV2Fields)
   .field('id', v.string(), { unique: true })
   .index('generationId', ['generationId'])
   .index('ownerId', ['ownerId'])
+  .index('ownerId_sourceUrl', ['ownerId', 'sourceUrl'])
   .edges('collections')
 
 export const imagesMetadataFields = {

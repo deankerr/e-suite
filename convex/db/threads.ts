@@ -8,12 +8,11 @@ import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { ENV } from '../lib/env'
 import { emptyPage, generateSlug } from '../lib/utils'
-import { kvListV, runConfigV, threadFields } from '../schema'
+import { runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
 import { imageModels } from '../shared/imageModels'
 import { createGeneration } from './generations'
 import { getImageEdges, getImageWithEdges } from './images'
-import { createEvaluateMessageUrlsJob } from './jobs'
 import { getMessageEdges, messageReturnFields } from './messages'
 import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -34,7 +33,7 @@ import type {
 import type { WithoutSystemFields } from 'convex/server'
 
 export const threadReturnFields = {
-  _id: v.id('threads'),
+  _id: v.string(),
   _creationTime: v.number(),
   slug: v.string(),
   title: v.optional(v.string()),
@@ -105,16 +104,17 @@ export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
   }
 }
 
-const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
+const getEmptyThread = async (ctx: QueryCtx) => {
   const viewer = await ctx.viewer()
   const user = viewer ? await getUserPublic(ctx, viewer._id) : null
   if (!user) return null
 
   return {
     _id: 'new' as Id<'threads'>,
+    _creationTime: Date.now(),
     slug: 'new',
     title: 'New Thread',
-    _creationTime: Date.now(),
+
     updatedAtTime: Date.now(),
     userId: user._id,
     userIsViewer: true,
@@ -426,7 +426,6 @@ export const append = mutation({
       role: literals('assistant', 'user'),
       name: v.optional(v.string()),
       text: v.optional(v.string()),
-      metadata: v.optional(kvListV),
     }),
     runConfig: v.optional(runConfigV),
     ignoreKeywordCommands: v.optional(v.boolean()),
@@ -446,9 +445,9 @@ export const append = mutation({
         (url) => url.hostname !== ENV.APP_HOSTNAME,
       )
       if (urls.length > 0) {
-        await createEvaluateMessageUrlsJob(ctx, {
+        await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
           urls: urls.map((url) => url.toString()),
-          messageId: message._id,
+          ownerId: thread.userId,
         })
       }
     }
