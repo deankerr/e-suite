@@ -198,7 +198,7 @@ export const imagesMetadataV2Fields = {
       prompt: v.string(),
       modelId: v.string(),
       modelName: v.string(),
-      endpointId: v.string(),
+      provider: v.string(),
     }),
   ),
 }
