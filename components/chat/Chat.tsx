@@ -16,7 +16,7 @@ export const Chat = ({
   ...props
 }: { threadId: string } & React.ComponentProps<typeof Panel>) => {
   const thread = useThread(threadId)
-  const actions = useThreadActions(threadId)
+  const actions = useThreadActions(thread?._id)
 
   if (!thread)
     return (
