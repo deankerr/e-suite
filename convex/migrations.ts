@@ -1,55 +1,98 @@
 import { makeMigration } from 'convex-helpers/server/migrations'
+import { nanoid } from 'nanoid/non-secure'
 
-import { internal } from './_generated/api'
 import { internalMutation } from './_generated/server'
-import { updateImageSearchText } from './db/images'
-import { internalMutation as entsInternalMutation, internalAction } from './functions'
+import { generateTimestampId } from './lib/utils'
+import { imageModels } from './shared/imageModels'
+
+import type { RunConfigTextToImageV2 } from './types'
 
 const migration = makeMigration(internalMutation, {
   migrationTable: 'migrations',
 })
 
-// export const myMigration = migration({
-//   table: 'images',
-//   migrateOne: async (ctx, doc) => {
-//   }
-// })
+export const myMigration = migration({
+  table: 'images_v1',
+  migrateOne: async (ctx, doc) => {
+    const createdAt = doc.originalCreationTime ?? doc._creationTime
+    const imageId = await ctx.db.insert('images_v2', {
+      blurDataUrl: doc.blurDataUrl,
+      createdAt,
+      fileId: doc.fileId,
+      format: doc.format,
+      height: doc.height,
+      width: doc.width,
+      color: doc.color,
+      id: generateTimestampId(createdAt),
+      ownerId: doc.ownerId,
+      sourceType: doc.sourceType === 'userMessageUrl' ? 'message-url' : 'generation',
+      sourceUrl: doc.sourceUrl,
+      runId: nanoid(),
+    })
 
-export const searchTextBatch = entsInternalMutation(
-  async (ctx, { cursor, numItems }: { cursor: string | null; numItems: number }) => {
-    const data = await ctx.table('images_v1').paginate({ cursor, numItems })
-    const { page, isDone, continueCursor } = data
-    for (const doc of page) {
-      await updateImageSearchText(ctx, doc.id)
+    const metadata = await ctx.db
+      .query('images_metadata')
+      .withIndex('imageId', (q) => q.eq('imageId', doc._id))
+      .collect()
+
+    for (const m of metadata) {
+      if (m.data.type === 'captionOCR_V0') {
+        await ctx.db.insert('images_metadata_v2', {
+          imageId,
+          data: {
+            type: 'caption',
+            modelId: m.data.captionModelId,
+            title: m.data.captionTitle,
+            description: m.data.captionDescription,
+            ocr: [m.data.captionOCR],
+            version: 1,
+          },
+        })
+      } else if (m.data.type === 'captionOCR_V1') {
+        await ctx.db.insert('images_metadata_v2', {
+          imageId,
+          data: {
+            type: 'caption',
+            modelId: m.data.modelId,
+            title: m.data.title,
+            description: m.data.description,
+            ocr: m.data.ocr_texts,
+            version: 2,
+          },
+        })
+      } else if (m.data.type === 'generationData_V0') {
+        await ctx.db.insert('images_metadata_v2', {
+          imageId,
+          data: {
+            type: 'generation',
+            modelId: m.data.modelId,
+            prompt: m.data.prompt,
+            modelName: m.data.modelName,
+            provider: m.data.endpointId,
+            version: 1,
+          },
+        })
+      }
     }
-    return { cursor: continueCursor, isDone }
-  },
-)
 
-export const runSearchMigration = internalAction(
-  async ({ runMutation }, { cursor, batchSize }: { cursor: string | null; batchSize: number }) => {
-    let isDone = false
-    while (!isDone) {
-      const args = { cursor, numItems: batchSize }
-      ;({ isDone, cursor } = await runMutation(internal.migrations.searchTextBatch, args))
-    }
-  },
-)
+    if (doc.generationId) {
+      const generation = await ctx.db.get(doc.generationId)
+      if (generation) {
+        const input = generation.input as RunConfigTextToImageV2
+        const model = imageModels.find((m) => m.modelId === input.modelId)
 
-export const migThreadConfig = entsInternalMutation({
-  args: {},
-  handler: async (ctx) => {
-    const threads = await ctx.skipRules.table('threads')
-    for (const thread of threads) {
-      const latestRunConfig =
-        thread.latestRunConfig?.type === 'textToImage'
-          ? {
-              ...thread.latestRunConfig,
-              modelId: 'fal-ai/flex/dev',
-            }
-          : thread.latestRunConfig
-
-      await thread.patch({ latestRunConfig })
+        await ctx.db.insert('images_metadata_v2', {
+          imageId,
+          data: {
+            type: 'generation',
+            modelId: input.modelId,
+            prompt: input.prompt,
+            provider: 'fal',
+            modelName: model?.name ?? '',
+            version: 1,
+          },
+        })
+      }
     }
   },
 })
