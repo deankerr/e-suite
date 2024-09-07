@@ -475,7 +475,7 @@ const createRun = async (
     role: 'assistant',
   })
 
-  await asyncMap(runConfigs, async (runConfig) => {
+  const jobIds = await asyncMap(runConfigs, async (runConfig) => {
     switch (runConfig.type) {
       case 'textToAudio':
         return createTextToAudioRun(ctx, { thread, messageId: message._id, runConfig })
@@ -489,6 +489,7 @@ const createRun = async (
     slug: thread.slug,
     messageId: message._id,
     series: message.series,
+    jobIds: jobIds.filter((id) => id !== undefined),
   }
 }
 
@@ -517,6 +518,8 @@ const createTextToAudioRun = async (
     messageId,
     input,
   })
+
+  return ''
 }
 
 // * chat
@@ -555,4 +558,6 @@ const createChatRun = async (
     latestRunConfig: input,
     updatedAtTime: Date.now(),
   })
+
+  return ''
 }
