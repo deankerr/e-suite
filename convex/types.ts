@@ -43,4 +43,5 @@ export type ThreadActionResult = {
   slug: string
   messageId: string
   series: number
+  jobIds: string[]
 }
