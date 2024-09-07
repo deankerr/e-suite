@@ -177,6 +177,7 @@ const images_v2 = defineEnt(imagesV2Fields)
   .index('generationId', ['generationId'])
   .index('ownerId', ['ownerId'])
   .index('ownerId_sourceUrl', ['ownerId', 'sourceUrl'])
+  .index('runId', ['runId'])
   .edges('collections')
 
 export const imagesMetadataFields = {
