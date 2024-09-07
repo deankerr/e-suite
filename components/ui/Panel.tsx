@@ -7,4 +7,4 @@ export const PanelHeader = twx.div`flex-start h-10 shrink-0 overflow-hidden bord
 export const PanelTitle = twx(Link)`font-medium underline-offset-4 hover:underline`
 export const PanelToolbar = twx.div`flex-start h-10 border-b overflow-hidden w-full gap-1 px-1`
 
-export const NavPanel = twx(Panel)`w-72 shrink-0`
+export const NavPanel = twx(Panel)`sm:w-72 shrink-0 `
