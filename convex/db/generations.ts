@@ -1,14 +1,33 @@
-import { asyncMap, pick } from 'convex-helpers'
+import { asyncMap, omit, pick } from 'convex-helpers'
+import { nullable } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { nanoid } from 'nanoid/non-secure'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
+import { paginatedReturnFields } from '../lib/utils'
 import { generationV2Fields, runConfigTextToImageV2 } from '../schema'
-import { getImageV2Edges } from './images'
+import { getImageV2Edges, imageReturnFields } from './images'
 
-export const getV2 = query({
+const generationsReturn = v.object({
+  _id: v.id('generations_v2'),
+  _creationTime: v.number(),
+  ...pick(generationV2Fields, [
+    'status',
+    'updatedAt',
+    'input',
+    'runId',
+    'ownerId',
+    'input',
+    'errors',
+    'results',
+    'workflow',
+  ]),
+  images: v.array(imageReturnFields),
+})
+
+export const get = query({
   args: {
     generationId: v.id('generations_v2'),
   },
@@ -19,7 +38,7 @@ export const getV2 = query({
       .then(async (gen) =>
         gen
           ? {
-              ...gen,
+              ...omit(gen, ['output']),
               images: await ctx
                 .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
                 .map(async (image) => getImageV2Edges(ctx, image)),
@@ -27,6 +46,7 @@ export const getV2 = query({
           : null,
       )
   },
+  returns: nullable(generationsReturn),
 })
 
 export const list = query({
@@ -40,12 +60,13 @@ export const list = query({
       .order('desc')
       .paginate(paginationOpts)
       .map(async (gen) => ({
-        ...gen,
+        ...omit(gen, ['output']),
         images: await ctx
           .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
           .map(async (image) => getImageV2Edges(ctx, image)),
       }))
   },
+  returns: v.object({ ...paginatedReturnFields, page: v.array(generationsReturn) }),
 })
 
 export const create = mutation({
@@ -74,9 +95,10 @@ export const create = mutation({
 
     return ids
   },
+  returns: v.array(v.id('generations_v2')),
 })
 
-export const activateV2 = internalMutation({
+export const activate = internalMutation({
   args: {
     generationId: v.id('generations_v2'),
   },
@@ -95,7 +117,7 @@ export const activateV2 = internalMutation({
   },
 })
 
-export const completeV2 = internalMutation({
+export const complete = internalMutation({
   args: {
     generationId: v.id('generations_v2'),
     results: v.array(generationV2Fields.results.element),
@@ -126,7 +148,7 @@ export const completeV2 = internalMutation({
   },
 })
 
-export const failV2 = internalMutation({
+export const fail = internalMutation({
   args: {
     generationId: v.id('generations_v2'),
     ...pick(generationV2Fields, ['errors']),

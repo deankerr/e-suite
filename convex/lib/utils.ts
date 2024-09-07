@@ -1,3 +1,5 @@
+import { literals } from 'convex-helpers/validators'
+import { v } from 'convex/values'
 import { customAlphabet } from 'nanoid/non-secure'
 
 import type { MutationCtx } from '../types'
@@ -11,6 +13,13 @@ export function emptyPage() {
     continueCursor: '',
     pageStatus: 'SplitRequired' as const,
   }
+}
+
+export const paginatedReturnFields = {
+  isDone: v.boolean(),
+  continueCursor: v.string(),
+  splitCursor: v.optional(v.union(v.string(), v.null())),
+  pageStatus: v.optional(v.union(literals('SplitRequired', 'SplitRecommended'), v.null())),
 }
 
 export const generateSlug = async (ctx: MutationCtx) => {
