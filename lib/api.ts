@@ -11,11 +11,6 @@ import type { RunConfig } from '@/convex/types'
 
 const RUN_THROTTLE = 2500
 
-// * mutations
-export const useGenerate = () => {
-  return useMutation(api.db.generations.create)
-}
-
 export type ThreadActions = ReturnType<typeof useThreadActions>
 export const useThreadActions = (threadId?: string) => {
   const router = useRouter()

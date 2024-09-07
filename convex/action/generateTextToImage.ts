@@ -44,7 +44,7 @@ export const run = internalAction({
   },
   handler: async (ctx, { generationId }) => {
     try {
-      const generation = await ctx.runMutation(internal.db.generations.activateV2, {
+      const generation = await ctx.runMutation(internal.db.generations.activate, {
         generationId,
       })
       const runConfig = generation.input as RunConfigTextToImageV2
@@ -85,7 +85,7 @@ export const run = internalAction({
       console.log('response', response)
       const output = vb.parse(Response, response)
 
-      await ctx.runMutation(internal.db.generations.completeV2, {
+      await ctx.runMutation(internal.db.generations.complete, {
         generationId,
         results: output.images.map((image) => ({
           url: image.url,
@@ -97,7 +97,7 @@ export const run = internalAction({
       })
     } catch (err) {
       console.error(err)
-      await ctx.runMutation(internal.db.generations.failV2, {
+      await ctx.runMutation(internal.db.generations.fail, {
         generationId,
         errors: [stringifyValueForError(err)],
       })

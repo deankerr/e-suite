@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { ENV } from '../lib/env'
-import { emptyPage, generateSlug } from '../lib/utils'
+import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
 import { runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
 import { getImageWithEdges } from './images'
@@ -46,13 +46,6 @@ export const threadReturnFields = {
 
   favorite: deprecated,
   voiceovers: deprecated,
-}
-
-const paginatedResultFields = {
-  isDone: v.boolean(),
-  continueCursor: v.string(),
-  splitCursor: v.optional(v.union(v.string(), v.null())),
-  pageStatus: v.optional(v.union(literals('SplitRequired', 'SplitRecommended'), v.null())),
 }
 
 // * Helpers
@@ -211,7 +204,7 @@ export const listMessages = query({
 
     return messages
   },
-  returns: v.object({ ...paginatedResultFields, page: v.array(v.object(messageReturnFields)) }),
+  returns: v.object({ ...paginatedReturnFields, page: v.array(v.object(messageReturnFields)) }),
 })
 
 export const searchImages = query({
