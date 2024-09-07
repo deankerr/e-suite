@@ -16,7 +16,7 @@ export const ChatsNavPanel = () => {
   const params = useParams()
 
   return (
-    <NavPanel>
+    <NavPanel className={cn(params.threadId && 'hidden sm:flex')}>
       <PanelHeader>
         <NavigationButton />
         <PanelTitle href="/chats">Chats</PanelTitle>
