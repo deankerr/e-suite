@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    template: `Generations · %s`,
-    default: `Generations`,
+    template: `Drawing · %s`,
+    default: `Drawing`,
   },
 }
 export default function Layout({ children }: { children: React.ReactNode }) {
