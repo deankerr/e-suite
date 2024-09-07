@@ -178,7 +178,38 @@ const images_v2 = defineEnt(imagesV2Fields)
   .index('ownerId', ['ownerId'])
   .index('ownerId_sourceUrl', ['ownerId', 'sourceUrl'])
   .index('runId', ['runId'])
+  .edges('images_metadata_v2', { to: 'images_metadata_v2', ref: 'imageId', deletion: 'soft' })
   .edges('collections')
+
+export const imagesMetadataV2Fields = {
+  data: v.union(
+    v.object({
+      type: v.literal('caption'),
+      version: v.number(),
+      modelId: v.string(),
+      title: v.string(),
+      description: v.string(),
+      ocr: v.array(v.string()),
+    }),
+
+    v.object({
+      type: v.literal('generation'),
+      version: v.number(),
+      prompt: v.string(),
+      modelId: v.string(),
+      modelName: v.string(),
+      endpointId: v.string(),
+    }),
+  ),
+}
+const images_metadata_v2 = defineEnt(imagesMetadataV2Fields)
+  .deletion('scheduled', {
+    delayMs: timeToDelete,
+  })
+  .edge('image', {
+    to: 'images_v2',
+    field: 'imageId',
+  })
 
 export const imagesMetadataFields = {
   data: v.union(
@@ -398,6 +429,7 @@ const schema = defineEntSchema(
     images_v1,
     images_v2,
     images_metadata,
+    images_metadata_v2,
     images_search_text,
     generations_v1,
     generations_v2,
