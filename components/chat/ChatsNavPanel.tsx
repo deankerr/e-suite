@@ -22,9 +22,11 @@ export const ChatsNavPanel = () => {
         <PanelTitle href="/chats">Chats</PanelTitle>
 
         <div className="grow" />
-        <Button variant="surface">
-          Create <Icons.Plus size={18} />
-        </Button>
+        <Link href="/chats/new">
+          <Button variant="surface">
+            Create <Icons.Plus size={18} />
+          </Button>
+        </Link>
       </PanelHeader>
 
       <VScrollArea>
@@ -38,7 +40,7 @@ export const ChatsNavPanel = () => {
                 thread.slug === params.threadId && 'bg-gray-3 hover:bg-gray-3',
               )}
             >
-              {thread.title}
+              {thread.title ?? 'Untitled'}
             </Link>
           ))}
         </div>
