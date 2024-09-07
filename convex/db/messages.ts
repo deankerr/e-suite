@@ -7,7 +7,7 @@ import { internalMutation, mutation, query } from '../functions'
 import { ENV } from '../lib/env'
 import { messageFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
-import { getImageV2ByOwnerIdSourceUrl, imageReturnFields } from './images'
+import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from './images'
 import { getUserIsViewer } from './users'
 
 import type { Id } from '../_generated/dataModel'
@@ -26,7 +26,7 @@ export const messageReturnFields = {
   userId: v.id('users'),
   userIsViewer: v.boolean(),
 
-  images: optional(v.array(imageReturnFields)),
+  images: optional(v.array(imagesReturn)),
 
   contentType: deprecated,
 }

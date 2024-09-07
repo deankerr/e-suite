@@ -217,7 +217,7 @@ function parseUrlToImageId(url: string) {
 
 // TODO handle multiple image versions from same source url
 
-export const imageReturnFields = v.object({
+export const imagesReturn = v.object({
   _id: v.id('images_v2'),
   _creationTime: v.number(),
   sourceUrl: v.string(),

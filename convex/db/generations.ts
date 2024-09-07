@@ -8,9 +8,11 @@ import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { paginatedReturnFields } from '../lib/utils'
 import { generationV2Fields, runConfigTextToImageV2 } from '../schema'
-import { getImageV2Edges, imageReturnFields } from './images'
+import { getImageV2Edges, imagesReturn } from './images'
 
-const generationsReturn = v.object({
+import type { Ent, QueryCtx, RunConfigTextToImageV2 } from '../types'
+
+export const generationsReturn = v.object({
   _id: v.id('generations_v2'),
   _creationTime: v.number(),
   ...pick(generationV2Fields, [
@@ -24,8 +26,19 @@ const generationsReturn = v.object({
     'results',
     'workflow',
   ]),
-  images: v.array(imageReturnFields),
+  images: v.array(imagesReturn),
 })
+
+export const getGenerationEdges = async (ctx: QueryCtx, generation: Ent<'generations_v2'>) => {
+  const doc = omit(generation.doc(), ['output'])
+  return {
+    ...doc,
+    input: generation.input as RunConfigTextToImageV2,
+    images: await ctx
+      .table('images_v2', 'generationId', (q) => q.eq('generationId', generation._id))
+      .map(async (image) => getImageV2Edges(ctx, image)),
+  }
+}
 
 export const get = query({
   args: {
@@ -35,16 +48,7 @@ export const get = query({
     return await ctx
       .table('generations_v2')
       .get(generationId)
-      .then(async (gen) =>
-        gen
-          ? {
-              ...omit(gen, ['output']),
-              images: await ctx
-                .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
-                .map(async (image) => getImageV2Edges(ctx, image)),
-            }
-          : null,
-      )
+      .then(async (gen) => (gen ? await getGenerationEdges(ctx, gen) : null))
   },
   returns: nullable(generationsReturn),
 })
@@ -59,12 +63,7 @@ export const list = query({
       .table('generations_v2', 'ownerId', (q) => q.eq('ownerId', viewer._id))
       .order('desc')
       .paginate(paginationOpts)
-      .map(async (gen) => ({
-        ...omit(gen, ['output']),
-        images: await ctx
-          .table('images_v2', 'generationId', (q) => q.eq('generationId', gen._id))
-          .map(async (image) => getImageV2Edges(ctx, image)),
-      }))
+      .map(async (gen) => await getGenerationEdges(ctx, gen))
   },
   returns: v.object({ ...paginatedReturnFields, page: v.array(generationsReturn) }),
 })
@@ -93,9 +92,15 @@ export const create = mutation({
       return id
     })
 
-    return ids
+    return {
+      runId,
+      generationIds: ids,
+    }
   },
-  returns: v.array(v.id('generations_v2')),
+  returns: v.object({
+    runId: v.string(),
+    generationIds: v.array(v.id('generations_v2')),
+  }),
 })
 
 export const activate = internalMutation({
