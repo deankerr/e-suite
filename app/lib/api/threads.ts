@@ -1,6 +1,8 @@
 import { useCachedQuery } from '@/app/lib/api/helpers'
 import { api } from '@/convex/_generated/api'
 
+import type { Id } from '@/convex/_generated/dataModel'
+
 export const useThreads = () => {
   const threads = useCachedQuery(api.db.threads.list, {})
   threads?.sort((a, b) => {
@@ -39,4 +41,8 @@ export const useMessage = (slug?: string, msg?: string) => {
     thread,
     message,
   }
+}
+
+export const useMessageById = (messageId: string) => {
+  return useCachedQuery(api.db.messages.getDoc, { messageId: messageId as Id<'messages'> })
 }
