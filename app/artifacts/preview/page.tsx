@@ -14,7 +14,9 @@ export default function Page() {
           'App.tsx': `export default function App() { return <p>Hello, world!</p> }`,
         }}
         theme={gruvboxDark}
-        options={{}}
+        options={{
+          externalResources: ['https://cdn.tailwindcss.com'],
+        }}
       >
         <SandpackLayout>
           <SandpackPreview />
