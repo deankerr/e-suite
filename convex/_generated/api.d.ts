@@ -32,6 +32,7 @@ import type * as db_messages from "../db/messages.js";
 import type * as db_metadata from "../db/metadata.js";
 import type * as db_models from "../db/models.js";
 import type * as db_runs from "../db/runs.js";
+import type * as db_texts from "../db/texts.js";
 import type * as db_threads from "../db/threads.js";
 import type * as db_users from "../db/users.js";
 import type * as deletion from "../deletion.js";
@@ -88,6 +89,7 @@ declare const fullApi: ApiFromModules<{
   "db/metadata": typeof db_metadata;
   "db/models": typeof db_models;
   "db/runs": typeof db_runs;
+  "db/texts": typeof db_texts;
   "db/threads": typeof db_threads;
   "db/users": typeof db_users;
   deletion: typeof deletion;

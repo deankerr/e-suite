@@ -340,6 +340,17 @@ export const speechFields = {
 }
 const speech = defineEnt(speechFields).index('textHash_resourceKey', ['textHash', 'resourceKey'])
 
+// * Texts
+export const textFields = {
+  title: v.optional(v.string()),
+  content: v.string(),
+  type: literals('prompt', 'message'),
+}
+const texts = defineEnt(textFields)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .edge('user')
+  .index('userId_type', ['userId', 'type'])
+
 // * Messages
 export const messageFields = {
   role: literals('system', 'assistant', 'user'),
@@ -402,6 +413,7 @@ const users = defineEnt(userFields)
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('images_v1', { ref: 'ownerId', deletion: 'soft' })
   .edges('collections', { ref: 'ownerId', deletion: 'soft' })
+  .edges('texts', { ref: 'userId', deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -434,6 +446,7 @@ const schema = defineEntSchema(
     generations_v1,
     generations_v2,
 
+    texts,
     messages,
     speech,
     threads,

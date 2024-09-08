@@ -93,6 +93,10 @@ export const Navigation = ({
         </Authenticated>
 
         <div className="space-y-1 py-2">
+          <NavItem href={'/prompts/new'}>
+            <Icons.Pencil size={20} className="place-self-center text-accent-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">Prompts</div>
+          </NavItem>
           <NavItem href={'/artifacts'}>
             <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
             <div className="line-clamp-2 select-none overflow-hidden pr-3">Artifacts</div>
