@@ -23,6 +23,12 @@ importers:
       '@clerk/themes':
         specifier: ^2.1.25
         version: 2.1.25
+      '@codesandbox/sandpack-react':
+        specifier: ^2.19.3
+        version: 2.19.3(@lezer/common@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@codesandbox/sandpack-themes':
+        specifier: ^2.0.21
+        version: 2.0.21
       '@fal-ai/serverless-client':
         specifier: ^0.14.2
         version: 0.14.2
@@ -756,11 +762,14 @@ packages:
   '@codesandbox/sandpack-client@2.19.0':
     resolution: {integrity: sha512-a1D1/kJgyJRtqwiv2keX484RtgArOIBCj9NX/AqXWdVrHAn+yJtxP1RCqW0T0sfpYray/j2XD2WQn/6kz7VKMA==}
 
-  '@codesandbox/sandpack-react@2.19.1':
-    resolution: {integrity: sha512-3XrvvcR09zrin/VwtDWN6zEZDQFr4ovc0Kh+/YBB5muG4r0b2UWDPQYTSAY+Xj9hLK+E51AM0rWrfDIlqzhGfA==}
+  '@codesandbox/sandpack-react@2.19.3':
+    resolution: {integrity: sha512-S/uyFfjlu2pyTTDoobm25RvxnfrRwp8fuXQWqrcxaCI7NkZ/aTAnIL+RC9Tf/AJJMMwcoTPKCi1g0f7zvnL+nA==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
       react-dom: ^16.8.0 || ^17 || ^18
+
+  '@codesandbox/sandpack-themes@2.0.21':
+    resolution: {integrity: sha512-CMH/MO/dh6foPYb/3eSn2Cu/J3+1+/81Fsaj7VggICkCrmRk0qG5dmgjGAearPTnRkOGORIPHuRqwNXgw0E6YQ==}
 
   '@discoveryjs/json-ext@0.5.7':
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -7096,7 +7105,7 @@ snapshots:
       outvariant: 1.4.0
       static-browser-server: 1.0.3
 
-  '@codesandbox/sandpack-react@2.19.1(@lezer/common@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@codesandbox/sandpack-react@2.19.3(@lezer/common@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@codemirror/autocomplete': 6.18.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.33.0)(@lezer/common@1.2.1)
       '@codemirror/commands': 6.6.0
@@ -7121,6 +7130,8 @@ snapshots:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@lezer/common'
+
+  '@codesandbox/sandpack-themes@2.0.21': {}
 
   '@discoveryjs/json-ext@0.5.7': {}
 
@@ -7686,7 +7697,7 @@ snapshots:
       '@codemirror/merge': 6.7.0
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.33.0
-      '@codesandbox/sandpack-react': 2.19.1(@lezer/common@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@codesandbox/sandpack-react': 2.19.3(@lezer/common@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@lexical/clipboard': 0.17.1
       '@lexical/link': 0.17.1
       '@lexical/list': 0.17.1
@@ -10212,7 +10223,7 @@ snapshots:
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.9.0(eslint@8.57.0)
       eslint-plugin-react: 7.35.0(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.2(eslint@8.57.0)
@@ -10243,7 +10254,7 @@ snapshots:
       is-bun-module: 1.1.0
       is-glob: 4.0.3
     optionalDependencies:
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0)
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
       - eslint-import-resolver-node
@@ -10261,7 +10272,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.0):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.0))(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5

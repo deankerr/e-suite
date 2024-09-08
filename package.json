@@ -19,6 +19,8 @@
     "@aws-sdk/credential-providers": "^3.637.0",
     "@clerk/nextjs": "^5.3.7",
     "@clerk/themes": "^2.1.25",
+    "@codesandbox/sandpack-react": "^2.19.3",
+    "@codesandbox/sandpack-themes": "^2.0.21",
     "@fal-ai/serverless-client": "^0.14.2",
     "@formkit/auto-animate": "^0.8.2",
     "@mdxeditor/editor": "^3.11.3",

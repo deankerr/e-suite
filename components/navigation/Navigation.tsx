@@ -92,6 +92,17 @@ export const Navigation = ({
           </div>
         </Authenticated>
 
+        <div className="space-y-1 py-2">
+          <NavItem href={'/artifacts'}>
+            <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">Artifacts</div>
+          </NavItem>
+          <NavItem href={'/artifacts/preview'}>
+            <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
+            <div className="line-clamp-2 select-none overflow-hidden pr-3">Preview</div>
+          </NavItem>
+        </div>
+
         {/* <ScrollArea scrollbars="vertical">
           <div ref={containerRef}>
             {threads
