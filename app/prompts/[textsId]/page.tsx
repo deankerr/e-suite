@@ -23,15 +23,8 @@ export default function Page({ params }: { params: { textsId: string } }) {
   const deletePrompt = useMutation(api.db.texts.deletePrompt)
 
   const handleSave = ({ title, content }: { title: string; content: string }) => {
-    if (!title) {
-      toast.error('Please enter a title')
-      return
-    }
-
-    if (!content) {
-      toast.error('Please enter a prompt')
-      return
-    }
+    if (!title) return toast.error('Please enter a title')
+    if (!content) return toast.error('Please enter a prompt')
 
     setPrompt({
       _id: prompt?._id,
@@ -63,9 +56,7 @@ export default function Page({ params }: { params: { textsId: string } }) {
   }
 
   if (isNewPrompt) {
-    return (
-      <PromptEditor initialTitle="" initialContent="" onSave={handleSave} onDelete={handleDelete} />
-    )
+    return <PromptEditor initialTitle="" initialContent="" onSave={handleSave} />
   }
 
   if (!prompt) {

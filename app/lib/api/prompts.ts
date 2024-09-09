@@ -2,7 +2,8 @@ import { useCachedQuery } from '@/app/lib/api/helpers'
 import { api } from '@/convex/_generated/api'
 
 export const usePrompts = () => {
-  return useCachedQuery(api.db.texts.listPrompts, {})
+  const prompts = useCachedQuery(api.db.texts.listPrompts, {})
+  return prompts ? prompts.sort((a, b) => b.updatedAt - a.updatedAt) : prompts
 }
 
 export const usePrompt = (promptId: string) => {

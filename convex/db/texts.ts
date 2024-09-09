@@ -10,6 +10,7 @@ const textPromptsReturn = v.object({
   content: v.string(),
   type: v.literal('prompt'),
   userId: v.id('users'),
+  updatedAt: v.number(),
 })
 
 export const getPrompt = query({
@@ -18,9 +19,7 @@ export const getPrompt = query({
   },
   handler: async (ctx, { _id }) => {
     const id = ctx.table('texts').normalizeId(_id)
-    if (!id) return null
-
-    const text = await ctx.table('texts').get(id)
+    const text = id ? await ctx.table('texts').get(id) : null
     if (!text || text.type !== 'prompt' || text.deletionTime) {
       return null
     }
@@ -56,9 +55,15 @@ export const setPrompt = mutation({
     const viewer = await ctx.viewerX()
 
     if (_id) {
-      return await ctx.table('texts').getX(_id).patch({ title, content })
+      return await ctx.table('texts').getX(_id).patch({ title, content, updatedAt: Date.now() })
     } else {
-      return await ctx.table('texts').insert({ title, content, type: 'prompt', userId: viewer._id })
+      return await ctx.table('texts').insert({
+        title,
+        content,
+        type: 'prompt',
+        userId: viewer._id,
+        updatedAt: Date.now(),
+      })
     }
   },
 })

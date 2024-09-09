@@ -1,27 +1,14 @@
 'use client'
 
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { useThreads } from '@/app/lib/api/threads'
 import { AppLogo } from '@/components/icons/AppLogo'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 import { cn } from '@/lib/utils'
-
-const ThreadIcon = ({ type = '', className }: { type?: string; className?: string }) => {
-  switch (type) {
-    case 'chat':
-      return <Icons.Chat size={20} className={className} />
-    case 'textToImage':
-      return <Icons.Images size={20} className={className} />
-    default:
-      return <Icons.NotePencil size={20} className={className} />
-  }
-}
 
 const NavItem = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof Link>) => {
   const pathname = usePathname()
@@ -44,11 +31,6 @@ export const Navigation = ({
   children,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) => {
-  const threads = useThreads()
-  const favouriteThreads = threads?.filter((thread) => thread.favorite)
-
-  const [containerRef] = useAutoAnimate()
-
   return (
     <div className={cn('h-full overflow-hidden bg-gray-1', className)} {...props}>
       <div className="-ml-px flex h-full w-60 flex-col text-sm font-medium">
@@ -68,18 +50,6 @@ export const Navigation = ({
               <div className="line-clamp-2 select-none overflow-hidden pr-3">Chats</div>
             </NavItem>
 
-            {favouriteThreads?.map((thread) => (
-              <NavItem key={thread._id} href={`/chats/${thread.slug}`} className="h-10">
-                <ThreadIcon
-                  type={thread.latestRunConfig?.type}
-                  className="place-self-center text-accent-11"
-                />
-                <div className="line-clamp-2 select-none overflow-hidden pr-3">
-                  {thread.title ?? 'Untitled'}
-                </div>
-              </NavItem>
-            ))}
-
             <NavItem href={'/generations'}>
               <Icons.FlowerLotus size={20} className="place-self-center text-accent-11" />
               <div className="line-clamp-2 select-none overflow-hidden pr-3">Generate</div>
@@ -92,41 +62,22 @@ export const Navigation = ({
           </div>
         </Authenticated>
 
-        <div className="space-y-1 py-2">
-          <NavItem href={'/prompts/new'}>
-            <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
-            <div className="line-clamp-2 select-none overflow-hidden pr-3">Prompts</div>
-          </NavItem>
-          <NavItem href={'/artifacts'}>
-            <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
-            <div className="line-clamp-2 select-none overflow-hidden pr-3">Artifacts</div>
-          </NavItem>
-          <NavItem href={'/artifacts/preview'}>
-            <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
-            <div className="line-clamp-2 select-none overflow-hidden pr-3">Preview</div>
-          </NavItem>
-        </div>
-
-        {/* <ScrollArea scrollbars="vertical">
-          <div ref={containerRef}>
-            {threads
-              ?.filter((thread) => thread.slug !== 'new')
-              .map((thread) => (
-                <NavItem
-                  key={thread._id}
-                  href={getThreadPath({ slug: thread.slug, type: thread.latestRunConfig?.type })}
-                >
-                  <ThreadIcon
-                    type={thread.latestRunConfig?.type}
-                    className="place-self-center text-accent-11"
-                  />
-                  <div className="line-clamp-2 select-none overflow-hidden pr-3">
-                    {thread.title ?? 'Untitled'}
-                  </div>
-                </NavItem>
-              ))}
+        <AdminOnlyUi>
+          <div className="space-y-1 py-2">
+            <NavItem href={'/prompts'}>
+              <Icons.NotePencil size={20} className="place-self-center text-accent-11" />
+              <div className="line-clamp-2 select-none overflow-hidden pr-3">Prompts</div>
+            </NavItem>
+            <NavItem href={'/artifacts'}>
+              <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
+              <div className="line-clamp-2 select-none overflow-hidden pr-3">Artifacts</div>
+            </NavItem>
+            <NavItem href={'/artifacts/preview'}>
+              <Icons.FolderStar size={20} className="place-self-center text-accent-11" />
+              <div className="line-clamp-2 select-none overflow-hidden pr-3">Preview</div>
+            </NavItem>
           </div>
-        </ScrollArea> */}
+        </AdminOnlyUi>
 
         <div className="grow" />
 

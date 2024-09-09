@@ -22,13 +22,14 @@ export const PromptEditor = ({
   initialTitle: string
   initialContent: string
   onSave: (args: { title: string; content: string }) => void
-  onDelete: () => void
+  onDelete?: () => void
 }) => {
   const ref = useRef<MDXEditorMethods>(null)
 
   const [titleValue, setTitleValue] = useState(initialTitle)
   const [textValue, setTextValue] = useState(initialContent)
 
+  const hasChanged = titleValue !== initialTitle || textValue !== initialContent
   return (
     <Panel>
       <PanelHeader>
@@ -46,20 +47,26 @@ export const PromptEditor = ({
           onChange={(e) => setTitleValue(e.target.value)}
         />
 
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <IconButton variant="ghost" color="red" aria-label="Delete prompt" className="mx-1">
-              <Icons.Trash size={18} />
-            </IconButton>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item color="red" onClick={onDelete}>
-              Delete
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+        {onDelete && (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton variant="ghost" color="red" aria-label="Delete prompt" className="mx-1">
+                <Icons.Trash size={18} />
+              </IconButton>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item color="red" onClick={onDelete}>
+                Delete
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
 
-        <Button variant="surface" onClick={() => onSave({ title: titleValue, content: textValue })}>
+        <Button
+          variant="surface"
+          onClick={() => onSave({ title: titleValue, content: textValue })}
+          disabled={!hasChanged}
+        >
           Save
         </Button>
       </PanelHeader>

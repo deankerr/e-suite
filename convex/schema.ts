@@ -345,6 +345,7 @@ export const textFields = {
   title: v.optional(v.string()),
   content: v.string(),
   type: literals('prompt', 'message'),
+  updatedAt: v.number(),
 }
 const texts = defineEnt(textFields)
   .deletion('scheduled', { delayMs: timeToDelete })
