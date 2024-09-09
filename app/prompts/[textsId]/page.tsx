@@ -1,10 +1,12 @@
 'use client'
 
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
+import { usePrompt } from '@/app/lib/api/prompts'
 import { PromptEditor } from '@/components/prompts/PromptEditor'
+import { PanelEmpty, PanelLoading } from '@/components/ui/Panel'
 import { api } from '@/convex/_generated/api'
 
 import type { Id } from '@/convex/_generated/dataModel'
@@ -15,9 +17,10 @@ export default function Page({ params }: { params: { textsId: string } }) {
   const textsId = params.textsId as Id<'texts'>
   const isNewPrompt = textsId === 'new'
 
-  const prompt = useQuery(api.db.texts.getPrompt, !isNewPrompt ? { _id: textsId } : 'skip')
+  const prompt = usePrompt(!isNewPrompt ? textsId : '')
 
   const setPrompt = useMutation(api.db.texts.setPrompt)
+  const deletePrompt = useMutation(api.db.texts.deletePrompt)
 
   const handleSave = ({ title, content }: { title: string; content: string }) => {
     if (!title) {
@@ -45,17 +48,39 @@ export default function Page({ params }: { params: { textsId: string } }) {
       })
   }
 
-  if (isNewPrompt) {
-    return <PromptEditor initialTitle="" initialContent="" onSave={handleSave} />
+  const handleDelete = () => {
+    if (!prompt?._id) return
+
+    deletePrompt({ _id: prompt._id })
+      .then(() => {
+        toast.success('Prompt deleted')
+        router.replace('/prompts')
+      })
+      .catch((error) => {
+        console.error(error)
+        toast.error('Failed to delete prompt')
+      })
   }
 
-  if (!prompt) return <div>No prompt</div>
+  if (isNewPrompt) {
+    return (
+      <PromptEditor initialTitle="" initialContent="" onSave={handleSave} onDelete={handleDelete} />
+    )
+  }
+
+  if (!prompt) {
+    if (prompt === null) {
+      return <PanelEmpty />
+    }
+    return <PanelLoading />
+  }
 
   return (
     <PromptEditor
       initialTitle={prompt.title ?? ''}
       initialContent={prompt.content}
       onSave={handleSave}
+      onDelete={handleDelete}
     />
   )
 }

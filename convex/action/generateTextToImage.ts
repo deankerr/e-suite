@@ -71,6 +71,7 @@ export const run = internalAction({
         guidance_scale: runConfig.guidanceScale,
         steps: runConfig.steps,
         loras: runConfig.loras,
+        enable_safety_checker: false,
       }
 
       let model = runConfig.modelId

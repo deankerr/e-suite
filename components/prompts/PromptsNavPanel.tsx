@@ -1,20 +1,19 @@
 'use client'
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { useQuery } from 'convex/react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
+import { usePrompts } from '@/app/lib/api/prompts'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Button } from '@/components/ui/Button'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
-import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
 export const PromptsNavPanel = () => {
   const params = useParams()
-  const prompts = useQuery(api.db.texts.listPrompts, {})
+  const prompts = usePrompts()
 
   return (
     <NavPanel>
@@ -38,7 +37,7 @@ export const PromptsNavPanel = () => {
               href={`/prompts/${prompt._id}`}
               className={cn(
                 'truncate rounded-sm px-2 py-3 text-sm font-medium hover:bg-gray-2',
-                prompt._id === params.promptId && 'bg-gray-3 hover:bg-gray-3',
+                prompt._id === params.textsId && 'bg-gray-3 hover:bg-gray-3',
               )}
             >
               {prompt.title ?? 'Untitled'}

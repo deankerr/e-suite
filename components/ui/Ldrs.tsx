@@ -71,3 +71,14 @@ export function Orbit({ color = 'var(--accent-11)', size, speed }: LoaderProps) 
   }, [])
   return <l-orbit color={color} size={size} speed={speed}></l-orbit>
 }
+
+export function Grid({ color = 'var(--accent-11)', size, speed }: LoaderProps) {
+  useEffect(() => {
+    async function getLoader() {
+      const { grid } = await import('ldrs')
+      grid.register()
+    }
+    getLoader()
+  }, [])
+  return <l-grid color={color} size={size} speed={speed}></l-grid>
+}

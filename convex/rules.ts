@@ -30,6 +30,18 @@ export function getEntDefinitionsWithRules(ctx: QueryCtx): typeof entDefinitions
         return ctx.viewerId === image.ownerId
       },
     },
+    images_v2: {
+      write: async ({ operation, ent: image, value }) => {
+        if (operation === 'create') return ctx.viewerId === value.ownerId
+        return ctx.viewerId === image.ownerId
+      },
+    },
+    texts: {
+      write: async ({ operation, ent: text, value }) => {
+        if (operation === 'create') return ctx.viewerId === value.userId
+        return ctx.viewerId === text.userId
+      },
+    },
   })
 }
 
