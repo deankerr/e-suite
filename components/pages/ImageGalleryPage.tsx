@@ -7,7 +7,7 @@ import { IImage } from '@/components/images/IImage'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { cn } from '@/lib/utils'
 
-import type { EImage, EImageGenerationData, EImageMetadata } from '@/convex/types'
+import type { EImage } from '@/convex/types'
 
 export const ImageGalleryPage = ({
   imageId,
@@ -60,7 +60,7 @@ export const ImageGalleryPage = ({
   )
 }
 
-const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationData }) => {
+const ImageGenerationDataCard = ({ generation }: { generation: any }) => {
   if (!generation) return null
   const input = generation.input as any
   const model = input.resourceKey
@@ -97,19 +97,19 @@ const ImageGenerationDataCard = ({ generation }: { generation: EImageGenerationD
   )
 }
 
-const ImageCaptionOCRV1Cards = ({ metadata }: { metadata: EImageMetadata[] }) => {
+const ImageCaptionOCRV1Cards = ({ metadata }: { metadata: any[] }) => {
   const data = metadata.find((m) => m.type === 'captionOCR_V1')
   if (!data) return null
 
   const paragraphs = data.description
     .split('. ')
-    .map((p) => (p.charAt(p.length - 1) === '.' ? p : p + '.'))
+    .map((p: string) => (p.charAt(p.length - 1) === '.' ? p : p + '.'))
 
   return (
     <>
       <Card className="space-y-2" size="2">
         <div className="pb-px text-base font-semibold">{data.title}</div>
-        {paragraphs.map((p, index) => (
+        {paragraphs.map((p: string, index: number) => (
           <p key={index} className="text-sm">
             {p}
           </p>
@@ -132,7 +132,7 @@ const ImageCaptionOCRV1Cards = ({ metadata }: { metadata: EImageMetadata[] }) =>
   )
 }
 
-const ImageCaptionOCRV0Cards = ({ metadata }: { metadata: EImageMetadata[] }) => {
+const ImageCaptionOCRV0Cards = ({ metadata }: { metadata: any[] }) => {
   const data = metadata.find((m) => m.type === 'captionOCR_V0')
   if (!data) return null
 
@@ -161,7 +161,7 @@ const ImageCaptionOCRV0Cards = ({ metadata }: { metadata: EImageMetadata[] }) =>
   )
 }
 
-const ImageGenerationDataV0Card = ({ metadata }: { metadata: EImageMetadata[] }) => {
+const ImageGenerationDataV0Card = ({ metadata }: { metadata: any[] }) => {
   const data = metadata.find((m) => m.type === 'generationData_V0')
   if (!data) return null
 

@@ -4,7 +4,6 @@ import { omit } from 'convex-helpers'
 import { v } from 'convex/values'
 import { z } from 'zod'
 
-import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
 
 export const run = internalAction({
@@ -12,7 +11,8 @@ export const run = internalAction({
     imageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const url = await ctx.runQuery(internal.db.images.getUrl, { imageId: args.imageId })
+    // const url = await ctx.runQuery(internal.db.images.getUrl, { imageId: args.imageId })
+    const url = ''
     if (!url) throw new Error('Image not found')
 
     const response = await generateObject({
@@ -53,14 +53,14 @@ export const run = internalAction({
     const result = omit(response, ['rawResponse', 'toJsonResponse'])
     console.log(result)
 
-    await ctx.runMutation(internal.db.images.createImageMetadata, {
-      imageId: args.imageId,
-      data: {
-        type: 'captionOCR_V1',
-        modelId: 'gpt-4o-mini',
-        ...result.object.data,
-      },
-    })
+    // await ctx.runMutation(internal.db.images.createImageMetadata, {
+    //   imageId: args.imageId,
+    //   data: {
+    //     type: 'captionOCR_V1',
+    //     modelId: 'gpt-4o-mini',
+    //     ...result.object.data,
+    //   },
+    // })
   },
 })
 

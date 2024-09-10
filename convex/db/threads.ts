@@ -1,4 +1,4 @@
-import { asyncMap, omit, pruneNull } from 'convex-helpers'
+import { asyncMap, omit } from 'convex-helpers'
 import { deprecated, literals, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
@@ -10,7 +10,6 @@ import { ENV } from '../lib/env'
 import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
 import { runConfigV, threadFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
-import { getImageWithEdges } from './images'
 import { getMessageEdges, messageReturnFields } from './messages'
 import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -207,33 +206,33 @@ export const listMessages = query({
   returns: v.object({ ...paginatedReturnFields, page: v.array(v.object(messageReturnFields)) }),
 })
 
-export const searchImages = query({
-  args: {
-    slugOrId: v.string(),
-    query: v.string(),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return emptyPage()
+// export const searchImages = query({
+//   args: {
+//     slugOrId: v.string(),
+//     query: v.string(),
+//     paginationOpts: paginationOptsValidator,
+//   },
+//   handler: async (ctx, args) => {
+//     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+//     if (!thread) return emptyPage()
 
-    const results = await ctx
-      .table('images_search_text')
-      .search('text', (q) => q.search('text', args.query))
-      .paginate(args.paginationOpts)
-      .map(async ({ imageId }) => {
-        if (await thread.edge('images_v1').has(imageId)) {
-          return await getImageWithEdges(ctx, imageId)
-        }
-        return null
-      })
+//     const results = await ctx
+//       .table('images_search_text')
+//       .search('text', (q) => q.search('text', args.query))
+//       .paginate(args.paginationOpts)
+//       .map(async ({ imageId }) => {
+//         if (await thread.edge('images_v1').has(imageId)) {
+//           return await getImageWithEdges(ctx, imageId)
+//         }
+//         return null
+//       })
 
-    return {
-      ...results,
-      page: pruneNull(results.page),
-    }
-  },
-})
+//     return {
+//       ...results,
+//       page: pruneNull(results.page),
+//     }
+//   },
+// })
 
 export const getMessage = query({
   args: {

@@ -128,34 +128,6 @@ export const collections = defineEnt(collectionFields)
   .edges('images_v2')
 
 // * images
-export const imagesFieldsV1 = {
-  sourceUrl: v.string(),
-  sourceType: v.union(v.literal('generation'), v.literal('userMessageUrl')),
-  fileId: v.id('_storage'),
-  format: v.string(),
-  width: v.number(),
-  height: v.number(),
-  blurDataUrl: v.string(),
-  color: v.string(),
-
-  generationId: v.optional(v.id('generations_v1')),
-  originalCreationTime: v.optional(v.number()),
-}
-const images_v1 = defineEnt(imagesFieldsV1)
-  .deletion('scheduled', { delayMs: timeToDelete })
-  .field('id', v.string(), { unique: true })
-  .edges('messages')
-  .edges('threads')
-  .edge('user', { field: 'ownerId' })
-  .edges('image_metadata', { to: 'images_metadata', ref: 'imageId' })
-  .edge('images_search_text', {
-    optional: true,
-    deletion: 'soft',
-    ref: 'imageId',
-    to: 'images_search_text',
-  })
-  .index('generationId', ['generationId'])
-
 export const imagesV2Fields = {
   sourceUrl: v.string(),
   sourceType: v.string(),
@@ -223,80 +195,6 @@ const images_metadata_v2 = defineEnt(imagesMetadataV2Fields)
     to: 'images_v2',
     field: 'imageId',
   })
-
-export const imagesMetadataFields = {
-  data: v.union(
-    v.object({
-      type: v.literal('captionOCR_V0'),
-      captionModelId: v.string(),
-      captionTitle: v.string(),
-      captionDescription: v.string(),
-      captionOCR: v.string(),
-    }),
-
-    v.object({
-      type: v.literal('captionOCR_V1'),
-      modelId: v.string(),
-      title: v.string(),
-      description: v.string(),
-      ocr_texts: v.array(v.string()),
-    }),
-
-    v.object({
-      type: v.literal('nsfwProbability'),
-      nsfwProbability: v.number(),
-    }),
-
-    v.object({
-      type: v.literal('generationData_V0'),
-      prompt: v.string(),
-      modelId: v.string(),
-      modelName: v.string(),
-      endpointId: v.string(),
-    }),
-  ),
-}
-const images_metadata = defineEnt(imagesMetadataFields).edge('image', {
-  to: 'images_v1',
-  field: 'imageId',
-})
-
-const images_search_text = defineEnt({
-  text: v.string(),
-})
-  .edge('image_v1', {
-    to: 'images_v1',
-    field: 'imageId',
-  })
-  .searchIndex('text', {
-    searchField: 'text',
-    filterFields: ['imageId'],
-  })
-
-export const generationFieldsV1 = {
-  status: literals('pending', 'active', 'completed', 'failed'),
-  updatedAt: v.number(),
-  input: v.any(),
-  results: v.array(
-    v.object({
-      type: v.literal('image'),
-      url: v.string(),
-      width: v.number(),
-      height: v.number(),
-      content_type: v.string(),
-    }),
-  ),
-  output: v.optional(v.any()),
-  workflow: v.optional(v.string()),
-  messageId: v.id('messages'),
-  threadId: v.id('threads'),
-  userId: v.id('users'),
-}
-const generations_v1 = defineEnt(generationFieldsV1)
-  .index('status', ['status'])
-  .index('threadId', ['threadId'])
-  .index('messageId', ['messageId'])
-  .index('userId', ['userId'])
 
 export const generationV2Fields = {
   status: literals('queued', 'active', 'done', 'failed'),
@@ -380,7 +278,6 @@ const messages = defineEnt(messageFields)
   .edge('thread')
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
-  .edges('images_v1')
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
 
@@ -399,7 +296,6 @@ const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('slug', v.string(), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
-  .edges('images_v1')
   .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
 
@@ -425,7 +321,6 @@ const users = defineEnt(userFields)
   .edges('threads', { ref: true, deletion: 'soft' })
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
-  .edges('images_v1', { ref: 'ownerId', deletion: 'soft' })
   .edges('collections', { ref: 'ownerId', deletion: 'soft' })
   .edges('texts', { ref: 'userId', deletion: 'soft' })
 
@@ -446,25 +341,14 @@ const operationsEventLog = defineEnt(operationsEventLogFields).field('ack', v.bo
   index: true,
 })
 
-const imagesV0Fields = {
-  fileId: v.id('_storage'),
-  messageId: v.id('messages'),
-  nsfwProbability: v.optional(v.number()),
-}
-const images = defineEnt(imagesV0Fields)
-
 // * Schema
 const schema = defineEntSchema(
   {
     audio,
     chat_models,
     collections,
-    images_v1,
     images_v2,
-    images_metadata,
     images_metadata_v2,
-    images_search_text,
-    generations_v1,
     generations_v2,
 
     texts,
@@ -476,7 +360,6 @@ const schema = defineEntSchema(
 
     operationsEventLog,
     migrations: defineEntFromTable(migrationsTable),
-    images,
   },
   {
     schemaValidation: false,
