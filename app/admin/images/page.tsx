@@ -3,7 +3,7 @@
 import { usePaginatedQuery } from 'convex/react'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
-import { IImageCard } from '@/components/images/IImageCard'
+import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import { api } from '@/convex/_generated/api'
@@ -16,7 +16,7 @@ export default function Page() {
     <AdminPageWrapper className="">
       <div className="grid grid-cols-6 place-items-center gap-3">
         {imagesQuery.results.map((image) =>
-          image ? <IImageCard key={image._id} image={image} sizes="16vw" /> : null,
+          image ? <ImageCardNext key={image._id} image={image} sizes="16vw" /> : null,
         )}
       </div>
 

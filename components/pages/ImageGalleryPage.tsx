@@ -4,7 +4,7 @@ import { Card, DataList } from '@radix-ui/themes'
 import Link from 'next/link'
 
 import { IImage } from '@/components/images/IImage'
-import { IImageCard } from '@/components/images/IImageCard'
+import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { cn } from '@/lib/utils'
 
 import type { EImage, EImageGenerationData, EImageMetadata } from '@/convex/types'
@@ -26,7 +26,7 @@ export const ImageGalleryPage = ({
     <>
       <div className="grid h-full w-full grid-rows-[1fr_auto_auto] gap-3 overflow-y-auto overflow-x-hidden p-3 md:grid-cols-[3fr_1fr] md:grid-rows-[auto_1fr] md:overflow-y-hidden">
         <div className="md:overflow-hidden [&>div]:m-auto">
-          {image && <IImageCard image={image} sizes="(min-width: 768px) 75vw, 100vw" priority />}
+          {image && <ImageCardNext image={image} sizes="(min-width: 768px) 75vw, 100vw" />}
         </div>
 
         <div className={cn('flex-col-start row-start-2 w-full', images.length < 2 && 'hidden')}>

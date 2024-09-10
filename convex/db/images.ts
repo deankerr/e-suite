@@ -1,7 +1,6 @@
 import { omit, pick } from 'convex-helpers'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
-import { ms } from 'itty-time'
 import { getQuery, parseFilename } from 'ufo'
 
 import { internal } from '../_generated/api'
@@ -150,7 +149,7 @@ export const remove = mutation({
     id: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.table('images_v1').getX('id', args.id).delete()
+    return await ctx.table('images_v2').getX('id', args.id).delete()
   },
 })
 

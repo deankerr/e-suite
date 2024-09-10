@@ -2,6 +2,7 @@ import * as Icons from '@phosphor-icons/react/dist/ssr'
 import * as Accordion from '@radix-ui/react-accordion'
 import { Badge } from '@radix-ui/themes'
 import { UsePaginatedQueryReturnType } from 'convex/react'
+import { ms } from 'itty-time'
 import Link from 'next/link'
 
 import { ImageCardNext } from '@/components/images/ImageCardNext'
@@ -73,7 +74,7 @@ export const GenerationCard = ({
       <div className="flex min-h-32 flex-wrap gap-2 px-2 py-2">
         {generation.images.map((image, index) => (
           <div key={image.id} className="w-72">
-            <ImageCardNext image={image}>
+            <ImageCardNext image={image} sizes="25vw">
               <div
                 className="absolute inset-0 cursor-pointer"
                 onClick={() =>
@@ -94,6 +95,7 @@ export const GenerationCard = ({
         ))}
 
         {generation.status !== 'failed' &&
+          Date.now() - generation.updatedAt < ms('30 seconds') &&
           [...Array(Math.max(0, (generation.input?.n ?? 0) - generation.images.length))].map(
             (_, i) => (
               <div key={i} className="aspect-square w-64 overflow-hidden">

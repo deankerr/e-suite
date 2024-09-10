@@ -8,18 +8,19 @@ import { toast } from 'sonner'
 import { useCollections } from '@/app/lib/api/collections'
 import { CreateCollectionDialog } from '@/components/collections/dialogs'
 import { DotsThreeFillY } from '@/components/icons/DotsThreeFillY'
+import { DeleteImageDialog } from '@/components/images/dialogs'
 import { IconButton } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
 
-import type { Doc, Id } from '@/convex/_generated/dataModel'
+import type { EImage } from '@/convex/types'
 
 export const ImageCardNext = ({
   image,
+  sizes,
   children,
 }: {
-  image: Doc<'images_v2'> & {
-    collectionIds: Id<'collections'>[]
-  }
+  image: EImage
+  sizes: string
   children?: React.ReactNode
 }) => {
   const collections = useCollections()
@@ -39,6 +40,7 @@ export const ImageCardNext = ({
         blurDataURL={image?.blurDataUrl}
         width={image.width}
         height={image.height}
+        sizes={sizes}
       />
       <div className="absolute inset-0 rounded-lg border-2 border-grayA-5" />
       {children}
@@ -123,10 +125,12 @@ export const ImageCardNext = ({
 
           <DropdownMenu.Separator />
 
-          <DropdownMenu.Item color="red">
-            <Icons.Trash />
-            Delete
-          </DropdownMenu.Item>
+          <DeleteImageDialog id={image.id}>
+            <DropdownMenu.Item color="red" onSelect={(e) => e.preventDefault()}>
+              <Icons.Trash />
+              Delete
+            </DropdownMenu.Item>
+          </DeleteImageDialog>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     </div>

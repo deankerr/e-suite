@@ -36,6 +36,7 @@ export const getGenerationEdges = async (ctx: QueryCtx, generation: Ent<'generat
     input: generation.input as RunConfigTextToImageV2,
     images: await ctx
       .table('images_v2', 'generationId', (q) => q.eq('generationId', generation._id))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .map(async (image) => getImageV2Edges(ctx, image)),
   }
 }

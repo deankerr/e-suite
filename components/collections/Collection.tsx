@@ -58,7 +58,7 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
         <div className="flex flex-wrap gap-2 p-2">
           {results?.map((image, index) => (
             <div key={image._id} className="w-72">
-              <ImageCardNext image={image}>
+              <ImageCardNext image={image} sizes="25vw">
                 <div
                   className="absolute inset-0 cursor-pointer"
                   onClick={() =>
