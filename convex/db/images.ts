@@ -1,10 +1,11 @@
 import { omit, pick } from 'convex-helpers'
+import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
 
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
-import { internalMutation, internalQuery, mutation } from '../functions'
+import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { generateTimestampId } from '../lib/utils'
 import { imagesMetadataFields, imagesV2Fields } from '../schema'
 import { getUserIsViewer } from './users'
@@ -286,5 +287,26 @@ export const createImageV2 = internalMutation({
 
     // await ctx.scheduler.runAfter(0, internal.action.generateImageVisionData.run, { imageId: id })
     return id
+  },
+})
+
+export const listAllImagesNotInCollection = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const viewer = await ctx.viewerX()
+    const result = await ctx
+      .table('images_v2', 'ownerId', (q) => q.eq('ownerId', viewer._id))
+      .paginate(args.paginationOpts)
+      .map(async (image) => {
+        const collection = await image.edge('collections').first()
+        return collection ? null : await getImageV2Edges(ctx, image)
+      })
+
+    return {
+      ...result,
+      page: result.page.filter((i) => i !== null),
+    }
   },
 })
