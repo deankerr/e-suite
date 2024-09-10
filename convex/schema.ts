@@ -178,6 +178,7 @@ const images_v2 = defineEnt(imagesV2Fields)
   .index('ownerId', ['ownerId'])
   .index('ownerId_sourceUrl', ['ownerId', 'sourceUrl'])
   .index('runId', ['runId'])
+  .index('fileId', ['fileId'])
   .edges('images_metadata_v2', { to: 'images_metadata_v2', ref: 'imageId', deletion: 'soft' })
   .edges('collections')
 
@@ -199,6 +200,18 @@ export const imagesMetadataV2Fields = {
       modelId: v.string(),
       modelName: v.string(),
       provider: v.string(),
+    }),
+
+    v.object({
+      type: v.literal('nsfwProbability'),
+      nsfwProbability: v.number(),
+    }),
+
+    v.object({
+      type: v.literal('message'),
+      role: v.string(),
+      name: v.optional(v.string()),
+      text: v.string(),
     }),
   ),
 }
@@ -433,6 +446,13 @@ const operationsEventLog = defineEnt(operationsEventLogFields).field('ack', v.bo
   index: true,
 })
 
+const imagesV0Fields = {
+  fileId: v.id('_storage'),
+  messageId: v.id('messages'),
+  nsfwProbability: v.optional(v.number()),
+}
+const images = defineEnt(imagesV0Fields)
+
 // * Schema
 const schema = defineEntSchema(
   {
@@ -456,9 +476,10 @@ const schema = defineEntSchema(
 
     operationsEventLog,
     migrations: defineEntFromTable(migrationsTable),
+    images,
   },
   {
-    schemaValidation: true,
+    schemaValidation: false,
   },
 )
 

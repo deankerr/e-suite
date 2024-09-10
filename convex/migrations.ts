@@ -1,3 +1,4 @@
+import { asyncMap } from 'convex-helpers'
 import { makeMigration } from 'convex-helpers/server/migrations'
 import { nanoid } from 'nanoid/non-secure'
 
@@ -111,5 +112,44 @@ export const imagesV2toDefaultCollection = migration({
     } as any
 
     await ctx.db.insert(table, args)
+  },
+})
+
+export const imagesExtraMetadata = migration({
+  table: 'images',
+  migrateOne: async (ctx, doc) => {
+    const imageV2 = await ctx.db
+      .query('images_v2')
+      .withIndex('fileId', (q) => q.eq('fileId', doc.fileId))
+      .collect()
+    if (imageV2.length === 0) return
+
+    const nsfwProbability = doc.nsfwProbability
+    if (nsfwProbability !== undefined) {
+      asyncMap(imageV2, async (image) => {
+        await ctx.db.insert('images_metadata_v2', {
+          data: {
+            type: 'nsfwProbability',
+            nsfwProbability,
+          },
+          imageId: image._id,
+        })
+      })
+    }
+
+    const message = await ctx.db.get(doc.messageId)
+    if (!message || message.role !== 'user' || !message.text) return
+
+    asyncMap(imageV2, async (image) => {
+      await ctx.db.insert('images_metadata_v2', {
+        data: {
+          type: 'message',
+          role: 'user',
+          name: message.name,
+          text: message.text ?? '',
+        },
+        imageId: image._id,
+      })
+    })
   },
 })
