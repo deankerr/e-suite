@@ -14,10 +14,10 @@ export const useCollection = (collectionId: string) => {
   return collections?.find((c) => c.id === collectionId)
 }
 
-export const useCollectionImages = (collectionId?: string) => {
+export const useCollectionImages = (collectionId?: string, order?: 'asc' | 'desc') => {
   const images = usePaginatedQuery(
     api.db.collections.listImages,
-    collectionId ? { collectionId } : 'skip',
+    collectionId ? { collectionId, order } : 'skip',
     { initialNumItems: 24 },
   )
   return collectionId ? images : undefined

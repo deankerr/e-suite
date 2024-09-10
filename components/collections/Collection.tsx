@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
 
@@ -17,8 +18,10 @@ import { VScrollArea } from '@/components/ui/VScrollArea'
 import { cn } from '@/lib/utils'
 
 export const Collection = ({ collectionId }: { collectionId: string }) => {
+  const [sort, setSort] = useState<'asc' | 'desc'>('desc')
+
   const collection = useCollection(collectionId)
-  const images = useCollectionImages(collection?._id)
+  const images = useCollectionImages(collection?._id, sort)
   const results = images?.results && images.results.length > 0 ? images.results : collection?.images
 
   const openLightbox = useLightbox()
@@ -52,6 +55,16 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
             </DeleteCollectionDialog>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
+
+        <div className="grow" />
+        <IconButton
+          variant="ghost"
+          color="gray"
+          aria-label="Sort"
+          onClick={() => setSort(sort === 'asc' ? 'desc' : 'asc')}
+        >
+          {sort === 'desc' ? <Icons.SortAscending size={20} /> : <Icons.SortDescending size={20} />}
+        </IconButton>
       </PanelHeader>
 
       <VScrollArea>

@@ -1,4 +1,4 @@
-import { nullable } from 'convex-helpers/validators'
+import { literals, nullable } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 
@@ -66,15 +66,16 @@ export const latest = query({
 export const listImages = query({
   args: {
     collectionId: v.string(),
+    order: v.optional(literals('asc', 'desc')),
     paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, { collectionId, paginationOpts }) => {
+  handler: async (ctx, { collectionId, order = 'desc', paginationOpts }) => {
     const collection = await getCollection(ctx, collectionId)
     if (!collection) return emptyPage()
 
     return await collection
       .edge('images_v2')
-      .order('desc')
+      .order(order)
       .paginate(paginationOpts)
       .map(async (image) => getImageV2Edges(ctx, image))
   },
