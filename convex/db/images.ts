@@ -1,6 +1,7 @@
 import { omit, pick } from 'convex-helpers'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
+import { ms } from 'itty-time'
 import { getQuery, parseFilename } from 'ufo'
 
 import { internal } from '../_generated/api'
@@ -296,8 +297,10 @@ export const listAllImagesNotInCollection = query({
   },
   handler: async (ctx, args) => {
     const viewer = await ctx.viewerX()
+    const time = Date.now() - ms('2 weeks')
     const result = await ctx
-      .table('images_v2', 'ownerId', (q) => q.eq('ownerId', viewer._id))
+      .table('images_v2', 'ownerId', (q) => q.eq('ownerId', viewer._id).gt('_creationTime', time))
+      .order('desc')
       .paginate(args.paginationOpts)
       .map(async (image) => {
         const collection = await image.edge('collections').first()

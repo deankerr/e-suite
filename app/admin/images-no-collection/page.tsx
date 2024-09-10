@@ -1,15 +1,15 @@
 'use client'
 
-import { usePaginatedQuery } from 'convex/react'
+import { useState } from 'react'
+import { useMutation, usePaginatedQuery } from 'convex/react'
 
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
-import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
-import { Orbit } from '@/components/ui/Ldrs'
+import { Button } from '@/components/ui/Button'
 import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
+import { TextField } from '@/components/ui/TextField'
 import { VScrollArea } from '@/components/ui/VScrollArea'
 import { api } from '@/convex/_generated/api'
-import { cn } from '@/lib/utils'
 
 export default function Page() {
   const images = usePaginatedQuery(
@@ -17,12 +17,27 @@ export default function Page() {
     {},
     { initialNumItems: 100 },
   )
+  const updateCollection = useMutation(api.db.collections.update)
+  const [id, setId] = useState('')
 
   return (
-    <Panel>
+    <Panel className="w-full">
       <PanelHeader className="gap-1">
         <NavigationButton />
         <PanelTitle href="#">Images without collection</PanelTitle>
+        <TextField placeholder="id" onValueChange={(value) => setId(value)} value={id} />
+        <Button
+          onClick={() =>
+            updateCollection({
+              collectionId: id,
+              images_v2: {
+                add: images.results.map((image) => image._id),
+              },
+            })
+          }
+        >
+          Move
+        </Button>
       </PanelHeader>
 
       <VScrollArea>
@@ -36,24 +51,6 @@ export default function Page() {
           ))}
 
           {images?.results?.length === 0 && <div className="text-gray-11">No images found.</div>}
-
-          <InfiniteScroll
-            isLoading={images?.isLoading ?? false}
-            hasMore={images?.status !== 'Exhausted'}
-            next={() => {
-              images?.loadMore(24)
-              console.log('load more')
-            }}
-          >
-            <div
-              className={cn(
-                'flex-center w-full py-4 *:invisible',
-                images?.status === 'LoadingMore' && '*:visible',
-              )}
-            >
-              <Orbit />
-            </div>
-          </InfiniteScroll>
         </div>
       </VScrollArea>
     </Panel>
