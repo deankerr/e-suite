@@ -3,7 +3,7 @@ import type { imagesReturn } from './db/images'
 import type { messageReturnFields } from './db/messages'
 import type { getChatModelByResourceKey } from './db/models'
 import type { threadReturnFields } from './db/threads'
-import type { getUserPublic } from './db/users'
+import type { userReturn } from './db/users'
 import type { mutation, query } from './functions'
 import type {
   entDefinitions,
@@ -27,7 +27,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
 export type EThread = Infer<AsObjectValidator<typeof threadReturnFields>>
 export type EMessage = Infer<AsObjectValidator<typeof messageReturnFields>>
 export type EImage = Infer<AsObjectValidator<typeof imagesReturn>>
-export type EUser = Awaited<ReturnType<typeof getUserPublic>>
+export type EUser = Infer<AsObjectValidator<typeof userReturn>>
 
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
 

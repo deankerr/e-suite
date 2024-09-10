@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useTimeoutEffect } from '@react-hookz/web'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -118,9 +118,4 @@ export const useDeleteMessage = () => {
 
 export const useDeleteImage = () => {
   return useMutation(api.db.images.remove)
-}
-
-// * queries
-export const useViewer = () => {
-  return useQuery(api.users.getViewer, {})
 }

@@ -59,7 +59,6 @@ import type * as shared_helpers from "../shared/helpers.js";
 import type * as shared_imageModels from "../shared/imageModels.js";
 import type * as shared_utils from "../shared/utils.js";
 import type * as types from "../types.js";
-import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -116,7 +115,6 @@ declare const fullApi: ApiFromModules<{
   "shared/imageModels": typeof shared_imageModels;
   "shared/utils": typeof shared_utils;
   types: typeof types;
-  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

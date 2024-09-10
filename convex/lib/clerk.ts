@@ -27,7 +27,7 @@ export const handleWebhook = httpAction(async (ctx, request) => {
 
     switch (event.type) {
       case 'user.created':
-        await ctx.runMutation(internal.users.create, {
+        await ctx.runMutation(internal.db.users.create, {
           fields: {
             tokenIdentifier: `${issuerDomain}|${event.data.id}`,
             // TODO proper name fallback
@@ -38,7 +38,7 @@ export const handleWebhook = httpAction(async (ctx, request) => {
         })
         break
       case 'user.updated':
-        await ctx.runMutation(internal.users.update, {
+        await ctx.runMutation(internal.db.users.update, {
           by: {
             tokenIdentifier: `${issuerDomain}|${event.data.id}`,
           },
@@ -51,7 +51,7 @@ export const handleWebhook = httpAction(async (ctx, request) => {
         })
         break
       case 'user.deleted':
-        await ctx.runMutation(internal.users.remove, {
+        await ctx.runMutation(internal.db.users.remove, {
           by: {
             tokenIdentifier: `${issuerDomain}|${event.data.id}`,
           },
