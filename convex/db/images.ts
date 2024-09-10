@@ -297,9 +297,8 @@ export const listAllImagesNotInCollection = query({
   },
   handler: async (ctx, args) => {
     const viewer = await ctx.viewerX()
-    const time = Date.now() - ms('2 weeks')
     const result = await ctx
-      .table('images_v2', 'ownerId', (q) => q.eq('ownerId', viewer._id).gt('_creationTime', time))
+      .table('images_v2', 'ownerId', (q) => q.eq('ownerId', viewer._id))
       .order('desc')
       .paginate(args.paginationOpts)
       .map(async (image) => {
