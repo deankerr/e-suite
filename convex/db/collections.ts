@@ -1,7 +1,9 @@
+import { nullable } from 'convex-helpers/validators'
+import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 
 import { mutation, query } from '../functions'
-import { generateSlugId } from '../lib/utils'
+import { emptyPage, generateSlugId, paginatedReturnFields } from '../lib/utils'
 import { getImageV2Edges, imagesReturn } from './images'
 
 import type { Ent, QueryCtx } from '../types'
@@ -26,7 +28,11 @@ export const getCollection = async (ctx: QueryCtx, collectionId: string) => {
 export const getCollectionEdges = async (ctx: QueryCtx, collection: Ent<'collections'>) => {
   return {
     ...collection.doc(),
-    images: await collection.edge('images_v2').map(async (image) => getImageV2Edges(ctx, image)),
+    images: await collection
+      .edge('images_v2')
+      .order('desc')
+      .take(24)
+      .map(async (image) => getImageV2Edges(ctx, image)),
   }
 }
 
@@ -51,9 +57,28 @@ export const latest = query({
       .table('collections', 'ownerId', (q) => q.eq('ownerId', viewer._id))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .take(50)
+      .take(24)
       .map(async (collection) => await getCollectionEdges(ctx, collection))
   },
+  returns: nullable(v.array(collectionReturnFields)),
+})
+
+export const listImages = query({
+  args: {
+    collectionId: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { collectionId, paginationOpts }) => {
+    const collection = await getCollection(ctx, collectionId)
+    if (!collection) return emptyPage()
+
+    return await collection
+      .edge('images_v2')
+      .order('desc')
+      .paginate(paginationOpts)
+      .map(async (image) => getImageV2Edges(ctx, image))
+  },
+  returns: v.object({ ...paginatedReturnFields, page: v.array(imagesReturn) }),
 })
 
 export const create = mutation({

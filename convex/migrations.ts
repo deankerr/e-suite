@@ -5,16 +5,18 @@ import { internalMutation } from './_generated/server'
 import { generateTimestampId } from './lib/utils'
 import { imageModels } from './shared/imageModels'
 
+import type { TableNames } from './_generated/dataModel'
 import type { RunConfigTextToImageV2 } from './types'
 
 const migration = makeMigration(internalMutation, {
   migrationTable: 'migrations',
 })
 
-export const myMigration = migration({
+export const imagesV1ToV2 = migration({
   table: 'images_v1',
   migrateOne: async (ctx, doc) => {
     const createdAt = doc.originalCreationTime ?? doc._creationTime
+
     const imageId = await ctx.db.insert('images_v2', {
       blurDataUrl: doc.blurDataUrl,
       createdAt,
@@ -85,7 +87,7 @@ export const myMigration = migration({
           imageId,
           data: {
             type: 'generation',
-            modelId: input.modelId,
+            modelId: input.modelId ?? generation.input.resourceKey,
             prompt: input.prompt,
             provider: 'fal',
             modelName: model?.name ?? '',
@@ -94,5 +96,20 @@ export const myMigration = migration({
         })
       }
     }
+  },
+})
+
+export const imagesV2toDefaultCollection = migration({
+  table: 'images_v2',
+  migrateOne: async (ctx, doc) => {
+    if (doc.ownerId !== '') return
+
+    const table = 'collections_to_images_v2' as TableNames
+    const args = {
+      collectionsId: '',
+      images_v2Id: doc._id,
+    } as any
+
+    await ctx.db.insert(table, args)
   },
 })
