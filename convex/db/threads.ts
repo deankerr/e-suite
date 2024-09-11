@@ -279,7 +279,7 @@ export const getConversation = internalQuery({
     if (thread.instructions) {
       messages.push({
         role: 'system',
-        content: thread.instructions,
+        content: thread.instructions.replace('{{date}}', new Date().toISOString()),
         name: undefined,
       })
     }
