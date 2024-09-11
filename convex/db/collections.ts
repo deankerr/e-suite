@@ -73,11 +73,16 @@ export const listImages = query({
     const collection = await getCollection(ctx, collectionId)
     if (!collection) return emptyPage()
 
-    return await collection
+    const result = await collection
       .edge('images_v2')
       .order(order)
       .paginate(paginationOpts)
       .map(async (image) => getImageV2Edges(ctx, image))
+
+    return {
+      ...result,
+      page: result.page.filter((image) => image.deletionTime === undefined),
+    }
   },
   returns: v.object({ ...paginatedReturnFields, page: v.array(imagesReturn) }),
 })
