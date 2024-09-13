@@ -27,7 +27,7 @@ export const useThread = (threadId: string) => {
     !userThread ? { slugOrId: threadId } : 'skip',
   )
 
-  return userThread ?? otherThread
+  return userThread || otherThread
 }
 
 export const useMessage = (slug?: string, msg?: string) => {

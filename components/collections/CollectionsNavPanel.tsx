@@ -16,6 +16,7 @@ export const CollectionsNavPanel = () => {
   const collections = useCollections()
   const params = useParams()
 
+  if (!collections) return null
   return (
     <NavPanel className={cn(params.collectionId && 'hidden sm:flex')}>
       <PanelHeader>

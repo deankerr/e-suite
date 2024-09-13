@@ -50,11 +50,11 @@ export const get = query({
 export const latest = query({
   args: {},
   handler: async (ctx) => {
-    const viewer = await ctx.viewer()
-    if (!viewer) return null
+    const viewerId = ctx.viewerId
+    if (!viewerId) return null
 
     return await ctx
-      .table('collections', 'ownerId', (q) => q.eq('ownerId', viewer._id))
+      .table('collections', 'ownerId', (q) => q.eq('ownerId', viewerId))
       .order('desc')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .take(24)

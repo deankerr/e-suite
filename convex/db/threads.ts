@@ -1,5 +1,5 @@
 import { asyncMap, omit } from 'convex-helpers'
-import { deprecated, literals, partial } from 'convex-helpers/validators'
+import { deprecated, literals, nullable, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
@@ -165,17 +165,17 @@ export const getDoc = internalQuery({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const userId = ctx.viewerId
-    if (!userId) return []
+    const viewerId = ctx.viewerId
+    if (!viewerId) return null
 
     const threads = await ctx
-      .table('threads', 'userId', (q) => q.eq('userId', userId))
+      .table('threads', 'userId', (q) => q.eq('userId', viewerId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .map(async (thread) => await getThreadEdges(ctx, thread))
 
     return threads
   },
-  returns: v.array(v.object(threadReturnFields)),
+  returns: nullable(v.array(v.object(threadReturnFields))),
 })
 
 export const listMessages = query({

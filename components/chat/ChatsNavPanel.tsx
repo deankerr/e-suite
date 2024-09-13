@@ -18,6 +18,7 @@ export const ChatsNavPanel = () => {
   const params = useParams()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
+  if (!threads) return null
   if (isCollapsed) {
     return (
       <div className="absolute left-[3.75rem] top-2.5 z-10">

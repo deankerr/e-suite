@@ -10,8 +10,12 @@ export const useCollections = () => {
 
 export const useCollection = (collectionId: string) => {
   const collections = useCachedQuery(api.db.collections.latest, {})
-  if (collections === null) return null
-  return collections?.find((c) => c.id === collectionId)
+  const userCollection = collections?.find((c) => c.id === collectionId) ?? null
+  const nonUserCollection = useCachedQuery(
+    api.db.collections.get,
+    !userCollection ? { collectionId } : 'skip',
+  )
+  return userCollection || nonUserCollection
 }
 
 export const useCollectionImages = (collectionId?: string, order?: 'asc' | 'desc') => {
