@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { DropdownMenu } from '@radix-ui/themes'
+import { DropdownMenu, Grid } from '@radix-ui/themes'
+import { Masonry } from 'react-plock'
 
 import { useCollection, useCollectionImages } from '@/app/lib/api/collections'
 import { DeleteCollectionDialog, EditCollectionTitleDialog } from '@/components/collections/dialogs'
@@ -21,10 +22,20 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
   const [sort, setSort] = useState<'asc' | 'desc'>('desc')
 
   const collection = useCollection(collectionId)
-  const images = useCollectionImages(collection?._id, sort)
-  const results = images?.results && images.results.length > 0 ? images.results : collection?.images
+  const collectionImages = useCollectionImages(collection?._id, sort)
+  const images =
+    collectionImages?.results && collectionImages.results.length > 0
+      ? collectionImages.results
+      : collection?.images
 
   const openLightbox = useLightbox()
+  const slides = images?.map((image) => ({
+    type: 'image' as const,
+    src: `/i/${image.id}`,
+    width: image.width,
+    height: image.height,
+    blurDataURL: image?.blurDataUrl,
+  }))
 
   if (!collection) return collection === null ? <PanelEmpty /> : <PanelLoading />
 
@@ -68,51 +79,60 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
       </PanelHeader>
 
       <VScrollArea>
-        <div className="flex flex-wrap gap-2 p-2">
-          {results?.map((image, index) => (
-            <div key={image._id} className="w-72">
-              <ImageCardNext image={image} sizes="25vw">
-                <div
-                  className="absolute inset-0 cursor-pointer"
-                  onClick={() =>
-                    openLightbox({
-                      slides: results?.map((image) => ({
-                        type: 'image',
-                        src: `/i/${image.id}`,
-                        width: image.width,
-                        height: image.height,
-                        blurDataURL: image?.blurDataUrl,
-                      })),
-                      index,
-                    })
-                  }
-                />
-              </ImageCardNext>
-            </div>
-          ))}
-
-          {collection.images.length === 0 && (
-            <div className="text-gray-11">This collection is empty.</div>
-          )}
-
-          <InfiniteScroll
-            isLoading={images?.isLoading ?? false}
-            hasMore={images?.status !== 'Exhausted'}
-            next={() => {
-              images?.loadMore(24)
-              console.log('load more')
-            }}
-          >
-            <div
-              className={cn(
-                'flex-center w-full py-4 *:invisible',
-                images?.status === 'LoadingMore' && '*:visible',
-              )}
+        <Masonry
+          items={images ?? []}
+          config={{
+            columns: [1, 2, 3, 4],
+            gap: [8, 8, 8, 8],
+            media: [520, 768, 1024, 1280],
+          }}
+          render={(image, idx) => (
+            <ImageCardNext
+              key={idx}
+              image={image}
+              sizes="(max-width: 520px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33.33vw, 25vw"
             >
-              <Orbit />
-            </div>
-          </InfiniteScroll>
-        </div>
+              <div
+                className="absolute inset-0 cursor-pointer"
+                onClick={() =>
+                  openLightbox({
+                    slides: slides ?? [],
+                    index: images?.indexOf(image) ?? 0,
+                  })
+                }
+              />
+            </ImageCardNext>
+          )}
+          className="p-2"
+        />
+
+        {collectionImages?.status === 'LoadingFirstPage' ? (
+          <div className="flex-center h-[98%]">
+            <Grid />
+          </div>
+        ) : (
+          <>
+            {images?.length === 0 && <div className="text-gray-11">No images found.</div>}
+
+            <InfiniteScroll
+              isLoading={collectionImages?.isLoading ?? false}
+              hasMore={collectionImages?.status !== 'Exhausted'}
+              next={() => {
+                collectionImages?.loadMore(24)
+                console.log('load more')
+              }}
+            >
+              <div
+                className={cn(
+                  'flex-center w-full py-4 *:invisible',
+                  collectionImages?.status === 'LoadingMore' && '*:visible',
+                )}
+              >
+                <Orbit />
+              </div>
+            </InfiniteScroll>
+          </>
+        )}
       </VScrollArea>
     </Panel>
   )
