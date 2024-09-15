@@ -536,7 +536,7 @@ const createChatRun = async (
   const input = z
     .object({
       excludeHistoryMessagesByName: z.array(z.string().max(64)).max(64).optional(),
-      maxHistoryMessages: z.number().max(64).default(64),
+      maxHistoryMessages: z.number().default(64),
       prependNamesToContent: z.boolean().default(false),
       stream: z.boolean().default(true),
       max_tokens: z.number().optional(),
