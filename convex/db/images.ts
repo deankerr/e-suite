@@ -1,4 +1,5 @@
 import { omit } from 'convex-helpers'
+import { literals } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { v } from 'convex/values'
 import { getQuery, parseFilename } from 'ufo'
@@ -6,7 +7,7 @@ import { getQuery, parseFilename } from 'ufo'
 import { internal } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { generateTimestampId } from '../lib/utils'
+import { emptyPage, generateTimestampId, paginatedReturnFields } from '../lib/utils'
 import { imagesV2Fields } from '../schema'
 
 import type { Id } from '../_generated/dataModel'
@@ -183,4 +184,23 @@ export const listAllImagesNotInCollection = query({
       page: result.page.filter((i) => i !== null),
     }
   },
+})
+
+export const listMyImages = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+    order: v.optional(literals('asc', 'desc')),
+  },
+  handler: async (ctx, { paginationOpts, order = 'desc' }) => {
+    const viewerId = ctx.viewerId
+    if (!viewerId) return emptyPage()
+
+    return await ctx
+      .table('images_v2', 'ownerId', (q) => q.eq('ownerId', viewerId))
+      .order(order)
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .paginate(paginationOpts)
+      .map((image) => getImageV2Edges(ctx, image))
+  },
+  returns: v.object({ ...paginatedReturnFields, page: v.array(imagesReturn) }),
 })

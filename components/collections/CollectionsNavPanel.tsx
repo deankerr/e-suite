@@ -35,13 +35,23 @@ export const CollectionsNavPanel = () => {
 
       <VScrollArea>
         <div className="flex flex-col gap-1 overflow-hidden p-1">
+          <Link
+            href={`/collections/all`}
+            className={cn(
+              'truncate rounded-sm px-2 py-3 text-sm font-medium hover:bg-gray-2',
+              params.collectionId === 'all' && 'bg-gray-3 hover:bg-gray-3',
+            )}
+          >
+            All
+          </Link>
+
           {collections?.map((collection) => (
             <Link
               key={collection._id}
               href={`/collections/${collection.id}`}
               className={cn(
                 'truncate rounded-sm px-2 py-3 text-sm font-medium hover:bg-gray-2',
-                collection.id === params.collectionId && 'bg-gray-3 hover:bg-gray-3',
+                params.collectionId === collection.id && 'bg-gray-3 hover:bg-gray-3',
               )}
             >
               {collection.title}

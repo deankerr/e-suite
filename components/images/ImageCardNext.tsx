@@ -41,6 +41,7 @@ export const ImageCardNext = ({
         width={image.width}
         height={image.height}
         sizes={sizes}
+        className="h-full w-full object-cover"
       />
       <div className="absolute inset-0 rounded-lg border-2 border-grayA-5" />
       {children}
