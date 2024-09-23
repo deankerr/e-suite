@@ -13,7 +13,6 @@ import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Grid, Orbit } from '@/components/ui/Ldrs'
 import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
-import { cn } from '@/lib/utils'
 
 export const MyImagesCollection = () => {
   const [sort, setSort] = useState<'asc' | 'desc'>('desc')
@@ -81,24 +80,22 @@ export const MyImagesCollection = () => {
         ) : (
           <>
             {images.results.length === 0 && <div className="text-gray-11">No images found.</div>}
-
-            <InfiniteScroll
-              isLoading={images.isLoading ?? false}
-              hasMore={images.status !== 'Exhausted'}
-              next={() => {
-                images.loadMore(24)
-                console.log('load more')
-              }}
-            >
-              <div
-                className={cn(
-                  'flex-center w-full py-4 *:invisible',
-                  images.status === 'LoadingMore' && '*:visible',
-                )}
+            <div className="flex-center h-12">
+              <InfiniteScroll
+                isLoading={images.isLoading ?? false}
+                hasMore={images.status !== 'Exhausted'}
+                next={() => {
+                  images?.loadMore(24)
+                  console.log('load more')
+                }}
               >
-                <Orbit />
-              </div>
-            </InfiniteScroll>
+                {images.status !== 'Exhausted' && (
+                  <div>
+                    <Orbit />
+                  </div>
+                )}
+              </InfiniteScroll>
+            </div>
           </>
         )}
       </VScrollArea>
