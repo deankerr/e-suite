@@ -182,8 +182,6 @@ export const listMessages = query({
   args: {
     slugOrId: v.string(),
     paginationOpts: paginationOptsValidator,
-    role: v.optional(literals('assistant', 'user')),
-    limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
@@ -192,12 +190,7 @@ export const listMessages = query({
     const messages = await thread
       .edge('messages')
       .order('desc')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('deletionTime'), undefined),
-          args.role ? q.eq(q.field('role'), args.role) : true,
-        ),
-      )
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .paginate(args.paginationOpts)
       .map(async (message) => await getMessageEdges(ctx, message))
 
@@ -286,6 +279,49 @@ export const getConversation = internalQuery({
 
     return messages.reverse()
   },
+})
+
+export const getMessageCreatedBetween = query({
+  args: {
+    threadId: v.string(),
+    before: v.number(),
+    after: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await getThreadBySlugOrId(ctx, args.threadId)
+    if (!thread) return null
+
+    const messages = await ctx
+      .table('messages', 'threadId', (q) =>
+        q
+          .eq('threadId', thread._id)
+          .gt('_creationTime', args.after)
+          .lt('_creationTime', args.before),
+      )
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map((message) => ({
+        _id: message._id,
+        _creationTime: message._creationTime,
+        role: message.role,
+        name: message.name,
+        text: message.text,
+        series: message.series,
+      }))
+
+    return messages
+  },
+  returns: nullable(
+    v.array(
+      v.object({
+        _id: v.id('messages'),
+        _creationTime: v.number(),
+        role: literals('system', 'assistant', 'user'),
+        name: v.optional(v.string()),
+        text: v.optional(v.string()),
+        series: v.number(),
+      }),
+    ),
+  ),
 })
 
 // * Mutations
