@@ -58,3 +58,13 @@ export const get = query({
   },
   returns: nullable(audioReturnFields),
 })
+
+export const getByMessageId = query({
+  args: {
+    messageId: v.id('messages'),
+  },
+  handler: async (ctx, { messageId }) => {
+    const audios = await ctx.table('audio', 'messageId', (q) => q.eq('messageId', messageId))
+    return audios
+  },
+})
