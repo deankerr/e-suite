@@ -20,6 +20,7 @@ import type * as action_generateImageVisionData from "../action/generateImageVis
 import type * as action_generateTextToImage from "../action/generateTextToImage.js";
 import type * as action_generateThreadTitle from "../action/generateThreadTitle.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
+import type * as action_run from "../action/run.js";
 import type * as action_textToAudio from "../action/textToAudio.js";
 import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
@@ -76,6 +77,7 @@ declare const fullApi: ApiFromModules<{
   "action/generateTextToImage": typeof action_generateTextToImage;
   "action/generateThreadTitle": typeof action_generateThreadTitle;
   "action/ingestImageUrl": typeof action_ingestImageUrl;
+  "action/run": typeof action_run;
   "action/textToAudio": typeof action_textToAudio;
   crons: typeof crons;
   "db/admin/events": typeof db_admin_events;

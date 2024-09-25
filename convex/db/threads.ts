@@ -6,15 +6,13 @@ import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
-import { ENV } from '../lib/env'
 import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
 import { runConfigV, threadFields } from '../schema'
-import { extractValidUrlsFromText } from '../shared/helpers'
-import { getMessageEdges, messageReturnFields } from './messages'
+import { createMessage, getMessageEdges, messageReturnFields } from './messages'
 import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
 
-import type { Doc, Id } from '../_generated/dataModel'
+import type { Id } from '../_generated/dataModel'
 import type {
   Ent,
   EntWriter,
@@ -26,7 +24,6 @@ import type {
   RunConfigTextToAudio,
   ThreadActionResult,
 } from '../types'
-import type { WithoutSystemFields } from 'convex/server'
 
 export const threadReturnFields = {
   _id: v.string(),
@@ -48,24 +45,6 @@ export const threadReturnFields = {
 }
 
 // * Helpers
-const createMessage = async (
-  ctx: MutationCtx,
-  fields: Omit<WithoutSystemFields<Doc<'messages'>>, 'series' | 'deletionTime'>,
-) => {
-  const prev = await ctx
-    .table('threads')
-    .getX(fields.threadId)
-    .edge('messages')
-    .order('desc')
-    .first()
-  const series = prev ? prev.series + 1 : 1
-
-  const message = await ctx
-    .table('messages')
-    .insert({ ...fields, series })
-    .get()
-  return message
-}
 
 const getMessageBySeries = async (
   ctx: QueryCtx,
@@ -111,10 +90,10 @@ const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
   }
 }
 
-const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
+export const getOrCreateUserThread = async (ctx: MutationCtx, threadId?: string) => {
   const user = await ctx.viewerX()
 
-  if (threadId === undefined || threadId === 'new') {
+  if (!threadId || threadId === 'new') {
     // * create thread
     const thread = await ctx
       .table('threads')
@@ -198,34 +177,6 @@ export const listMessages = query({
   },
   returns: v.object({ ...paginatedReturnFields, page: v.array(v.object(messageReturnFields)) }),
 })
-
-// export const searchImages = query({
-//   args: {
-//     slugOrId: v.string(),
-//     query: v.string(),
-//     paginationOpts: paginationOptsValidator,
-//   },
-//   handler: async (ctx, args) => {
-//     const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-//     if (!thread) return emptyPage()
-
-//     const results = await ctx
-//       .table('images_search_text')
-//       .search('text', (q) => q.search('text', args.query))
-//       .paginate(args.paginationOpts)
-//       .map(async ({ imageId }) => {
-//         if (await thread.edge('images_v1').has(imageId)) {
-//           return await getImageWithEdges(ctx, imageId)
-//         }
-//         return null
-//       })
-
-//     return {
-//       ...results,
-//       page: pruneNull(results.page),
-//     }
-//   },
-// })
 
 export const getMessage = query({
   args: {
@@ -442,18 +393,6 @@ export const append = mutation({
       userId: thread.userId,
       ...args.message,
     })
-
-    if (message.text) {
-      const urls = extractValidUrlsFromText(message.text).filter(
-        (url) => url.hostname !== ENV.APP_HOSTNAME,
-      )
-      if (urls.length > 0) {
-        await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
-          urls: urls.map((url) => url.toString()),
-          ownerId: thread.userId,
-        })
-      }
-    }
 
     if (args.ignoreKeywordCommands !== true) {
       const userConfig = await matchUserCommandKeywords(ctx, args.message.text)

@@ -7,6 +7,7 @@ import ReactTextareaAutosize from 'react-textarea-autosize'
 import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
 import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
+import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 
 import type { ThreadActions } from '@/lib/api'
 
@@ -15,11 +16,13 @@ export const Composer = ({
   defaultTextValue = '',
   loading = false,
   onSend,
+  onRun,
 }: {
   initialResourceKey?: string
   defaultTextValue?: string
   loading?: boolean
   onSend?: ThreadActions['send']
+  onRun?: (text: string, model: { provider: string; id: string }) => void
 }) => {
   const [resourceKey, setResourceKey] = useState(initialResourceKey)
 
@@ -58,6 +61,18 @@ export const Composer = ({
           <ModelButton resourceKey={resourceKey} />
         </ModelPickerCmd>
         <div className="flex-end ml-auto shrink-0 gap-2">
+          <AdminOnlyUi>
+            <Button
+              onClick={() =>
+                onRun?.(textValue, {
+                  provider: resourceKey.split('::')[0]!,
+                  id: resourceKey.split('::')[1]!,
+                })
+              }
+            >
+              Run
+            </Button>
+          </AdminOnlyUi>
           <AddButton loading={loading} onClick={() => handleSend('add')} />
           <SendButton loading={loading} onClick={() => handleSend('run')} />
         </div>

@@ -10,8 +10,9 @@ import { extractValidUrlsFromText } from '../shared/helpers'
 import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from './images'
 import { getUserIsViewer } from './users'
 
-import type { Id } from '../_generated/dataModel'
-import type { Ent, QueryCtx } from '../types'
+import type { Doc, Id } from '../_generated/dataModel'
+import type { Ent, MutationCtx, QueryCtx } from '../types'
+import type { WithoutSystemFields } from 'convex/server'
 
 export const messageReturnFields = {
   _id: v.id('messages'),
@@ -31,6 +32,7 @@ export const messageReturnFields = {
   contentType: deprecated,
 }
 
+// * query helpers
 export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
   const audio = await ctx
     .table('audio', 'messageId', (q) => q.eq('messageId', messageId))
@@ -65,6 +67,7 @@ export const getMessageUrlImages = async (ctx: QueryCtx, message: Ent<'messages'
   return pruneNull(results)
 }
 
+// * queries
 export const get = query({
   args: {
     messageId: v.string(),
@@ -87,6 +90,53 @@ export const getDoc = query({
     return await ctx.table('messages').get(args.messageId).doc()
   },
 })
+
+// * mutations
+export const createMessage = async (
+  ctx: MutationCtx,
+  fields: Omit<WithoutSystemFields<Doc<'messages'>>, 'series' | 'deletionTime'>,
+  opts?: {
+    skipRules?: boolean
+    evaluateUrls?: boolean
+  },
+) => {
+  const skipRules = opts?.skipRules ?? false
+  const evaluateUrls = opts?.evaluateUrls ?? true
+
+  const prev = await ctx.skipRules
+    .table('threads')
+    .getX(fields.threadId)
+    .edge('messages')
+    .order('desc')
+    .first()
+  const series = prev ? prev.series + 1 : 1
+
+  const message = skipRules
+    ? await ctx.skipRules
+        .table('messages')
+        .insert({ ...fields, series })
+        .get()
+    : await ctx
+        .table('messages')
+        .insert({ ...fields, series })
+        .get()
+
+  if (!evaluateUrls) return message
+
+  if (message.text) {
+    const urls = extractValidUrlsFromText(message.text).filter(
+      (url) => url.hostname !== ENV.APP_HOSTNAME,
+    )
+    if (urls.length > 0) {
+      await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
+        urls: urls.map((url) => url.toString()),
+        ownerId: message.userId,
+      })
+    }
+  }
+
+  return message
+}
 
 export const update = mutation({
   args: {

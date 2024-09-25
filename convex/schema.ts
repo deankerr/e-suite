@@ -253,15 +253,17 @@ const speech = defineEnt(speechFields).index('textHash_resourceKey', ['textHash'
 
 // * Texts
 export const textFields = {
+  type: literals('prompt', 'message'),
   title: v.optional(v.string()),
   content: v.string(),
-  type: literals('prompt', 'message'),
   updatedAt: v.number(),
+  runId: v.optional(v.id('runs')),
 }
 const texts = defineEnt(textFields)
   .deletion('scheduled', { delayMs: timeToDelete })
   .edge('user')
   .index('userId_type', ['userId', 'type'])
+  .index('runId', ['runId'])
 
 // * Messages
 export const messageFields = {
@@ -269,6 +271,7 @@ export const messageFields = {
   name: v.optional(v.string()),
   text: v.optional(v.string()),
 
+  runId: v.optional(v.id('runs')),
   contentType: deprecated,
   inference: deprecated,
 }
@@ -280,6 +283,7 @@ const messages = defineEnt(messageFields)
   .edges('audio', { ref: true, deletion: 'soft' })
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
+  .index('runId', ['runId'])
 
 // * Threads
 export const threadFields = {
@@ -296,8 +300,54 @@ const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('slug', v.string(), { unique: true })
   .edges('messages', { ref: true, deletion: 'soft' })
-  .edge('user')
   .edges('audio', { ref: true, deletion: 'soft' })
+  .edges('runs', { ref: true, deletion: 'soft' })
+  .edge('user')
+
+export const modelParametersFields = {
+  maxTokens: v.optional(v.number()),
+  temperature: v.optional(v.number()),
+  topP: v.optional(v.number()),
+  topK: v.optional(v.number()),
+  stop: v.optional(v.array(v.string())),
+  repetitionPenalty: v.optional(v.number()),
+  frequencyPenalty: v.optional(v.number()),
+  presencePenalty: v.optional(v.number()),
+}
+
+export const runFields = {
+  status: literals('queued', 'active', 'done', 'failed'),
+  updatedAt: v.number(),
+  startedAt: v.number(),
+  endedAt: v.number(),
+
+  model: v.object({
+    id: v.string(),
+    provider: v.string(),
+  }),
+  modelParameters: v.optional(v.object(modelParametersFields)),
+  instructions: v.optional(v.string()),
+  maxMessages: v.optional(v.number()),
+  stream: v.boolean(),
+
+  usage: v.optional(
+    v.object({
+      promptTokens: v.number(),
+      completionTokens: v.number(),
+      totalTokens: v.number(),
+    }),
+  ),
+  finishReason: v.optional(v.string()),
+  cost: v.optional(v.number()),
+  errors: v.optional(v.array(v.any())),
+
+  messageId: v.optional(v.id('messages')),
+}
+const runs = defineEnt(runFields)
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .edge('thread')
+  .edge('user')
+  .index('messageId', ['messageId'])
 
 // * Users
 export const userFields = {
@@ -318,11 +368,12 @@ const users = defineEnt(userFields)
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('tokenIdentifier', v.string(), { unique: true })
   .edges('users_api_keys', { ref: true })
-  .edges('threads', { ref: true, deletion: 'soft' })
-  .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('collections', { ref: 'ownerId', deletion: 'soft' })
+  .edges('messages', { ref: true, deletion: 'soft' })
+  .edges('runs', { ref: true, deletion: 'soft' })
   .edges('texts', { ref: 'userId', deletion: 'soft' })
+  .edges('threads', { ref: true, deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -353,6 +404,7 @@ const schema = defineEntSchema(
 
     texts,
     messages,
+    runs,
     speech,
     threads,
     users,
