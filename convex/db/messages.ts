@@ -29,6 +29,7 @@ export const messageReturnFields = {
 
   images: optional(v.array(imagesReturn)),
 
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
   contentType: deprecated,
 }
 

@@ -1,4 +1,4 @@
-import { asyncMap, omit } from 'convex-helpers'
+import { asyncMap, omit, pick } from 'convex-helpers'
 import { deprecated, literals, nullable, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
@@ -37,6 +37,7 @@ export const threadReturnFields = {
   userId: v.id('users'),
   userIsViewer: v.boolean(),
   user: v.any(),
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
 
   latestRunConfig: v.optional(v.any()),
 
@@ -276,6 +277,27 @@ export const getMessageCreatedBetween = query({
 })
 
 // * Mutations
+export const create = mutation({
+  args: pick(threadFields, ['title', 'instructions', 'favorite', 'kvMetadata']),
+  handler: async (ctx, args) => {
+    const user = await ctx.viewerX()
+    const slug = await generateSlug(ctx)
+
+    const id = await ctx.table('threads').insert({
+      ...args,
+      updatedAtTime: Date.now(),
+      userId: user._id,
+      slug: await generateSlug(ctx),
+    })
+
+    return {
+      id,
+      slug,
+    }
+  },
+  returns: v.object({ id: v.id('threads'), slug: v.string() }),
+})
+
 const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime'])))
 export const update = mutation({
   args: {

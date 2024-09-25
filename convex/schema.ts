@@ -272,6 +272,8 @@ export const messageFields = {
   text: v.optional(v.string()),
 
   runId: v.optional(v.id('runs')),
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
+
   contentType: deprecated,
   inference: deprecated,
 }
@@ -292,6 +294,7 @@ export const threadFields = {
   latestRunConfig: v.optional(v.any()),
   updatedAtTime: v.number(),
   favourite: v.optional(v.boolean()),
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
 
   voiceovers: deprecated,
   favorite: deprecated,
