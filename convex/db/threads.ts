@@ -215,7 +215,7 @@ export const getConversation = internalQuery({
         role: message.role,
         name: prependNamesToContent ? undefined : message.name,
         content:
-          prependNamesToContent && message.name !== undefined
+          prependNamesToContent && message.role === 'user' && message.name !== undefined
             ? `${message.name}: ${message.text}`
             : message.text || '',
       }))
