@@ -1,6 +1,6 @@
 import { defineEnt, defineEntFromTable, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { migrationsTable } from 'convex-helpers/server/migrations'
-import { deprecated, literals } from 'convex-helpers/validators'
+import { literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 
@@ -273,9 +273,6 @@ export const messageFields = {
 
   runId: v.optional(v.id('runs')),
   kvMetadata: v.optional(v.record(v.string(), v.string())),
-
-  contentType: deprecated,
-  inference: deprecated,
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -292,12 +289,10 @@ export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
   latestRunConfig: v.optional(v.any()),
-  updatedAtTime: v.number(),
   favourite: v.optional(v.boolean()),
-  kvMetadata: v.optional(v.record(v.string(), v.string())),
 
-  voiceovers: deprecated,
-  favorite: deprecated,
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
+  updatedAtTime: v.number(),
 }
 const threads = defineEnt(threadFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -417,7 +412,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: false,
+    schemaValidation: true,
   },
 )
 

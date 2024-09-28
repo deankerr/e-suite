@@ -278,7 +278,7 @@ export const getMessageCreatedBetween = query({
 
 // * Mutations
 export const create = mutation({
-  args: pick(threadFields, ['title', 'instructions', 'favorite', 'kvMetadata']),
+  args: pick(threadFields, ['title', 'instructions', 'favourite', 'kvMetadata']),
   handler: async (ctx, args) => {
     const user = await ctx.viewerX()
     const slug = await generateSlug(ctx)
