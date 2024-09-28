@@ -1,5 +1,5 @@
 import { asyncMap, pruneNull } from 'convex-helpers'
-import { deprecated, literals, optional } from 'convex-helpers/validators'
+import { deprecated, literals, nullable, optional } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internal } from '../_generated/api'
@@ -8,6 +8,7 @@ import { ENV } from '../lib/env'
 import { messageFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
 import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from './images'
+import { getThreadBySlugOrId } from './threads'
 import { getUserIsViewer } from './users'
 
 import type { Doc, Id } from '../_generated/dataModel'
@@ -90,6 +91,27 @@ export const getDoc = query({
   handler: async (ctx, args) => {
     return await ctx.table('messages').get(args.messageId).doc()
   },
+})
+
+export const listLatest = query({
+  args: {
+    threadId: v.string(),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { threadId, limit = 20 }) => {
+    const thread = await getThreadBySlugOrId(ctx, threadId)
+    if (!thread) return null
+
+    const result = await ctx
+      .table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .order('desc')
+      .take(Math.min(limit, 200))
+      .map(async (message) => await getMessageEdges(ctx, message))
+
+    return result.reverse()
+  },
+  returns: nullable(v.array(v.object(messageReturnFields))),
 })
 
 // * mutations

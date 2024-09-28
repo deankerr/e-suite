@@ -6,9 +6,31 @@ const migration = makeMigration(internalMutation, {
   migrationTable: 'migrations',
 })
 
-// export const imagesV1ToV2 = migration({
-//   table: 'images_v1',
-//   migrateOne: async (ctx, doc) => {
+export const threadsDepFields = migration({
+  table: 'threads',
+  migrateOne: async (ctx, doc) => {
+    if (doc.favorite || doc.voiceovers) {
+      return {
+        ...doc,
+        favorite: undefined,
+        voiceovers: undefined,
+      }
+    }
+    return doc
+  },
+})
 
-//   },
-// })
+export const messagesDepFields = migration({
+  table: 'messages',
+  migrateOne: async (ctx, doc) => {
+    if (doc.contentType || doc.inference) {
+      return {
+        ...doc,
+        contentType: undefined,
+        inference: undefined,
+      }
+    }
+    return doc
+  },
+  batchSize: 500,
+})
