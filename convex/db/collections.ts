@@ -20,9 +20,11 @@ const collectionReturnFields = v.object({
 
 export const getCollection = async (ctx: QueryCtx, collectionId: string) => {
   const _id = ctx.table('collections').normalizeId(collectionId)
-  return _id
+  const collection = _id
     ? await ctx.table('collections').get(_id)
     : await ctx.table('collections').get('id', collectionId)
+
+  return collection && collection.deletionTime === undefined ? collection : null
 }
 
 export const getCollectionEdges = async (ctx: QueryCtx, collection: Ent<'collections'>) => {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AlertDialog, Dialog, TextField } from '@radix-ui/themes'
 import { useMutation } from 'convex/react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/Button'
@@ -15,6 +16,7 @@ export const CreateCollectionDialog = ({
 }: {
   imageId?: Id<'images_v2'>
 } & React.ComponentProps<typeof Dialog.Root>) => {
+  const router = useRouter()
   const createCollection = useMutation(api.db.collections.create)
   const [title, setTitle] = useState('')
   return (
@@ -48,7 +50,10 @@ export const CreateCollectionDialog = ({
             <Button
               onClick={() =>
                 createCollection({ title, imageIds: imageId ? [imageId] : undefined })
-                  .then(() => toast.success('Collection created'))
+                  .then((id) => {
+                    toast.success('Collection created')
+                    router.push(`/collections/${id}`)
+                  })
                   .catch((error) => {
                     console.error(error)
                     toast.error('Failed to create collection')
@@ -119,6 +124,7 @@ export const DeleteCollectionDialog = ({
   collectionId: string
 } & React.ComponentProps<typeof AlertDialog.Root>) => {
   const deleteCollection = useMutation(api.db.collections.remove)
+  const router = useRouter()
 
   return (
     <AlertDialog.Root {...props}>
@@ -142,7 +148,10 @@ export const DeleteCollectionDialog = ({
               color="red"
               onClick={() => {
                 deleteCollection({ collectionId })
-                  .then(() => toast.success('Collection deleted'))
+                  .then(() => {
+                    toast.success('Collection deleted')
+                    router.push('/collections')
+                  })
                   .catch((error) => {
                     console.error(error)
                     toast.error('Failed to delete collection')
