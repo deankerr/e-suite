@@ -325,7 +325,9 @@ export const runFields = {
   }),
   modelParameters: v.optional(v.object(modelParametersFields)),
   instructions: v.optional(v.string()),
+
   maxMessages: v.optional(v.number()),
+  prependNamesToMessageContent: v.optional(v.boolean()),
   stream: v.boolean(),
 
   usage: v.optional(

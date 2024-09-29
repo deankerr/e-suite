@@ -17,6 +17,9 @@ export const create = mutation({
     }),
     modelParameters: v.optional(v.object(modelParametersFields)),
     instructions: v.optional(v.string()),
+
+    maxMessages: v.optional(v.number()),
+    prependNamesToMessageContent: v.optional(v.boolean()),
     stream: v.optional(v.boolean()),
 
     appendMessages: v.optional(
@@ -97,11 +100,23 @@ export const activate = internalMutation({
         q.and(q.eq(q.field('deletionTime'), undefined), q.neq(q.field('text'), undefined)),
       )
       .take(limit)
-      .map((message) => ({
-        role: message.role,
-        name: message.role === 'user' ? message.name : undefined,
-        content: message.text as string,
-      }))
+      .map((message) => {
+        if (run.prependNamesToMessageContent) {
+          return {
+            role: message.role,
+            content:
+              message.role === 'user' && message.name
+                ? `${message.name}: ${message.text}`
+                : (message.text as string),
+          }
+        } else {
+          return {
+            role: message.role,
+            name: message.role === 'user' ? message.name : undefined,
+            content: message.text as string,
+          }
+        }
+      })
 
     return { run: run.doc(), messages: messages.reverse() }
   },
