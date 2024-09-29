@@ -339,24 +339,10 @@ export const remove = mutation({
 })
 
 // * keyword commands
-const defaultConfigs = [
-  {
-    name: 'sound generation',
-    runConfig: [
-      {
-        type: 'textToAudio' as const,
-        resourceKey: 'elevenlabs::sound-generation',
-        prompt: '',
-      },
-    ],
-    keyword: '@sfx',
-  },
-]
-
 export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) => {
   if (!text) return null
   const user = await ctx.viewerX()
-  const configs = (user.runConfigs ?? []).concat(defaultConfigs)
+  const configs = user.runConfigs ?? []
 
   const getMatch = (keyword: string) => {
     // * match + strip command keywords
