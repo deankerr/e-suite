@@ -161,6 +161,42 @@ export const createMessage = async (
   return message
 }
 
+export const create = mutation({
+  args: {
+    threadId: v.string(),
+    role: messageFields.role,
+    name: v.optional(v.string()),
+    text: v.optional(v.string()),
+    kv: v.optional(
+      v.object({
+        set: v.record(v.string(), v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, { threadId, role, name, text, kv }) => {
+    const thread = await getThreadBySlugOrId(ctx, threadId)
+    if (!thread) throw new ConvexError('invalid thread')
+
+    const message = await createMessage(ctx, {
+      threadId: thread._id,
+      userId: thread.userId,
+      role,
+      name,
+      text,
+      kvMetadata: kv?.set,
+    })
+
+    return {
+      id: message._id,
+      series: message.series,
+    }
+  },
+  returns: v.object({
+    id: v.id('messages'),
+    series: v.number(),
+  }),
+})
+
 export const update = mutation({
   args: {
     messageId: v.id('messages'),
