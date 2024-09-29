@@ -70,6 +70,18 @@ export const getDoc = internalQuery({
   },
 })
 
+export const getByRunId = query({
+  args: {
+    runId: v.string(),
+  },
+  handler: async (ctx, { runId }) => {
+    return await ctx
+      .table('images_v2', 'runId', (q) => q.eq('runId', runId))
+      .map(async (image) => await getImageV2Edges(ctx, image))
+  },
+  returns: v.array(imagesReturn),
+})
+
 export const createImageV2 = internalMutation({
   args: {
     ...omit(imagesV2Fields, ['createdAt']),
