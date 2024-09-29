@@ -1,5 +1,5 @@
 import { asyncMap, omit, pick } from 'convex-helpers'
-import { deprecated, literals, nullable, partial } from 'convex-helpers/validators'
+import { literals, nullable, partial } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
@@ -37,12 +37,9 @@ export const threadReturnFields = {
   userId: v.id('users'),
   userIsViewer: v.boolean(),
   user: v.any(),
-  kvMetadata: v.optional(v.record(v.string(), v.string())),
+  kvMetadata: v.record(v.string(), v.string()),
 
   latestRunConfig: v.optional(v.any()),
-
-  favorite: deprecated,
-  voiceovers: deprecated,
 }
 
 // * Helpers
@@ -70,6 +67,7 @@ export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
     ...thread,
     user: await getUserPublic(ctx, thread.userId),
     userIsViewer: getUserIsViewer(ctx, thread.userId),
+    kvMetadata: thread.kvMetadata ?? {},
   }
 }
 
@@ -88,6 +86,7 @@ const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
     userId: user._id,
     userIsViewer: true,
     user,
+    kvMetadata: {},
   }
 }
 

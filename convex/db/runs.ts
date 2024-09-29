@@ -2,36 +2,10 @@ import { literals } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { internalMutation, mutation, query } from '../functions'
+import { internalMutation, mutation } from '../functions'
 import { modelParametersFields } from '../schema'
-import { generationsReturn, getGenerationEdges } from './generations'
-import { getImageV2Edges, imagesReturn } from './images'
 import { createMessage } from './messages'
 import { getOrCreateUserThread } from './threads'
-
-export const getGenerations = query({
-  args: {
-    runId: v.string(),
-  },
-  handler: async (ctx, { runId }) => {
-    return await ctx
-      .table('generations_v2', 'runId', (q) => q.eq('runId', runId))
-      .map(async (gen) => await getGenerationEdges(ctx, gen))
-  },
-  returns: v.array(generationsReturn),
-})
-
-export const getImages = query({
-  args: {
-    runId: v.string(),
-  },
-  handler: async (ctx, { runId }) => {
-    return await ctx
-      .table('images_v2', 'runId', (q) => q.eq('runId', runId))
-      .map(async (image) => await getImageV2Edges(ctx, image))
-  },
-  returns: v.array(imagesReturn),
-})
 
 export const create = mutation({
   args: {

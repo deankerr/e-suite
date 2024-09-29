@@ -1,6 +1,6 @@
-import { asyncMap, pruneNull } from 'convex-helpers'
-import { deprecated, literals, nullable, optional } from 'convex-helpers/validators'
-import { v } from 'convex/values'
+import { asyncMap, omit, pruneNull } from 'convex-helpers'
+import { literals, nullable, optional } from 'convex-helpers/validators'
+import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
@@ -30,8 +30,7 @@ export const messageReturnFields = {
 
   images: optional(v.array(imagesReturn)),
 
-  kvMetadata: v.optional(v.record(v.string(), v.string())),
-  contentType: deprecated,
+  kvMetadata: v.record(v.string(), v.string()),
 }
 
 // * query helpers
@@ -54,6 +53,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
     threadSlug: thread.slug,
     userIsViewer: getUserIsViewer(ctx, message.userId),
     images: await getMessageUrlImages(ctx, message),
+    kvMetadata: message.kvMetadata ?? {},
   }
 }
 
@@ -165,19 +165,45 @@ export const update = mutation({
   args: {
     messageId: v.id('messages'),
 
-    role: messageFields.role,
+    role: v.optional(messageFields.role),
     name: v.optional(v.string()),
     text: v.optional(v.string()),
+
+    kv: v.optional(
+      v.object({
+        delete: v.optional(v.array(v.string())),
+        set: v.optional(v.record(v.string(), v.string())),
+        setUnique: v.optional(v.record(v.string(), v.string())),
+      }),
+    ),
   },
-  handler: async (ctx, { messageId, role, name, text }) => {
+  handler: async (ctx, { messageId, kv, ...args }) => {
+    const message = await ctx.table('messages').getX(messageId)
+
+    if (args.name === '') args.name = undefined
+    if (args.text === '') args.text = undefined
+
+    const kvMetadata = omit(message.kvMetadata ?? {}, kv?.delete ?? [])
+    if (kv?.set) {
+      Object.assign(kvMetadata, kv.set)
+    }
+
+    if (kv?.setUnique) {
+      const currentKeys = Object.keys(kvMetadata)
+      const duplicateKeys = Object.keys(kv.setUnique).filter((key) => currentKeys.includes(key))
+      if (duplicateKeys.length > 0) {
+        throw new ConvexError({
+          message: `Duplicate key(s) in setUnique: ${duplicateKeys.join(', ')}`,
+          duplicateKeys,
+        })
+      }
+      Object.assign(kvMetadata, kv.setUnique)
+    }
+
     return await ctx
       .table('messages')
       .getX(messageId)
-      .patch({
-        role,
-        name: name || undefined,
-        text: text || undefined,
-      })
+      .patch({ ...args, kvMetadata })
   },
 })
 
