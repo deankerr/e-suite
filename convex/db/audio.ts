@@ -1,7 +1,9 @@
 import { nullable } from 'convex-helpers/validators'
 import { v } from 'convex/values'
+import { z } from 'zod'
 
-import { internalMutation, query } from '../functions'
+import { internal } from '../_generated/api'
+import { internalMutation, mutation, query } from '../functions'
 
 export const audioReturnFields = v.object({
   _id: v.id('audio'),
@@ -66,5 +68,26 @@ export const getByMessageId = query({
   handler: async (ctx, { messageId }) => {
     const audios = await ctx.table('audio', 'messageId', (q) => q.eq('messageId', messageId))
     return audios
+  },
+})
+
+export const generate = mutation({
+  args: {
+    messageId: v.id('messages'),
+    prompt: v.string(),
+    duration: v.optional(v.number()),
+  },
+  handler: async (ctx, { messageId, prompt, duration }) => {
+    const input = z
+      .object({
+        prompt: z.string().max(2048),
+        duration: z.number().max(30).optional(),
+      })
+      .parse({ prompt, duration })
+
+    await ctx.scheduler.runAfter(0, internal.action.textToAudio.run, {
+      messageId,
+      input,
+    })
   },
 })
