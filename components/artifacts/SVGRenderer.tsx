@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import DOMPurify from 'dompurify'
 
-export const SVGRenderer = ({ svgText, extra = false }: { svgText: string; extra?: boolean }) => {
+export const SVGRenderer = ({ svgText, extra = true }: { svgText: string; extra?: boolean }) => {
   const svgContainerRef = useRef<HTMLDivElement>(null)
 
   const options = {
