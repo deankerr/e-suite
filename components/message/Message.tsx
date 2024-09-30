@@ -67,6 +67,14 @@ export const Message = ({
               </DropdownMenu.Item>
             </Link>
 
+            <DropdownMenu.Item
+              onClick={() => {
+                navigator.clipboard.writeText(message._id)
+              }}
+            >
+              <Icons.Copy /> Copy message ID
+            </DropdownMenu.Item>
+
             <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
               {showEditor ? 'Cancel Edit' : 'Edit'}
             </DropdownMenu.Item>

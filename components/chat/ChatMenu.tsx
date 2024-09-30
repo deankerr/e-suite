@@ -33,15 +33,13 @@ export const ChatMenu = ({ threadId }: { threadId: string }) => {
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content variant="soft">
-          {route === 'images' ? (
-            <DropdownMenu.Item onClick={() => router.push(`/chat/${thread.slug}`)}>
-              <Icons.Chat /> Chat view
-            </DropdownMenu.Item>
-          ) : route === 'chat' ? (
-            <DropdownMenu.Item onClick={() => router.push(`/images/${thread.slug}`)}>
-              <Icons.ImagesSquare /> Image view
-            </DropdownMenu.Item>
-          ) : null}
+          <DropdownMenu.Item
+            onClick={() => {
+              navigator.clipboard.writeText(thread._id)
+            }}
+          >
+            <Icons.Copy /> Copy thread ID
+          </DropdownMenu.Item>
 
           <DropdownMenu.Item onClick={() => setShowEditTitleDialog(true)}>
             <Icons.Pencil /> Edit title
