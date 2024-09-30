@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { usePaginatedQuery } from 'convex/react'
 
 import { useThread } from '@/app/lib/api/threads'
@@ -9,7 +9,6 @@ import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
-import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
 export default function Page({ params }: { params: { threadId: string } }) {
@@ -19,9 +18,10 @@ export default function Page({ params }: { params: { threadId: string } }) {
     api.db.threads.listMessages,
     { slugOrId: params.threadId },
     {
-      initialNumItems: appConfig.nInitialMessages,
+      initialNumItems: 30,
     },
   )
+  const hasSkippedFirstLoad = useRef(false)
 
   const svgMessages = useMemo(() => {
     return results
@@ -65,10 +65,12 @@ export default function Page({ params }: { params: { threadId: string } }) {
             />
           )}
           onAtTop={() => {
-            console.log('at top')
             if (status === 'CanLoadMore') {
-              console.log('loading more')
-              loadMore(appConfig.nInitialMessages)
+              if (!hasSkippedFirstLoad.current) {
+                hasSkippedFirstLoad.current = true
+                return console.log('skipped first load')
+              }
+              loadMore(30)
             }
           }}
         />

@@ -27,13 +27,5 @@ export const SVGRenderer = ({ svgText, extra = false }: { svgText: string; extra
     container.innerHTML = processedSVG
   }, [processedSVG])
 
-  return (
-    <div
-      ref={svgContainerRef}
-      className="overflow-hidden rounded-md border"
-      tabIndex={0}
-      aria-label="Rendered SVG content"
-      role="img"
-    />
-  )
+  return <div ref={svgContainerRef} tabIndex={0} aria-label="Rendered SVG content" role="img" />
 }
