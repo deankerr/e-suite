@@ -8,6 +8,7 @@ import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
 import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { EmptyPage } from '@/components/pages/EmptyPage'
+import { Orbit } from '@/components/ui/Ldrs'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
 import { api } from '@/convex/_generated/api'
 
@@ -18,7 +19,7 @@ export default function Page({ params }: { params: { threadId: string } }) {
     api.db.threads.listMessages,
     { slugOrId: params.threadId },
     {
-      initialNumItems: 30,
+      initialNumItems: 20,
     },
   )
   const hasSkippedFirstLoad = useRef(false)
@@ -50,6 +51,7 @@ export default function Page({ params }: { params: { threadId: string } }) {
           {thread.title ?? 'Untitled Thread'}
         </PanelTitle>
         <div className="grow" />
+        {status === 'LoadingMore' && <Orbit />}
       </PanelHeader>
 
       <div className="grow">
