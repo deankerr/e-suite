@@ -3,12 +3,22 @@
 import { useEffect, useRef } from 'react'
 import DOMPurify from 'dompurify'
 
-export const SVGRenderer = ({ svgText }: { svgText: string }) => {
+export const SVGRenderer = ({ svgText, extra = false }: { svgText: string; extra?: boolean }) => {
   const svgContainerRef = useRef<HTMLDivElement>(null)
-  const processedSVG = DOMPurify.sanitize(svgText, {
+
+  const options = {
     USE_PROFILES: { svg: true, svgFilters: true },
     ADD_TAGS: ['animate'],
-  })
+  }
+
+  const optionsExtra = {
+    USE_PROFILES: { svg: true, svgFilters: true },
+    ADD_TAGS: ['animate', 'use'],
+    ADD_ATTR: ['to', 'from', 'dominant-baseline'],
+  }
+
+  const config = extra ? optionsExtra : options
+  const processedSVG = DOMPurify.sanitize(svgText, config)
 
   useEffect(() => {
     const container = svgContainerRef.current
