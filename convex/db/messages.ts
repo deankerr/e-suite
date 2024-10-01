@@ -4,7 +4,6 @@ import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
-import { ENV } from '../lib/env'
 import { messageFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
 import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from './images'
@@ -59,9 +58,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
 }
 
 export const getMessageUrlImages = async (ctx: QueryCtx, message: Ent<'messages'>) => {
-  const urls = extractValidUrlsFromText(message.text || '').filter(
-    (url) => url.hostname !== ENV.APP_HOSTNAME,
-  )
+  const urls = extractValidUrlsFromText(message.text || '')
 
   const results = await asyncMap(
     urls,
@@ -148,9 +145,8 @@ export const createMessage = async (
   if (!evaluateUrls) return message
 
   if (message.text) {
-    const urls = extractValidUrlsFromText(message.text).filter(
-      (url) => url.hostname !== ENV.APP_HOSTNAME,
-    )
+    const urls = extractValidUrlsFromText(message.text)
+
     if (urls.length > 0) {
       await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
         urls: urls.map((url) => url.toString()),

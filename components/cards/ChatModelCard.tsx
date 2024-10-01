@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { EndpointBadge, endpointTokens } from '@/app/admin/Badges'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
-import { isValidUrl } from '@/convex/shared/helpers'
+import { getURLIfValid } from '@/convex/shared/helpers'
 import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/types'
@@ -18,7 +18,7 @@ export const ChatModelCard = ({
 }: { model: EChatModel } & React.ComponentProps<'div'>) => {
   const logoSrc = llmAuthorLogos[model.creatorName.toLowerCase()]
 
-  const url = isValidUrl(model.link) ? new URL(model.link) : null
+  const url = getURLIfValid(model.link)
   return (
     <Card {...props} className={cn('flex h-40 w-72 max-w-full shrink-0 flex-col', className)}>
       <div>

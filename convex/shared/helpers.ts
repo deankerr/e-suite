@@ -1,3 +1,5 @@
+import { ConvexError } from 'convex/values'
+
 import type { EMessage } from '../types'
 
 export function getMessageName(message: EMessage) {
@@ -7,36 +9,31 @@ export function getMessageName(message: EMessage) {
   return 'Assistant'
 }
 
-export const getMaxQuantityForModel = (resourceKey: string) => {
-  const maxQuantities: Record<string, number> = {
-    'fal::fal-ai/aura-flow': 2,
-    'fal::fal-ai/flux-pro': 1,
+export function getURLIfValid(url: string) {
+  try {
+    return new URL(url)
+  } catch {
+    return null
   }
-
-  return maxQuantities[resourceKey] ?? 4
 }
 
-export function isValidUrl(url: string) {
-  try {
-    new URL(url)
-    return true
-  } catch {
-    return false
-  }
+export function getAppHostname() {
+  const hostname = process.env.NEXT_PUBLIC_APP_HOSTNAME ?? process.env.APP_HOSTNAME
+  if (!hostname) throw new ConvexError('APP_HOSTNAME is not set')
+  return hostname
 }
 
 export function extractValidUrlsFromText(text: string): URL[] {
+  const ignoredUrls = [getAppHostname(), 'www.w3.org/2000/svg']
+
   const urlRegex = /(https?:\/\/[^\s]+)/g
   const matches = text.match(urlRegex) || []
   return matches
-    .map((url) => {
-      try {
-        return new URL(url)
-      } catch {
-        return null
-      }
-    })
-    .filter((url): url is URL => url !== null)
+    .map(getURLIfValid)
+    .filter(
+      (url): url is URL =>
+        url !== null && !ignoredUrls.some((ignored) => url.href.includes(ignored)),
+    )
 }
 
 export function hasDelimiter(text: string) {
