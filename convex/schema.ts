@@ -317,7 +317,7 @@ export const runFields = {
   status: literals('queued', 'active', 'done', 'failed'),
   updatedAt: v.number(),
   startedAt: v.number(),
-  endedAt: v.number(),
+  endedAt: v.optional(v.number()),
 
   model: v.object({
     id: v.string(),
@@ -339,6 +339,7 @@ export const runFields = {
   ),
   finishReason: v.optional(v.string()),
   cost: v.optional(v.number()),
+  providerMetadata: v.optional(v.any()),
   errors: v.optional(v.array(v.any())),
 
   messageId: v.optional(v.id('messages')),

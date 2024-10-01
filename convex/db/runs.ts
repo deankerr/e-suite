@@ -1,5 +1,6 @@
 import { literals } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
+import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation } from '../functions'
@@ -55,7 +56,6 @@ export const create = mutation({
       status: 'queued',
       updatedAt: Date.now(),
       startedAt: 0,
-      endedAt: 0,
     })
 
     await ctx.scheduler.runAfter(0, internal.action.run.run, {
@@ -118,7 +118,13 @@ export const activate = internalMutation({
         }
       })
 
-    return { run: run.doc(), messages: messages.reverse() }
+    const thread = await ctx.table('threads').getX(run.threadId)
+
+    return {
+      run: run.doc(),
+      messages: messages.reverse(),
+      threadInstructions: thread.instructions,
+    }
   },
 })
 
@@ -177,5 +183,45 @@ export const fail = internalMutation({
       endedAt: Date.now(),
       errors,
     })
+  },
+})
+
+const openRouterMetadataSchema = z.object({
+  id: z.string(),
+  total_cost: z.number(),
+  finish_reason: z.string(),
+  tokens_prompt: z.number(),
+  tokens_completion: z.number(),
+})
+
+export const updateProviderMetadata = internalMutation({
+  args: {
+    runId: v.id('runs'),
+    providerMetadata: v.any(),
+  },
+  handler: async (ctx, { runId, providerMetadata }) => {
+    const run = await ctx.skipRules.table('runs').getX(runId)
+
+    const parsed = openRouterMetadataSchema.safeParse(providerMetadata)
+    if (parsed.success) {
+      const { total_cost, finish_reason, tokens_prompt, tokens_completion } = parsed.data
+
+      await run.patch({
+        updatedAt: Date.now(),
+        finishReason: finish_reason,
+        usage: {
+          promptTokens: tokens_prompt,
+          completionTokens: tokens_completion,
+          totalTokens: tokens_prompt + tokens_completion,
+        },
+        cost: total_cost,
+        providerMetadata,
+      })
+    } else {
+      await run.patch({
+        updatedAt: Date.now(),
+        providerMetadata,
+      })
+    }
   },
 })

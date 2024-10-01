@@ -1,5 +1,4 @@
 import { createOpenAI, openai } from '@ai-sdk/openai'
-import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateText, streamText } from 'ai'
 import { omit } from 'convex-helpers'
 import { ConvexError, v } from 'convex/values'
@@ -16,11 +15,14 @@ function createModelProvider(model: { provider: string; id: string }) {
     case 'openai':
       return openai(model.id)
     case 'openrouter':
-      return createOpenRouter({
+      return createOpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey: ENV.OPENROUTER_API_KEY,
         headers: {
           'HTTP-Referer': `https://${ENV.APP_HOSTNAME}`,
           'X-Title': `esuite`,
         },
+        compatibility: 'strict',
       })(model.id)
     case 'together':
       return createOpenAI({
@@ -38,21 +40,23 @@ export const run = internalAction({
   },
   handler: async (ctx, { runId }) => {
     try {
-      const { run, messages } = await ctx.runMutation(internal.db.runs.activate, { runId })
-      const model = createModelProvider(run.model)
+      const { run, messages, threadInstructions } = await ctx.runMutation(
+        internal.db.runs.activate,
+        { runId },
+      )
+      console.log({ ...run, messages })
 
+      const model = createModelProvider(run.model)
       const input = {
         ...run.modelParameters,
         model,
-        system: run.instructions,
+        system: run.instructions ?? threadInstructions,
         messages,
       }
-      console.log(input)
 
       async function nonStreaming() {
-        const { text, finishReason, usage, warnings, response, responseMessages } =
-          await generateText({ ...input })
-        return { text, finishReason, usage, warnings, response, responseMessages }
+        const { text, finishReason, usage, warnings, response } = await generateText({ ...input })
+        return { text, finishReason, usage, warnings, response }
       }
 
       async function streaming() {
@@ -73,16 +77,13 @@ export const run = internalAction({
           }
         }
 
-        const [text, finishReason, usage, warnings, response, responseMessages] = await Promise.all(
-          [
-            result.text,
-            result.finishReason,
-            result.usage,
-            result.warnings,
-            result.response,
-            result.responseMessages,
-          ],
-        )
+        const [text, finishReason, usage, warnings, response] = await Promise.all([
+          result.text,
+          result.finishReason,
+          result.usage,
+          result.warnings,
+          result.response,
+        ])
 
         try {
           await ctx.scheduler.runAfter(ms('1 minute'), internal.db.texts.deleteText, {
@@ -92,14 +93,15 @@ export const run = internalAction({
           console.error(err)
         }
 
-        return { text, finishReason, usage, warnings, response, responseMessages }
+        return { text, finishReason, usage, warnings, response }
       }
 
-      const { text, finishReason, usage, warnings, response, responseMessages } = run.stream
+      const { text, finishReason, usage, warnings, response } = run.stream
         ? await streaming()
         : await nonStreaming()
 
-      console.log(responseMessages, { finishReason }, usage, omit(response, ['headers']))
+      console.log(text)
+      console.log({ finishReason, usage, response: omit(response, ['headers']) })
       if (warnings) warnings.forEach((warning) => console.warn(warning))
 
       await ctx.runMutation(internal.db.runs.complete, {
@@ -108,11 +110,64 @@ export const run = internalAction({
         finishReason,
         usage,
       })
+
+      if (run.model.provider === 'openrouter') {
+        await ctx.scheduler.runAfter(1000, internal.action.run.fetchOpenRouterMetadata, {
+          runId,
+          responseId: response.id,
+        })
+      }
     } catch (err) {
       console.error(err)
+
       await ctx.runMutation(internal.db.runs.fail, {
         runId,
         errors: [getErrorMessage(err)],
+      })
+    }
+  },
+})
+
+export const fetchOpenRouterMetadata = internalAction({
+  args: {
+    runId: v.id('runs'),
+    responseId: v.string(),
+    attempt: v.optional(v.number()),
+  },
+  handler: async (ctx, { runId, responseId, attempt = 1 }) => {
+    try {
+      const response = await fetch(`https://openrouter.ai/api/v1/generation?id=${responseId}`, {
+        headers: {
+          Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
+        },
+      })
+
+      const json = await response.json()
+      console.log('openrouter metadata', responseId, runId, attempt, json)
+
+      if ('data' in json) {
+        await ctx.runMutation(internal.db.runs.updateProviderMetadata, {
+          runId,
+          providerMetadata: json.data,
+        })
+        return
+      }
+
+      if ('error' in json) {
+        throw new ConvexError(json.error.message)
+      }
+
+      throw new ConvexError('invalid openrouter response')
+    } catch (err) {
+      if (attempt > 5) {
+        throw err
+      }
+
+      console.error(err)
+      await ctx.scheduler.runAfter(2000 * attempt, internal.action.run.fetchOpenRouterMetadata, {
+        runId,
+        responseId,
+        attempt: attempt + 1,
       })
     }
   },
