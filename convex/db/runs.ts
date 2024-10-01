@@ -8,6 +8,8 @@ import { modelParametersFields } from '../schema'
 import { createMessage } from './messages'
 import { getOrCreateUserThread } from './threads'
 
+import type { MutationCtx } from '../types'
+
 export const create = mutation({
   args: {
     threadId: v.string(),
@@ -155,16 +157,58 @@ export const complete = internalMutation({
       { skipRules: true },
     )
 
+    const cost = await getInferenceCost(ctx, {
+      promptTokens: usage.promptTokens,
+      completionTokens: usage.completionTokens,
+      model: run.model,
+    })
+
     await run.patch({
       status: 'done',
       updatedAt: Date.now(),
       endedAt: Date.now(),
       finishReason,
       usage,
+      cost,
       messageId: message._id,
     })
   },
 })
+
+async function getInferenceCost(
+  ctx: MutationCtx,
+  {
+    promptTokens,
+    completionTokens,
+    model,
+  }: { promptTokens: number; completionTokens: number; model: { id: string; provider: string } },
+) {
+  try {
+    const chatModel = await ctx
+      .table('chat_models')
+      .filter((q) =>
+        q.and(q.eq(q.field('modelId'), model.id), q.eq(q.field('endpoint'), model.provider)),
+      )
+      .first()
+    if (!chatModel) return
+
+    switch (chatModel.pricing.type) {
+      case 'free':
+        return 0
+      case 'llm':
+        return (
+          (promptTokens * chatModel.pricing.tokenInput +
+            completionTokens * chatModel.pricing.tokenOutput) /
+          1_000_000
+        )
+      default:
+        return
+    }
+  } catch (err) {
+    console.error(err)
+    return
+  }
+}
 
 export const fail = internalMutation({
   args: {
