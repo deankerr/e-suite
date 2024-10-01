@@ -144,6 +144,7 @@ export const complete = internalMutation({
         userId: run.userId,
         role: 'assistant',
         text,
+        runId,
       },
       { skipRules: true },
     )

@@ -1,6 +1,7 @@
 import { createOpenAI, openai } from '@ai-sdk/openai'
-import { openrouter } from '@openrouter/ai-sdk-provider'
+import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateText, streamText } from 'ai'
+import { omit } from 'convex-helpers'
 import { ConvexError, v } from 'convex/values'
 import { ms } from 'itty-time'
 
@@ -9,6 +10,27 @@ import { internalAction } from '../functions'
 import { ENV } from '../lib/env'
 import { hasDelimiter } from '../shared/helpers'
 import { getErrorMessage } from '../shared/utils'
+
+function createModelProvider(model: { provider: string; id: string }) {
+  switch (model.provider) {
+    case 'openai':
+      return openai(model.id)
+    case 'openrouter':
+      return createOpenRouter({
+        headers: {
+          'HTTP-Referer': `https://${ENV.APP_HOSTNAME}`,
+          'X-Title': `esuite`,
+        },
+      })(model.id)
+    case 'together':
+      return createOpenAI({
+        apiKey: ENV.TOGETHER_API_KEY,
+        baseURL: 'https://api.together.xyz/v1',
+      })(model.id)
+    default:
+      throw new ConvexError(`invalid provider: ${model.provider}`)
+  }
+}
 
 export const run = internalAction({
   args: {
@@ -28,9 +50,11 @@ export const run = internalAction({
       console.log(input)
 
       async function nonStreaming() {
-        const { text, finishReason, usage, warnings } = await generateText(input)
-        return { text, finishReason, usage, warnings }
+        const { text, finishReason, usage, warnings, response, responseMessages } =
+          await generateText({ ...input })
+        return { text, finishReason, usage, warnings, response, responseMessages }
       }
+
       async function streaming() {
         const textId = await ctx.runMutation(internal.db.texts.createMessageText, {
           runId,
@@ -49,12 +73,16 @@ export const run = internalAction({
           }
         }
 
-        const [text, finishReason, usage, warnings] = await Promise.all([
-          result.text,
-          result.finishReason,
-          result.usage,
-          result.warnings,
-        ])
+        const [text, finishReason, usage, warnings, response, responseMessages] = await Promise.all(
+          [
+            result.text,
+            result.finishReason,
+            result.usage,
+            result.warnings,
+            result.response,
+            result.responseMessages,
+          ],
+        )
 
         try {
           await ctx.scheduler.runAfter(ms('1 minute'), internal.db.texts.deleteText, {
@@ -64,12 +92,14 @@ export const run = internalAction({
           console.error(err)
         }
 
-        return { text, finishReason, usage, warnings }
+        return { text, finishReason, usage, warnings, response, responseMessages }
       }
 
-      const { text, finishReason, usage, warnings } = run.stream
+      const { text, finishReason, usage, warnings, response, responseMessages } = run.stream
         ? await streaming()
         : await nonStreaming()
+
+      console.log(responseMessages, { finishReason }, usage, omit(response, ['headers']))
       if (warnings) warnings.forEach((warning) => console.warn(warning))
 
       await ctx.runMutation(internal.db.runs.complete, {
@@ -87,19 +117,3 @@ export const run = internalAction({
     }
   },
 })
-
-function createModelProvider(model: { provider: string; id: string }) {
-  switch (model.provider) {
-    case 'openai':
-      return openai(model.id)
-    case 'openrouter':
-      return openrouter(model.id)
-    case 'together':
-      return createOpenAI({
-        apiKey: ENV.TOGETHER_API_KEY,
-        baseURL: 'https://api.together.xyz/v1',
-      })(model.id)
-    default:
-      throw new ConvexError(`invalid provider: ${model.provider}`)
-  }
-}

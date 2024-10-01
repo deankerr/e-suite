@@ -31,6 +31,7 @@ export const messageReturnFields = {
   images: optional(v.array(imagesReturn)),
 
   kvMetadata: v.record(v.string(), v.string()),
+  runId: v.optional(v.id('runs')),
 }
 
 // * query helpers
