@@ -7,7 +7,6 @@ import ReactTextareaAutosize from 'react-textarea-autosize'
 import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
 import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
-import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 
 import type { ThreadActions } from '@/lib/api'
 
@@ -15,31 +14,31 @@ export const Composer = ({
   initialResourceKey = '',
   defaultTextValue = '',
   loading = false,
-  onSend,
+  onAppend,
   onRun,
 }: {
   initialResourceKey?: string
   defaultTextValue?: string
   loading?: boolean
-  onSend?: ThreadActions['send']
+  onAppend?: ThreadActions['append']
   onRun?: (text: string, model: { provider: string; id: string }) => void
 }) => {
   const [resourceKey, setResourceKey] = useState(initialResourceKey)
 
   const [textValue, setTextValue] = useState(defaultTextValue)
 
-  const handleSend = (method: 'run' | 'add') => {
-    const config = {
-      method,
-      text: textValue,
-      type: 'chat' as const,
-      resourceKey,
-    }
-
-    onSend?.(config).then((success) => {
+  const handleAppend = () => {
+    onAppend?.({ message: { text: textValue, role: 'user' } }).then((success) => {
       if (success) {
         setTextValue('')
       }
+    })
+  }
+
+  const handleRun = () => {
+    onRun?.(textValue, {
+      provider: resourceKey.split('::')[0]!,
+      id: resourceKey.split('::')[1]!,
     })
   }
 
@@ -52,7 +51,7 @@ export const Composer = ({
           placeholder="Enter your prompt..."
           value={textValue}
           onValueChange={setTextValue}
-          onSend={() => handleSend('run')}
+          onSend={() => handleRun()}
         />
       </div>
 
@@ -61,20 +60,8 @@ export const Composer = ({
           <ModelButton resourceKey={resourceKey} />
         </ModelPickerCmd>
         <div className="flex-end ml-auto shrink-0 gap-2">
-          <AdminOnlyUi>
-            <Button
-              onClick={() =>
-                onRun?.(textValue, {
-                  provider: resourceKey.split('::')[0]!,
-                  id: resourceKey.split('::')[1]!,
-                })
-              }
-            >
-              Run
-            </Button>
-          </AdminOnlyUi>
-          <AddButton loading={loading} onClick={() => handleSend('add')} />
-          <SendButton loading={loading} onClick={() => handleSend('run')} />
+          <AddButton loading={loading} onClick={() => handleAppend()} />
+          <SendButton loading={loading} onClick={() => handleRun()} />
         </div>
       </div>
     </div>

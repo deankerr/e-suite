@@ -54,7 +54,7 @@ export const Chat = ({
 
           {thread.userIsViewer && (
             <Composer
-              onSend={actions.send}
+              onAppend={actions.append}
               loading={actions.state !== 'ready'}
               initialResourceKey={thread.latestRunConfig?.resourceKey}
             />
@@ -139,7 +139,7 @@ const ChatInstance = ({ threadId }: { threadId: string }) => {
       <div className="grow"></div>
 
       <Composer
-        onSend={actions.send}
+        onAppend={actions.append}
         loading={actions.state !== 'ready'}
         initialResourceKey={thread.latestRunConfig?.resourceKey}
       />

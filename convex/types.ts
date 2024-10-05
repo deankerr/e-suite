@@ -35,11 +35,3 @@ export type RunConfig = Infer<typeof runConfigV>
 export type RunConfigTextToImageV2 = Infer<typeof runConfigTextToImageV2>
 export type RunConfigTextToAudio = Infer<typeof runConfigTextToAudioV>
 export type RunConfigChat = Infer<typeof runConfigChatV>
-
-export type ThreadActionResult = {
-  threadId: Id<'threads'>
-  slug: string
-  messageId: string
-  series: number
-  jobIds: string[]
-}

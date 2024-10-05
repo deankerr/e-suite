@@ -60,7 +60,7 @@ export const Chat = ({
 
       {thread.userIsViewer && (
         <Composer
-          onSend={actions.send}
+          onAppend={actions.append}
           loading={actions.state !== 'ready'}
           onRun={handleRun}
           initialResourceKey={getModelKey(thread.kvMetadata)}

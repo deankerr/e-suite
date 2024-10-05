@@ -1,30 +1,18 @@
-import { asyncMap, omit, pick } from 'convex-helpers'
+import { omit, pick } from 'convex-helpers'
 import { literals, nullable } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
-import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
-import { runConfigV, threadFields } from '../schema'
+import { threadFields } from '../schema'
 import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
 import { createMessage, getMessageEdges, messageReturnFields } from './messages'
-import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
 
 import type { Id } from '../_generated/dataModel'
-import type {
-  Ent,
-  EntWriter,
-  EThread,
-  MutationCtx,
-  QueryCtx,
-  RunConfig,
-  RunConfigChat,
-  RunConfigTextToAudio,
-  ThreadActionResult,
-} from '../types'
+import type { Ent, EThread, MutationCtx, QueryCtx } from '../types'
 
 export const threadReturnFields = {
   _id: v.string(),
@@ -350,48 +338,7 @@ export const remove = mutation({
   },
 })
 
-// * keyword commands
-export const matchUserCommandKeywords = async (ctx: MutationCtx, text?: string) => {
-  if (!text) return null
-  const user = await ctx.viewerX()
-  const configs = user.runConfigs ?? []
-
-  const getMatch = (keyword: string) => {
-    // * match + strip command keywords
-    if (['/', '@'].includes(keyword.charAt(0))) {
-      if (text.startsWith(`${keyword} `)) {
-        return { text: text.replace(`${keyword} `, ''), keyword }
-      }
-    } else if (text.includes(keyword)) {
-      // * keyword anywhere
-      return { text, keyword }
-    }
-
-    return null
-  }
-
-  const matches = configs
-    .map((conf) => {
-      const match = conf.keyword ? getMatch(conf.keyword) : null
-      if (match) {
-        for (const c of conf.runConfig) {
-          if ('prompt' in c) {
-            c.prompt = `${c.prompt} ${match.text}`
-          }
-        }
-        return conf.runConfig
-      }
-    })
-    .filter((m) => m !== undefined)
-
-  if (matches.length > 1) console.warn('matched multiple configs:', matches)
-  return matches[0]
-}
-
-// * Thread Actions (mutations)
-
-// * append
-// * add any message to thread, optionally run with config
+// * append message
 export const append = mutation({
   args: {
     threadId: v.optional(v.string()),
@@ -400,8 +347,6 @@ export const append = mutation({
       name: v.optional(v.string()),
       text: v.optional(v.string()),
     }),
-    runConfig: v.optional(runConfigV),
-    ignoreKeywordCommands: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const thread = await getOrCreateUserThread(ctx, args.threadId)
@@ -413,22 +358,6 @@ export const append = mutation({
       ...args.message,
     })
 
-    if (args.ignoreKeywordCommands !== true) {
-      const userConfig = await matchUserCommandKeywords(ctx, args.message.text)
-      if (userConfig) {
-        const runConfigs = Array.isArray(userConfig) ? userConfig : [userConfig]
-        return await createRun(ctx, {
-          thread,
-          userId: thread.userId,
-          runConfigs,
-        })
-      }
-    }
-
-    if (args.runConfig) {
-      return await createRun(ctx, { thread, userId: thread.userId, runConfigs: [args.runConfig] })
-    }
-
     return {
       threadId: thread._id,
       slug: thread.slug,
@@ -437,120 +366,3 @@ export const append = mutation({
     }
   },
 })
-
-// * run
-// * no user message. will create asst/result message
-export const run = mutation({
-  args: {
-    threadId: v.optional(v.string()),
-    runConfig: runConfigV,
-  },
-  handler: async (ctx, { threadId, runConfig }) => {
-    const thread = await getOrCreateUserThread(ctx, threadId)
-    if (!thread) throw new ConvexError('invalid thread')
-
-    return await createRun(ctx, { thread, userId: thread.userId, runConfigs: [runConfig] })
-  },
-})
-
-// * createRun - process runConfig
-const createRun = async (
-  ctx: MutationCtx,
-  {
-    thread,
-    userId,
-    runConfigs,
-  }: { thread: EntWriter<'threads'>; userId: Id<'users'>; runConfigs: RunConfig[] },
-): Promise<ThreadActionResult> => {
-  const message = await createMessage(ctx, {
-    threadId: thread._id,
-    userId,
-    role: 'assistant',
-  })
-
-  const jobIds = await asyncMap(runConfigs, async (runConfig) => {
-    switch (runConfig.type) {
-      case 'textToAudio':
-        return createTextToAudioRun(ctx, { thread, messageId: message._id, runConfig })
-      case 'chat':
-        return createChatRun(ctx, { thread, messageId: message._id, runConfig })
-    }
-  })
-
-  return {
-    threadId: thread._id,
-    slug: thread.slug,
-    messageId: message._id,
-    series: message.series,
-    jobIds: jobIds.filter((id) => id !== undefined),
-  }
-}
-
-// * Runs
-
-// * textToAudio
-const createTextToAudioRun = async (
-  ctx: MutationCtx,
-  {
-    messageId,
-    runConfig,
-  }: {
-    thread: Ent<'threads'>
-    messageId: Id<'messages'>
-    runConfig: RunConfigTextToAudio
-  },
-) => {
-  const input = z
-    .object({
-      prompt: z.string().max(2048),
-      duration: z.number().max(30).optional(),
-    })
-    .parse(runConfig)
-
-  await ctx.scheduler.runAfter(0, internal.action.textToAudio.run, {
-    messageId,
-    input,
-  })
-
-  return ''
-}
-
-// * chat
-const createChatRun = async (
-  ctx: MutationCtx,
-  {
-    thread,
-    messageId,
-    runConfig,
-  }: { thread: EntWriter<'threads'>; messageId: Id<'messages'>; runConfig: RunConfigChat },
-) => {
-  const chatModel = await getChatModelByResourceKey(ctx, runConfig.resourceKey)
-  if (!chatModel) throw new ConvexError('invalid resourceKey')
-
-  const input = z
-    .object({
-      excludeHistoryMessagesByName: z.array(z.string().max(64)).max(64).optional(),
-      maxHistoryMessages: z.number().default(64),
-      prependNamesToContent: z.boolean().default(false),
-      stream: z.boolean().default(true),
-      max_tokens: z.number().optional(),
-    })
-    .transform((conf) => ({
-      ...conf,
-      resourceKey: chatModel.resourceKey,
-      type: 'chat' as const,
-    }))
-    .parse(runConfig)
-
-  await ctx.scheduler.runAfter(0, internal.action.chat.run, {
-    messageId,
-    runConfig: input,
-  })
-
-  await thread.patch({
-    latestRunConfig: input,
-    updatedAtTime: Date.now(),
-  })
-
-  return ''
-}
