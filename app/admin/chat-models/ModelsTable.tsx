@@ -16,7 +16,7 @@ export const ModelsTable = ({
 
   const models2 = models.map((model) => ({
     ...model,
-    costPerMToken: getLLMPricing(model),
+    costPerMToken: model.pricing,
   }))
 
   const byScore = models2.toSorted((a, b) => b.internalScore - a.internalScore)
@@ -74,7 +74,7 @@ export const ModelsTable = ({
               </Table.Cell>
 
               <Table.Cell maxWidth="360px">{model.name}</Table.Cell>
-              <Table.Cell maxWidth="360px">{model.endpoint}</Table.Cell>
+              <Table.Cell maxWidth="360px">{model.provider}</Table.Cell>
               <Table.Cell justify="end">{model.internalScore}</Table.Cell>
               <Table.Cell>
                 {model.tags.join(', ') || <span className="italic text-gray-10">none</span>}
@@ -101,17 +101,4 @@ export const ModelsTable = ({
       </Table.Root>
     </div>
   )
-}
-
-function getLLMPricing(model: EChatModel) {
-  if (model.pricing.type === 'llm') {
-    return model.pricing
-  }
-  if (model.pricing.type === 'free') return { type: 'llm' as const, tokenInput: 0, tokenOutput: 0 }
-
-  return { type: 'llm' as const, tokenInput: Infinity, tokenOutput: Infinity }
-}
-
-function fixPrecision(n: number) {
-  return Math.round(n * 1000000) / 1000000
 }

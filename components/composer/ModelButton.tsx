@@ -17,7 +17,7 @@ export const ModelButton = forwardRef<
   const chatModels = useChatModels()
   const model = chatModels?.find((model) => model.resourceKey === resourceKey)
 
-  const icon = modelIcons[model?.type ?? 'fallback']
+  const icon = modelIcons['chat']
   const label = model?.name ?? 'Select model'
   return (
     <Button

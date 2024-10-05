@@ -194,23 +194,16 @@ async function getInferenceCost(
     const chatModel = await ctx
       .table('chat_models')
       .filter((q) =>
-        q.and(q.eq(q.field('modelId'), model.id), q.eq(q.field('endpoint'), model.provider)),
+        q.and(q.eq(q.field('modelId'), model.id), q.eq(q.field('provider'), model.provider)),
       )
       .first()
     if (!chatModel) return
 
-    switch (chatModel.pricing.type) {
-      case 'free':
-        return 0
-      case 'llm':
-        return (
-          (promptTokens * chatModel.pricing.tokenInput +
-            completionTokens * chatModel.pricing.tokenOutput) /
-          1_000_000
-        )
-      default:
-        return
-    }
+    return (
+      (promptTokens * chatModel.pricing.tokenInput +
+        completionTokens * chatModel.pricing.tokenOutput) /
+      1_000_000
+    )
   } catch (err) {
     console.error(err)
     return

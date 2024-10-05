@@ -66,9 +66,9 @@ export default function Page() {
                         </div>
 
                         <div>{model.creatorName}</div>
-                        <div>{model.endpoint}</div>
+                        <div>{model.provider}</div>
 
-                        {model.pricing.type === 'llm' ? (
+                        {model.pricing.tokenInput + model.pricing.tokenOutput > 0 ? (
                           <>
                             <div className="text-right tabular-nums">
                               in ${model.pricing.tokenInput.toFixed(2)} / Mtok
@@ -77,9 +77,9 @@ export default function Page() {
                               out ${model.pricing.tokenOutput.toFixed(2)} / Mtok
                             </div>
                           </>
-                        ) : model.pricing.type === 'free' ? (
+                        ) : (
                           <div className="row-span-2 place-self-center text-grass-11">free</div>
-                        ) : null}
+                        )}
                       </div>
                     </div>
                   </Card>

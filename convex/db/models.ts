@@ -11,25 +11,18 @@ export const getChatModelByResourceKey = async (ctx: QueryCtx, resourceKey: stri
     .unique()
   if (!model) return null
 
-  return { ...model, type: 'chat' as const }
+  return { ...model, description: '' }
 }
 
 export const listChatModels = query({
-  args: {
-    endpoint: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
     const models = await ctx
       .table('chat_models')
-      .filter((q) => {
-        if (args.endpoint) {
-          return q.eq(q.field('endpoint'), args.endpoint)
-        }
-        return true
-      })
-      .map((model) => ({ ...model, type: 'chat' as const, description: '' }))
+      .filter((q) => q.and(q.eq(q.field('hidden'), false), q.eq(q.field('available'), true)))
+      .map((model) => ({ ...model, description: '' }))
 
-    return models.sort((a, b) => b.internalScore - a.internalScore)
+    return models.sort((a, b) => a.name.localeCompare(b.name))
   },
 })
 

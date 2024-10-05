@@ -60,59 +60,37 @@ export const runConfigTextToAudioV = v.object({
 export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV2, runConfigTextToAudioV)
 
 // * Models
-const sharedModelFields = {
+export const chatModelFields = {
   name: v.string(),
   description: v.string(),
   creatorName: v.string(),
+  created: v.number(),
   link: v.string(),
 
   license: v.string(),
   tags: v.array(v.string()),
   coverImageUrl: v.optional(v.string()),
 
-  endpoint: v.string(),
+  provider: v.string(),
   modelId: v.string(),
-  endpointModelId: v.string(),
 
-  pricing: v.union(
-    v.object({
-      type: v.literal('llm'),
-      tokenInput: v.number(),
-      tokenOutput: v.number(),
-      imageInput: v.optional(v.number()),
-      imageOutput: v.optional(v.number()),
-    }),
-    v.object({
-      type: v.literal('free'),
-    }),
-    v.object({
-      type: v.literal('perRequest'),
-      value: v.number(),
-    }),
-    v.object({
-      type: v.literal('perSecond'),
-      value: v.number(),
-    }),
-    v.object({
-      type: v.literal('perMegapixel'),
-      value: v.number(),
-    }),
-  ),
+  pricing: v.object({
+    tokenInput: v.number(),
+    tokenOutput: v.number(),
+    imageInput: v.optional(v.number()),
+    imageOutput: v.optional(v.number()),
+  }),
 
   moderated: v.boolean(),
   available: v.boolean(),
   hidden: v.boolean(),
   internalScore: v.number(),
-}
 
-export const chatModelFields = {
-  ...sharedModelFields,
   numParameters: v.optional(v.number()),
   contextLength: v.number(),
   tokenizer: v.string(),
   stop: v.optional(v.array(v.string())),
   maxOutputTokens: v.optional(v.number()),
-  type: v.optional(v.literal('chat')),
 }
 const chat_models = defineEnt(chatModelFields).field('resourceKey', v.string(), {
   unique: true,

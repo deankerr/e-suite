@@ -46,7 +46,6 @@ import type * as lib_ai from "../lib/ai.js";
 import type * as lib_clerk from "../lib/clerk.js";
 import type * as lib_env from "../lib/env.js";
 import type * as lib_fetch from "../lib/fetch.js";
-import type * as lib_modelTags from "../lib/modelTags.js";
 import type * as lib_sharp from "../lib/sharp.js";
 import type * as lib_utils from "../lib/utils.js";
 import type * as lib_valibot from "../lib/valibot.js";
@@ -99,7 +98,6 @@ declare const fullApi: ApiFromModules<{
   "lib/clerk": typeof lib_clerk;
   "lib/env": typeof lib_env;
   "lib/fetch": typeof lib_fetch;
-  "lib/modelTags": typeof lib_modelTags;
   "lib/sharp": typeof lib_sharp;
   "lib/utils": typeof lib_utils;
   "lib/valibot": typeof lib_valibot;

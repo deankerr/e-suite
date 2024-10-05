@@ -19,9 +19,7 @@ async function fetchModelRecords() {
 export const updateOpenRouterModels = internalAction({
   args: {},
   handler: async (ctx) => {
-    const existingModels = await ctx.runQuery(api.db.models.listChatModels, {
-      endpoint: 'openrouter',
-    })
+    const existingModels = await ctx.runQuery(api.db.models.listChatModels, {})
     const records = await fetchModelRecords()
     const processed = records.map(processModelRecord).filter((m) => m !== null)
 
@@ -83,28 +81,25 @@ function processModelRecord(record: unknown) {
   // * snip "self-moderated" name text
   const name = data.name.replace(/ \(self-moderated\)$/, '')
 
-  const { creatorName, modelName } = getCreatorModelNames(name)
+  const { creatorName } = getCreatorModelNames(name)
 
-  const pricing = data.id.endsWith(':free')
-    ? { type: 'free' as const }
-    : {
-        type: 'llm' as const,
-        tokenInput: toPerMillionTokens(data.pricing.prompt),
-        tokenOutput: toPerMillionTokens(data.pricing.completion),
-        imageInput: toPerThousandTokens(data.pricing.image),
-        imageOutput: toPerThousandTokens(data.pricing.request),
-      }
+  const pricing = {
+    tokenInput: toPerMillionTokens(data.pricing.prompt),
+    tokenOutput: toPerMillionTokens(data.pricing.completion),
+    imageInput: toPerThousandTokens(data.pricing.image),
+    imageOutput: toPerThousandTokens(data.pricing.request),
+  }
 
   return {
-    endpoint: 'openrouter',
-    name: modelName,
+    provider: 'openrouter',
+    name,
     description: data.description,
     creatorName,
+    created: data.created,
     link: '',
     license: '',
     tags: [],
     modelId: data.id,
-    endpointModelId: data.id,
     pricing,
     moderated: data.top_provider.is_moderated,
     available: true,
@@ -112,7 +107,7 @@ function processModelRecord(record: unknown) {
     internalScore: 0,
     contextLength: data.context_length,
     tokenizer: data.architecture.tokenizer,
-    type: 'chat' as const,
+    maxOutputTokens: data.top_provider.max_completion_tokens ?? undefined,
     resourceKey: `openrouter::${data.id}`,
   }
 }

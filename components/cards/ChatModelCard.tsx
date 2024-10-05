@@ -33,7 +33,7 @@ export const ChatModelCard = ({
           )}
         </div>
         <div className="text-sm font-medium">{model.name}</div>
-        <div className="mt-1 font-mono text-xs text-gray-11">{model.endpointModelId}</div>
+        <div className="mt-1 font-mono text-xs text-gray-11">{model.modelId}</div>
       </div>
 
       <div className="flex grow gap-1 text-sm">
@@ -42,7 +42,7 @@ export const ChatModelCard = ({
       </div>
 
       <div className={cn('flex shrink-0 flex-wrap items-end gap-2')}>
-        <EndpointBadge endpoint={model.endpoint} />
+        <EndpointBadge endpoint={model.provider} />
 
         {url?.host.endsWith('civitai.com') ? (
           <LinkButton href={model.link} color={endpointTokens('civitai').color}>
