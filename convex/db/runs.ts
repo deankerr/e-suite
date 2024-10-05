@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { internalMutation, mutation } from '../functions'
 import { modelParametersFields } from '../schema'
+import { updateKvMetadata } from './helpers/kvMetadata'
 import { createMessage } from './messages'
 import { getOrCreateUserThread } from './threads'
 
@@ -39,7 +40,13 @@ export const create = mutation({
     const thread = await getOrCreateUserThread(ctx, threadId)
     if (!thread) throw new ConvexError('invalid thread id')
 
-    await thread.patch({ updatedAtTime: Date.now() })
+    const kvMetadata = updateKvMetadata(thread.kvMetadata, {
+      set: {
+        'esuite:model:id': args.model.id,
+        'esuite:model:provider': args.model.provider,
+      },
+    })
+    await thread.patch({ updatedAtTime: Date.now(), kvMetadata })
 
     for (const messageArgs of appendMessages) {
       await createMessage(ctx, {

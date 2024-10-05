@@ -63,9 +63,16 @@ export const Chat = ({
           onSend={actions.send}
           loading={actions.state !== 'ready'}
           onRun={handleRun}
-          initialResourceKey={thread.latestRunConfig?.resourceKey}
+          initialResourceKey={getModelKey(thread.kvMetadata)}
         />
       )}
     </Panel>
   )
+}
+
+function getModelKey(kvMetadata: Record<string, string>) {
+  const id = kvMetadata['esuite:model:id']
+  const provider = kvMetadata['esuite:model:provider']
+  if (!id || !provider) return undefined
+  return `${provider}::${id}`
 }
