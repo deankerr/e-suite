@@ -35,17 +35,6 @@ export const messageReturnFields = {
 }
 
 // * query helpers
-export const getMessageAudio = async (ctx: QueryCtx, messageId: Id<'messages'>) => {
-  const audio = await ctx
-    .table('audio', 'messageId', (q) => q.eq('messageId', messageId))
-    .filter((q) => q.eq(q.field('deletionTime'), undefined))
-    .map(async (a) => ({
-      ...a,
-      fileUrl: a.fileId ? await ctx.storage.getUrl(a.fileId) : undefined,
-    }))
-  return audio
-}
-
 export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) => {
   const thread = await message.edgeX('thread')
   return {

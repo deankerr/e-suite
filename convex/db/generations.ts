@@ -7,10 +7,35 @@ import { nanoid } from 'nanoid/non-secure'
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { paginatedReturnFields } from '../lib/utils'
-import { generationV2Fields, runConfigTextToImageV2 } from '../schema'
+import { generationV2Fields } from '../schema'
 import { getImageV2Edges, imagesReturn } from './images'
 
 import type { Ent, QueryCtx, RunConfigTextToImageV2 } from '../types'
+
+export const runConfigTextToImageV2 = v.object({
+  type: v.literal('textToImage'),
+  modelId: v.string(),
+  workflow: v.optional(v.string()),
+
+  prompt: v.string(),
+  negativePrompt: v.optional(v.string()),
+  n: v.optional(v.number()),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
+  size: v.optional(v.string()),
+  seed: v.optional(v.number()),
+  guidanceScale: v.optional(v.number()),
+  steps: v.optional(v.number()),
+
+  loras: v.optional(
+    v.array(
+      v.object({
+        path: v.string(),
+        scale: v.optional(v.number()),
+      }),
+    ),
+  ),
+})
 
 export const generationsReturn = v.object({
   _id: v.id('generations_v2'),

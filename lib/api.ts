@@ -4,10 +4,7 @@ import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
-
-import type { RunConfig } from '@/convex/types'
 
 const RUN_THROTTLE = 2500
 

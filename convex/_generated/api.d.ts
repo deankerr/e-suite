@@ -15,7 +15,6 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as action_chat from "../action/chat.js";
 import type * as action_evaluateMessageUrls from "../action/evaluateMessageUrls.js";
 import type * as action_evaluateNsfwProbability from "../action/evaluateNsfwProbability.js";
 import type * as action_generateImageVisionData from "../action/generateImageVisionData.js";
@@ -67,7 +66,6 @@ import type * as types from "../types.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "action/chat": typeof action_chat;
   "action/evaluateMessageUrls": typeof action_evaluateMessageUrls;
   "action/evaluateNsfwProbability": typeof action_evaluateNsfwProbability;
   "action/generateImageVisionData": typeof action_generateImageVisionData;

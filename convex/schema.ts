@@ -6,59 +6,6 @@ import { ms } from 'itty-time'
 
 const timeToDelete = ms('1 day')
 
-// * run config schemas
-export const runConfigChatV = v.object({
-  type: v.literal('chat'),
-  resourceKey: v.string(),
-  excludeHistoryMessagesByName: v.optional(v.array(v.string())),
-  maxHistoryMessages: v.optional(v.number()),
-  prependNamesToContent: v.optional(v.boolean()),
-  stream: v.optional(v.boolean()),
-
-  temperature: v.optional(v.number()),
-  max_tokens: v.optional(v.number()),
-  top_p: v.optional(v.number()),
-  top_k: v.optional(v.number()),
-  stop: v.optional(v.array(v.string())),
-  repetition_penalty: v.optional(v.number()),
-  frequency_penalty: v.optional(v.number()),
-  presence_penalty: v.optional(v.number()),
-})
-
-export const runConfigTextToImageV2 = v.object({
-  type: v.literal('textToImage'),
-  modelId: v.string(),
-  workflow: v.optional(v.string()),
-
-  prompt: v.string(),
-  negativePrompt: v.optional(v.string()),
-  n: v.optional(v.number()),
-  width: v.optional(v.number()),
-  height: v.optional(v.number()),
-  size: v.optional(v.string()),
-  seed: v.optional(v.number()),
-  guidanceScale: v.optional(v.number()),
-  steps: v.optional(v.number()),
-
-  loras: v.optional(
-    v.array(
-      v.object({
-        path: v.string(),
-        scale: v.optional(v.number()),
-      }),
-    ),
-  ),
-})
-
-export const runConfigTextToAudioV = v.object({
-  type: v.literal('textToAudio'),
-  resourceKey: v.string(),
-  prompt: v.optional(v.string()),
-  duration: v.optional(v.number()),
-})
-
-export const runConfigV = v.union(runConfigChatV, runConfigTextToImageV2, runConfigTextToAudioV)
-
 // * Models
 export const chatModelFields = {
   name: v.string(),
@@ -337,7 +284,7 @@ export const userFields = {
     v.array(
       v.object({
         name: v.string(),
-        runConfig: v.array(runConfigV),
+        runConfig: v.array(v.any()),
         keyword: v.optional(v.string()),
       }),
     ),
