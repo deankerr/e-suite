@@ -20,7 +20,10 @@ export const FavouriteButton = ({ threadId }: { threadId: string }) => {
       variant="ghost"
       color={thread.favourite ? 'orange' : 'gray'}
       onClick={() =>
-        sendUpdateThread({ threadId: thread._id, fields: { favourite: !thread.favourite } })
+        sendUpdateThread({
+          threadId: thread._id,
+          favourite: !thread.favourite,
+        })
       }
     >
       <Icons.Star size={20} weight={thread.favourite ? 'fill' : 'regular'} />

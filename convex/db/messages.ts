@@ -6,6 +6,7 @@ import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { messageFields } from '../schema'
 import { extractValidUrlsFromText } from '../shared/helpers'
+import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
 import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from './images'
 import { getThreadBySlugOrId } from './threads'
 import { getUserIsViewer } from './users'
@@ -116,15 +117,15 @@ export const listLatest = query({
 export const createMessage = async (
   ctx: MutationCtx,
   fields: Omit<WithoutSystemFields<Doc<'messages'>>, 'series' | 'deletionTime'>,
-  opts?: {
+  options?: {
     skipRules?: boolean
     evaluateUrls?: boolean
     generateThreadTitle?: boolean
   },
 ) => {
-  const skipRules = opts?.skipRules ?? false
-  const evaluateUrls = opts?.evaluateUrls ?? fields.role === 'user'
-  const generateThreadTitle = opts?.generateThreadTitle ?? fields.role === 'assistant'
+  const skipRules = options?.skipRules ?? false
+  const evaluateUrls = options?.evaluateUrls ?? fields.role === 'user'
+  const generateThreadTitle = options?.generateThreadTitle ?? fields.role === 'assistant'
 
   const thread = await ctx.skipRules.table('threads').getX(fields.threadId)
 
@@ -166,26 +167,16 @@ export const createMessage = async (
 export const create = mutation({
   args: {
     threadId: v.string(),
-    role: messageFields.role,
-    name: v.optional(v.string()),
-    text: v.optional(v.string()),
-    kv: v.optional(
-      v.object({
-        set: v.record(v.string(), v.string()),
-      }),
-    ),
+    ...omit(messageFields, ['runId']),
   },
-  handler: async (ctx, { threadId, role, name, text, kv }) => {
+  handler: async (ctx, { threadId, ...fields }) => {
     const thread = await getThreadBySlugOrId(ctx, threadId)
     if (!thread) throw new ConvexError('invalid thread')
 
     const message = await createMessage(ctx, {
+      ...fields,
       threadId: thread._id,
       userId: thread.userId,
-      role,
-      name,
-      text,
-      kvMetadata: kv?.set,
     })
 
     return {
@@ -207,36 +198,15 @@ export const update = mutation({
     name: v.optional(v.string()),
     text: v.optional(v.string()),
 
-    kv: v.optional(
-      v.object({
-        delete: v.optional(v.array(v.string())),
-        set: v.optional(v.record(v.string(), v.string())),
-        setUnique: v.optional(v.record(v.string(), v.string())),
-      }),
-    ),
+    updateKv: v.optional(updateKvValidator),
   },
-  handler: async (ctx, { messageId, kv, ...args }) => {
+  handler: async (ctx, { messageId, updateKv, ...args }) => {
     const message = await ctx.table('messages').getX(messageId)
 
     if (args.name === '') args.name = undefined
     if (args.text === '') args.text = undefined
 
-    const kvMetadata = omit(message.kvMetadata ?? {}, kv?.delete ?? [])
-    if (kv?.set) {
-      Object.assign(kvMetadata, kv.set)
-    }
-
-    if (kv?.setUnique) {
-      const currentKeys = Object.keys(kvMetadata)
-      const duplicateKeys = Object.keys(kv.setUnique).filter((key) => currentKeys.includes(key))
-      if (duplicateKeys.length > 0) {
-        throw new ConvexError({
-          message: `Duplicate key(s) in setUnique: ${duplicateKeys.join(', ')}`,
-          duplicateKeys,
-        })
-      }
-      Object.assign(kvMetadata, kv.setUnique)
-    }
+    const kvMetadata = updateKvMetadata(message.kvMetadata, updateKv)
 
     return await ctx
       .table('messages')
@@ -252,16 +222,21 @@ export const updateSR = internalMutation({
     role: messageFields.role,
     name: v.optional(v.string()),
     text: v.optional(v.string()),
+
+    updateKv: v.optional(updateKvValidator),
   },
-  handler: async (ctx, { messageId, role, name, text }) => {
+  handler: async (ctx, { messageId, updateKv, ...args }) => {
+    const message = await ctx.skipRules.table('messages').getX(messageId)
+
+    if (args.name === '') args.name = undefined
+    if (args.text === '') args.text = undefined
+
+    const kvMetadata = updateKvMetadata(message.kvMetadata, updateKv)
+
     return await ctx.skipRules
       .table('messages')
       .getX(messageId)
-      .patch({
-        role,
-        name: name || undefined,
-        text: text || undefined,
-      })
+      .patch({ ...args, kvMetadata })
   },
 })
 

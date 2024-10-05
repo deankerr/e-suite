@@ -30,6 +30,7 @@ import type * as db_admin_see from "../db/admin/see.js";
 import type * as db_audio from "../db/audio.js";
 import type * as db_collections from "../db/collections.js";
 import type * as db_generations from "../db/generations.js";
+import type * as db_helpers_kvMetadata from "../db/helpers/kvMetadata.js";
 import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
 import type * as db_metadata from "../db/metadata.js";
@@ -87,6 +88,7 @@ declare const fullApi: ApiFromModules<{
   "db/audio": typeof db_audio;
   "db/collections": typeof db_collections;
   "db/generations": typeof db_generations;
+  "db/helpers/kvMetadata": typeof db_helpers_kvMetadata;
   "db/images": typeof db_images;
   "db/messages": typeof db_messages;
   "db/metadata": typeof db_metadata;

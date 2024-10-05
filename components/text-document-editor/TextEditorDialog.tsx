@@ -36,9 +36,7 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
 
       updateThread({
         threadId: thread._id,
-        fields: {
-          instructions,
-        },
+        instructions,
       })
         .catch((err) => {
           console.error(err)

@@ -43,7 +43,7 @@ export const run = internalAction({
 
     await ctx.runMutation(internal.db.threads.updateSR, {
       threadId: message.threadId,
-      fields: { title },
+      title,
     })
   },
 })

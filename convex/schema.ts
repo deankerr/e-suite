@@ -270,9 +270,9 @@ export const messageFields = {
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
   text: v.optional(v.string()),
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
 
   runId: v.optional(v.id('runs')),
-  kvMetadata: v.optional(v.record(v.string(), v.string())),
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -290,8 +290,8 @@ export const threadFields = {
   instructions: v.optional(v.string()),
   latestRunConfig: v.optional(v.any()),
   favourite: v.optional(v.boolean()),
-
   kvMetadata: v.optional(v.record(v.string(), v.string())),
+
   updatedAtTime: v.number(),
 }
 const threads = defineEnt(threadFields)

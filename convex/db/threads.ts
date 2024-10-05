@@ -1,5 +1,5 @@
 import { asyncMap, omit, pick } from 'convex-helpers'
-import { literals, nullable, partial } from 'convex-helpers/validators'
+import { literals, nullable } from 'convex-helpers/validators'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
@@ -8,6 +8,7 @@ import { internal } from '../_generated/api'
 import { internalMutation, internalQuery, mutation, query } from '../functions'
 import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
 import { runConfigV, threadFields } from '../schema'
+import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
 import { createMessage, getMessageEdges, messageReturnFields } from './messages'
 import { getChatModelByResourceKey } from './models'
 import { getUserIsViewer, getUserPublic } from './users'
@@ -297,30 +298,41 @@ export const create = mutation({
   returns: v.object({ id: v.id('threads'), slug: v.string() }),
 })
 
-const updateArgs = v.object(partial(omit(threadFields, ['updatedAtTime'])))
 export const update = mutation({
   args: {
+    ...omit(threadFields, ['updatedAtTime', 'kvMetadata']),
     threadId: v.string(),
-    fields: updateArgs,
+    updateKv: v.optional(updateKvValidator),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, { threadId, updateKv, ...fields }) => {
+    const thread = await getThreadBySlugOrId(ctx, threadId)
+    if (!thread) throw new ConvexError('invalid thread')
+
+    const kvMetadata = updateKvMetadata(thread.kvMetadata, updateKv)
+
     return await ctx
       .table('threads')
-      .getX(args.threadId as Id<'threads'>)
-      .patch({ ...args.fields, updatedAtTime: Date.now() })
+      .getX(thread._id)
+      .patch({ ...fields, kvMetadata, updatedAtTime: Date.now() })
   },
 })
 
 export const updateSR = internalMutation({
   args: {
+    ...omit(threadFields, ['updatedAtTime', 'kvMetadata']),
     threadId: v.string(),
-    fields: updateArgs,
+    updateKv: v.optional(updateKvValidator),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, { threadId, updateKv, ...fields }) => {
+    const thread = await getThreadBySlugOrId(ctx, threadId)
+    if (!thread) throw new ConvexError('invalid thread')
+
+    const kvMetadata = updateKvMetadata(thread.kvMetadata, updateKv)
+
     return await ctx.skipRules
       .table('threads')
-      .getX(args.threadId as Id<'threads'>)
-      .patch({ ...args.fields, updatedAtTime: Date.now() })
+      .getX(thread._id)
+      .patch({ ...fields, kvMetadata, updatedAtTime: Date.now() })
   },
 })
 

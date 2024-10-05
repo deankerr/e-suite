@@ -46,7 +46,7 @@ export const EditThreadTitleDialog = ({
             </Button>
           </Dialog.Close>
           <Dialog.Close>
-            <Button onClick={() => sendUpdateThread({ threadId, fields: { title } })}>Save</Button>
+            <Button onClick={() => sendUpdateThread({ threadId, title })}>Save</Button>
           </Dialog.Close>
         </div>
       </Dialog.Content>
