@@ -4,7 +4,7 @@ import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
-import { internalMutation, internalQuery, mutation, query } from '../functions'
+import { internalMutation, mutation, query } from '../functions'
 import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
 import { threadFields } from '../schema'
 import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
@@ -15,24 +15,25 @@ import type { Id } from '../_generated/dataModel'
 import type { Ent, EThread, MutationCtx, QueryCtx } from '../types'
 
 export const threadReturnFields = {
+  // doc
   _id: v.string(),
   _creationTime: v.number(),
-  slug: v.string(),
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-
-  updatedAtTime: v.number(),
+  latestRunConfig: v.optional(v.any()),
   favourite: v.optional(v.boolean()),
+  kvMetadata: v.record(v.string(), v.string()),
+  updatedAtTime: v.number(),
+  // + fields
+  slug: v.string(),
   userId: v.id('users'),
+
+  // edge
   userIsViewer: v.boolean(),
   user: v.any(),
-  kvMetadata: v.record(v.string(), v.string()),
-
-  latestRunConfig: v.optional(v.any()),
 }
 
 // * Helpers
-
 const getMessageBySeries = async (
   ctx: QueryCtx,
   { threadId, series }: { threadId: Id<'threads'>; series: number },
@@ -119,17 +120,6 @@ export const get = query({
   returns: v.union(v.object(threadReturnFields), v.null()),
 })
 
-export const getDoc = internalQuery({
-  args: {
-    slugOrId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-
-    return thread ? thread.doc() : null
-  },
-})
-
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -181,89 +171,6 @@ export const getMessage = query({
   returns: v.union(v.object(messageReturnFields), v.null()),
 })
 
-export const getConversation = internalQuery({
-  args: {
-    messageId: v.id('messages'),
-    limit: v.optional(v.number()),
-    prependNamesToContent: v.optional(v.boolean()),
-  },
-  handler: async (ctx, { messageId, limit = 20, prependNamesToContent = false }) => {
-    const message = await ctx.table('messages').getX(messageId)
-
-    const messages = await ctx
-      .table('messages', 'threadId', (q) =>
-        q.eq('threadId', message.threadId).lt('_creationTime', message._creationTime),
-      )
-      .order('desc')
-      .filter((q) =>
-        q.and(q.eq(q.field('deletionTime'), undefined), q.neq(q.field('text'), undefined)),
-      )
-      .take(limit)
-      .map((message) => ({
-        role: message.role,
-        name: prependNamesToContent ? undefined : message.name,
-        content:
-          prependNamesToContent && message.role === 'user' && message.name !== undefined
-            ? `${message.name}: ${message.text}`
-            : message.text || '',
-      }))
-
-    const thread = await ctx.skipRules.table('threads').getX(message.threadId)
-    if (thread.instructions) {
-      messages.push({
-        role: 'system',
-        content: thread.instructions.replace('{{date}}', new Date().toISOString()),
-        name: undefined,
-      })
-    }
-
-    return messages.reverse()
-  },
-})
-
-export const getMessageCreatedBetween = query({
-  args: {
-    threadId: v.string(),
-    before: v.number(),
-    after: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.threadId)
-    if (!thread) return null
-
-    const messages = await ctx
-      .table('messages', 'threadId', (q) =>
-        q
-          .eq('threadId', thread._id)
-          .gt('_creationTime', args.after)
-          .lt('_creationTime', args.before),
-      )
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map((message) => ({
-        _id: message._id,
-        _creationTime: message._creationTime,
-        role: message.role,
-        name: message.name,
-        text: message.text,
-        series: message.series,
-      }))
-
-    return messages
-  },
-  returns: nullable(
-    v.array(
-      v.object({
-        _id: v.id('messages'),
-        _creationTime: v.number(),
-        role: literals('system', 'assistant', 'user'),
-        name: v.optional(v.string()),
-        text: v.optional(v.string()),
-        series: v.number(),
-      }),
-    ),
-  ),
-})
-
 // * Mutations
 export const create = mutation({
   args: pick(threadFields, ['title', 'instructions', 'favourite', 'kvMetadata']),
@@ -303,6 +210,7 @@ export const update = mutation({
       .getX(thread._id)
       .patch({ ...fields, kvMetadata, updatedAtTime: Date.now() })
   },
+  returns: v.id('threads'),
 })
 
 export const updateSR = internalMutation({
@@ -322,6 +230,7 @@ export const updateSR = internalMutation({
       .getX(thread._id)
       .patch({ ...fields, kvMetadata, updatedAtTime: Date.now() })
   },
+  returns: v.id('threads'),
 })
 
 export const remove = mutation({
@@ -336,6 +245,7 @@ export const remove = mutation({
 
     await ctx.scheduler.runAfter(0, internal.deletion.scheduleFileDeletion, {})
   },
+  returns: v.null(),
 })
 
 // * append message
@@ -365,4 +275,10 @@ export const append = mutation({
       series: message.series,
     }
   },
+  returns: v.object({
+    threadId: v.id('threads'),
+    slug: v.string(),
+    messageId: v.id('messages'),
+    series: v.number(),
+  }),
 })
