@@ -119,17 +119,16 @@ export const createMessage = async (
   opts?: {
     skipRules?: boolean
     evaluateUrls?: boolean
+    generateThreadTitle?: boolean
   },
 ) => {
   const skipRules = opts?.skipRules ?? false
-  const evaluateUrls = opts?.evaluateUrls ?? true
+  const evaluateUrls = opts?.evaluateUrls ?? fields.role === 'user'
+  const generateThreadTitle = opts?.generateThreadTitle ?? fields.role === 'assistant'
 
-  const prev = await ctx.skipRules
-    .table('threads')
-    .getX(fields.threadId)
-    .edge('messages')
-    .order('desc')
-    .first()
+  const thread = await ctx.skipRules.table('threads').getX(fields.threadId)
+
+  const prev = await thread.edge('messages').order('desc').first()
   const series = prev ? prev.series + 1 : 1
 
   const message = skipRules
@@ -142,17 +141,23 @@ export const createMessage = async (
         .insert({ ...fields, series })
         .get()
 
-  if (!evaluateUrls) return message
+  if (evaluateUrls) {
+    if (message.text) {
+      const urls = extractValidUrlsFromText(message.text)
 
-  if (message.text) {
-    const urls = extractValidUrlsFromText(message.text)
-
-    if (urls.length > 0) {
-      await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
-        urls: urls.map((url) => url.toString()),
-        ownerId: message.userId,
-      })
+      if (urls.length > 0) {
+        await ctx.scheduler.runAfter(0, internal.action.evaluateMessageUrls.run, {
+          urls: urls.map((url) => url.toString()),
+          ownerId: message.userId,
+        })
+      }
     }
+  }
+
+  if (generateThreadTitle && !thread.title) {
+    await ctx.scheduler.runAfter(0, internal.action.generateThreadTitle.run, {
+      messageId: message._id,
+    })
   }
 
   return message
