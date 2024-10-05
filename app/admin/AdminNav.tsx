@@ -7,7 +7,6 @@ const routes = [
   { path: '/admin', label: 'Dashboard' },
   { path: '/admin/chat-models', label: 'chat models' },
   { path: '/admin/image-models', label: 'image models' },
-  { path: '/admin/voice-models', label: 'voice models' },
   { path: '/admin/images', label: 'images' },
 ]
 
