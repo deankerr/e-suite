@@ -16,22 +16,24 @@ import type { Ent, MutationCtx, QueryCtx } from '../types'
 import type { WithoutSystemFields } from 'convex/server'
 
 export const messageReturnFields = {
+  // doc
   _id: v.id('messages'),
   _creationTime: v.number(),
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
   text: v.optional(v.string()),
-
-  series: v.number(),
-  threadId: v.id('threads'),
-  threadSlug: v.string(),
-  userId: v.id('users'),
-  userIsViewer: v.boolean(),
-
-  images: optional(v.array(imagesReturn)),
-
   kvMetadata: v.record(v.string(), v.string()),
   runId: v.optional(v.id('runs')),
+
+  // fields
+  series: v.number(),
+  threadId: v.id('threads'),
+  userId: v.id('users'),
+
+  // edges
+  images: optional(v.array(imagesReturn)),
+  threadSlug: v.string(),
+  userIsViewer: v.boolean(),
 }
 
 // * query helpers
@@ -62,14 +64,13 @@ export const get = query({
   args: {
     messageId: v.string(),
   },
-  returns: v.union(v.null(), v.object(messageReturnFields)),
-
   handler: async (ctx, args) => {
     const id = ctx.unsafeDb.normalizeId('messages', args.messageId)
     const message = id ? await ctx.table('messages').get(id) : null
 
     return message ? await getMessageEdges(ctx, message) : null
   },
+  returns: v.union(v.null(), v.object(messageReturnFields)),
 })
 
 export const getDoc = query({
@@ -77,8 +78,14 @@ export const getDoc = query({
     messageId: v.id('messages'),
   },
   handler: async (ctx, args) => {
-    return await ctx.table('messages').get(args.messageId).doc()
+    const message = await ctx.table('messages').get(args.messageId).doc()
+    if (!message) return null
+    return {
+      ...message,
+      kvMetadata: message.kvMetadata ?? {},
+    }
   },
+  returns: nullable(v.object(omit(messageReturnFields, ['images', 'threadSlug', 'userIsViewer']))),
 })
 
 export const listLatest = query({
@@ -169,11 +176,15 @@ export const create = mutation({
     })
 
     return {
+      threadId: thread._id,
+      slug: thread.slug,
       id: message._id,
       series: message.series,
     }
   },
   returns: v.object({
+    threadId: v.id('threads'),
+    slug: v.string(),
     id: v.id('messages'),
     series: v.number(),
   }),
@@ -202,6 +213,7 @@ export const update = mutation({
       .getX(messageId)
       .patch({ ...args, kvMetadata })
   },
+  returns: v.id('messages'),
 })
 
 export const updateSR = internalMutation({
@@ -227,6 +239,7 @@ export const updateSR = internalMutation({
       .getX(messageId)
       .patch({ ...args, kvMetadata })
   },
+  returns: v.id('messages'),
 })
 
 export const streamText = internalMutation({
@@ -237,6 +250,7 @@ export const streamText = internalMutation({
   handler: async (ctx, args) => {
     return await ctx.skipRules.table('messages').getX(args.messageId).patch({ text: args.text })
   },
+  returns: v.id('messages'),
 })
 
 export const remove = mutation({
@@ -251,4 +265,5 @@ export const remove = mutation({
 
     await ctx.scheduler.runAfter(0, internal.deletion.scheduleFileDeletion, {})
   },
+  returns: v.null(),
 })
