@@ -83,19 +83,21 @@ export const useThreadTextSearch = (
   }, [textSearchValue, setDebouncedValue])
 
   const text = debouncedValue.length >= 3 ? debouncedValue : ''
-  const results = useQuery(api.db.thread.messages.searchText, { ...args, text })
+  const isSkipped = !text
+
+  const results = useQuery(api.db.thread.messages.searchText, text ? { ...args, text } : 'skip')
   const stored = useRef(results)
 
   if (results !== undefined) {
     stored.current = results
   }
 
-  const isLoading = results === undefined
+  const isLoading = results === undefined && !isSkipped
 
   return {
     results: stored.current ?? [],
     isLoading,
-    isActive: results !== null && !!text && !isLoading,
+    isSkipped,
   }
 }
 

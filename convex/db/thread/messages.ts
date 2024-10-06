@@ -130,7 +130,7 @@ export const searchText = query({
   },
   handler: async (ctx, { threadId, role, name, limit = 20, ...args }) => {
     const text = args.text.trimStart()
-    if (text.length < 3) return null
+    if (text.length < 3) return []
 
     const thread = await getThread(ctx, threadId)
     if (!thread) return []

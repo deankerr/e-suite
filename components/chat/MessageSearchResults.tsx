@@ -11,21 +11,17 @@ import { PanelBody } from '../ui/Panel'
 import { VScrollArea } from '../ui/VScrollArea'
 
 export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
-  const { results, isLoading, isActive } = useThreadTextSearchResults(threadId)
+  const { results, isLoading, isSkipped } = useThreadTextSearchResults(threadId)
 
   const [fadeOut, setFadeOut] = useState(false)
   useEffect(() => {
-    if (isLoading) {
-      setFadeOut(true)
-    } else {
-      setFadeOut(false)
-    }
+    if (isLoading) setFadeOut(true)
+    else setFadeOut(false)
   }, [isLoading])
 
-  const emptyState = results.length === 0 && !isActive
   return (
     <>
-      {!emptyState && (
+      {!isSkipped && (
         <PanelBody>
           <VScrollArea className="bg-gray-1">
             <div
@@ -41,15 +37,11 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
               ))}
             </div>
 
-            {results.length === 0 ? (
-              isActive ? (
-                <div className="flex-col-center h-full w-full">
-                  <FishFoodIcon className="size-36 text-gray-10" />
-                  <div className="text-base font-medium text-gray-11">No results.</div>
-                </div>
-              ) : (
-                <div className="py-1">Enter a query.</div>
-              )
+            {results.length === 0 && !isLoading ? (
+              <div className="flex-col-center h-full w-full">
+                <FishFoodIcon className="size-36 text-gray-10" />
+                <div className="text-base font-medium text-gray-11">No results.</div>
+              </div>
             ) : null}
           </VScrollArea>
         </PanelBody>

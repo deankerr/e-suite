@@ -21,7 +21,7 @@ export const SearchField = (props: React.ComponentProps<typeof TextField>) => {
             props.onValueChange?.('')
           }}
         >
-          <Icons.X />
+          <Icons.X size={16} />
         </IconButton>
       </TextFieldSlot>
     </TextField>
