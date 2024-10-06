@@ -21,7 +21,7 @@ export const Chat = ({
   const thread = useThread(threadId)
   const actions = useThreadActions(thread?._id)
 
-  const sendCreateRun = useMutation(api.db.runs.create)
+  const sendCreateRun = useMutation(api.db.thread.runs.create)
   const handleRun = (text: string, model: { provider: string; id: string }) => {
     const appendMessages = text ? [{ role: 'user' as const, text }] : undefined
 

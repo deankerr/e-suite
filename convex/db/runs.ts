@@ -1,87 +1,27 @@
-import { literals } from 'convex-helpers/validators'
+import { nullable } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
 
-import { internal } from '../_generated/api'
-import { internalMutation, mutation } from '../functions'
-import { modelParametersFields } from '../schema'
-import { updateKvMetadata } from './helpers/kvMetadata'
+import { internalMutation, query } from '../functions'
+import { runFields } from '../schema'
 import { createMessage } from './helpers/messages'
-import { getOrCreateUserThread } from './threads'
 
 import type { MutationCtx } from '../types'
 
-export const create = mutation({
+export const get = query({
   args: {
-    threadId: v.string(),
-
-    model: v.object({
-      provider: v.string(),
-      id: v.string(),
-    }),
-    modelParameters: v.optional(v.object(modelParametersFields)),
-    instructions: v.optional(v.string()),
-
-    maxMessages: v.optional(v.number()),
-    prependNamesToMessageContent: v.optional(v.boolean()),
-    stream: v.optional(v.boolean()),
-
-    appendMessages: v.optional(
-      v.array(
-        v.object({
-          role: literals('assistant', 'user'),
-          name: v.optional(v.string()),
-          text: v.optional(v.string()),
-        }),
-      ),
-    ),
-  },
-  handler: async (ctx, { threadId, appendMessages = [], ...args }) => {
-    const thread = await getOrCreateUserThread(ctx, threadId)
-    if (!thread) throw new ConvexError('invalid thread id')
-
-    const kvMetadata = updateKvMetadata(thread.kvMetadata, {
-      set: {
-        'esuite:model:id': args.model.id,
-        'esuite:model:provider': args.model.provider,
-      },
-    })
-    await thread.patch({ updatedAtTime: Date.now(), kvMetadata })
-
-    for (const messageArgs of appendMessages) {
-      await createMessage(ctx, {
-        threadId: thread._id,
-        userId: thread.userId,
-        ...messageArgs,
-      })
-    }
-
-    const runId = await ctx.table('runs').insert({
-      stream: true,
-      ...args,
-      threadId: thread._id,
-      userId: thread.userId,
-
-      status: 'queued',
-      updatedAt: Date.now(),
-      startedAt: 0,
-    })
-
-    await ctx.scheduler.runAfter(0, internal.action.run.run, {
-      runId,
-    })
-
-    return {
-      runId,
-      threadId: thread._id,
-      threadSlug: thread.slug,
-    }
-  },
-  returns: v.object({
     runId: v.id('runs'),
-    threadId: v.id('threads'),
-    threadSlug: v.string(),
-  }),
+  },
+  handler: async (ctx, { runId }) => {
+    return await ctx.table('runs').get(runId)
+  },
+  returns: nullable(
+    v.object({
+      ...runFields,
+      threadId: v.id('threads'),
+      userId: v.id('users'),
+    }),
+  ),
 })
 
 export const activate = internalMutation({
@@ -90,7 +30,7 @@ export const activate = internalMutation({
   },
   handler: async (ctx, { runId }) => {
     const run = await ctx.skipRules.table('runs').getX(runId)
-    if (run.status !== 'queued') throw new ConvexError('run is not queued')
+    if (run.status !== 'queued') throw new ConvexError({ message: 'run is not queued', runId })
 
     await run.patch({
       status: 'active',
@@ -150,7 +90,7 @@ export const complete = internalMutation({
   },
   handler: async (ctx, { runId, text, finishReason, usage }) => {
     const run = await ctx.skipRules.table('runs').getX(runId)
-    if (run.status !== 'active') throw new ConvexError('run is not active')
+    if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
 
     const message = await createMessage(
       ctx,
@@ -217,7 +157,7 @@ export const fail = internalMutation({
   },
   handler: async (ctx, { runId, ...args }) => {
     const run = await ctx.skipRules.table('runs').getX(runId)
-    if (run.status !== 'active') throw new ConvexError('run is not active')
+    if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
 
     const errors = [...(run.errors ?? []), ...args.errors]
 

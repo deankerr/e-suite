@@ -39,6 +39,7 @@ import type * as db_models from "../db/models.js";
 import type * as db_runs from "../db/runs.js";
 import type * as db_texts from "../db/texts.js";
 import type * as db_thread_messages from "../db/thread/messages.js";
+import type * as db_thread_runs from "../db/thread/runs.js";
 import type * as db_threads from "../db/threads.js";
 import type * as db_users from "../db/users.js";
 import type * as deletion from "../deletion.js";
@@ -93,6 +94,7 @@ declare const fullApi: ApiFromModules<{
   "db/runs": typeof db_runs;
   "db/texts": typeof db_texts;
   "db/thread/messages": typeof db_thread_messages;
+  "db/thread/runs": typeof db_thread_runs;
   "db/threads": typeof db_threads;
   "db/users": typeof db_users;
   deletion: typeof deletion;

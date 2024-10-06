@@ -6,7 +6,12 @@ import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { messageFields } from '../schema'
 import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
-import { createMessage, getMessageEdges, messageReturnFields } from './helpers/messages'
+import {
+  createMessage,
+  getMessageEdges,
+  messageCreateFields,
+  messageReturnFields,
+} from './helpers/messages'
 import { getThreadX } from './helpers/threads'
 
 import type { Id } from '../_generated/dataModel'
@@ -44,7 +49,7 @@ export const getDoc = query({
 export const create = mutation({
   args: {
     threadId: v.string(),
-    ...omit(messageFields, ['runId']),
+    ...messageCreateFields,
   },
   handler: async (ctx, { threadId, ...fields }) => {
     const thread = await getThreadX(ctx, threadId)

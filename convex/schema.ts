@@ -247,7 +247,7 @@ export const modelParametersFields = {
 export const runFields = {
   status: literals('queued', 'active', 'done', 'failed'),
   updatedAt: v.number(),
-  startedAt: v.number(),
+  startedAt: v.optional(v.number()),
   endedAt: v.optional(v.number()),
 
   model: v.object({
@@ -257,9 +257,10 @@ export const runFields = {
   modelParameters: v.optional(v.object(modelParametersFields)),
   instructions: v.optional(v.string()),
 
+  stream: v.boolean(),
   maxMessages: v.optional(v.number()),
   prependNamesToMessageContent: v.optional(v.boolean()),
-  stream: v.boolean(),
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
 
   usage: v.optional(
     v.object({

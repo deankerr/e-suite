@@ -1,5 +1,5 @@
 import { omit, pick } from 'convex-helpers'
-import { literals, nullable } from 'convex-helpers/validators'
+import { nullable } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
@@ -7,7 +7,7 @@ import { internalMutation, mutation, query } from '../functions'
 import { generateSlug } from '../lib/utils'
 import { threadFields } from '../schema'
 import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
-import { createMessage } from './helpers/messages'
+import { createMessage, messageCreateFields } from './helpers/messages'
 import { getThread, getThreadEdges, getThreadX, threadReturnFields } from './helpers/threads'
 import { getUserPublic } from './users'
 
@@ -15,7 +15,6 @@ import type { Id } from '../_generated/dataModel'
 import type { EThread, MutationCtx, QueryCtx } from '../types'
 
 // * Helpers
-
 const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
   const viewer = await ctx.viewer()
   const user = viewer ? await getUserPublic(ctx, viewer._id) : null
@@ -123,7 +122,6 @@ export const update = mutation({
   },
   handler: async (ctx, { threadId, updateKv, ...fields }) => {
     const thread = await getThreadX(ctx, threadId)
-
     const kvMetadata = updateKvMetadata(thread.kvMetadata, updateKv)
 
     return await ctx
@@ -171,11 +169,7 @@ export const remove = mutation({
 export const append = mutation({
   args: {
     threadId: v.optional(v.string()),
-    message: v.object({
-      role: literals('assistant', 'user'),
-      name: v.optional(v.string()),
-      text: v.optional(v.string()),
-    }),
+    message: v.object(messageCreateFields),
   },
   handler: async (ctx, args) => {
     const thread = await getOrCreateUserThread(ctx, args.threadId)
