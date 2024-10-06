@@ -1,6 +1,6 @@
 import { omit, pick } from 'convex-helpers'
 import { partial } from 'convex-helpers/validators'
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 
 import { internalMutation, mutation, query } from '../functions'
 import { generateRandomString } from '../lib/utils'
@@ -8,11 +8,13 @@ import { userFields } from '../schema'
 
 import type { Id } from '../_generated/dataModel'
 import type { QueryCtx } from '../types'
+import type { Infer } from 'convex/values'
 
-export const userReturn = v.object({
+export const userReturnFieldsPublic = v.object({
   _id: v.id('users'),
   _creationTime: v.number(),
   ...pick(userFields, ['name', 'imageUrl', 'role']),
+  isViewer: v.boolean(),
 })
 
 export const getUserPrivate = async (ctx: QueryCtx, userId: Id<'users'>) => {
@@ -22,11 +24,26 @@ export const getUserPrivate = async (ctx: QueryCtx, userId: Id<'users'>) => {
   return { ...omit(user, ['tokenIdentifier']), isViewer }
 }
 
-export const getUserPublic = async (ctx: QueryCtx, userId: Id<'users'>) => {
+export const getUserPublic = async (
+  ctx: QueryCtx,
+  userId: Id<'users'>,
+): Promise<Infer<typeof userReturnFieldsPublic> | null> => {
   const user = await ctx.table('users').get(userId)
   if (!user) return null
 
-  return { ...omit(user.doc(), ['tokenIdentifier', 'runConfigs']) }
+  return {
+    ...pick(user.doc(), ['_id', '_creationTime', 'name', 'imageUrl', 'role']),
+    isViewer: getUserIsViewer(ctx, userId),
+  }
+}
+
+export const getUserPublicX = async (
+  ctx: QueryCtx,
+  userId: Id<'users'>,
+): Promise<Infer<typeof userReturnFieldsPublic>> => {
+  const user = await getUserPublic(ctx, userId)
+  if (!user) throw new ConvexError({ message: 'invalid user id', xid: userId })
+  return user
 }
 
 export const getUserIsViewer = (ctx: QueryCtx, userId: Id<'users'>) => {

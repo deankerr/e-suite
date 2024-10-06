@@ -6,7 +6,7 @@ import { internal } from '../_generated/api'
 import { internalMutation, mutation } from '../functions'
 import { modelParametersFields } from '../schema'
 import { updateKvMetadata } from './helpers/kvMetadata'
-import { createMessage } from './messages'
+import { createMessage } from './helpers/messages'
 import { getOrCreateUserThread } from './threads'
 
 import type { MutationCtx } from '../types'

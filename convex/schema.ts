@@ -207,7 +207,13 @@ const messages = defineEnt(messageFields)
   .edges('audio', { ref: true, deletion: 'soft' })
   .index('threadId_series', ['threadId', 'series'])
   .index('threadId_role', ['threadId', 'role'])
+  .index('threadId_name', ['threadId', 'name'])
+  .index('threadId_role_name', ['threadId', 'role', 'name'])
   .index('runId', ['runId'])
+  .searchIndex('search_text_threadId_role_name', {
+    searchField: 'text',
+    filterFields: ['threadId', 'role', 'name'],
+  })
 
 // * Threads
 export const threadFields = {

@@ -90,7 +90,7 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
               <MDXEditor
                 ref={editorRef}
                 markdown={thread?.instructions ?? ''}
-                readOnly={!thread?.userIsViewer}
+                readOnly={!thread?.user.isViewer}
                 placeholder="Write your instructions here..."
                 className="markdown-body"
               />
@@ -107,7 +107,7 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
                 {/* <Button color="gray" variant="solid">
                   Cancel
                 </Button> */}
-                {thread?.userIsViewer && (
+                {thread?.user.isViewer && (
                   <Button variant="solid" onClick={handleSave}>
                     Save
                   </Button>

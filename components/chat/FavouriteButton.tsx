@@ -10,7 +10,7 @@ export const FavouriteButton = ({ threadId }: { threadId: string }) => {
   const thread = useThread(threadId)
   const sendUpdateThread = useUpdateThread()
 
-  if (!thread || !thread.userIsViewer) {
+  if (!thread || !thread.user.isViewer) {
     return null
   }
 

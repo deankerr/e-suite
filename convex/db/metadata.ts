@@ -4,7 +4,7 @@ import { getQuery } from 'ufo'
 import { api } from '../_generated/api'
 import { httpAction } from '../_generated/server'
 import { query } from '../functions'
-import { getThreadBySlugOrId } from './threads'
+import { getThread } from './helpers/threads'
 
 export const getMetadata = query({
   args: {
@@ -13,7 +13,7 @@ export const getMetadata = query({
   },
   handler: async (ctx, args) => {
     if (args.route === 'chats') {
-      const thread = await getThreadBySlugOrId(ctx, args.id)
+      const thread = await getThread(ctx, args.id)
       if (thread && thread.title) {
         return {
           title: thread.title,

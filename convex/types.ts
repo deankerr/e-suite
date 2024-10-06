@@ -1,10 +1,10 @@
 import type { TableNames } from './_generated/dataModel'
 import type { runConfigTextToImageV2 } from './db/generations'
+import type { messageReturnFields } from './db/helpers/messages'
+import type { threadReturnFields } from './db/helpers/threads'
 import type { imagesReturn } from './db/images'
-import type { messageReturnFields } from './db/messages'
 import type { getChatModelByResourceKey } from './db/models'
-import type { threadReturnFields } from './db/threads'
-import type { userReturn } from './db/users'
+import type { userReturnFieldsPublic } from './db/users'
 import type { mutation, query } from './functions'
 import type { entDefinitions } from './schema'
 import type { GenericEnt, GenericEntWriter } from 'convex-ents'
@@ -22,7 +22,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
 export type EThread = Infer<AsObjectValidator<typeof threadReturnFields>>
 export type EMessage = Infer<AsObjectValidator<typeof messageReturnFields>>
 export type EImage = Infer<AsObjectValidator<typeof imagesReturn>>
-export type EUser = Infer<AsObjectValidator<typeof userReturn>>
+export type EUser = Infer<AsObjectValidator<typeof userReturnFieldsPublic>>
 
 export type EChatModel = NonNullable<Awaited<ReturnType<typeof getChatModelByResourceKey>>>
 

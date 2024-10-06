@@ -19,7 +19,7 @@ export const ChatMenu = ({ threadId }: { threadId: string }) => {
   const [showEditTitleDialog, setShowEditTitleDialog] = useState(false)
   const [showDeleteThreadDialog, setShowDeleteThreadDialog] = useState(false)
 
-  if (!thread || !thread.userIsViewer) {
+  if (!thread || !thread.user.isViewer) {
     return null
   }
 

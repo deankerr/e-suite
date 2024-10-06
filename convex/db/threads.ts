@@ -8,58 +8,14 @@ import { internalMutation, mutation, query } from '../functions'
 import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
 import { threadFields } from '../schema'
 import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
-import { createMessage, getMessageEdges, messageReturnFields } from './messages'
-import { getUserIsViewer, getUserPublic } from './users'
+import { createMessage, getMessageEdges, messageReturnFields } from './helpers/messages'
+import { getThread, getThreadEdges, getThreadX, threadReturnFields } from './helpers/threads'
+import { getUserPublic } from './users'
 
 import type { Id } from '../_generated/dataModel'
-import type { Ent, EThread, MutationCtx, QueryCtx } from '../types'
-
-export const threadReturnFields = {
-  // doc
-  _id: v.string(),
-  _creationTime: v.number(),
-  title: v.optional(v.string()),
-  instructions: v.optional(v.string()),
-  latestRunConfig: v.optional(v.any()),
-  favourite: v.optional(v.boolean()),
-  kvMetadata: v.record(v.string(), v.string()),
-  updatedAtTime: v.number(),
-  // + fields
-  slug: v.string(),
-  userId: v.id('users'),
-
-  // edge
-  userIsViewer: v.boolean(),
-  user: v.any(),
-}
+import type { EThread, MutationCtx, QueryCtx } from '../types'
 
 // * Helpers
-const getMessageBySeries = async (
-  ctx: QueryCtx,
-  { threadId, series }: { threadId: Id<'threads'>; series: number },
-) => {
-  const messageEnt = await ctx.table('messages').get('threadId_series', threadId, series)
-  if (!messageEnt || messageEnt?.deletionTime) return null
-
-  return await getMessageEdges(ctx, messageEnt)
-}
-
-export const getThreadBySlugOrId = async (ctx: QueryCtx, slugOrId: string) => {
-  const id = ctx.unsafeDb.normalizeId('threads', slugOrId)
-  const thread = id
-    ? await ctx.table('threads').get(id)
-    : await ctx.table('threads', 'slug', (q) => q.eq('slug', slugOrId)).unique()
-  return thread && !thread.deletionTime ? thread : null
-}
-
-export const getThreadEdges = async (ctx: QueryCtx, thread: Ent<'threads'>) => {
-  return {
-    ...thread,
-    user: await getUserPublic(ctx, thread.userId),
-    userIsViewer: getUserIsViewer(ctx, thread.userId),
-    kvMetadata: thread.kvMetadata ?? {},
-  }
-}
 
 const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
   const viewer = await ctx.viewer()
@@ -74,7 +30,6 @@ const getEmptyThread = async (ctx: QueryCtx): Promise<EThread | null> => {
 
     updatedAtTime: Date.now(),
     userId: user._id,
-    userIsViewer: true,
     user,
     kvMetadata: {},
   }
@@ -110,14 +65,17 @@ export const get = query({
     slugOrId: v.string(),
   },
   handler: async (ctx, args) => {
-    if (args.slugOrId === 'new') return await getEmptyThread(ctx)
+    if (args.slugOrId === 'new') {
+      const emptyThread = await getEmptyThread(ctx)
+      return emptyThread
+    }
 
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    const thread = await getThread(ctx, args.slugOrId)
     if (!thread) return null
 
     return await getThreadEdges(ctx, thread)
   },
-  returns: v.union(v.object(threadReturnFields), v.null()),
+  returns: nullable(v.object(threadReturnFields)),
 })
 
 export const list = query({
@@ -142,7 +100,7 @@ export const listMessages = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
+    const thread = await getThread(ctx, args.slugOrId)
     if (!thread) return emptyPage()
 
     const messages = await thread
@@ -155,20 +113,6 @@ export const listMessages = query({
     return messages
   },
   returns: v.object({ ...paginatedReturnFields, page: v.array(v.object(messageReturnFields)) }),
-})
-
-export const getMessage = query({
-  args: {
-    slugOrId: v.string(),
-    series: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThreadBySlugOrId(ctx, args.slugOrId)
-    if (!thread) return null
-
-    return await getMessageBySeries(ctx, { threadId: thread._id, series: args.series })
-  },
-  returns: v.union(v.object(messageReturnFields), v.null()),
 })
 
 // * Mutations
@@ -200,8 +144,7 @@ export const update = mutation({
     updateKv: v.optional(updateKvValidator),
   },
   handler: async (ctx, { threadId, updateKv, ...fields }) => {
-    const thread = await getThreadBySlugOrId(ctx, threadId)
-    if (!thread) throw new ConvexError('invalid thread')
+    const thread = await getThreadX(ctx, threadId)
 
     const kvMetadata = updateKvMetadata(thread.kvMetadata, updateKv)
 
@@ -220,9 +163,7 @@ export const updateSR = internalMutation({
     updateKv: v.optional(updateKvValidator),
   },
   handler: async (ctx, { threadId, updateKv, ...fields }) => {
-    const thread = await getThreadBySlugOrId(ctx, threadId)
-    if (!thread) throw new ConvexError('invalid thread')
-
+    const thread = await getThreadX(ctx, threadId)
     const kvMetadata = updateKvMetadata(thread.kvMetadata, updateKv)
 
     return await ctx.skipRules

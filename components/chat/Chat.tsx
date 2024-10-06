@@ -58,7 +58,7 @@ export const Chat = ({
       <Toolbar threadId={threadId} />
       {children}
 
-      {thread.userIsViewer && (
+      {thread.user.isViewer && (
         <Composer
           onAppend={actions.append}
           loading={actions.state !== 'ready'}

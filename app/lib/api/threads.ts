@@ -33,8 +33,8 @@ export const useThread = (threadId: string) => {
 export const useMessage = (slug?: string, msg?: string) => {
   const thread = useThread(slug ?? '')
   const message = useCachedQuery(
-    api.db.threads.getMessage,
-    slug && msg ? { slugOrId: slug, series: parseInt(msg) } : 'skip',
+    api.db.thread.messages.get,
+    slug && msg ? { threadId: slug, series: parseInt(msg) || -1 } : 'skip',
   )
 
   return {
