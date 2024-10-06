@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { usePaginatedQuery, useQuery } from 'convex/react'
+import { parseAsString, useQueryState } from 'nuqs'
 import { useDebounceValue } from 'usehooks-ts'
 
 import { useCachedQuery } from '@/app/lib/api/helpers'
@@ -65,23 +66,45 @@ export const useMessageFeedQuery = (threadId: string) => {
   return messages
 }
 
+export const useThreadTextSearchQueryParams = () => {
+  const search = useQueryState('search', parseAsString.withDefault(''))
+  const name = useQueryState('name', parseAsString.withDefault(''))
+  return { search, name }
+}
+
 export const useThreadTextSearch = (
   args: { threadId: string; name?: string },
-  searchTextValue: string,
+  textSearchValue: string,
 ) => {
-  const [debouncedValue, setDebouncedValue] = useDebounceValue(searchTextValue, 300, {
+  const [debouncedValue, setDebouncedValue] = useDebounceValue(textSearchValue, 300, {
     maxWait: 1000,
   })
   useEffect(() => {
-    setDebouncedValue(searchTextValue)
-  }, [searchTextValue, setDebouncedValue])
+    setDebouncedValue(textSearchValue)
+  }, [textSearchValue, setDebouncedValue])
 
-  const results = useQuery(api.db.thread.messages.searchText, { ...args, text: debouncedValue })
+  const text = debouncedValue.length >= 3 ? debouncedValue : ''
+  const results = useQuery(api.db.thread.messages.searchText, { ...args, text })
   const stored = useRef(results)
 
   if (results !== undefined) {
     stored.current = results
   }
 
-  return { results: stored.current, isLoading: results === undefined }
+  const isLoading = results === undefined
+
+  return {
+    results: stored.current ?? [],
+    isLoading,
+    isActive: results !== null && !!text && !isLoading,
+  }
+}
+
+export const useThreadTextSearchResults = (threadId: string) => {
+  const {
+    search: [searchValue],
+    name: [nameValue],
+  } = useThreadTextSearchQueryParams()
+  const results = useThreadTextSearch({ threadId, name: nameValue }, searchValue)
+  return results
 }

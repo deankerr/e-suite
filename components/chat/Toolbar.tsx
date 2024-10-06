@@ -1,17 +1,16 @@
 'use client'
 
-import { useAtom } from 'jotai'
-
-import { useThread } from '@/app/lib/api/threads'
+import { useThread, useThreadTextSearchQueryParams } from '@/app/lib/api/threads'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
 import { Button } from '@/components/ui/Button'
 import { PanelToolbar } from '@/components/ui/Panel'
 import { SearchField } from '../ui/SearchField'
-import { threadSearchTextAtom } from './atoms'
 
 export const Toolbar = ({ threadId }: { threadId: string }) => {
   const thread = useThread(threadId ?? '')
-  const [searchTextValue, setSearchTextValue] = useAtom(threadSearchTextAtom)
+  const {
+    search: [searchTextValue, setSearchTextValue],
+  } = useThreadTextSearchQueryParams()
 
   if (!thread) return null
   return (
