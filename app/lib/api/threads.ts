@@ -1,4 +1,4 @@
-import { usePaginatedQuery } from 'convex/react'
+import { usePaginatedQuery, useQuery } from 'convex/react'
 
 import { useCachedQuery } from '@/app/lib/api/helpers'
 import { appConfig } from '@/config/config'
@@ -61,4 +61,10 @@ export const useMessageFeedQuery = (threadId: string) => {
   messages.results.reverse()
 
   return messages
+}
+
+export const useThreadTextSearch = (
+  args: { threadId: string; text: string; name?: string } | 'skip',
+) => {
+  return useQuery(api.db.thread.messages.searchText, args)
 }

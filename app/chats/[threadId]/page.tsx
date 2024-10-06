@@ -7,6 +7,7 @@ import { htmlTextAtom } from '@/components/artifacts/atoms'
 import { HTMLRenderer } from '@/components/artifacts/HTMLRenderer'
 import { Chat } from '@/components/chat/Chat'
 import { MessageFeed } from '@/components/chat/MessageFeed'
+import { MessageSearchResults } from '@/components/chat/MessageSearchResults'
 import { IconButton } from '@/components/ui/Button'
 import { Panel, PanelHeader } from '@/components/ui/Panel'
 
@@ -16,8 +17,9 @@ export default function Page({ params }: { params: { threadId: string } }) {
   return (
     <>
       <Chat threadId={params.threadId}>
-        <div className="grow">
-          <MessageFeed threadId={params.threadId} />
+        <div className="grow overflow-hidden">
+          {/* <MessageFeed threadId={params.threadId} /> */}
+          <MessageSearchResults threadId={params.threadId} />
         </div>
       </Chat>
 

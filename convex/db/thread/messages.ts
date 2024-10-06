@@ -128,10 +128,14 @@ export const searchText = query({
     name: v.optional(v.string()),
     limit: v.optional(v.number()),
   },
-  handler: async (ctx, { threadId, text, role, name, limit = 20 }) => {
+  handler: async (ctx, { threadId, role, name, limit = 20, ...args }) => {
+    const text = args.text.trim()
+    if (text.length < 3) return []
+
     const thread = await getThread(ctx, threadId)
     if (!thread) return []
 
+    console.log(text)
     const messages = await ctx
       .table('messages')
       .search('search_text_threadId_role_name', (q) => {
@@ -147,5 +151,5 @@ export const searchText = query({
 
     return messages
   },
-  returns: v.array(v.object(messageReturnFields)),
+  returns: nullable(v.array(v.object(messageReturnFields))),
 })

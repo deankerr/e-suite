@@ -15,6 +15,7 @@ import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { getMessageName } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { TimeSinceLink } from './TimeSinceLink'
 
 import type { EMessage } from '@/convex/types'
 
@@ -123,6 +124,16 @@ export const Message = ({
           {/* => name */}
           <div className="brightness-125 saturate-[.75]" style={{ color: marbleProps[0].color }}>
             {name}
+          </div>
+          <div
+            className="text-xs text-gray-10"
+            title={new Date(message._creationTime).toString().split('GMT')[0]}
+          >
+            {Math.floor(
+              (new Date().getTime() - new Date(message._creationTime).getTime()) /
+                (1000 * 60 * 60 * 24),
+            )}
+            d
           </div>
           {/* => menu */}
           {dropdownMenu}

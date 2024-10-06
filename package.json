@@ -89,6 +89,7 @@
     "tailwindcss-animated": "^1.1.2",
     "type-fest": "^4.26.1",
     "ufo": "^1.5.4",
+    "usehooks-ts": "^3.1.0",
     "valibot": "^0.42.1",
     "vaul": "^0.9.6",
     "yet-another-react-lightbox": "^3.21.6",
