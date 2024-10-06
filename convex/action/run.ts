@@ -38,7 +38,7 @@ export const run = internalAction({
   args: {
     runId: v.id('runs'),
   },
-  handler: async (ctx, { runId }) => {
+  handler: async (ctx, { runId }): Promise<void> => {
     try {
       const { run, messages, threadInstructions } = await ctx.runMutation(
         internal.db.runs.activate,
@@ -134,7 +134,7 @@ export const fetchOpenRouterMetadata = internalAction({
     responseId: v.string(),
     attempt: v.optional(v.number()),
   },
-  handler: async (ctx, { runId, responseId, attempt = 1 }) => {
+  handler: async (ctx, { runId, responseId, attempt = 1 }): Promise<void> => {
     try {
       const response = await fetch(`https://openrouter.ai/api/v1/generation?id=${responseId}`, {
         headers: {

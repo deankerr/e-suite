@@ -11,7 +11,7 @@ export const runV2 = internalAction({
     ...pick(imagesV2Fields, ['sourceUrl', 'sourceType', 'generationId', 'ownerId']),
     runId: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<void> => {
     const runId = args.runId ?? nanoid()
     const { fileId, metadata } = await ctx.runAction(internal.lib.sharp.storeImageFromUrl, {
       url: args.sourceUrl,

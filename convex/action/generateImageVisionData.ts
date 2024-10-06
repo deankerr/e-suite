@@ -10,7 +10,7 @@ export const run = internalAction({
   args: {
     imageId: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<void> => {
     // const url = await ctx.runQuery(internal.db.images.getUrl, { imageId: args.imageId })
     const url = ''
     if (!url) throw new Error('Image not found')

@@ -15,7 +15,7 @@ export const run = internalAction({
       duration: v.optional(v.number()),
     }),
   },
-  handler: async (ctx, { messageId, input }) => {
+  handler: async (ctx, { messageId, input }): Promise<void> => {
     const { prompt, duration } = input
 
     const fileId = await soundGeneration(ctx, {

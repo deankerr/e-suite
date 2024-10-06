@@ -42,7 +42,7 @@ export const run = internalAction({
   args: {
     generationId: v.id('generations_v2'),
   },
-  handler: async (ctx, { generationId }) => {
+  handler: async (ctx, { generationId }): Promise<void> => {
     try {
       const generation = await ctx.runMutation(internal.db.generations.activate, {
         generationId,

@@ -9,7 +9,7 @@ export const run = internalAction({
   args: {
     messageId: v.id('messages'),
   },
-  handler: async (ctx, { messageId }) => {
+  handler: async (ctx, { messageId }): Promise<void> => {
     const message = await ctx.runQuery(api.db.messages.get, {
       messageId,
     })
