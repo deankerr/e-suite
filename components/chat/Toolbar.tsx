@@ -1,8 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useAtom } from 'jotai'
-import { useDebounceValue } from 'usehooks-ts'
 
 import { useThread } from '@/app/lib/api/threads'
 import { TextEditorDialog } from '@/components/text-document-editor/TextEditorDialog'
@@ -14,13 +12,6 @@ import { threadSearchTextAtom } from './atoms'
 export const Toolbar = ({ threadId }: { threadId: string }) => {
   const thread = useThread(threadId ?? '')
   const [searchTextValue, setSearchTextValue] = useAtom(threadSearchTextAtom)
-  const [localValue, setLocalValue] = useDebounceValue(searchTextValue, 300, {
-    maxWait: 1000,
-  })
-
-  useEffect(() => {
-    setSearchTextValue(localValue)
-  }, [localValue, setSearchTextValue])
 
   if (!thread) return null
   return (
@@ -33,7 +24,7 @@ export const Toolbar = ({ threadId }: { threadId: string }) => {
 
       <div className="grow" />
 
-      <SearchField onValueChange={setLocalValue} />
+      <SearchField value={searchTextValue} onValueChange={setSearchTextValue} />
     </PanelToolbar>
   )
 }
