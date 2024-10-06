@@ -1,15 +1,11 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Button, IconButton } from '@radix-ui/themes'
-import { usePathname } from 'next/navigation'
 
 import { useThread, useThreads } from '@/app/lib/api/threads'
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { FavouriteButton } from '@/components/chat/FavouriteButton'
 import { Toolbar } from '@/components/chat/Toolbar'
-import { Composer } from '@/components/composer/Composer'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Panel, PanelHeader, PanelTitle, PanelToolbar } from '@/components/ui/Panel'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
@@ -52,13 +48,13 @@ export const Chat = ({
           <Toolbar threadId={threadId} />
           {children}
 
-          {thread.user.isViewer && (
+          {/* {thread.user.isViewer && (
             <Composer
               onAppend={actions.append}
               loading={actions.state !== 'ready'}
               initialResourceKey={thread.latestRunConfig?.resourceKey}
             />
-          )}
+          )} */}
         </>
       )}
 
@@ -138,11 +134,11 @@ const ChatInstance = ({ threadId }: { threadId: string }) => {
       <PanelToolbar>Thread: {thread.title}</PanelToolbar>
       <div className="grow"></div>
 
-      <Composer
+      {/* <Composer
         onAppend={actions.append}
         loading={actions.state !== 'ready'}
         initialResourceKey={thread.latestRunConfig?.resourceKey}
-      />
+      /> */}
     </div>
   )
 }

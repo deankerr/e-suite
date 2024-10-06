@@ -11,16 +11,16 @@ import type { Id } from '@/convex/_generated/dataModel'
 
 export const useThreads = () => {
   const threads = useCachedQuery(api.db.threads.list, {})
-  threads?.sort((a, b) => {
-    if (a.favourite === true && b.favourite !== true) {
-      return -1 // Favourites come first
-    }
-    if (b.favourite === true && a.favourite !== true) {
-      return 1 // Favourites come first
-    }
-    return b.updatedAtTime - a.updatedAtTime // Then sort by updatedAtTime
-  })
-  return threads?.map((t, i) => ({ ...t, nn: i }))
+  if (!threads) return threads
+
+  const favourites = threads
+    .filter((thread) => thread.favourite)
+    .sort((a, b) => b.updatedAtTime - a.updatedAtTime)
+  const rest = threads
+    .filter((thread) => !thread.favourite)
+    .sort((a, b) => b.updatedAtTime - a.updatedAtTime)
+
+  return [...favourites, ...rest]
 }
 
 export const useThread = (threadId: string) => {
@@ -61,9 +61,8 @@ export const useMessageFeedQuery = (threadId: string) => {
       initialNumItems: appConfig.nInitialMessages,
     },
   )
-  messages.results.reverse()
 
-  return messages
+  return { ...messages, results: messages.results.toReversed() }
 }
 
 export const useThreadTextSearchQueryParams = () => {

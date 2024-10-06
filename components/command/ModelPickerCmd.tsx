@@ -22,6 +22,7 @@ export const ModelPickerCmd = ({
 
   const [open, setOpen] = useState(false)
   const handleSelect = (value: string) => {
+    console.log('model', value.split('::'))
     onValueChange(value)
     setOpen(false)
   }

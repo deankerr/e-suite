@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { Card, DropdownMenu } from '@radix-ui/themes'
+import { DropdownMenu } from '@radix-ui/themes'
 import { RiMoreFill } from '@remixicon/react'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 
 import { ImageCardNext } from '@/components/images/ImageCardNext'
@@ -11,20 +10,12 @@ import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { IconButton } from '@/components/ui/Button'
-import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { getMessageName } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { TimeSince } from './TimeSince'
 
 import type { EMessage } from '@/convex/types'
-
-const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'), {
-  loading: () => (
-    <Card className="mx-auto aspect-[8/5] w-80">
-      <SkeletonPulse className="absolute inset-0" />
-    </Card>
-  ),
-})
 
 export const Message = ({
   message,
@@ -124,16 +115,10 @@ export const Message = ({
           <div className="brightness-125 saturate-[.75]" style={{ color: marbleProps[0].color }}>
             {name}
           </div>
-          <div
-            className="text-xs text-gray-10"
-            title={new Date(message._creationTime).toString().split('GMT')[0]}
-          >
-            {Math.floor(
-              (new Date().getTime() - new Date(message._creationTime).getTime()) /
-                (1000 * 60 * 60 * 24),
-            )}
-            d
+          <div className="w-6 text-center text-gray-10">
+            <TimeSince time={Math.floor(message._creationTime)} />
           </div>
+
           {/* => menu */}
           {dropdownMenu}
         </div>
@@ -173,21 +158,6 @@ export const Message = ({
             ))}
           </div>
         ) : null}
-
-        {/* => audio  */}
-        {/* {message.audio.length > 0 ? (
-          <div className="flex flex-wrap justify-center gap-2 py-1">
-            {message.audio.map((sfx) =>
-              sfx.fileUrl ? (
-                <AudioPlayer
-                  key={sfx._id}
-                  url={sfx.fileUrl}
-                  titleText={sfx.generationData.prompt}
-                />
-              ) : null,
-            )}
-          </div>
-        ) : null} */}
 
         {/* => loading ping  */}
         {/* {message.jobs.filter((job) => job.status === 'active' || job.status === 'pending').length >

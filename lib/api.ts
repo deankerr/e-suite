@@ -21,16 +21,22 @@ export const useThreadActions = (threadId?: string) => {
   const append = useCallback(
     async (args: Omit<Parameters<typeof sendAppend>[0], 'threadId'>) => {
       if (actionState !== 'ready') {
-        toast.error('Please wait before running the action again.')
-        return
+        return toast.error('Please wait before running the action again.')
       }
+
       setActionState('pending')
+
       try {
         console.log('append', args)
         const result = await sendAppend({ ...args, threadId })
 
         setActionState('rateLimited')
         reset()
+
+        if (result.threadId !== threadId) {
+          router.push(`/chat/${result.slug}`)
+        }
+
         return result
       } catch (err) {
         console.error(err)
@@ -40,7 +46,7 @@ export const useThreadActions = (threadId?: string) => {
         return null
       }
     },
-    [actionState, sendAppend, threadId, reset],
+    [actionState, sendAppend, threadId, reset, router],
   )
 
   return { append, state: actionState }

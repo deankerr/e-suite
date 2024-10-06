@@ -4,42 +4,42 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
+import { useThreadActions } from '@/app/lib/api/actions'
+import { useThread } from '@/app/lib/api/threads'
 import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
 import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
 
-import type { ThreadActions } from '@/lib/api'
+export type ComposerSend = (args: {
+  text: string
+  model: { provider: string; id: string }
+  action: 'append' | 'run'
+}) => Promise<unknown>
 
-export const Composer = ({
-  initialResourceKey = '',
-  defaultTextValue = '',
-  loading = false,
-  onAppend,
-  onRun,
-}: {
-  initialResourceKey?: string
-  defaultTextValue?: string
-  loading?: boolean
-  onAppend?: ThreadActions['append']
-  onRun?: (text: string, model: { provider: string; id: string }) => void
-}) => {
-  const [resourceKey, setResourceKey] = useState(initialResourceKey)
+export const Composer = ({ threadId }: { threadId: string }) => {
+  const thread = useThread(threadId)
+  const actions = useThreadActions(thread?._id ?? '')
+  const loading = actions.state !== 'ready'
 
-  const [textValue, setTextValue] = useState(defaultTextValue)
+  const [resourceKey, setResourceKey] = useState(
+    getModelKey(thread?.kvMetadata ?? {}) ?? 'openrouter::meta-llama/llama-3.1-70b-instruct',
+  )
+  const [textValue, setTextValue] = useState('')
 
-  const handleAppend = () => {
-    onAppend?.({ message: { text: textValue, role: 'user' } }).then((success) => {
-      if (success) {
-        setTextValue('')
-      }
-    })
-  }
+  const handleSend = (action: 'append' | 'run') => {
+    if (!resourceKey) return console.error('No model selected')
 
-  const handleRun = () => {
-    onRun?.(textValue, {
-      provider: resourceKey.split('::')[0]!,
-      id: resourceKey.split('::')[1]!,
-    })
+    actions
+      .send({
+        text: textValue,
+        model: { provider: resourceKey.split('::')[0]!, id: resourceKey.split('::')[1]! },
+        action,
+      })
+      .then((result) => {
+        console.log(result)
+        if (result !== null) setTextValue('')
+      })
+      .catch((err) => console.error(err))
   }
 
   return (
@@ -51,7 +51,7 @@ export const Composer = ({
           placeholder="Enter your prompt..."
           value={textValue}
           onValueChange={setTextValue}
-          onSend={() => handleRun()}
+          onSend={() => handleSend('run')}
         />
       </div>
 
@@ -60,8 +60,8 @@ export const Composer = ({
           <ModelButton resourceKey={resourceKey} />
         </ModelPickerCmd>
         <div className="flex-end ml-auto shrink-0 gap-2">
-          <AddButton loading={loading} onClick={() => handleAppend()} />
-          <SendButton loading={loading} onClick={() => handleRun()} />
+          <AddButton loading={loading} onClick={() => handleSend('append')} />
+          <SendButton loading={loading} onClick={() => handleSend('run')} />
         </div>
       </div>
     </div>
@@ -118,4 +118,11 @@ const CommandEnter = () => {
       <Icons.ArrowElbowDownLeft />
     </div>
   )
+}
+
+function getModelKey(kvMetadata: Record<string, string>) {
+  const id = kvMetadata['esuite:model:id']
+  const provider = kvMetadata['esuite:model:provider']
+  if (!id || !provider) return undefined
+  return `${provider}::${id}`
 }

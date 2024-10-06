@@ -42,7 +42,7 @@ export const list = query({
       .edge('messages')
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .order(order)
-      .take(limit)
+      .take(Math.min(limit, 100))
       .map(async (message) => await getMessageEdges(ctx, message))
     return messages
   },
@@ -66,7 +66,7 @@ export const search = query({
       order = 'desc',
       role,
       name,
-      createdAfter = 10000,
+      createdAfter = 1,
       createdBefore = Infinity,
       paginationOpts,
     },
@@ -135,7 +135,6 @@ export const searchText = query({
     const thread = await getThread(ctx, threadId)
     if (!thread) return []
 
-    console.log(text)
     const messages = await ctx
       .table('messages')
       .search('search_text_threadId_role_name', (q) => {
