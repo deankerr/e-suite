@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { FishFoodIcon } from '../icons/FishFoodIcon'
 import { Message } from '../message/Message'
 import { Orbit } from '../ui/Ldrs'
+import { PanelBody } from '../ui/Panel'
 import { VScrollArea } from '../ui/VScrollArea'
 
 export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
@@ -21,39 +22,44 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
     }
   }, [isLoading])
 
+  const emptyState = results.length === 0 && !isActive
   return (
-    <div className="h-full overflow-hidden">
-      <VScrollArea>
-        <div
-          className={cn(
-            'divide-y divide-gray-4',
-            fadeOut && 'opacity-50 transition-opacity duration-300 ease-in-out',
-          )}
-        >
-          {results.map((message) => (
-            <div key={message._id} className="py-1">
-              <Message message={message} />
+    <>
+      {!emptyState && (
+        <PanelBody>
+          <VScrollArea className="bg-gray-1">
+            <div
+              className={cn(
+                'divide-y divide-gray-4',
+                fadeOut && 'opacity-50 transition-opacity duration-300 ease-in-out',
+              )}
+            >
+              {results.map((message) => (
+                <div key={message._id} className="py-1">
+                  <Message message={message} />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {results.length === 0 ? (
-          isActive ? (
-            <div className="flex-col-center h-full w-full">
-              <FishFoodIcon className="size-36 text-gray-10" />
-              <div className="text-base font-medium text-gray-11">No results.</div>
-            </div>
-          ) : (
-            <div className="py-1">Enter a query.</div>
-          )
-        ) : null}
-      </VScrollArea>
+            {results.length === 0 ? (
+              isActive ? (
+                <div className="flex-col-center h-full w-full">
+                  <FishFoodIcon className="size-36 text-gray-10" />
+                  <div className="text-base font-medium text-gray-11">No results.</div>
+                </div>
+              ) : (
+                <div className="py-1">Enter a query.</div>
+              )
+            ) : null}
+          </VScrollArea>
+        </PanelBody>
+      )}
 
       {isLoading && (
         <div className="absolute right-4 top-4">
           <Orbit />
         </div>
       )}
-    </div>
+    </>
   )
 }

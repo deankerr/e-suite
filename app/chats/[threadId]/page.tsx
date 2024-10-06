@@ -17,9 +17,13 @@ export default function Page({ params }: { params: { threadId: string } }) {
   return (
     <>
       <Chat threadId={params.threadId}>
-        <div className="grow overflow-hidden">
-          {/* <MessageFeed threadId={params.threadId} /> */}
-          <MessageSearchResults threadId={params.threadId} />
+        <div className="grid grow grid-flow-col overflow-hidden outline outline-2 -outline-offset-4 outline-pink-8">
+          {/* <div className=''>
+            <MessageFeed threadId={params.threadId} />
+          </div> */}
+          <div>
+            <MessageSearchResults threadId={params.threadId} />
+          </div>
         </div>
       </Chat>
 
