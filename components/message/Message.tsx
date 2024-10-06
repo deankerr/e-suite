@@ -15,7 +15,6 @@ import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { getMessageName } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { TimeSinceLink } from './TimeSinceLink'
 
 import type { EMessage } from '@/convex/types'
 
