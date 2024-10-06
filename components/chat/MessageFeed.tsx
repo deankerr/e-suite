@@ -1,26 +1,17 @@
 'use client'
 
 import { useRef } from 'react'
-import { usePaginatedQuery } from 'convex/react'
 import { Virtuoso } from 'react-virtuoso'
 
+import { useMessageFeedQuery } from '@/app/lib/api/threads'
 import { Message } from '@/components/message/Message'
 import { LineZoom } from '@/components/ui/Ldrs'
 import { appConfig } from '@/config/config'
-import { api } from '@/convex/_generated/api'
 
 import type { VirtuosoHandle } from 'react-virtuoso'
 
 export const MessageFeed = ({ threadId }: { threadId: string }) => {
-  const { results, loadMore, status } = usePaginatedQuery(
-    api.db.threads.listMessages,
-    { slugOrId: threadId },
-    {
-      initialNumItems: appConfig.nInitialMessages,
-    },
-  )
-
-  const messages = [...results].reverse().sort((a, b) => a.series - b.series)
+  const { results: messages, loadMore, status } = useMessageFeedQuery(threadId)
 
   const virtuoso = useRef<VirtuosoHandle>(null)
 
@@ -47,13 +38,7 @@ export const MessageFeed = ({ threadId }: { threadId: string }) => {
       }}
       computeItemKey={(index, message) => message._id}
       itemContent={(index, message) => {
-        return (
-          <Message
-            message={message}
-            // deepLinkUrl={`${path.threadPath}/${message.series}`}
-            // isSequential={isSameAuthor(findMessageSeries(message.series - 1), message)}
-          />
-        )
+        return <Message message={message} />
       }}
     />
   )

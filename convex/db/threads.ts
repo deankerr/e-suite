@@ -1,14 +1,13 @@
 import { omit, pick } from 'convex-helpers'
 import { literals, nullable } from 'convex-helpers/validators'
-import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
-import { emptyPage, generateSlug, paginatedReturnFields } from '../lib/utils'
+import { generateSlug } from '../lib/utils'
 import { threadFields } from '../schema'
 import { updateKvMetadata, updateKvValidator } from './helpers/kvMetadata'
-import { createMessage, getMessageEdges, messageReturnFields } from './helpers/messages'
+import { createMessage } from './helpers/messages'
 import { getThread, getThreadEdges, getThreadX, threadReturnFields } from './helpers/threads'
 import { getUserPublic } from './users'
 
@@ -92,27 +91,6 @@ export const list = query({
     return threads
   },
   returns: nullable(v.array(v.object(threadReturnFields))),
-})
-
-export const listMessages = query({
-  args: {
-    slugOrId: v.string(),
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
-    const thread = await getThread(ctx, args.slugOrId)
-    if (!thread) return emptyPage()
-
-    const messages = await thread
-      .edge('messages')
-      .order('desc')
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .paginate(args.paginationOpts)
-      .map(async (message) => await getMessageEdges(ctx, message))
-
-    return messages
-  },
-  returns: v.object({ ...paginatedReturnFields, page: v.array(v.object(messageReturnFields)) }),
 })
 
 // * Mutations

@@ -1,4 +1,7 @@
+import { usePaginatedQuery } from 'convex/react'
+
 import { useCachedQuery } from '@/app/lib/api/helpers'
+import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
 import type { Id } from '@/convex/_generated/dataModel'
@@ -45,4 +48,17 @@ export const useMessage = (slug?: string, msg?: string) => {
 
 export const useMessageById = (messageId: string) => {
   return useCachedQuery(api.db.messages.getDoc, { messageId: messageId as Id<'messages'> })
+}
+
+export const useMessageFeedQuery = (threadId: string) => {
+  const messages = usePaginatedQuery(
+    api.db.thread.messages.search,
+    { threadId },
+    {
+      initialNumItems: appConfig.nInitialMessages,
+    },
+  )
+  messages.results.reverse()
+
+  return messages
 }

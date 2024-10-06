@@ -40,26 +40,6 @@ export const getDoc = query({
   returns: nullable(v.object(omit(messageReturnFields, ['images', 'threadSlug', 'userIsViewer']))),
 })
 
-export const listLatest = query({
-  args: {
-    threadId: v.string(),
-    limit: v.optional(v.number()),
-  },
-  handler: async (ctx, { threadId, limit = 20 }) => {
-    const thread = await getThreadX(ctx, threadId)
-
-    const result = await ctx
-      .table('messages', 'threadId', (q) => q.eq('threadId', thread._id))
-      .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .order('desc')
-      .take(Math.min(limit, 200))
-      .map(async (message) => await getMessageEdges(ctx, message))
-
-    return result.reverse()
-  },
-  returns: nullable(v.array(v.object(messageReturnFields))),
-})
-
 // * mutations
 export const create = mutation({
   args: {

@@ -23,6 +23,8 @@ export const threadReturnFields = {
   user: userReturnFieldsPublic,
 }
 
+type ThreadReturnFields = Infer<AsObjectValidator<typeof threadReturnFields>>
+
 export const getThread = async (ctx: QueryCtx, xid: string) => {
   const id = ctx.table('threads').normalizeId(xid)
   const thread = id
@@ -40,7 +42,7 @@ export const getThreadX = async (ctx: QueryCtx, xid: string) => {
 export const getThreadEdges = async (
   ctx: QueryCtx,
   thread: Ent<'threads'>,
-): Promise<Infer<AsObjectValidator<typeof threadReturnFields>>> => {
+): Promise<ThreadReturnFields> => {
   return {
     ...thread,
     user: await getUserPublicX(ctx, thread.userId),

@@ -1,27 +1,19 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
-import { usePaginatedQuery } from 'convex/react'
 
-import { useThread } from '@/app/lib/api/threads'
+import { useMessageFeedQuery, useThread } from '@/app/lib/api/threads'
 import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
 import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Orbit } from '@/components/ui/Ldrs'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
-import { api } from '@/convex/_generated/api'
 
 export default function Page({ params }: { params: { threadId: string } }) {
   const thread = useThread(params.threadId)
 
-  const { results, loadMore, status } = usePaginatedQuery(
-    api.db.threads.listMessages,
-    { slugOrId: params.threadId },
-    {
-      initialNumItems: 20,
-    },
-  )
+  const { results, loadMore, status } = useMessageFeedQuery(params.threadId)
   const hasSkippedFirstLoad = useRef(false)
 
   const svgMessages = useMemo(() => {

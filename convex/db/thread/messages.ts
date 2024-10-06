@@ -22,7 +22,8 @@ export const get = query({
       )
       .unique()
 
-    return message ? await getMessageEdges(ctx, message) : null
+    if (!message || message.deletionTime) return null
+    return await getMessageEdges(ctx, message)
   },
   returns: nullable(v.object(messageReturnFields)),
 })
@@ -39,6 +40,7 @@ export const list = query({
 
     const messages = await thread
       .edge('messages')
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
       .order(order)
       .take(limit)
       .map(async (message) => await getMessageEdges(ctx, message))
@@ -72,7 +74,7 @@ export const search = query({
     const thread = await getThread(ctx, threadId)
     if (!thread) return emptyPage()
 
-    paginationOpts.numItems = Math.min(paginationOpts.numItems, 5)
+    paginationOpts.numItems = Math.min(paginationOpts.numItems, 100)
 
     const query =
       role && name
