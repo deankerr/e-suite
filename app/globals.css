@@ -1,6 +1,6 @@
 @import 'tailwindcss/base';
 @import '@radix-ui/themes/styles.css';
-@import './github-markdown-dark.css';
+@import './temp-tui-md.css';
 
 @tailwind components;
 
@@ -185,4 +185,9 @@
       'rlig' 1,
       'calt' 1;
   }
+}
+
+code {
+  @apply overflow-auto whitespace-pre rounded-md p-2;
+  background-color: transparent !important;
 }

@@ -124,7 +124,7 @@ export const Message = ({
         </div>
 
         {!showEditor && text ? (
-          <div className="markdown-body min-h-7 py-1">
+          <div className="temp-tui-md-root min-h-7 py-1">
             {/* => markdown text */}
             <Markdown text={text} />
           </div>
