@@ -13,9 +13,9 @@ import { useLightbox } from '@/components/lightbox/hooks'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
-import { Orbit } from '@/components/ui/Ldrs'
 import { Panel, PanelEmpty, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
+import { Loader } from '../ui/Loader'
 
 export const Collection = ({ collectionId }: { collectionId: string }) => {
   const [sort, setSort] = useState<'asc' | 'desc'>('desc')
@@ -123,7 +123,7 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
               >
                 {collectionImages?.status !== 'Exhausted' && (
                   <div>
-                    <Orbit />
+                    <Loader type="orbit" />
                   </div>
                 )}
               </InfiniteScroll>

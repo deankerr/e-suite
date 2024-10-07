@@ -9,8 +9,12 @@ import { createMessage, messageCreateFields } from '../helpers/messages'
 import { getThread } from '../helpers/threads'
 import { getOrCreateUserThread } from '../threads'
 
+import type { Id } from '../../_generated/dataModel'
+
 const runReturnFields = {
   ...runFields,
+  _id: v.id('runs'),
+  _creationTime: v.number(),
   threadId: v.id('threads'),
   userId: v.id('users'),
 }
@@ -93,6 +97,7 @@ export const list = query({
       .table('runs', 'threadId', (q) => q.eq('threadId', thread._id))
       .order('desc')
       .take(Math.min(limit, 100))
+      .map((run) => ({ ...run }))
     return runs
   },
   returns: nullable(v.array(v.object(runReturnFields))),

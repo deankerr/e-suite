@@ -4,8 +4,8 @@ import { useRef, useState } from 'react'
 
 import { useThread, useThreads } from '@/app/lib/api/threads'
 import { ChatMenu } from '@/components/chat/ChatMenu'
+import { ChatToolbar } from '@/components/chat/ChatToolbar'
 import { FavouriteButton } from '@/components/chat/FavouriteButton'
-import { Toolbar } from '@/components/chat/Toolbar'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Panel, PanelHeader, PanelTitle, PanelToolbar } from '@/components/ui/Panel'
 import { SkeletonShimmer } from '@/components/ui/Skeleton'
@@ -45,7 +45,7 @@ export const Chat = ({
 
       {!page && (
         <>
-          <Toolbar threadId={threadId} />
+          <ChatToolbar threadId={threadId} />
           {children}
 
           {/* {thread.user.isViewer && (

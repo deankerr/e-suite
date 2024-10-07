@@ -11,6 +11,8 @@ export const ErrorPage = ({
   error: Error & { digest?: string }
   reset: () => void
 }) => {
+  const message = error.message.replaceAll('\n', '\n\n')
+
   useEffect(() => {
     console.error(error)
   }, [error])
@@ -23,9 +25,9 @@ export const ErrorPage = ({
 
       <h2 className="font-mono text-xl text-red-10">error</h2>
 
-      <div className="w-full max-w-2xl overflow-y-auto overflow-x-hidden text-wrap rounded-md border border-red-11 bg-red-2 p-4 font-mono text-sm">
-        {error?.message}
-      </div>
+      <pre className="w-full max-w-3xl overflow-y-auto overflow-x-hidden whitespace-pre-wrap rounded-md border border-red-11 bg-red-2 p-4 font-mono text-sm">
+        {message}
+      </pre>
 
       <Button color="red" variant="solid" onClick={() => reset()}>
         Retry

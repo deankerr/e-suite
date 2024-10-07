@@ -36,6 +36,10 @@ export const useThread = (threadId: string) => {
   return userThread || otherThread
 }
 
+export const useListThreadRuns = (threadId: string) => {
+  return useQuery(api.db.thread.runs.list, { threadId })
+}
+
 export const useMessage = (slug?: string, msg?: string) => {
   const thread = useThread(slug ?? '')
   const message = useCachedQuery(

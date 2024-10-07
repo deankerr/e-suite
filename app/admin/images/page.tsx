@@ -5,7 +5,7 @@ import { usePaginatedQuery } from 'convex/react'
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Loader } from '@/components/ui/Loader'
 import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 
@@ -26,7 +26,7 @@ export default function Page() {
         next={() => imagesQuery.loadMore(50)}
       >
         <div className={cn('mx-auto mt-1', imagesQuery.status === 'Exhausted' && 'hidden')}>
-          <LoadingSpinner variant="infinity" className="bg-accentA-11" />
+          <Loader type="dotPulse" />
         </div>
       </InfiniteScroll>
     </AdminPageWrapper>

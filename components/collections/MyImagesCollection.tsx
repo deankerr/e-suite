@@ -10,9 +10,9 @@ import { useLightbox } from '@/components/lightbox/hooks'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
-import { Grid, Orbit } from '@/components/ui/Ldrs'
 import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
+import { Loader } from '../ui/Loader'
 
 export const MyImagesCollection = () => {
   const [sort, setSort] = useState<'asc' | 'desc'>('desc')
@@ -75,7 +75,7 @@ export const MyImagesCollection = () => {
 
         {images.status === 'LoadingFirstPage' ? (
           <div className="flex-center h-[98%]">
-            <Grid />
+            <Loader type="grid" />
           </div>
         ) : (
           <>
@@ -91,7 +91,7 @@ export const MyImagesCollection = () => {
               >
                 {images.status !== 'Exhausted' && (
                   <div>
-                    <Orbit />
+                    <Loader type="orbit" />
                   </div>
                 )}
               </InfiniteScroll>

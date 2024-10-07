@@ -6,7 +6,7 @@ import { useThreadTextSearchResults } from '@/app/lib/api/threads'
 import { cn } from '@/lib/utils'
 import { FishFoodIcon } from '../icons/FishFoodIcon'
 import { Message } from '../message/Message'
-import { Orbit } from '../ui/Ldrs'
+import { Loader } from '../ui/Loader'
 import { PanelBody } from '../ui/Panel'
 import { VScrollArea } from '../ui/VScrollArea'
 
@@ -49,7 +49,7 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
 
       {isLoading && (
         <div className="absolute right-4 top-4">
-          <Orbit />
+          <Loader type="orbit" />
         </div>
       )}
     </>

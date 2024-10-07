@@ -7,7 +7,7 @@ import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
 import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { EmptyPage } from '@/components/pages/EmptyPage'
-import { Orbit } from '@/components/ui/Ldrs'
+import { Loader } from '@/components/ui/Loader'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
 
 export default function Page({ params }: { params: { threadId: string } }) {
@@ -43,7 +43,7 @@ export default function Page({ params }: { params: { threadId: string } }) {
           {thread.title ?? 'Untitled Thread'}
         </PanelTitle>
         <div className="grow" />
-        {status === 'LoadingMore' && <Orbit />}
+        {status === 'LoadingMore' && <Loader type="orbit" />}
       </PanelHeader>
 
       <div className="grow">
