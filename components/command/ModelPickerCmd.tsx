@@ -37,7 +37,7 @@ export const ModelPickerCmd = ({
       >
         <Dialog.Title className="sr-only">Model Picker</Dialog.Title>
         <CmdK tabIndex={0} className="bg-gray-2">
-          <CmdK.Input placeholder="Search models..." />
+          <CmdK.Input placeholder="Search models..." autoFocus />
           <CmdK.List>
             <CmdK.Empty>No models found</CmdK.Empty>
 
