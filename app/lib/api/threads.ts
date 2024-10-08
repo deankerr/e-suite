@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { usePaginatedQuery, useQuery } from 'convex/react'
+import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { ms } from 'itty-time'
 import { parseAsString, useQueryState } from 'nuqs'
 import { useDebounceValue } from 'usehooks-ts'
@@ -164,4 +164,20 @@ export const useThreadTextSearchResults = (threadId: string) => {
   } = useThreadTextSearchQueryParams()
   const results = useThreadTextSearch({ threadId, name: nameValue }, searchValue)
   return results
+}
+
+export const useUpdateThread = () => {
+  return useMutation(api.db.threads.update)
+}
+
+export const useDeleteThread = () => {
+  return useMutation(api.db.threads.remove)
+}
+
+export const useUpdateMessage = () => {
+  return useMutation(api.db.messages.update)
+}
+
+export const useDeleteMessage = () => {
+  return useMutation(api.db.messages.remove)
 }

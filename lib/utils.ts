@@ -25,35 +25,3 @@ export function getConvexSiteUrl() {
   if (!convexUrl) throw new Error('NEXT_PUBLIC_CONVEX_URL is undefined')
   return convexUrl.replace('.cloud', '.site')
 }
-
-export const sleep = (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms))
-
-export function stringToHex(str: string) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  }
-
-  let color = '#'
-  for (let i = 0; i < 3; i++) {
-    const value = (hash >> (i * 8)) & 0xff
-    color += ('00' + value.toString(16)).slice(-2)
-  }
-
-  return color
-}
-
-export function stringHashToListItem<T>(str: string, list: T[]): T {
-  if (list.length === 0) {
-    throw new Error('The provided list is empty')
-  }
-
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  hash = Math.abs(hash)
-
-  const index = hash % list.length
-  return list[index] as T
-}

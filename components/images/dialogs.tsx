@@ -1,7 +1,7 @@
 import { AlertDialog } from '@radix-ui/themes'
 
+import { useDeleteImage } from '@/app/lib/api/images'
 import { Button } from '@/components/ui/Button'
-import { useDeleteImage } from '@/lib/api'
 
 export const DeleteImageDialog = ({
   id,

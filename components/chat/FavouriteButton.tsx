@@ -2,9 +2,8 @@
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 
-import { useThread } from '@/app/lib/api/threads'
+import { useThread, useUpdateThread } from '@/app/lib/api/threads'
 import { IconButton } from '@/components/ui/Button'
-import { useUpdateThread } from '@/lib/api'
 
 export const FavouriteButton = ({ threadId }: { threadId: string }) => {
   const thread = useThread(threadId)

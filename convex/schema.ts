@@ -46,7 +46,7 @@ const chat_models = defineEnt(chatModelFields).field('resourceKey', v.string(), 
 export const collectionFields = {
   title: v.string(),
 }
-export const collections = defineEnt(collectionFields)
+const collections = defineEnt(collectionFields)
   .deletion('scheduled', { delayMs: timeToDelete })
   .field('id', v.string(), { unique: true })
   .edge('user', { field: 'ownerId' })

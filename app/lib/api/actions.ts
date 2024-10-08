@@ -10,7 +10,6 @@ import type { ComposerSend } from '@/components/composer/Composer'
 
 const runTimeout = 2500
 
-export type ThreadActions = ReturnType<typeof useThreadActions>
 export const useThreadActions = (threadId: string) => {
   const router = useRouter()
   const [actionState, setActionState] = useState<'ready' | 'pending' | 'rateLimited'>('ready')

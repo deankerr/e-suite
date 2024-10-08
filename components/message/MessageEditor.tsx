@@ -3,10 +3,10 @@ import { Label } from '@radix-ui/react-label'
 import { Button, Select } from '@radix-ui/themes'
 import { toast } from 'sonner'
 
+import { useUpdateMessage } from '@/app/lib/api/threads'
 import { TextareaAutosize } from '@/components/ui/TextareaAutosize'
 import { TextField } from '@/components/ui/TextField'
 import { EMessage } from '@/convex/types'
-import { useUpdateMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import type { FormEvent } from 'react'

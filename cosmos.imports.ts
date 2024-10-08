@@ -3,14 +3,13 @@
 
 import { RendererConfig, UserModuleWrappers } from 'react-cosmos-core';
 
-import * as fixture0 from './components/navigation/__fixtures__/NavigationSheet';
-import * as fixture1 from './components/navigation/__fixtures__/NavigationRail';
-import * as fixture2 from './components/navigation/__fixtures__/Navigation';
-import * as fixture3 from './components/text-document-editor/__fixtures__/TextDocumentEditor';
-import * as fixture4 from './components/composer/__fixtures__/Composer';
-import * as fixture5 from './components/generations/__fixtures__/GenerateForm';
-import * as fixture6 from './components/chat/__fixtures__/ChatsContainer';
-import * as fixture7 from './components/chat/__fixtures__/Chat';
+import * as fixture0 from './components/text-document-editor/__fixtures__/TextDocumentEditor';
+import * as fixture1 from './components/navigation/__fixtures__/NavigationSheet';
+import * as fixture2 from './components/navigation/__fixtures__/NavigationRail';
+import * as fixture3 from './components/navigation/__fixtures__/Navigation';
+import * as fixture4 from './components/generations/__fixtures__/GenerateForm';
+import * as fixture5 from './components/composer/__fixtures__/Composer';
+import * as fixture6 from './components/chat/__fixtures__/Chat';
 
 import * as decorator0 from './components/cosmos.decorator';
 import * as decorator1 from './components/text-document-editor/__fixtures__/cosmos.decorator';
@@ -22,14 +21,13 @@ export const rendererConfig: RendererConfig = {
 };
 
 const fixtures = {
-  'components/navigation/__fixtures__/NavigationSheet.tsx': { module: fixture0 },
-  'components/navigation/__fixtures__/NavigationRail.tsx': { module: fixture1 },
-  'components/navigation/__fixtures__/Navigation.tsx': { module: fixture2 },
-  'components/text-document-editor/__fixtures__/TextDocumentEditor.tsx': { module: fixture3 },
-  'components/composer/__fixtures__/Composer.tsx': { module: fixture4 },
-  'components/generations/__fixtures__/GenerateForm.tsx': { module: fixture5 },
-  'components/chat/__fixtures__/ChatsContainer.tsx': { module: fixture6 },
-  'components/chat/__fixtures__/Chat.tsx': { module: fixture7 }
+  'components/text-document-editor/__fixtures__/TextDocumentEditor.tsx': { module: fixture0 },
+  'components/navigation/__fixtures__/NavigationSheet.tsx': { module: fixture1 },
+  'components/navigation/__fixtures__/NavigationRail.tsx': { module: fixture2 },
+  'components/navigation/__fixtures__/Navigation.tsx': { module: fixture3 },
+  'components/generations/__fixtures__/GenerateForm.tsx': { module: fixture4 },
+  'components/composer/__fixtures__/Composer.tsx': { module: fixture5 },
+  'components/chat/__fixtures__/Chat.tsx': { module: fixture6 }
 };
 
 const decorators = {
