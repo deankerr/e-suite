@@ -1,6 +1,6 @@
-import { PanelBody } from '../ui/Panel'
+import { PanelBody } from '../../ui/Panel'
 
-export const ChatBackPanel = (props: React.ComponentProps<'svg'>) => {
+export const ChatBackgroundPanel = (props: React.ComponentProps<'svg'>) => {
   return (
     <PanelBody className="flex-center">
       <svg

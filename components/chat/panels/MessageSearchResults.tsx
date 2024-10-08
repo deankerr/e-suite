@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 
 import { useThreadTextSearchResults } from '@/app/lib/api/threads'
 import { cn } from '@/app/lib/utils'
-import { FishFoodIcon } from '../icons/FishFoodIcon'
-import { Message } from '../message/Message'
-import { Loader } from '../ui/Loader'
-import { PanelBody } from '../ui/Panel'
-import { VScrollArea } from '../ui/VScrollArea'
+import { FishFoodIcon } from '@/components/icons/FishFoodIcon'
+import { Message } from '@/components/message/Message'
+import { Loader } from '@/components/ui/Loader'
+import { PanelBody } from '@/components/ui/Panel'
+import { VScrollArea } from '@/components/ui/VScrollArea'
 
 export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
   const { results, isLoading, isSkipped } = useThreadTextSearchResults(threadId)

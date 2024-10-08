@@ -1,10 +1,11 @@
 'use client'
 
 import { useMessageFeedQuery, useStreamingMessages } from '@/app/lib/api/threads'
+import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { Message } from '@/components/message/Message'
+import { Loader } from '@/components/ui/Loader'
+import { PanelBody } from '@/components/ui/Panel'
 import { appConfig } from '@/config/config'
-import { VirtualizedFeed } from '../feed/VirtualizedFeed'
-import { Loader } from '../ui/Loader'
 
 export const MessageFeed = ({ threadId }: { threadId: string }) => {
   const { results, loadMore, status } = useMessageFeedQuery(threadId)
@@ -20,22 +21,26 @@ export const MessageFeed = ({ threadId }: { threadId: string }) => {
 
   if (status === 'LoadingFirstPage' && threadId !== 'new')
     return (
-      <div className="flex-col-center h-full">
-        <Loader type="zoomies" />
-      </div>
+      <PanelBody>
+        <div className="flex-col-center h-full">
+          <Loader type="zoomies" />
+        </div>
+      </PanelBody>
     )
   if (!messages || messages.length === 0) return null
 
   return (
-    <VirtualizedFeed
-      items={messages}
-      renderItem={(message) => <Message message={message} />}
-      onAtTop={() => {
-        if (status === 'CanLoadMore') {
-          loadMore(appConfig.nInitialMessages * 2)
-          console.log('load', appConfig.nInitialMessages * 2)
-        }
-      }}
-    />
+    <PanelBody>
+      <VirtualizedFeed
+        items={messages}
+        renderItem={(message) => <Message message={message} />}
+        onAtTop={() => {
+          if (status === 'CanLoadMore') {
+            loadMore(appConfig.nInitialMessages * 2)
+            console.log('load', appConfig.nInitialMessages * 2)
+          }
+        }}
+      />
+    </PanelBody>
   )
 }
