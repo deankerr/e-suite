@@ -20,8 +20,6 @@ const nextConfig = {
         hostname: '*',
       },
     ],
-    loader: 'custom',
-    loaderFile: './lib/image-loader.ts',
   },
 
   redirects: async () => {

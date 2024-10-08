@@ -11,6 +11,7 @@ import { DotsThreeFillY } from '@/components/icons/DotsThreeFillY'
 import { DeleteImageDialog } from '@/components/images/dialogs'
 import { IconButton } from '@/components/ui/Button'
 import { api } from '@/convex/_generated/api'
+import imageLoader from './image-loader'
 
 import type { EImage } from '@/convex/types'
 
@@ -42,6 +43,7 @@ export const ImageCardNext = ({
         height={image.height}
         sizes={sizes}
         className="h-full w-full object-cover"
+        loader={imageLoader}
       />
       <div className="absolute inset-0 rounded-lg border-2 border-grayA-5" />
       {children}

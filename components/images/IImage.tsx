@@ -4,6 +4,7 @@ import { forwardRef } from 'react'
 import NextImage from 'next/image'
 
 import { cn } from '@/app/lib/utils'
+import imageLoader from './image-loader'
 
 import type { EImage } from '@/convex/types'
 
@@ -28,6 +29,7 @@ export const IImage = forwardRef<HTMLImageElement, Props>(
           className={cn('h-full w-full object-contain', className)}
           {...props}
           ref={ref}
+          loader={imageLoader}
         />
         {children}
       </div>

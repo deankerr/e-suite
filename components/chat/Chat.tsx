@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
-import { toast } from 'sonner'
 
 import { useListThreadRuns, useThread, useThreadTextSearchQueryParams } from '@/app/lib/api/threads'
 import { ChatMenu } from '@/components/chat/ChatMenu'
@@ -22,7 +21,7 @@ import {
   PanelTitle,
 } from '@/components/ui/Panel'
 import { getErrorMessage, parseJson } from '@/convex/shared/utils'
-import { Button, IconButton } from '../ui/Button'
+import { IconButton } from '../ui/Button'
 import { RunStatusBadge } from '../ui/RunStatusBadge'
 import { SearchField } from '../ui/SearchField'
 import { ChatBackPanel } from './ChatBackPanel'
@@ -46,20 +45,9 @@ export const Chat = ({
         <ChatMenu threadId={thread.slug} />
         <FavouriteButton threadId={thread.slug} />
 
-        <Button
-          onClick={() => {
-            toast.info('toast is nice.')
-            toast.success('toast is done.')
-            toast.warning('toast is burnt.')
-            toast.error('toast is on fire.')
-          }}
-        >
-          Toast
-        </Button>
         <div className="grow" />
 
         <ThreadQuerySearchField />
-
         <IconButton
           aria-label="Show runs"
           variant="surface"
