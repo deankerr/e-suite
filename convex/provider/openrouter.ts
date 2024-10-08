@@ -1,10 +1,18 @@
-import { asyncMap, omit } from 'convex-helpers'
+import { asyncMap, omit, pick } from 'convex-helpers'
+import { updatedDiff } from 'deep-object-diff'
 import ky from 'ky'
+import { mergeDeep } from 'remeda'
 import { z } from 'zod'
 
-import { api, internal } from '../_generated/api'
+import { internal } from '../_generated/api'
 import { logActionOpsEvent } from '../db/admin/events'
 import { internalAction } from '../functions'
+
+import type { Doc } from '../_generated/dataModel'
+import type { WithoutSystemFields } from 'convex/server'
+
+type ModelDoc = WithoutSystemFields<Doc<'chat_models'>>
+type ModelDocKey = keyof WithoutSystemFields<Doc<'chat_models'>>
 
 async function fetchModelRecords() {
   const response = await ky.get('https://openrouter.ai/api/v1/models').json()
@@ -19,18 +27,48 @@ async function fetchModelRecords() {
 export const updateOpenRouterModels = internalAction({
   args: {},
   handler: async (ctx) => {
-    const existingModels = await ctx.runQuery(api.db.models.listChatModels, {})
+    const existingModels = await ctx.runQuery(internal.db.models.listAll, {})
     const records = await fetchModelRecords()
     const processed = records.map(processModelRecord).filter((m) => m !== null)
 
     await asyncMap(processed, async (model) => {
       const existing = existingModels.find((m) => m.resourceKey === model.resourceKey)
       if (existing) {
-        // * replace data of existing model
-        await ctx.runMutation(internal.db.models.updateChatModel, {
-          id: existing._id,
-          ...model,
-        })
+        // compare keys: name, description, creatorName, created, pricing**, contextLength, tokenizer, maxOutputTokens
+        // patch if any differ, log an operations event
+        const keys = [
+          'name',
+          'description',
+          'creatorName',
+          'created',
+          'pricing',
+          'contextLength',
+          'tokenizer',
+          'maxOutputTokens',
+        ] as ModelDocKey[]
+        const current = pick(existing, keys)
+        const updated = pick(model, keys)
+        const diff = updatedDiff(current, updated) as Partial<ModelDoc>
+        const diffKeys = Object.keys(diff) as ModelDocKey[]
+        if (diffKeys.length > 0) {
+          // * replace data of existing model
+          const patch = pick(mergeDeep(current, diff), diffKeys)
+
+          await ctx.runMutation(internal.db.models.update, {
+            id: existing._id,
+            fields: patch,
+          })
+
+          await logActionOpsEvent(ctx, {
+            message: `model updated: ${model.provider} - ${model.name}`,
+            type: 'notice',
+            data: {
+              before: updatedDiff(updated, current),
+              after: diff,
+              patch,
+            },
+          })
+        }
       } else {
         // * create new model
         await ctx.runMutation(internal.db.models.createChatModel, model)
@@ -65,7 +103,7 @@ export const updateOpenRouterModels = internalAction({
   },
 })
 
-function processModelRecord(record: unknown) {
+function processModelRecord(record: unknown): ModelDoc | null {
   const result = orModelSchema.safeParse(record)
   if (!result.success) {
     console.error(result.error.flatten())

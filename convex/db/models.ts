@@ -1,6 +1,7 @@
+import { partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
-import { internalMutation, query } from '../functions'
+import { internalMutation, internalQuery, query } from '../functions'
 import { chatModelFields } from '../schema'
 import { QueryCtx } from '../types'
 
@@ -26,6 +27,13 @@ export const listChatModels = query({
   },
 })
 
+export const listAll = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.table('chat_models')
+  },
+})
+
 export const createChatModel = internalMutation({
   args: {
     ...chatModelFields,
@@ -44,5 +52,15 @@ export const updateChatModel = internalMutation({
   },
   handler: async (ctx, { id, ...args }) => {
     return await ctx.table('chat_models').getX(id).replace(args)
+  },
+})
+
+export const update = internalMutation({
+  args: {
+    id: v.id('chat_models'),
+    fields: v.object(partial(chatModelFields)),
+  },
+  handler: async (ctx, { id, fields }) => {
+    return await ctx.table('chat_models').getX(id).patch(fields)
   },
 })
