@@ -42,7 +42,7 @@ export function getErrorMessage(error: unknown) {
   return 'Unknown Error'
 }
 
-// from convex/values
+// from 'convex/values'
 export function stringifyValueForError(value: any) {
   if (typeof value === 'string') return value
 
@@ -58,4 +58,13 @@ export function stringifyValueForError(value: any) {
     }
     return value
   })
+}
+
+export function parseJson(input: string): unknown {
+  try {
+    return JSON.parse(input)
+  } catch (error) {
+    console.error('Unable to parse JSON', input, error)
+    return undefined
+  }
 }

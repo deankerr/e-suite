@@ -9,7 +9,16 @@ import { createMessage, messageCreateFields } from '../helpers/messages'
 import { getThread } from '../helpers/threads'
 import { getOrCreateUserThread } from '../threads'
 
-import type { Id } from '../../_generated/dataModel'
+const textMessagesReturn = v.object({
+  _id: v.id('texts'),
+  _creationTime: v.number(),
+  title: v.optional(v.string()),
+  content: v.string(),
+  type: v.string(),
+  userId: v.id('users'),
+  updatedAt: v.number(),
+  runId: v.optional(v.id('runs')),
+})
 
 const runReturnFields = {
   ...runFields,
@@ -17,6 +26,7 @@ const runReturnFields = {
   _creationTime: v.number(),
   threadId: v.id('threads'),
   userId: v.id('users'),
+  texts: v.optional(v.array(textMessagesReturn)),
 }
 
 export const create = mutation({
@@ -97,7 +107,14 @@ export const list = query({
       .table('runs', 'threadId', (q) => q.eq('threadId', thread._id))
       .order('desc')
       .take(Math.min(limit, 100))
-      .map((run) => ({ ...run }))
+      .map(async (run) => ({
+        ...run,
+        providerMetadata: undefined,
+        texts: await ctx
+          .table('texts', 'runId', (q) => q.eq('runId', run._id))
+          .filter((q) => q.eq(q.field('deletionTime'), undefined))
+          .map((text) => text.doc()),
+      }))
     return runs
   },
   returns: nullable(v.array(v.object(runReturnFields))),

@@ -10,7 +10,6 @@ const MemoizedHighlight = memo(
           <code
             style={style}
             className={`overflow-auto whitespace-pre rounded-md p-2 ${className}`}
-            {...props}
           >
             {tokens.map((line, i) => (
               <div key={i} {...getLineProps({ line })}>
@@ -27,13 +26,13 @@ const MemoizedHighlight = memo(
 )
 MemoizedHighlight.displayName = 'MemoizedHighlight'
 
-const CodeHighlighter = ({ children, className, ...props }: React.ComponentProps<'code'>) => {
+const CodeHighlighter = ({ children, className }: React.ComponentProps<'code'>) => {
   const match = /language-(\w+)/.exec(className || '')
   const language = match?.[1] ?? ''
 
   const code = children?.toString().replace(/\n$/, '')
   if (!code) return null
-  if (!code.includes('\n')) return <RadixCode>{code}</RadixCode>
+  if (!language && !code.includes('\n')) return <RadixCode>{code}</RadixCode>
 
   return <MemoizedHighlight code={code} language={language} />
 }

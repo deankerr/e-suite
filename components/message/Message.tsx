@@ -13,6 +13,7 @@ import { IconButton } from '@/components/ui/Button'
 import { getMessageName } from '@/convex/shared/helpers'
 import { useDeleteMessage } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { Loader } from '../ui/Loader'
 import { TimeSince } from './TimeSince'
 
 import type { EMessage } from '@/convex/types'
@@ -97,6 +98,7 @@ export const Message = ({
         'flex min-h-7 w-full shrink-0 pr-2 @container/message',
         'rounded border border-transparent',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
+        message.threadSlug === 'streaming' && 'bg-grayA-2',
         className,
       )}
     >
@@ -135,19 +137,6 @@ export const Message = ({
           <MessageEditor message={message} onClose={() => setShowEditor(false)} className="pb-2" />
         )}
 
-        {/* => errors * */}
-        {/* {message.jobs.map(({ error }, i) =>
-          error ? (
-            <ErrorCallout
-              key={i}
-              title={error.code}
-              message={error.message}
-              size="1"
-              className="mx-auto mb-1 max-w-xl"
-            />
-          ) : null,
-        )} */}
-
         {/* => images  */}
         {message.images?.length ? (
           <div className="flex flex-wrap gap-2">
@@ -160,12 +149,11 @@ export const Message = ({
         ) : null}
 
         {/* => loading ping  */}
-        {/* {message.jobs.filter((job) => job.status === 'active' || job.status === 'pending').length >
-          0 && (
-          <div className="col-start-2">
-            <LoadingSpinner variant="ping" />
+        {message.threadSlug === 'waiting' && (
+          <div className="p-1">
+            <Loader type="ping" color={marbleProps[0].color} />
           </div>
-        )} */}
+        )}
 
         {/* => json */}
         {showJson && <Pre className="max-w-screen-md">{JSON.stringify(message, null, 2)}</Pre>}

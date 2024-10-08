@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { usePaginatedQuery, useQuery } from 'convex/react'
+import { ms } from 'itty-time'
 import { parseAsString, useQueryState } from 'nuqs'
 import { useDebounceValue } from 'usehooks-ts'
 
@@ -8,6 +9,7 @@ import { appConfig } from '@/config/config'
 import { api } from '@/convex/_generated/api'
 
 import type { Id } from '@/convex/_generated/dataModel'
+import type { EMessage } from '@/convex/types'
 
 export const useThreads = () => {
   const threads = useCachedQuery(api.db.threads.list, {})
@@ -51,6 +53,56 @@ export const useMessage = (slug?: string, msg?: string) => {
     thread,
     message,
   }
+}
+
+export const useStreamingMessages = (threadId: string) => {
+  const runs = useListThreadRuns(threadId)
+  const streamingMessages = runs
+    ?.filter((run) => Date.now() - run._creationTime < ms('1 minute'))
+    .map((run) => {
+      const streams = run.texts.map((streamingText) => {
+        // * streaming
+        const message: EMessage = {
+          _id: streamingText._id as unknown as Id<'messages'>,
+          _creationTime: streamingText._creationTime,
+          role: 'assistant' as const,
+          text: streamingText.content,
+
+          userId: streamingText.userId,
+          threadId: run.threadId,
+          threadSlug: 'streaming',
+          runId: run._id,
+
+          kvMetadata: {},
+          series: 0,
+          userIsViewer: false,
+        }
+        return message
+      })
+      if (streams.length === 0 && run.status !== 'failed') {
+        // * non-streaming
+        return {
+          _id: run._id as unknown as Id<'messages'>,
+          _creationTime: run._creationTime,
+          role: 'assistant' as const,
+
+          userId: run.userId,
+          threadId: run.threadId,
+          threadSlug: 'waiting',
+          runId: run._id,
+
+          kvMetadata: {},
+          series: 0,
+          userIsViewer: false,
+        }
+      }
+
+      return streams
+    })
+    .flat()
+    .toReversed()
+
+  return streamingMessages
 }
 
 export const useMessageById = (messageId: string) => {

@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import * as Icons from '@phosphor-icons/react/dist/ssr'
+
 import { useListThreadRuns, useThread, useThreadTextSearchQueryParams } from '@/app/lib/api/threads'
 import { ChatMenu } from '@/components/chat/ChatMenu'
 import { ChatToolbar } from '@/components/chat/ChatToolbar'
@@ -17,7 +20,9 @@ import {
   PanelLoading,
   PanelTitle,
 } from '@/components/ui/Panel'
-import { Loader } from '../ui/Loader'
+import { getErrorMessage, parseJson } from '@/convex/shared/utils'
+import { IconButton } from '../ui/Button'
+import { RunStatusBadge } from '../ui/RunStatusBadge'
 import { SearchField } from '../ui/SearchField'
 import { ChatBackPanel } from './ChatBackPanel'
 
@@ -29,7 +34,7 @@ export const Chat = ({
   const thread = useThread(threadId)
 
   const runs = useListThreadRuns(threadId)
-  const showRunsPanel = false
+  const [showRunsPanel, setShowRunsPanel] = useState(false)
 
   if (!thread) return thread === null ? <PanelEmpty /> : <PanelLoading />
   return (
@@ -43,6 +48,16 @@ export const Chat = ({
         <div className="grow" />
 
         <ThreadQuerySearchField />
+
+        <IconButton
+          aria-label="Show runs"
+          variant="surface"
+          color={showRunsPanel ? 'orange' : 'gray'}
+          onClick={() => setShowRunsPanel(!showRunsPanel)}
+          className="ml-2"
+        >
+          <Icons.ListPlus />
+        </IconButton>
       </PanelHeader>
 
       {/* > toolbar */}
@@ -54,23 +69,33 @@ export const Chat = ({
 
         <PanelBody>
           <MessageFeed threadId={threadId} />
-          <div className="flex-start absolute bottom-0 h-16 w-full shrink-0 gap-4 bg-whiteA-9">
-            <Loader type="dotWave" />
-          </div>
         </PanelBody>
 
         <MessageSearchResults threadId={threadId} />
 
         {showRunsPanel && (
-          <PanelBody>
-            <div className="flex-col-start h-full gap-2 overflow-y-auto overflow-x-hidden bg-transparent p-2">
+          <PanelBody className="justify-self-end bg-transparent">
+            <div className="flex-col-start h-full items-end gap-2 overflow-y-auto overflow-x-hidden bg-blackA-4 p-2">
               {runs?.map((run) => (
-                <pre
+                <div
                   key={run._id}
-                  className="w-full whitespace-pre-wrap border bg-gray-1 p-1 font-mono text-xs"
+                  className="flex-col-start w-80 gap-2 rounded border bg-gray-1 px-3 py-2 text-xs"
                 >
-                  {JSON.stringify(run, null, 2)}
-                </pre>
+                  <div className="flex-between gap-2">
+                    <RunStatusBadge status={run.status} />
+                    {run.endedAt && run.startedAt ? (
+                      <span>{((run.endedAt - run.startedAt) / 1000).toFixed(2)}s</span>
+                    ) : null}
+                  </div>
+
+                  {run.errors?.map((err, i) => (
+                    <div key={i}>{getErrorMessage(parseJson(err))}</div>
+                  ))}
+
+                  <pre className="whitespace-pre-wrap border-t p-1 pt-2 font-mono text-xxs">
+                    {JSON.stringify(run, null, 2)}
+                  </pre>
+                </div>
               ))}
             </div>
           </PanelBody>

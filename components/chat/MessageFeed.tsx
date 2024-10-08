@@ -1,13 +1,22 @@
 'use client'
 
-import { useMessageFeedQuery } from '@/app/lib/api/threads'
+import { useMessageFeedQuery, useStreamingMessages } from '@/app/lib/api/threads'
 import { Message } from '@/components/message/Message'
 import { appConfig } from '@/config/config'
 import { VirtualizedFeed } from '../feed/VirtualizedFeed'
 import { Loader } from '../ui/Loader'
 
 export const MessageFeed = ({ threadId }: { threadId: string }) => {
-  const { results: messages, loadMore, status } = useMessageFeedQuery(threadId)
+  const { results, loadMore, status } = useMessageFeedQuery(threadId)
+
+  const streamingMessages = useStreamingMessages(threadId) ?? []
+
+  const messages = [
+    ...results,
+    ...streamingMessages.filter(
+      (streamingMessage) => !results.findLast((result) => result.runId === streamingMessage.runId),
+    ),
+  ]
 
   if (status === 'LoadingFirstPage' && threadId !== 'new')
     return (

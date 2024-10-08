@@ -62,7 +62,7 @@ export const useThreadActions = (threadId: string) => {
 
       try {
         console.log('createRun', args)
-        const result = await sendCreateRun({ ...args, threadId: threadId ?? 'new', stream: true })
+        const result = await sendCreateRun({ ...args, threadId: threadId ?? 'new', stream: false })
 
         setActionState('rateLimited')
         reset()
