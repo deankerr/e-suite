@@ -5,6 +5,7 @@ import { RiMoreFill } from '@remixicon/react'
 import Link from 'next/link'
 
 import { useDeleteMessage } from '@/app/lib/api/threads'
+import { useViewer } from '@/app/lib/api/users'
 import { cn } from '@/app/lib/utils'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { useMarbleProperties } from '@/components/marble-avatar/Marble'
@@ -42,9 +43,10 @@ export const Message = ({
 
   const deleteMessage = useDeleteMessage()
 
+  const { isViewer } = useViewer(message.userId)
   const dropdownMenu = useMemo(
     () =>
-      message.userIsViewer ? (
+      isViewer ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <IconButton variant="ghost" size="1" color="gray" aria-label="More">
@@ -82,7 +84,7 @@ export const Message = ({
       ) : null,
     [
       deleteMessage,
-      message.userIsViewer,
+      isViewer,
       message.threadSlug,
       message.series,
       message._id,

@@ -1,5 +1,5 @@
 import { omit, pick } from 'convex-helpers'
-import { partial } from 'convex-helpers/validators'
+import { nullable, partial } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 
 import { internalMutation, mutation, query } from '../functions'
@@ -107,6 +107,8 @@ export const generateNewApiKey = mutation({
 export const getViewer = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.viewer()
+    const viewer = await ctx.viewer()
+    return viewer ? pick(viewer.doc(), ['_id', '_creationTime', 'name', 'imageUrl', 'role']) : null
   },
+  returns: nullable(v.object(omit(userReturnFieldsPublic.fields, ['isViewer']))),
 })

@@ -42,7 +42,7 @@ export const getDoc = query({
       kvMetadata: message.kvMetadata ?? {},
     }
   },
-  returns: nullable(v.object(omit(messageReturnFields, ['images', 'threadSlug', 'userIsViewer']))),
+  returns: nullable(v.object(omit(messageReturnFields, ['images', 'threadSlug']))),
 })
 
 // * mutations

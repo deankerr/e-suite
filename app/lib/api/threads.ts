@@ -75,7 +75,6 @@ export const useStreamingMessages = (threadId: string) => {
 
           kvMetadata: {},
           series: 0,
-          userIsViewer: false,
         }
         return message
       })

@@ -6,7 +6,6 @@ import { internal } from '../../_generated/api'
 import { messageFields } from '../../schema'
 import { extractValidUrlsFromText } from '../../shared/helpers'
 import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from '../images'
-import { getUserIsViewer } from '../users'
 
 import type { Doc } from '../../_generated/dataModel'
 import type { Ent, MutationCtx, QueryCtx } from '../../types'
@@ -34,7 +33,6 @@ export const messageReturnFields = {
   // edges
   images: optional(v.array(imagesReturn)),
   threadSlug: v.string(),
-  userIsViewer: v.boolean(),
 }
 
 // * query helpers
@@ -42,9 +40,7 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
   const thread = await message.edgeX('thread')
   return {
     ...message.doc(),
-    contentType: undefined,
     threadSlug: thread.slug,
-    userIsViewer: getUserIsViewer(ctx, message.userId),
     images: await getMessageUrlImages(ctx, message),
     kvMetadata: message.kvMetadata ?? {},
   }
