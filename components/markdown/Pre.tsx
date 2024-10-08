@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useSetAtom } from 'jotai'
 
@@ -5,7 +6,7 @@ import { htmlTextAtom } from '@/components/artifacts/atoms'
 import { IconButton } from '@/components/ui/Button'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 
-export const Pre = ({ children, ...props }: React.ComponentProps<'pre'>) => {
+export const Pre = memo(({ children, ...props }: React.ComponentProps<'pre'>) => {
   let text = ''
 
   if (children && typeof children === 'object' && 'props' in children) {
@@ -17,7 +18,6 @@ export const Pre = ({ children, ...props }: React.ComponentProps<'pre'>) => {
   return (
     <pre
       {...props}
-      // className="group overflow-auto rounded-md bg-grayA-2 p-2 text-xs/5 has-[code]:overflow-hidden [&>code]:-m-2 [&>code]:block"
       className="group overflow-auto rounded-md bg-grayA-2 p-2 has-[code]:overflow-hidden [&>code]:block"
     >
       {children}
@@ -29,7 +29,9 @@ export const Pre = ({ children, ...props }: React.ComponentProps<'pre'>) => {
       </div>
     </pre>
   )
-}
+})
+
+Pre.displayName = 'Pre'
 
 const CopyToClipboardButton = ({ text }: { text: string }) => {
   return (

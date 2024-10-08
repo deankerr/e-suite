@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { ComponentPropsWithoutRef, memo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
@@ -7,21 +7,19 @@ import { Code } from '@/components/markdown/Code'
 import { Pre } from '@/components/markdown/Pre'
 import { LinkBadge } from '@/components/message/LinkBadge'
 
-const Component = (props: { text?: string }) => {
-  if (!props.text) return null
-
+export const Markdown = memo(({ children }: { children?: string | null | undefined }) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
         a: ({ color: _, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
-        code: ({ children, className }) => <Code className={className}>{children}</Code>,
-        pre: ({ node, ...props }) => <Pre {...props} />,
+        code: (props: ComponentPropsWithoutRef<'code'>) => <Code {...props} />,
+        pre: (props: ComponentPropsWithoutRef<'pre'>) => <Pre {...props} />,
       }}
     >
-      {props.text}
+      {children}
     </ReactMarkdown>
   )
-}
+})
 
-export const Markdown = memo(Component)
+Markdown.displayName = 'Markdown'

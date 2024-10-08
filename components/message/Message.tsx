@@ -45,51 +45,53 @@ export const Message = ({
 
   const { isViewer } = useViewer(message.userId)
   const dropdownMenu = useMemo(
-    () =>
-      isViewer ? (
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <IconButton variant="ghost" size="1" color="gray" aria-label="More">
-              <RiMoreFill size={20} />
-            </IconButton>
-          </DropdownMenu.Trigger>
+    () => (
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          <IconButton variant="ghost" size="1" color="gray" aria-label="More">
+            <RiMoreFill size={20} />
+          </IconButton>
+        </DropdownMenu.Trigger>
 
-          <DropdownMenu.Content variant="soft">
-            <Link href={`/chats/${message.threadSlug}/${message.series}`}>
-              <DropdownMenu.Item>
-                <Icons.Share /> Link
+        <DropdownMenu.Content variant="soft">
+          <Link href={`/chats/${message.threadSlug}/${message.series}`}>
+            <DropdownMenu.Item>
+              <Icons.Share /> Link
+            </DropdownMenu.Item>
+          </Link>
+          <DropdownMenu.Item
+            onClick={() => {
+              navigator.clipboard.writeText(message._id)
+            }}
+          >
+            <Icons.Copy /> Copy message ID
+          </DropdownMenu.Item>
+          <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
+
+          {isViewer && (
+            <>
+              <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
+                {showEditor ? 'Cancel Edit' : 'Edit'}
               </DropdownMenu.Item>
-            </Link>
-
-            <DropdownMenu.Item
-              onClick={() => {
-                navigator.clipboard.writeText(message._id)
-              }}
-            >
-              <Icons.Copy /> Copy message ID
-            </DropdownMenu.Item>
-
-            <DropdownMenu.Item onClick={() => setShowEditor(!showEditor)}>
-              {showEditor ? 'Cancel Edit' : 'Edit'}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onClick={() => setShowJson(!showJson)}>Show JSON</DropdownMenu.Item>
-            <DropdownMenu.Item
-              color="red"
-              onClick={() => deleteMessage({ messageId: message._id })}
-            >
-              Delete
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      ) : null,
+              <DropdownMenu.Item
+                color="red"
+                onClick={() => deleteMessage({ messageId: message._id })}
+              >
+                Delete
+              </DropdownMenu.Item>
+            </>
+          )}
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+    ),
     [
-      deleteMessage,
-      isViewer,
       message.threadSlug,
       message.series,
       message._id,
+      isViewer,
       showEditor,
       showJson,
+      deleteMessage,
     ],
   )
 
@@ -130,7 +132,7 @@ export const Message = ({
         {!showEditor && text ? (
           <div className="temp-tui-md-root min-h-7 py-1">
             {/* => markdown text */}
-            <Markdown text={text} />
+            <Markdown>{text}</Markdown>
           </div>
         ) : null}
 

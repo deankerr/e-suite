@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Code as RadixCode } from '@radix-ui/themes'
 import { Highlight, themes } from 'prism-react-renderer'
 
-const MemoizedHighlight = memo(
+const SyntaxHighlighter = memo(
   (props: Omit<React.ComponentProps<typeof Highlight>, 'children'>) => {
     return (
       <Highlight theme={themes.gruvboxMaterialDark} {...props}>
@@ -24,17 +24,15 @@ const MemoizedHighlight = memo(
     )
   },
 )
-MemoizedHighlight.displayName = 'MemoizedHighlight'
+SyntaxHighlighter.displayName = 'SyntaxHighlighter'
 
-const CodeHighlighter = ({ children, className }: React.ComponentProps<'code'>) => {
+export const Code = memo(({ children, className }: React.ComponentProps<'code'>) => {
   const match = /language-(\w+)/.exec(className || '')
   const language = match?.[1] ?? ''
 
-  const code = children?.toString().replace(/\n$/, '')
-  if (!code) return null
-  if (!language && !code.includes('\n')) return <RadixCode>{code}</RadixCode>
+  const code = children?.toString() ?? ''
+  if (!code.includes('\n')) return <RadixCode>{code}</RadixCode>
 
-  return <MemoizedHighlight code={code} language={language} />
-}
-
-export const Code = memo(CodeHighlighter)
+  return <SyntaxHighlighter code={code} language={language} />
+})
+Code.displayName = 'Code'

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
@@ -16,7 +16,7 @@ export type ComposerSend = (args: {
   action: 'append' | 'run'
 }) => Promise<unknown>
 
-export const Composer = ({ threadId }: { threadId: string }) => {
+export const Composer = memo(({ threadId }: { threadId: string }) => {
   const thread = useThread(threadId)
   const actions = useThreadActions(thread?._id ?? '')
   const loading = actions.state !== 'ready'
@@ -66,7 +66,8 @@ export const Composer = ({ threadId }: { threadId: string }) => {
       </div>
     </div>
   )
-}
+})
+Composer.displayName = 'Composer'
 
 const Textarea = ({
   onChange,
