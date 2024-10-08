@@ -11,8 +11,8 @@ export const Markdown = memo(({ children }: { children?: string | null | undefin
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
-        a: ({ color: _, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
-        code: ({ color, ...props }) => <Code {...props} />,
+        a: ({ color, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
+        code: ({ color, ...props }) => <Code {...props} className="bg-transparent" />,
       }}
     >
       {children}
