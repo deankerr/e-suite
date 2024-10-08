@@ -31,6 +31,7 @@ import type * as db_collections from "../db/collections.js";
 import type * as db_generations from "../db/generations.js";
 import type * as db_helpers_kvMetadata from "../db/helpers/kvMetadata.js";
 import type * as db_helpers_messages from "../db/helpers/messages.js";
+import type * as db_helpers_runs from "../db/helpers/runs.js";
 import type * as db_helpers_threads from "../db/helpers/threads.js";
 import type * as db_images from "../db/images.js";
 import type * as db_messages from "../db/messages.js";
@@ -86,6 +87,7 @@ declare const fullApi: ApiFromModules<{
   "db/generations": typeof db_generations;
   "db/helpers/kvMetadata": typeof db_helpers_kvMetadata;
   "db/helpers/messages": typeof db_helpers_messages;
+  "db/helpers/runs": typeof db_helpers_runs;
   "db/helpers/threads": typeof db_helpers_threads;
   "db/images": typeof db_images;
   "db/messages": typeof db_messages;

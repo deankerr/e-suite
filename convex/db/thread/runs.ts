@@ -3,31 +3,12 @@ import { ConvexError, v } from 'convex/values'
 
 import { internal } from '../../_generated/api'
 import { mutation, query } from '../../functions'
-import { modelParametersFields, runFields } from '../../schema'
+import { modelParametersFields } from '../../schema'
 import { updateKvMetadata } from '../helpers/kvMetadata'
 import { createMessage, messageCreateFields } from '../helpers/messages'
+import { runReturnFields } from '../helpers/runs'
 import { getThread } from '../helpers/threads'
 import { getOrCreateUserThread } from '../threads'
-
-const textMessagesReturn = v.object({
-  _id: v.id('texts'),
-  _creationTime: v.number(),
-  title: v.optional(v.string()),
-  content: v.string(),
-  type: v.string(),
-  userId: v.id('users'),
-  updatedAt: v.number(),
-  runId: v.optional(v.id('runs')),
-})
-
-const runReturnFields = {
-  ...runFields,
-  _id: v.id('runs'),
-  _creationTime: v.number(),
-  threadId: v.id('threads'),
-  userId: v.id('users'),
-  texts: v.optional(v.array(textMessagesReturn)),
-}
 
 export const create = mutation({
   args: {

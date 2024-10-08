@@ -3,8 +3,8 @@ import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
 
 import { internalMutation, query } from '../functions'
-import { runFields } from '../schema'
 import { createMessage } from './helpers/messages'
+import { runReturnFields } from './helpers/runs'
 
 import type { MutationCtx } from '../types'
 
@@ -13,15 +13,10 @@ export const get = query({
     runId: v.id('runs'),
   },
   handler: async (ctx, { runId }) => {
-    return await ctx.table('runs').get(runId)
+    const run = await ctx.table('runs').get(runId)
+    return run ? { ...run, providerMetadata: undefined } : run
   },
-  returns: nullable(
-    v.object({
-      ...runFields,
-      threadId: v.id('threads'),
-      userId: v.id('users'),
-    }),
-  ),
+  returns: nullable(v.object(runReturnFields)),
 })
 
 export const activate = internalMutation({
