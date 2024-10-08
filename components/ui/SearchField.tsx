@@ -1,8 +1,8 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 
+import { cn } from '@/app/lib/utils'
 import { IconButton } from '@/components/ui/Button'
 import { TextField, TextFieldSlot } from '@/components/ui/TextField'
-import { cn } from '@/lib/utils'
 
 export const SearchField = (props: React.ComponentProps<typeof TextField>) => {
   return (

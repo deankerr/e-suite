@@ -4,9 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { EndpointBadge, endpointTokens } from '@/app/admin/Badges'
+import { cn } from '@/app/lib/utils'
 import { SkeletonPulse } from '@/components/ui/Skeleton'
 import { getURLIfValid } from '@/convex/shared/helpers'
-import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/types'
 import type { StaticImport } from 'next/dist/shared/lib/get-img-props'

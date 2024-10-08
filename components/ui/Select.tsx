@@ -5,7 +5,7 @@ import { CaretSortIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { Theme } from '@radix-ui/themes'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 const Select = SelectPrimitive.Root
 

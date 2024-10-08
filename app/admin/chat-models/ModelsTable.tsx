@@ -2,8 +2,8 @@ import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { Table } from '@radix-ui/themes'
 
+import { cn } from '@/app/lib/utils'
 import { ModelLogo } from '@/components/icons/ModelLogo'
-import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/types'
 

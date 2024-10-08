@@ -4,7 +4,7 @@ import svgToDataUri from 'mini-svg-data-uri'
 import { fontFamily } from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
 
-import radixColors from './lib/radix-colors'
+import radixColors from './config/radix-colors'
 
 import type { Config } from 'tailwindcss'
 
@@ -218,9 +218,6 @@ const config: Config = {
         scanlinesDown: 'scanlinesDown 20s linear infinite',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-      },
-      boxShadow: {
-        glow: '0 0 10px 0px #ff720021, 0 0 5px 0px #ff720021',
       },
     },
   },

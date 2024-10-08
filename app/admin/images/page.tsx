@@ -3,11 +3,11 @@
 import { usePaginatedQuery } from 'convex/react'
 
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
+import { cn } from '@/app/lib/utils'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Loader } from '@/components/ui/Loader'
 import { api } from '@/convex/_generated/api'
-import { cn } from '@/lib/utils'
 
 export default function Page() {
   const imagesQuery = usePaginatedQuery(api.db.admin.see.latestImages, {}, { initialNumItems: 50 })

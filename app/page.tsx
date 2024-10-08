@@ -3,8 +3,10 @@ import { Panel } from '@/components/ui/Panel'
 
 export default function Page() {
   return (
-    <Panel>
-      <BlankPage />
-    </Panel>
+    <div className="w-full bg-grid-redA7">
+      {/* <Panel>
+        <BlankPage />
+      </Panel> */}
+    </div>
   )
 }

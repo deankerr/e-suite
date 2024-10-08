@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Theme } from '@radix-ui/themes'
 import { Drawer as DrawerPrimitive } from 'vaul'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 const Drawer = ({
   shouldScaleBackground = true,
@@ -47,7 +47,7 @@ const DrawerContent = React.forwardRef<
         )}
         {...props}
       >
-        <div className="bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full" />
+        <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
         {children}
       </DrawerPrimitive.Content>
     </Theme>

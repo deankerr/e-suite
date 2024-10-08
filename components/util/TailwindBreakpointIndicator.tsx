@@ -2,8 +2,8 @@
 
 import { useWindowSize } from '@react-hookz/web'
 
+import { cn } from '@/app/lib/utils'
 import { ClientOnly } from '@/components/util/ClientOnly'
-import { cn } from '@/lib/utils'
 
 export function TailwindBreakpointIndicator() {
   const { width, height } = useWindowSize()

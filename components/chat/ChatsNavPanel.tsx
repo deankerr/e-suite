@@ -8,11 +8,11 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import { useThreads } from '@/app/lib/api/threads'
+import { cn } from '@/app/lib/utils'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
-import { cn } from '@/lib/utils'
 import { SearchField } from '../ui/SearchField'
 
 export const ChatsNavPanel = () => {

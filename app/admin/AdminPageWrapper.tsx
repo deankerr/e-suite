@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 export const AdminPageWrapper = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (

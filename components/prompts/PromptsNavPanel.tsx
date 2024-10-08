@@ -5,11 +5,11 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import { usePrompts } from '@/app/lib/api/prompts'
+import { cn } from '@/app/lib/utils'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Button } from '@/components/ui/Button'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
-import { cn } from '@/lib/utils'
 
 export const PromptsNavPanel = () => {
   const params = useParams()

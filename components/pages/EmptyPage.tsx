@@ -1,7 +1,7 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 
+import { cn } from '@/app/lib/utils'
 import { Link } from '@/components/ui/Link'
-import { cn } from '@/lib/utils'
 
 export const EmptyPage = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (

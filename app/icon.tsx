@@ -1,7 +1,7 @@
 import svgToDataUri from 'mini-svg-data-uri'
 import { ImageResponse } from 'next/og'
 
-import { environment } from '@/lib/utils'
+import { environment } from '@/app/lib/utils'
 
 export const runtime = 'edge'
 

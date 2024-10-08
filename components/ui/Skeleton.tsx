@@ -1,4 +1,4 @@
-import { cn, twx } from '@/lib/utils'
+import { cn, twx } from '@/app/lib/utils'
 
 export function SkeletonPulse({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (

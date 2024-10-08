@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Tooltip } from '@radix-ui/themes'
 
-import { useIsClient } from '@/lib/useIsClient'
+import { useIsClient } from '@/app/lib/useIsClient'
 
 export const TimeSince = ({ time }: { time: number }) => {
   const isClient = useIsClient()

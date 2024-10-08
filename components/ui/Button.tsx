@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import { Button as RadixButton, IconButton as RadixIconButton } from '@radix-ui/themes'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 import type { SetRequired } from 'type-fest'
 

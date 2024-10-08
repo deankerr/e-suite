@@ -3,9 +3,9 @@
 import { Card, DataList } from '@radix-ui/themes'
 import Link from 'next/link'
 
+import { cn } from '@/app/lib/utils'
 import { IImage } from '@/components/images/IImage'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
-import { cn } from '@/lib/utils'
 
 import type { EImage } from '@/convex/types'
 

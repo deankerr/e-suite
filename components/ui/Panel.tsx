@@ -1,8 +1,8 @@
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import NextLink from 'next/link'
 
+import { twx } from '@/app/lib/utils'
 import { Link } from '@/components/ui/Link'
-import { twx } from '@/lib/utils'
 import { Loader } from './Loader'
 
 export const Panel = twx.div`flex h-full w-full flex-col text-sm overflow-hidden bg-gray-1 md:rounded-md md:border`

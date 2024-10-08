@@ -4,7 +4,7 @@ import { forwardRef } from 'react'
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { Command as CommandPrimitive } from 'cmdk'
 
-import { cn, twx } from '@/lib/utils'
+import { cn, twx } from '@/app/lib/utils'
 
 const Command = twx(
   CommandPrimitive,

@@ -7,7 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Play, useHowl } from 'rehowl'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 import MeshBg from './AudiPlayerMeshBg.svg'
 
 export default function AudioPlayer({ url, titleText }: { url: string; titleText: string }) {

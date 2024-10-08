@@ -5,10 +5,10 @@ import { Authenticated } from 'convex/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { cn } from '@/app/lib/utils'
 import { AppLogo } from '@/components/icons/AppLogo'
 import { UserButtons } from '@/components/layout/UserButtons'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
-import { cn } from '@/lib/utils'
 
 const NavItem = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof Link>) => {
   const pathname = usePathname()

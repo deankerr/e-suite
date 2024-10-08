@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import { useThreadTextSearchResults } from '@/app/lib/api/threads'
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 import { FishFoodIcon } from '../icons/FishFoodIcon'
 import { Message } from '../message/Message'
 import { Loader } from '../ui/Loader'

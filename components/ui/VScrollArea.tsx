@@ -1,6 +1,6 @@
 import { ScrollArea } from '@radix-ui/themes'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 export const VScrollArea = ({
   children,

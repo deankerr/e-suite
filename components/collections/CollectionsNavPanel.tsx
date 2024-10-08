@@ -6,11 +6,11 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import { useCollections } from '@/app/lib/api/collections'
+import { cn } from '@/app/lib/utils'
 import { CreateCollectionDialog } from '@/components/collections/dialogs'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
-import { cn } from '@/lib/utils'
 
 export const CollectionsNavPanel = () => {
   const collections = useCollections()

@@ -6,8 +6,8 @@ import * as SheetPrimitive from '@radix-ui/react-dialog'
 import { Theme } from '@radix-ui/themes'
 import { cva } from 'class-variance-authority'
 
+import { cn } from '@/app/lib/utils'
 import { IconButton } from '@/components/ui/Button'
-import { cn } from '@/lib/utils'
 
 import type { VariantProps } from 'class-variance-authority'
 

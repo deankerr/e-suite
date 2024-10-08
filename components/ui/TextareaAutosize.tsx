@@ -1,6 +1,6 @@
 import ReactTextareaAutosize from 'react-textarea-autosize'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 export const TextareaAutosize = ({
   className,

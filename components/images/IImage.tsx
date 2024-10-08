@@ -3,7 +3,7 @@
 import { forwardRef } from 'react'
 import NextImage from 'next/image'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/app/lib/utils'
 
 import type { EImage } from '@/convex/types'
 

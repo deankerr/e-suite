@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Dialog } from '@radix-ui/themes'
 
 import { useChatModels } from '@/app/lib/api/models'
+import { cn } from '@/app/lib/utils'
 import { CmdK } from '@/components/command/CmdK'
 import { ModelLogo } from '@/components/icons/ModelLogo'
-import { cn } from '@/lib/utils'
 
 import type { EChatModel } from '@/convex/types'
 
