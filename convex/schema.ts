@@ -1,6 +1,6 @@
 import { defineEnt, defineEntFromTable, defineEntSchema, getEntDefinitions } from 'convex-ents'
 import { migrationsTable } from 'convex-helpers/server/migrations'
-import { literals } from 'convex-helpers/validators'
+import { deprecated, literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 import { ms } from 'itty-time'
 
@@ -219,7 +219,7 @@ const messages = defineEnt(messageFields)
 export const threadFields = {
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  latestRunConfig: v.optional(v.any()),
+  latestRunConfig: deprecated,
   favourite: v.optional(v.boolean()),
   kvMetadata: v.optional(v.record(v.string(), v.string())),
 

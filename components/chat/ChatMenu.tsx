@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
-import { usePathname, useRouter } from 'next/navigation'
 
 import { useThread } from '@/app/lib/api/threads'
 import { DeleteThreadDialog, EditThreadTitleDialog } from '@/components/chat/dialogs'
@@ -12,9 +11,6 @@ import { IconButton } from '@/components/ui/Button'
 
 export const ChatMenu = ({ threadId }: { threadId: string }) => {
   const thread = useThread(threadId)
-  const pathname = usePathname()
-  const router = useRouter()
-  const route = pathname.split('/')[1]
 
   const [showEditTitleDialog, setShowEditTitleDialog] = useState(false)
   const [showDeleteThreadDialog, setShowDeleteThreadDialog] = useState(false)

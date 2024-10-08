@@ -1,3 +1,4 @@
+import { omit } from 'convex-helpers'
 import { ConvexError, v } from 'convex/values'
 
 import { getUserPublicX, userReturnFieldsPublic } from '../users'
@@ -11,7 +12,6 @@ export const threadReturnFields = {
   _creationTime: v.number(),
   title: v.optional(v.string()),
   instructions: v.optional(v.string()),
-  latestRunConfig: v.optional(v.any()),
   favourite: v.optional(v.boolean()),
   kvMetadata: v.record(v.string(), v.string()),
   updatedAtTime: v.number(),
@@ -30,7 +30,7 @@ export const getThread = async (ctx: QueryCtx, xid: string) => {
   const thread = id
     ? await ctx.table('threads').get(id)
     : await ctx.table('threads', 'slug', (q) => q.eq('slug', xid)).unique()
-  return thread && !thread.deletionTime ? thread : null
+  return thread && !thread.deletionTime ? omit(thread, ['latestRunConfig']) : null
 }
 
 export const getThreadX = async (ctx: QueryCtx, xid: string) => {
