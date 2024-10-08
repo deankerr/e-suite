@@ -1,26 +1,3 @@
-/* running indicator */
-:where(.temp-tui-md-running):empty::after,
-:where(.temp-tui-md-running) > :where(:not(ol):not(ul):not(pre)):last-child::after,
-:where(.temp-tui-md-running) > pre:last-child code::after,
-:where(.temp-tui-md-running)
-  > :where(:is(ol, ul):last-child)
-  > :where(li:last-child:not(:has(* > li)))::after,
-:where(.temp-tui-md-running)
-  > :where(:is(ol, ul):last-child)
-  > :where(li:last-child)
-  > :where(:is(ol, ul):last-child)
-  > :where(li:last-child:not(:has(* > li)))::after,
-:where(.temp-tui-md-running)
-  > :where(:is(ol, ul):last-child)
-  > :where(li:last-child)
-  > :where(:is(ol, ul):last-child)
-  > :where(li:last-child)
-  > :where(:is(ol, ul):last-child)
-  > :where(li:last-child)::after {
-  @apply animate-pulse font-sans content-['\25CF'] ltr:ml-1 rtl:mr-1;
-}
-/* typography */
-
 .temp-tui-md-root h1 {
   @apply mb-8 scroll-m-20 text-4xl font-bold tracking-tight last:mb-0;
 }
@@ -95,19 +72,19 @@
 }
 
 .temp-tui-md-root pre {
-  /* @apply overflow-x-auto rounded-b-lg bg-black p-4 text-white; */
-  @apply overflow-x-auto rounded-b-lg text-white;
+  @apply overflow-x-auto rounded border p-2;
 }
 
+/* 
 .temp-tui-md-root > code,
 .temp-tui-md-root :not(:where(pre)) code {
   @apply m-0 rounded border bg-gray-2 font-semibold;
-}
+} */
 
-.temp-tui-code-header-root {
+/* .temp-tui-code-header-root {
   @apply flex items-center justify-between gap-4 rounded-t-lg bg-gray-3 px-4 py-2 text-sm font-semibold text-white;
 }
 
 .temp-tui-code-header-language {
   @apply lowercase [&>span]:text-xs;
-}
+} */

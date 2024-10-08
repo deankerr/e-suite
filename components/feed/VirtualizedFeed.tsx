@@ -109,8 +109,8 @@ export function VirtualizedFeed<T extends Item>({
       atBottomStateChange={handleAtBottomStateChange}
       atTopThreshold={reachThreshold}
       atBottomThreshold={reachThreshold}
-      // overscan={5}
-      increaseViewportBy={1000}
+      overscan={5000}
+      // increaseViewportBy={1000}
       logLevel={LogLevel.DEBUG}
     />
   )

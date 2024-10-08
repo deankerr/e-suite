@@ -113,7 +113,7 @@ export const useMessageFeedQuery = (threadId: string) => {
     api.db.thread.messages.search,
     { threadId },
     {
-      initialNumItems: appConfig.nInitialMessages,
+      initialNumItems: 25,
     },
   )
 

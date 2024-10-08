@@ -105,6 +105,7 @@ export const Message = ({
         message.threadSlug === 'streaming' && 'bg-grayA-2',
         className,
       )}
+      style={{ contain: 'paint' }}
     >
       {/* > timeline */}
       <div className={cn('flex w-4 shrink-0 justify-center', hideTimeline && 'hidden')}>

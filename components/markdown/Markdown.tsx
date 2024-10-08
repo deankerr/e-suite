@@ -1,10 +1,9 @@
-import { ComponentPropsWithoutRef, memo } from 'react'
+import { memo } from 'react'
+import { Code } from '@radix-ui/themes'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
-import { Code } from '@/components/markdown/Code'
-import { Pre } from '@/components/markdown/Pre'
 import { LinkBadge } from '@/components/message/LinkBadge'
 
 export const Markdown = memo(({ children }: { children?: string | null | undefined }) => {
@@ -13,8 +12,7 @@ export const Markdown = memo(({ children }: { children?: string | null | undefin
       remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
         a: ({ color: _, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
-        code: (props: ComponentPropsWithoutRef<'code'>) => <Code {...props} />,
-        pre: (props: ComponentPropsWithoutRef<'pre'>) => <Pre {...props} />,
+        code: ({ color, ...props }) => <Code {...props} />,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import { ScrollArea } from '@radix-ui/themes'
 
-import { cn } from '@/app/lib/utils'
+import { cn, twx } from '@/app/lib/utils'
 
 export const VScrollArea = ({
   children,
@@ -17,3 +17,7 @@ export const VScrollArea = ({
     </ScrollArea>
   )
 }
+
+export const ScrollAreaVertical = twx(ScrollArea).attrs({
+  scrollbars: 'vertical',
+})`grow [&>div>div]:max-w-full`
