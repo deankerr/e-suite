@@ -61,7 +61,7 @@ export const useThreadActions = (threadId: string) => {
 
       try {
         console.log('createRun', args)
-        const result = await sendCreateRun({ ...args, threadId: threadId ?? 'new', stream: false })
+        const result = await sendCreateRun({ ...args, threadId: threadId ?? 'new', stream: true })
 
         setActionState('rateLimited')
         reset()
@@ -90,7 +90,10 @@ export const useThreadActions = (threadId: string) => {
       }
 
       if (action === 'append') return append({ message })
-      else return createRun({ appendMessages: [message], model, stream: true })
+      else {
+        const appendMessages = text ? [message] : undefined
+        return createRun({ appendMessages, model, stream: true })
+      }
     },
     [append, createRun],
   )

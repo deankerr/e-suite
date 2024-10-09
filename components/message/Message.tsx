@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
 import { RiMoreFill } from '@remixicon/react'
+import { useQuery } from 'convex-helpers/react/cache/hooks'
 import Link from 'next/link'
 
 import { useDeleteMessage } from '@/app/lib/api/threads'
@@ -13,29 +14,25 @@ import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { IconButton } from '@/components/ui/Button'
+import { api } from '@/convex/_generated/api'
 import { getMessageName } from '@/convex/shared/helpers'
 import { Loader } from '../ui/Loader'
 import { TimeSince } from './TimeSince'
 
 import type { EMessage } from '@/convex/types'
 
+function getKV(kvMetadata: Record<string, string> | undefined, key: string) {
+  return kvMetadata?.[key]
+}
+
 export const Message = ({
   message,
-  deepLinkUrl,
   hideTimeline = false,
-  priority = false,
-  withText,
-  className,
-  ...props
 }: {
   message: EMessage
-  deepLinkUrl?: string
   hideTimeline?: boolean
-  priority?: boolean
-  withText?: string
-} & React.ComponentProps<'div'>) => {
+}) => {
   const name = getMessageName(message) || message.role
-  const text = message.text
   const marbleProps = useMarbleProperties(name)
 
   const [showJson, setShowJson] = useState(false)
@@ -43,7 +40,15 @@ export const Message = ({
 
   const deleteMessage = useDeleteMessage()
 
+  const runHint = getKV(message.kvMetadata, 'esuite:run-hint') ?? 'done'
+  const runId = message.runId && runHint !== 'done' ? message.runId : undefined
+  const textStreams = useQuery(api.db.thread.runs.getTextStreams, runId ? { runId } : 'skip')
+  const text = message.text ?? textStreams?.[0]?.content
+  const showRunIndicator = runId && !text
+
   const { isViewer } = useViewer(message.userId)
+  const hasSVG = text && text.includes('```svg\n<svg')
+
   const dropdownMenu = useMemo(
     () => (
       <DropdownMenu.Root>
@@ -97,13 +102,10 @@ export const Message = ({
 
   return (
     <div
-      {...props}
       className={cn(
         'flex min-h-7 w-full shrink-0 pr-2 @container/message',
         'rounded border border-transparent',
         showEditor && 'border-dashed border-accentA-7 hover:border-accentA-8',
-        message.threadSlug === 'streaming' && 'bg-grayA-2',
-        className,
       )}
       style={{ contain: 'paint' }}
     >
@@ -128,6 +130,14 @@ export const Message = ({
 
           {/* => menu */}
           {dropdownMenu}
+
+          {hasSVG && (
+            <Link href={`/drawing/${message._id}`} target="_blank">
+              <IconButton variant="ghost" color="gray" size="1" aria-label="Open SVG">
+                <Icons.Graph size={18} />
+              </IconButton>
+            </Link>
+          )}
         </div>
 
         {!showEditor && text ? (
@@ -154,7 +164,7 @@ export const Message = ({
         ) : null}
 
         {/* => loading ping  */}
-        {message.threadSlug === 'waiting' && (
+        {showRunIndicator && (
           <div className="p-1">
             <Loader type="ping" color={marbleProps[0].color} />
           </div>

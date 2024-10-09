@@ -28,7 +28,7 @@ export const create = mutation({
 
     appendMessages: v.optional(v.array(v.object(messageCreateFields))),
   },
-  handler: async (ctx, { threadId, appendMessages = [], ...args }) => {
+  handler: async (ctx, { threadId, appendMessages = [], instructions, ...args }) => {
     const thread = await getOrCreateUserThread(ctx, threadId)
     if (!thread) throw new ConvexError('invalid thread id')
 
@@ -53,6 +53,7 @@ export const create = mutation({
       ...args,
       threadId: thread._id,
       userId: thread.userId,
+      instructions: instructions ?? thread.instructions,
 
       status: 'queued',
       updatedAt: Date.now(),
@@ -99,4 +100,21 @@ export const list = query({
     return runs
   },
   returns: nullable(v.array(v.object(runReturnFields))),
+})
+
+export const getTextStreams = query({
+  args: {
+    runId: v.id('runs'),
+  },
+  handler: async (ctx, { runId }) => {
+    const run = await ctx.table('runs').get(runId)
+    if (!run) return []
+
+    const texts = await ctx
+      .table('texts', 'runId', (q) => q.eq('runId', run._id))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
+      .map((text) => ({ content: text.content, _id: text._id }))
+    return texts
+  },
+  returns: v.array(v.object({ content: v.string(), _id: v.id('texts') })),
 })

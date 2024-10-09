@@ -10,14 +10,16 @@ import { appConfig } from '@/config/config'
 export const MessageFeed = ({ threadId }: { threadId: string }) => {
   const { results, loadMore, status } = useMessageFeedQuery(threadId)
 
-  const streamingMessages = useStreamingMessages(threadId) ?? []
+  // const streamingMessages = useStreamingMessages(threadId) ?? []
 
-  const messages = [
-    ...results,
-    ...streamingMessages.filter(
-      (streamingMessage) => !results.findLast((result) => result.runId === streamingMessage.runId),
-    ),
-  ]
+  // const messages = [
+  //   ...results,
+  //   ...streamingMessages.filter(
+  //     (streamingMessage) => !results.findLast((result) => result.runId === streamingMessage.runId),
+  //   ),
+  // ]
+
+  const messages = results
 
   if (status === 'LoadingFirstPage' && threadId !== 'new')
     return (

@@ -6,7 +6,7 @@ import { internalMutation, query } from '../functions'
 import { createMessage } from './helpers/messages'
 import { runReturnFields } from './helpers/runs'
 
-import type { MutationCtx } from '../types'
+import type { Ent, MutationCtx } from '../types'
 
 export const get = query({
   args: {
@@ -26,12 +26,6 @@ export const activate = internalMutation({
   handler: async (ctx, { runId }) => {
     const run = await ctx.skipRules.table('runs').getX(runId)
     if (run.status !== 'queued') throw new ConvexError({ message: 'run is not queued', runId })
-
-    await run.patch({
-      status: 'active',
-      updatedAt: Date.now(),
-      startedAt: Date.now(),
-    })
 
     const limit = run.maxMessages ?? 20
 
@@ -64,6 +58,28 @@ export const activate = internalMutation({
 
     const thread = await ctx.table('threads').getX(run.threadId)
 
+    // * response message
+    const message = await createMessage(
+      ctx,
+      {
+        threadId: run.threadId,
+        userId: run.userId,
+        role: 'assistant',
+        runId,
+        kvMetadata: {
+          'esuite:run-hint': run.stream ? 'streaming' : 'non-streaming',
+        },
+      },
+      { skipRules: true },
+    )
+
+    await run.patch({
+      status: 'active',
+      updatedAt: Date.now(),
+      startedAt: Date.now(),
+      messageId: message._id,
+    })
+
     return {
       run: run.doc(),
       messages: messages.reverse(),
@@ -71,6 +87,22 @@ export const activate = internalMutation({
     }
   },
 })
+
+async function getOrCreateRunMessage(ctx: MutationCtx, run: Ent<'runs'>) {
+  const runMessage = run.messageId ? await ctx.skipRules.table('messages').get(run.messageId) : null
+  if (runMessage) return runMessage
+
+  return await createMessage(
+    ctx,
+    {
+      threadId: run.threadId,
+      userId: run.userId,
+      role: 'assistant',
+      runId: run._id,
+    },
+    { skipRules: true },
+  )
+}
 
 export const complete = internalMutation({
   args: {
@@ -87,22 +119,21 @@ export const complete = internalMutation({
     const run = await ctx.skipRules.table('runs').getX(runId)
     if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
 
-    const message = await createMessage(
-      ctx,
-      {
-        threadId: run.threadId,
-        userId: run.userId,
-        role: 'assistant',
-        text,
-        runId,
-      },
-      { skipRules: true },
-    )
-
     const cost = await getInferenceCost(ctx, {
       promptTokens: usage.promptTokens,
       completionTokens: usage.completionTokens,
       model: run.model,
+    })
+
+    const runMessage = await getOrCreateRunMessage(ctx, run)
+
+    const kvMetadata = runMessage.kvMetadata ?? {}
+    await runMessage.patch({
+      text,
+      kvMetadata: {
+        ...kvMetadata,
+        'esuite:run-hint': 'done',
+      },
     })
 
     await run.patch({
@@ -112,7 +143,7 @@ export const complete = internalMutation({
       finishReason,
       usage,
       cost,
-      messageId: message._id,
+      messageId: runMessage._id,
     })
   },
 })
@@ -162,6 +193,14 @@ export const fail = internalMutation({
       endedAt: Date.now(),
       errors,
     })
+
+    if (run.messageId) {
+      try {
+        await ctx.skipRules.table('messages').getX(run.messageId).delete()
+      } catch (err) {
+        console.error('Failed to delete run message', err)
+      }
+    }
   },
 })
 
