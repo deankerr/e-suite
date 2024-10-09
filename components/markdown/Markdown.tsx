@@ -12,7 +12,7 @@ export const Markdown = memo(({ children }: { children?: string | null | undefin
       remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
         a: ({ color, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
-        code: ({ color, ...props }) => <Code {...props} className="bg-transparent" />,
+        code: ({ color, ...props }) => <Code {...props} color="gold" className="bg-transparent" />,
       }}
     >
       {children}

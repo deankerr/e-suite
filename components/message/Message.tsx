@@ -8,7 +8,6 @@ import { useDeleteMessage, useMessageTextStream } from '@/app/lib/api/threads'
 import { useViewer } from '@/app/lib/api/users'
 import { cn } from '@/app/lib/utils'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
-import { useMarbleProperties } from '@/components/marble-avatar/Marble'
 import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
 import { MessageEditor } from '@/components/message/MessageEditor'
@@ -22,6 +21,15 @@ import type { EMessage } from '@/convex/types'
 function getKV(kvMetadata: Record<string, string> | undefined, key: string) {
   return kvMetadata?.[`esuite:${key}`]
 }
+
+const accentColors: Record<string, string> = {
+  assistant: '#d86518',
+  system: '#ffc53d', // amber-9
+  user: '#29a383', // mint-9
+  tool: '#46a758', // grass-9
+}
+
+const accentColorFallback = '#29a383' // jade-9
 
 export const Message = ({
   message,
@@ -38,7 +46,7 @@ export const Message = ({
 
   const name = role === 'assistant' ? assistantName : getMessageName(message) || message.role
 
-  const marbleProps = useMarbleProperties(getMessageName(message))
+  const accentColor = accentColors[role] ?? accentColorFallback
 
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
@@ -48,7 +56,7 @@ export const Message = ({
   const runId = getKV(kv, 'run:hint') ? message.runId : undefined
   const textStream = useMessageTextStream(runId)
   const text = message.text ?? textStream
-  const showRunIndicator = runId && !text
+  const showRunIndicator = runId && text === undefined
 
   const { isViewer } = useViewer(message.userId)
   const hasSVG = text && text.includes('```svg\n<svg')
@@ -115,17 +123,14 @@ export const Message = ({
     >
       {/* > timeline */}
       <div className={cn('flex w-4 shrink-0 justify-center', hideTimeline && 'hidden')}>
-        <div
-          className="absolute inset-y-1 w-px"
-          style={{ backgroundColor: marbleProps[0].color }}
-        />
+        <div className="absolute inset-y-1 w-px" style={{ backgroundColor: accentColor }} />
       </div>
 
       {/* > content */}
       <div className="grow">
         <div className="flex-start gap-1">
           {/* => name */}
-          <div className="brightness-125 saturate-[.75]" style={{ color: marbleProps[0].color }}>
+          <div className="brightness-125 saturate-[.75]" style={{ color: accentColor }}>
             {name}
           </div>
           <div className="w-6 text-center text-gray-10">
@@ -170,7 +175,7 @@ export const Message = ({
         {/* => loading ping  */}
         {showRunIndicator && (
           <div className="p-1">
-            <Loader type="ping" color={marbleProps[0].color} />
+            <Loader type="ping" color={accentColor} />
           </div>
         )}
 

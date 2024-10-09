@@ -20,4 +20,9 @@ export const colors = [
   '#30a46c', // green-9
   '#f76b15', // orange-9
   '#e93d82', // crimson-9
+  '#978365', // gold-9
+  '#AD7F58', // brown-9
+  '#6F5F58', // bronze-9
+  '#86EAD4', // mint-9
+  '#BDEE63', // lime-9
 ]

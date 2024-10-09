@@ -260,5 +260,5 @@
 }
 
 .markdown-root pre {
-  @apply overflow-x-auto rounded border border-accentA-3 bg-accent-2 p-2;
+  @apply overflow-x-auto rounded border bg-gray-2 p-2;
 }
