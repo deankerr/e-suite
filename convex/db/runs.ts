@@ -1,12 +1,14 @@
-import { omit } from 'convex-helpers'
 import { nullable } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
 
 import { internalMutation, query } from '../functions'
+import { updateKvMetadata } from './helpers/kvMetadata'
 import { createMessage } from './helpers/messages'
 import { runReturnFields } from './helpers/runs'
+import { getChatModel } from './models'
 
+import type { Doc } from '../_generated/dataModel'
 import type { Ent, MutationCtx } from '../types'
 
 export const get = query({
@@ -68,7 +70,8 @@ export const activate = internalMutation({
         role: 'assistant',
         runId,
         kvMetadata: {
-          'esuite:run-hint': run.stream ? 'stream' : 'non-stream',
+          'esuite:run:hint': run.stream ? 'stream' : 'non-stream',
+          'esuite:run:model-id': run.model.id,
         },
       },
       { skipRules: true },
@@ -120,19 +123,28 @@ export const complete = internalMutation({
     const run = await ctx.skipRules.table('runs').getX(runId)
     if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
 
-    const cost = await getInferenceCost(ctx, {
-      promptTokens: usage.promptTokens,
-      completionTokens: usage.completionTokens,
-      model: run.model,
-    })
+    const chatModel = await getChatModel(ctx, run.model.id)
 
     const runMessage = await getOrCreateRunMessage(ctx, run)
-
     const kvMetadata = runMessage.kvMetadata ?? {}
     await runMessage.patch({
       text,
-      kvMetadata: omit(kvMetadata, ['esuite:run-hint']),
+      kvMetadata: updateKvMetadata(kvMetadata, {
+        delete: ['esuite:run-hint'],
+        set: {
+          'esuite:run:model-id': run.model.id,
+          'esuite:run:model-name': chatModel?.name,
+        },
+      }),
     })
+
+    const cost = chatModel
+      ? getInferenceCost({
+          promptTokens: usage.promptTokens,
+          completionTokens: usage.completionTokens,
+          model: chatModel,
+        })
+      : undefined
 
     await run.patch({
       status: 'done',
@@ -146,32 +158,19 @@ export const complete = internalMutation({
   },
 })
 
-async function getInferenceCost(
-  ctx: MutationCtx,
-  {
-    promptTokens,
-    completionTokens,
-    model,
-  }: { promptTokens: number; completionTokens: number; model: { id: string; provider: string } },
-) {
-  try {
-    const chatModel = await ctx
-      .table('chat_models')
-      .filter((q) =>
-        q.and(q.eq(q.field('modelId'), model.id), q.eq(q.field('provider'), model.provider)),
-      )
-      .first()
-    if (!chatModel) return
-
-    return (
-      (promptTokens * chatModel.pricing.tokenInput +
-        completionTokens * chatModel.pricing.tokenOutput) /
-      1_000_000
-    )
-  } catch (err) {
-    console.error(err)
-    return
-  }
+function getInferenceCost({
+  promptTokens,
+  completionTokens,
+  model,
+}: {
+  promptTokens: number
+  completionTokens: number
+  model: Doc<'chat_models'>
+}) {
+  return (
+    (promptTokens * model.pricing.tokenInput + completionTokens * model.pricing.tokenOutput) /
+    1_000_000
+  )
 }
 
 export const fail = internalMutation({

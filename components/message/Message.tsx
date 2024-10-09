@@ -20,7 +20,7 @@ import { TimeSince } from './TimeSince'
 import type { EMessage } from '@/convex/types'
 
 function getKV(kvMetadata: Record<string, string> | undefined, key: string) {
-  return kvMetadata?.[key]
+  return kvMetadata?.[`esuite:${key}`]
 }
 
 export const Message = ({
@@ -30,16 +30,22 @@ export const Message = ({
   message: EMessage
   hideTimeline?: boolean
 }) => {
-  const name = getMessageName(message) || message.role
-  const marbleProps = useMarbleProperties(name)
+  const { role, kvMetadata: kv } = message
+
+  const modelId = getKV(kv, 'run:model-id')
+  const modelName = getKV(kv, 'run:model-name')
+  const assistantName = message.name ?? modelName ?? modelId ?? 'Assistant'
+
+  const name = role === 'assistant' ? assistantName : getMessageName(message) || message.role
+
+  const marbleProps = useMarbleProperties(getMessageName(message))
 
   const [showJson, setShowJson] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
   const deleteMessage = useDeleteMessage()
 
-  const runHint = getKV(message.kvMetadata, 'esuite:run-hint')
-  const runId = runHint === 'stream' ? message.runId : undefined
+  const runId = getKV(kv, 'run:hint') ? message.runId : undefined
   const textStream = useMessageTextStream(runId)
   const text = message.text ?? textStream
   const showRunIndicator = runId && !text

@@ -15,6 +15,14 @@ export const getChatModelByResourceKey = async (ctx: QueryCtx, resourceKey: stri
   return { ...model, description: '' }
 }
 
+export const getChatModel = async (ctx: QueryCtx, modelId: string) => {
+  const model = await ctx
+    .table('chat_models')
+    .filter((q) => q.eq(q.field('modelId'), modelId))
+    .first()
+  return model
+}
+
 export const listChatModels = query({
   args: {},
   handler: async (ctx) => {
