@@ -1,6 +1,6 @@
 'use client'
 
-import { useMessage } from '@/app/lib/api/threads'
+import { useMessage } from '@/app/lib/api/messages'
 import { MessageV1 } from '@/components/message/MessageV1'
 import { Panel, PanelEmpty, PanelLoading } from '@/components/ui/Panel'
 

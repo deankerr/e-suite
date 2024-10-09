@@ -72,10 +72,6 @@ const config: Config = {
           'justify-content': 'space-between',
           'align-items': 'center',
         },
-        '.monospace': {
-          fontSize: '15px',
-          lineHeight: '1.5',
-        },
       })
     }),
     plugin(function ({ matchUtilities }: any) {

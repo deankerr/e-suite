@@ -12,6 +12,7 @@ export const Markdown = memo(({ children }: { children?: string | null | undefin
       components={{
         a: ({ color, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
       }}
+      className="markdown-root"
     >
       {children}
     </ReactMarkdown>

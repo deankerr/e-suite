@@ -1,5 +1,7 @@
 import { Code } from '@radix-ui/themes'
 
+import { useMessageTextStream } from '@/app/lib/api/threads'
+import { cn } from '@/app/lib/utils'
 import { Markdown } from '../markdown/Markdown'
 import { Loader } from '../ui/Loader'
 import { MessageEditor } from './MessageEditor'
@@ -10,26 +12,27 @@ import type { EMessage } from '@/convex/types'
 export const MessageBody = () => {
   const { message, isEditing, showJson, textStyle } = useMessageContext()
 
-  if (!message) return null
+  const runId = message.kvMetadata['esuite:run:hint'] ? message.runId : undefined
+  const textStream = useMessageTextStream(runId)
+  const text = message.text ?? textStream
 
   return (
-    <div className="flex shrink-0 flex-col bg-gray-2">
-      <div className="min-h-14">
-        {showJson ? <MessageJson message={message} /> : null}
-        {isEditing ? <MessageEditor /> : <MessageText text={message.text} textStyle={textStyle} />}
+    <div className="flex shrink-0 flex-col">
+      {showJson ? <MessageJson message={message} /> : null}
 
-        {message.text === undefined && (
-          <div className="flex-start w-full gap-4 p-4">
+      <div className={cn('min-h-12 p-3.5 leading-7 text-gray-11')}>
+        {isEditing ? <MessageEditor /> : <MessageText textStyle={textStyle}>{text}</MessageText>}
+
+        {runId && text === undefined && (
+          <div className="flex-start">
             <Loader type="dotPulse" />
           </div>
         )}
 
         {message.text === '' && (
-          <div className="p-3.5">
-            <Code variant="ghost" color="gray">
-              (blank message)
-            </Code>
-          </div>
+          <Code variant="ghost" color="gray">
+            (blank message)
+          </Code>
         )}
       </div>
     </div>
@@ -37,30 +40,19 @@ export const MessageBody = () => {
 }
 
 const MessageText = ({
-  text,
+  children,
   textStyle,
 }: {
-  text: string | undefined
+  children: string | undefined
   textStyle: 'markdown' | 'monospace'
 }) => {
-  if (textStyle === 'markdown') {
-    return (
-      <div className="markdown-root p-3.5 text-base">
-        <Markdown>{text}</Markdown>
-      </div>
-    )
-  }
-
-  return (
-    <pre className="mb-4 overflow-x-auto whitespace-pre-wrap p-4 text-gray-11 sm:text-[15px] sm:leading-6">
-      {text}
-    </pre>
-  )
+  if (textStyle === 'markdown') return <Markdown>{children}</Markdown>
+  return <div className="whitespace-pre-wrap font-mono font-[15px]">{children}</div>
 }
 
 const MessageJson = ({ message }: { message: EMessage }) => {
   return (
-    <pre className="jetbrains mb-4 overflow-x-auto whitespace-pre-wrap bg-blackA-3 p-4 text-gray-11">
+    <pre className="overflow-x-auto whitespace-pre-wrap bg-blackA-3 p-3.5 leading-6 text-gray-11">
       {JSON.stringify(message, null, 2)}
     </pre>
   )

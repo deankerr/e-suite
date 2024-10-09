@@ -2,7 +2,8 @@
 
 import { useMemo, useRef } from 'react'
 
-import { useMessageFeedQuery, useThread } from '@/app/lib/api/threads'
+import { useMessageFeedQuery } from '@/app/lib/api/messages'
+import { useThread } from '@/app/lib/api/threads'
 import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
 import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'

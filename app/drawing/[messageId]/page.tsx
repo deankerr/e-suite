@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-import { useMessageById } from '@/app/lib/api/threads'
+import { useMessageById } from '@/app/lib/api/messages'
 import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
 import { Panel } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'

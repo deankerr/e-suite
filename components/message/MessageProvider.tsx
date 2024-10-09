@@ -6,7 +6,7 @@ import { useUpdateMessage } from '@/app/lib/api/threads'
 import type { EMessage } from '@/convex/types'
 
 type MessageContextType = {
-  message: EMessage | null
+  message: EMessage
   isEditing: boolean
   showJson: boolean
   textStyle: 'markdown' | 'monospace'
@@ -20,12 +20,11 @@ const MessageContext = createContext<MessageContextType | undefined>(undefined)
 
 export function MessageProvider({
   children,
-  initialMessage,
+  message,
 }: {
   children: React.ReactNode
-  initialMessage: EMessage | null
+  message: EMessage
 }) {
-  const [message, setMessage] = useState<EMessage | null>(initialMessage)
   const [isEditing, setIsEditing] = useState(false)
   const [showJson, setShowJson] = useState(false)
   const [textStyle, setTextStyle] = useState<'markdown' | 'monospace'>('markdown')
@@ -43,7 +42,7 @@ export function MessageProvider({
           name: message.name,
           text: newText,
         })
-        setMessage({ ...message, text: newText })
+        setIsEditing(false)
         toast.success('Message updated')
       } catch (error) {
         toast.error('Failed to update message')

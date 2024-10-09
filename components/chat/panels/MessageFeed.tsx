@@ -1,6 +1,6 @@
 'use client'
 
-import { useMessageFeedQuery } from '@/app/lib/api/threads'
+import { useMessageFeedQuery } from '@/app/lib/api/messages'
 import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { Message } from '@/components/message/Message'
 import { MessageV1 } from '@/components/message/MessageV1'

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { parseAsString, useQueryState } from 'nuqs'
 import { useDebounceValue } from 'usehooks-ts'
 
@@ -35,37 +35,12 @@ export const useThread = (threadId: string) => {
   return userThread || otherThread
 }
 
+export const useRun = (runId: Id<'runs'> | undefined) => {
+  return useCachedQuery(api.db.runs.get, runId ? { runId } : 'skip')
+}
+
 export const useListThreadRuns = (threadId: string) => {
   return useQuery(api.db.thread.runs.list, { threadId })
-}
-
-export const useMessage = (slug?: string, msg?: string) => {
-  const thread = useThread(slug ?? '')
-  const message = useCachedQuery(
-    api.db.thread.messages.get,
-    slug && msg ? { threadId: slug, series: parseInt(msg) || -1 } : 'skip',
-  )
-
-  return {
-    thread,
-    message,
-  }
-}
-
-export const useMessageById = (messageId: string) => {
-  return useCachedQuery(api.db.messages.getDoc, { messageId: messageId as Id<'messages'> })
-}
-
-export const useMessageFeedQuery = (threadId: string) => {
-  const messages = usePaginatedQuery(
-    api.db.thread.messages.search,
-    { threadId },
-    {
-      initialNumItems: 25,
-    },
-  )
-
-  return { ...messages, results: messages.results.toReversed() }
 }
 
 export const useMessageTextStream = (runId: Id<'runs'> | undefined) => {
