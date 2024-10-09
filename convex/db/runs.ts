@@ -1,3 +1,4 @@
+import { omit } from 'convex-helpers'
 import { nullable } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
@@ -67,7 +68,7 @@ export const activate = internalMutation({
         role: 'assistant',
         runId,
         kvMetadata: {
-          'esuite:run-hint': run.stream ? 'streaming' : 'non-streaming',
+          'esuite:run-hint': run.stream ? 'stream' : 'non-stream',
         },
       },
       { skipRules: true },
@@ -130,10 +131,7 @@ export const complete = internalMutation({
     const kvMetadata = runMessage.kvMetadata ?? {}
     await runMessage.patch({
       text,
-      kvMetadata: {
-        ...kvMetadata,
-        'esuite:run-hint': 'done',
-      },
+      kvMetadata: omit(kvMetadata, ['esuite:run-hint']),
     })
 
     await run.patch({

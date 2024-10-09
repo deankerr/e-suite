@@ -2,10 +2,9 @@ import { useMemo, useState } from 'react'
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { DropdownMenu } from '@radix-ui/themes'
 import { RiMoreFill } from '@remixicon/react'
-import { useQuery } from 'convex-helpers/react/cache/hooks'
 import Link from 'next/link'
 
-import { useDeleteMessage } from '@/app/lib/api/threads'
+import { useDeleteMessage, useMessageTextStream } from '@/app/lib/api/threads'
 import { useViewer } from '@/app/lib/api/users'
 import { cn } from '@/app/lib/utils'
 import { ImageCardNext } from '@/components/images/ImageCardNext'
@@ -14,7 +13,6 @@ import { Markdown } from '@/components/markdown/Markdown'
 import { Pre } from '@/components/markdown/Pre'
 import { MessageEditor } from '@/components/message/MessageEditor'
 import { IconButton } from '@/components/ui/Button'
-import { api } from '@/convex/_generated/api'
 import { getMessageName } from '@/convex/shared/helpers'
 import { Loader } from '../ui/Loader'
 import { TimeSince } from './TimeSince'
@@ -40,10 +38,10 @@ export const Message = ({
 
   const deleteMessage = useDeleteMessage()
 
-  const runHint = getKV(message.kvMetadata, 'esuite:run-hint') ?? 'done'
-  const runId = message.runId && runHint !== 'done' ? message.runId : undefined
-  const textStreams = useQuery(api.db.thread.runs.getTextStreams, runId ? { runId } : 'skip')
-  const text = message.text ?? textStreams?.[0]?.content
+  const runHint = getKV(message.kvMetadata, 'esuite:run-hint')
+  const runId = runHint === 'stream' ? message.runId : undefined
+  const textStream = useMessageTextStream(runId)
+  const text = message.text ?? textStream
   const showRunIndicator = runId && !text
 
   const { isViewer } = useViewer(message.userId)

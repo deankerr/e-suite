@@ -92,10 +92,6 @@ export const list = query({
       .map(async (run) => ({
         ...run,
         providerMetadata: undefined,
-        texts: await ctx
-          .table('texts', 'runId', (q) => q.eq('runId', run._id))
-          .filter((q) => q.eq(q.field('deletionTime'), undefined))
-          .map((text) => text.doc()),
       }))
     return runs
   },
