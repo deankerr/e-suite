@@ -11,7 +11,7 @@ export const ChatToolbar = ({ threadId }: { threadId: string }) => {
 
   const kv = Object.entries(thread.kvMetadata)
   return (
-    <PanelToolbar>
+    <PanelToolbar className="bg-grayA-1 pl-2">
       <TextEditorDialog slug={thread.slug}>
         <Button variant="soft" color="gray" size="1">
           Instructions

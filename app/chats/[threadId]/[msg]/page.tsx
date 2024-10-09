@@ -1,7 +1,7 @@
 'use client'
 
 import { useMessage } from '@/app/lib/api/threads'
-import { Message } from '@/components/message/Message'
+import { MessageV1 } from '@/components/message/MessageV1'
 import { Panel, PanelEmpty, PanelLoading } from '@/components/ui/Panel'
 
 export default function Page({ params }: { params: { threadId: string; msg: string } }) {
@@ -12,7 +12,7 @@ export default function Page({ params }: { params: { threadId: string; msg: stri
   return result.message ? (
     <Panel>
       <div className="grow overflow-y-auto p-2 text-sm">
-        <Message message={result.message} hideTimeline />
+        <MessageV1 message={result.message} hideTimeline />
       </div>
     </Panel>
   ) : (

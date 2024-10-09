@@ -11,7 +11,7 @@ export const LinkBadge = ({ href, ...props }: React.ComponentProps<typeof Link>)
   const label = getLabel(href)
   return (
     <Link href={href} className="opacity-90 hover:opacity-100" {...props}>
-      <Badge className="select-none">
+      <Badge className="select-none" color="bronze">
         {label} <RiExternalLinkLine size="1.3em" />
       </Badge>
     </Link>

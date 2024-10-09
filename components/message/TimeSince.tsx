@@ -17,7 +17,7 @@ export const TimeSince = ({ time }: { time: number }) => {
       { label: 'd', seconds: 86400 },
       { label: 'h', seconds: 3600 },
       { label: 'm', seconds: 60 },
-      { label: 's', seconds: 1 },
+      // { label: 's', seconds: 1 },
     ]
 
     for (const interval of intervals) {

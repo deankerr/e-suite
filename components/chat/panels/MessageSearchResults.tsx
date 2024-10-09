@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useThreadTextSearchResults } from '@/app/lib/api/threads'
 import { cn } from '@/app/lib/utils'
 import { FishFoodIcon } from '@/components/icons/FishFoodIcon'
-import { Message } from '@/components/message/Message'
+import { MessageV1 } from '@/components/message/MessageV1'
 import { Loader } from '@/components/ui/Loader'
 import { PanelBody } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
@@ -32,7 +32,7 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
             >
               {results.map((message) => (
                 <div key={message._id} className="py-1">
-                  <Message message={message} />
+                  <MessageV1 message={message} />
                 </div>
               ))}
             </div>

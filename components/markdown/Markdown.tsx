@@ -1,5 +1,4 @@
 import { memo } from 'react'
-import { Code } from '@radix-ui/themes'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
@@ -12,7 +11,6 @@ export const Markdown = memo(({ children }: { children?: string | null | undefin
       remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
         a: ({ color, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
-        code: ({ color, ...props }) => <Code {...props} color="gold" className="bg-transparent" />,
       }}
     >
       {children}
