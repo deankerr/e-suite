@@ -5,6 +5,8 @@ import { useUpdateMessage } from '@/app/lib/api/threads'
 
 import type { EMessage } from '@/convex/types'
 
+type EMessageUpdate = { role: EMessage['role']; name: EMessage['name']; text: EMessage['text'] }
+
 type MessageContextType = {
   message: EMessage
   isEditing: boolean
@@ -13,7 +15,7 @@ type MessageContextType = {
   setIsEditing: (value: boolean) => void
   setShowJson: (value: boolean) => void
   setTextStyle: (value: 'markdown' | 'monospace') => void
-  updateMessageText: (newText: string) => Promise<void>
+  updateMessage: (fields: EMessageUpdate) => Promise<void>
 }
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined)
@@ -29,18 +31,16 @@ export function MessageProvider({
   const [showJson, setShowJson] = useState(false)
   const [textStyle, setTextStyle] = useState<'markdown' | 'monospace'>('markdown')
 
-  const updateMessage = useUpdateMessage()
+  const sendUpdateMessage = useUpdateMessage()
 
-  const updateMessageText = useCallback(
-    async (newText: string) => {
-      if (!message) return
-
+  const updateMessage = useCallback(
+    async ({ role, name, text }: EMessageUpdate) => {
       try {
-        await updateMessage({
+        await sendUpdateMessage({
           messageId: message._id,
-          role: message.role,
-          name: message.name,
-          text: newText,
+          role,
+          name,
+          text,
         })
         setIsEditing(false)
         toast.success('Message updated')
@@ -49,7 +49,7 @@ export function MessageProvider({
         console.error('Error updating message:', error)
       }
     },
-    [message, updateMessage],
+    [message._id, sendUpdateMessage],
   )
 
   const value = {
@@ -60,7 +60,7 @@ export function MessageProvider({
     setIsEditing,
     setShowJson,
     setTextStyle,
-    updateMessageText,
+    updateMessage,
   }
 
   return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>

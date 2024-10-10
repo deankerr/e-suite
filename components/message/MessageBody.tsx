@@ -1,7 +1,6 @@
 import { Code } from '@radix-ui/themes'
 
 import { useMessageTextStream } from '@/app/lib/api/threads'
-import { cn } from '@/app/lib/utils'
 import { Markdown } from '../markdown/Markdown'
 import { Loader } from '../ui/Loader'
 import { MessageEditor } from './MessageEditor'
@@ -20,7 +19,7 @@ export const MessageBody = () => {
     <div className="flex shrink-0 flex-col">
       {showJson ? <MessageJson message={message} /> : null}
 
-      <div className={cn('min-h-12 p-3.5 leading-7 text-gray-11')}>
+      <div className="min-h-12 p-3.5 leading-7 text-gray-11">
         {isEditing ? <MessageEditor /> : <MessageText textStyle={textStyle}>{text}</MessageText>}
 
         {runId && text === undefined && (

@@ -1,17 +1,12 @@
 'use client'
 
-import { useMessageQuery } from '@/app/lib/api/messages'
 import { MessageBody } from './MessageBody'
 import { MessageHeader } from './MessageHeader'
 import { MessageProvider } from './MessageProvider'
 
-export const Message = ({ messageId }: { messageId: string }) => {
-  const message = useMessageQuery(messageId)
+import type { EMessage } from '@/convex/types'
 
-  if (!message) {
-    return <div className="flex-center shrink-0 rounded-md border p-1.5">Loading...</div>
-  }
-
+export const Message = ({ message }: { message: EMessage }) => {
   return (
     <MessageProvider message={message}>
       <div className="flex shrink-0 flex-col rounded border bg-gray-2">

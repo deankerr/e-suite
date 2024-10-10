@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { LogLevel, Virtuoso, VirtuosoHandle } from 'react-virtuoso'
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 
 type Item = {
   _id: string
@@ -109,9 +109,7 @@ export function VirtualizedFeed<T extends Item>({
       atBottomStateChange={handleAtBottomStateChange}
       atTopThreshold={reachThreshold}
       atBottomThreshold={reachThreshold}
-      overscan={5000}
-      // increaseViewportBy={1000}
-      logLevel={LogLevel.DEBUG}
+      overscan={900}
     />
   )
 }
