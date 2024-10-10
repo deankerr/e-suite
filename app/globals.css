@@ -1,5 +1,6 @@
 @import 'tailwindcss/base';
 @import '@radix-ui/themes/styles.css';
+@import '@mdxeditor/editor/dist/style.css';
 
 @tailwind components;
 

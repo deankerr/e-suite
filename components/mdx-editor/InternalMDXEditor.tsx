@@ -1,15 +1,10 @@
 'use client'
 
 import {
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
   codeBlockPlugin,
   codeMirrorPlugin,
-  CodeToggle,
-  ConditionalContents,
   headingsPlugin,
   imagePlugin,
-  InsertCodeBlock,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
@@ -18,11 +13,7 @@ import {
   quotePlugin,
   tablePlugin,
   thematicBreakPlugin,
-  toolbarPlugin,
-  UndoRedo,
 } from '@mdxeditor/editor'
-
-import '@mdxeditor/editor/style.css'
 
 import type { MDXEditorMethods, MDXEditorProps } from '@mdxeditor/editor'
 import type { ForwardedRef } from 'react'
@@ -52,33 +43,6 @@ export default function InternalMDXEditor({
             tsx: 'TypeScript',
             '': 'Unspecified',
           },
-        }),
-
-        toolbarPlugin({
-          toolbarContents: () => (
-            <>
-              {' '}
-              <UndoRedo />
-              <BlockTypeSelect />
-              <BoldItalicUnderlineToggles />
-              <CodeToggle />
-              <ConditionalContents
-                options={[
-                  // {
-                  //   when: (editor) => editor?.editorType === 'codeblock',
-                  //   contents: () => <ChangeCodeMirrorLanguage />,
-                  // },
-                  {
-                    fallback: () => (
-                      <>
-                        <InsertCodeBlock />
-                      </>
-                    ),
-                  },
-                ]}
-              />
-            </>
-          ),
         }),
 
         markdownShortcutPlugin(),

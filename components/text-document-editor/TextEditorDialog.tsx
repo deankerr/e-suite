@@ -91,7 +91,7 @@ export const TextEditorDialog = forwardRef<TextEditorDialogRef, TextEditorDialog
                 markdown={thread?.instructions ?? ''}
                 readOnly={!thread?.user.isViewer}
                 placeholder="Write your instructions here..."
-                className="markdown-body"
+                contentEditableClassName="markdown-root"
               />
             </div>
 
