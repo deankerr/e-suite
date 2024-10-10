@@ -3,6 +3,7 @@ import { Code } from '@radix-ui/themes'
 import { useMessageTextStream } from '@/app/lib/api/threads'
 import { Markdown } from '../markdown/Markdown'
 import { Loader } from '../ui/Loader'
+import { AdminOnlyUi } from '../util/AdminOnlyUi'
 import { MessageEditor } from './MessageEditor'
 import { useMessageContext } from './MessageProvider'
 
@@ -17,6 +18,17 @@ export const MessageBody = () => {
 
   return (
     <div className="flex shrink-0 flex-col">
+      <AdminOnlyUi>
+        <div className="flex-end w-full divide-x divide-gray-7 pt-1 text-right font-mono text-xxs">
+          {Object.entries(message.kvMetadata).map(([key, value]) => (
+            <div key={key} className="px-2">
+              <div className="text-gold-12">{key}</div>
+              <div className="text-gold-11">{value}</div>
+            </div>
+          ))}
+        </div>
+      </AdminOnlyUi>
+
       {showJson ? <MessageJson message={message} /> : null}
 
       <div className="min-h-12 p-3.5 leading-7 text-gray-11">
