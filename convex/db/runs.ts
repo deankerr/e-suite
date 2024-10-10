@@ -71,7 +71,7 @@ export const activate = internalMutation({
         runId,
         kvMetadata: {
           'esuite:run:hint': run.stream ? 'stream' : 'non-stream',
-          'esuite:run:model-id': run.model.id,
+          'esuite:run:model:id': run.model.id,
         },
       },
       { skipRules: true },
