@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useThreadTextSearchResults } from '@/app/lib/api/threads'
 import { cn } from '@/app/lib/utils'
 import { FishFoodIcon } from '@/components/icons/FishFoodIcon'
-import { MessageV1 } from '@/components/message/MessageV1'
+import { Message } from '@/components/message/Message'
 import { Loader } from '@/components/ui/Loader'
 import { PanelBody } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
@@ -26,13 +26,13 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
           <VScrollArea className="bg-gray-1">
             <div
               className={cn(
-                'divide-y divide-gray-4',
+                '',
                 fadeOut && 'opacity-50 transition-opacity duration-300 ease-in-out',
               )}
             >
               {results.map((message) => (
-                <div key={message._id} className="py-1">
-                  <MessageV1 message={message} />
+                <div key={message._id} className="mx-auto max-w-[85ch] py-3">
+                  <Message message={message} />
                 </div>
               ))}
             </div>
