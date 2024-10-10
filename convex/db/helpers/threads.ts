@@ -30,7 +30,7 @@ export const getThread = async (ctx: QueryCtx, xid: string) => {
   const thread = id
     ? await ctx.table('threads').get(id)
     : await ctx.table('threads', 'slug', (q) => q.eq('slug', xid)).unique()
-  return thread && !thread.deletionTime ? omit(thread, ['latestRunConfig']) : null
+  return thread && !thread.deletionTime ? thread : null
 }
 
 export const getThreadX = async (ctx: QueryCtx, xid: string) => {

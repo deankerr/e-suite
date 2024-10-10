@@ -85,7 +85,7 @@ export const list = query({
     const threads = await ctx
       .table('threads', 'userId', (q) => q.eq('userId', viewerId))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
-      .map(async (thread) => await getThreadEdges(ctx, omit(thread, ['latestRunConfig'])))
+      .map(async (thread) => await getThreadEdges(ctx, thread))
 
     return threads
   },
