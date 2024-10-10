@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useState } from 'react'
 import { toast } from 'sonner'
 
 import { useUpdateMessage } from '@/app/lib/api/threads'
+import { useViewer } from '@/app/lib/api/users'
 
 import type { EMessage } from '@/convex/types'
 
@@ -12,6 +13,7 @@ type MessageContextType = {
   isEditing: boolean
   showJson: boolean
   textStyle: 'markdown' | 'monospace'
+  viewerCanEdit: boolean
   setIsEditing: (value: boolean) => void
   setShowJson: (value: boolean) => void
   setTextStyle: (value: 'markdown' | 'monospace') => void
@@ -52,11 +54,14 @@ export function MessageProvider({
     [message._id, sendUpdateMessage],
   )
 
+  const { isViewer: viewerCanEdit } = useViewer(message.userId)
+
   const value = {
     message,
     isEditing,
     showJson,
     textStyle,
+    viewerCanEdit,
     setIsEditing,
     setShowJson,
     setTextStyle,

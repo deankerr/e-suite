@@ -12,8 +12,16 @@ import { TimeSince } from './TimeSince'
 import type { EMessage } from '@/convex/types'
 
 export const MessageHeader = () => {
-  const { message, isEditing, showJson, setIsEditing, setShowJson, textStyle, setTextStyle } =
-    useMessageContext()
+  const {
+    message,
+    isEditing,
+    showJson,
+    setShowJson,
+    setIsEditing,
+    viewerCanEdit,
+    textStyle,
+    setTextStyle,
+  } = useMessageContext()
 
   const deleteMessage = useDeleteMessage()
   const handleDeleteMessage = () => {
@@ -77,28 +85,32 @@ export const MessageHeader = () => {
         <Icons.MarkdownLogo size={18} />
       </IconButton>
 
-      <IconButton
-        variant="ghost"
-        color={isEditing ? 'orange' : 'gray'}
-        size="1"
-        aria-label="Edit"
-        onClick={() => setIsEditing(!isEditing)}
-      >
-        <Icons.Pencil size={18} />
-      </IconButton>
+      {viewerCanEdit && (
+        <IconButton
+          variant="ghost"
+          color={isEditing ? 'orange' : 'gray'}
+          size="1"
+          aria-label="Edit"
+          onClick={() => setIsEditing(!isEditing)}
+        >
+          <Icons.Pencil size={18} />
+        </IconButton>
+      )}
 
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <IconButton variant="ghost" color="gray" size="1" aria-label="Delete">
-            <Icons.Trash size={18} />
-          </IconButton>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content variant="soft" size="1">
-          <DropdownMenu.Item color="red" onClick={handleDeleteMessage}>
-            Delete
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+      {viewerCanEdit && (
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <IconButton variant="ghost" color="gray" size="1" aria-label="Delete">
+              <Icons.Trash size={18} />
+            </IconButton>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content variant="soft" size="1">
+            <DropdownMenu.Item color="red" onClick={handleDeleteMessage}>
+              Delete
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      )}
 
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
