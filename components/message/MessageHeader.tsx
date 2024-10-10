@@ -60,8 +60,10 @@ export const MessageHeader = () => {
         </Link>
       )}
 
-      <div className="flex-center font-mono text-gray-10">
+      <div className="flex-center gap-1 font-mono text-gray-10">
         <TimeSince time={Math.floor(message._creationTime)} />
+        <div>⋅</div>
+        <div>#{message.series}</div>
       </div>
 
       <IconButton
@@ -139,7 +141,7 @@ export const MessageHeader = () => {
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      <div className="flex-center w-5">
+      <div className="flex-center w-6">
         {run?.status === 'done' ? (
           <Icons.Check className="text-green-11" />
         ) : run?.status === 'failed' ? (
