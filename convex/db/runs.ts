@@ -130,10 +130,10 @@ export const complete = internalMutation({
     await runMessage.patch({
       text,
       kvMetadata: updateKvMetadata(kvMetadata, {
-        delete: ['esuite:run-hint'],
+        delete: ['esuite:run:hint'],
         set: {
-          'esuite:run:model-id': run.model.id,
-          'esuite:run:model-name': chatModel?.name,
+          'esuite:run:model:id': run.model.id,
+          'esuite:run:model:name': chatModel?.name,
         },
       }),
     })

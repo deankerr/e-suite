@@ -42,7 +42,6 @@ export function hasDelimiter(text: string) {
     text.includes('.') ||
     text.includes('?') ||
     text.includes('!') ||
-    text.includes(',') ||
-    text.length > 100
+    text.length >= 200
   )
 }
