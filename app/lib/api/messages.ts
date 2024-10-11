@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { usePaginatedQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
@@ -35,8 +35,15 @@ export const useMessageFeedQuery = (threadId: string, initialNumItems = 25) => {
       initialNumItems,
     },
   )
-
   const results = useMemo(() => messages.results.toReversed(), [messages.results])
+
+  const firstLoadedMessageTime = useRef(0)
+  if (!firstLoadedMessageTime.current && results[0]) {
+    firstLoadedMessageTime.current = results[0]._creationTime
+  }
+  const prependedCount = results.filter(
+    (message) => message._creationTime < firstLoadedMessageTime.current,
+  ).length
 
   if (!threadId || threadId === 'new') {
     if (messages.status === 'LoadingFirstPage') {
@@ -44,5 +51,5 @@ export const useMessageFeedQuery = (threadId: string, initialNumItems = 25) => {
     }
   }
 
-  return { ...messages, results }
+  return { ...messages, results, prependedCount }
 }

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Code } from '@radix-ui/themes'
 
 import { useMessageTextStream } from '@/app/lib/api/threads'

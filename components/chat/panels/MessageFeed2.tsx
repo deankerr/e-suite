@@ -14,7 +14,6 @@ import type { EMessage } from '@/convex/types'
 
 export type MessageFeedContext = {
   status: 'LoadingFirstPage' | 'CanLoadMore' | 'LoadingMore' | 'Exhausted'
-  virtuosoHandle?: VirtuosoHandle | null
 }
 
 export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
@@ -25,12 +24,7 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
   const [isAtTop, setIsAtTop] = useState(true)
   const [isAtBottom, setIsAtBottom] = useState(false)
 
-  const [queryStartTime] = useState(Date.now())
-  const { results, loadMore, status } = useMessageFeedQuery(threadId, 25)
-
-  const nPrependedMessages = results.filter(
-    (message) => message._creationTime < queryStartTime,
-  ).length
+  const { results, loadMore, status, prependedCount } = useMessageFeedQuery(threadId, 25)
 
   const scrollToEnd = useCallback(() => {
     if (isScrollingRef.current) return console.debug('scroll skipped')
@@ -86,7 +80,7 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
         data={results}
         alignToBottom
         followOutput="smooth"
-        firstItemIndex={1_000_000 - nPrependedMessages}
+        firstItemIndex={1_000_000 - prependedCount}
         initialTopMostItemIndex={{
           index: results.length - 1,
           align: 'end',
@@ -113,8 +107,7 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
 
       <AdminOnlyUi>
         <div className="absolute right-5 top-1 text-right font-mono text-xs text-gray-9">
-          {isAtTop ? 'atTop' : ''} {isAtBottom ? 'atBottom' : ''} {-nPrependedMessages}{' '}
-          {results.length}
+          {isAtTop ? 'atTop' : ''} {isAtBottom ? 'atBottom' : ''} {-prependedCount} {results.length}
         </div>
       </AdminOnlyUi>
     </PanelBody>
