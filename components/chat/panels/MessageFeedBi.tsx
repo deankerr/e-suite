@@ -65,7 +65,7 @@ export const MessageFeedBi = ({ threadId }: { threadId: string }) => {
       <Virtuoso
         context={{ timeInit: feed.queryStartTime }}
         components={{
-          EmptyPlaceholder: () => <div className="h-full w-full bg-green-4"></div>,
+          EmptyPlaceholder: () => <div className="h-full w-full bg-gray-1"></div>,
         }}
         data={messages}
         alignToBottom

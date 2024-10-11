@@ -26,12 +26,12 @@ export const useMessageById = (messageId: string) => {
   return useCachedQuery(api.db.messages.getDoc, { messageId: messageId as Id<'messages'> })
 }
 
-export const useMessageFeedQuery = (threadId: string) => {
+export const useMessageFeedQuery = (threadId: string, initialNumItems = 25) => {
   const messages = usePaginatedQuery(
     api.db.thread.messages.search,
     { threadId },
     {
-      initialNumItems: 25,
+      initialNumItems,
     },
   )
 
