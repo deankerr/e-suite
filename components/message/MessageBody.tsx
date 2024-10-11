@@ -21,7 +21,7 @@ export const MessageBody = () => {
   return (
     <div className={cn('flex shrink-0 flex-col', isHidden && 'opacity-30')}>
       <AdminOnlyUi>
-        <div className="flex-end h-9 w-full divide-x divide-gray-7 border-b py-1 text-right font-mono text-xxs">
+        <div className="flex-end w-full divide-x divide-gray-7 border-b py-1 text-right font-mono text-xxs empty:hidden">
           {Object.entries(message.kvMetadata).map(([key, value]) => (
             <div key={key} className="px-2">
               <div className="text-gold-12">{key}</div>

@@ -146,7 +146,7 @@ export const MessageHeader = () => {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <IconButton variant="ghost" color="gray" size="1" aria-label="More">
-            <Icons.DotsThree size={18} className="scale-150" weight="bold" />
+            <Icons.DotsThree size={18} className="scale-150" />
           </IconButton>
         </DropdownMenu.Trigger>
 
@@ -178,7 +178,7 @@ export const MessageHeader = () => {
         ) : run ? (
           <Loader type="ping" color="orange" size={40} />
         ) : (
-          <Icons.Dot />
+          <Icons.Dot weight="bold" />
         )}
       </div>
     </div>
