@@ -1,11 +1,11 @@
 import { asyncMap, omit, pruneNull } from 'convex-helpers'
-import { literals, optional } from 'convex-helpers/validators'
+import { literals } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { internal } from '../../_generated/api'
 import { messageFields } from '../../schema'
 import { extractValidUrlsFromText } from '../../shared/helpers'
-import { getImageV2ByOwnerIdSourceUrl, imagesReturn } from '../images'
+import { getImageV2ByOwnerIdSourceUrl } from '../images'
 
 import type { Doc } from '../../_generated/dataModel'
 import type { Ent, MutationCtx, QueryCtx } from '../../types'
@@ -32,7 +32,6 @@ export const messageReturnFields = {
   userId: v.id('users'),
 
   // edges
-  images: optional(v.array(imagesReturn)),
   threadSlug: v.string(),
 }
 
@@ -42,7 +41,6 @@ export const getMessageEdges = async (ctx: QueryCtx, message: Ent<'messages'>) =
   return {
     ...message.doc(),
     threadSlug: thread.slug,
-    images: await getMessageUrlImages(ctx, message),
     kvMetadata: message.kvMetadata ?? {},
   }
 }
