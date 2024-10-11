@@ -10,9 +10,16 @@ import { Loader } from '@/components/ui/Loader'
 import { PanelBody } from '@/components/ui/Panel'
 import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 
+import type { EMessage } from '@/convex/types'
+
+export type MessageFeedContext = {
+  status: 'LoadingFirstPage' | 'CanLoadMore' | 'LoadingMore' | 'Exhausted'
+  virtuosoHandle: VirtuosoHandle | null
+}
+
 export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
   const [queryStartTime] = useState(Date.now())
-  const { results, loadMore, status, isLoading } = useMessageFeedQuery(threadId, 10)
+  const { results, loadMore, status } = useMessageFeedQuery(threadId, 10)
 
   const nPastMessages = results.filter((message) => message._creationTime < queryStartTime).length
 
@@ -35,18 +42,17 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
 
   return (
     <PanelBody>
-      <Virtuoso
+      <Virtuoso<EMessage, MessageFeedContext>
         ref={virtuosoRef}
-        context={{ status, isLoading }}
+        context={{ status, virtuosoHandle: virtuosoRef.current }}
         components={{
           Header,
           List,
           EmptyPlaceholder,
-          ScrollSeekPlaceholder,
         }}
         data={results}
         alignToBottom
-        followOutput="smooth"
+        followOutput
         firstItemIndex={1_000_000 - nPastMessages}
         initialTopMostItemIndex={{
           index: results.length - 1,
@@ -56,11 +62,11 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
         atTopStateChange={handleAtTopStateChange}
         atTopThreshold={1200}
         atBottomStateChange={handleAtBottomStateChange}
-        atBottomThreshold={200}
-        itemContent={(_, data) => {
+        atBottomThreshold={400}
+        itemContent={(_, data, context) => {
           return (
             <div className="mx-auto max-w-4xl py-2">
-              <Message message={data} />
+              <Message message={data} context={context} />
             </div>
           )
         }}

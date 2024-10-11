@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Code } from '@radix-ui/themes'
 
 import { useMessageTextStream } from '@/app/lib/api/threads'
@@ -11,17 +12,24 @@ import { useMessageContext } from './MessageProvider'
 import type { EMessage } from '@/convex/types'
 
 export const MessageBody = () => {
-  const { message, isEditing, showJson, textStyle } = useMessageContext()
+  const { message, context, isEditing, showJson, textStyle } = useMessageContext()
 
   const isHidden = message.channel === 'hidden'
   const runId = message.kvMetadata['esuite:run:hint'] ? message.runId : undefined
   const textStream = useMessageTextStream(runId)
   const text = message.text ?? textStream
 
+  useEffect(() => {
+    if (!runId) return
+    if (!context?.virtuosoHandle) return console.log('no handle')
+    context.virtuosoHandle.scrollBy({ top: 999999, behavior: 'smooth' })
+    console.log('text autoscroll', message._id)
+  }, [text, runId])
+
   return (
     <div className={cn('flex shrink-0 flex-col', isHidden && 'opacity-30')}>
       <AdminOnlyUi>
-        <div className="flex-end w-full divide-x divide-gray-7 border-b py-1 text-right font-mono text-xxs first:hidden empty:hidden">
+        <div className="flex-end w-full divide-x divide-gray-7 border-b py-1 text-right font-mono text-xxs empty:hidden">
           {Object.entries(message.kvMetadata).map(([key, value]) => (
             <div key={key} className="px-2">
               <div className="text-gold-12">{key}</div>

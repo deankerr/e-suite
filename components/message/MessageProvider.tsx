@@ -4,12 +4,14 @@ import { toast } from 'sonner'
 import { useUpdateMessage } from '@/app/lib/api/threads'
 import { useViewer } from '@/app/lib/api/users'
 
+import type { MessageFeedContext } from '../chat/panels/MessageFeed2'
 import type { EMessage } from '@/convex/types'
 
 type EMessageUpdate = { role: EMessage['role']; name: EMessage['name']; text: EMessage['text'] }
 
 type MessageContextType = {
   message: EMessage
+  context?: MessageFeedContext
   isEditing: boolean
   showJson: boolean
   textStyle: 'markdown' | 'monospace'
@@ -25,16 +27,17 @@ const MessageContext = createContext<MessageContextType | undefined>(undefined)
 export function MessageProvider({
   children,
   message,
+  context,
 }: {
   children: React.ReactNode
   message: EMessage
+  context?: MessageFeedContext
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [showJson, setShowJson] = useState(false)
   const [textStyle, setTextStyle] = useState<'markdown' | 'monospace'>('markdown')
 
   const sendUpdateMessage = useUpdateMessage()
-
   const updateMessage = useCallback(
     async ({ role, name, text }: EMessageUpdate) => {
       try {
@@ -58,6 +61,7 @@ export function MessageProvider({
 
   const value = {
     message,
+    context,
     isEditing,
     showJson,
     textStyle,
