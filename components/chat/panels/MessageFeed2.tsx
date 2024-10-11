@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
-import { Components, Virtuoso, VirtuosoHandle } from 'react-virtuoso'
+import { memo, useCallback, useRef, useState } from 'react'
+import { Components, ListItem, Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 
 import { useMessageFeedQuery } from '@/app/lib/api/messages'
 import { twx } from '@/app/lib/utils'
@@ -14,24 +14,56 @@ import type { EMessage } from '@/convex/types'
 
 export type MessageFeedContext = {
   status: 'LoadingFirstPage' | 'CanLoadMore' | 'LoadingMore' | 'Exhausted'
-  virtuosoHandle: VirtuosoHandle | null
+  virtuosoHandle?: VirtuosoHandle | null
 }
 
 export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
-  const [queryStartTime] = useState(Date.now())
-  const { results, loadMore, status } = useMessageFeedQuery(threadId, 10)
-
-  const nPastMessages = results.filter((message) => message._creationTime < queryStartTime).length
-
   const virtuosoRef = useRef<VirtuosoHandle>(null)
+  const isScrollingRef = useRef(false)
+  const lastMessageData = useRef({ _id: '', size: 0 })
+
   const [isAtTop, setIsAtTop] = useState(true)
   const [isAtBottom, setIsAtBottom] = useState(false)
+
+  const [queryStartTime] = useState(Date.now())
+  const { results, loadMore, status } = useMessageFeedQuery(threadId, 25)
+
+  const nPrependedMessages = results.filter(
+    (message) => message._creationTime < queryStartTime,
+  ).length
+
+  const scrollToEnd = useCallback(() => {
+    if (isScrollingRef.current) return console.debug('scroll skipped')
+    virtuosoRef.current?.scrollToIndex({
+      index: results.length - 1,
+      align: 'end',
+      behavior: 'smooth',
+    })
+    console.debug('scrolled to end')
+  }, [results.length])
+
+  // * track last item's size, scroll to end if increased
+  const handleItemsRendered = useCallback(
+    (items: ListItem<EMessage>[]) => {
+      const lastItemRendered = items.at(-1)
+      const isLastMessage =
+        lastItemRendered && lastItemRendered.originalIndex === results.length - 1
+      if (!isLastMessage || !lastItemRendered.data) return
+
+      const isSameId = lastItemRendered.data._id === lastMessageData.current._id
+      const isLarger = lastItemRendered.size > lastMessageData.current.size
+      if (isSameId && isLarger && isAtBottom) scrollToEnd()
+
+      lastMessageData.current = { _id: lastItemRendered.data._id, size: lastItemRendered.size }
+    },
+    [isAtBottom, results.length, scrollToEnd],
+  )
 
   const handleAtTopStateChange = useCallback(
     (atTop: boolean) => {
       setIsAtTop(atTop)
       if (atTop && status === 'CanLoadMore') {
-        console.log('load', 40)
+        console.debug('load', 40)
         loadMore(40)
       }
     },
@@ -44,16 +76,17 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
     <PanelBody>
       <Virtuoso<EMessage, MessageFeedContext>
         ref={virtuosoRef}
-        context={{ status, virtuosoHandle: virtuosoRef.current }}
+        context={{ status }}
         components={{
           Header,
+          Footer,
           List,
           EmptyPlaceholder,
         }}
         data={results}
         alignToBottom
-        followOutput
-        firstItemIndex={1_000_000 - nPastMessages}
+        followOutput="smooth"
+        firstItemIndex={1_000_000 - nPrependedMessages}
         initialTopMostItemIndex={{
           index: results.length - 1,
           align: 'end',
@@ -63,46 +96,39 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
         atTopThreshold={1200}
         atBottomStateChange={handleAtBottomStateChange}
         atBottomThreshold={400}
-        itemContent={(_, data, context) => {
-          return (
-            <div className="mx-auto max-w-4xl py-2">
-              <Message message={data} context={context} />
-            </div>
-          )
-        }}
-        computeItemKey={(_, item) => item._id}
         increaseViewportBy={1200}
-        logLevel={1}
+        defaultItemHeight={900}
+        computeItemKey={(_, item) => item._id}
+        itemContent={(_, data) => <MemoizedMessage message={data} />}
+        isScrolling={(isScrolling) => (isScrollingRef.current = isScrolling)}
+        itemsRendered={handleItemsRendered}
+        skipAnimationFrameInResizeObserver
       />
 
       {status === 'LoadingMore' && (
-        <div className="absolute right-5 top-1 text-right font-mono text-xs text-gray-9">
+        <div className="absolute right-5 top-1">
           <Loader type="ring2" size={32} />
         </div>
       )}
 
       <AdminOnlyUi>
         <div className="absolute right-5 top-1 text-right font-mono text-xs text-gray-9">
-          {isAtTop ? 'atTop' : ''} {isAtBottom ? 'atBottom' : ''} {nPastMessages} {results.length}
+          {isAtTop ? 'atTop' : ''} {isAtBottom ? 'atBottom' : ''} {-nPrependedMessages}{' '}
+          {results.length}
         </div>
       </AdminOnlyUi>
     </PanelBody>
   )
 }
 
-const ScrollSeekPlaceholder: Components['ScrollSeekPlaceholder'] = ({ height }) => {
+const MemoizedMessage = memo(({ message }: { message: EMessage }) => {
   return (
-    <div className="mx-auto max-w-[85ch] py-3" style={{ height }}>
-      <div
-        className="flex h-full shrink-0 flex-col overflow-hidden rounded border bg-gray-2"
-        style={{ contain: 'paint' }}
-      >
-        <div className="h-12 bg-grayA-2" />
-        <div className="grow" />
-      </div>
+    <div className="mx-auto max-w-4xl py-2">
+      <Message message={message} />
     </div>
   )
-}
+})
+MemoizedMessage.displayName = 'MMessage'
 
 const EmptyPlaceholder: Components<any, any>['EmptyPlaceholder'] = ({ context }) => (
   <div className="flex-center h-full w-full bg-gray-1">
@@ -122,12 +148,8 @@ const Header: Components<any, any>['Header'] = ({ context }) => {
   )
 }
 
-const Footer: Components<any, any>['Footer'] = ({ context }) => {
-  return (
-    <div className="mx-auto flex max-w-3xl items-center px-1 pb-3 pt-1.5 md:px-6">
-      <div className="flex-center h-12 w-full rounded-md text-gray-8"></div>
-    </div>
-  )
+const Footer: Components<any, any>['Footer'] = () => {
+  return <div className="h-6"></div>
 }
 
 const List = twx.div`px-1 md:px-6`
