@@ -61,7 +61,11 @@ const MessageText = ({
 }) => {
   if (!children) return null
   if (textStyle === 'markdown') return <Markdown>{children}</Markdown>
-  return <div className="whitespace-pre-wrap font-mono font-[15px]">{children}</div>
+  return (
+    <div className="whitespace-pre-wrap font-mono font-[15px] leading-7 text-gray-11">
+      {children}
+    </div>
+  )
 }
 
 const MessageJson = ({ message }: { message: EMessage }) => {

@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { usePaginatedQuery } from 'convex/react'
 
 import { api } from '@/convex/_generated/api'
@@ -35,5 +36,13 @@ export const useMessageFeedQuery = (threadId: string, initialNumItems = 25) => {
     },
   )
 
-  return { ...messages, results: messages.results.toReversed() }
+  const results = useMemo(() => messages.results.toReversed(), [messages.results])
+
+  if (!threadId || threadId === 'new') {
+    if (messages.status === 'LoadingFirstPage') {
+      messages.status = 'Exhausted' as any
+    }
+  }
+
+  return { ...messages, results }
 }
