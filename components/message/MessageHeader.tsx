@@ -117,17 +117,16 @@ export const MessageHeader = () => {
         </IconButton>
       )}
 
-      {viewerCanEdit && (
-        <IconButton
-          variant="ghost"
-          color={isHidden ? 'orange' : 'gray'}
-          size="1"
-          aria-label="Hide"
-          onClick={handleToggleHidden}
-        >
-          {isHidden ? <Icons.EyeClosed size={18} /> : <Icons.Eye size={18} />}
-        </IconButton>
-      )}
+      <IconButton
+        variant="ghost"
+        color={isHidden ? 'orange' : 'gray'}
+        size="1"
+        aria-label="Hide"
+        onClick={handleToggleHidden}
+        disabled={!viewerCanEdit}
+      >
+        {isHidden ? <Icons.EyeClosed size={18} /> : <Icons.Eye size={18} />}
+      </IconButton>
 
       {viewerCanEdit && (
         <DropdownMenu.Root>
@@ -136,7 +135,7 @@ export const MessageHeader = () => {
               <Icons.Trash size={18} />
             </IconButton>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content variant="soft" size="1">
+          <DropdownMenu.Content variant="soft">
             <DropdownMenu.Item color="red" onClick={handleDeleteMessage}>
               Delete
             </DropdownMenu.Item>
@@ -196,6 +195,6 @@ function getName(message: EMessage) {
   if (message.name) return message.name
 
   if (message.role === 'assistant') {
-    return message.kvMetadata['esuite:run:model-name']
+    return message.kvMetadata['esuite:run:model:name']
   }
 }

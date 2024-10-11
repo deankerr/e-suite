@@ -21,7 +21,7 @@ export const MessageBody = () => {
   return (
     <div className={cn('flex shrink-0 flex-col', isHidden && 'opacity-30')}>
       <AdminOnlyUi>
-        <div className="flex-end w-full divide-x divide-gray-7 border-b py-1 text-right font-mono text-xxs empty:hidden">
+        <div className="flex-end w-full divide-x divide-gray-7 border-b py-1 text-right font-mono text-xxs first:hidden empty:hidden">
           {Object.entries(message.kvMetadata).map(([key, value]) => (
             <div key={key} className="px-2">
               <div className="text-gold-12">{key}</div>
@@ -33,16 +33,16 @@ export const MessageBody = () => {
 
       {showJson ? <MessageJson message={message} /> : null}
 
-      <div className="min-h-12 p-3.5 leading-7 text-gray-11">
+      <div className="min-h-12 p-3">
         {isEditing ? <MessageEditor /> : <MessageText textStyle={textStyle}>{text}</MessageText>}
 
-        {runId && text === undefined && (
-          <div className="flex-start">
+        {!text && (
+          <div className="flex-start h-8">
             <Loader type="dotPulse" />
           </div>
         )}
 
-        {message.text === '' && (
+        {!runId && message.text === '' && (
           <Code variant="ghost" color="gray">
             (blank message)
           </Code>
@@ -59,6 +59,7 @@ const MessageText = ({
   children: string | undefined
   textStyle: 'markdown' | 'monospace'
 }) => {
+  if (!children) return null
   if (textStyle === 'markdown') return <Markdown>{children}</Markdown>
   return <div className="whitespace-pre-wrap font-mono font-[15px]">{children}</div>
 }

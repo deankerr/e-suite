@@ -187,32 +187,42 @@
   }
 }
 
+.markdown-root {
+  @apply overflow-hidden;
+}
+
 .markdown-root h1 {
-  @apply mb-8 scroll-m-20 text-4xl font-bold tracking-tight last:mb-0;
+  @apply text-4xl font-bold tracking-tight;
+  @apply pb-6 pt-10 first:pt-4;
 }
 
 .markdown-root h2 {
-  @apply mb-4 mt-8 scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0 last:mb-0;
+  @apply text-3xl font-semibold tracking-tight;
+  @apply pb-4 pt-8;
 }
 
 .markdown-root h3 {
-  @apply mb-4 mt-6 scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 last:mb-0;
+  @apply text-2xl font-semibold tracking-tight;
+  @apply pb-4 pt-6;
 }
 
 .markdown-root h4 {
-  @apply mb-4 mt-6 scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 last:mb-0;
+  @apply text-xl font-semibold tracking-tight;
+  @apply pb-4 pt-6;
 }
 
 .markdown-root h5 {
-  @apply my-4 text-lg font-semibold first:mt-0 last:mb-0;
+  @apply text-lg font-semibold;
+  @apply pb-3 pt-4;
 }
 
 .markdown-root h6 {
-  @apply my-4 font-semibold first:mt-0 last:mb-0;
+  @apply font-semibold;
+  @apply pb-3 pt-4;
 }
 
 .markdown-root p {
-  @apply mb-2.5 mt-5 leading-7 first:mt-0 last:mb-0;
+  @apply pb-3 pt-3 leading-7 first:pt-0 last:pb-0;
 }
 
 .markdown-root a {
@@ -224,28 +234,27 @@
 }
 
 .markdown-root ul {
-  @apply my-2.5 ml-6 list-disc [&>li]:mt-1;
+  @apply ml-6 list-disc pb-2 [&>li]:pt-2;
 }
 
 .markdown-root ol {
-  @apply my-2.5 ml-6 list-decimal [&>li]:mt-1;
-}
-
-.markdown-root li > ul,
-.markdown-root li > ol {
-  @apply mb-2.5 mt-1;
+  @apply ml-6 list-decimal pb-2 [&>li]:pt-2;
 }
 
 .markdown-root hr {
-  @apply my-5 border-b;
+  @apply border-b;
 }
 
 .markdown-root table {
-  @apply my-5 w-full border-separate border-spacing-0 overflow-y-auto;
+  @apply w-full border-separate border-spacing-0;
+}
+
+.markdown-root thead {
+  @apply bg-grayA-2;
 }
 
 .markdown-root th {
-  @apply bg-gray-2 px-4 py-2 text-left font-bold first:rounded-tl-lg last:rounded-tr-lg [&[align=center]]:text-center [&[align=right]]:text-right;
+  @apply border-y px-4 py-2 text-left font-bold first:rounded-tl-lg first:border-l last:rounded-tr-lg last:border-r [&[align=center]]:text-center [&[align=right]]:text-right;
 }
 
 .markdown-root td {
@@ -253,7 +262,7 @@
 }
 
 .markdown-root tr {
-  @apply m-0 border-b p-0 first:border-t [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg;
+  @apply border-b first:border-t [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg;
 }
 
 .markdown-root sup {
@@ -268,4 +277,34 @@
   @apply leading-5 text-grayA-11;
   font-size: 13px;
   line-height: 1.2;
+}
+
+.header-markers h1::before {
+  content: '⋅ ';
+  @apply text-gray-8;
+}
+
+.header-markers h2::before {
+  content: '∶ ';
+  @apply text-gray-8;
+}
+
+.header-markers h3::before {
+  content: '∴ ';
+  @apply text-gray-8;
+}
+
+.header-markers h4::before {
+  content: '∷ ';
+  @apply text-gray-8;
+}
+
+.header-markers h5::before {
+  content: '∵ ';
+  @apply text-gray-8;
+}
+
+.header-markers h6::before {
+  content: '∵ ';
+  @apply text-gray-8;
 }

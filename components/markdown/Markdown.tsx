@@ -10,7 +10,12 @@ export const Markdown = memo(({ children }: { children?: string | null | undefin
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
       components={{
-        a: ({ color, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
+        a: ({ node, color, ...props }) => <LinkBadge {...props} href={props.href ?? ''} />,
+        table: ({ node, ...props }) => (
+          <div className="w-full overflow-x-auto">
+            <table {...props} />
+          </div>
+        ),
       }}
       className="markdown-root"
     >
