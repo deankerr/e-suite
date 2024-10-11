@@ -44,7 +44,13 @@ export const run = internalAction({
         internal.db.runs.activate,
         { runId },
       )
-      console.log({ ...run, messages })
+      console.log({
+        ...run,
+        messages: messages.map((message) => ({
+          ...message,
+          content: message.content.slice(0, 500),
+        })),
+      })
 
       const model = createModelProvider(run.model)
       const input = {

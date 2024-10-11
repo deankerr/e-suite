@@ -3,7 +3,8 @@ import { Code, DropdownMenu } from '@radix-ui/themes'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { useDeleteMessage, useRun } from '@/app/lib/api/threads'
+import { useDeleteMessage, useRun, useUpdateMessage } from '@/app/lib/api/threads'
+import { cn } from '@/app/lib/utils'
 import { IconButton } from '../ui/Button'
 import { Loader } from '../ui/Loader'
 import { useMessageContext } from './MessageProvider'
@@ -35,6 +36,12 @@ export const MessageHeader = () => {
       })
   }
 
+  const isHidden = message.channel === 'hidden'
+  const updateMessage = useUpdateMessage()
+  const handleToggleHidden = () => {
+    updateMessage({ messageId: message._id, channel: isHidden ? '' : 'hidden' })
+  }
+
   const color = getRoleColor(message.role)
   const name = getName(message)
   const hasSVG = message.text?.includes('```svg\n<svg')
@@ -43,8 +50,19 @@ export const MessageHeader = () => {
   const run = useRun(runId)
 
   return (
-    <div className="flex h-12 shrink-0 items-center gap-1 border-b border-grayA-3 bg-grayA-2 p-2.5">
+    <div
+      className={cn(
+        'flex h-12 shrink-0 items-center gap-1 border-b border-grayA-3 bg-grayA-2 p-2.5',
+        isHidden && 'opacity-60',
+      )}
+    >
       <div className="flex-start gap-2">
+        {message.channel && (
+          <Code color="amber" className="whitespace-pre px-1.5 uppercase" size="3">
+            {message.channel}
+          </Code>
+        )}
+
         <Code color={color} className="whitespace-pre px-1.5 uppercase" size="3">
           {message.role}
         </Code>
@@ -96,6 +114,18 @@ export const MessageHeader = () => {
           onClick={() => setIsEditing(!isEditing)}
         >
           <Icons.Pencil size={18} />
+        </IconButton>
+      )}
+
+      {viewerCanEdit && (
+        <IconButton
+          variant="ghost"
+          color={isHidden ? 'orange' : 'gray'}
+          size="1"
+          aria-label="Hide"
+          onClick={handleToggleHidden}
+        >
+          {isHidden ? <Icons.EyeClosed size={18} /> : <Icons.Eye size={18} />}
         </IconButton>
       )}
 

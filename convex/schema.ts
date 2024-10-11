@@ -195,7 +195,9 @@ export const messageFields = {
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
   text: v.optional(v.string()),
+
   kvMetadata: v.optional(v.record(v.string(), v.string())),
+  channel: v.optional(v.string()),
 
   runId: v.optional(v.id('runs')),
 }
@@ -209,6 +211,7 @@ const messages = defineEnt(messageFields)
   .index('threadId_role', ['threadId', 'role'])
   .index('threadId_name', ['threadId', 'name'])
   .index('threadId_role_name', ['threadId', 'role', 'name'])
+  .index('threadId_channel', ['threadId', 'channel'])
   .index('runId', ['runId'])
   .searchIndex('search_text_threadId_role_name', {
     searchField: 'text',

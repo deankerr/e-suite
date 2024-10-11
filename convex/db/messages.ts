@@ -83,6 +83,7 @@ export const update = mutation({
     name: v.optional(v.string()),
     text: v.optional(v.string()),
 
+    channel: v.optional(v.string()),
     updateKv: v.optional(updateKvValidator),
   },
   handler: async (ctx, { messageId, updateKv, ...args }) => {
@@ -90,6 +91,7 @@ export const update = mutation({
 
     if (args.name === '') args.name = undefined
     if (args.text === '') args.text = undefined
+    if (args.channel === '') args.channel = undefined
 
     const kvMetadata = updateKvMetadata(message.kvMetadata, updateKv)
 

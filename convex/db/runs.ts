@@ -33,8 +33,11 @@ export const activate = internalMutation({
     const limit = run.maxMessages ?? 20
 
     const messages = await ctx.skipRules
-      .table('messages', 'threadId', (q) =>
-        q.eq('threadId', run.threadId).lt('_creationTime', run._creationTime),
+      .table('messages', 'threadId_channel', (q) =>
+        q
+          .eq('threadId', run.threadId)
+          .eq('channel', undefined)
+          .lt('_creationTime', run._creationTime),
       )
       .order('desc')
       .filter((q) =>
@@ -61,7 +64,7 @@ export const activate = internalMutation({
 
     const thread = await ctx.table('threads').getX(run.threadId)
 
-    // * response message
+    // * create response message
     const message = await createMessage(
       ctx,
       {
@@ -205,8 +208,8 @@ const openRouterMetadataSchema = z.object({
   id: z.string(),
   total_cost: z.number(),
   finish_reason: z.string(),
-  tokens_prompt: z.number(),
-  tokens_completion: z.number(),
+  native_tokens_prompt: z.number(),
+  native_tokens_completion: z.number(),
 })
 
 export const updateProviderMetadata = internalMutation({
@@ -219,15 +222,16 @@ export const updateProviderMetadata = internalMutation({
 
     const parsed = openRouterMetadataSchema.safeParse(providerMetadata)
     if (parsed.success) {
-      const { total_cost, finish_reason, tokens_prompt, tokens_completion } = parsed.data
+      const { total_cost, finish_reason, native_tokens_prompt, native_tokens_completion } =
+        parsed.data
 
       await run.patch({
         updatedAt: Date.now(),
         finishReason: finish_reason,
         usage: {
-          promptTokens: tokens_prompt,
-          completionTokens: tokens_completion,
-          totalTokens: tokens_prompt + tokens_completion,
+          promptTokens: native_tokens_prompt,
+          completionTokens: native_tokens_completion,
+          totalTokens: native_tokens_prompt + native_tokens_completion,
         },
         cost: total_cost,
         providerMetadata,

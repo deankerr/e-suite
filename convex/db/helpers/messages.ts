@@ -22,6 +22,7 @@ export const messageReturnFields = {
   role: literals('system', 'assistant', 'user'),
   name: v.optional(v.string()),
   text: v.optional(v.string()),
+  channel: v.optional(v.string()),
   kvMetadata: v.record(v.string(), v.string()),
   runId: v.optional(v.id('runs')),
 
