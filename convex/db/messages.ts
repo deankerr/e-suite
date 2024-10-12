@@ -32,15 +32,18 @@ export const get = query({
 
 export const getDoc = query({
   args: {
-    messageId: v.id('messages'),
+    messageId: v.string(),
   },
   handler: async (ctx, args) => {
-    const message = await ctx.table('messages').get(args.messageId).doc()
-    if (!message) return null
-    return {
-      ...message,
-      kvMetadata: message.kvMetadata ?? {},
-    }
+    const id = ctx.table('messages').normalizeId(args.messageId)
+    const message = id ? await ctx.table('messages').get(id).doc() : null
+
+    return message
+      ? {
+          ...message,
+          kvMetadata: message.kvMetadata ?? {},
+        }
+      : null
   },
   returns: nullable(v.object(omit(messageReturnFields, ['threadSlug']))),
 })
@@ -125,17 +128,6 @@ export const updateSR = internalMutation({
       .table('messages')
       .getX(messageId)
       .patch({ ...args, kvMetadata })
-  },
-  returns: v.id('messages'),
-})
-
-export const streamText = internalMutation({
-  args: {
-    messageId: v.id('messages'),
-    text: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.skipRules.table('messages').getX(args.messageId).patch({ text: args.text })
   },
   returns: v.id('messages'),
 })

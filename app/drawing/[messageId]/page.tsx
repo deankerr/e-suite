@@ -4,6 +4,8 @@ import { useMemo } from 'react'
 
 import { useMessageById } from '@/app/lib/api/messages'
 import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
+import { EmptyPage } from '@/components/pages/EmptyPage'
+import { LoadingPage } from '@/components/pages/LoadingPage'
 import { Panel } from '@/components/ui/Panel'
 import { VScrollArea } from '@/components/ui/VScrollArea'
 
@@ -23,9 +25,13 @@ export default function Page({ params }: { params: { messageId: string } }) {
     return []
   }, [message?.text])
 
+  if (!message) {
+    return <Panel>{message === null ? <EmptyPage /> : <LoadingPage />}</Panel>
+  }
+
   return (
     <Panel>
-      <VScrollArea className="">
+      <VScrollArea>
         <div className="flex-col-center h-full gap-4">
           {svgContents.length > 0 ? (
             svgContents.map((svg, index) => (
