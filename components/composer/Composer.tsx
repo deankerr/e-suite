@@ -59,6 +59,11 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
         <ModelPickerCmd value={resourceKey} onValueChange={setResourceKey}>
           <ModelButton resourceKey={resourceKey} />
         </ModelPickerCmd>
+
+        <div className="my-auto hidden h-fit items-center rounded bg-grayA-2 p-1 font-mono text-xs text-gray-10 sm:flex">
+          {resourceKey.split('::')[1]}
+        </div>
+
         <div className="flex-end ml-auto shrink-0 gap-2">
           <AddButton loading={loading} onClick={() => handleSend('append')} />
           <SendButton loading={loading} onClick={() => handleSend('run')} />

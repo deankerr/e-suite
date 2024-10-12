@@ -3,10 +3,9 @@ import { Code, DropdownMenu } from '@radix-ui/themes'
 import Link from 'next/link'
 import { toast } from 'sonner'
 
-import { useDeleteMessage, useRun, useUpdateMessage } from '@/app/lib/api/threads'
+import { useDeleteMessage, useUpdateMessage } from '@/app/lib/api/threads'
 import { cn } from '@/app/lib/utils'
 import { IconButton } from '../ui/Button'
-import { Loader } from '../ui/Loader'
 import { useMessageContext } from './MessageProvider'
 import { TimeSince } from './TimeSince'
 
@@ -45,9 +44,6 @@ export const MessageHeader = () => {
   const color = getRoleColor(message.role)
   const name = getName(message)
   const hasSVG = message.text?.includes('```svg\n<svg')
-
-  const runId = message.kvMetadata['esuite:run:hint'] ? message.runId : undefined
-  const run = useRun(runId)
 
   return (
     <div
@@ -169,18 +165,6 @@ export const MessageHeader = () => {
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
-
-      <div className="flex-center w-6">
-        {run?.status === 'done' ? (
-          <Icons.Check className="text-green-11" />
-        ) : run?.status === 'failed' ? (
-          <Icons.WarningOctagon className="text-red-11" />
-        ) : run ? (
-          <Loader type="ping" color="orange" size={40} />
-        ) : (
-          <Icons.Dot weight="bold" />
-        )}
-      </div>
     </div>
   )
 }
