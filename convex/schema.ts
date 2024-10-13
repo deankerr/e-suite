@@ -246,6 +246,23 @@ export const modelParametersFields = {
   presencePenalty: v.optional(v.number()),
 }
 
+const runFields2 = {
+  status: literals('queued', 'active', 'done', 'failed'),
+  updatedAt: v.number(),
+  startedAt: v.optional(v.number()),
+  endedAt: v.optional(v.number()),
+  firstTokenAt: v.optional(v.number()),
+
+  model: v.optional(
+    v.object({
+      id: v.string(),
+      ...modelParametersFields,
+    }),
+  ),
+
+  instructions: v.string(),
+}
+
 export const runFields = {
   status: literals('queued', 'active', 'done', 'failed'),
   updatedAt: v.number(),
@@ -281,10 +298,48 @@ export const runFields = {
   messageId: v.optional(v.id('messages')),
 }
 const runs = defineEnt(runFields)
-  .deletion('scheduled', { delayMs: timeToDelete })
+  .deletion('scheduled', { delayMs: timeToDelete }) // todo rm/soft?
   .edge('thread')
   .edge('user')
   .index('messageId', ['messageId'])
+
+// * Patterns
+export const patternFields = {
+  name: v.string(),
+  description: v.string(),
+
+  model: v.object({
+    id: v.string(),
+    ...modelParametersFields,
+  }),
+
+  instructions: v.string(),
+  initialMessasges: v.array(
+    v.object({
+      role: literals('system', 'assistant', 'user'),
+      name: v.optional(v.string()),
+      text: v.string(),
+    }),
+  ),
+
+  dynamicMessages: v.array(
+    v.object({
+      message: v.object({
+        role: literals('system', 'assistant', 'user'),
+        name: v.optional(v.string()),
+        text: v.string(),
+      }),
+    }),
+  ),
+
+  kvMetadata: v.record(v.string(), v.string()),
+}
+const patterns = defineEnt(patternFields)
+  .field('xid', v.string(), { unique: true })
+  .field('updatedAt', v.number())
+  .field('lastUsedAt', v.number())
+  .deletion('scheduled', { delayMs: timeToDelete })
+  .edge('user')
 
 // * Users
 export const userFields = {
@@ -310,6 +365,7 @@ const users = defineEnt(userFields)
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('runs', { ref: true, deletion: 'soft' })
   .edges('texts', { ref: 'userId', deletion: 'soft' })
+  .edges('patterns', { ref: true, deletion: 'soft' })
   .edges('threads', { ref: true, deletion: 'soft' })
 
 export const usersApiKeysFields = {
@@ -344,6 +400,7 @@ const schema = defineEntSchema(
     runs,
     speech,
     threads,
+    patterns,
     users,
     users_api_keys,
 
