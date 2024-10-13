@@ -121,8 +121,9 @@ export const complete = internalMutation({
       completionTokens: v.number(),
       totalTokens: v.number(),
     }),
+    firstTokenAt: v.optional(v.number()),
   },
-  handler: async (ctx, { runId, text, finishReason, usage }) => {
+  handler: async (ctx, { runId, text, finishReason, usage, firstTokenAt }) => {
     const run = await ctx.skipRules.table('runs').getX(runId)
     if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
 
@@ -156,6 +157,7 @@ export const complete = internalMutation({
       finishReason,
       usage,
       cost,
+      firstTokenAt,
       messageId: runMessage._id,
     })
   },

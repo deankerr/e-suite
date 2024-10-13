@@ -1,6 +1,5 @@
 import { createOpenAI, openai } from '@ai-sdk/openai'
 import { generateText, streamText } from 'ai'
-import { omit } from 'convex-helpers'
 import { ConvexError, v } from 'convex/values'
 import { ms } from 'itty-time'
 
@@ -46,6 +45,7 @@ export const run = internalAction({
       )
       console.log({
         ...run,
+        instructions: run.instructions ? run.instructions.slice(0, 500) : run.instructions,
         messages: messages.map((message) => ({
           ...message,
           content: message.content.slice(0, 500),
@@ -62,7 +62,7 @@ export const run = internalAction({
 
       async function nonStreaming() {
         const { text, finishReason, usage, warnings, response } = await generateText({ ...input })
-        return { text, finishReason, usage, warnings, response }
+        return { text, finishReason, usage, warnings, response, firstTokenAt: undefined }
       }
 
       async function streaming() {
@@ -72,8 +72,11 @@ export const run = internalAction({
         })
         const result = await streamText(input)
 
+        let firstTokenAt = 0
         let streamedText = ''
         for await (const textPart of result.textStream) {
+          if (!textPart) continue
+          if (!firstTokenAt) firstTokenAt = Date.now()
           streamedText += textPart
           if (hasDelimiter(textPart)) {
             await ctx.runMutation(internal.db.texts.streamToText, {
@@ -99,22 +102,21 @@ export const run = internalAction({
           console.error(err)
         }
 
-        return { text, finishReason, usage, warnings, response }
+        return { text, finishReason, usage, warnings, response, firstTokenAt }
       }
 
-      const { text, finishReason, usage, warnings, response } = run.stream
+      const { text, finishReason, usage, warnings, response, firstTokenAt } = run.stream
         ? await streaming()
         : await nonStreaming()
 
-      console.log(text)
-      console.log({ finishReason, usage, response: omit(response, ['headers']) })
-      if (warnings) warnings.forEach((warning) => console.warn(warning))
+      console.log(text, { finishReason, usage, warnings })
 
       await ctx.runMutation(internal.db.runs.complete, {
         runId,
         text,
         finishReason,
         usage,
+        firstTokenAt,
       })
 
       if (run.model.provider === 'openrouter') {

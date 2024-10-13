@@ -260,6 +260,8 @@ export const runFields = {
   instructions: v.optional(v.string()),
 
   stream: v.boolean(),
+  firstTokenAt: v.optional(v.number()),
+
   maxMessages: v.optional(v.number()),
   prependNamesToMessageContent: v.optional(v.boolean()),
   kvMetadata: v.optional(v.record(v.string(), v.string())),
