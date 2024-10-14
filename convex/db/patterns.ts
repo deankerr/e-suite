@@ -8,10 +8,7 @@ import { patternFields } from '../schema'
 import { getPattern, getPatternWriterX } from './helpers/patterns'
 import { xid } from './helpers/xid'
 
-const patternCreateFields = {
-  ...partial(omit(patternFields, ['model'])),
-  model: patternFields['model'],
-}
+// * Queries
 
 export const get = query({
   args: {
@@ -21,6 +18,21 @@ export const get = query({
     return await getPattern(ctx, id).then((pattern) => pattern?.doc() ?? null)
   },
 })
+
+export const list = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.viewerX()
+    return await ctx.table('patterns').filter((q) => q.eq(q.field('userId'), user._id))
+  },
+})
+
+const patternCreateFields = {
+  ...partial(omit(patternFields, ['model'])),
+  model: patternFields['model'],
+}
+
+// * Mutations
 
 export const create = mutation({
   args: patternCreateFields,
