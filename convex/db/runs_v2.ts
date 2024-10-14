@@ -1,15 +1,18 @@
 import { pick } from 'convex-helpers'
+import { nullable } from 'convex-helpers/validators'
 import { ConvexError, v } from 'convex/values'
 import { z } from 'zod'
 
 import { internal } from '../_generated/api'
-import { internalMutation, mutation } from '../functions'
+import { internalMutation, mutation, query } from '../functions'
 import { runFieldsV2 } from '../schema'
 import { updateKvMetadata } from './helpers/kvMetadata'
 import { createMessage, messageCreateFields } from './helpers/messages'
 import { getPatternWriterX } from './helpers/patterns'
 import { getChatModel } from './models'
 import { getOrCreateUserThread } from './threads'
+
+import type { Id } from '../_generated/dataModel'
 
 // TODO * pattern initial/dynamic messages
 
@@ -22,6 +25,24 @@ const runCreateFields = {
 
   appendMessages: v.optional(v.array(v.object(messageCreateFields))),
 }
+
+export const runV2ReturnFields = {
+  _id: v.id('runs_v2'),
+  _creationTime: v.number(),
+  ...runFieldsV2,
+  threadId: v.id('threads'),
+  userId: v.id('users'),
+}
+
+export const get = query({
+  args: {
+    runId: v.string(),
+  },
+  handler: async (ctx, { runId }) => {
+    return await ctx.table('runs_v2').get(runId as Id<'runs_v2'>)
+  },
+  returns: nullable(v.object(runV2ReturnFields)),
+})
 
 export const create = mutation({
   args: runCreateFields,

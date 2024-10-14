@@ -35,8 +35,8 @@ export const useThread = (threadId: string) => {
   return userThread || otherThread
 }
 
-export const useRun = (runId: Id<'runs'> | undefined) => {
-  return useCachedQuery(api.db.runs.get, runId ? { runId } : 'skip')
+export const useRun = (runId: string | undefined) => {
+  return useCachedQuery(api.db.runs_v2.get, runId ? { runId } : 'skip')
 }
 
 export const useListThreadRuns = (threadId: string) => {

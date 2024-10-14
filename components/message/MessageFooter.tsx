@@ -25,20 +25,23 @@ export const MessageFooter = () => {
 
   if (!run) return null
 
-  const timeActive = getDuration(run.startedAt, run.endedAt)
-
+  const timeActive = getDuration(run.timings.startedAt, run.timings.endedAt)
+  const topProvider = run.providerMetadata?.provider_name as string | undefined
   return (
     <div className="flex-end h-8 divide-x divide-grayA-3 overflow-hidden border-t border-grayA-3 px-1 font-mono text-xs text-gray-10 [&>div]:px-2.5">
       <div className="grow">{run.model.id}</div>
-      <div>{run.finishReason}</div>
+
+      {topProvider && <div>{topProvider}</div>}
+
+      <div>{run.usage?.finishReason}</div>
 
       <div>{timeActive.toFixed(1)}s</div>
       {run.usage && (
         <div>
-          {run.usage.completionTokens} / {run.usage.totalTokens} tok
+          {run.usage.completionTokens} / {run.usage.promptTokens} tok
         </div>
       )}
-      {run.cost !== undefined && <div>${formatCost(run.cost)} USD</div>}
+      {run.usage?.cost !== undefined && <div>${formatCost(run.usage.cost)} USD</div>}
 
       <div className="flex-center shrink-0">
         {run.status === 'queued' && <Loader type="ping" size={24} color="var(--gold-11)" />}
@@ -46,7 +49,7 @@ export const MessageFooter = () => {
 
         {run.status === 'done' && <Icons.Check className="size-4 text-green-10 saturate-50" />}
 
-        {(run.status === 'failed' || run.finishReason === 'error') && (
+        {(run.status === 'failed' || run.usage?.finishReason === 'error') && (
           <Icons.WarningOctagon className="size-4 text-red-10 saturate-50" />
         )}
       </div>

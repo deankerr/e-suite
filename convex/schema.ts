@@ -368,7 +368,7 @@ export const patternFields = {
   }),
 
   instructions: v.string(),
-  initialMessasges: v.array(
+  initialMessages: v.array(
     v.object({
       role: literals('system', 'assistant', 'user'),
       name: v.optional(v.string()),
