@@ -25,6 +25,7 @@ export const messageReturnFields = {
   channel: v.optional(v.string()),
   kvMetadata: v.record(v.string(), v.string()),
   runId: v.optional(v.id('runs')),
+  runId_v2: v.optional(v.string()),
 
   // fields
   series: v.number(),
@@ -82,6 +83,8 @@ export const createMessage = async (
         .table('messages')
         .insert({ ...fields, series })
         .get()
+
+  console.log('create:', message.role, message.text)
 
   if (evaluateUrls) {
     if (message.text) {

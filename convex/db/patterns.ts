@@ -22,17 +22,20 @@ export const get = query({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const user = await ctx.viewerX()
-    return await ctx.table('patterns').filter((q) => q.eq(q.field('userId'), user._id))
+    const user = await ctx.viewer()
+    if (!user) return null
+    return await ctx
+      .table('patterns', 'userId', (q) => q.eq('userId', user._id))
+      .filter((q) => q.eq(q.field('deletionTime'), undefined))
   },
 })
+
+// * Mutations
 
 const patternCreateFields = {
   ...partial(omit(patternFields, ['model'])),
   model: patternFields['model'],
 }
-
-// * Mutations
 
 export const create = mutation({
   args: patternCreateFields,
@@ -61,7 +64,7 @@ export const create = mutation({
       xid: xid('pattern'),
       userId: user._id,
       updatedAt: Date.now(),
-      lastUsedAt: Date.now(),
+      lastUsedAt: 0,
     })
 
     return patternId

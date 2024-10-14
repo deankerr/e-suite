@@ -182,7 +182,7 @@ export const textFields = {
   title: v.optional(v.string()),
   content: v.string(),
   updatedAt: v.number(),
-  runId: v.optional(v.id('runs')),
+  runId: v.optional(v.union(v.id('runs'), v.id('runs_v2'))),
 }
 const texts = defineEnt(textFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -200,6 +200,7 @@ export const messageFields = {
   channel: v.optional(v.string()),
 
   runId: v.optional(v.id('runs')),
+  runId_v2: v.optional(v.id('runs_v2')),
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -213,6 +214,7 @@ const messages = defineEnt(messageFields)
   .index('threadId_role_name', ['threadId', 'role', 'name'])
   .index('threadId_channel', ['threadId', 'channel'])
   .index('runId', ['runId'])
+  .index('runId_v2', ['runId_v2'])
   .searchIndex('search_text_threadId_role_name', {
     searchField: 'text',
     filterFields: ['threadId', 'role', 'name'],
@@ -247,17 +249,15 @@ export const modelParametersFields = {
   presencePenalty: v.optional(v.number()),
 }
 
-const runFieldsV2 = {
+export const runFieldsV2 = {
   status: literals('queued', 'active', 'done', 'failed'),
   stream: v.boolean(),
   patternId: v.optional(v.id('patterns')),
 
-  model: v.optional(
-    v.object({
-      id: v.string(),
-      ...modelParametersFields,
-    }),
-  ),
+  model: v.object({
+    id: v.string(),
+    ...modelParametersFields,
+  }),
 
   options: v.optional(
     v.object({
@@ -271,21 +271,20 @@ const runFieldsV2 = {
   additionalInstructions: v.optional(v.string()),
 
   // * run stats
-  timings: v.optional(
-    v.object({
-      startedAt: v.number(),
-      endedAt: v.optional(v.number()),
-      firstTokenAt: v.optional(v.number()),
-    }),
-  ),
+  timings: v.object({
+    queuedAt: v.number(),
+    startedAt: v.optional(v.number()),
+    endedAt: v.optional(v.number()),
+    firstTokenAt: v.optional(v.number()),
+  }),
 
   usage: v.optional(
     v.object({
-      cost: v.number(),
+      cost: v.optional(v.number()),
       finishReason: v.string(),
       promptTokens: v.number(),
       completionTokens: v.number(),
-      model: v.string(),
+      modelId: v.string(),
       requestId: v.string(),
     }),
   ),
