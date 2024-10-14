@@ -1,6 +1,5 @@
 import { generateText, streamText } from 'ai'
 import { ConvexError, v } from 'convex/values'
-import { ms } from 'itty-time'
 
 import { internal } from '../_generated/api'
 import { internalAction } from '../functions'
@@ -55,7 +54,7 @@ export const run = internalAction({
 
       const { text, finishReason, usage, warnings, response, firstTokenAt } = stream
         ? await streamAIText(ctx, { runId, userId }, input)
-        : await runAIText(input)
+        : await getAIText(input)
 
       console.log(text, { finishReason, usage, warnings })
 
@@ -70,6 +69,12 @@ export const run = internalAction({
         modelId: response.modelId,
         requestId: response.id,
       })
+
+      // * get openrouter metadata
+      await ctx.scheduler.runAfter(0, internal.action.run_v2.getProviderMetadata, {
+        runId,
+        requestId: response.id,
+      })
     } catch (err) {
       console.error(err)
 
@@ -81,7 +86,7 @@ export const run = internalAction({
   },
 })
 
-async function runAIText(input: Parameters<typeof generateText>[0]) {
+async function getAIText(input: Parameters<typeof generateText>[0]) {
   const { text, finishReason, usage, warnings, response } = await generateText(input)
   return { text, finishReason, usage, warnings, response, firstTokenAt: undefined }
 }
@@ -120,7 +125,7 @@ async function streamAIText(
   ])
 
   try {
-    await ctx.scheduler.runAfter(ms('1 minute'), internal.db.texts.deleteText, {
+    await ctx.scheduler.runAfter(0, internal.db.texts.deleteText, {
       textId,
     })
   } catch (err) {
@@ -129,3 +134,49 @@ async function streamAIText(
 
   return { text, finishReason, usage, warnings, response, firstTokenAt }
 }
+
+async function fetchOpenRouterMetadata(requestId: string) {
+  try {
+    const response = await fetch(`https://openrouter.ai/api/v1/generation?id=${requestId}`, {
+      headers: {
+        Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
+      },
+    })
+    const json = await response.json()
+
+    if ('data' in json) return json.data
+    console.error(json)
+    return null
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+}
+
+const MAX_ATTEMPTS = 5
+export const getProviderMetadata = internalAction({
+  args: {
+    runId: v.id('runs_v2'),
+    requestId: v.string(),
+    attempts: v.optional(v.number()),
+  },
+  handler: async (ctx, { runId, requestId, attempts = 1 }) => {
+    try {
+      const metadata = await fetchOpenRouterMetadata(requestId)
+      if (!metadata) throw new ConvexError('failed to fetch openrouter metadata')
+
+      await ctx.runMutation(internal.db.runs_v2.updateProviderMetadata, {
+        runId,
+        providerMetadata: metadata,
+      })
+    } catch (err) {
+      if (attempts >= MAX_ATTEMPTS) throw new ConvexError('failed to fetch openrouter metadata')
+
+      await ctx.scheduler.runAfter(2000 * attempts, internal.action.run_v2.getProviderMetadata, {
+        runId,
+        requestId,
+        attempts: attempts + 1,
+      })
+    }
+  },
+})

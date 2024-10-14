@@ -1,5 +1,6 @@
 import { pick } from 'convex-helpers'
 import { ConvexError, v } from 'convex/values'
+import { z } from 'zod'
 
 import { internal } from '../_generated/api'
 import { internalMutation, mutation } from '../functions'
@@ -262,6 +263,55 @@ export const fail = internalMutation({
       }
     } catch (err) {
       console.error('Failed to update run message', err)
+    }
+  },
+})
+
+const OpenRouterMetadataSchema = z.object({
+  id: z.string(),
+  model: z.string(),
+  total_cost: z.number(),
+  finish_reason: z.string(),
+  native_tokens_prompt: z.number(),
+  native_tokens_completion: z.number(),
+})
+
+export const updateProviderMetadata = internalMutation({
+  args: {
+    runId: v.id('runs_v2'),
+    providerMetadata: v.record(v.string(), v.any()),
+  },
+  handler: async (ctx, { runId, providerMetadata }) => {
+    const run = await ctx.skipRules.table('runs_v2').getX(runId)
+
+    const parsed = OpenRouterMetadataSchema.safeParse(providerMetadata)
+    if (parsed.success) {
+      const {
+        total_cost,
+        finish_reason,
+        native_tokens_prompt,
+        native_tokens_completion,
+        id,
+        model,
+      } = parsed.data
+
+      await run.patch({
+        updatedAt: Date.now(),
+        usage: {
+          cost: total_cost,
+          finishReason: finish_reason,
+          promptTokens: native_tokens_prompt,
+          completionTokens: native_tokens_completion,
+          modelId: model,
+          requestId: id,
+        },
+        providerMetadata,
+      })
+    } else {
+      await run.patch({
+        updatedAt: Date.now(),
+        providerMetadata,
+      })
     }
   },
 })
