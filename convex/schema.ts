@@ -373,6 +373,7 @@ export const patternFields = {
       role: literals('system', 'assistant', 'user'),
       name: v.optional(v.string()),
       text: v.string(),
+      channel: v.optional(v.string()),
     }),
   ),
   dynamicMessages: v.array(
@@ -381,6 +382,7 @@ export const patternFields = {
         role: literals('system', 'assistant', 'user'),
         name: v.optional(v.string()),
         text: v.string(),
+        channel: v.optional(v.string()),
       }),
     }),
   ),

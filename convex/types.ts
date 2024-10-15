@@ -4,6 +4,7 @@ import type { messageReturnFields } from './db/helpers/messages'
 import type { threadReturnFields } from './db/helpers/threads'
 import type { imagesReturn } from './db/images'
 import type { getChatModelByResourceKey } from './db/models'
+import type { patternReturnFields } from './db/patterns'
 import type { runV2ReturnFields } from './db/runs_v2'
 import type { userReturnFieldsPublic } from './db/users'
 import type { mutation, query } from './functions'
@@ -20,6 +21,7 @@ export type EntWriter<TableName extends TableNames> = GenericEntWriter<
   TableName
 >
 
+export type EPattern = Infer<AsObjectValidator<typeof patternReturnFields>>
 export type EThread = Infer<AsObjectValidator<typeof threadReturnFields>>
 export type EMessage = Infer<AsObjectValidator<typeof messageReturnFields>>
 export type EImage = Infer<AsObjectValidator<typeof imagesReturn>>

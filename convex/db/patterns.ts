@@ -8,6 +8,16 @@ import { patternFields } from '../schema'
 import { getPattern, getPatternWriterX } from './helpers/patterns'
 import { xid } from './helpers/xid'
 
+export const patternReturnFields = {
+  ...patternFields,
+  _id: v.id('patterns'),
+  _creationTime: v.number(),
+  xid: v.string(),
+  updatedAt: v.number(),
+  lastUsedAt: v.number(),
+  userId: v.id('users'),
+}
+
 // * Queries
 
 export const get = query({
