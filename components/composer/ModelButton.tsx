@@ -12,10 +12,10 @@ const modelIcons: Record<string, React.ReactNode> = {
 
 export const ModelButton = forwardRef<
   HTMLButtonElement,
-  { resourceKey?: string } & Partial<React.ComponentProps<typeof Button>>
->(({ resourceKey, ...props }, ref) => {
+  { modelId?: string } & Partial<React.ComponentProps<typeof Button>>
+>(({ modelId, ...props }, ref) => {
   const chatModels = useChatModels()
-  const model = chatModels?.find((model) => model.resourceKey === resourceKey)
+  const model = chatModels?.find((model) => model.modelId === modelId)
 
   const icon = modelIcons['chat']
   const label = model?.name ?? 'Select model'

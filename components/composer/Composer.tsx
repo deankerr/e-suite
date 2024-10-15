@@ -21,18 +21,18 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
   const actions = useThreadActions(thread?._id ?? '')
   const loading = actions.state !== 'ready'
 
-  const [resourceKey, setResourceKey] = useState(
-    getModelKey(thread?.kvMetadata ?? {}) ?? 'openrouter::meta-llama/llama-3.1-70b-instruct',
+  const [modelId, setModelId] = useState(
+    getModelKey(thread?.kvMetadata ?? {}) ?? 'meta-llama/llama-3.1-70b-instruct',
   )
   const [textValue, setTextValue] = useState('')
 
   const handleSend = (action: 'append' | 'run') => {
-    if (!resourceKey) return console.error('No model selected')
+    if (!modelId) return console.error('No model selected')
 
     actions
       .send({
         text: textValue,
-        model: { provider: resourceKey.split('::')[0]!, id: resourceKey.split('::')[1]! },
+        model: { provider: modelId.split('::')[0]!, id: modelId.split('::')[1]! },
         action,
       })
       .then((result) => {
@@ -56,12 +56,12 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
       </div>
 
       <div className="flex gap-2 overflow-hidden border-t border-grayA-3 p-2">
-        <ModelPickerCmd value={resourceKey} onValueChange={setResourceKey}>
-          <ModelButton resourceKey={resourceKey} />
+        <ModelPickerCmd value={modelId} onValueChange={setModelId}>
+          <ModelButton modelId={modelId} />
         </ModelPickerCmd>
 
         <div className="my-auto hidden h-fit items-center rounded bg-grayA-2 p-1 font-mono text-xs text-gray-10 sm:flex">
-          {resourceKey.split('::')[1]}
+          {modelId}
         </div>
 
         <div className="flex-end ml-auto shrink-0 gap-2">
@@ -127,8 +127,5 @@ const CommandEnter = () => {
 }
 
 function getModelKey(kvMetadata: Record<string, string>) {
-  const id = kvMetadata['esuite:model:id']
-  const provider = kvMetadata['esuite:model:provider']
-  if (!id || !provider) return undefined
-  return `${provider}::${id}`
+  return kvMetadata['esuite:model:id']
 }

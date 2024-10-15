@@ -45,8 +45,8 @@ const demo_patn: EPattern = {
 }
 
 export default function Page() {
-  const [resourceKey, setResourceKey] = useState('openrouter::' + demo_patn.model.id)
-  // Replace useOrderedList with useOrderedListReducer
+  const [modelId, setModelId] = useState(demo_patn.model.id)
+
   const { items: initialMessages, updateItems: updateInitialMessages } = useOrderedListReducer(
     demo_patn.initialMessages.map((item, i) => ({ ...item, __key: demo_patn.xid + i })),
   )
@@ -109,13 +109,13 @@ export default function Page() {
           {/* > model */}
           <div className="space-y-1 p-4">
             <Label>Model</Label>
-            <ModelPickerCmd value={resourceKey} onValueChange={setResourceKey}>
-              <ModelButton resourceKey={resourceKey} />
+            <ModelPickerCmd value={modelId} onValueChange={setModelId}>
+              <ModelButton modelId={modelId} />
             </ModelPickerCmd>
 
             <div className="py-2">
               <Code color="gray" size="3">
-                {resourceKey.split('::')[1]}
+                {modelId}
               </Code>
             </div>
           </div>
