@@ -6,15 +6,13 @@ import { z } from 'zod'
 import { internal } from '../_generated/api'
 import { internalMutation, mutation, query } from '../functions'
 import { runFieldsV2 } from '../schema'
-import { updateKvMetadata } from './helpers/kvMetadata'
+import { createKvMetadata, updateKvMetadata } from './helpers/kvMetadata'
 import { createMessage, messageCreateFields } from './helpers/messages'
-import { getPatternWriterX } from './helpers/patterns'
+import { getPattern, getPatternWriterX } from './helpers/patterns'
 import { getChatModel } from './models'
 import { getOrCreateUserThread } from './threads'
 
 import type { Id } from '../_generated/dataModel'
-
-// TODO * pattern initial/dynamic messages
 
 const runCreateFields = {
   threadId: v.string(),
@@ -65,7 +63,7 @@ export const create = mutation({
     const threadKvMetadata = updateKvMetadata(thread.kvMetadata, {
       set: {
         'esuite:model:id': model.id,
-        'esuite:pattern:id': pattern?._id,
+        'esuite:pattern:xid': pattern?.xid,
       },
     })
     await thread.patch({ updatedAtTime: Date.now(), kvMetadata: threadKvMetadata })
@@ -118,6 +116,8 @@ export const activate = internalMutation({
     const run = await ctx.skipRules.table('runs').getX(runId)
     if (run.status !== 'queued') throw new ConvexError({ message: 'run is not queued', runId })
 
+    const pattern = run.patternId ? await getPattern(ctx, run.patternId) : null
+
     // * create response message
     const responseMessage = await createMessage(
       ctx,
@@ -126,18 +126,30 @@ export const activate = internalMutation({
         userId: run.userId,
         role: 'assistant',
         runId,
-        kvMetadata: {
+        kvMetadata: createKvMetadata({
           'esuite:run:active': run.stream ? 'stream' : 'get',
           'esuite:model:id': run.model.id,
-        },
+          'esuite:pattern:xid': pattern?.xid,
+        }),
       },
       { skipRules: true },
     )
 
-    // NOTE remove default when token counting is implemented
-    const maxMessages = run.options?.maxMessages ?? 50
+    console.log('respMessage', responseMessage)
 
-    const messages = await ctx.skipRules
+    const messages: AIChatMessage[] = []
+
+    // * pattern initial messages
+    if (pattern) {
+      const initialMessages = pattern.initialMessages
+        .filter((message) => !message.channel)
+        .map(formatMessage)
+      messages.push(...initialMessages)
+    }
+
+    // * conversation messages from thread
+    const maxMessages = run.options?.maxMessages ?? 50
+    const conversation = await ctx.skipRules
       .table('messages', 'threadId_channel', (q) =>
         q
           .eq('threadId', run.threadId)
@@ -149,13 +161,8 @@ export const activate = internalMutation({
         q.and(q.eq(q.field('deletionTime'), undefined), q.neq(q.field('text'), undefined)),
       )
       .take(maxMessages)
-      .map(({ role, name, text = '' }) => {
-        const prefix = name ? `${name}: ` : ''
-        return {
-          role,
-          content: `${prefix}${text}`,
-        }
-      })
+      .map(formatMessage)
+    messages.push(...conversation.reverse())
 
     await run.patch({
       status: 'active',
@@ -168,11 +175,32 @@ export const activate = internalMutation({
 
     return {
       ...run.doc(),
-      messages: messages.reverse(),
+      messages,
       messageId: responseMessage._id,
     }
   },
 })
+
+type AIChatMessage = {
+  role: 'system' | 'assistant' | 'user'
+  content: string
+}
+
+function formatMessage({
+  role,
+  name,
+  text = '',
+}: {
+  role: AIChatMessage['role']
+  name?: string
+  text?: string
+}): AIChatMessage {
+  const prefix = role !== 'system' && name ? `${name}: ` : ''
+  return {
+    role,
+    content: `${prefix}${text}`,
+  }
+}
 
 export const complete = internalMutation({
   args: {
@@ -225,6 +253,7 @@ export const complete = internalMutation({
         },
       }),
     })
+    console.log('kvMetadata', kvMetadata)
 
     return await run.patch({
       status: 'done',

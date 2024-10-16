@@ -76,7 +76,7 @@ export const run = internalAction({
       })
 
       // * get openrouter metadata
-      await ctx.scheduler.runAfter(200, internal.action.run.getProviderMetadata, {
+      await ctx.scheduler.runAfter(500, internal.action.run.getProviderMetadata, {
         runId,
         requestId: response.id,
       })

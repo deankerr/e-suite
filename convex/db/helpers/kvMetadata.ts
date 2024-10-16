@@ -37,3 +37,12 @@ export function updateKvMetadata(current: Record<string, string> = {}, kvUpdater
 
   return kvMetadata
 }
+
+export function createKvMetadata(
+  kvOptional: Record<string, string | undefined>,
+): Record<string, string> {
+  const obj = Object.entries(kvOptional).filter(
+    (entry): entry is [string, string] => entry[1] !== undefined,
+  )
+  return Object.fromEntries(obj)
+}
