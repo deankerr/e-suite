@@ -21,7 +21,7 @@ function getDuration(startTime = 0, endTime = Date.now()) {
 }
 
 export const MessageFooter = () => {
-  const { run } = useMessageContext()
+  const { message, run } = useMessageContext()
 
   if (!run) return null
 
@@ -29,7 +29,9 @@ export const MessageFooter = () => {
   const topProvider = run.providerMetadata?.provider_name as string | undefined
   return (
     <div className="flex-end h-8 divide-x divide-grayA-3 overflow-hidden border-t border-grayA-3 px-1 font-mono text-xs text-gray-10 [&>div]:px-2.5">
-      <div className="grow">{run.model.id}</div>
+      <div className="grow">
+        {run.model.id} {message.kvMetadata['esuite:pattern:xid']}
+      </div>
 
       {topProvider && <div>{topProvider}</div>}
 

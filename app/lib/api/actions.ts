@@ -83,7 +83,13 @@ export const useThreadActions = (threadId: string) => {
   )
 
   const send = useCallback(
-    async ({ text, model, action }: Parameters<ComposerSend>[0]) => {
+    async ({
+      text,
+      model,
+      action,
+      patternId,
+      maxCompletionTokens,
+    }: Parameters<ComposerSend>[0]) => {
       const message = {
         role: 'user' as const,
         text,
@@ -92,7 +98,13 @@ export const useThreadActions = (threadId: string) => {
       if (action === 'append') return append({ message })
       else {
         const appendMessages = text ? [message] : undefined
-        return createRun({ appendMessages, model, stream: true })
+        return createRun({
+          appendMessages,
+          model: patternId ? undefined : model,
+          stream: true,
+          patternId,
+          options: { maxCompletionTokens },
+        })
       }
     },
     [append, createRun],

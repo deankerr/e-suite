@@ -9,11 +9,15 @@ import { useThread } from '@/app/lib/api/threads'
 import { ModelPickerCmd } from '@/components/command/ModelPickerCmd'
 import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
+import { TextField } from '../ui/TextField'
+import { AdminOnlyUi } from '../util/AdminOnlyUi'
 
 export type ComposerSend = (args: {
   text: string
   model: { provider: string; id: string }
   action: 'append' | 'run'
+  patternId?: string
+  maxCompletionTokens?: number
 }) => Promise<unknown>
 
 export const Composer = memo(({ threadId }: { threadId: string }) => {
@@ -25,6 +29,8 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
     getModelKey(thread?.kvMetadata ?? {}) ?? 'meta-llama/llama-3.1-70b-instruct',
   )
   const [textValue, setTextValue] = useState('')
+  const [patternId, setPatternId] = useState('')
+  const [maxCompletionTokens, setMaxCompletionTokens] = useState(1000)
 
   const handleSend = (action: 'append' | 'run') => {
     if (!modelId) return console.error('No model selected')
@@ -34,6 +40,8 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
         text: textValue,
         model: { provider: 'openrouter', id: modelId },
         action,
+        patternId: patternId || undefined,
+        maxCompletionTokens: maxCompletionTokens || undefined,
       })
       .then((result) => {
         console.log(result)
@@ -63,6 +71,17 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
         <div className="my-auto hidden h-fit items-center rounded bg-grayA-2 p-1 font-mono text-xs text-gray-10 sm:flex">
           {modelId}
         </div>
+
+        <AdminOnlyUi>
+          <TextField placeholder="patternId" value={patternId} onValueChange={setPatternId} />
+          <TextField
+            type="number"
+            placeholder="maxCompletionTokens"
+            value={maxCompletionTokens.toString()}
+            onValueChange={(value) => setMaxCompletionTokens(parseInt(value))}
+            className="w-20"
+          />
+        </AdminOnlyUi>
 
         <div className="flex-end ml-auto shrink-0 gap-2">
           <AddButton loading={loading} onClick={() => handleSend('append')} />
