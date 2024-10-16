@@ -200,7 +200,7 @@ export const messageFields = {
   channel: v.optional(v.string()),
 
   runId: v.optional(v.id('runs')),
-  runId_v2: v.optional(v.id('runs_v2')),
+  runId_v2: v.optional(v.id('runs_v2')), // ! TEMP
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -214,7 +214,6 @@ const messages = defineEnt(messageFields)
   .index('threadId_role_name', ['threadId', 'role', 'name'])
   .index('threadId_channel', ['threadId', 'channel'])
   .index('runId', ['runId'])
-  .index('runId_v2', ['runId_v2'])
   .searchIndex('search_text_threadId_role_name', {
     searchField: 'text',
     filterFields: ['threadId', 'role', 'name'],
@@ -235,7 +234,6 @@ const threads = defineEnt(threadFields)
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('runs', { ref: true, deletion: 'soft' })
-  .edges('runs_v2', { ref: true, deletion: 'soft' })
   .edge('user')
 
 export const modelParametersFields = {
@@ -317,42 +315,6 @@ export const runFieldsV2 = {
   kvMetadata: v.record(v.string(), v.string()),
   updatedAt: v.number(),
 }
-const runs_v2 = defineEnt(runFieldsV2).deletion('soft').edge('thread').edge('user')
-
-export const runFields = {
-  status: literals('queued', 'active', 'done', 'failed'),
-  updatedAt: v.number(),
-  startedAt: v.optional(v.number()),
-  endedAt: v.optional(v.number()),
-
-  model: v.object({
-    id: v.string(),
-    provider: v.string(),
-  }),
-  modelParameters: v.optional(v.object(modelParametersFields)),
-  instructions: v.optional(v.string()),
-
-  stream: v.boolean(),
-  firstTokenAt: v.optional(v.number()),
-
-  maxMessages: v.optional(v.number()),
-  prependNamesToMessageContent: v.optional(v.boolean()),
-  kvMetadata: v.optional(v.record(v.string(), v.string())),
-
-  usage: v.optional(
-    v.object({
-      promptTokens: v.number(),
-      completionTokens: v.number(),
-      totalTokens: v.number(),
-    }),
-  ),
-  finishReason: v.optional(v.string()),
-  cost: v.optional(v.number()),
-  providerMetadata: v.optional(v.any()),
-  errors: v.optional(v.array(v.any())),
-
-  messageId: v.optional(v.id('messages')),
-}
 const runs = defineEnt(runFieldsV2).deletion('soft').edge('thread').edge('user')
 
 // * Patterns
@@ -419,7 +381,6 @@ const users = defineEnt(userFields)
   .edges('threads', { ref: true, deletion: 'soft' })
   .edges('patterns', { ref: true, deletion: 'soft' })
   .edges('runs', { ref: true, deletion: 'soft' })
-  .edges('runs_v2', { ref: true, deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -451,7 +412,7 @@ const schema = defineEntSchema(
     texts,
     messages,
     runs,
-    runs_v2,
+    runs_v2: defineEnt({}),
     speech,
     threads,
     patterns,
@@ -462,7 +423,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: false,
+    schemaValidation: true,
   },
 )
 

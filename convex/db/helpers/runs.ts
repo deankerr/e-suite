@@ -1,6 +1,6 @@
 import { v } from 'convex/values'
 
-import { runFields } from '../../schema'
+import { runFieldsV2 } from '../../schema'
 
 export const textMessagesReturn = v.object({
   _id: v.id('texts'),
@@ -14,7 +14,7 @@ export const textMessagesReturn = v.object({
 })
 
 export const runReturnFields = {
-  ...runFields,
+  ...runFieldsV2,
   _id: v.id('runs'),
   _creationTime: v.number(),
   threadId: v.id('threads'),

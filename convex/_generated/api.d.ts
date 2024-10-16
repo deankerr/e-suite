@@ -22,7 +22,6 @@ import type * as action_generateTextToImage from "../action/generateTextToImage.
 import type * as action_generateThreadTitle from "../action/generateThreadTitle.js";
 import type * as action_ingestImageUrl from "../action/ingestImageUrl.js";
 import type * as action_run from "../action/run.js";
-import type * as action_run_v2 from "../action/run_v2.js";
 import type * as action_textToAudio from "../action/textToAudio.js";
 import type * as crons from "../crons.js";
 import type * as db_admin_events from "../db/admin/events.js";
@@ -41,7 +40,7 @@ import type * as db_messages from "../db/messages.js";
 import type * as db_metadata from "../db/metadata.js";
 import type * as db_models from "../db/models.js";
 import type * as db_patterns from "../db/patterns.js";
-import type * as db_runs_v2 from "../db/runs_v2.js";
+import type * as db_runs from "../db/runs.js";
 import type * as db_texts from "../db/texts.js";
 import type * as db_thread_messages from "../db/thread/messages.js";
 import type * as db_thread_runs from "../db/thread/runs.js";
@@ -82,7 +81,6 @@ declare const fullApi: ApiFromModules<{
   "action/generateThreadTitle": typeof action_generateThreadTitle;
   "action/ingestImageUrl": typeof action_ingestImageUrl;
   "action/run": typeof action_run;
-  "action/run_v2": typeof action_run_v2;
   "action/textToAudio": typeof action_textToAudio;
   crons: typeof crons;
   "db/admin/events": typeof db_admin_events;
@@ -101,7 +99,7 @@ declare const fullApi: ApiFromModules<{
   "db/metadata": typeof db_metadata;
   "db/models": typeof db_models;
   "db/patterns": typeof db_patterns;
-  "db/runs_v2": typeof db_runs_v2;
+  "db/runs": typeof db_runs;
   "db/texts": typeof db_texts;
   "db/thread/messages": typeof db_thread_messages;
   "db/thread/runs": typeof db_thread_runs;

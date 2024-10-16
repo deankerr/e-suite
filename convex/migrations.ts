@@ -135,7 +135,7 @@ export const runsV0ToV2_3 = migration({
       messageId: undefined,
     }
   },
-  batchSize: 500,
+  batchSize: 200,
 })
 
 // export const threadsDepFields2 = migration({

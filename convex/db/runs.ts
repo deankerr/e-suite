@@ -1,248 +1,357 @@
-// import { nullable } from 'convex-helpers/validators'
-// import { ConvexError, v } from 'convex/values'
-// import { z } from 'zod'
+import { pick } from 'convex-helpers'
+import { nullable } from 'convex-helpers/validators'
+import { ConvexError, v } from 'convex/values'
+import { z } from 'zod'
 
-// import { internalMutation, query } from '../functions'
-// import { updateKvMetadata } from './helpers/kvMetadata'
-// import { createMessage } from './helpers/messages'
-// import { runReturnFields } from './helpers/runs'
-// import { getChatModel } from './models'
+import { internal } from '../_generated/api'
+import { internalMutation, mutation, query } from '../functions'
+import { runFieldsV2 } from '../schema'
+import { updateKvMetadata } from './helpers/kvMetadata'
+import { createMessage, messageCreateFields } from './helpers/messages'
+import { getPatternWriterX } from './helpers/patterns'
+import { getChatModel } from './models'
+import { getOrCreateUserThread } from './threads'
 
-// import type { Doc } from '../_generated/dataModel'
-// import type { Ent, MutationCtx } from '../types'
+import type { Id } from '../_generated/dataModel'
 
-// export const get = query({
-//   args: {
-//     runId: v.id('runs'),
-//   },
-//   handler: async (ctx, { runId }) => {
-//     const run = await ctx.table('runs').get(runId)
-//     return run ? { ...run, providerMetadata: undefined } : run
-//   },
-//   returns: nullable(v.object(runReturnFields)),
-// })
+// TODO * pattern initial/dynamic messages
 
-// export const activate = internalMutation({
-//   args: {
-//     runId: v.id('runs'),
-//   },
-//   handler: async (ctx, { runId }) => {
-//     const run = await ctx.skipRules.table('runs').getX(runId)
-//     if (run.status !== 'queued') throw new ConvexError({ message: 'run is not queued', runId })
+const runCreateFields = {
+  threadId: v.string(),
+  ...pick(runFieldsV2, ['stream', 'options', 'instructions', 'additionalInstructions']),
+  model: v.optional(runFieldsV2.model),
+  patternId: v.optional(v.string()),
+  kvMetadata: v.optional(v.record(v.string(), v.string())),
 
-//     const limit = run.maxMessages ?? 20
+  appendMessages: v.optional(v.array(v.object(messageCreateFields))),
+}
 
-//     const messages = await ctx.skipRules
-//       .table('messages', 'threadId_channel', (q) =>
-//         q
-//           .eq('threadId', run.threadId)
-//           .eq('channel', undefined)
-//           .lt('_creationTime', run._creationTime),
-//       )
-//       .order('desc')
-//       .filter((q) =>
-//         q.and(q.eq(q.field('deletionTime'), undefined), q.neq(q.field('text'), undefined)),
-//       )
-//       .take(limit)
-//       .map((message) => {
-//         if (run.prependNamesToMessageContent) {
-//           return {
-//             role: message.role,
-//             content:
-//               message.role === 'user' && message.name
-//                 ? `${message.name}: ${message.text}`
-//                 : (message.text as string),
-//           }
-//         } else {
-//           return {
-//             role: message.role,
-//             name: message.role === 'user' ? message.name : undefined,
-//             content: message.text as string,
-//           }
-//         }
-//       })
+export const runV2ReturnFields = {
+  _id: v.id('runs'),
+  _creationTime: v.number(),
+  ...runFieldsV2,
+  threadId: v.id('threads'),
+  userId: v.id('users'),
+}
 
-//     const thread = await ctx.table('threads').getX(run.threadId)
+export const get = query({
+  args: {
+    runId: v.string(),
+  },
+  handler: async (ctx, { runId }) => {
+    return await ctx.table('runs').get(runId as Id<'runs'>)
+  },
+  returns: nullable(v.object(runV2ReturnFields)),
+})
 
-//     // * create response message
-//     const message = await createMessage(
-//       ctx,
-//       {
-//         threadId: run.threadId,
-//         userId: run.userId,
-//         role: 'assistant',
-//         runId,
-//         kvMetadata: {
-//           'esuite:run:hint': run.stream ? 'stream' : 'non-stream',
-//           'esuite:run:model:id': run.model.id,
-//         },
-//       },
-//       { skipRules: true },
-//     )
+export const create = mutation({
+  args: runCreateFields,
+  handler: async (ctx, { appendMessages = [], ...args }) => {
+    const thread = await getOrCreateUserThread(ctx, args.threadId)
+    if (!thread) throw new ConvexError('invalid thread id')
 
-//     await run.patch({
-//       status: 'active',
-//       updatedAt: Date.now(),
-//       startedAt: Date.now(),
-//       messageId: message._id,
-//     })
+    const pattern = args.patternId ? await getPatternWriterX(ctx, args.patternId) : null
+    if (pattern) {
+      await pattern.patch({ lastUsedAt: Date.now() })
+    }
 
-//     return {
-//       run: run.doc(),
-//       messages: messages.reverse(),
-//       threadInstructions: thread.instructions,
-//     }
-//   },
-// })
+    const model = args.model ?? pattern?.model
+    if (!model) {
+      throw new ConvexError('no model provided')
+      // ? use fallback model
+    }
 
-// async function getOrCreateRunMessage(ctx: MutationCtx, run: Ent<'runs'>) {
-//   const runMessage = run.messageId ? await ctx.skipRules.table('messages').get(run.messageId) : null
-//   if (runMessage) return runMessage
+    // * tag thread with ids to inform frontend input settings
+    const threadKvMetadata = updateKvMetadata(thread.kvMetadata, {
+      set: {
+        'esuite:model:id': model.id,
+        'esuite:pattern:id': pattern?._id,
+      },
+    })
+    await thread.patch({ updatedAtTime: Date.now(), kvMetadata: threadKvMetadata })
 
-//   return await createMessage(
-//     ctx,
-//     {
-//       threadId: run.threadId,
-//       userId: run.userId,
-//       role: 'assistant',
-//       runId: run._id,
-//     },
-//     { skipRules: true },
-//   )
-// }
+    for (const message of appendMessages) {
+      await createMessage(ctx, {
+        threadId: thread._id,
+        userId: thread.userId,
+        ...message,
+      })
+    }
 
-// export const complete = internalMutation({
-//   args: {
-//     runId: v.id('runs'),
-//     text: v.string(),
-//     finishReason: v.string(),
-//     usage: v.object({
-//       promptTokens: v.number(),
-//       completionTokens: v.number(),
-//       totalTokens: v.number(),
-//     }),
-//     firstTokenAt: v.optional(v.number()),
-//   },
-//   handler: async (ctx, { runId, text, finishReason, usage, firstTokenAt }) => {
-//     const run = await ctx.skipRules.table('runs').getX(runId)
-//     if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
+    const runId = await ctx.table('runs').insert({
+      status: 'queued',
+      stream: args.stream,
+      patternId: pattern?._id,
+      model,
+      options: args.options ?? pattern?.options,
+      instructions: args.instructions ?? pattern?.instructions,
+      additionalInstructions: args.additionalInstructions,
+      kvMetadata: args.kvMetadata ?? {},
 
-//     const chatModel = await getChatModel(ctx, run.model.id)
+      timings: {
+        queuedAt: Date.now(),
+      },
 
-//     const runMessage = await getOrCreateRunMessage(ctx, run)
-//     const kvMetadata = runMessage.kvMetadata ?? {}
-//     await runMessage.patch({
-//       text,
-//       kvMetadata: updateKvMetadata(kvMetadata, {
-//         delete: ['esuite:run:hint'],
-//         set: {
-//           'esuite:run:model:id': run.model.id,
-//           'esuite:run:model:name': chatModel?.name,
-//         },
-//       }),
-//     })
+      threadId: thread._id,
+      userId: thread.userId,
 
-//     const cost = chatModel
-//       ? getInferenceCost({
-//           promptTokens: usage.promptTokens,
-//           completionTokens: usage.completionTokens,
-//           model: chatModel,
-//         })
-//       : undefined
+      updatedAt: Date.now(),
+    })
 
-//     await run.patch({
-//       status: 'done',
-//       updatedAt: Date.now(),
-//       endedAt: Date.now(),
-//       finishReason,
-//       usage,
-//       cost,
-//       firstTokenAt,
-//       messageId: runMessage._id,
-//     })
-//   },
-// })
+    await ctx.scheduler.runAfter(0, internal.action.run.run, {
+      runId,
+    })
 
-// function getInferenceCost({
-//   promptTokens,
-//   completionTokens,
-//   model,
-// }: {
-//   promptTokens: number
-//   completionTokens: number
-//   model: Doc<'chat_models'>
-// }) {
-//   return (
-//     (promptTokens * model.pricing.tokenInput + completionTokens * model.pricing.tokenOutput) /
-//     1_000_000
-//   )
-// }
+    return {
+      runId,
+      threadId: thread._id,
+      threadSlug: thread.slug,
+    }
+  },
+})
 
-// export const fail = internalMutation({
-//   args: {
-//     runId: v.id('runs'),
-//     errors: v.array(v.string()),
-//   },
-//   handler: async (ctx, { runId, ...args }) => {
-//     const run = await ctx.skipRules.table('runs').getX(runId)
-//     if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
+export const activate = internalMutation({
+  args: {
+    runId: v.id('runs'),
+  },
+  handler: async (ctx, { runId }) => {
+    const run = await ctx.skipRules.table('runs').getX(runId)
+    if (run.status !== 'queued') throw new ConvexError({ message: 'run is not queued', runId })
 
-//     const errors = [...(run.errors ?? []), ...args.errors]
+    // * create response message
+    const responseMessage = await createMessage(
+      ctx,
+      {
+        threadId: run.threadId,
+        userId: run.userId,
+        role: 'assistant',
+        runId,
+        kvMetadata: {
+          'esuite:run:active': run.stream ? 'stream' : 'get',
+          'esuite:model:id': run.model.id,
+        },
+      },
+      { skipRules: true },
+    )
 
-//     await run.patch({
-//       status: 'failed',
-//       updatedAt: Date.now(),
-//       endedAt: Date.now(),
-//       errors,
-//     })
+    // NOTE remove default when token counting is implemented
+    const maxMessages = run.options?.maxMessages ?? 50
 
-//     if (run.messageId) {
-//       try {
-//         await ctx.skipRules.table('messages').getX(run.messageId).delete()
-//       } catch (err) {
-//         console.error('Failed to delete run message', err)
-//       }
-//     }
-//   },
-// })
+    const messages = await ctx.skipRules
+      .table('messages', 'threadId_channel', (q) =>
+        q
+          .eq('threadId', run.threadId)
+          .eq('channel', undefined)
+          .lt('_creationTime', responseMessage._creationTime),
+      )
+      .order('desc')
+      .filter((q) =>
+        q.and(q.eq(q.field('deletionTime'), undefined), q.neq(q.field('text'), undefined)),
+      )
+      .take(maxMessages)
+      .map(({ role, name, text = '' }) => {
+        const prefix = name ? `${name}: ` : ''
+        return {
+          role,
+          content: `${prefix}${text}`,
+        }
+      })
 
-// const openRouterMetadataSchema = z.object({
-//   id: z.string(),
-//   total_cost: z.number(),
-//   finish_reason: z.string(),
-//   native_tokens_prompt: z.number(),
-//   native_tokens_completion: z.number(),
-// })
+    await run.patch({
+      status: 'active',
+      updatedAt: Date.now(),
+      timings: {
+        ...run.timings,
+        startedAt: Date.now(),
+      },
+    })
 
-// export const updateProviderMetadata = internalMutation({
-//   args: {
-//     runId: v.id('runs'),
-//     providerMetadata: v.any(),
-//   },
-//   handler: async (ctx, { runId, providerMetadata }) => {
-//     const run = await ctx.skipRules.table('runs').getX(runId)
+    return {
+      ...run.doc(),
+      messages: messages.reverse(),
+      messageId: responseMessage._id,
+    }
+  },
+})
 
-//     const parsed = openRouterMetadataSchema.safeParse(providerMetadata)
-//     if (parsed.success) {
-//       const { total_cost, finish_reason, native_tokens_prompt, native_tokens_completion } =
-//         parsed.data
+export const complete = internalMutation({
+  args: {
+    runId: v.id('runs'),
+    messageId: v.id('messages'),
+    text: v.string(),
+    firstTokenAt: v.optional(v.number()),
+    finishReason: v.string(),
+    promptTokens: v.number(),
+    completionTokens: v.number(),
+    modelId: v.string(),
+    requestId: v.string(),
+  },
+  handler: async (
+    ctx,
+    {
+      runId,
+      messageId,
+      text,
+      firstTokenAt,
+      finishReason,
+      promptTokens,
+      completionTokens,
+      modelId,
+      requestId,
+    },
+  ) => {
+    const run = await ctx.skipRules.table('runs').getX(runId)
+    if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
 
-//       await run.patch({
-//         updatedAt: Date.now(),
-//         finishReason: finish_reason,
-//         usage: {
-//           promptTokens: native_tokens_prompt,
-//           completionTokens: native_tokens_completion,
-//           totalTokens: native_tokens_prompt + native_tokens_completion,
-//         },
-//         cost: total_cost,
-//         providerMetadata,
-//       })
-//     } else {
-//       await run.patch({
-//         updatedAt: Date.now(),
-//         providerMetadata,
-//       })
-//     }
-//   },
-// })
+    const chatModel = await getChatModel(ctx, run.model.id)
+    const cost = chatModel
+      ? getInferenceCost({
+          pricing: chatModel.pricing,
+          usage: {
+            promptTokens,
+            completionTokens,
+          },
+        })
+      : undefined
+
+    const message = await ctx.skipRules.table('messages').getX(messageId)
+    const kvMetadata = message.kvMetadata ?? {}
+    await message.patch({
+      text,
+      kvMetadata: updateKvMetadata(kvMetadata, {
+        delete: ['esuite:run:active'],
+        set: {
+          'esuite:model:name': chatModel?.name,
+        },
+      }),
+    })
+
+    return await run.patch({
+      status: 'done',
+      updatedAt: Date.now(),
+      timings: {
+        ...run.timings,
+        endedAt: Date.now(),
+        firstTokenAt,
+      },
+      usage: {
+        cost,
+        finishReason,
+        promptTokens,
+        completionTokens,
+        modelId,
+        requestId,
+      },
+    })
+  },
+})
+
+export const fail = internalMutation({
+  args: {
+    runId: v.id('runs'),
+    errors: v.array(runFieldsV2.errors.element),
+  },
+  handler: async (ctx, { runId, errors }) => {
+    const run = await ctx.skipRules.table('runs').getX(runId)
+    if (run.status !== 'active') throw new ConvexError({ message: 'run is not active', runId })
+
+    await run.patch({
+      status: 'failed',
+      updatedAt: Date.now(),
+      timings: {
+        ...run.timings,
+        endedAt: Date.now(),
+      },
+      errors: [...(run.errors ?? []), ...errors],
+    })
+
+    try {
+      const messages = await ctx.skipRules
+        .table('messages', 'runId', (q) =>
+          q.eq('runId', runId).gte('_creationTime', run._creationTime),
+        )
+        .order('desc')
+
+      for (const message of messages) {
+        const kvMetadata = updateKvMetadata(message.kvMetadata, {
+          delete: ['esuite:run:active'],
+          set: {
+            'esuite:run:error': errors.at(-1)?.message ?? 'unknown error',
+          },
+        })
+
+        await message.patch({ kvMetadata })
+      }
+    } catch (err) {
+      console.error('Failed to update run message', err)
+    }
+  },
+})
+
+const OpenRouterMetadataSchema = z.object({
+  id: z.string(),
+  model: z.string(),
+  total_cost: z.number(),
+  finish_reason: z.string(),
+  native_tokens_prompt: z.number(),
+  native_tokens_completion: z.number(),
+})
+
+export const updateProviderMetadata = internalMutation({
+  args: {
+    runId: v.id('runs'),
+    providerMetadata: v.record(v.string(), v.any()),
+  },
+  handler: async (ctx, { runId, providerMetadata }) => {
+    const run = await ctx.skipRules.table('runs').getX(runId)
+
+    const parsed = OpenRouterMetadataSchema.safeParse(providerMetadata)
+    if (parsed.success) {
+      const {
+        total_cost,
+        finish_reason,
+        native_tokens_prompt,
+        native_tokens_completion,
+        id,
+        model,
+      } = parsed.data
+
+      await run.patch({
+        updatedAt: Date.now(),
+        usage: {
+          cost: total_cost,
+          finishReason: finish_reason,
+          promptTokens: native_tokens_prompt,
+          completionTokens: native_tokens_completion,
+          modelId: model,
+          requestId: id,
+        },
+        providerMetadata,
+      })
+    } else {
+      await run.patch({
+        updatedAt: Date.now(),
+        providerMetadata,
+      })
+    }
+  },
+})
+
+function getInferenceCost({
+  pricing,
+  usage,
+}: {
+  pricing: {
+    tokenInput: number
+    tokenOutput: number
+  }
+  usage: {
+    promptTokens: number
+    completionTokens: number
+  }
+}) {
+  return (
+    (usage.promptTokens * pricing.tokenInput + usage.completionTokens * pricing.tokenOutput) /
+    1_000_000
+  )
+}
