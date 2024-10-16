@@ -32,7 +32,7 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
     actions
       .send({
         text: textValue,
-        model: { provider: modelId.split('::')[0]!, id: modelId.split('::')[1]! },
+        model: { provider: 'openrouter', id: modelId },
         action,
       })
       .then((result) => {

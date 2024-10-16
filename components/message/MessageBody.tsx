@@ -10,11 +10,12 @@ import { useMessageContext } from './MessageProvider'
 import type { EMessage } from '@/convex/types'
 
 export const MessageBody = () => {
-  const { message, isEditing, showJson, textStyle } = useMessageContext()
+  const { message, run, isEditing, showJson, textStyle } = useMessageContext()
 
   const isHidden = message.channel === 'hidden'
-  const runId = message.kvMetadata['esuite:run:hint'] ? message.runId : undefined
-  const textStream = useMessageTextStream(runId)
+  const isActive = run?.status === 'active'
+  const isStreaming = run?.stream && !message.text
+  const textStream = useMessageTextStream(isStreaming ? run._id : undefined)
   const text = message.text ?? textStream
 
   return (
@@ -24,15 +25,21 @@ export const MessageBody = () => {
       <div className="min-h-12 p-3">
         {isEditing ? <MessageEditor /> : <MessageText textStyle={textStyle}>{text}</MessageText>}
 
-        {!text && (
+        {isActive && !text && (
           <div className="flex-start h-8">
-            <Loader type="dotPulse" />
+            <Loader type="dotPulse" size={32} />
           </div>
         )}
 
-        {!runId && message.text === '' && (
+        {!isActive && message.text === '' && (
           <Code variant="ghost" color="gray">
             (blank message)
+          </Code>
+        )}
+
+        {run?.status === 'failed' && (
+          <Code variant="ghost" color="red">
+            Error: generation failed.
           </Code>
         )}
       </div>

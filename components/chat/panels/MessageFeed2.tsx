@@ -89,7 +89,7 @@ export const MessageFeed2 = ({ threadId }: { threadId: string }) => {
         atTopStateChange={handleAtTopStateChange}
         atTopThreshold={1200}
         atBottomStateChange={handleAtBottomStateChange}
-        atBottomThreshold={400}
+        atBottomThreshold={200}
         increaseViewportBy={1200}
         defaultItemHeight={900}
         computeItemKey={(_, item) => item._id}

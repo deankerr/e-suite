@@ -50,37 +50,37 @@ export const useThreadActions = (threadId: string) => {
     [actionState, sendAppend, threadId, reset, router],
   )
 
-  // const sendCreateRun = useMutation(api.db.thread.runs.create)
-  // const createRun = useCallback(
-  //   async (args: Omit<Parameters<typeof sendCreateRun>[0], 'threadId'>) => {
-  //     if (actionState !== 'ready') {
-  //       return toast.error('Please wait before running the action again.')
-  //     }
+  const sendCreateRun = useMutation(api.db.runs.create)
+  const createRun = useCallback(
+    async (args: Omit<Parameters<typeof sendCreateRun>[0], 'threadId'>) => {
+      if (actionState !== 'ready') {
+        return toast.error('Please wait before running the action again.')
+      }
 
-  //     setActionState('pending')
+      setActionState('pending')
 
-  //     try {
-  //       console.log('createRun', args)
-  //       const result = await sendCreateRun({ ...args, threadId: threadId ?? 'new', stream: true })
+      try {
+        console.log('createRun', args)
+        const result = await sendCreateRun({ ...args, threadId: threadId ?? 'new', stream: true })
 
-  //       setActionState('rateLimited')
-  //       reset()
+        setActionState('rateLimited')
+        reset()
 
-  //       if (result.threadId !== threadId) {
-  //         router.push(`/chats/${result.threadSlug}`)
-  //       }
+        if (result.threadId !== threadId) {
+          router.push(`/chats/${result.threadSlug}`)
+        }
 
-  //       return result
-  //     } catch (err) {
-  //       console.error(err)
-  //       toast.error('An error occurred while trying to create run.')
+        return result
+      } catch (err) {
+        console.error(err)
+        toast.error('An error occurred while trying to create run.')
 
-  //       setActionState('ready')
-  //       return null
-  //     }
-  //   },
-  //   [actionState, reset, router, sendCreateRun, threadId],
-  // )
+        setActionState('ready')
+        return null
+      }
+    },
+    [actionState, reset, router, sendCreateRun, threadId],
+  )
 
   const send = useCallback(
     async ({ text, model, action }: Parameters<ComposerSend>[0]) => {
@@ -92,10 +92,10 @@ export const useThreadActions = (threadId: string) => {
       if (action === 'append') return append({ message })
       else {
         const appendMessages = text ? [message] : undefined
-        // return createRun({ appendMessages, model, stream: true })
+        return createRun({ appendMessages, model, stream: true })
       }
     },
-    [append],
+    [append, createRun],
   )
 
   return { append, state: actionState, send }
