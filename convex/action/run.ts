@@ -23,15 +23,18 @@ export const run = internalAction({
         instructions = '',
         additionalInstructions = '',
         messages,
-        model: { id: modelId, ...parameters },
+        model: { id: modelId, provider: modelProvider, ...modelParameters },
         userId,
         messageId,
         patternId,
+        options,
       } = await ctx.runMutation(internal.db.runs.activate, {
         runId,
       })
 
       const system = [instructions, additionalInstructions].join('\n\n').trim() || undefined
+
+      const parameters = { ...modelParameters, maxTokens: options?.maxCompletionTokens }
 
       console.log({
         stream,
@@ -73,7 +76,7 @@ export const run = internalAction({
       })
 
       // * get openrouter metadata
-      await ctx.scheduler.runAfter(0, internal.action.run.getProviderMetadata, {
+      await ctx.scheduler.runAfter(200, internal.action.run.getProviderMetadata, {
         runId,
         requestId: response.id,
       })
