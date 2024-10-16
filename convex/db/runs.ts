@@ -135,8 +135,6 @@ export const activate = internalMutation({
       { skipRules: true },
     )
 
-    console.log('respMessage', responseMessage)
-
     const messages: AIChatMessage[] = []
 
     // * pattern initial messages
@@ -253,7 +251,6 @@ export const complete = internalMutation({
         },
       }),
     })
-    console.log('kvMetadata', kvMetadata)
 
     return await run.patch({
       status: 'done',

@@ -29,8 +29,8 @@ export const Composer = memo(({ threadId }: { threadId: string }) => {
     getModelKey(thread?.kvMetadata ?? {}) ?? 'meta-llama/llama-3.1-70b-instruct',
   )
   const [textValue, setTextValue] = useState('')
-  const [patternId, setPatternId] = useState('')
-  const [maxCompletionTokens, setMaxCompletionTokens] = useState(1000)
+  const [patternId, setPatternId] = useState(thread?.kvMetadata['esuite:pattern:xid'] ?? '')
+  const [maxCompletionTokens, setMaxCompletionTokens] = useState(4096)
 
   const handleSend = (action: 'append' | 'run') => {
     if (!modelId) return console.error('No model selected')

@@ -84,8 +84,6 @@ export const createMessage = async (
         .insert({ ...fields, series })
         .get()
 
-  console.log('create:', message.role, message.text)
-
   if (evaluateUrls) {
     if (message.text) {
       const urls = extractValidUrlsFromText(message.text)

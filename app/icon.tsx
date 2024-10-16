@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import svgToDataUri from 'mini-svg-data-uri'
 import { ImageResponse } from 'next/og'
 

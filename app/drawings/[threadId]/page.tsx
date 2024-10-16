@@ -1,34 +1,36 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 
 import { useMessageFeedQuery } from '@/app/lib/api/messages'
 import { useThread } from '@/app/lib/api/threads'
 import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
-import { VirtualizedFeed } from '@/components/feed/VirtualizedFeed'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { EmptyPage } from '@/components/pages/EmptyPage'
+import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
+import { VScrollArea } from '@/components/ui/VScrollArea'
 
 export default function Page({ params }: { params: { threadId: string } }) {
   const thread = useThread(params.threadId)
 
   const { results, loadMore, status } = useMessageFeedQuery(params.threadId)
-  const hasSkippedFirstLoad = useRef(false)
 
   const svgMessages = useMemo(() => {
     return results
+      .slice(0, 50)
       .map((msg) => {
         const svg = extractSVG(msg.text ?? '')
         if (!svg) return null
         return {
           _id: msg._id,
+          series: msg.series,
           ...svg,
         }
       })
       .filter((val) => val !== null)
-      .reverse()
+      .toReversed()
   }, [results])
 
   if (!thread) {
@@ -47,29 +49,28 @@ export default function Page({ params }: { params: { threadId: string } }) {
         {status === 'LoadingMore' && <Loader type="orbit" />}
       </PanelHeader>
 
-      <div className="grow">
-        <VirtualizedFeed
-          items={svgMessages}
-          renderItem={(item) => (
-            <SVGContainer
-              _id={item._id}
-              width={item.width}
-              height={item.height}
-              title={item.title}
-              svgText={item.svgText}
-            />
-          )}
-          onAtTop={() => {
-            if (status === 'CanLoadMore') {
-              if (!hasSkippedFirstLoad.current) {
-                hasSkippedFirstLoad.current = true
-                return console.log('skipped first load')
-              }
-              loadMore(30)
-            }
-          }}
-        />
-      </div>
+      <VScrollArea>
+        <div className="space-y-4">
+          {svgMessages.map((msg) => (
+            <div key={msg._id} className="flex-col-center">
+              <SVGContainer
+                _id={msg._id}
+                width={msg.width}
+                height={msg.height}
+                title={msg.title}
+                svgText={msg.svgText}
+              />
+              <div className="py-2 font-mono text-sm">
+                {msg.series} | {msg.title}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex-col-center py-4">
+          <Button onClick={() => loadMore(25)}>Load More</Button>
+        </div>
+      </VScrollArea>
     </Panel>
   )
 }
