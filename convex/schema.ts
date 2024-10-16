@@ -182,7 +182,7 @@ export const textFields = {
   title: v.optional(v.string()),
   content: v.string(),
   updatedAt: v.number(),
-  runId: v.optional(v.id('runs')),
+  runId: v.optional(v.union(v.id('runs'), v.id('runs_v2'))),
 }
 const texts = defineEnt(textFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -200,6 +200,7 @@ export const messageFields = {
   channel: v.optional(v.string()),
 
   runId: v.optional(v.id('runs')),
+  runId_v2: v.optional(v.id('runs_v2')),
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -213,6 +214,7 @@ const messages = defineEnt(messageFields)
   .index('threadId_role_name', ['threadId', 'role', 'name'])
   .index('threadId_channel', ['threadId', 'channel'])
   .index('runId', ['runId'])
+  .index('runId_v2', ['runId_v2'])
   .searchIndex('search_text_threadId_role_name', {
     searchField: 'text',
     filterFields: ['threadId', 'role', 'name'],
@@ -233,6 +235,7 @@ const threads = defineEnt(threadFields)
   .edges('messages', { ref: true, deletion: 'soft' })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('runs', { ref: true, deletion: 'soft' })
+  .edges('runs_v2', { ref: true, deletion: 'soft' })
   .edge('user')
 
 export const modelParametersFields = {
@@ -245,6 +248,76 @@ export const modelParametersFields = {
   frequencyPenalty: v.optional(v.number()),
   presencePenalty: v.optional(v.number()),
 }
+
+export const runFieldsV2 = {
+  status: literals('queued', 'active', 'done', 'failed'),
+  stream: v.boolean(),
+  patternId: v.optional(v.id('patterns')),
+
+  model: v.object({
+    id: v.string(),
+    provider: v.optional(v.string()),
+    ...modelParametersFields,
+  }),
+
+  options: v.optional(
+    v.object({
+      maxMessages: v.optional(v.number()),
+      maxCompletionTokens: v.optional(v.number()),
+    }),
+  ),
+
+  // * override pattern instructions (if pattern is set)
+  instructions: v.optional(v.string()),
+  // * append to instructions (from pattern if set)
+  additionalInstructions: v.optional(v.string()),
+
+  // * run stats
+  timings: v.object({
+    queuedAt: v.number(),
+    startedAt: v.optional(v.number()),
+    endedAt: v.optional(v.number()),
+    firstTokenAt: v.optional(v.number()),
+  }),
+
+  usage: v.optional(
+    v.object({
+      cost: v.optional(v.number()),
+      finishReason: v.string(),
+      promptTokens: v.number(),
+      completionTokens: v.number(),
+      modelId: v.string(),
+      requestId: v.string(),
+    }),
+  ),
+
+  // * results
+  results: v.optional(
+    v.array(
+      v.object({
+        type: v.literal('message'),
+        id: v.id('messages'),
+      }),
+    ),
+  ),
+
+  errors: v.optional(
+    v.array(
+      v.object({
+        code: v.string(),
+        message: v.string(),
+        data: v.optional(v.any()),
+      }),
+    ),
+  ),
+
+  // * post-run metadata from openrouter
+  providerMetadata: v.optional(v.record(v.string(), v.any())),
+  // * user metadata
+  kvMetadata: v.record(v.string(), v.string()),
+  updatedAt: v.number(),
+}
+const runs_v2 = defineEnt(runFieldsV2).deletion('soft').edge('thread').edge('user')
 
 export const runFields = {
   status: literals('queued', 'active', 'done', 'failed'),
@@ -280,26 +353,60 @@ export const runFields = {
 
   messageId: v.optional(v.id('messages')),
 }
-const runs = defineEnt(runFields)
+const runs = defineEnt(runFieldsV2).deletion('soft').edge('thread').edge('user')
+
+// * Patterns
+export const patternFields = {
+  name: v.string(),
+  description: v.string(),
+
+  model: v.object({
+    id: v.string(),
+    provider: v.optional(v.string()),
+    ...modelParametersFields,
+  }),
+
+  instructions: v.string(),
+  initialMessages: v.array(
+    v.object({
+      role: literals('system', 'assistant', 'user'),
+      name: v.optional(v.string()),
+      text: v.string(),
+      channel: v.optional(v.string()),
+    }),
+  ),
+  dynamicMessages: v.array(
+    v.object({
+      message: v.object({
+        role: literals('system', 'assistant', 'user'),
+        name: v.optional(v.string()),
+        text: v.string(),
+        channel: v.optional(v.string()),
+      }),
+    }),
+  ),
+
+  options: v.optional(
+    v.object({
+      maxMessages: v.optional(v.number()),
+      maxCompletionTokens: v.optional(v.number()),
+    }),
+  ),
+
+  kvMetadata: v.record(v.string(), v.string()),
+}
+const patterns = defineEnt(patternFields)
+  .field('xid', v.string(), { unique: true })
+  .field('updatedAt', v.number())
+  .field('lastUsedAt', v.number())
   .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('thread')
   .edge('user')
-  .index('messageId', ['messageId'])
 
 // * Users
 export const userFields = {
   name: v.string(),
   imageUrl: v.string(),
   role: literals('user', 'admin'),
-  runConfigs: v.optional(
-    v.array(
-      v.object({
-        name: v.string(),
-        runConfig: v.array(v.any()),
-        keyword: v.optional(v.string()),
-      }),
-    ),
-  ),
 }
 const users = defineEnt(userFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -307,10 +414,12 @@ const users = defineEnt(userFields)
   .edges('users_api_keys', { ref: true })
   .edges('audio', { ref: true, deletion: 'soft' })
   .edges('collections', { ref: 'ownerId', deletion: 'soft' })
-  .edges('messages', { ref: true, deletion: 'soft' })
-  .edges('runs', { ref: true, deletion: 'soft' })
   .edges('texts', { ref: 'userId', deletion: 'soft' })
+  .edges('messages', { ref: true, deletion: 'soft' })
   .edges('threads', { ref: true, deletion: 'soft' })
+  .edges('patterns', { ref: true, deletion: 'soft' })
+  .edges('runs', { ref: true, deletion: 'soft' })
+  .edges('runs_v2', { ref: true, deletion: 'soft' })
 
 export const usersApiKeysFields = {
   valid: v.boolean(),
@@ -342,8 +451,10 @@ const schema = defineEntSchema(
     texts,
     messages,
     runs,
+    runs_v2,
     speech,
     threads,
+    patterns,
     users,
     users_api_keys,
 
@@ -351,7 +462,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: true,
+    schemaValidation: false,
   },
 )
 

@@ -1,5 +1,5 @@
 import { literals } from 'convex-helpers/validators'
-import { v } from 'convex/values'
+import { Infer, v } from 'convex/values'
 import { customAlphabet } from 'nanoid/non-secure'
 
 import type { MutationCtx } from '../types'
@@ -73,4 +73,35 @@ export function generateTimestampId(timestamp: number, pad = ID_PADDING): string
 export function generateSlugId(length = 8) {
   const nanoid = customAlphabet(BASE62, length)
   return nanoid()
+}
+
+type DefaultValues<T> = {
+  [K in keyof T]?: T[K] | null
+}
+
+/**
+ * Prepares an object for updating by removing undefined values and applying defaults.
+ *
+ * @param updates - The object containing the updates.
+ * @param defaults - An object containing default values for fields.
+ * @returns An object safe to use with Convex's patch method.
+ */
+export function prepareUpdate<T extends Record<string, any>>(
+  updates: Partial<T>,
+  defaults: DefaultValues<T> = {},
+): Partial<T> {
+  const result: Partial<T> = {}
+
+  for (const [key, value] of Object.entries(updates)) {
+    if (value === undefined) {
+      if (key in defaults) {
+        result[key as keyof T] = defaults[key as keyof T] as T[keyof T]
+      }
+      // If the key is not in defaults, we omit it entirely
+    } else {
+      result[key as keyof T] = value
+    }
+  }
+
+  return result
 }

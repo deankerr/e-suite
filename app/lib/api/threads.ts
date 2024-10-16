@@ -35,13 +35,13 @@ export const useThread = (threadId: string) => {
   return userThread || otherThread
 }
 
-export const useRun = (runId: Id<'runs'> | undefined) => {
-  return useCachedQuery(api.db.runs.get, runId ? { runId } : 'skip')
+export const useRun = (runId: string | undefined) => {
+  return useCachedQuery(api.db.runs_v2.get, runId ? { runId } : 'skip')
 }
 
-export const useListThreadRuns = (threadId: string) => {
-  return useQuery(api.db.thread.runs.list, { threadId })
-}
+// export const useListThreadRuns = (threadId: string) => {
+//   return useQuery(api.db.thread.runs.list, { threadId })
+// }
 
 export const useMessageTextStream = (runId: Id<'runs'> | undefined) => {
   const textStreams = useQuery(api.db.thread.runs.getTextStreams, runId ? { runId } : 'skip')

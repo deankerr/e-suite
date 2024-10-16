@@ -18,11 +18,11 @@ export const ModelPickerCmd = ({
   children?: React.ReactNode
 }) => {
   const chatModels = useChatModels()
-  const model = chatModels?.find((model) => model.resourceKey === value)
+  const model = chatModels?.find((model) => model.modelId === value)
 
   const [open, setOpen] = useState(false)
   const handleSelect = (value: string) => {
-    console.log('model', value.split('::'))
+    console.debug('model', value)
     onValueChange(value)
     setOpen(false)
   }
@@ -44,9 +44,9 @@ export const ModelPickerCmd = ({
             {model && (
               <CmdK.Group heading="Current">
                 <ModelItem
-                  key={model.resourceKey}
-                  value={`current ${model.resourceKey}`}
-                  onSelect={() => handleSelect(model.resourceKey)}
+                  key={model.modelId}
+                  value={`current ${model.modelId}`}
+                  onSelect={() => handleSelect(model.modelId)}
                   model={model}
                 />
               </CmdK.Group>
@@ -55,9 +55,9 @@ export const ModelPickerCmd = ({
             <CmdK.Group heading="Chat Models">
               {chatModels?.map((model) => (
                 <ModelItem
-                  key={model.resourceKey}
-                  value={model.resourceKey}
-                  onSelect={() => handleSelect(model.resourceKey)}
+                  key={model.modelId}
+                  value={model.modelId}
+                  onSelect={() => handleSelect(model.modelId)}
                   model={model}
                 />
               ))}

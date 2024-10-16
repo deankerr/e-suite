@@ -5,6 +5,30 @@ import * as vb from 'valibot'
 import { ENV } from '../lib/env'
 import { ResourceKey } from '../lib/valibot'
 
+export function createAIProvider(model: { id: string; provider?: string }) {
+  switch (model.provider) {
+    case 'openai':
+      return openai(model.id)
+    case 'together':
+      return createOpenAI({
+        apiKey: ENV.TOGETHER_API_KEY,
+        baseURL: 'https://api.together.xyz/v1',
+      })(model.id)
+    default:
+      return createOpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey: ENV.OPENROUTER_API_KEY,
+        headers: {
+          'HTTP-Referer': `https://${ENV.APP_HOSTNAME}`,
+          'X-Title': `esuite`,
+        },
+        compatibility: 'strict',
+      })(model.id)
+  }
+}
+
+// TODO * remove:
+
 const createProvider = (endpoint: string) => {
   switch (endpoint) {
     case 'openai':

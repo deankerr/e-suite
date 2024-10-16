@@ -33,150 +33,150 @@ function createModelProvider(model: { provider: string; id: string }) {
   }
 }
 
-export const run = internalAction({
-  args: {
-    runId: v.id('runs'),
-  },
-  handler: async (ctx, { runId }): Promise<void> => {
-    try {
-      const { run, messages, threadInstructions } = await ctx.runMutation(
-        internal.db.runs.activate,
-        { runId },
-      )
-      console.log({
-        ...run,
-        instructions: run.instructions ? run.instructions.slice(0, 500) : run.instructions,
-        messages: messages.map((message) => ({
-          ...message,
-          content: message.content.slice(0, 500),
-        })),
-      })
+// export const run = internalAction({
+//   args: {
+//     runId: v.id('runs'),
+//   },
+//   handler: async (ctx, { runId }): Promise<void> => {
+//     try {
+//       const { run, messages, threadInstructions } = await ctx.runMutation(
+//         internal.db.runs.activate,
+//         { runId },
+//       )
+//       console.log({
+//         ...run,
+//         instructions: run.instructions ? run.instructions.slice(0, 500) : run.instructions,
+//         messages: messages.map((message) => ({
+//           ...message,
+//           content: message.content.slice(0, 500),
+//         })),
+//       })
 
-      const model = createModelProvider(run.model)
-      const input = {
-        ...run.modelParameters,
-        model,
-        system: run.instructions ?? threadInstructions,
-        messages,
-      }
+//       const model = createModelProvider(run.model)
+//       const input = {
+//         ...run.modelParameters,
+//         model,
+//         system: run.instructions ?? threadInstructions,
+//         messages,
+//       }
 
-      async function nonStreaming() {
-        const { text, finishReason, usage, warnings, response } = await generateText({ ...input })
-        return { text, finishReason, usage, warnings, response, firstTokenAt: undefined }
-      }
+//       async function nonStreaming() {
+//         const { text, finishReason, usage, warnings, response } = await generateText({ ...input })
+//         return { text, finishReason, usage, warnings, response, firstTokenAt: undefined }
+//       }
 
-      async function streaming() {
-        const textId = await ctx.runMutation(internal.db.texts.createMessageText, {
-          runId,
-          userId: run.userId,
-        })
-        const result = await streamText(input)
+//       async function streaming() {
+//         const textId = await ctx.runMutation(internal.db.texts.createMessageText, {
+//           runId,
+//           userId: run.userId,
+//         })
+//         const result = await streamText(input)
 
-        let firstTokenAt = 0
-        let streamedText = ''
-        for await (const textPart of result.textStream) {
-          if (!textPart) continue
-          if (!firstTokenAt) firstTokenAt = Date.now()
-          streamedText += textPart
-          if (hasDelimiter(textPart)) {
-            await ctx.runMutation(internal.db.texts.streamToText, {
-              textId,
-              content: streamedText,
-            })
-          }
-        }
+//         let firstTokenAt = 0
+//         let streamedText = ''
+//         for await (const textPart of result.textStream) {
+//           if (!textPart) continue
+//           if (!firstTokenAt) firstTokenAt = Date.now()
+//           streamedText += textPart
+//           if (hasDelimiter(textPart)) {
+//             await ctx.runMutation(internal.db.texts.streamToText, {
+//               textId,
+//               content: streamedText,
+//             })
+//           }
+//         }
 
-        const [text, finishReason, usage, warnings, response] = await Promise.all([
-          result.text,
-          result.finishReason,
-          result.usage,
-          result.warnings,
-          result.response,
-        ])
+//         const [text, finishReason, usage, warnings, response] = await Promise.all([
+//           result.text,
+//           result.finishReason,
+//           result.usage,
+//           result.warnings,
+//           result.response,
+//         ])
 
-        try {
-          await ctx.scheduler.runAfter(ms('1 minute'), internal.db.texts.deleteText, {
-            textId,
-          })
-        } catch (err) {
-          console.error(err)
-        }
+//         try {
+//           await ctx.scheduler.runAfter(ms('1 minute'), internal.db.texts.deleteText, {
+//             textId,
+//           })
+//         } catch (err) {
+//           console.error(err)
+//         }
 
-        return { text, finishReason, usage, warnings, response, firstTokenAt }
-      }
+//         return { text, finishReason, usage, warnings, response, firstTokenAt }
+//       }
 
-      const { text, finishReason, usage, warnings, response, firstTokenAt } = run.stream
-        ? await streaming()
-        : await nonStreaming()
+//       const { text, finishReason, usage, warnings, response, firstTokenAt } = run.stream
+//         ? await streaming()
+//         : await nonStreaming()
 
-      console.log(text, { finishReason, usage, warnings })
+//       console.log(text, { finishReason, usage, warnings })
 
-      await ctx.runMutation(internal.db.runs.complete, {
-        runId,
-        text,
-        finishReason,
-        usage,
-        firstTokenAt,
-      })
+//       await ctx.runMutation(internal.db.runs.complete, {
+//         runId,
+//         text,
+//         finishReason,
+//         usage,
+//         firstTokenAt,
+//       })
 
-      if (run.model.provider === 'openrouter') {
-        await ctx.scheduler.runAfter(1000, internal.action.run.fetchOpenRouterMetadata, {
-          runId,
-          responseId: response.id,
-        })
-      }
-    } catch (err) {
-      console.error(err)
+//       if (run.model.provider === 'openrouter') {
+//         await ctx.scheduler.runAfter(1000, internal.action.run.fetchOpenRouterMetadata, {
+//           runId,
+//           responseId: response.id,
+//         })
+//       }
+//     } catch (err) {
+//       console.error(err)
 
-      await ctx.runMutation(internal.db.runs.fail, {
-        runId,
-        errors: [getErrorMessage(err)],
-      })
-    }
-  },
-})
+//       await ctx.runMutation(internal.db.runs.fail, {
+//         runId,
+//         errors: [getErrorMessage(err)],
+//       })
+//     }
+//   },
+// })
 
-export const fetchOpenRouterMetadata = internalAction({
-  args: {
-    runId: v.id('runs'),
-    responseId: v.string(),
-    attempt: v.optional(v.number()),
-  },
-  handler: async (ctx, { runId, responseId, attempt = 1 }): Promise<void> => {
-    try {
-      const response = await fetch(`https://openrouter.ai/api/v1/generation?id=${responseId}`, {
-        headers: {
-          Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
-        },
-      })
+// export const fetchOpenRouterMetadata = internalAction({
+//   args: {
+//     runId: v.id('runs'),
+//     responseId: v.string(),
+//     attempt: v.optional(v.number()),
+//   },
+//   handler: async (ctx, { runId, responseId, attempt = 1 }): Promise<void> => {
+//     try {
+//       const response = await fetch(`https://openrouter.ai/api/v1/generation?id=${responseId}`, {
+//         headers: {
+//           Authorization: `Bearer ${ENV.OPENROUTER_API_KEY}`,
+//         },
+//       })
 
-      const json = await response.json()
-      console.log('openrouter metadata', responseId, runId, attempt, json)
+//       const json = await response.json()
+//       console.log('openrouter metadata', responseId, runId, attempt, json)
 
-      if ('data' in json) {
-        await ctx.runMutation(internal.db.runs.updateProviderMetadata, {
-          runId,
-          providerMetadata: json.data,
-        })
-        return
-      }
+//       if ('data' in json) {
+//         await ctx.runMutation(internal.db.runs.updateProviderMetadata, {
+//           runId,
+//           providerMetadata: json.data,
+//         })
+//         return
+//       }
 
-      if ('error' in json) {
-        throw new ConvexError(json.error.message)
-      }
+//       if ('error' in json) {
+//         throw new ConvexError(json.error.message)
+//       }
 
-      throw new ConvexError('invalid openrouter response')
-    } catch (err) {
-      if (attempt > 5) {
-        throw err
-      }
+//       throw new ConvexError('invalid openrouter response')
+//     } catch (err) {
+//       if (attempt > 5) {
+//         throw err
+//       }
 
-      console.error(err)
-      await ctx.scheduler.runAfter(2000 * attempt, internal.action.run.fetchOpenRouterMetadata, {
-        runId,
-        responseId,
-        attempt: attempt + 1,
-      })
-    }
-  },
-})
+//       console.error(err)
+//       await ctx.scheduler.runAfter(2000 * attempt, internal.action.run.fetchOpenRouterMetadata, {
+//         runId,
+//         responseId,
+//         attempt: attempt + 1,
+//       })
+//     }
+//   },
+// })
