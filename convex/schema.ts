@@ -256,12 +256,14 @@ export const runFieldsV2 = {
 
   model: v.object({
     id: v.string(),
+    provider: v.optional(v.string()),
     ...modelParametersFields,
   }),
 
   options: v.optional(
     v.object({
       maxMessages: v.optional(v.number()),
+      maxCompletionTokens: v.optional(v.number()),
     }),
   ),
 
@@ -351,11 +353,7 @@ export const runFields = {
 
   messageId: v.optional(v.id('messages')),
 }
-const runs = defineEnt(runFields)
-  .deletion('scheduled', { delayMs: timeToDelete })
-  .edge('thread')
-  .edge('user')
-  .index('messageId', ['messageId'])
+const runs = defineEnt(runFieldsV2).deletion('soft').edge('thread').edge('user')
 
 // * Patterns
 export const patternFields = {
@@ -364,6 +362,7 @@ export const patternFields = {
 
   model: v.object({
     id: v.string(),
+    provider: v.optional(v.string()),
     ...modelParametersFields,
   }),
 
@@ -390,6 +389,7 @@ export const patternFields = {
   options: v.optional(
     v.object({
       maxMessages: v.optional(v.number()),
+      maxCompletionTokens: v.optional(v.number()),
     }),
   ),
 
@@ -462,7 +462,7 @@ const schema = defineEntSchema(
     migrations: defineEntFromTable(migrationsTable),
   },
   {
-    schemaValidation: true,
+    schemaValidation: false,
   },
 )
 
