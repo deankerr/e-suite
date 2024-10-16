@@ -65,7 +65,7 @@ export const Navigation = ({
         <AdminOnlyUi>
           <div className="space-y-1 py-2">
             <NavItem href={'/patterns'}>
-              <Icons.GearFine size={20} className="place-self-center text-accent-11" />
+              <Icons.Robot size={20} className="place-self-center text-accent-11" />
               <div className="line-clamp-2 select-none overflow-hidden pr-3">Patterns</div>
             </NavItem>
             <NavItem href={'/prompts'}>

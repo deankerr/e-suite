@@ -1,12 +1,12 @@
 import { omit } from 'convex-helpers'
-import { partial } from 'convex-helpers/validators'
+import { nullable, partial } from 'convex-helpers/validators'
 import { v } from 'convex/values'
 
 import { mutation, query } from '../functions'
 import { prepareUpdate } from '../lib/utils'
 import { patternFields } from '../schema'
 import { getPattern, getPatternWriterX } from './helpers/patterns'
-import { xid } from './helpers/xid'
+import { generateXid } from './helpers/xid'
 
 export const patternReturnFields = {
   ...patternFields,
@@ -38,6 +38,7 @@ export const list = query({
       .table('patterns', 'userId', (q) => q.eq('userId', user._id))
       .filter((q) => q.eq(q.field('deletionTime'), undefined))
   },
+  returns: nullable(v.array(v.object(patternReturnFields))),
 })
 
 // * Mutations
@@ -63,6 +64,8 @@ export const create = mutation({
   ) => {
     const user = await ctx.viewerX()
 
+    const patternXid = generateXid('pattern')
+
     const patternId = await ctx.table('patterns').insert({
       name,
       description,
@@ -71,14 +74,18 @@ export const create = mutation({
       dynamicMessages,
       kvMetadata,
       model,
-      xid: xid('pattern'),
+      xid: patternXid,
       userId: user._id,
       updatedAt: Date.now(),
       lastUsedAt: 0,
     })
 
-    return patternId
+    return { id: patternId, xid: patternXid }
   },
+  returns: v.object({
+    id: v.id('patterns'),
+    xid: v.string(),
+  }),
 })
 
 export const update = mutation({
