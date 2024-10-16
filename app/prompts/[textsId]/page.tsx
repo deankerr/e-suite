@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { use } from "react";
 
 import { useMutation } from 'convex/react'
 import { useRouter } from 'next/navigation'
@@ -11,7 +12,8 @@ import { api } from '@/convex/_generated/api'
 
 import type { Id } from '@/convex/_generated/dataModel'
 
-export default function Page({ params }: { params: { textsId: string } }) {
+export default function Page(props: { params: Promise<{ textsId: string }> }) {
+  const params = use(props.params);
   const router = useRouter()
 
   const textsId = params.textsId as Id<'texts'>

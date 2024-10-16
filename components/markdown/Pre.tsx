@@ -9,11 +9,11 @@ import { AdminOnlyUi } from '@/components/util/AdminOnlyUi'
 export const Pre = memo(({ children, ...props }: React.ComponentProps<'pre'>) => {
   let text = ''
 
-  if (children && typeof children === 'object' && 'props' in children) {
-    if (children.props.children && typeof children.props.children === 'string') {
-      text = children.props.children
-    }
-  }
+  // if (children && typeof children === 'object' && 'props' in children) {
+  //   if (children.props.children && typeof children.props.children === 'string') {
+  //     text = children.props.children
+  //   }
+  // }
 
   return (
     <pre

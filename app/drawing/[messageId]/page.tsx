@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, use } from 'react';
 
 import { useMessageById } from '@/app/lib/api/messages'
 import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
@@ -15,7 +15,8 @@ const extractSVGCodeblocks = (messageText: string): string[] => {
   return matches.map((match) => match[1] ?? '').filter((svg) => svg.trim() !== '')
 }
 
-export default function Page({ params }: { params: { messageId: string } }) {
+export default function Page(props: { params: Promise<{ messageId: string }> }) {
+  const params = use(props.params);
   const message = useMessageById(params.messageId)
 
   const svgContents = useMemo(() => {

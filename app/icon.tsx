@@ -38,7 +38,7 @@ export default function Icon() {
   return new ImageResponse(
     (
       // ImageResponse JSX element
-      <img alt="" width={32} height={32} src={sun} />
+      (<img alt="" width={32} height={32} src={sun} />)
     ),
     // ImageResponse options
     {
@@ -46,5 +46,5 @@ export default function Icon() {
       // config to also set the ImageResponse's width and height.
       ...size,
     },
-  )
+  );
 }

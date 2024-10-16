@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, use } from 'react';
 
 import { useMessageFeedQuery } from '@/app/lib/api/messages'
 import { useThread } from '@/app/lib/api/threads'
@@ -12,7 +12,8 @@ import { Loader } from '@/components/ui/Loader'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
 import { ScrollArea } from '@/components/ui/ScrollArea'
 
-export default function Page({ params }: { params: { threadId: string } }) {
+export default function Page(props: { params: Promise<{ threadId: string }> }) {
+  const params = use(props.params);
   const thread = useThread(params.threadId)
 
   const { results, loadMore, status } = useMessageFeedQuery(params.threadId)

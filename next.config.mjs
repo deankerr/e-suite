@@ -43,6 +43,10 @@ const nextConfig = {
       destination: `${backendUrl}/i/:slug`,
     },
   ],
+
+  experimental: {
+    reactCompiler: true,
+  },
 }
 
 const withBundleAnalyzer = bundleAnalyzer({

@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { use } from "react";
 
 import * as Icons from '@phosphor-icons/react/dist/ssr'
 import { useAtom } from 'jotai'
@@ -9,7 +10,8 @@ import { Chat } from '@/components/chat/Chat'
 import { IconButton } from '@/components/ui/Button'
 import { Panel, PanelHeader } from '@/components/ui/Panel'
 
-export default function Page({ params }: { params: { threadId: string } }) {
+export default function Page(props: { params: Promise<{ threadId: string }> }) {
+  const params = use(props.params);
   const [htmlText, setHtmlText] = useAtom(htmlTextAtom)
 
   return (

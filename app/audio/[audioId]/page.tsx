@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { use } from "react";
 
 import { Card } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
@@ -15,7 +16,8 @@ const AudioPlayer = dynamic(() => import('@/components/audio/AudioPlayer'), {
   ),
 })
 
-export default function Page({ params }: { params: { audioId: string } }) {
+export default function Page(props: { params: Promise<{ audioId: string }> }) {
+  const params = use(props.params);
   const audio = useAudio(params.audioId)
 
   return (
