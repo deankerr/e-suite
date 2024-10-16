@@ -9,7 +9,7 @@ import { cn } from '@/app/lib/utils'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Button } from '@/components/ui/Button'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 export const PromptsNavPanel = () => {
   const params = useParams()
@@ -29,7 +29,7 @@ export const PromptsNavPanel = () => {
         </Link>
       </PanelHeader>
 
-      <VScrollArea>
+      <ScrollArea>
         <div className="flex flex-col gap-1 overflow-hidden p-1">
           {prompts?.map((prompt) => (
             <Link
@@ -44,7 +44,7 @@ export const PromptsNavPanel = () => {
             </Link>
           ))}
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </NavPanel>
   )
 }

@@ -8,7 +8,7 @@ import { usePatterns } from '@/app/lib/api/patterns'
 import { cn } from '@/app/lib/utils'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 import { Button } from '../ui/Button'
 
 export const PatternsNavPanel = () => {
@@ -33,7 +33,7 @@ export const PatternsNavPanel = () => {
         </Link>
       </PanelHeader>
 
-      <VScrollArea>
+      <ScrollArea>
         <div className="flex flex-col gap-1 overflow-hidden p-1">
           {patterns?.map((pattern) => (
             <Link
@@ -48,7 +48,7 @@ export const PatternsNavPanel = () => {
             </Link>
           ))}
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </NavPanel>
   )
 }

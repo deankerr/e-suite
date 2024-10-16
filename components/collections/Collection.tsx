@@ -14,7 +14,7 @@ import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { InfiniteScroll } from '@/components/ui/InfiniteScroll'
 import { Panel, PanelEmpty, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 import { Loader } from '../ui/Loader'
 
 export const Collection = ({ collectionId }: { collectionId: string }) => {
@@ -77,7 +77,7 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
         </IconButton>
       </PanelHeader>
 
-      <VScrollArea>
+      <ScrollArea>
         <Masonry
           items={images ?? []}
           config={{
@@ -130,7 +130,7 @@ export const Collection = ({ collectionId }: { collectionId: string }) => {
             </div>
           </>
         )}
-      </VScrollArea>
+      </ScrollArea>
     </Panel>
   )
 }

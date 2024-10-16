@@ -7,7 +7,7 @@ import { accentColors } from '@radix-ui/themes/props'
 import { AdminPageWrapper } from '@/app/admin/AdminPageWrapper'
 import { useCachedQuery } from '@/app/lib/api/helpers'
 import { useChatModels } from '@/app/lib/api/models'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 import { api } from '@/convex/_generated/api'
 
 export default function Page() {
@@ -44,7 +44,7 @@ export default function Page() {
           Events
         </Heading>
 
-        <VScrollArea>
+        <ScrollArea>
           <div className="divide-y">
             {events?.map((event) => (
               <div key={event._id}>
@@ -69,7 +69,7 @@ export default function Page() {
               </div>
             ))}
           </div>
-        </VScrollArea>
+        </ScrollArea>
       </Card>
     </AdminPageWrapper>
   )

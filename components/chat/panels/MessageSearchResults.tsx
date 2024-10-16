@@ -8,7 +8,7 @@ import { FishFoodIcon } from '@/components/icons/FishFoodIcon'
 import { Message } from '@/components/message/Message'
 import { Loader } from '@/components/ui/Loader'
 import { PanelBody } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
   const { results, isLoading, isSkipped } = useThreadTextSearchResults(threadId)
@@ -23,7 +23,7 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
     <>
       {!isSkipped && (
         <PanelBody>
-          <VScrollArea className="bg-gray-1">
+          <ScrollArea className="bg-gray-1">
             <div
               className={cn(
                 '',
@@ -43,7 +43,7 @@ export const MessageSearchResults = ({ threadId }: { threadId: string }) => {
                 <div className="text-base font-medium text-gray-11">No results.</div>
               </div>
             ) : null}
-          </VScrollArea>
+          </ScrollArea>
         </PanelBody>
       )}
 

@@ -4,7 +4,7 @@ import { useGenerate } from '@/app/lib/api/generations'
 import { GenerateForm } from '@/components/generations/GenerateForm'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 export const GeneratePanel = () => {
   const generate = useGenerate()
@@ -17,9 +17,9 @@ export const GeneratePanel = () => {
         <div className="grow" />
       </PanelHeader>
 
-      <VScrollArea>
+      <ScrollArea>
         <GenerateForm onRun={generate} />
-      </VScrollArea>
+      </ScrollArea>
     </Panel>
   )
 }

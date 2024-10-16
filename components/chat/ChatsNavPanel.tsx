@@ -12,7 +12,7 @@ import { cn } from '@/app/lib/utils'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { IconButton } from '@/components/ui/Button'
 import { NavPanel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 import { SearchField } from '../ui/SearchField'
 
 export const ChatsNavPanel = () => {
@@ -78,7 +78,7 @@ export const ChatsNavPanel = () => {
         <SearchField className="w-full" value={searchText} onValueChange={setSearchText} />
       </div>
 
-      <VScrollArea>
+      <ScrollArea>
         <div className="flex flex-col gap-1 overflow-hidden p-1">
           {threadsSorted.map((thread) => (
             <Link
@@ -94,7 +94,7 @@ export const ChatsNavPanel = () => {
             </Link>
           ))}
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </NavPanel>
   )
 }

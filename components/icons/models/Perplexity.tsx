@@ -1,6 +1,10 @@
-import type { IconProps } from '@/components/icons/models/types'
+import { SVGProps } from 'react'
 
-export const Perplexity = ({ size = '1em', style, ...rest }: IconProps) => {
+export const Perplexity = ({
+  size = '1em',
+  style,
+  ...rest
+}: SVGProps<SVGSVGElement> & { size?: string | number }) => {
   return (
     <svg
       fill="currentColor"

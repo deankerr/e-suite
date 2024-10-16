@@ -20,8 +20,8 @@ import { ModelButton } from '@/components/composer/ModelButton'
 import { Button, IconButton } from '@/components/ui/Button'
 import { Label } from '@/components/ui/Label'
 import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 import { TextField } from '@/components/ui/TextField'
-import { VScrollArea } from '@/components/ui/VScrollArea'
 import { LoadingPage } from '../pages/LoadingPage'
 
 import type { EMessage, EPattern } from '@/convex/types'
@@ -100,7 +100,7 @@ function PatternEditor({ pattern, isNew = false }: { pattern: EPattern; isNew?: 
           )}
         </PanelHeader>
 
-        <VScrollArea>
+        <ScrollArea>
           <div className="flex">
             <div className="shrink-0 px-4">
               <div className="flex gap-3 p-4">
@@ -202,7 +202,7 @@ function PatternEditor({ pattern, isNew = false }: { pattern: EPattern; isNew?: 
               />
             </div>
           </div>
-        </VScrollArea>
+        </ScrollArea>
       </Panel>
     </>
   )

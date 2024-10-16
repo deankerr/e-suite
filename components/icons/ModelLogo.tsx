@@ -13,7 +13,7 @@ import { Perplexity } from '@/components/icons/models/Perplexity'
 import { Yi } from '@/components/icons/models/Yi'
 import { ZeroOne } from '@/components/icons/models/ZeroOne'
 
-import type { IconProps } from '@/components/icons/models/types'
+import type { SVGProps } from 'react'
 
 const brandIcons = [
   {
@@ -65,15 +65,20 @@ const brandIcons = [
 
 const fallback = Icons.Cube
 
-export const ModelLogo = memo(({ modelName, ...props }: { modelName: string } & IconProps) => {
-  const matchingIcon = brandIcons.find((brand) =>
-    brand.name.some((name) => modelName.toLowerCase().includes(name.toLowerCase())),
-  )
+export const ModelLogo = memo(
+  ({
+    modelName,
+    ...props
+  }: { modelName: string } & SVGProps<SVGSVGElement> & { size?: string | number }) => {
+    const matchingIcon = brandIcons.find((brand) =>
+      brand.name.some((name) => modelName.toLowerCase().includes(name.toLowerCase())),
+    )
 
-  const IconComponent = matchingIcon ? matchingIcon.icon : fallback
+    const IconComponent = matchingIcon ? matchingIcon.icon : fallback
 
-  return <IconComponent {...props} />
-})
+    return <IconComponent {...props} />
+  },
+)
 ModelLogo.displayName = 'ModelLogo'
 
 /* 

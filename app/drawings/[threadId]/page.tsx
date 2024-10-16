@@ -10,7 +10,7 @@ import { EmptyPage } from '@/components/pages/EmptyPage'
 import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { Panel, PanelHeader, PanelLoading, PanelTitle } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 export default function Page({ params }: { params: { threadId: string } }) {
   const thread = useThread(params.threadId)
@@ -49,7 +49,7 @@ export default function Page({ params }: { params: { threadId: string } }) {
         {status === 'LoadingMore' && <Loader type="orbit" />}
       </PanelHeader>
 
-      <VScrollArea>
+      <ScrollArea>
         <div className="space-y-4">
           {svgMessages.map((msg) => (
             <div key={msg._id} className="flex-col-center">
@@ -70,7 +70,7 @@ export default function Page({ params }: { params: { threadId: string } }) {
         <div className="flex-col-center py-4">
           <Button onClick={() => loadMore(25)}>Load More</Button>
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </Panel>
   )
 }

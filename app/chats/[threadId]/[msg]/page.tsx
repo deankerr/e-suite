@@ -3,7 +3,7 @@
 import { useMessage } from '@/app/lib/api/messages'
 import { Message } from '@/components/message/Message'
 import { Panel, PanelEmpty, PanelLoading } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 export default function Page({ params }: { params: { threadId: string; msg: string } }) {
   const result = useMessage(params.threadId, params.msg)
@@ -12,11 +12,11 @@ export default function Page({ params }: { params: { threadId: string; msg: stri
 
   return (
     <Panel>
-      <VScrollArea>
+      <ScrollArea>
         <div className="mx-auto max-w-[85ch] py-3">
           <Message message={result.message} />
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </Panel>
   )
 }

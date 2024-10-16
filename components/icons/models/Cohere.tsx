@@ -1,6 +1,10 @@
-import type { IconProps } from '@/components/icons/models/types'
+import type { SVGProps } from 'react'
 
-export const Cohere = ({ size = '1em', style, ...rest }: IconProps) => {
+export const Cohere = ({
+  size = '1em',
+  style,
+  ...rest
+}: SVGProps<SVGSVGElement> & { size?: string | number }) => {
   return (
     <svg
       fill="currentColor"

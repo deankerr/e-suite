@@ -7,8 +7,8 @@ import { ImageCardNext } from '@/components/images/ImageCardNext'
 import { NavigationButton } from '@/components/navigation/NavigationSheet'
 import { Button } from '@/components/ui/Button'
 import { Panel, PanelHeader, PanelTitle } from '@/components/ui/Panel'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 import { TextField } from '@/components/ui/TextField'
-import { VScrollArea } from '@/components/ui/VScrollArea'
 import { api } from '@/convex/_generated/api'
 
 export default function Page() {
@@ -40,7 +40,7 @@ export default function Page() {
         </Button>
       </PanelHeader>
 
-      <VScrollArea>
+      <ScrollArea>
         <div className="flex flex-wrap gap-2 p-2">
           {images?.results?.map((image, index) => (
             <div key={image._id} className="w-72">
@@ -52,7 +52,7 @@ export default function Page() {
 
           {images?.results?.length === 0 && <div className="text-gray-11">No images found.</div>}
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </Panel>
   )
 }

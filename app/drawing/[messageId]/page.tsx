@@ -7,7 +7,7 @@ import { SVGRenderer } from '@/components/artifacts/SVGRenderer'
 import { EmptyPage } from '@/components/pages/EmptyPage'
 import { LoadingPage } from '@/components/pages/LoadingPage'
 import { Panel } from '@/components/ui/Panel'
-import { VScrollArea } from '@/components/ui/VScrollArea'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 const extractSVGCodeblocks = (messageText: string): string[] => {
   const svgRegex = /```svg\n([\s\S]*?)\n```/g
@@ -31,7 +31,7 @@ export default function Page({ params }: { params: { messageId: string } }) {
 
   return (
     <Panel>
-      <VScrollArea>
+      <ScrollArea>
         <div className="flex-col-center h-full gap-4">
           {svgContents.length > 0 ? (
             svgContents.map((svg, index) => (
@@ -41,7 +41,7 @@ export default function Page({ params }: { params: { messageId: string } }) {
             <p className="text-gray-600">No SVG content found in the message.</p>
           )}
         </div>
-      </VScrollArea>
+      </ScrollArea>
     </Panel>
   )
 }
