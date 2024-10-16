@@ -79,7 +79,7 @@ export const deletePrompt = mutation({
 
 export const createMessageText = internalMutation({
   args: {
-    runId: v.union(v.id('runs'), v.id('runs_v2')),
+    runId: v.id('runs'),
     userId: v.id('users'),
   },
   handler: async (ctx, { runId, userId }) => {

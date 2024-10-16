@@ -35,7 +35,7 @@ export function MessageProvider({
   const [textStyle, setTextStyle] = useState<'markdown' | 'monospace'>('markdown')
   const { isViewer: viewerCanEdit } = useViewer(message.userId)
 
-  const run = useRun(message.runId_v2)
+  const run = useRun(message.runId)
 
   const sendUpdateMessage = useUpdateMessage()
   const updateMessage = useCallback(

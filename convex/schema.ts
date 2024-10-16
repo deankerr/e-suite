@@ -182,7 +182,7 @@ export const textFields = {
   title: v.optional(v.string()),
   content: v.string(),
   updatedAt: v.number(),
-  runId: v.optional(v.union(v.id('runs'), v.id('runs_v2'))),
+  runId: v.optional(v.id('runs')),
 }
 const texts = defineEnt(textFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -200,7 +200,6 @@ export const messageFields = {
   channel: v.optional(v.string()),
 
   runId: v.optional(v.id('runs')),
-  runId_v2: v.optional(v.id('runs_v2')), // ! TEMP
 }
 const messages = defineEnt(messageFields)
   .deletion('scheduled', { delayMs: timeToDelete })
@@ -412,7 +411,6 @@ const schema = defineEntSchema(
     texts,
     messages,
     runs,
-    runs_v2: defineEnt({}),
     speech,
     threads,
     patterns,
