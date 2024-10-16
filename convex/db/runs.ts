@@ -242,6 +242,12 @@ export const complete = internalMutation({
         modelId,
         requestId,
       },
+      results: [
+        {
+          type: 'message',
+          id: messageId,
+        },
+      ],
     })
   },
 })
